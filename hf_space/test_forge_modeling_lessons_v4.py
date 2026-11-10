@@ -22,7 +22,8 @@ class ForgeModelingLessonsV4(unittest.TestCase):
         text=select_modeling_lesson("How does §E Particle Studio work?")
         for part in ("v11.224", "GAME EDITOR", "12 emitters", "96 motes", "576 total", "JSON"):
             self.assertIn(part,text)
-        self.assertIn("NO native particle.create",text)
+        self.assertIn("§C particle.create/set require an active",text)
+        self.assertIn("exact native receipts",text)
 
     def test_particle_gameplay_distinction(self):
         text=select_modeling_lesson("§E Particle Studio create sparks for a sheep building")

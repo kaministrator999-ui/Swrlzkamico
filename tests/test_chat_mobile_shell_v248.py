@@ -33,7 +33,7 @@ def test_clean_composer_and_export():
     assert 'download="swrlz-dragon-chat.json"' in menu
     assert 'href="/api/lalm_station/export"' not in composer
     assert html.count('href="/api/lalm_station/export"')==1
-    assert "modelId:String(settingsState.model.defaultModel||\"700m\")" in html
+    assert 'modelId:(["700m","stock","coder"].includes(settingsState.model.defaultModel)?settingsState.model.defaultModel:"700m")' in html
     assert "profileId:String(settingsState.general.personalityProfile||\"default\")" in html
     assert "ingress:\"SWRLZ_LALM_STATION\"" in html
 

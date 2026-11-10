@@ -304,6 +304,406 @@ _VISION_START = "\n\n[Uploaded image — vision description, not original pixels
 _VISION_END = "\n[/Uploaded image]"
 
 
+def _conflicting_staff_handedness(description: str) -> bool:
+    """Detect competing staff-hand labels in unverified whole/crop text.
+
+    This is a textual disagreement signal, NOT visual verification. A figure
+    rotated in a reference sheet can reverse page-relative appearances.
+    """
+    sides = set()
+    for sentence in re.split(r"(?<=[.!?;])\s+|\n+", description):
+        if re.search(r"\bstaff\b", sentence, re.I):
+            sides.update(side.lower() for side in re.findall(
+                r"\b(left|right)\s+hand\b", sentence, re.I
+            ))
+    return len(sides) > 1
+
+
+def _omit_unverifiable_turnaround_claims(
+    body: str, *, conflicting_staff_hands: bool = False,
+    omit_boot_appearance: bool = False,
+    omit_redundant_topics: tuple[str, ...] = ()
+) -> str:
+    """Conservatively omit categorical negatives/visibility absolutes.
+
+    The formatter cannot inspect pixels. It must never "correct" visual
+    content by inventing another fact; the raw model handoff is preserved.
+    This guard is restricted to multi-view reference captions, where cropped
+    or rear views make universal visibility claims especially unreliable.
+    """
+    parts = re.split(r"(?<=[.!?;])\s+", body.strip())
+    clean = []
+    for raw in parts:
+        clause = raw.strip()
+        if not clause:
+            continue
+        # Pure absence statements on a reference sheet are not independently
+        # established, especially about small trim, buckles and occlusions.
+        if re.match(r"(?i)^(?:no|none|without)\b", clause):
+            continue
+        if re.search(r"(?i)\b(?:no|without|zero)\s+occlusion\b", clause):
+            continue
+        if re.search(r"(?i)\b(?:all|every)\s+(?:limbs|parts|hands|heads?|views?|angles?)\b", clause):
+            continue
+        if re.search(r"(?i)\b(?:in|across|from)\s+(?:all|every)\s+(?:views?|angles?)\b", clause):
+            continue
+        # Turnaround crop notes are fallible model observations rather than
+        # verification of exact hand counts or contacts in each viewpoint.
+        # Preserve the general visible props without promoting such guesses.
+        clause = re.sub(
+            r"(?i)\s*[—–]\s*all\s+(?:wearing|holding|carrying|gripping)\b.*$",
+            "", clause,
+        ).strip()
+        if not clause:
+            continue
+        # For multi-view reports a text-only formatter cannot prove that
+        # two angles have identical grips/poses or that an obscured accessory
+        # is absent. Remove these comparative assertions, not the surrounding
+        # positive observations or their original saved inference records.
+        if (re.search(
+                r"(?i)\b(?:left\s+(?:and|or)\s+right|right\s+(?:and|or)\s+left)"
+                r"\s+side\s+views?\b", clause)
+                and re.search(
+                    r"(?i)\b(?:same|matching|identical)\b.{0,90}"
+                    r"\b(?:hand|grip|stance|pose|position)\b", clause)):
+            continue
+        clause = re.sub(
+            r"(?i)(?:,\s*|\s+but\s+)"
+            r"(?:absent|missing|not\s+(?:visible|shown|present))"
+            r"\s+(?:in|from|on)\s+.*$", "", clause,
+        ).strip()
+        # A staff base/ground-clearance inference is especially unreliable
+        # when deduced from an illustration's overlapping silhouettes.
+        if re.search(r"(?i)\b(?:staff|wand|rod|spear|pole)\b", clause):
+            clause = re.sub(
+                r"(?i),\s*(?:its|the|a)\s+(?:base|tip|end)\s+"
+                r"(?:is\s+)?(?:resting|touching|standing|hovering|lying|leaning)\b.*$",
+                "", clause,
+            ).strip()
+        # Keep the affirmative object description without the unsupported
+        # negative contact inference.
+        clause = re.sub(
+            r"(?i),\s*not\s+(?:touching|reaching|resting\s+on)"
+            r"\s+(?:the\s+)?(?:ground|floor)\b.*$", "", clause,
+        ).strip()
+        if not clause:
+            continue
+        # A turnaround's reversed profile is not proof of reversed grip
+        # or anatomical hand position. Avoid certifying that comparison
+        # from the model's prose alone. Keep the raw source unchanged.
+        if (re.search(
+                r"(?i)\b(?:left|right)\s+side\s+views?\b.*"
+                r"\bmirrors?\b", clause)
+                and re.search(
+                    r"(?i)\b(?:reversed|opposite|swapped)\b.{0,50}"
+                    r"\b(?:hand|grip|pose|position)\b", clause)):
+            continue
+        # A visible draping textile is not evidence of hidden mechanical or
+        # armored construction. In ordinary descriptive answers, avoid
+        # promoting the model's inference about a concealed inner layer to
+        # an observation. Explicitly exposed/visible armor remains reportable.
+        if not re.search(r"(?i)\b(?:exposed|clearly\s+visible|uncovered)\b", clause):
+            hidden_structure = (
+                re.search(r"(?i)\b(?:beneath|under|underneath|inside)\b", clause)
+                and re.search(
+                    r"(?i)\b(?:armor|armour|armored|armoured|torso|skeleton|"
+                    r"chassis|mechanism|framework)\b", clause)
+                and re.search(
+                    r"(?i)\b(?:robe|cloak|cape|hood|garment|coat|fabric)\b", clause)
+            )
+            invented_layer = re.search(
+                r"(?i)\b(?:robe|cloak|cape|garment|coat|fabric)\b.{0,75}"
+                r"\b(?:drapes|covers|conceals|hides)\s+(?:over|around|under)?"
+                r"\s*(?:a|the|an)?\s*(?:segmented|armored|armoured|"
+                r"mechanical|skeletal|hidden)\b", clause
+            )
+            if hidden_structure or invented_layer:
+                continue
+        # An overhead hood/garment panel does not by itself establish the
+        # structure of an armored torso. This specific combination of a
+        # top-panel attribution, rigid torso construction, and draped garment
+        # is an unverified inference in a multi-view caption. Abstain from
+        # the clause rather than fabricate a soft-cloth replacement.
+        if (re.search(r"(?i)\b(?:top|overhead)\s+(?:view|panel)\b", clause)
+                and re.search(
+                    r"(?i)\b(?:hooded\s+)?(?:robe|cloak|cape|garment)\b"
+                    r".{0,45}\b(?:has|contains|includes)\b.{0,60}"
+                    r"\b(?:segmented|armored|armoured|rigid|mechanical)\b"
+                    r"(?:\s+\w+){0,3}\s+\b(?:torso|chest)\b", clause)):
+            continue
+        # Several distinct surface motifs cannot be reliably assigned to one
+        # garment hem merely because the model lists them in one sentence.
+        # Preserve the motif inventory and viewpoint, but remove an overly
+        # broad shared hem-location claim. Exact individual owners belong to
+        # the vision model's source-view comparison, not a text-only guard.
+        if (re.search(r"(?i)\b(?:motifs|symbols|emblems|markings|patterns)\b", clause)
+                and re.search(r"\b[\w-]+(?:\s+[\w-]+)?\s*,\s*"
+                              r"[\w-]+(?:\s+[\w-]+)?\s*,\s*"
+                              r"(?:and\s+)?[\w-]+(?:\s+[\w-]+)?\s+"
+                              r"(?:motifs|symbols|emblems|markings|patterns)\b", clause, re.I)):
+            clause = re.sub(
+                r"(?i)\s+(?:on|along|at)\s+(?:the|its|a)\s+"
+                r"(?:[a-z-]+(?:['’]s)?\s+){0,3}hem\b", "", clause,
+            ).strip()
+        # A multi-view synthesis sometimes attaches a guessed hand-held prop
+        # to an overhead/headwear-only detail panel. A text formatter cannot
+        # verify that contact from pixels. Preserve any preceding description
+        # of the top-view surface, but abstain from the contact assertion.
+        # Raw inference text is retained in the original vision handoff.
+        top_panel = re.search(r"(?i)\b(?:top|overhead)\s+(?:view|panel)\b", clause)
+        if top_panel:
+            contact = re.search(
+                r"(?i)\b(?:held|gripped|carried|clutched|grasped)"
+                r"\s+(?:in|by|with)\s+(?:(?:the|a|her|his|their)\s+)?"
+                r"(?:(?:left|right)\s+)?hands?\b|"
+                r"\b(?:(?:left|right)\s+)?hands?\s+"
+                r"(?:holding|gripping|carrying|grasping)\b|"
+                r"\b(?:in|on)\s+(?:(?:the|a)\s+)?"
+                r"(?:left|right)\s+hands?\b",
+                clause,
+            )
+            if contact and contact.start() >= top_panel.end():
+                head = clause[:contact.start()]
+                connectors = list(re.finditer(r"(?i)(?:,\s*|\s+and\s+)", head))
+                if connectors:
+                    clause = head[:connectors[-1].start()].strip()
+                else:
+                    continue
+                if not clause:
+                    continue
+        # Keep a useful standalone stance observation when a sentence
+        # bundles it with an unsupported list of grips across views.
+        clause = re.sub(
+            r"(?i)(\b(?:stance|posture)\s+(?:is|appears)\s+\w+)\s*,"
+            r"\s*(?:holding|gripping|carrying)\b.*$",
+            r"\1", clause,
+        ).strip()
+        if re.search(r"(?i)\bhand\s+contact\s*:", clause):
+            continue
+        if re.search(r"(?i)\b(?:both|one|two)\s+hands?\b.{0,80}"
+                     r"\b(?:staff|wand|prop|object|tool|weapon)\b|"
+                     r"\b(?:staff|wand|prop|object|tool|weapon)\b.{0,80}"
+                     r"\b(?:both|one|two)\s+hands?\b", clause):
+            continue
+        if re.search(
+            r"(?i)\b(?:front|back|rear|top|side|overhead)\s+views?\b.{0,120}"
+            r"\bhand(?:s)?\s+(?:holding|gripping)\b", clause,
+        ):
+            continue
+        if re.search(
+            r"(?i)\b(?:staff|wand|weapon|tool)\s+(?:is\s+)?"
+            r"(?:held|gripped)\s+(?:in|by|with)\s+"
+            r"(?:(?:a|one|both|the)\s+)?(?:(?:left|right)\s+)?hands?\b",
+            clause,
+        ):
+            continue
+        # A page-relative left/right mismatch in source captions is not
+        # trustworthy anatomical handedness. Do not fabricate a correction.
+        if (conflicting_staff_hands
+                and re.search(r"\bstaff\b", clause, re.I)
+                and re.search(r"\b(?:left|right)\s+hand\b", clause, re.I)):
+            continue
+        # When appearance is also covered under clothing, don't re-list
+        # boot color/fur under anatomy (but preserve genuine stance geometry).
+        if omit_boot_appearance and re.search(r"\bboots?\b", clause, re.I):
+            # A mixed shape sentence can mention both a useful hem length
+            # and redundant boot appearance; retain its geometric claim.
+            clause = re.sub(
+                r"(?i),?\s+and\s+(?:the\s+)?"
+                r"(?:character|figure|subject|person|they|it)\s+"
+                r"(?:wears|has|is\s+wearing)\s+[^.!?]*\bboots?\b[^.!?]*[.!?]?$",
+                "", clause,
+            ).strip()
+            if re.search(r"\bboots?\b", clause, re.I) and not re.search(
+                    r"\b(?:stance|footprint|width|wide|size|proportion|silhouette|outline)\b",
+                    clause, re.I):
+                continue
+        # Restrict de-duplication to small, single-purpose clauses in a
+        # labeled multi-view report. Do not remove a sentence containing
+        # novel shape or view observations just because it mentions a prop.
+        topics = set(omit_redundant_topics)
+        if "staff" in topics and re.search(r"\bstaff\b", clause, re.I) and not re.search(
+                r"\b(?:front|back|top|side|view|silhouette|width|size|proportion|stance|outline)\b",
+                clause, re.I):
+            continue
+        if "pouch" in topics and re.search(r"\b(?:pouch|satchel)\b", clause, re.I) and not re.search(
+                r"\b(?:belt|buckle|robe|trim|cape)\b", clause, re.I):
+            continue
+        if "belt" in topics and re.search(r"\b(?:belt|buckle)\b", clause, re.I) and not re.search(
+                r"\b(?:pouch|satchel|robe|cape|hem)\b", clause, re.I):
+            continue
+        if "hood" in topics and re.search(r"\bhood\b", clause, re.I) and not re.search(
+                r"\b(?:staff|pouch|satchel|stance|silhouette)\b", clause, re.I):
+            continue
+        if "hair" in topics and re.search(r"\b(?:hair|braids?)\b", clause, re.I) and not re.search(
+                r"\b(?:staff|pouch|satchel|hood)\b", clause, re.I):
+            continue
+        if "eyes" in topics and re.search(r"\beyes?\b", clause, re.I) and not re.search(
+                r"\b(?:staff|pouch|satchel|hood)\b", clause, re.I):
+            continue
+        # An illustration shows folds and overlap, not verified mesh topology.
+        clause = re.sub(r"(?i)\bhas layered geometry with visible\b",
+                        "appears layered, with", clause)
+        clause = re.sub(r"(?i)\bhas layered construction with visible\b",
+                        "appears layered, with", clause)
+        clause = clause.rstrip(";").strip()
+        if clause and not re.search(r"[.!?][\"'”’)\]]*$", clause):
+            clause += "."
+        clean.append(clause)
+    return " ".join(clean)
+
+
+def _format_direct_vision_report(description: str) -> str:
+    """Present a single factual assistant answer, not duplicate raw model logs.
+
+    This is a deterministic text layout transform, not a new image inference
+    or a claim that a second model reviewed the original pixels.
+    """
+    text = description.strip()
+    contradictory_staff_hands = _conflicting_staff_handedness(text)
+    # Source-crop observations remain in the saved user handoff/export; only
+    # the selected whole-image narrative belongs in the assistant's answer.
+    text = text.split("\n\n[Raw source-crop observations; accuracy unverified]\n", 1)[0]
+    text = re.split(
+        r"\n\s*Focused image details\s*\(unverified source-crop observations\):",
+        text, maxsplit=1, flags=re.I,
+    )[0].strip()
+    text = re.sub(
+        r"^Character reference[^\n]*\n\s*", "", text, count=1, flags=re.I,
+    ).strip()
+    if not text:
+        return "## Image analysis\n\nThe local model produced no usable visual description."
+
+    labels = {
+        "subject and views": "Subject & views",
+        "view comparisons": "View-by-view details",
+        "view comparison": "View-by-view details",
+        "view-by-view details": "View-by-view details",
+        "views and subject": "Subject & views",
+        "overview": "Overview",
+        "shape and proportions": "Shape & proportions",
+        "relative proportions": "Shape & proportions",
+        "shape and anatomy": "Appearance & silhouette",
+        "silhouette and anatomy": "Appearance & silhouette",
+        "geometry and layers": "Geometry & layers",
+        "shape and construction": "Geometry & layers",
+        "clothing and surface detail": "Clothing & surfaces",
+        "clothing and surfaces": "Clothing & surfaces",
+        "color and surface": "Clothing & surfaces",
+        "materials and markings": "Materials & markings",
+        "props and contact": "Props & contact",
+        "props and small features": "Props & details",
+        "props and fine details": "Props & details",
+        "accessories and contact": "Props & contact",
+        "visibility limits": "Visibility & uncertainties",
+        "visibility and uncertainty": "Visibility & uncertainties",
+        "limits": "Visibility limits",
+    }
+    pattern = re.compile(
+        r"(?im)^(" + "|".join(re.escape(k) for k in labels) + r"):\s*"
+    )
+    matches = list(pattern.finditer(text))
+    # A heading-based report does not confer accuracy on crop observations.
+    # For multi-view reference sheets, abstain from overly broad absolutes.
+    turnaround = (
+        len(set(match.lower() for match in re.findall(
+            r"\b(?:front|back|top|side)\b", text, re.I
+        ))) >= 3
+        and bool(re.search(r"\bviews?\b", text, re.I))
+    )
+    sections = []
+    clothing_mention_boots = any(
+        ("clothing" in match.group(1).casefold()
+         or "materials" in match.group(1).casefold())
+        and re.search(
+            r"(?i)\bboots?\b",
+            text[match.end() : matches[i + 1].start()
+                 if i + 1 < len(matches) else len(text)]
+        ) for i, match in enumerate(matches)
+    )
+    if len(matches) >= 2:
+        # These facts are classified into one primary section when possible.
+        # Preserve the more detailed prop description, appearance attributes,
+        # and clothing decorations rather than listing them a second time.
+        role_text = {}
+        for i, m in enumerate(matches):
+            name = labels[m.group(1).casefold()]
+            body_end = matches[i + 1].start() if i + 1 < len(matches) else len(text)
+            role_text[name] = role_text.get(name, "") + " " + text[m.end():body_end]
+        props = " ".join(value for name, value in role_text.items()
+                         if name.startswith("Props"))
+        clothing = " ".join(value for name, value in role_text.items()
+                            if name.startswith(("Clothing", "Materials")))
+        appearance = " ".join(value for name, value in role_text.items()
+                              if name.startswith(("Appearance", "Shape")))
+        seen = set()
+        seen_sentences = set()
+        for i, match in enumerate(matches[:8]):
+            start = match.end()
+            end = matches[i + 1].start() if i + 1 < len(matches) else len(text)
+            body = re.sub(r"\s*\n\s*", " ", text[start:end]).strip()
+            if turnaround:
+                heading = labels[match.group(1).casefold()]
+                topics = []
+                if heading.startswith(("Appearance", "Shape")) and re.search(r"\bstaff\b", props, re.I):
+                    topics.append("staff")
+                if heading.startswith(("Clothing", "Materials")) and re.search(
+                        r"\b(?:pouch|satchel)\b", props, re.I):
+                    topics.append("pouch")
+                if heading.startswith("Props"):
+                    if re.search(r"\b(?:belt|buckle)\b", clothing, re.I):
+                        topics.append("belt")
+                    if re.search(r"\bhood\b", clothing, re.I):
+                        topics.append("hood")
+                    if re.search(r"\b(?:hair|braids?)\b", appearance, re.I):
+                        topics.append("hair")
+                    if re.search(r"\beyes?\b", appearance, re.I):
+                        topics.append("eyes")
+                body = _omit_unverifiable_turnaround_claims(
+                    body, conflicting_staff_hands=contradictory_staff_hands,
+                    omit_redundant_topics=tuple(topics),
+                    omit_boot_appearance=(
+                        clothing_mention_boots
+                        and match.group(1).casefold() in {
+                            "shape and anatomy", "silhouette and anatomy",
+                            "shape and proportions", "relative proportions",
+                            "geometry and layers", "shape and construction"
+                        }
+                    ),
+                )
+            if not body:
+                continue
+            # Exact repetition across sections adds no visual information;
+            # remove only identical sentences, never guess semantic equivalence.
+            unique_sentences = []
+            for sentence in re.split(r"(?<=[.!?])\s+", body):
+                claim = re.sub(r"\W+", " ", sentence).casefold().strip()
+                if not claim or claim in seen_sentences:
+                    continue
+                seen_sentences.add(claim)
+                unique_sentences.append(sentence)
+            body = " ".join(unique_sentences).strip()
+            if not body:
+                continue
+            name = labels[match.group(1).casefold()]
+            signature = (name.casefold(), re.sub(r"\s+", " ", body.casefold()))
+            if signature in seen:
+                continue
+            seen.add(signature)
+            sections.append(f"### {name}\n\n{body}")
+    # Unstructured and partial captions must still be readable; no invented
+    # headings or reconstructed observations are added to their content.
+    content = "\n\n".join(sections) if sections else (
+        _omit_unverifiable_turnaround_claims(
+            text, conflicting_staff_hands=contradictory_staff_hands
+        ) if turnaround else text
+    )
+    return (
+        "## Image analysis\n\n" + content +
+        "\n\n*Based on the local image model's observations; not independently verified.*"
+    )
+
+
 def _direct_vision_description(payload: dict[str, Any]) -> str | None:
     """Return the actual analyzer text for basic image identification requests.
 
@@ -349,7 +749,7 @@ def _direct_vision_description(payload: dict[str, Any]) -> str | None:
     }
     if question not in direct_questions:
         return None
-    return "Local image analyzer's description (not directly inspected by §C):\n\n" + description
+    return _format_direct_vision_report(description)
 
 
 def _ground_vision_handoff(payload: dict[str, Any]) -> dict[str, Any]:

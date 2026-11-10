@@ -23,6 +23,14 @@ UPSTREAM_URL = "https://github.com/ggml-org/llama.cpp.git"
 SERVER_PORT = 16943
 SERVER_URL = f"http://127.0.0.1:{SERVER_PORT}"
 START_TIMEOUT = 240
+# The Space previously reported a 16-core CPU quota. Trial 8 decode / 14
+# image-prefill threads beyond the passing 6/12 profile; keep two cores of
+# quota headroom during prefill and retain a single serialized vision job.
+# Thread counts are configuration, NOT proof of speed or measured CPU usage.
+# Retain pinned weights, context, batch limits and cancellation semantics.
+DECODE_THREADS = 8
+BATCH_THREADS = 14
+PARALLEL_REQUESTS = 1
 
 _build_lock = threading.Lock()
 _server_lock = threading.Lock()
@@ -104,8 +112,8 @@ def _ensure_running(model_path: str, projector_path: str) -> None:
         binary = _exe_path()
         args = [str(binary), "--model", model_path, "--mmproj", projector_path,
                 "--host", "127.0.0.1", "--port", str(SERVER_PORT),
-                "--ctx-size", "8192", "--threads", "2", "--threads-batch", "2",
-                "--batch-size", "512", "--ubatch-size", "256", "--parallel", "1"]
+                "--ctx-size", "8192", "--threads", str(DECODE_THREADS), "--threads-batch", str(BATCH_THREADS),
+                "--batch-size", "512", "--ubatch-size", "256", "--parallel", str(PARALLEL_REQUESTS)]
         # Never persist user image payloads or stream output to log files.
         _server_proc = subprocess.Popen(args, stdin=subprocess.DEVNULL,
                                         stdout=subprocess.DEVNULL,

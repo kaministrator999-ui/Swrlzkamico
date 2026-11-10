@@ -41,8 +41,8 @@ import chatgpt_import_job
 import chatgpt_account_memory
 import personal_history_lookup
 import private_account_facts_v208
-from runtime_capacity import runtime_capacity_snapshot
-from chat_vision import export_threads_with_vision_handoffs
+from runtime_capacity import runtime_capacity_snapshot, ResponseResourceMeter
+from chat_vision import export_threads_with_vision_handoffs, vision_handoff_from_message, vision_job_resource_receipt
 import tempfile
 from project_archive import ProjectArchiveError, archive_filename, build_project_archive, parse_project_files, project_markdown, source_fences, validate_project_files
 from project_revision_workspace import RevisionWorkspaceError, merge_project_revision_files
@@ -1079,9 +1079,84 @@ def _response_prose(text):
     return prose.strip()
 
 
-def _history_projection(thread):
+def _current_vision_question(prompt):
+    """Read an attached image handoff's question without changing saved text."""
+    handoff=vision_handoff_from_message({"role":"user","text":str(prompt or "")})
+    return (str(handoff.get("questionSentToChatModel") or "").strip()
+            if handoff is not None else str(prompt or ""))
+
+
+def _companion_topic_shift_from_vision(prompt):
+    """Spot an explicit conversation with the assistant, not an image follow-up.
+
+    This is a relevance gate for *model input*, never a generated greeting.
+    Ambiguous visual questions retain their entire saved image discussion.
+    """
+    text=" ".join(_current_vision_question(prompt).casefold().replace("’","'").split())
+    if not text or len(text)>280:
+        return False
+    social=bool(re.search(
+        r"\b(?:how (?:are you|your|you're|youre) doing|how are you|"
+        r"how (?:are you|your|you're) feeling|how(?:'s| is) it going|"
+        r"how(?:'s| is) (?:§wyrlz|swyrlz|swurlz) doing|"
+        r"what(?:'s| is) up with you|are you (?:doing )?(?:okay|ok|alright))\b",
+        text,
+    ))
+    image_reference=bool(re.search(r"\b(?:image|picture|photo|mage|character|drawing|artwork)\b",text))
+    rejected_image=bool(image_reference and re.search(
+        r"\b(?:didn't|did not|don't|do not|wasn't|was not|not|never)\b.{0,100}"
+        r"\b(?:image|picture|photo|mage|character|drawing|artwork)\b", text,
+    ))
+    # A correction can change subjects without reusing the word "image".
+    # Do not interpret the assistant's name as an object in prior artwork.
+    # Only explicit addresses/corrections trigger this inference-only gate.
+    explicit_redirect=bool(re.search(
+        r"\b(?:i (?:meant|mean) (?:you|yourself|§wyrlz|swyrlz|swurlz)|"
+        r"i(?: was| am|'m) (?:asking|talking|speaking) (?:(?:about|to) )?"
+        r"(?:you|yourself|§wyrlz|swyrlz|swurlz)|"
+        r"i(?: was| am|'m) not (?:asking|talking) about (?:the )?"
+        r"(?:image|picture|photo|mage|character|drawing|artwork))\b",
+        text,
+    ))
+    return (social and (not image_reference or rejected_image)) or (
+        explicit_redirect and (not image_reference or rejected_image)
+    )
+
+
+def _inference_prompt_after_vision(prompt):
+    """Keep attached image evidence out of a new assistant-directed social turn.
+
+    Only inference changes: persist the user's original message/attachment,
+    so later image-specific questions can still use the original evidence.
+    """
+    if _companion_topic_shift_from_vision(prompt):
+        return _current_vision_question(prompt)
+    return prompt
+
+
+def _history_projection(thread, current_prompt=""):
+    messages=thread.get("messages") or []
+    if _companion_topic_shift_from_vision(current_prompt):
+        # A recent image upload is task evidence, not the assistant's own
+        # identity or conversational state. A correction like "I meant you,
+        # not the image" must not include the mage description, its direct
+        # image answer, or later assistant echoes in the next model prompt.
+        # This only changes the read-only inference projection: all saved
+        # messages remain intact, and genuine visual follow-ups retain them.
+        # Repeated L1/L2 trials can create several image turns in the same
+        # thread. Cutting at only the LAST upload leaves the first mage
+        # analysis in context, causing an assistant greeting to repeat it.
+        # Use the earliest image in the recent active context window instead.
+        recent_start=max(0,len(messages)-24)
+        recent_images=[
+            i for i in range(recent_start,len(messages))
+            if messages[i].get("role")=="user"
+            and vision_handoff_from_message(messages[i]) is not None
+        ]
+        if recent_images:
+            messages=messages[:recent_images[0]]
     projected=[]
-    for message in thread.get("messages") or []:
+    for message in messages:
         if message.get("role") not in ("user","assistant"):
             continue
         meta=copy.deepcopy(message.get("meta") or {})
@@ -1117,6 +1192,26 @@ def _run(key,request_id,model_id,payload,assistant_id,forge_context=None):
         g["startedAtUnixMs"]=int(time.time()*1000)
         g["queueWaitMs"]=max(0,g["startedAtUnixMs"]-int(g.get("acceptedAtUnixMs") or g["startedAtUnixMs"]))
         g["status"].append({"phase":"GENERATING","reason":"Workstation admitted generation","atUnixMs":g["startedAtUnixMs"]})
+    # One meter per accepted response route. Counters are shared-cgroup
+    # observations, NOT an isolated model's memory or CPU allocation.
+    resource_meter=ResponseResourceMeter()
+    resource_usage=None
+    def finish_resource_usage(outcome):
+        nonlocal resource_usage
+        if resource_usage is None:
+            resource_usage=resource_meter.finish()
+            resource_usage["routeId"]=str(model_id or "unknown")[:80]
+            # The RESOURCE event reports actual configured *thread budgets*,
+            # not CPU usage or a guarantee those threads were busy.
+            with _lock:
+                active=s.get("activeGeneration")
+                plan=(active.get("resourcePlan") if active and
+                      active.get("requestId")==request_id else None)
+            resource_usage["configuredEngineThreadBudget"]=copy.deepcopy(plan) if isinstance(plan,dict) else None
+            resource_usage["outcome"]=outcome
+            print(json.dumps({"event":"STATION_RESPONSE_RESOURCE_USAGE",
+                              "requestId":request_id,"usage":resource_usage}),flush=True)
+        return copy.deepcopy(resource_usage)
     try:
         if forge_context is None and model_id=="stock" and _stock_generate is None and not (payload.get("githubDirectTestTxt") or payload.get("githubChatFileAction") or payload.get("verifiedPrivateAnswer") or payload.get("githubStart") or payload.get("githubAction") or payload.get("suppliedGitHubReportExplanation")):raise RuntimeError("Original HF generator is not installed")
         text=""; completed=False
@@ -1428,13 +1523,16 @@ def _run(key,request_id,model_id,payload,assistant_id,forge_context=None):
             if kind=="FAILED":raise RuntimeError(str(event.get("reason") or "Generation failed"))
             if kind in ("COMPLETE","COMPLETED"):completed=True
         if cancelled:
+            cancelled_usage=finish_resource_usage("CANCELLED")
             with _lock:
                 g=s.get("activeGeneration")
                 if g and g.get("requestId")==request_id:
-                    g.update(terminal=True,terminalType="CANCELLED",phase="CANCELLED")
+                    g.update(terminal=True,terminalType="CANCELLED",phase="CANCELLED",
+                             responseResourceUsage=cancelled_usage)
                     g["status"].append({"phase":"CANCELLED","reason":"Stopped by user"});_commit_revision(s)
             return
         if not text:raise RuntimeError("Selected model emitted no DELTA")
+        complete_usage=finish_resource_usage("COMPLETE")
         github_telemetry=None
         online_outcome=None
         knowledge_snapshot=None
@@ -1446,6 +1544,7 @@ def _run(key,request_id,model_id,payload,assistant_id,forge_context=None):
             g["status"].append({"phase":"PERSISTING","reason":"Saving the response to the chat","atUnixMs":completed_ms})
             started_ms=int(g.get("startedAtUnixMs") or completed_ms)
             accepted_ms=int(g.get("acceptedAtUnixMs") or started_ms)
+            g["responseResourceUsage"]=complete_usage
             g["stationTiming"]={
                 "acceptedAtUnixMs":accepted_ms,
                 "startedAtUnixMs":started_ms,
@@ -1499,7 +1598,8 @@ def _run(key,request_id,model_id,payload,assistant_id,forge_context=None):
                 "behaviorLedger":behavior_camera,
                 "structuredReceipt":copy.deepcopy(((intent.get("failureEvidence") or {}).get("receiptSemantics") or {}).get("structuredReceipt") or {}),
             } if intent.get("codingTask") else None
-            telemetry_meta={"progressTrace":progress_timeline_v238.project(g.get("status"),accepted_ms,request_id)}
+            telemetry_meta={"progressTrace":progress_timeline_v238.project(g.get("status"),accepted_ms,request_id),
+                            "responseResourceUsage":copy.deepcopy(complete_usage)}
             if validation.get("status") == "SOURCE_VALIDATED_ONLY":
                 # Preserve exact proposal provenance after the next generation
                 # replaces activeGeneration. This is not an execution receipt.
@@ -1522,6 +1622,8 @@ def _run(key,request_id,model_id,payload,assistant_id,forge_context=None):
             if online_trace: telemetry_meta["onlineTrace"]=online_trace
             if online_log_persistence: telemetry_meta["onlineLogPersistence"]=online_log_persistence
             if programming_telemetry: telemetry_meta["programmingTelemetry"]=programming_telemetry
+            if isinstance(payload.get("visionResourceUsage"),dict):
+                telemetry_meta["visionResourceUsage"]=copy.deepcopy(payload["visionResourceUsage"])
             artifact_id=str(intent.get("artifactTargetId") or "")
             artifact=(_find_artifact(thread,artifact_id)
                       if artifact_id and intent.get("artifactMutationRequested")
@@ -1622,6 +1724,7 @@ def _run(key,request_id,model_id,payload,assistant_id,forge_context=None):
                     "engineCompletionTelemetry":copy.deepcopy(g.get("engineCompletionTelemetry") or {}),
                     "contextBudget":copy.deepcopy(g.get("contextBudget") or {}),
                     "resourcePlan":copy.deepcopy(g.get("resourcePlan") or {}),
+                    "responseResourceUsage":copy.deepcopy(complete_usage),
                     "finalResponse":str(text or "")[:24000],
                     "finalResponseSha256":hashlib.sha256(str(text or "").encode("utf-8")).hexdigest(),
                     "requestedModelId":str(g.get("requestedModelId") or model_id)[:80],
@@ -1642,6 +1745,7 @@ def _run(key,request_id,model_id,payload,assistant_id,forge_context=None):
                     "schema":"swrlz-station-programming-log-v1",
                     "generationTelemetry":generation_telemetry,
                     "stationTiming":station_timing,
+                    "responseResourceUsage":copy.deepcopy(complete_usage),
                     "candidateValidation":{
                         "status":validation.get("status"),
                         "reasons":[str(x)[:160] for x in (validation.get("reasons") or [])[:8]],
@@ -1732,11 +1836,13 @@ def _run(key,request_id,model_id,payload,assistant_id,forge_context=None):
                     _commit_revision(s)
             threading.Thread(target=persist_programming_log,daemon=True,name="programming-log-"+request_id[:8]).start()
     except Exception as exc:
+        failed_usage=finish_resource_usage("FAILED")
         failed_online_outcome=None
         with _lock:
             g=s["activeGeneration"]
             if g and g["requestId"]==request_id:
-                g.update(terminal=True,terminalType="FAILED",phase="FAILED")
+                g.update(terminal=True,terminalType="FAILED",phase="FAILED",
+                         responseResourceUsage=failed_usage)
                 g["status"].append({"phase":"FAILED","reason":str(exc)[:240],"atUnixMs":int(time.time()*1000),**progress_timeline_v238.forge_failure_fields(g.get("code"),"FAILED")})
                 if isinstance(g.get("onlineResearch"),dict) and g.get("onlineResearch"):
                     failed_online_outcome={
@@ -1753,12 +1859,15 @@ def _run(key,request_id,model_id,payload,assistant_id,forge_context=None):
                     }
                 thread=next((t for t in s["threads"] if t["id"]==payload["threadId"]),None)
                 if thread:
-                    thread["messages"].append({"id":assistant_id,"role":"assistant","text":(str(g.get("text") or "") if forge_context is not None and g.get("text") else "Generation failed: "+str(exc)[:240]),"createdAt":int(time.time()*1000),"meta":{"requestId":request_id,"modelId":model_id,"state":"FAILED","onlineResearch":copy.deepcopy(g.get("onlineResearch") or {}),"onlineTrace":copy.deepcopy((g.get("onlineTrace") or [])[-64:]),"progressTrace":progress_timeline_v238.project(g.get("status"),g.get("acceptedAtUnixMs"),request_id)}})
+                    thread["messages"].append({"id":assistant_id,"role":"assistant","text":(str(g.get("text") or "") if forge_context is not None and g.get("text") else "Generation failed: "+str(exc)[:240]),"createdAt":int(time.time()*1000),"meta":{"requestId":request_id,"modelId":model_id,"state":"FAILED","responseResourceUsage":copy.deepcopy(failed_usage),"onlineResearch":copy.deepcopy(g.get("onlineResearch") or {}),"onlineTrace":copy.deepcopy((g.get("onlineTrace") or [])[-64:]),"progressTrace":progress_timeline_v238.project(g.get("status"),g.get("acceptedAtUnixMs"),request_id)}})
                     _commit_revision(s)
         if failed_online_outcome is not None:
             threading.Thread(target=persist_runtime_diagnostic,args=(request_id,str(failed_online_outcome.get("selectedModelId") or model_id),"ONLINE_RESEARCH_OUTCOME",failed_online_outcome),daemon=True,name="online-failed-"+request_id[:8]).start()
 
     finally:
+        # Early cancellation, response replacement, and CAS failures also
+        # stop sampling; no private prompt/image content appears in logs.
+        finish_resource_usage("INTERRUPTED")
         _invalidate_forge(forge_context)
 
 def _container_content_tag(text):
@@ -1820,6 +1929,12 @@ async def cancel_generation(request:Request):
         if not g or g.get("requestId")!=rid:return JSONResponse({"ok":False,"requestId":rid,"state":"NOT_ACTIVE"},status_code=409)
         if g.get("terminal"):return {"ok":True,"requestId":rid,"state":str(g.get("terminalType") or "TERMINAL")}
         g["cancelRequested"]=True;g["status"].append({"phase":"CANCEL_REQUESTED","reason":"User requested stop"})
+        # The cancellation flag is set ONLY by this authenticated endpoint.
+        # Log the accepting route and prior phase, never account data,
+        # user prompts, cookies, full IDs or generated text.
+        print(json.dumps({"event":"STATION_CANCEL_REQUEST_ACCEPTED",
+                          "requestId":rid[:8],
+                          "phaseBeforeCancel":str(g.get("phase") or "")[:40]}),flush=True)
     _invalidate_forge(_forge_contexts.get(key))
     return {"ok":True,"requestId":rid,"state":"CANCEL_REQUESTED"}
 
@@ -1924,6 +2039,10 @@ async def _send_owned(request,body,forge_context):
     # user-supplied thread id as an identity or OAuth credential.
     _,verified_user=_account_session(request)
     google_owner=str((verified_user or {}).get("id") or "")
+    # Never trust browser telemetry: cross-check the live Qwen job against
+    # verified account identity AND its exact saved model-description handoff.
+    vision_receipt=(vision_job_resource_receipt(google_owner,body.get("visionJobId"),prompt)
+                    if isinstance(body.get("visionJobId"),str) else None)
     profile_id=str(body.get("profileId") or "LALM")
     if profile_id not in ("LALM","default","gegd"):profile_id="LALM"
     if google_owner.startswith("google:") and account_chat_store.configured():
@@ -1990,10 +2109,11 @@ async def _send_owned(request,body,forge_context):
                 feedback={"schema":"swrlz-knowledge-followup-v1","parentRequestId":prior_request,"turnIndex":followup_index,"userText":str(prompt)[:4000],"capturedAtUnixMs":now_ms}
                 event_type="KNOWLEDGE_ACQUISITION_FOLLOWUP_"+str(followup_index)
                 threading.Thread(target=persist_runtime_diagnostic,args=(prior_request,model_id,event_type,feedback),daemon=True,name="knowledge-followup-"+prior_request[:8]).start()
-        history=_history_projection(t)
+        history=_history_projection(t, current_prompt=prompt)
         pins=t.get("messagePins") if isinstance(t.get("messagePins"),dict) else {}
         pinned_context=[_artifact_context_item(t,m) for m in t["messages"] if pins.get(str(m.get("id") or "")) and m.get("role") in ("user","assistant")]
-        t["messages"].append({"id":str(body.get("messageId") or uuid.uuid4().hex),"role":"user","text":prompt,"createdAt":now_ms,"meta":{"requestId":rid,"modelId":model_id,**({"contentTag":content_tag} if content_tag else {})}})
+        t["messages"].append({"id":str(body.get("messageId") or uuid.uuid4().hex),"role":"user","text":prompt,"createdAt":now_ms,"meta":{"requestId":rid,"modelId":model_id,**({"contentTag":content_tag} if content_tag else {}),
+                    **({"visionResourceUsage":copy.deepcopy(vision_receipt)} if vision_receipt else {})}})
         s["currentId"]=tid
         try:_commit_revision(s)
         except HTTPException as exc:
@@ -2002,7 +2122,9 @@ async def _send_owned(request,body,forge_context):
             if exc.status_code==409:_restore_chat_from_store(s)
             raise
         s["activeGeneration"]={"requestId":rid,"threadId":tid,"modelId":model_id,"requestedModelId":model_id,"selectedModelId":model_id,"text":"","phase":"QUEUED","terminal":False,"lastSeq":0,"status":[{"phase":"QUEUED","reason":"Accepted by Workstation","atUnixMs":now_ms}],"acceptedAtUnixMs":now_ms,"startedAtUnixMs":None,"completedAtUnixMs":None,"queueWaitMs":None,"stationTiming":None,"resourcePlan":None,"diagnosticTrace":None,"memoryCandidates":[],"responseCognition":None,"onlineResearch":None,"onlineTrace":[],"onlineLogPersistence":None,"sources":[],"widgets":[],"programmingIntent":None,"intentContract":None,"failureEvidence":None,"repairConstraints":None,"behaviorLedger":None,"behaviorRepairBase":None,"candidateValidation":None,"candidateAttempts":[],"generationTelemetry":None,"engineCompletionTelemetry":None,"repairDiagnostics":[],"artifactReceipt":None,"githubTelemetryPersistence":None}
-    payload={"requestId":rid,"threadId":tid,"prompt":prompt,"history":history,"pinnedContext":pinned_context,"profileId":profile_id,"profile":profile,"userProfile":user_profile,"temporalContext":temporal_context,"clientLocation":client_location,"priorProgrammingState":copy.deepcopy(t.get("programmingState") or {})}
+    payload={"requestId":rid,"threadId":tid,"prompt":_inference_prompt_after_vision(prompt),"history":history,"pinnedContext":pinned_context,"profileId":profile_id,"profile":profile,"userProfile":user_profile,"temporalContext":temporal_context,"clientLocation":client_location,"priorProgrammingState":copy.deepcopy(t.get("programmingState") or {})}
+    if vision_receipt:
+        payload["visionResourceUsage"]=copy.deepcopy(vision_receipt)
     local_project_intent=_owned_project_edit_intent(t,prompt,history,pinned_context,payload["priorProgrammingState"])
     if local_project_intent:
         payload["programmingIntent"]=copy.deepcopy(local_project_intent)

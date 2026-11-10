@@ -3,8 +3,10 @@ on:
   push:
     branches:
       - experiment/chat-vision-qwen3vl4b-20261106
+      - feature/chat-vision-grounded-visual-report-20261107
     paths:
       - .deploy/QWEN3VL_RUNTIME_DIAGNOSTIC.txt
+      - .deploy/CHAT_VISION_PR385_RUNTIME_DIAGNOSTIC.txt
 permissions:
   contents: read
 jobs:
@@ -40,6 +42,38 @@ jobs:
           for line in lines:
               names.extend(re.findall(r'"event"\s*:\s*"([A-Z0-9_]{4,80})"',line))
           print('SERVER_EVENT_NAMES:',json.dumps(names[-45:]),flush=True)
+          # Runtime-only performance breadcrumbs. Never print user text,
+          # images, per-user job IDs, or raw log lines.
+          perf=[]
+          event_allow={'LOCAL_VISION_FIRST_TEXT','LOCAL_VISION_DONE',
+                       'LOCAL_VISION_DETAIL_RETRY','LOCAL_VISION_REGION_FAILED',
+                       'LOCAL_VISION_FUSION_FAILED','VISION_RESPONSE_RESOURCE_USAGE'}
+          for line in lines[-150:]:
+              start=line.find('{"event":')
+              if start<0: continue
+              try: obj=json.loads(line[start:])
+              except (ValueError,TypeError): continue
+              event=obj.get('event')
+              if event not in event_allow: continue
+              record={'event':event}
+              for key in ('pass','firstChunkSeconds','seconds','errorType'):
+                  if key in obj and isinstance(obj[key],(str,int,float)):
+                      record[key]=obj[key]
+              if event=='VISION_RESPONSE_RESOURCE_USAGE':
+                  usage=obj.get('usage')
+                  if isinstance(usage,dict):
+                      record['outcome']=usage.get('outcome')
+                      wall_ms=usage.get('wallTimeMs')
+                      record['totalSeconds']=(round(wall_ms/1000,2)
+                           if type(wall_ms) in (int,float) and wall_ms>=0 else None)
+                      capacity=usage.get('capacity') or {}
+                      observed=usage.get('observed') or {}
+                      for key,source in (('cpuLimitCores',capacity),('averageCgroupCpuCores',observed),
+                                         ('memoryPeakSampledBytes',observed)):
+                          value=source.get(key)
+                          if type(value) in (int,float):record[key]=value
+              perf.append(record)
+          print('SANITIZED_VISION_PERFORMANCE:',json.dumps(perf[-30:]),flush=True)
           # The chat itself has no model-status UI. Server logs are the proof.
           for line in lines:
               if '"modelId": "vision"' not in line and '"modelId":"vision"' not in line:

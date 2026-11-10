@@ -17,6 +17,12 @@ assert.match(html,/imagePreviews=new Map\(\)/);
 assert.match(html,/encodeImageForVision=attachment=>new Promise/);
 assert.match(html,/fetch\("\/api\/lalm_station\/vision"/);
 assert.match(html,/description=await requestVisionDescription\(attachment,draftText,activity\)/);
+assert.match(html,/const visionRequestId=uid\("vision"\)/);
+assert.match(html,/\.\.\.\(attachment&&activity\?\.jobId\?\{visionJobId:activity\.jobId\}:\{\}\)/);
+assert.match(html,/const requestVisionDescription=async\(attachment,question,activity\)=>/);
+assert.match(html,/analysisLevels:Math\.max\(1,Math\.min\(3,Number\(attachment\.analysisLevels\)\|\|1\)\),\s*visionRequestId/);
+assert.match(html,/if\(result\.resumedExistingJob===true\)/);
+assert.match(html,/Resumed a previously accepted upload; no new inference started/);
 assert.match(html,/const startVisionActivity=\(attachment,question\)=>/);
 assert.match(html,/activity\.jobId=String\(result\.jobId\)/);
 assert.match(html,/cancel\.textContent="Cancel analysis"/);
@@ -52,6 +58,102 @@ assert.match(html,/activity\.update\(activity\.abort\.signal\.aborted\?"STOPPED"
 assert.ok(!html.includes("Analyzing image…"),"no opaque composer-only image operation");
 assert.match(html,/prompt:text,threadId:submission\.threadId/);
 assert.match(html,/imagePreviews\.set\(userMessageId,attachment\.url\)/);
+// User image message stays an attachment; model report appears once as §C's reply.
+assert.ok(!html.includes("imageRegionEvidence"),"no source-crop card under the uploaded image");
+assert.ok(!html.includes("user-vision-summary"),"saved model output must not expand under the image");
+assert.ok(!html.includes("vision-model-report"),"no nested report-card stack");
+assert.ok(!html.includes("showReferenceFindings(timing)"),"do not create a separate interim report stack");
+assert.match(html,/className="vision-progress-observation"/,"one live source-grounded progress surface");
+assert.match(html,/progressiveBody\.textContent=firstText\.slice\(0,1100\)/,"initial model overview is the provisional answer");
+assert.match(html,/timing\.spatialRegionRecords/,"append observed view crops only when real model results exist");
+assert.match(html,/Number\(timing\?\.requestedLevels\)>=2/,"single-pass L1 stays compact; progressive view details are L2+ only");
+assert.match(html,/progressive\.hidden=false/);
+assert.match(html,/root\.append\(header,message,previewButton,steps,timer,sourceInfo,status,progressive\)/);
+assert.match(html,/removeVisionActivity\(activity\)/,"replace provisional content with the single durable final answer");
+assert.ok(!html.includes('const findings=document.createElement("section")'),"no interim final report");
+assert.match(html,/const formatLegacyVisionReply=value=>/);
+assert.match(html,/const visionFinal=legacyVision!==null/);
+assert.match(html,/container\.classList\.toggle\("vision-editorial",visionFinal\)/);
+assert.match(html,/originalRenderedSources\.set\(container,rawSource\)/,"Copy must retain unmodified source even when legacy vision display is reformatted");
+assert.match(html,/const source=sourceContext\?sourceContext\.body:displaySource/);
+assert.match(html,/vision-preview-unavailable/);
+// The mobile Send and Stop controls must not share a touch target after admission.
+assert.match(html,/id="sendControlSpacer"[^>]*aria-hidden="true" hidden/);
+assert.match(html,/sendControlSpacer\.hidden=!active/);
+assert.match(html,/\.send-control-spacer\{[^}]*pointer-events:none/);
+assert.match(html,/performance\.now\(\)-lastTouchSend<1000\)return/);
+assert.match(html,/stopButton\.addEventListener\("click",async\(\)=>\{/);
+
+assert.match(html,/msg\?\.meta\?\.visionResourceUsage/,"saved vision receipt participates in history DOM reuse");
+assert.match(html,/JSON\.stringify\(msg\?\.meta\?\.visionResourceUsage\|\|null\)/,"arrival of authoritative timing receipt triggers conversation repaint");
+assert.match(html,/visionReceipt\?\.usage\?\.wallTimeMs/,"duration uses verified server wall time");
+assert.match(html,/visionReceipt\?\.source==="owner-and-description-verified-vision-job"/,"never accept unverified client duration");
+assert.match(html,/duration\.className="vision-completion-time"/,"completed image duration stays attached to its saved message");
+assert.match(html,/meta\.appendChild\(duration\)/,"duration is retained after the transient progress card is removed");
+
+assert.ok(!html.includes("Read full observation"),"interim caption must not repeat as expanded raw text");
+assert.ok(!html.includes("Raw model output · 1 level"),"no duplicate raw output panel in live progress");
+const legacyStart=html.indexOf("      const formatLegacyVisionReply=value=>{");
+const legacyEnd=html.indexOf("      const renderAssistantContent=",legacyStart);
+assert.ok(legacyStart>=0&&legacyEnd>legacyStart,"formatter is available");
+const legacyFormatter=new Function(html.slice(legacyStart,legacyEnd)+"return formatLegacyVisionReply;")();
+const screenshotCaption=[
+  "Local image analyzer's description (not directly inspected by §C):",
+  "",
+  "Character reference · local model observation (accuracy unverified)",
+  "",
+  "Subject and views: Front, left side, right side, back and top views of Little Crystal Mage.",
+  "Silhouette and anatomy: White braided hair and purple eyes. Feet are clad in brown boots with fur trim at top.",
+  "Clothing and surface detail: Purple hooded robe with gold trim. Robe has layered geometry with visible folds and creases. Boots are brown with fur trim at top. No buckles or hidden fastenings.",
+  "Props and small features: Staff with purple crystal. Staff is held by right hand in front view, left hand in side views.",
+  "Visibility limits: Top view shows the hood. No occlusion is implied for the staff or other features.",
+  "",
+  "Focused image details (unverified source-crop observations):",
+  "- Upper-left figure detail: Two identical figures; left hand gripping a staff."
+].join("\n");
+const readable=legacyFormatter(screenshotCaption);
+assert.match(readable,/^## Image analysis/);
+assert.ok(readable.includes("Staff with purple crystal"),"retain verified-as-text visual detail");
+assert.ok(!readable.includes("right hand in front"),"reject conflicting handedness");
+assert.ok(!readable.includes("left hand in side"),"reject conflicting handedness");
+assert.ok(!readable.includes("No occlusion is implied"),"discard unjustified absolutes");
+assert.ok(!readable.includes("No buckles or hidden fastenings"),"discard categorical absence");
+assert.ok(!readable.includes("layered geometry"),"do not claim source mesh topology");
+assert.ok(readable.includes("appears layered, with folds and creases"),"state observable layering cautiously");
+assert.equal((readable.match(/\bboots?\b/gi)||[]).length,1,"boots once under clothing, not again under anatomy");
+assert.ok(!readable.includes("Two identical figures"),"raw crop notes stay out of final response");
+
+// A newer live mage caption repeated belt, braid, eyes, pouch and hood
+// in multiple sections. Keep the most informative claim in its own section.
+const repeatedMage=[
+  "Local image analyzer's description (not directly inspected by §C):",
+  "",
+  "Character reference · local model observation (accuracy unverified)",
+  "",
+  "Subject and views: Front, left side, right side, back, and top views of a single Little Crystal Mage.",
+  "Silhouette and anatomy: Silver-white hair in two braids; purple eyes; wears a hooded robe with cape; stands on two legs; holds a staff in the right hand; left hand rests on a satchel in front view; back view shows full cape and staff beside the figure; top view shows hood shape and staff position.",
+  "Clothing and surface detail: Purple hooded robe with gold trim; star, moon, leaf and magic symbols; fur-lined boots; belt with buckle; satchel with leaf emblem; robe has layered geometry with visible seams and folds.",
+  "Props and small features: Staff topped with glowing purple crystal; satchel with brown leather and leaf emblem; belt with buckle; hood with star and moon motifs; hair in two braids; eyes purple; no other visible accessories.",
+  "Visibility limits: Back view shows the robe and staff; top view shows hood and staff; no occlusion is implied for all views; no hidden parts are visible.",
+  "",
+  "Focused image details (unverified source-crop observations):",
+  "- Upper-left figure detail: Two identical figures in purple robes; right side view shows left hand gripping a staff."
+].join("\n");
+const newReadable=legacyFormatter(repeatedMage);
+assert.ok(newReadable.includes("Staff topped with glowing purple crystal"),"keep richest staff description");
+assert.equal((newReadable.match(/belt with buckle/g)||[]).length,1,"do not repeat belt");
+assert.equal((newReadable.match(/hair in two braids/g)||[]).length,1,"do not repeat hair inventory");
+assert.ok(!newReadable.includes("eyes purple"),"eyes already under appearance");
+assert.ok(newReadable.includes("hood with star and moon motifs"),"preserve a distinct location-specific ornament detail");
+assert.ok(newReadable.includes("satchel with brown leather and leaf emblem"),"keep richer satchel detail");
+assert.ok(!newReadable.includes("satchel with leaf emblem;"),"suppress weaker satchel inventory");
+assert.ok(!newReadable.includes("holds a staff in the right hand"),"no confident conflicting staff-hand assignment");
+assert.ok(newReadable.includes("top view shows hood shape and staff position"),"preserve unique angle observation");
+assert.ok(!newReadable.includes("layered geometry"),"no inferred mesh topology");
+assert.ok(!newReadable.includes("no occlusion"),"no unsupported universal visibility");
+assert.ok(!newReadable.includes("Two identical figures"),"crop evidence remains diagnostic, not repeated answer");
+
+
 assert.match(html,/recognition\.onresult=event=>/);
 assert.match(html,/prompt\.value=\(original\+separator\+transcript\)/);
 assert.match(html,/prompt\.dispatchEvent\(new Event\("input",\{bubbles:true\}\)\)/);
@@ -101,13 +203,16 @@ assert.match(html,/Original received by server/);
 for(const id of ["imageVisionLevelSelect"]){
   assert.equal((html.match(new RegExp('id="'+id+'"','g'))||[]).length,1);
 }
-assert.match(html,/analysisLevels:Math\.max\(1,Math\.min\(3,Number\(attachment\.analysisLevels\)\|\|2\)\)/);
-assert.match(html,/option value="1"/);
-assert.match(html,/option value="2" selected/);
+assert.match(html,/analysisLevels:Math\.max\(1,Math\.min\(3,Number\(attachment\.analysisLevels\)\|\|1\)\)/);
+assert.match(html,/selectedImage=\{file,url:URL\.createObjectURL\(file\),analysisLevels:1\}/);
+assert.match(html,/option value="1" selected/);
+assert.match(html,/option value="2">L2 · Multi-view \(slow\)/);
 assert.match(html,/option value="3"/);
+assert.match(html,/observed==="REGION_PREFILL"/);
+assert.match(html,/observed==="REGION_DECODING"/);
+assert.match(html,/five-view reference can take 6\+ minutes/);
 assert.match(html,/observed==="LEVEL3_PREFILL"/);
 assert.match(html,/observed==="LEVEL3_DECODING"/);
-assert.match(html,/showLevels\(records,selected\)/);
 assert.match(html,/levelRecords:state\.levelRecords/);
 
 assert.ok(!html.includes("1600/Math.max(img.naturalWidth"),"do not encode unused pixels at 1600px");
@@ -121,6 +226,27 @@ const station=fs.readFileSync("hf_space/station.py","utf8");
 assert.match(station,/install_chat_vision\(app, _require_vision_account\)/);
 assert.match(station,/startsWith\('google:'\)|startswith\('google:'\)/);
 const backend=fs.readFileSync("hf_space/chat_vision.py","utf8");
+const router=fs.readFileSync("hf_space/model_router.py","utf8");
+const capacity=fs.readFileSync("hf_space/runtime_capacity.py","utf8");
+assert.match(capacity,/class ResponseResourceMeter:/);
+assert.match(capacity,/isolatedModelAttribution/);
+assert.match(capacity,/cgroupCpuUsageUsecDelta/);
+assert.match(capacity,/memoryPeakSampledBytes/);
+assert.match(station,/responseResourceUsage/);
+assert.match(station,/visionResourceUsage/);
+assert.match(station,/vision_job_resource_receipt/);
+assert.match(station,/STATION_CANCEL_REQUEST_ACCEPTED/,"server audits only accepted cancel requests");
+assert.equal((station.match(/g\["cancelRequested"\]=True/g)||[]).length,1,"cancellation state is set only in authenticated cancel endpoint");
+assert.match(backend,/VISION_RESPONSE_RESOURCE_USAGE/);
+assert.match(backend,/resourceUsage/);
+assert.match(backend,/vision_job_resource_receipt/);
+assert.match(backend,/configuredEngineThreadBudget/);
+assert.match(backend,/resumedExistingJob/);
+assert.match(router,/def _format_direct_vision_report\(/);
+assert.match(router,/return _format_direct_vision_report\(description\)/);
+assert.match(router,/## Image analysis/);
+assert.match(router,/Focused image details/);
+assert.ok(!router.includes("Raw\\n    # crop evidence"),"no invalid escaped newline in source router");
 assert.match(backend,/phaseElapsedSeconds/);
 assert.match(backend,/elapsedSeconds/);
 assert.match(backend,/max_tokens=tokens/);
@@ -153,13 +279,21 @@ assert.match(backend,/MAX_IMAGE_PIXELS = 16_000_000/);
 assert.match(backend,/def _run_vision_job\(/);
 assert.match(backend,/def _detail_regions\(/);
 assert.match(backend,/spatialRegionRecords/);
+assert.match(backend,/with_boxes=True/);
+assert.match(backend,/coordinateSpace": "exif-corrected-source-normalized"/);
+assert.match(backend,/RAW_CROP_MARKER/);
+assert.match(backend,/vision_request_id = payload\.get\("visionRequestId", ""\)/);
+assert.match(backend,/VISION_REQUEST_ID_INVALID/);
+assert.match(backend,/resumedExistingJob/);
+assert.match(backend,/bool\(vision_request_id\) and job\["phase"\] == "COMPLETE"/);
+assert.match(backend,/Geometry and layers:/);
+assert.match(backend,/Do NOT output separate Shape, Geometry, and Props sections/);
+assert.match(backend,/Materials and markings:/);
 assert.match(backend,/referenceProgress/);
-assert.match(html,/vision-reference-findings/);
-assert.match(html,/showReferenceFindings\(timing\)/);
 assert.match(html,/referenceProgress:state\.referenceProgress/);
-assert.match(html,/Final modeling description/);
-assert.match(html,/Read full observation/);
-assert.match(html,/vision-reference-more/);
+assert.match(backend,/spatialRegionRecords/);
+assert.match(html,/\.assistant-body\.vision-editorial/);
+assert.ok(!html.includes("vision-reference-findings"),"raw reports remain in JSON export, not chat cards");
 // The image analysis card must not trap touch scrolling in a nested 72dvh
 // scrollport; swiping anywhere on it scrolls the single chat viewport.
 assert.match(html,/\.vision-work-card\{[^}]*max-height:none;overflow:visible;touch-action:pan-y/s);
@@ -167,6 +301,10 @@ assert.ok(!html.includes('max-height:72dvh;overflow-y:auto;overscroll-behavior:c
 // Both an in-progress attachment and the committed chat image get the same
 // keyboard/Android-tappable expanded image preview, with native Escape close.
 assert.match(html,/const openVisionImagePreview=\(imageUrl/);
+assert.match(html,/const formatLegacyVisionReply=value=>/);
+assert.match(html,/const displaySource=legacyVision\|\|rawSource/);
+assert.match(html,/const source=sourceContext\?sourceContext\.body:displaySource/);
+assert.match(html,/\.assistant-body\.vision-editorial/);
 assert.match(html,/dialog\.showModal\(\);close\.focus\(\)/);
 assert.match(html,/dialog\.addEventListener\("close",\(\)=>dialog\.remove\(\)/);
 assert.match(html,/previewButton\.addEventListener\("click",\(\)=>openVisionImagePreview\(attachment\.url/);
@@ -178,9 +316,13 @@ assert.match(html,/const fractionY=Math\.max\(0,Math\.min\(1,\(event\.clientY-be
 assert.match(html,/dialog\.scrollLeft\+=after\.left\+fractionX\*after\.width-event\.clientX/);
 assert.match(html,/dialog\.scrollTop\+=after\.top\+fractionY\*after\.height-event\.clientY/);
 assert.match(html,/image\.style\.height=image\.naturalHeight\+"px"/);
-assert.match(backend,/proposals = proposals\[:2\]/);
-assert.match(backend,/about 80 to 120 words/);
-assert.match(backend,/Focused image details/);
+assert.match(backend,/proposals = proposals\[:7\] if layout_panels else proposals\[:2\]/);
+assert.match(backend,/from vision_sheet_layout import discover_view_panels/);
+assert.match(backend,/regionKind/);
+assert.match(backend,/evidence_notes = "\\n"\.join\(evidence_lines\)\[:2400\]/);
+assert.match(backend,/90-130 word overview/);
+assert.match(backend,/never generalize a pose or held object/);
+assert.match(backend,/RAW_CROP_MARKER/);
 assert.ok(!backend.includes('"\\n\\nSource observations:\\n"'),"final response must not repeat the whole raw overview");
 assert.ok(!html.includes('Checking for contradictions'),"internal inference consistency checks stay hidden");
 assert.match(backend,/def vision_status\(/);

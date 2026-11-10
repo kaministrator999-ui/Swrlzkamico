@@ -244,7 +244,8 @@ class ForgeStationHTTP(unittest.TestCase):
             result = self.client.get("/api/hf/models")
         self.assertEqual(result.status_code, 200, result.text)
         models = result.json()["models"]
-        self.assertEqual([item["model_id"] for item in models], ["r39", "stock", "700m", "coder", "compare"])
+        self.assertEqual([item["model_id"] for item in models], ["stock", "700m", "coder", "compare"])
+        self.assertNotIn("r39", [item["model_id"] for item in models])
         self.assertFalse(next(item for item in models if item["model_id"] == "compare")["available"])
         self.assertEqual(next(item for item in models if item["model_id"] == "coder")["checkpoint"], model_router.CODER_CHECKPOINT)
         for item in models:
@@ -264,6 +265,42 @@ class ForgeStationHTTP(unittest.TestCase):
         self.assertEqual(station._forge_contexts, {})
         snapshot = self.client.get("/api/lalm_station/sync", headers=self.headers(sid=SID)).json()
         self.assertEqual(snapshot["currentThread"]["messages"][-1]["text"], "Hello!")
+
+    def test_per_reply_resource_usage_is_saved_on_all_text_routes(self):
+        response=self.send(sid=SID,prompt="Say hello")
+        self.assertEqual(response.status_code,202,response.text)
+        snapshot=self.client.get("/api/lalm_station/sync",headers=self.headers(sid=SID)).json()
+        assistant=next(m for m in reversed(snapshot["currentThread"]["messages"])
+                       if m["role"]=="assistant")
+        usage=assistant["meta"]["responseResourceUsage"]
+        self.assertEqual(usage["schema"],"swrlz-response-resource-usage-v1")
+        self.assertEqual(usage["scope"],"shared-cgroup-v2")
+        self.assertFalse(usage["isolatedModelAttribution"])
+        self.assertEqual(usage["routeId"],"700m")
+        self.assertEqual(usage["outcome"],"COMPLETE")
+        self.assertIn("cpuLimitState",usage["capacity"])
+        self.assertIn("memoryLimitState",usage["capacity"])
+        self.assertIn("cgroupCpuUsageUsecDelta",usage["observed"])
+        self.assertIn("memoryPeakSampledBytes",usage["observed"])
+        self.assertIn("configuredEngineThreadBudget",usage)
+        self.assertEqual(self.saved[ALICE["id"]]["threads"][0]["messages"][-1]
+                         ["meta"]["responseResourceUsage"],usage)
+
+    def test_verified_image_resource_receipt_attaches_to_same_saved_turn(self):
+        verified={"source":"owner-and-description-verified-vision-job",
+                  "modelRoute":"qwen3-vl-4b",
+                  "usage":{"schema":"swrlz-response-resource-usage-v1",
+                           "routeId":"qwen3-vl-4b","isolatedModelAttribution":False}}
+        with mock.patch.object(station,"vision_job_resource_receipt",
+                               return_value=verified) as lookup:
+            response=self.send(sid=SID,prompt="Analyze uploaded mage",
+                               visionJobId="a"*32)
+        self.assertEqual(response.status_code,202,response.text)
+        lookup.assert_called_once_with(ALICE["id"],"a"*32,"Analyze uploaded mage")
+        messages=self.saved[ALICE["id"]]["threads"][0]["messages"]
+        self.assertEqual(messages[-2]["meta"]["visionResourceUsage"],verified)
+        self.assertEqual(messages[-1]["meta"]["visionResourceUsage"],verified)
+        self.assertEqual(messages[-1]["meta"]["responseResourceUsage"]["routeId"],"700m")
 
     def test_cookie_account_cannot_use_even_a_real_embed_lease(self):
         token = self.pair()

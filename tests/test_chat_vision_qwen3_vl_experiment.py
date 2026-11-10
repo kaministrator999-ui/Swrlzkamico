@@ -13,7 +13,10 @@ SOURCE = ROOT / "chat_vision.py"
 
 
 def _vision(variant):
-    with patch.dict(os.environ, {"SWRLZ_VISION_MODEL": variant}):
+    # The real Space exposes hf_space as its module root. Reproduce that
+    # import context for isolated source loading without permanently editing sys.path.
+    with patch.dict(os.environ, {"SWRLZ_VISION_MODEL": variant}), \
+         patch.object(sys, "path", [str(ROOT), *sys.path]):
         spec = importlib.util.spec_from_file_location("swrlz_qwen3_vision_test", SOURCE)
         module = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(module)
@@ -83,6 +86,11 @@ def test_qwen_server_is_local_and_source_revision_immutable():
     assert server.LLAMA_CPP_COMMIT == "fd27b2034905f8dadd8bd6d2cc44595f4929d391"
     assert server.SERVER_URL.startswith("http://127.0.0.1:")
     assert "https://github.com/ggml-org/llama.cpp.git" == server.UPSTREAM_URL
+    # Staged performance trial under the measured 16-core Space quota.
+    # Trial 8 decode / 14 batch; keep bounded by measured 16-core quota.
+    assert server.DECODE_THREADS == 8
+    assert server.BATCH_THREADS == 14
+    assert server.PARALLEL_REQUESTS == 1
 
 
 def test_qwen_server_sse_yields_real_choices_not_synthetic_output():

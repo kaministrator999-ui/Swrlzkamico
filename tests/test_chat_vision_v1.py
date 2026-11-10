@@ -5,6 +5,7 @@ import base64
 import importlib.util
 import json
 import os
+import sys
 import threading
 import time
 from pathlib import Path
@@ -17,6 +18,8 @@ from fastapi.testclient import TestClient
 # Exercise transport, region inference, and explicit level comparisons using
 # the single active Qwen3-VL vision route, with mocked model responses.
 SOURCE = Path(__file__).resolve().parents[1] / "hf_space" / "chat_vision.py"
+# The vision module loads the layout helper alongside the Space runtime.
+sys.path.insert(0, str(SOURCE.parent))
 spec = importlib.util.spec_from_file_location("swrlz_chat_vision_test", SOURCE)
 assert spec and spec.loader
 vision = importlib.util.module_from_spec(spec)
@@ -159,10 +162,16 @@ assert fake_model.calls[0]["messages"][0]["content"][1]["image_url"]["url"] == v
 assert fake_model.calls[0]["max_tokens"] == vision.MAX_VISION_OUTPUT_TOKENS == 224
 assert fake_model.calls[0]["stream"] is True
 visual_prompt = fake_model.calls[0]["messages"][0]["content"][0]["text"]
-assert "multi-view character sheet" in visual_prompt
+assert "multi-view sheet" in visual_prompt
 assert "concrete" in visual_prompt
-assert "clothing, objects" in visual_prompt
-assert "Only read clearly legible text" in visual_prompt
+assert "never generalize a pose or held object to" in visual_prompt
+assert "Detail-only, palette and overhead panels" in visual_prompt
+assert "supporting detail, color-swatch" in visual_prompt
+assert "motifs tied to the garment surface" in visual_prompt
+assert "garment panel from decoration along its hem or border" in visual_prompt
+assert "prop's visible silhouette" in visual_prompt
+assert "clothing layers, colors, patterns, props and accessories" in visual_prompt
+assert "Include only legible text and observable contacts" in visual_prompt
 assert "Question: What is shown?" in visual_prompt
 
 # The actual exported turnaround attempts were too generic even when Chat
@@ -268,6 +277,11 @@ with patch.object(vision,"_load_local_model",return_value=study_model):
 assert len(study_model.calls)==3
 assert "Level 1" in study and "Level 2" in study and "Level 3" in study
 assert "raw model outputs" in study and "accuracy unverified" in study
+assert "Level 1 is the whole-image comparison baseline" in study
+assert "Descriptor keyword counts measure wording only" in study
+assert "Selected by descriptor-count heuristic" not in study
+assert all(f.get("selectedLevel") == 1 for _, f in study_phases
+           if f.get("selectedLevel") is not None), "L3 should compare outputs without ranking verbosity"
 assert "Original source received: 1024 × 768px" in study
 assert "center-source-crop-if-large" in study
 assert "A purple mage in gold boots" in study
@@ -367,18 +381,68 @@ with patch.object(vision, "_prepare_image", lambda x: x), patch.object(vision, "
     assert done["sourceWidth"] == 16 and done["sourceHeight"] == 16
     assert done["sourceBytes"] == len(jpeg)
     assert done["originalBytesPreserved"] is True
+    # Resource observations are from shared cgroup, not model-owned RAM/CPU.
+    usage = done["resourceUsage"]
+    assert usage["schema"] == "swrlz-response-resource-usage-v1"
+    assert usage["scope"] == "shared-cgroup-v2"
+    assert usage["isolatedModelAttribution"] is False
+    assert usage["routeId"] == "qwen3-vl-4b"
+    assert usage["outcome"] == "COMPLETE"
+    assert "memoryPeakSampledBytes" in usage["observed"]
+    # Only the actual account and matching completed vision handoff may attach
+    # those readings to a saved user/assistant message.
+    handoff_prompt = "Describe this image." + vision.VISION_START + done["description"] + vision.VISION_END
+    receipt = vision.vision_job_resource_receipt("google:test",job_id,handoff_prompt)
+    assert receipt is not None and receipt["usage"]["routeId"] == "qwen3-vl-4b"
+    assert vision.vision_job_resource_receipt("google:other",job_id,handoff_prompt) is None
+    assert vision.vision_job_resource_receipt("google:test","0"*32,handoff_prompt) is None
+    assert vision.vision_job_resource_receipt("google:test",job_id,handoff_prompt+"tampered") is None
     # Status reflects only server-read original dimensions, never a guessed
     # pixel size or a fabricated verified visual recognition score.
     assert done["done"] is True
     assert done["elapsedSeconds"] >= done["phaseElapsedSeconds"] >= 0
     assert isinstance(done["elapsedSeconds"], float)
     assert isinstance(done["phaseElapsedSeconds"], float)
+    # Each explicit Send gets its own ID. Retries of that Send reuse the
+    # accepted completed job; a new Send never replays stale completed text.
+    first_payload = {"image": valid, "question": "Fresh resend",
+                     "visionRequestId": "vision-fresh-0001"}
+    first = client.post("/api/lalm_station/vision", json=first_payload)
+    assert first.status_code == 202 and first.json()["resumedExistingJob"] is False
+    first_id = first.json()["jobId"]
+    assert poll_done(first_id)["phase"] == "COMPLETE"
+    calls_after_first = len(fake_model.calls)
+    retry = client.post("/api/lalm_station/vision", json=first_payload)
+    assert retry.status_code == 202
+    assert retry.json()["jobId"] == first_id
+    assert retry.json()["resumedExistingJob"] is True
+    assert retry.json()["done"] is True
+    assert len(fake_model.calls) == calls_after_first, "retry may not rerun inference"
+    second_payload = dict(first_payload, visionRequestId="vision-fresh-0002")
+    second = client.post("/api/lalm_station/vision", json=second_payload)
+    assert second.status_code == 202
+    assert second.json()["resumedExistingJob"] is False
+    assert second.json()["jobId"] != first_id
+    assert poll_done(second.json()["jobId"])["phase"] == "COMPLETE"
+    assert len(fake_model.calls) == calls_after_first + 1, "new Send must rerun local inference"
+    # Older clients without per-send IDs must not silently replay a completed
+    # request just because image, prompt and analysis level match.
+    legacy = client.post("/api/lalm_station/vision", json={"image": valid, "question": "Simple"})
+    assert legacy.status_code == 202
+    assert legacy.json()["jobId"] != job_id
+    assert legacy.json()["resumedExistingJob"] is False
+    assert poll_done(legacy.json()["jobId"])["phase"] == "COMPLETE"
 
 assert client.post("/api/lalm_station/vision", json={"image": "invalid"}).status_code == 400
 for bad in (0,4,"3",True):
     invalid_response=client.post("/api/lalm_station/vision",
         json={"image":valid,"question":"test","analysisLevels":bad})
     assert invalid_response.status_code==400,invalid_response.text
+for invalid_nonce in ("x", "has spaces in it", "z" * 129, 17):
+    invalid_response = client.post("/api/lalm_station/vision", json={
+        "image": valid, "question": "test", "visionRequestId": invalid_nonce})
+    assert invalid_response.status_code == 400
+    assert invalid_response.json()["code"] == "VISION_REQUEST_ID_INVALID"
 assert client.post("/api/lalm_station/vision", data="oops", headers={"Content-Type": "text/plain"}).status_code == 415
 assert client.get("/api/lalm_station/vision/status", params={"jobId": "invalid"}).status_code == 400
 assert client.get("/api/lalm_station/vision/status", params={"jobId": "a"*32}).status_code == 404
@@ -534,7 +598,7 @@ import typing
 router_source = (SOURCE.parent / "model_router.py").read_text(encoding="utf-8")
 tree = ast.parse(router_source)
 selected = [node for node in tree.body if isinstance(node, (ast.Assign, ast.FunctionDef)) and (
-    isinstance(node, ast.FunctionDef) and node.name in {"_ground_vision_handoff", "_direct_vision_description"}
+    isinstance(node, ast.FunctionDef) and node.name in {"_ground_vision_handoff", "_direct_vision_description", "_format_direct_vision_report", "_omit_unverifiable_turnaround_claims", "_conflicting_staff_handedness"}
     or isinstance(node, ast.Assign) and any(isinstance(target, ast.Name) and target.id in {"_VISION_START","_VISION_END"} for target in node.targets)
 )]
 namespace = {"Any": typing.Any, "re": __import__("re")}
@@ -554,9 +618,340 @@ assert direct(input_payload) is not None  # This is an intentional direct image-
 direct_user = "What do you see in this picture?" + vision.VISION_START + observed + vision.VISION_END
 direct_response = direct({"prompt": direct_user, "history": []})
 assert isinstance(direct_response, str)
-assert "Local image analyzer's description" in direct_response
-assert direct_response.endswith(observed)
+assert direct_response.startswith("## Image analysis\n\n")
+assert observed in direct_response
 assert direct_response.count(observed) == 1, "Never regenerate or invent description"
+assert "not independently verified" in direct_response
+# Real old Qwen descriptions keep one readable final answer; the raw model
+# appendix stays in the saved user message and its export.
+legacy = ("Character reference · local model observation (accuracy unverified)\n\n"
+          "Subject and views: One hooded character in multiple views.\n"
+          "Shape and proportions: Large hood and compact body.\n"
+          "Materials and markings: Purple robe, gold trim.\n"
+          "\nFocused image details (unverified source-crop observations):\n"
+          "- Upper-left crop: Large hood and compact body.")
+legacy_answer = direct({"prompt": question + vision.VISION_START + legacy + vision.VISION_END})
+assert legacy_answer.startswith("## Image analysis")
+assert "### Shape & proportions" in legacy_answer
+assert "### Materials & markings" in legacy_answer
+assert "Upper-left crop" not in legacy_answer
+assert legacy_answer.count("Large hood and compact body.") == 1
+
+# Regression from an actual Little Crystal Mage turnaround observation:
+# visually unverifiable categorical negatives and cross-view absolutes must
+# not be polished into false certainty by the final presentation layer.
+problematic_vision = (
+    "Character reference · local model observation (accuracy unverified)\n\n"
+    "Subject and views: Front, left side, right side, back, and top views of "
+    "a single character, Little Crystal Mage.\n"
+    "Silhouette and anatomy: Pale skin, silver-white braided hair, purple eyes. "
+    "Standing posture with arms at sides or holding staff. "
+    "No occlusion in any view; all limbs and head are visible.\n"
+    "Clothing and surface detail: Deep purple hooded robe with gold embroidery. "
+    "Belt with pouch. Brown boots. No buckles or hidden construction.\n"
+    "Props and small features: Staff topped with glowing purple crystal. "
+    "Braids are visible in all views. No leaf emblems or leaf motifs on the staff.\n"
+    "Visibility limits: Back view shows only the back of the robe and staff; "
+    "no occlusion of the character's face or limbs. "
+    "Top view shows only the head and shoulders; no occlusion of the staff or hands.\n"
+    "\nFocused image details (unverified source-crop observations):\n"
+    "- Upper-left figure detail: Two identical figures in purple robes."
+)
+problematic_result = direct({
+    "prompt": "What do you see in this image?" +
+              vision.VISION_START + problematic_vision + vision.VISION_END
+})
+assert problematic_result.startswith("## Image analysis")
+for unsafe in (
+    "No occlusion", "no occlusion", "all limbs and head are visible",
+    "No buckles", "No leaf emblems", "Braids are visible in all views",
+    "Two identical figures"
+):
+    assert unsafe not in problematic_result, unsafe
+for preserved in (
+    "Little Crystal Mage", "silver-white braided hair", "Deep purple hooded robe",
+    "Staff topped with glowing purple crystal",
+    "Back view shows only the back of the robe"
+):
+    assert preserved in problematic_result, preserved
+assert problematic_vision.count("No occlusion") == 1, "raw observation remains untouched"
+
+# Captured improved-but-verbose mage caption: report the final answer once,
+# remove raw crop confusion and verbatim cross-section repetitions while
+# retaining view-specific information. These are presentation regressions,
+# not evidence that Qwen correctly identified original image pixels.
+newer_mage_observation = (
+    "Character reference · local model observation (accuracy unverified)\n\n"
+    "Subject and views: One character shown in five views: front, left side, "
+    "right side, back, and top. All views depict the same character and props.\n"
+    "Silhouette and anatomy: Silver-white hair in two braids. The back view "
+    "shows the full cape and a staff. The top view shows the hood's shape "
+    "and the staff's position.\n"
+    "Clothing and surface detail: Purple robe with gold trim. Brown boots "
+    "with fur lining.\n"
+    "Props and small features: Staff topped with glowing purple crystal. "
+    "The staff is visible in all views. Brown satchel hangs at the hip. "
+    "The top view shows the hood's shape and the staff's position.\n"
+    "Visibility limits: The back view does not show the face; the top view "
+    "shows only the hood, not the whole body.\n"
+    "\nFocused image details (unverified source-crop observations):\n"
+    "- Upper-left figure detail: Two identical chibi figures."
+)
+formatted_newer=direct({"prompt":"What do you see in this image?" +
+                        vision.VISION_START + newer_mage_observation +
+                        vision.VISION_END})
+assert formatted_newer.count("The top view shows the hood's shape and the staff's position.") == 1
+assert "The staff is visible in all views" not in formatted_newer
+assert "Two identical chibi figures" not in formatted_newer
+assert "Brown satchel hangs at the hip" in formatted_newer
+assert "The back view does not show the face" in formatted_newer
+assert "not independently verified" in formatted_newer
+
+# Captured screenshot case: both left/right staff hands were guessed in one
+# turnaround, boots appeared in anatomy and clothing, and illustrations
+# were described as verified 3D geometry. The formatter may abstain from
+# these unsupported details, but must preserve the useful core features.
+redundant_mage = (
+    "Character reference · local model observation (accuracy unverified)\n\n"
+    "Subject and views: Five views — front, left side, right side, back, and top — "
+    "show Little Crystal Mage in a consistent outfit.\n"
+    "Silhouette and anatomy: Pale skin and white braids. Limbs are short. "
+    "Feet are clad in brown boots with fur trim at top.\n"
+    "Clothing and surface detail: Purple hooded robe with gold trim. "
+    "Robe has layered geometry with visible folds and creases. "
+    "Boots are brown with fur trim at top. No buckles or hidden fastenings.\n"
+    "Props and small features: Staff with purple crystal. "
+    "Staff is held by right hand in front view, left hand in side views. "
+    "Pouch attaches to belt.\n"
+    "Visibility limits: Top view shows the hood and staff. "
+    "No occlusion is implied for the staff or other features.\n"
+    "\nFocused image details (unverified source-crop observations):\n"
+    "- Upper-left figure detail: Two identical figures with staves. "
+    "Right side view shows left hand gripping a staff."
+)
+cleaned_mage = direct({"prompt":"What do you see in this image?" +
+                       vision.VISION_START + redundant_mage + vision.VISION_END})
+assert "Staff with purple crystal." in cleaned_mage
+assert "right hand in front" not in cleaned_mage
+assert "left hand in side" not in cleaned_mage
+assert "No occlusion is implied" not in cleaned_mage
+assert "No buckles or hidden fastenings" not in cleaned_mage
+assert "layered geometry" not in cleaned_mage
+assert "appears layered, with folds and creases" in cleaned_mage
+assert cleaned_mage.lower().count("boots") == 1, cleaned_mage
+assert "Two identical figures" not in cleaned_mage
+assert "not independently verified" in cleaned_mage
+assert "Feet are clad" in redundant_mage, "source handoff must remain unchanged"
+
+# New real mage report: a richer satchel/hood detail belongs in the final
+# reply, but basic belt/hair/eye inventory must not be repeated across sections.
+latest_mage = (
+    "Character reference · local model observation (accuracy unverified)\n\n"
+    "Subject and views: Front, left side, right side, back, and top views of "
+    "a single Little Crystal Mage.\n"
+    "Silhouette and anatomy: Silver-white hair in two braids; purple eyes; "
+    "wears a hooded robe with cape; stands on two legs; holds a staff in the "
+    "right hand; left hand rests on a satchel in front view; back view "
+    "shows full cape and staff beside the figure; top view shows hood "
+    "shape and staff position.\n"
+    "Clothing and surface detail: Purple hooded robe with gold trim; "
+    "star, moon, leaf and magic symbols; fur-lined boots; belt with buckle; "
+    "satchel with leaf emblem; robe has layered geometry with visible "
+    "seams and folds.\n"
+    "Props and small features: Staff topped with glowing purple crystal; "
+    "satchel with brown leather and leaf emblem; belt with buckle; "
+    "hood with star and moon motifs; hair in two braids; eyes purple; "
+    "no other visible accessories.\n"
+    "Visibility limits: Back view shows the robe and staff; "
+    "top view shows hood and staff; no occlusion is implied for all views; "
+    "no hidden parts are visible.\n"
+    "\nFocused image details (unverified source-crop observations):\n"
+    "- Upper-left figure detail: Two identical figures in purple robes; "
+    "right side view shows left hand gripping a staff."
+)
+latest_report = direct({"prompt": "What do you see in this image?" +
+                        vision.VISION_START + latest_mage + vision.VISION_END})
+assert latest_report.count("belt with buckle") == 1, latest_report
+assert latest_report.count("hair in two braids") == 1, latest_report
+assert "eyes purple" not in latest_report
+assert "satchel with brown leather and leaf emblem" in latest_report
+assert "holds a staff in the right hand" not in latest_report
+assert "top view shows hood shape and staff position" in latest_report
+assert "hood with star and moon motifs" in latest_report, "do not discard unique location-specific details"
+assert "no occlusion is implied" not in latest_report
+assert "layered geometry" not in latest_report
+assert "Two identical figures" not in latest_report
+assert "belt with buckle" in latest_mage, "raw text is untouched"
+
+
+
+
+# User-tested 6/12 L2 report: a longer response is not a better observation
+# when grip counts, rear-side staff positions and top-view contacts are
+# guessed. This is a deterministic formatting guard, not pixel verification.
+cross_view_grip_guess = (
+    "Character reference · local model observation (accuracy unverified)\n\n"
+    "Subject and views: One chibi mage in front, left side, right side, back, "
+    "and top views — all wearing identical purple hooded robes and holding staff.\n"
+    "View comparisons: Back view reveals stars and a crescent motif. "
+    "Top view shows a pointed hood with central emblem.\n"
+    "Shape and proportions: Large head relative to torso. "
+    "Stance is upright, holding staff with both hands in front view, "
+    "one hand in side views, and staff held vertically in back view.\n"
+    "Geometry and layers: Hood covers the shoulders. "
+    "Robe panels visibly overlap; pouch hangs from belt.\n"
+    "Materials and markings: Purple fabric with gold trim and embroidery. "
+    "Boots are brown with fur trim.\n"
+    "Props and contact: Staff held in hand. "
+    "Hand contact: front view shows both hands on staff. "
+    "Side views show one hand on staff. "
+    "Back view shows staff held with one hand. "
+    "Top view shows hand holding orb.\n"
+    "\n[Raw source-crop observations; accuracy unverified]\n"
+    "- View panel 1: Purple hood and staff."
+)
+cross_view_answer = direct({
+    "prompt": "What do you see in this image?" + vision.VISION_START +
+              cross_view_grip_guess + vision.VISION_END
+})
+for unsupported_contact in (
+    "both hands", "one hand on staff", "staff held with one hand",
+    "hand holding orb", "Hand contact:", "all wearing identical",
+):
+    assert unsupported_contact.casefold() not in cross_view_answer.casefold(), (
+        unsupported_contact, cross_view_answer
+    )
+for actual_observation in (
+    "pointed hood", "crescent motif", "Large head relative to torso",
+    "Stance is upright", "Robe panels visibly overlap", "Purple fabric with gold trim"
+):
+    assert actual_observation in cross_view_answer, (
+        actual_observation, cross_view_answer
+    )
+assert cross_view_grip_guess.count("both hands") == 2, "raw evidence text must remain unchanged"
+assert "View panel 1:" not in cross_view_answer
+
+# A newer live L2 turnaround repeatedly invented spatial relationships while
+# identifying most visible objects correctly. A text-only presentation layer
+# must not upgrade uncertain cross-view absence, identical poses or a prop's
+# supposed ground clearance to reliable claims. Raw model data stays intact.
+spatial_claims_report = (
+    "Character reference · local model observation (accuracy unverified)\n\n"
+    "Subject and views: A character appears in Front, Left Side, Right Side, "
+    "Back and Top views with a cloak and a staff.\n"
+    "View comparisons: Left and Right Side Views show the character holding "
+    "the staff with the same hand position and stance. "
+    "The Left Side View reveals a satchel with a leaf emblem hanging from "
+    "the belt, absent in the Right Side View. "
+    "The Back View shows a scarf draped over the cloak's hem, "
+    "not visible in other views. "
+    "The Top View displays the hood's layered fabric and border.\n"
+    "Geometry and layers: The hood has visible trim. "
+    "The staff is held upright, its base resting near the hip, "
+    "not touching the ground. "
+    "The satchel is positioned at the hip in the Left Side View, "
+    "but not visible in others.\n"
+    "Materials and markings: Purple fabric and gold embroidery."
+)
+spatial_clean = direct({
+    "prompt": "What do you see in this image?" +
+              vision.VISION_START + spatial_claims_report + vision.VISION_END
+})
+for guessed in (
+    "same hand position and stance", "absent in the Right Side View",
+    "not visible in other views", "its base resting near the hip",
+    "not touching the ground", "but not visible in others",
+):
+    assert guessed.casefold() not in spatial_clean.casefold(), (guessed, spatial_clean)
+for grounded in (
+    "satchel with a leaf emblem hanging from the belt",
+    "Top View displays the hood's layered fabric and border",
+    "The staff is held upright",
+    "Purple fabric and gold embroidery",
+):
+    assert grounded in spatial_clean, (grounded, spatial_clean)
+assert "same hand position and stance" in spatial_claims_report, "source remains unmodified"
+
+# Live L2 regression: a useful overhead hood description was combined with
+# an invented hand-held object. Keep positive headwear observations while
+# abstaining from unverifiable top-panel contact. Do not alter raw evidence.
+overhead_contact_report = (
+    "Character reference · local model observation (accuracy unverified)\n\n"
+    "Subject and views: One subject shown in front, left side, right side, "
+    "back and top reference views.\n"
+    "View comparisons: The back view shows a crescent on the cape, "
+    "and the top view shows a pointed hood with leaf markings and "
+    "a glowing orb held in the right hand.\n"
+    "Geometry and layers: The cape drapes to mid-calf, "
+    "and the character wears brown fur-trimmed boots.\n"
+    "Materials and markings: Purple robe and brown fur-trimmed boots."
+)
+overhead_clean = direct({
+    "prompt": "What do you see in this image?" +
+              vision.VISION_START + overhead_contact_report + vision.VISION_END
+})
+assert "pointed hood with leaf markings" in overhead_clean, overhead_clean
+assert "crescent on the cape" in overhead_clean, overhead_clean
+assert "glowing orb held in the right hand" not in overhead_clean, overhead_clean
+assert "The cape drapes to mid-calf" in overhead_clean, overhead_clean
+assert overhead_clean.casefold().count("boots") == 1, overhead_clean
+assert "glowing orb held in the right hand" in overhead_contact_report
+
+# Live image-sheet acceptance: fabric overlap was misreported as hidden
+# armor, then the hood-focused overhead view was said to confirm it.
+# Reverse-angle silhouettes were also upgraded to a made-up hand swap.
+# Preserve real exposed structure elsewhere instead of banning armor words.
+hidden_layer_report = (
+    "Character reference · local model observation (accuracy unverified)\n\n"
+    "Subject and views: One figure shown in Front, Left Side, Right Side, "
+    "Back and Top views wearing a robe.\n"
+    "View comparisons: The Right Side view mirrors Left with reversed "
+    "hand position. Back view shows a crescent on a cape. "
+    "Top view shows the segmented armored torso beneath the cloak.\n"
+    "Geometry and layers: Hooded cloak drapes over segmented armor torso. "
+    "Hem reaches mid-calf. Staff is held upright.\n"
+    "Materials and markings: The purple robe has gold trim. "
+    "Top view confirms armor beneath cloak. "
+    "Front view shows exposed plate armor over a visible tunic."
+)
+hidden_layer_clean = direct({
+    "prompt": "What do you see in this image?" +
+              vision.VISION_START + hidden_layer_report + vision.VISION_END
+})
+for unsupported in (
+    "mirrors Left with reversed hand position",
+    "segmented armored torso beneath the cloak",
+    "drapes over segmented armor torso",
+    "confirms armor beneath cloak",
+):
+    assert unsupported.casefold() not in hidden_layer_clean.casefold(), (
+        unsupported, hidden_layer_clean
+    )
+for supported in (
+    "Back view shows a crescent on a cape",
+    "Hem reaches mid-calf",
+    "Staff is held upright",
+    "Front view shows exposed plate armor over a visible tunic",
+):
+    assert supported in hidden_layer_clean, (supported, hidden_layer_clean)
+assert "segmented armored torso beneath the cloak" in hidden_layer_report
+
+# The guard does not suppress actual descriptions about another view just
+# because a separate overhead panel is mentioned.
+other_view_contact = (
+    "Subject and views: Front, left side, back, top views of one figure.\n"
+    "View comparisons: Front view shows a lantern held in the left hand. "
+    "Top view shows a textured helmet."
+)
+other_view_answer = direct({
+    "prompt": "Describe this image" +
+              vision.VISION_START + other_view_contact + vision.VISION_END
+})
+assert "lantern held in the left hand" in other_view_answer, other_view_answer
+assert "Top view shows a textured helmet" in other_view_answer, other_view_answer
+
+assert "not independently verified" in problematic_result
+
 assert direct({"prompt": "Describe this image" + vision.VISION_START + observed + vision.VISION_END}) is not None
 assert direct({"prompt": "What do you see in this image?" + vision.VISION_START + observed + vision.VISION_END}) is not None
 assert direct({"prompt": "Please describe this image!" + vision.VISION_START + observed + vision.VISION_END}) is not None
@@ -578,9 +973,130 @@ assert '"Cache-Control":"no-store"' in station_source
 station_source = (SOURCE.parent / "chat_vision.py").read_text(encoding="utf-8")
 assert station_source.index('job["lastPolledAt"] = now', station_source.index("def vision_status(")) < station_source.index('_cancel_unwatched_jobs(now)', station_source.index("def vision_status("))
 
-# Dense wide reference sheets need real source-pixel crops focused on the
-# figure band, not four full-height strips containing unrelated footer panels.
+# Genuine multi-panel image layout is discovered from original pixels, not
+# from the words "Little Crystal Mage" or hardcoded five equal-width columns.
 from PIL import ImageDraw
+from vision_sheet_layout import discover_view_panels
+
+sheet = Image.new("RGB", (1448, 1086), "white")
+sheet_paint = ImageDraw.Draw(sheet)
+for index in range(5):
+    left = 42 + index * 280
+    sheet_paint.rectangle((left, 165, left + 170, 690),
+                          fill="#7040ba", outline="#26103c", width=8)
+    sheet_paint.ellipse((left + 30, 190, left + 140, 330), fill="#e9d6af")
+    sheet_paint.rectangle((left + 60, 390, left + 115, 650), fill="#7253a9")
+sheet_paint.rectangle((50, 934, 1390, 1036), fill="#6e3e86")
+source_b = io.BytesIO()
+sheet.save(source_b, format="PNG")
+sheet_url = "data:image/png;base64," + base64.b64encode(source_b.getvalue()).decode("ascii")
+panel_layout = discover_view_panels(sheet)
+assert [name for name, _ in panel_layout] == [
+    "View panel 1", "View panel 2", "View panel 3",
+    "View panel 4", "View panel 5", "Supporting reference panels"
+], panel_layout
+assert all(0 <= x0 < x1 <= 1448 and 0 <= y0 < y1 <= 1086
+           for _, (x0, y0, x1, y1) in panel_layout)
+assert panel_layout[-1][1][1] > panel_layout[0][1][1], "Supporting row must be below figures"
+planned = vision._detail_regions(sheet_url, "Character turnaround of one character in five views.",
+                                  with_boxes=True)
+assert [name for name, _, _ in planned] == [name for name, _ in panel_layout]
+assert all(url.startswith("data:image/jpeg;base64,") for _, url, _ in planned)
+assert len({tuple(box) for _, _, box in planned}) == 6
+# The lower detail/palette strip is folded (left half above right half)
+# into ONE image input. Original full-source region coordinates stay intact,
+# so both halves get more source pixels without an additional vision call.
+support_url = planned[-1][1]
+with Image.open(io.BytesIO(base64.b64decode(support_url.partition(",")[2]))) as support_image:
+    assert support_image.width <= 768 and support_image.height <= 768
+    assert support_image.width < 2 * support_image.height, (
+        "wide reference strip must not be squeezed into a tiny panorama"
+    )
+assert planned[-1][0] == "Supporting reference panels"
+assert planned[-1][2][0] < .05 and planned[-1][2][2] > .95
+assert len(planned) == 6, "folding the support strip cannot add inference calls"
+
+class PanelModel:
+    def __init__(self):
+        self.calls = []
+    def create_chat_completion(self, **kwargs):
+        self.calls.append(kwargs)
+        prompt = kwargs["messages"][0]["content"][0]["text"]
+        if "Unverified source-crop notes" in prompt:
+            observation = ("Subject and views: One illustrated character in several labeled views.\n"
+                           "View comparisons: Back and top are different source views.\n"
+                           "Materials and markings: A purple cloak with gold decoration.\n"
+                           "Props and contact: A staff appears in the character views.")
+        elif "Supporting reference panels" in prompt:
+            observation = "A bottom panel contains color samples and decorative reference shapes."
+        elif "Source region View panel" in prompt:
+            observation = "One figure occupies this view with a dark purple cloak and gold trim."
+        else:
+            observation = "Character turnaround of a purple-cloaked person shown in multiple views."
+        return iter([{"choices": [{"delta": {"content": observation}}]}])
+
+panel_model = PanelModel()
+panel_phases = []
+with patch.object(vision, "_load_local_model", return_value=panel_model):
+    panel_answer = vision._ask_vision_local(
+        sheet_url, "What do you see in this image?",
+        report_phase=lambda phase, **fields: panel_phases.append((phase, fields)),
+    )
+assert len(panel_model.calls) == 8, "whole overview + five panels + reference row + whole-image synthesis"
+assert panel_answer.startswith("Character reference · local model observation")
+assert any(f.get("requestedRegions") == 6 for _, f in panel_phases)
+panel_records = [f["spatialRegionRecords"] for _, f in panel_phases
+                 if f.get("spatialRegionRecords")]
+assert len(panel_records[-1]) == 6
+assert [record["regionKind"] for record in panel_records[-1]] == ["view"] * 5 + ["support"]
+assert [record["viewPanelIndex"] for record in panel_records[-1]] == [1, 2, 3, 4, 5, None]
+last_instructions = panel_model.calls[-1]["messages"][0]["content"][0]["text"]
+assert "View panel 5" in last_instructions
+assert "Supporting reference panels" in last_instructions
+assert "POSITIONAL labels" in last_instructions
+assert "headwear-only or ornament-detail crop" in panel_model.calls[1]["messages"][0]["content"][0]["text"]
+assert "folded into TWO rows" in panel_model.calls[-2]["messages"][0]["content"][0]["text"]
+assert "Layered cloth, seams and trim" in panel_model.calls[1]["messages"][0]["content"][0]["text"]
+assert "do not silently drop the sheet's legend" in last_instructions
+assert "folded into two stacked" in last_instructions
+assert "opposite profiles exact mirrors" in last_instructions
+assert "hem length to visible legs and footwear" in last_instructions
+assert "each motif to the exact visible surface" in last_instructions
+assert "ornament mounted on a prop" in last_instructions
+assert "genuine crop-specific findings absent from the overview" in last_instructions
+# Live L1/L2 visual acceptance regression: prevent the final pass from
+# filling redundant headings or inventing symmetrical panels, unseen
+# anatomy, supported-object contact or the decorative legend.
+assert "Never claim views differ ONLY in orientation" in last_instructions
+assert "Do not claim a prop is resting" in last_instructions
+assert "do not infer shoulders, arms, a torso" in last_instructions
+assert "Do not guess concealed ears, neck surfaces, gloves" in last_instructions
+assert "supporting reference-strip closeups" in last_instructions
+assert "do not create a redundant props section" in last_instructions
+assert "Do NOT output separate Shape, Geometry, and Props sections" in last_instructions
+assert "For every spatial assertion mentally pair SUBJECT" in last_instructions
+assert "absence is not established" in last_instructions
+assert "Do not declare identical grips, poses or hand positions" in last_instructions
+assert "Do not infer grip counts, handedness, a staff's base" in last_instructions
+assert "garment wrapped around the neck or shoulders" in last_instructions
+assert "internal rigid equipment" in last_instructions
+assert "concealed component" in last_instructions
+assert "Opposing profiles do not establish mirrored" in last_instructions
+# The reference strip is included first in the evidence notes, without
+# altering the separately recorded per-panel chronological source order.
+assert last_instructions.index("\nSupporting reference panels (support):") < last_instructions.index("\nView panel 1 (view):")
+# Changing the number of panels should not force a 5-view result.
+three = Image.new("RGB", (1200, 880), "white")
+three_paint = ImageDraw.Draw(three)
+for index in range(3):
+    x = 60 + 390 * index
+    three_paint.rectangle((x, 160, x + 230, 650), fill="#5f34a3")
+assert len(discover_view_panels(three)) == 3
+assert discover_view_panels(Image.new("RGB", (1200, 900), "white")) == []
+
+# The older fallback still handles art with no clear separate whitespace
+# between figures, using selective closeups rather than invented panels.
+
 reference = Image.new("RGB", (1448, 1086), "white")
 painter = ImageDraw.Draw(reference)
 for index in range(4):
@@ -589,6 +1105,8 @@ for index in range(4):
                       fill="#7040ba", outline="#202020", width=12)
     painter.line((left + 25, 200, left + 140, 625),
                  fill="#e5b744", width=14)
+# A continuous overlaid band defeats panel separation: exercise fallback.
+painter.rectangle((30, 350, 1410, 475), fill="#7040ba")
 # Palette below figures must not occupy each character-focused crop.
 painter.rectangle((0, 950, 1447, 1085), fill="#11aa22")
 buffer = io.BytesIO()
@@ -602,6 +1120,14 @@ refined_regions = vision._detail_regions(
 assert [label for label, _ in refined_regions] == [
     "Upper-left figure detail", "Central outfit and prop detail",
 ], "Only useful source-image face and costume close-ups, not four whole views"
+boxed_regions = vision._detail_regions(
+    reference_encoded, "A purple hood, braided hair, gold trim and a staff.",
+    with_boxes=True)
+assert len(boxed_regions) == 2
+for label, encoded, box in boxed_regions:
+    assert label and encoded.startswith("data:image/jpeg;base64,")
+    assert len(box) == 4 and all(0 <= n <= 1 for n in box)
+    assert box[0] < box[2] and box[1] < box[3], "source region, not invented object boundary"
 text_regions = vision._detail_regions(
     reference_encoded, "Braided hair and a gold-trimmed robe.",
     "Read the small labels and examine the details.")
@@ -629,8 +1155,8 @@ zero_model = ZeroDescriptorStudyModel()
 with patch.object(vision, "_load_local_model", return_value=zero_model):
     zero_study = vision._ask_vision_local(valid, "What do you see?", analysis_levels=3)
 assert zero_model.calls == 3
-assert "All level captions returned 0 tracked descriptors" in zero_study
-assert "Level 1 remains the fallback, not a quality winner" in zero_study
+assert "Descriptor keyword counts measure wording only" in zero_study
+assert "Level 1 is the whole-image comparison baseline" in zero_study
 
 # The whole-image integration pass must use BOTH actual pixels and
 # accumulated region observations. A generic final caption must not replace
@@ -664,6 +1190,12 @@ assert joined.startswith("Character reference · local model observation")
 assert "purple hood" in joined and "gold-trimmed cloak" in joined
 assert "Upper-left figure detail" in joined
 assert "Character turnaround with braided white hair" not in joined, "no duplicated raw overview"
+assert vision.RAW_CROP_MARKER in joined, "original crop notes remain inspectable in the saved user handoff"
+direct_joined = direct({"prompt": "What do you see in this image?" +
+                        vision.VISION_START + joined + vision.VISION_END})
+assert "### Subject & views" in direct_joined
+assert "Upper-left figure detail" not in direct_joined, "no second raw-crop text dump in §C reply"
+assert vision.RAW_CROP_MARKER not in direct_joined
 final_prompt = joint_model.calls[-1]["messages"][0]["content"]
 assert final_prompt[1]["type"] == "image_url", "the integration must see the source image"
 assert final_prompt[1]["image_url"]["url"] == (
@@ -671,9 +1203,16 @@ assert final_prompt[1]["image_url"]["url"] == (
 ), "final synthesis must reuse the complete 768px overview, not downsize again"
 assert "Whole scene:" in final_prompt[0]["text"]
 assert "Central outfit and prop detail" in final_prompt[0]["text"]
+assert "View comparisons:" in final_prompt[0]["text"]
+assert "visible belt buckle cannot" in final_prompt[0]["text"]
+assert "110 to 175 information-dense words" in final_prompt[0]["text"]
+assert "Do NOT output separate Shape, Geometry, and Props sections" in final_prompt[0]["text"]
+assert "Do not infer grip counts, handedness" in final_prompt[0]["text"]
+assert "do not propagate a staff" in final_prompt[0]["text"]
+assert "Do NOT narrate what each view fails to show" in final_prompt[0]["text"]
 assert any(f.get("inferenceStage") == "FUSION_PREFILL" for _, f in joint_phases)
 assert any(f.get("integratedSelected") is True for _, f in joint_phases)
-assert joint_model.calls[-1]["max_tokens"] == 320
+assert joint_model.calls[-1]["max_tokens"] == 384
 assert any(fields.get("referenceProgress") is True and fields.get("requestedRegions") == 2
            for _, fields in joint_phases), "show overview before crops finish"
 assert any(fields.get("completedRegions") == 1 for _, fields in joint_phases)
@@ -824,6 +1363,8 @@ crop_snapshots = [
 assert crop_snapshots
 assert sum(bool(item.get("tokenLimitReached")) for item in crop_snapshots[-1]) == 1
 assert crop_snapshots[-1][1]["finishReason"] == "length"
+assert all(record["coordinateSpace"] == "exif-corrected-source-normalized"
+           and len(record["sourceBox"]) == 4 for record in crop_snapshots[-1])
 assert all("at most 55 words" in call["messages"][0]["content"][0]["text"]
            for call in finish_model.calls[1:3])
 assert not crop_snapshots[-1][0]["tokenLimitReached"]

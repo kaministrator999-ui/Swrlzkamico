@@ -126,7 +126,9 @@ def _cpu_capacity():
 def _thread_plan():
     """Favor broad prompt-prefill parallelism while keeping token decode conservative."""
     capacity=_cpu_capacity()
-    return min(8,capacity),capacity
+    # Trial 10 decode threads on the previously measured 16-core Space;
+    # batch prefill remains bounded by the affinity/capacity contract.
+    return min(10,capacity),capacity
 
 def load(context=CONTEXT_TOKENS):
     global _model
@@ -735,6 +737,14 @@ def generate_events(payload):
     system+=("\nRESPONSE MODE: VERIFIED-FILE-CONVERSATION. Talk naturally about the "
              "message in the already-read file. Do not generate code or infer tests from a path."
              if file_dialogue else "\n"+identity_response_mode)
+    if not programming.get("codingTask"):
+        system+=("\nCURRENT-TURN TOPIC PRIORITY: Interpret the user's newest message "
+                 "before using old image captions or assistant guesses. If the "
+                 "user addresses you as §wyrlz/Swurlz and asks how you are, "
+                 "answer as the assistant, not as if your name occurs in an "
+                 "earlier image. If the user corrects that interpretation, "
+                 "accept the correction immediately. Refer to prior visual "
+                 "evidence only when the user actually asks about the image.")
     if not programming.get("codingTask"):
         social_style=_social_checkin_style_hint(prompt)
         if social_style:

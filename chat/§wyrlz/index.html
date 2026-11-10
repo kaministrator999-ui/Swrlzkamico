@@ -543,7 +543,12 @@
     /* Chat usability pass 1.0.88 */
     .jump-latest{position:fixed;z-index:5;right:16px;bottom:calc(var(--composer-visible-height,70px) + 12px);min-height:38px;padding:0 13px;border:1px solid rgba(56,232,255,.38);border-radius:999px;background:rgba(3,19,34,.94);color:#dffaff;box-shadow:0 8px 24px rgba(0,0,0,.32);cursor:pointer}.jump-latest[hidden]{display:none}
     #sendButton[hidden]{display:none!important}
-    .stop-button{display:inline-grid;place-items:center;width:36px;height:36px;border:1px solid rgba(255,107,122,.42);border-radius:50%;background:rgba(65,18,31,.92);color:#ffdce2;cursor:pointer;font-size:13px}.stop-button[hidden]{display:none}
+    .stop-button{display:inline-grid;place-items:center;width:36px;height:36px;flex-shrink:0;border:1px solid rgba(255,107,122,.42);border-radius:50%;background:rgba(65,18,31,.92);color:#ffdce2;cursor:pointer;font-size:13px}.stop-button[hidden]{display:none}
+    /* Keep the old Send tap location inert while Stop is active. Android touch
+       and a rapid second tap must never hit Stop just because Send vanished. */
+    .send-control-spacer{display:block;width:36px;height:36px;flex:0 0 36px;pointer-events:none}.send-control-spacer[hidden]{display:none}
+    body.swrlz-embed-composer .send-control-spacer{width:44px;height:44px;flex-basis:44px}
+    body.swrlz-embed-composer .stop-button{width:44px;height:44px}
     .send-button{width:36px!important;height:36px!important}.send-button svg{width:16px!important;height:16px!important}
 
     /* Embedded §E touch keyboard/clipboard controls; ordinary standalone Chat unchanged. */
@@ -946,26 +951,25 @@
     .vision-level-label{display:inline-flex;align-items:center;gap:5px;max-width:100%;color:#b8ddec;font:10px/1.3 var(--font-telemetry)}
     .vision-level-label select{min-width:106px;max-width:160px;border:1px solid rgba(86,207,248,.33);border-radius:7px;background:#071e31;color:#e0faff;padding:5px;font:inherit}
     .vision-level-label select:focus-visible{outline:2px solid #67dfff}
-    .vision-level-evidence{margin:8px 0 0;padding:6px 8px;border:1px solid rgba(105,214,246,.22);border-radius:8px;background:rgba(0,17,31,.44);font:10px/1.4 var(--font-telemetry)}
-    .vision-level-evidence[hidden]{display:none!important}
-    .vision-level-evidence summary{cursor:pointer;color:#b6e9f6}
-    .vision-level-entry{padding:7px 0;border-top:1px solid rgba(105,214,246,.13);white-space:pre-wrap;overflow-wrap:anywhere;color:#b7d4e2}
-    .vision-level-entry strong{display:block;margin-bottom:3px;color:#e3faff}
-    .vision-reference-findings{margin:10px 0 8px;padding:9px 10px;border-radius:9px;border:1px solid rgba(105,214,246,.24);background:rgba(0,14,28,.42);color:#d8f2ff}
-    .vision-reference-findings[hidden]{display:none!important}
-    .vision-reference-findings-title{display:block;margin-bottom:5px;color:#f0fbff;font-size:12px}
-    .vision-reference-findings ol{list-style:decimal;margin:0;padding-left:20px;display:grid;gap:8px}
-    .vision-reference-findings li{padding-left:2px;white-space:normal;overflow-wrap:anywhere}
-    .vision-reference-findings li strong{display:block;margin-bottom:2px;color:#c2eafb}
-    .vision-reference-findings li div{white-space:pre-wrap;line-height:1.5;color:#d9eaf4}
-    .vision-reference-final{border-top:1px solid rgba(105,214,246,.25);padding-top:10px!important}
-    .vision-reference-final>strong{color:#eaffff!important}
-    .vision-reference-more{margin-top:6px;font-size:11px;color:#9fd4ee}
-    .vision-reference-more summary{cursor:pointer}
-    .vision-reference-more>div{margin-top:6px}
-
     .composer-shell.collapsed .composer-media-tools{display:none}
     .user-image-attachment{display:block;max-width:min(240px,100%);max-height:180px;object-fit:contain;border-radius:9px}
+    /* One editorial answer in the assistant bubble, not nested reports. */
+    .assistant-body.vision-editorial{padding:14px 16px 18px!important}
+    .assistant-body.vision-editorial .message-text{line-height:1.55}
+    .assistant-body.vision-editorial .message-text h2{
+      margin:0 0 13px!important;padding:0 0 9px;border-bottom:1px solid rgba(132,220,250,.28);
+      color:#effcff;font-size:19px;letter-spacing:-.015em;line-height:1.25
+    }
+    .assistant-body.vision-editorial .message-text h3{
+      margin:14px 0 5px!important;padding:10px 0 0;
+      border-top:1px solid rgba(132,220,250,.15);
+      color:#b9e9fb;font-size:13px;letter-spacing:.02em;font-weight:750;line-height:1.35
+    }
+    .assistant-body.vision-editorial .message-text h3:first-of-type{border-top:0;padding-top:0}
+    .assistant-body.vision-editorial .message-text p{margin:0 0 10px;line-height:1.6}
+    .assistant-body.vision-editorial .message-text p:last-child{margin-bottom:0}
+    .assistant-body.vision-editorial .message-text p:last-child em{font-size:11px;color:#a1becd}
+    .vision-preview-unavailable{display:block;margin-top:6px;color:#a0bcca;font-size:11px}
     .user-image-preview-button,.vision-work-preview-button{display:inline-block;margin:8px 0 0;padding:0;border:0;background:none;color:inherit;text-align:left;cursor:zoom-in;max-width:100%;touch-action:pan-y}
     .user-image-preview-button:focus-visible,.vision-work-preview-button:focus-visible{outline:2px solid #91e6ff;outline-offset:3px;border-radius:8px}
     .vision-image-dialog{box-sizing:border-box;position:fixed;inset:0;margin:auto;padding:48px 12px 12px;width:min(100vw - 18px,1100px);max-width:calc(100vw - 18px);max-height:calc(100dvh - 18px);border:1px solid rgba(105,214,246,.42);border-radius:14px;background:#071827;color:#eafaff;overflow:auto;overscroll-behavior:contain}
@@ -975,7 +979,6 @@
     .vision-image-dialog img[data-zoom="actual"]{max-width:none;max-height:none;cursor:zoom-out}
     .vision-image-dialog-hint{text-align:center;font-size:11px;margin:8px 0 0;color:#b7ddec}
 
-    .user-vision-summary{margin-top:8px;font-size:11px;color:#d4e9f7;white-space:pre-wrap}
     /* Image preflight stays in the chat viewport, not hidden in the composer. */
     /* Single scrollport: the chat viewport owns vertical dragging even when
        a swipe begins over analysis text, preview, or empty card space. */
@@ -993,8 +996,14 @@
     .vision-work-timer{margin:8px 0 4px;font:11px var(--font-telemetry,monospace);font-variant-numeric:tabular-nums;color:#a6ecf8}
     .vision-work-timer[data-long="true"]{color:#ffd29b}
     .vision-work-status{color:#a4d4e9;font-size:11px;margin-top:6px}
+    /* One progressive, provisional analysis attached to the existing progress
+       card. The authoritative assistant answer replaces it on completion. */
+    .vision-progress-observation{margin-top:10px;padding:9px 10px;border:1px solid rgba(135,218,248,.24);border-radius:10px;background:rgba(7,19,34,.72);max-height:min(290px,44vh);overflow-y:auto;overscroll-behavior:contain;touch-action:pan-y}
+    .vision-progress-observation[hidden]{display:none}
+    .vision-progress-title{font-weight:700;color:#c9f2ff;margin-bottom:6px}
+    .vision-progress-body{white-space:pre-wrap;overflow-wrap:anywhere;color:#e6f7ff;font-size:12px}
+    .vision-progress-note{color:#92c3d7;font-size:11px;margin-top:7px}
     .vision-work-card[data-state="error"] .vision-work-status{color:#ffb3c2}
-    .user-vision-summary summary{cursor:pointer}
     @media(max-width:400px){.composer-media-tools{gap:4px;padding-left:3px;padding-right:3px}.composer-media-button{padding:3px 7px;font-size:10px}.image-attachment span{max-width:78px}}
   </style>
   <script src="/chat/§wyrlz/assets/forge-embed-v1.js"></script>
@@ -1322,6 +1331,7 @@
           <button class="send-button" id="sendButton" type="button" aria-label="Send message">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12 20 4l-6 16-3-7-7-1Z"/><path d="m11 13 9-9"/></svg>
           </button>
+          <span class="send-control-spacer" id="sendControlSpacer" aria-hidden="true" hidden></span>
         </div>
       </div>
       <div class="composer-media-tools" aria-label="Message media">
@@ -1337,8 +1347,8 @@
           <span id="imageAttachmentName"></span>
           <label class="vision-level-label" for="imageVisionLevelSelect">Vision
             <select id="imageVisionLevelSelect" aria-label="Vision analysis levels">
-              <option value="1">L1 · Fast</option>
-              <option value="2" selected>L2 · Adaptive</option>
+              <option value="1" selected>L1 · Fast (1 pass)</option>
+              <option value="2">L2 · Multi-view (slow)</option>
               <option value="3">L3 · Compare all (slow)</option>
             </select>
           </label>
@@ -1355,6 +1365,7 @@
       const embedPaste = document.getElementById("swrlzEmbedPaste");
       if(new URLSearchParams(location.search).get("forgeEmbed")==="1")document.body.classList.add("swrlz-embed-composer");
       const stopButton = document.getElementById("stopButton");
+      const sendControlSpacer=document.getElementById("sendControlSpacer");
       const imagePicker=document.getElementById("imagePicker");
       const imagePickButton=document.getElementById("imagePickButton");
       const imageRemoveButton=document.getElementById("imageRemoveButton");
@@ -1367,6 +1378,7 @@
       const VISION_START="\n\n[Uploaded image — vision description, not original pixels]\n";
       const VISION_END="\n[/Uploaded image]";
       const imagePreviews=new Map();
+      // Ephemeral source regions, paired with temporary image object URLs.
       let selectedImage=null, speechRecognition=null;
       const composerNotice=(message,error=false)=>{
         composerFeedback.textContent=message||"";
@@ -1379,7 +1391,7 @@
         if(selectedImage){
           imageAttachmentThumbnail.src=selectedImage.url;
           imageAttachmentName.textContent=selectedImage.file.name;
-          imageVisionLevelSelect.value=String(selectedImage.analysisLevels||2);
+          imageVisionLevelSelect.value=String(selectedImage.analysisLevels||1);
         }
       };
       const removeSelectedImage=()=>{
@@ -1395,12 +1407,13 @@
           composerNotice("Choose a JPEG, PNG, or WebP under 8 MB.",true);return;
         }
         removeSelectedImage();
-        selectedImage={file,url:URL.createObjectURL(file),analysisLevels:2};
+        selectedImage={file,url:URL.createObjectURL(file),analysisLevels:1};
         updateImagePreview();composerNotice("");
       });
       imageVisionLevelSelect.addEventListener("change",()=>{
-        if(selectedImage)selectedImage.analysisLevels=Number(imageVisionLevelSelect.value)||2;
-        if(imageVisionLevelSelect.value==="3")composerNotice("L3 compares all three real CPU passes. This is slower; captions will be saved in the chat for comparison.");
+        if(selectedImage)selectedImage.analysisLevels=Number(imageVisionLevelSelect.value)||1;
+        if(imageVisionLevelSelect.value==="3")composerNotice("L3 compares three full-image passes plus optional details; local CPU processing can take several minutes.");
+        else if(imageVisionLevelSelect.value==="2")composerNotice("L2 analyzes individual views and then combines them; a five-view reference can take 6+ minutes on the local CPU.");
         else composerNotice("");
       });
       imageRemoveButton.addEventListener("click",()=>{removeSelectedImage();composerNotice("");});
@@ -1433,8 +1446,12 @@
         activity.update("PREPARING");
         const image=await encodeImageForVision(attachment);
         activity.note("Original image preserved for server-side processing.");
+        // Stable across HTTP retries, unique for each intentional Send. A
+        // repeat upload is a NEW inference, even with identical image/question.
+        const visionRequestId=uid("vision");
         const body=JSON.stringify({image,question:question||"Describe this image.",
-          analysisLevels:Math.max(1,Math.min(3,Number(attachment.analysisLevels)||2))});
+          analysisLevels:Math.max(1,Math.min(3,Number(attachment.analysisLevels)||1)),
+          visionRequestId});
         let jobId="",reconnects=0,pollingErrors=0;
         const acceptJob=async()=>{
           let attempted=false;
@@ -1470,6 +1487,8 @@
             }
             activity.jobId=String(result.jobId);
             activity.update(result.phase||"QUEUED");
+            if(result.resumedExistingJob===true)
+              activity.note("Resumed a previously accepted upload; no new inference started.");
             await activity.onAccepted?.(); // Accepted vision job; establish its real conversation now.
             return String(result.jobId);
           }
@@ -1667,16 +1686,23 @@
         const timer=document.createElement("div");timer.className="vision-work-timer";timer.setAttribute("aria-label","Elapsed processing time");
         const status=document.createElement("div");status.className="vision-work-status";status.setAttribute("role","status");status.setAttribute("aria-live","polite");
         const sourceInfo=document.createElement("div");sourceInfo.className="vision-work-status";sourceInfo.hidden=true;
-        const findings=document.createElement("section");findings.className="vision-reference-findings";findings.hidden=true;
-        findings.setAttribute("aria-label","Modeling reference analysis findings");
-        const findingsTitle=document.createElement("strong");findingsTitle.className="vision-reference-findings-title";
-        findingsTitle.textContent="Reference image observations";
-        const findingsList=document.createElement("ol");findingsList.setAttribute("aria-live","polite");
-        findings.append(findingsTitle,findingsList);
-        const evidence=document.createElement("details");evidence.className="vision-level-evidence";evidence.hidden=true;
-        const evidenceSummary=document.createElement("summary");evidenceSummary.textContent="Observed levels";
-        const evidenceContents=document.createElement("div");evidence.append(evidenceSummary,evidenceContents);
-        root.append(header,message,previewButton,steps,timer,sourceInfo,status,findings,evidence);messageList.appendChild(root);
+        // Show L1 as the first useful provisional answer and append L2 crop
+        // observations inside this SAME live surface. No premature persisted
+        // assistant turn; the single final assistant message replaces it.
+        const progressive=document.createElement("section");
+        progressive.className="vision-progress-observation";
+        progressive.hidden=true;
+        progressive.setAttribute("aria-label","Provisional image observations");
+        const progressiveTitle=document.createElement("div");
+        progressiveTitle.className="vision-progress-title";
+        const progressiveBody=document.createElement("div");
+        progressiveBody.className="vision-progress-body";
+        const progressiveNote=document.createElement("div");
+        progressiveNote.className="vision-progress-note";
+        progressiveNote.textContent="Local model observations · unverified. The final reply will reconcile the views.";
+        progressive.append(progressiveTitle,progressiveBody,progressiveNote);
+        root.append(header,message,previewButton,steps,timer,sourceInfo,status,progressive);
+        messageList.appendChild(root);
         const initialTime=Date.now();
         const durationText=seconds=>{
           const n=Math.max(0,Math.floor(Number(seconds)||0)),m=Math.floor(n/60),sec=String(n%60).padStart(2,"0");
@@ -1687,70 +1713,7 @@
         const activity={
           root,originThreadId:activeThreadId,originDraft:draftThread,
           jobId:"",abort:new AbortController(),phase:"",phaseStart:initialTime,
-          serverTiming:null,interval:null,renderedLevels:"",renderedFindings:"",
-          showReferenceFindings(timing){
-            // Show only completed model observations. Keep the entire first
-            // output in an opt-in disclosure instead of filling the viewport
-            // and repeating the same long text in the raw-output box.
-            if(timing?.referenceProgress!==true)return;
-            const overview=timing.levelRecords?.[0]?.description;
-            if(typeof overview!=="string"||!overview.trim())return;
-            const regions=Array.isArray(timing.spatialRegionRecords)?timing.spatialRegionRecords:[];
-            const entries=[["Whole-image overview",overview,false]];
-            for(const region of regions){
-              if(typeof region.description==="string"&&region.description.trim())
-                entries.push([String(region.region||"Focused detail"),region.description,false]);
-            }
-            const integrated=timing.integratedObservation?.description;
-            if(timing.integratedSelected===true&&typeof integrated==="string"&&integrated.trim())
-              entries.push(["Final modeling description",integrated,true]);
-            const signature=JSON.stringify(entries);
-            if(signature===this.renderedFindings)return;
-            this.renderedFindings=signature;findings.hidden=false;
-            findingsList.replaceChildren();
-            for(const [name,body,isFinal] of entries){
-              const item=document.createElement("li");
-              if(isFinal)item.classList.add("vision-reference-final");
-              const heading=document.createElement("strong");heading.textContent=name;
-              item.append(heading);
-              const content=document.createElement("div");
-              if(!isFinal&&body.length>420){
-                // Preview ends on a complete sentence or line whenever
-                // possible. The exact raw observation remains one tap away.
-                const cut=body.slice(0,390);
-                const boundary=Math.max(cut.lastIndexOf(". "),cut.lastIndexOf("\n"));
-                const preview=(boundary>180?cut.slice(0,boundary+1):cut).trimEnd();
-                content.textContent=preview+"…";
-                const more=document.createElement("details");
-                more.className="vision-reference-more";
-                const label=document.createElement("summary");label.textContent="Read full observation";
-                const full=document.createElement("div");full.textContent=body;
-                more.append(label,full);item.append(content,more);
-              }else{
-                content.textContent=body;item.append(content);
-              }
-              findingsList.append(item);
-            }
-          },
-          showLevels(records,selected){
-            if(!Array.isArray(records)||!records.length)return;
-            const signature=records.map(x=>[x.level,x.description,x.elapsedSeconds].join("|")).join("~")+"|"+selected;
-            if(signature===this.renderedLevels)return;
-            this.renderedLevels=signature;evidence.hidden=false;
-            evidenceSummary.textContent="Raw model output · "+records.length+" level"+(records.length===1?"":"s")+" (expand if needed)";
-            evidenceContents.replaceChildren();
-            for(const record of records){
-              const entry=document.createElement("div");entry.className="vision-level-entry";
-              const heading=document.createElement("strong");
-              const noDescriptors=records.every(item=>Number(item.descriptorCount||0)===0);
-              heading.textContent="L"+record.level+" · "+record.inputMaxSide+"px · "+
-                Number(record.elapsedSeconds||0).toFixed(2)+"s"+
-                (selected===record.level?(noDescriptors?" · fallback (no descriptors)":" · selected by heuristic"):"");
-              const body=document.createElement("div");
-              body.textContent=String(record.description||"");
-              entry.append(heading,body);evidenceContents.append(entry);
-            }
-          },
+          serverTiming:null,interval:null,
           tick(){
             const now=Date.now();
             const timing=this.serverTiming&&this.serverTiming.phase===this.phase
@@ -1808,8 +1771,28 @@
               if(!sourceInfo.textContent.includes("Loaded local vision model:"))
                 sourceInfo.textContent+=(sourceInfo.textContent?"\n":"")+line;
             }
-            if(timing?.levelRecords)this.showLevels(timing.levelRecords,Number(timing.selectedLevel)||1);
-            this.showReferenceFindings(timing);
+            if(phase==="ANALYZING"&&Number(timing?.requestedLevels)>=2){
+              const first=Array.isArray(timing.levelRecords)
+                ?timing.levelRecords.find(item=>item?.level===1&&typeof item.description==="string")
+                :null;
+              const firstText=String(first?.description||"").trim();
+              if(firstText){
+                const crops=Array.isArray(timing.spatialRegionRecords)
+                  ?timing.spatialRegionRecords.filter(item=>item&&typeof item.description==="string")
+                  :[];
+                const additional=crops.slice(0,8).map(item=>{
+                  const label=String(item.region||"Source view").slice(0,65);
+                  const observation=String(item.description||"").trim().slice(0,420);
+                  return observation?label+": "+observation:"";
+                }).filter(Boolean);
+                progressive.hidden=false;
+                progressiveTitle.textContent=additional.length
+                  ?"Initial L1 overview · "+additional.length+" additional view observation"+(additional.length===1?"":"s")
+                  :"Initial L1 overview · analyzing additional views";
+                progressiveBody.textContent=firstText.slice(0,1100)+
+                  (additional.length?"\n\nMore observations (unverified):\n"+additional.join("\n\n"):"");
+              }
+            }
             if(detail)status.textContent=detail;
             else if(timing?.integratedOutcome==="FAILED")status.textContent="Whole-image synthesis failed; retaining raw region observations.";
             else if(timing?.integratedOutcome==="NOT_SELECTED")status.textContent="Whole-image synthesis too generic; retaining raw region observations.";
@@ -1820,6 +1803,8 @@
             else if(observed==="DETAIL_PREFILL")status.textContent="Refining visual details from a higher-resolution image…";
             else if(observed==="DETAIL_DECODING")status.textContent="Level 2 · generating more specific details… first text after "+
                 durationText(timing.firstChunkSeconds??0);
+            else if(observed==="REGION_PREFILL")status.textContent="Analyzing view "+(Math.max(0,Number(timing.completedRegions)||0)+1)+"/"+(Math.max(1,Number(timing.requestedRegions)||1))+" · preparing image crop…";
+            else if(observed==="REGION_DECODING")status.textContent="Analyzing view "+(Math.max(0,Number(timing.completedRegions)||0)+1)+"/"+(Math.max(1,Number(timing.requestedRegions)||1))+" · generating visual details…";
             else if(observed==="LEVEL3_RETRY")status.textContent="Level 3 · preparing deep image comparison…";
             else if(observed==="LEVEL3_PREFILL")status.textContent="Level 3 · reading retained 768px image…";
             else if(observed==="LEVEL3_DECODING")status.textContent="Level 3 · generating deep description… first text after "+
@@ -3027,9 +3012,138 @@
         }else card.append(top,file,repo,facts,details);
         container.appendChild(card);
       };
+      // Past saved responses may contain the original unformatted vision
+      // output. Reformat presentation only; the original message and export
+      // are not rewritten or represented as newly re-analyzed pixels.
+      const formatLegacyVisionReply=value=>{
+        const source=String(value||"");
+        const prefix="Local image analyzer's description (not directly inspected by §C):";
+        if(!source.startsWith(prefix))return null;
+        const completeModelText=source.slice(prefix.length).trim();
+        let body=completeModelText
+          .split("\n\n[Raw source-crop observations; accuracy unverified]\n",1)[0]
+          .split(/\n\s*Focused image details\s*\(unverified source-crop observations\):/i,1)[0]
+          .replace(/^Character reference[^\n]*\n\s*/i,"").trim();
+        if(!body)return null;
+        const aliases={
+          "subject and views":"Subject & views","views and subject":"Subject & views",
+          "view comparisons":"View-by-view details","view comparison":"View-by-view details",
+          "shape and proportions":"Shape & proportions","shape and anatomy":"Appearance & silhouette",
+          "silhouette and anatomy":"Appearance & silhouette",
+          "geometry and layers":"Geometry & layers","shape and construction":"Geometry & layers",
+          "clothing and surfaces":"Clothing & surfaces",
+          "clothing and surface detail":"Clothing & surfaces",
+          "materials and markings":"Materials & markings",
+          "props and contact":"Props & contact",
+          "props and small features":"Props & details",
+          "props and fine details":"Props & details",
+          "visibility limits":"Visibility limits",
+          "visibility and uncertainty":"Visibility limits"
+        };
+        const labels=/^(Subject and views|Views and subject|View comparisons|View comparison|Shape and proportions|Shape and anatomy|Silhouette and anatomy|Geometry and layers|Shape and construction|Clothing and surfaces|Clothing and surface detail|Materials and markings|Props and contact|Props and small features|Props and fine details|Visibility limits|Visibility and uncertainty):\s*/gim;
+        const matches=[...body.matchAll(labels)];
+        // Report display is not a second visual inspection. Use the raw
+        // caption/crop notes only to detect uncertain page-relative hands.
+        const staffSides=new Set();
+        completeModelText.split(/(?<=[.!?;])\s+|\n+/).forEach(line=>{
+          if(!/\bstaff\b/i.test(line))return;
+          for(const side of line.matchAll(/\b(left|right)\s+hand\b/gi))
+            staffSides.add(side[1].toLowerCase());
+        });
+        const conflictingStaffHands=staffSides.size>1;
+        const clothingMentionsBoots=matches.some((match,index)=>{
+          if(!/clothing|materials/i.test(match[1]))return false;
+          const end=index+1<matches.length?matches[index+1].index:body.length;
+          return /\bboots?\b/i.test(body.slice(match.index+match[0].length,end));
+        });
+        const roleText={};
+        matches.forEach((match,index)=>{
+          const end=index+1<matches.length?matches[index+1].index:body.length;
+          const role=aliases[match[1].toLowerCase()]||match[1];
+          roleText[role]=(roleText[role]||"")+" "+body.slice(match.index+match[0].length,end);
+        });
+        const roleContent=prefix=>Object.entries(roleText)
+          .filter(([name])=>prefix.some(p=>name.startsWith(p)))
+          .map(([,value])=>value).join(" ");
+        const propsText=roleContent(["Props"]);
+        const clothingText=roleContent(["Clothing","Materials"]);
+        const appearanceText=roleContent(["Appearance","Shape"]);
+        const viewWords=new Set((body.match(/\b(?:front|back|top|side)\b/gi)||[]).map(x=>x.toLowerCase()));
+        const turnaround=viewWords.size>=3&&/\bviews?\b/i.test(body);
+        const filterClaim=(sentence,heading)=>{
+          const line=sentence.trim();
+          if(!line)return"";
+          if(!turnaround)return line;
+          if(/^(?:no|none|without)\b/i.test(line)||
+              /\b(?:no|without|zero)\s+occlusion\b/i.test(line)||
+              /\b(?:all|every)\s+(?:limbs|parts|hands|heads?|views?|angles?)\b/i.test(line)||
+              /\b(?:in|across|from)\s+(?:all|every)\s+(?:views?|angles?)\b/i.test(line))return"";
+          if(conflictingStaffHands&&/\bstaff\b/i.test(line)&&
+              /\b(?:left|right)\s+hand\b/i.test(line))return"";
+          if(clothingMentionsBoots&&/shape|silhouette|anatomy|proportion/i.test(heading)&&
+              /\bboots?\b/i.test(line)&&
+              !/\b(?:stance|footprint|width|wide|size|proportion|silhouette|outline)\b/i.test(line))
+            return"";
+          const topics=[];
+          const role=aliases[heading.toLowerCase()]||heading;
+          if(/^(Appearance|Shape)/.test(role)&&/\bstaff\b/i.test(propsText))topics.push("staff");
+          if(/^(Clothing|Materials)/.test(role)&&/\b(?:satchel|pouch)\b/i.test(propsText))topics.push("pouch");
+          if(/^Props/.test(role)){
+            if(/\b(?:belt|buckle)\b/i.test(clothingText))topics.push("belt");
+            if(/\bhood\b/i.test(clothingText))topics.push("hood");
+            if(/\b(?:hair|braids?)\b/i.test(appearanceText))topics.push("hair");
+            if(/\beyes?\b/i.test(appearanceText))topics.push("eyes");
+          }
+          const has=(r)=>r.test(line);
+          if(topics.includes("staff")&&has(/\bstaff\b/i)&&
+              !has(/\b(?:front|back|top|side|view|silhouette|width|size|proportion|stance|outline)\b/i))return"";
+          if(topics.includes("pouch")&&has(/\b(?:pouch|satchel)\b/i)&&
+              !has(/\b(?:belt|buckle|robe|trim|cape)\b/i))return"";
+          if(topics.includes("belt")&&has(/\b(?:belt|buckle)\b/i)&&
+              !has(/\b(?:pouch|satchel|robe|cape|hem)\b/i))return"";
+          if(topics.includes("hood")&&has(/\bhood\b/i)&&
+              !has(/\b(?:staff|pouch|satchel|stance|silhouette)\b/i))return"";
+          if(topics.includes("hair")&&has(/\b(?:hair|braids?)\b/i)&&
+              !has(/\b(?:staff|pouch|satchel|hood)\b/i))return"";
+          if(topics.includes("eyes")&&has(/\beyes?\b/i)&&
+              !has(/\b(?:staff|pouch|satchel|hood)\b/i))return"";
+          const qualified=line.replace(/\bhas layered (?:geometry|construction) with visible\b/gi,
+                                       "appears layered, with");
+          return /[.!?][\\"\u201d\u2019\u0027)\]]*$/.test(qualified)?qualified:qualified.replace(/;$/,"")+".";
+        };
+        if(matches.length>=2){
+          const sections=[],seen=new Set(),seenClaims=new Set();
+          matches.slice(0,8).forEach((match,index)=>{
+            const end=index+1<matches.length?matches[index+1].index:body.length;
+            let detail=body.slice(match.index+match[0].length,end).replace(/\s*\n\s*/g," ").trim();
+            if(!detail)return;
+            detail=detail.split(/(?<=[.!?;])\s+/).map(sentence=>filterClaim(sentence,match[1])).filter(Boolean)
+              .filter(sentence=>{
+                const claim=sentence.toLowerCase().replace(/[^\p{L}\p{N}]+/gu," ").trim();
+                if(!claim||seenClaims.has(claim))return false;
+                seenClaims.add(claim);return true;
+              }).join(" ");
+            if(!detail)return;
+            const heading=aliases[match[1].toLowerCase()]||match[1];
+            const key=heading.toLowerCase()+"|"+detail.toLowerCase().replace(/\s+/g," ");
+            if(seen.has(key))return;
+            seen.add(key);
+            sections.push("### "+heading+"\n\n"+detail);
+          });
+          if(sections.length)body=sections.join("\n\n");
+        }
+        return "## Image analysis\n\n"+body+
+          "\n\n*Based on the local image model's observations; not independently verified.*";
+      };
       const renderAssistantContent=(container,text,messageId="",presentationHint="",verifiedContext=null,archiveContext=null)=>{
         container.innerHTML="";
         const rawSource=String(text||"");
+        const legacyVision=formatLegacyVisionReply(rawSource);
+        const visionFinal=legacyVision!==null||/^## Image analysis(?:\n|$)/.test(rawSource);
+        const displaySource=legacyVision||rawSource;
+        container.classList.toggle("vision-editorial",visionFinal);
+        // Copy the readable final answer. Original upstream text remains
+        // preserved in chat history and its provenance-labeled export.
         originalRenderedSources.set(container,rawSource);
         // Rendering a repository browser requires Station-verified same-message
         // GitHub evidence. The model may output "## GitHub directory: /" as prose:
@@ -3061,7 +3175,7 @@
         }
         const sourceContext=splitGitHubSourcePreamble(rawSource)
           ||splitVerifiedGitHubFilePreamble(rawSource,verifiedContext);
-        const source=sourceContext?sourceContext.body:rawSource;
+        const source=sourceContext?sourceContext.body:displaySource;
         if(sourceContext)appendGitHubSourceCard(container,sourceContext);
         let cursor=0,match,codeIndex=0;
         const appendInlineStyles=(parent,value)=>{
@@ -3443,7 +3557,8 @@
         const messages=(thread.messages||[]).map(msg=>[
           String(msg?.id||""),String(msg?.role||""),String(msg?.text||""),
           !!pins[String(msg?.id||"")],String(msg?.meta?.state||msg?.state||""),
-          String(msg?.meta?.artifactRevision||""),String(msg?.meta?.contentTag||""),JSON.stringify(msg?.meta?.widgets||[]),Number(msg?.createdAt||0)
+          String(msg?.meta?.artifactRevision||""),String(msg?.meta?.contentTag||""),JSON.stringify(msg?.meta?.widgets||[]),
+          JSON.stringify(msg?.meta?.visionResourceUsage||null),Number(msg?.createdAt||0)
         ]);
         const artifactState=artifacts.map(a=>[
           String(a?.id||""),Number(a?.currentRevision||0),String(a?.title||""),
@@ -3472,6 +3587,7 @@
         msg?.createdAt,msg?.meta?.state,msg?.state,msg?.meta?.requestId,
         msg?.meta?.contentTag,msg?.meta?.artifactRevision,
         msg?.meta?.widgets,msg?.meta?.progressTrace,msg?.meta?.githubContext,
+        msg?.meta?.visionResourceUsage,
         msg?.meta?.evidence, msg?.codeArtifact, thread?.messagePins?.[msg?.id],
         msg?.role==="assistant"?precedingPrompt:"",
         chatAccountUser?.displayName,chatAccountUser?.email,chatAccountUser?.picture
@@ -3528,6 +3644,23 @@
             const imageText=String(msg.text||"");
             const imageStart=imageText.indexOf(VISION_START);
             const hasVision=imageStart>=0&&imageText.endsWith(VISION_END);
+            // Native Station persists an owner/description-verified vision job
+            // resource receipt. Show its measured wall time even after the
+            // transient progress card is removed or the thread is reloaded.
+            // No client timing is trusted or written into the model's prompt.
+            const visionReceipt=msg?.meta?.visionResourceUsage;
+            const visionMs=visionReceipt?.usage?.wallTimeMs;
+            if(hasVision&&visionReceipt?.source==="owner-and-description-verified-vision-job"&&
+                visionReceipt?.usage?.outcome==="COMPLETE"&&Number.isFinite(visionMs)&&
+                visionMs>=0&&visionMs<86400000){
+              const minutes=Math.floor(visionMs/60000);
+              const seconds=String(Math.floor(visionMs/1000)%60).padStart(2,"0");
+              const duration=document.createElement("span");
+              duration.className="vision-completion-time";
+              duration.textContent=" · Vision "+minutes+":"+seconds;
+              duration.title="Server-measured image analysis time, excluding the follow-up chat response";
+              meta.appendChild(duration);
+            }
             if(hasVision){
               bubble.textContent=imageText.slice(0,imageStart)||"Image attached";
               const previewURL=imagePreviews.get(msg.id||"");
@@ -3540,13 +3673,14 @@
                 expand.title="Tap to enlarge image";expand.append(image);
                 expand.addEventListener("click",()=>openVisionImagePreview(previewURL,"Uploaded image"));
                 bubble.appendChild(expand);
+              }else{
+                // The pixel upload is intentionally not persisted in chat
+                // history. Do not show saved analyzer text in its place.
+                const unavailable=document.createElement("span");
+                unavailable.className="vision-preview-unavailable";
+                unavailable.textContent="Image preview unavailable after reload";
+                bubble.appendChild(unavailable);
               }
-              const details=document.createElement("details");details.className="user-vision-summary";
-              const summary=document.createElement("summary");
-              summary.textContent=previewURL?"Image analyzed":"Image analyzed · original image not stored";
-              const description=document.createElement("div");
-              description.textContent=imageText.slice(imageStart+VISION_START.length,-VISION_END.length);
-              details.append(summary,description);bubble.appendChild(details);
             }else if(persistedTag==="container:code"||persistedTag==="container:lyrics"){
               bubble.classList.add("user-container-message");
               const syntheticFence=(persistedTag==="container:lyrics"?"lyrics":"code")+"\n"+String(msg.text||"");
@@ -3684,6 +3818,7 @@
         const active=stationGenerationActive()||(sending&&!stationGeneration?.terminal);
         sendButton.disabled=stationBusy();imagePickButton.disabled=stationBusy();micButton.disabled=stationBusy();
         sendButton.hidden=active;stopButton.hidden=!active;
+        sendControlSpacer.hidden=!active;
         const requestId=stationAcknowledgedRequest?.requestId||stationGeneration?.requestId;
         stopButton.disabled=!!stationCancellation&&stationCancellation.requestId===requestId;
       };
@@ -4280,7 +4415,7 @@
           transportCamera("before-fetch");
           let response;
           try{
-            response=await fetch(sendPath,{method:"POST",credentials:"same-origin",cache:"no-store",headers:{"Content-Type":"application/json","X-SWRLZ-Request-Id":requestId},body:JSON.stringify({protocolVersion:2,requestId,prompt:text,threadId:submission.threadId,messageId:userMessageId,assistantMessageId,contentTag,modelId:(["700m","stock","coder"].includes(settingsState.model.defaultModel)?settingsState.model.defaultModel:"700m"),profileId:String(settingsState.general.personalityProfile||"default"),ingress:"SWRLZ_LALM_STATION",timeZone:(()=>{try{return Intl.DateTimeFormat().resolvedOptions().timeZone||"UTC"}catch(_){return "UTC"}})(),...(clientLocation?{clientLocation}:{}),...forgeBinding})});
+            response=await fetch(sendPath,{method:"POST",credentials:"same-origin",cache:"no-store",headers:{"Content-Type":"application/json","X-SWRLZ-Request-Id":requestId},body:JSON.stringify({protocolVersion:2,requestId,prompt:text,threadId:submission.threadId,messageId:userMessageId,assistantMessageId,contentTag,...(attachment&&activity?.jobId?{visionJobId:activity.jobId}:{}),modelId:(["700m","stock","coder"].includes(settingsState.model.defaultModel)?settingsState.model.defaultModel:"700m"),profileId:String(settingsState.general.personalityProfile||"default"),ingress:"SWRLZ_LALM_STATION",timeZone:(()=>{try{return Intl.DateTimeFormat().resolvedOptions().timeZone||"UTC"}catch(_){return "UTC"}})(),...(clientLocation?{clientLocation}:{}),...forgeBinding})});
             transportCamera("fetch-response",{status:response.status,ok:response.ok});
           }catch(networkError){
             transportCamera("fetch-network-failed",{error:String(networkError?.message||networkError)});
@@ -4398,6 +4533,10 @@
         }
       };
       stopButton.addEventListener("click",async()=>{
+        // A touch can synthesize a second click as Send is replaced by Stop.
+        // Suppress only the same immediate touch gesture; later intentional
+        // Stop presses still reach the authenticated cancel endpoint.
+        if(performance.now()-lastTouchSend<1000)return;
         const rid=String(stationAcknowledgedRequest?.requestId||stationGeneration?.requestId||"");if(!rid)return;
         if(stationCancellation?.requestId===rid)return;
         const projectionEpoch=accountProjectionEpoch,cancellation={projectionEpoch,requestId:rid};
@@ -5202,6 +5341,10 @@
         window.SwrlzForgeEmbedV1?.notifyAccount(accountUser);
         if(priorUserId!==(accountUser?.id||"")){
           accountProjectionEpoch++;streamAbortController?.abort();clearTimeout(stationPoll);
+          // Model crop evidence and local upload previews belong to one account
+          // session. Release both when the account projection changes.
+          for(const previewUrl of imagePreviews.values())URL.revokeObjectURL(previewUrl);
+          imagePreviews.clear();
           chatThreads=[];activeThreadId="";pendingDraftThread=null;stationGeneration=null;stationAwaitingCommit="";stationAcknowledgedRequest=null;stationSubmission=null;stationCancellation=null;stationSyncOwner=null;stationSyncAgain=false;sending=false;streamAbortController=null;stationSettledRequests.clear();forgeNativeProgress.clear();syncStationControls();chatRevision=0;
           draftThread=!accountUser;window.SwrlzForgeEmbedV1?.setThread("");renderThreads();
         }
@@ -5377,6 +5520,10 @@
       });
       window.addEventListener("swrlz-forge-account-changed",()=>{
         accountProjectionEpoch++;streamAbortController?.abort();clearTimeout(stationPoll);
+          // Model crop evidence and local upload previews belong to one account
+          // session. Release both when the account projection changes.
+          for(const previewUrl of imagePreviews.values())URL.revokeObjectURL(previewUrl);
+          imagePreviews.clear();
         chatThreads=[];activeThreadId="";pendingDraftThread=null;stationGeneration=null;stationAwaitingCommit="";stationAcknowledgedRequest=null;stationSubmission=null;stationCancellation=null;stationSyncOwner=null;stationSyncAgain=false;sending=false;streamAbortController=null;stationSettledRequests.clear();forgeNativeProgress.clear();syncStationControls();chatRevision=0;draftThread=true;
         renderThreads();renderConversation(null);refreshAccount();
       });

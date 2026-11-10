@@ -257,9 +257,18 @@ def select_modeling_lesson(
         topic = "general"
     lesson = _BASE + " " + _TOPICS[topic]
     if role == "planner":
-        lesson += (
+        # Reserve room for the fail-closed planner rule even when a long
+        # topic description reaches the bounded lesson limit.
+        directive = (
             " For the JSON planner, unsupported operations must return "
             "disposition=clarify with an empty operations list; "
             "no extra operation types are permitted."
         )
+        budget = 1150 - len(directive)
+        context_text = lesson[:budget].rstrip()
+        if len(lesson) > budget:
+            last_sentence = context_text.rfind(". ")
+            if last_sentence >= 180:
+                context_text = context_text[:last_sentence + 1]
+        return context_text + directive
     return lesson[:1150]

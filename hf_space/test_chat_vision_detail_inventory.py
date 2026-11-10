@@ -103,7 +103,7 @@ class DetailedImageRoutingTests(unittest.TestCase):
         self.assertIn("Whole scene:", fused_input[0]["text"])
         self.assertIn("Center-right detail", fused_input[0]["text"])
         self.assertEqual(fused_input[1]["type"], "image_url")
-        self.assertEqual(model.calls[-1]["max_tokens"], 192)
+        self.assertEqual(model.calls[-1]["max_tokens"], 384)
         self.assertTrue(any(fields.get("integratedSelected") is True for _, fields in phases))
         self.assertEqual(model.calls[0]["max_tokens"], chat_vision.MAX_VISION_OUTPUT_TOKENS)
         self.assertEqual(model.calls[1]["max_tokens"], 128)
