@@ -61,7 +61,7 @@ for token in [
 
 ]:
     assert token in html,token
-assert html.count(" source.engine='§wyrl§ Engine · Maker v11.377';source.version=11.376;")==5
+assert html.count(" source.engine='§wyrl§ Engine · Maker v11.377';source.version=11.377;")==5
 # The project save handlers must be in the same authenticated Chat-host closure
 # as cloudRefs, RPC and the existing on-device library.
 assert html.index("const PROTOCOL='swrlz-forge-chat-v1'") < html.index('const se371CloudLinks=new Map();')
