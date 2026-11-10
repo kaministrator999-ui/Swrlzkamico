@@ -63,7 +63,7 @@ for token in [
 
 ]:
     assert token in html,token
-assert html.count(" source.engine='§wyrl§ Engine · Maker v11.380';source.version=11.378;")==5
+assert html.count(" source.engine='§wyrl§ Engine · Maker v11.380';source.version=11.380;")==5
 # The project save handlers must be in the same authenticated Chat-host closure
 # as cloudRefs, RPC and the existing on-device library.
 assert html.index("const PROTOCOL='swrlz-forge-chat-v1'") < html.index('const se371CloudLinks=new Map();')
@@ -82,8 +82,8 @@ subprocess.run(['node',str(ROOT/'scripts/test_v11_375_image_blockout.cjs')],chec
 subprocess.run(['node','--check',str(ROOT/'runtime/model_vr_selector_lasso_v11_376.js')],check=True)
 subprocess.run(['node','--check',str(ROOT/'runtime/model_image_outlines_v11_377.js')],check=True)
 subprocess.run(['node',str(ROOT/'scripts/test_v11_377_image_outlines.cjs')],check=True)
-subprocess.run(['node','--check',str(ROOT/'runtime/model_image_stable_lofts_v11_380.js')],check=True)
-subprocess.run(['node',str(ROOT/'scripts/test_v11_380_stable_lofts.cjs')],check=True)
+subprocess.run(['node','--check',str(ROOT/'runtime/model_image_stable_lofts_v11_378.js')],check=True)
+subprocess.run(['node',str(ROOT/'scripts/test_v11_378_stable_lofts.cjs')],check=True)
 subprocess.run(['node',str(ROOT/'scripts/test_v11_376_vr_selector_lasso.cjs'),str(out/'index.html')],check=True)
 for source in ['runtime/sheep_vr_frame_cadence_v11_379.js','runtime/engine_advanced_graphics_v11_380.js']:
     subprocess.run(['node','--check',str(ROOT/source)],check=True)
