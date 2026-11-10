@@ -404,6 +404,6 @@
     "patches/v11_380_graphics_performance_tabs.py",
     "patches/v11_381_sheep_xr_guest_sync.py"
   ],
-  "finalBytes": 9531450,
-  "finalSha256": "bc3497e22269ad38ccbfef0d4defbd4b628892bf9f8b960a64d1fdb492dfc6c8"
+  "finalBytes": 9530598,
+  "finalSha256": "10d562b9eecfd12a8bd967ce393d1018d1a6aeaaad11a753207f1c87e845e33a"
 }

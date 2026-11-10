@@ -1,14 +1,17 @@
-name: §E v11.381 Quest guest candidate validation
+name: §E v11.381 sealed Quest guest verification
+
 on:
   push:
     branches: [fix/sheep-xr-guest-sync-381]
     paths:
       - 'projects/swrlz-forge-moba/**'
       - '.github/workflows/preview-se381-source-digest.yml'
+
 permissions:
   contents: read
+
 jobs:
-  validate:
+  verify:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -16,34 +19,5 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - name: Targeted Quest guest LAN tests
-        run: |
-          node --check projects/swrlz-forge-moba/runtime/sheep_xr_guest_sync_v11_381.js
-          node projects/swrlz-forge-moba/tests/test_sheep_xr_guest_sync_v11_381.cjs
-          python -m py_compile projects/swrlz-forge-moba/patches/v11_381_sheep_xr_guest_sync.py
-      - name: Rebuild candidate from sealed v11.380 base, measure exact source
-        run: |
-          python - <<'PY'
-          import base64,gzip,hashlib,importlib.util,json
-          from pathlib import Path
-          root=Path('projects/swrlz-forge-moba').resolve()
-          m=json.loads((root/'source-manifest.json').read_text())
-          assert m['name'] in ('§wyrl§ Engine v11.380','§wyrl§ Engine v11.381')
-          raw=gzip.decompress(base64.b64decode(''.join((root/p).read_text().strip() for p in m['chunks'])))
-          assert hashlib.sha256(raw).hexdigest()==m['baseSha256']
-          html=raw.decode('utf8')
-          patches=m['patches'][:]
-          if patches[-1]!='patches/v11_381_sheep_xr_guest_sync.py':
-            patches.append('patches/v11_381_sheep_xr_guest_sync.py')
-          for i,rel in enumerate(patches):
-            spec=importlib.util.spec_from_file_location('se381_preview_'+str(i),root/rel)
-            mod=importlib.util.module_from_spec(spec);spec.loader.exec_module(mod)
-            html=mod.apply(html)
-          assert "SWYRL_ENGINE_DEPLOY_MARKER: V11_381_XR_GUEST_HOST_SYNC" in html
-          assert "window.SWRLZ_FORGE_BUILD={version:'v11.381'" in html
-          assert "SWYRL_ENGINE_SHEEP_XR_GUEST_381" in html
-          out=html.encode('utf8')
-          print('SE381_CANDIDATE_BYTES='+str(len(out)),flush=True)
-          print('SE381_CANDIDATE_SHA256='+hashlib.sha256(out).hexdigest(),flush=True)
-          print('SE381_CANDIDATE_PATCHES='+str(len(patches)),flush=True)
-          PY
+      - name: Verify complete sealed source and focused Quest guest regression
+        run: python projects/swrlz-forge-moba/scripts/verify_v11_381_release.py --output dist/se381-candidate
