@@ -1,3 +1,7 @@
+## §E v11.375 — Integrated image-to-editable 3D blockout (2026-11-10)
+
+A blank Model Studio project can now use the existing § Chat panel's local image upload to generate an approximate four-part, editable 3D silhouette from a five-view sheet, optionally including a narrow side prop. Existing source cloning, Undo and Save apply; original images are not stored in account projects by this feature. This is an experimental blockout, not a complete UV-textured or rigged character. See `projects/swrlz-forge-moba/docs/IMAGE_TURNAROUND_BLOCKOUT_V11_375.md`.
+
 ## §E v11.374 — Quest 2 feedback corrections for Phase 1 (2026-11-10)
 
 The VR Model Studio menu can be dragged using the controller pointer rather than tiny Grip-position differences. Multiselection now displays a clearly expanding group boundary, and raycast contact with active transformation gizmos displays the normal pointer indicator. A permanent **Projects** navigation tab makes Save to Account, Save Project and Clone Project easy to find without opening §C chat. Legacy controller hints, model manipulation, Undo/Redo and save/UV/account revision safeguards stay intact. Physical Quest 2 acceptance remains the owner's test after the protected release.
