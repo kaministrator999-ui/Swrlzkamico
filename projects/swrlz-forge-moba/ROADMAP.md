@@ -1,3 +1,7 @@
+## §E v11.373 · Initial XR sweep hit survives selection refresh (2026-11-10)
+
+Phase 1 correctness repair: the original v11.372 trigger dispatcher selected a part then invalidated hover before opening the swipe session. Capture and forward the exact trigger hit instead; test forward multi-mesh selection, reverse-only newly added selections, preexisting selected IDs, and preservation of the distinct grip/menu/transform modes. Release verification: scripts/verify_v11_373_release.py. This does not advance the agreed roadmap: manipulation first, then building, rigging, animation.
+
 ## §E v11.372 · VR Phase 1 existing-mesh manipulation (2026-11-09)
 
 **Current focus:** comfortable selection, rotation, translation, scale, independent movable menus, camera orbit and in-VR account saving. Left trigger supports reversible hold-sweep multiselect while tap remains available; hold Grip to reveal the controller transform guide and use model-space axes for precise movement/rotation. Bring project Save/Clone/Save to Account into the immersive Studio console, while keeping local and authenticated cloud identities separate. Preserve native Undo, source meshes, starter templates, UV, textures, controller visual labels and tool profile mappings. Finish owner headset acceptance on manipulation before proceeding to model construction, then skeleton rigging/posing, then animation; future modes should share the same loaded VR character and workspace. Release receipt: scripts/verify_v11_372_release.py; original v11.371 save-protection tests remain active.
