@@ -5,6 +5,9 @@ on:
       - 'projects/swrlz-forge-moba/patches/v11_372_model_vr_phase1.py'
       - 'projects/swrlz-forge-moba/runtime/model_vr_phase1_v11_372.js'
       - 'projects/swrlz-forge-moba/source-manifest.json'
+      - 'projects/swrlz-forge-moba/scripts/verify_v11_372_release.py'
+      - 'projects/swrlz-forge-moba/scripts/test_v11_372_model_vr_phase1.cjs'
+      - '.github/workflows/engine-seal-probe.yml'
   workflow_dispatch:
 permissions:
   contents: read
@@ -34,3 +37,7 @@ jobs:
           print("CANDIDATE_FINAL_SHA256="+hashlib.sha256(data).hexdigest(), flush=True)
           PY
           node --check runtime/model_vr_phase1_v11_372.js
+      - name: Verify the exact sealed v11.372 release and focused VR tests
+        run: |
+          git checkout -- projects/swrlz-forge-moba/source-manifest.json
+          python3 projects/swrlz-forge-moba/scripts/verify_v11_372_release.py --output /tmp/se372-verified
