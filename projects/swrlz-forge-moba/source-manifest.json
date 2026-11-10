@@ -397,6 +397,6 @@
     "patches/v11_373_vr_sweep_handoff.py",
     "patches/v11_374_vr_owner_feedback.py"
   ],
-  "finalBytes": 9448549,
-  "finalSha256": "829c7729237af858c37ed0aab1d4835b971b59c0db414ebd1f6b83f8b242e9ba"
+  "finalBytes": 9452192,
+  "finalSha256": "fa62b27dd99560a505014da0614bd96708b3a65b4b4419989951f3629949966a"
 }
