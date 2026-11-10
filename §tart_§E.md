@@ -1,3 +1,7 @@
+## §E v11.377 — Image reference → editable 2D outlines (2026-11-10)
+
+The original §C reference importer now proposes local color-region and silhouette traces before trying to construct any 3D meshes. The existing in-panel 2D work area offers five orthographic view choices, region selection and names, show/hide, vertex editing, re-tracing and SVG export. Automatic segmentation is only a draft; the mage's individual hood/face/robe pieces need user review. The experimental v11.375 rough 3D generator remains tucked away and must be explicitly chosen. No starter project or existing mesh is changed simply by loading an image. Owner phone/Quest trial follows deployment.
+
 ## §E v11.376 — Model VR Selector with Left Grip area lasso (2026-11-10)
 
 The existing left-trigger swipe/add/retrace selector remains available. A dedicated VR **Select** navigation tab now offers Sweep, Front Lasso and Through Lasso. While a lasso choice is armed, holding **Left Grip** draws a visible 2D selection loop projected into the model workspace; releasing it adds the mesh parts in the outlined area. Front restricts to a nearby depth band, and Through includes overlapping parts behind one another. Earlier selections remain. Menu Grip dragging takes priority when aimed at the menu; returning to other menu tabs restores Left Grip workspace motion. Source model, saved data/UV, §C image blockout, existing quick controls, and project/account safeguards are preserved. Quest 2 interaction acceptance follows deployment.
