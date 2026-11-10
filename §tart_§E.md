@@ -1,3 +1,7 @@
+## §E v11.376 — Model VR Selector with Left Grip area lasso (2026-11-10)
+
+The existing left-trigger swipe/add/retrace selector remains available. A dedicated VR **Select** navigation tab now offers Sweep, Front Lasso and Through Lasso. While a lasso choice is armed, holding **Left Grip** draws a visible 2D selection loop projected into the model workspace; releasing it adds the mesh parts in the outlined area. Front restricts to a nearby depth band, and Through includes overlapping parts behind one another. Earlier selections remain. Menu Grip dragging takes priority when aimed at the menu; returning to other menu tabs restores Left Grip workspace motion. Source model, saved data/UV, §C image blockout, existing quick controls, and project/account safeguards are preserved. Quest 2 interaction acceptance follows deployment.
+
 ## §E v11.375 — Integrated image-to-editable 3D blockout (2026-11-10)
 
 A blank Model Studio project can now use the existing § Chat panel's local image upload to generate an approximate four-part, editable 3D silhouette from a five-view sheet, optionally including a narrow side prop. Existing source cloning, Undo and Save apply; original images are not stored in account projects by this feature. This is an experimental blockout, not a complete UV-textured or rigged character. See `projects/swrlz-forge-moba/docs/IMAGE_TURNAROUND_BLOCKOUT_V11_375.md`.
