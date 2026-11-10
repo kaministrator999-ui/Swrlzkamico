@@ -35,7 +35,9 @@ def load_formatters():
 class MultiViewClaimRegression(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.guard, cls.format = load_formatters()
+        guard, formatter = load_formatters()
+        cls.guard = staticmethod(guard)
+        cls.format = staticmethod(formatter)
 
     def test_current_l2_false_armor_without_losing_real_design(self):
         raw = (
