@@ -401,6 +401,6 @@
     "patches/v11_377_image_part_outlines.py",
     "patches/v11_378_stable_reference_lofts.py"
   ],
-  "finalBytes": 9494160,
-  "finalSha256": "596f2aebe170c8eef324452fff910aef45d08145930e8df8a4f379a17e906e70"
+  "finalBytes": 9500980,
+  "finalSha256": "69a212ae9705ae80d3c7dcba835fdb3eb465cb0fcc7927d317d1388ab7aae67e"
 }
