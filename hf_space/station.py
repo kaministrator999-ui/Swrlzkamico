@@ -1079,13 +1079,20 @@ def _response_prose(text):
     return prose.strip()
 
 
+def _current_vision_question(prompt):
+    """Read an attached image handoff's question without changing saved text."""
+    handoff=vision_handoff_from_message({"role":"user","text":str(prompt or "")})
+    return (str(handoff.get("questionSentToChatModel") or "").strip()
+            if handoff is not None else str(prompt or ""))
+
+
 def _companion_topic_shift_from_vision(prompt):
     """Spot an explicit conversation with the assistant, not an image follow-up.
 
     This is a relevance gate for *model input*, never a generated greeting.
     Ambiguous visual questions retain their entire saved image discussion.
     """
-    text=" ".join(str(prompt or "").casefold().replace("’","'").split())
+    text=" ".join(_current_vision_question(prompt).casefold().replace("’","'").split())
     if not text or len(text)>280:
         return False
     social=bool(re.search(
@@ -1114,6 +1121,17 @@ def _companion_topic_shift_from_vision(prompt):
     return (social and (not image_reference or rejected_image)) or (
         explicit_redirect and (not image_reference or rejected_image)
     )
+
+
+def _inference_prompt_after_vision(prompt):
+    """Keep attached image evidence out of a new assistant-directed social turn.
+
+    Only inference changes: persist the user's original message/attachment,
+    so later image-specific questions can still use the original evidence.
+    """
+    if _companion_topic_shift_from_vision(prompt):
+        return _current_vision_question(prompt)
+    return prompt
 
 
 def _history_projection(thread, current_prompt=""):
@@ -2104,7 +2122,7 @@ async def _send_owned(request,body,forge_context):
             if exc.status_code==409:_restore_chat_from_store(s)
             raise
         s["activeGeneration"]={"requestId":rid,"threadId":tid,"modelId":model_id,"requestedModelId":model_id,"selectedModelId":model_id,"text":"","phase":"QUEUED","terminal":False,"lastSeq":0,"status":[{"phase":"QUEUED","reason":"Accepted by Workstation","atUnixMs":now_ms}],"acceptedAtUnixMs":now_ms,"startedAtUnixMs":None,"completedAtUnixMs":None,"queueWaitMs":None,"stationTiming":None,"resourcePlan":None,"diagnosticTrace":None,"memoryCandidates":[],"responseCognition":None,"onlineResearch":None,"onlineTrace":[],"onlineLogPersistence":None,"sources":[],"widgets":[],"programmingIntent":None,"intentContract":None,"failureEvidence":None,"repairConstraints":None,"behaviorLedger":None,"behaviorRepairBase":None,"candidateValidation":None,"candidateAttempts":[],"generationTelemetry":None,"engineCompletionTelemetry":None,"repairDiagnostics":[],"artifactReceipt":None,"githubTelemetryPersistence":None}
-    payload={"requestId":rid,"threadId":tid,"prompt":prompt,"history":history,"pinnedContext":pinned_context,"profileId":profile_id,"profile":profile,"userProfile":user_profile,"temporalContext":temporal_context,"clientLocation":client_location,"priorProgrammingState":copy.deepcopy(t.get("programmingState") or {})}
+    payload={"requestId":rid,"threadId":tid,"prompt":_inference_prompt_after_vision(prompt),"history":history,"pinnedContext":pinned_context,"profileId":profile_id,"profile":profile,"userProfile":user_profile,"temporalContext":temporal_context,"clientLocation":client_location,"priorProgrammingState":copy.deepcopy(t.get("programmingState") or {})}
     if vision_receipt:
         payload["visionResourceUsage"]=copy.deepcopy(vision_receipt)
     local_project_intent=_owned_project_edit_intent(t,prompt,history,pinned_context,payload["priorProgrammingState"])
