@@ -1,0 +1,53 @@
+name: §E v11.373 exact candidate and VR sweep regression
+on:
+  push:
+    paths:
+      - 'projects/swrlz-forge-moba/patches/v11_373_vr_sweep_handoff.py'
+      - 'projects/swrlz-forge-moba/source-manifest.json'
+      - 'projects/swrlz-forge-moba/scripts/test_v11_373_sweep_handoff.cjs'
+      - 'projects/swrlz-forge-moba/scripts/verify_v11_373_release.py'
+      - '.github/workflows/se-v11-373-sweep-candidate.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  candidate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Candidate source receipt and targeted sweep regression
+        run: |
+          cd projects/swrlz-forge-moba
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path('source-manifest.json')
+          m=json.loads(p.read_text())
+          m['finalSha256']=''
+          m['finalBytes']=0
+          p.write_text(json.dumps(m))
+          PY
+          python3 build_space.py --output /tmp/se373-candidate
+          python3 - <<'PY'
+          import hashlib
+          from pathlib import Path
+          data=Path('/tmp/se373-candidate/index.html').read_bytes()
+          print("CANDIDATE_FINAL_BYTES="+str(len(data)),flush=True)
+          print("CANDIDATE_FINAL_SHA256="+hashlib.sha256(data).hexdigest(),flush=True)
+          PY
+          node scripts/test_v11_373_sweep_handoff.cjs /tmp/se373-candidate/index.html
+          node scripts/test_v11_372_model_vr_phase1.cjs
+      - name: Verify sealed v11.373 source when receipt is current
+        run: |
+          cd projects/swrlz-forge-moba
+          if python3 - <<'PY'
+          import json
+          m=json.load(open('source-manifest.json'))
+          assert m['finalBytes']!=9448883 and m['finalSha256']!='6754aca2a32af1ace4cb22f90fd0d9e34bc49e5f9e6d7fbd10655ce86a750106'
+          PY
+          then
+            git checkout -- source-manifest.json
+            python3 scripts/verify_v11_373_release.py --output /tmp/se373-sealed
+          else
+            echo 'Candidate source awaits new receipt'
+          fi
