@@ -1,0 +1,4 @@
+TARGET=kamiloki/Swyrlz
+APPROVED=1
+SOURCE_REF=74c3e249c56ab1d4df57b181dfeef56aa40c7fdd
+REQUEST_NONCE=chat-streaming-talk-20261110-74c3e249-v1
