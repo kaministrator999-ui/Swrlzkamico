@@ -19,6 +19,8 @@ jobs:
           node --check projects/swrlz-forge-moba/runtime/model_image_blockout_v11_375.js
           node projects/swrlz-forge-moba/scripts/test_v11_375_image_blockout.cjs
           python -m py_compile projects/swrlz-forge-moba/patches/v11_375_chat_turnaround_blockout.py
+      - name: Verify sealed production engine build and native geometry tests
+        run: python projects/swrlz-forge-moba/scripts/verify_v11_375_release.py --output dist/swrlz-forge-moba
       - name: Rebuild append-only patch chain and print actual integrity
         run: |
           python - <<'PY'
@@ -28,8 +30,8 @@ jobs:
           manifest=json.loads((root/'source-manifest.json').read_text())
           patches=list(manifest['patches'])
           new='patches/v11_375_chat_turnaround_blockout.py'
-          assert patches[-1]=='patches/v11_374_vr_owner_feedback.py'
-          patches.append(new)
+          if patches[-1]=='patches/v11_374_vr_owner_feedback.py':patches.append(new)
+          else:assert patches[-1]==new
           names=manifest.get('chunks') or sorted(x.relative_to(root).as_posix() for x in (root/'payload').glob('part-*.txt'))
           original=gzip.decompress(base64.b64decode(''.join((root/name).read_text().strip() for name in names)))
           assert hashlib.sha256(original).hexdigest()==manifest['baseSha256']
