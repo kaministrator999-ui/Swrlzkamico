@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.374
+title: §wyrl§ Engine v11.375
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,10 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## v11.375 · Image → 3D blockout in integrated §C
+
+Open an independent Blank 3D model, expand the image blockout section in § Chat, upload a five-view character sheet and review adjustable view guides. A local silhouette algorithm builds four editable loft sections, with optional detached side prop, using the existing native model/Undo/Save tools. This is an approximate untextured 3D starting shape, not a model-generated full likeness. The uploaded image is not sent to a model backend or stored as an account image. See `docs/IMAGE_TURNAROUND_BLOCKOUT_V11_375.md`. Owner image/VR acceptance remains outstanding.
 
 ## v11.374 · VR Model Studio Quest 2 usability feedback
 
