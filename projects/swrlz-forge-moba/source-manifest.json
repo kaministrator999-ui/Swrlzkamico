@@ -398,6 +398,6 @@
     "patches/v11_374_vr_owner_feedback.py",
     "patches/v11_375_chat_turnaround_blockout.py"
   ],
-  "finalBytes": 9468304,
-  "finalSha256": "11ef4d9be97e14e661e7b9bb9cd9bd94d03a6f100ea25e099b2f7ab151a88679"
+  "finalBytes": 9467573,
+  "finalSha256": "37453b2be4cbaa8db15e30ff4cff9a6739f0f5bca50bd9d7a16b0029449dff04"
 }
