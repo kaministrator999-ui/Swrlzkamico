@@ -1,0 +1,49 @@
+name: Verify hosted §E v11.380 served receipt
+
+on:
+  push:
+    branches:
+      - fix/sheep-vr-frame-gap-379
+    paths:
+      - '.github/workflows/verify-se380-served-receipt.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: Verify deployed SOURCE and exact served index bytes
+        shell: bash
+        run: |
+          python - <<'PY'
+          import hashlib,json,time,urllib.request
+          expected='89392538043e679344ad5d20d31cd7e7a0522517e0209d5ba3d9f44b3c5cee9d'
+          base='https://kamiloki-swrlz-forge-moba.hf.space/'
+          data=None
+          for attempt in range(10):
+            try:
+              with urllib.request.urlopen(base+'SOURCE.json',timeout=30) as r:
+                data=json.load(r)
+              if data.get('sourceVersion')=='§wyrl§ Engine v11.380' and data.get('finalSha256')==expected:break
+              print('hosted-source-not-yet-current',data.get('sourceVersion'),flush=True)
+            except Exception as e:
+              print('hosted-source-unavailable',repr(e),flush=True)
+            time.sleep(5)
+          assert data and data['sourceVersion']=='§wyrl§ Engine v11.380'
+          assert data['finalSha256']==expected
+          assert data['finalBytes']==9524157
+          assert len(data['patches'])==387
+          print('HOSTED_SOURCE_VERSION='+data['sourceVersion'],flush=True)
+          print('HOSTED_SOURCE_SHA='+data['finalSha256'],flush=True)
+          for name in ('index.html','modeler.html'):
+            with urllib.request.urlopen(base+name,timeout=60) as r:
+              data=r.read()
+            digest=hashlib.sha256(data).hexdigest()
+            print('HOSTED_'+name+'_BYTES='+str(len(data)),flush=True)
+            print('HOSTED_'+name+'_SHA='+digest,flush=True)
+            assert digest==expected and len(data)==9524157
+          print('SE380_HOSTED_RECEIPT_AND_BOTH_PAGES_VERIFIED',flush=True)
+          PY
