@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.377
+title: §wyrl§ Engine v11.378
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,11 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## v11.378 · Improved experimental 3D blockout from edited 2D contours
+
+The existing **editable 2D outlines** remain the default and support re-trace, selection, correction and SVG export. The optional **Experimental old rough 3D blockout** now reads the corrected main front silhouette, keeps a stable centerline rather than combining arbitrary full-width row samples, uses bounded side-view depth, and produces three independently editable loft sections (upper, middle, lower). The separate narrow accessory/prop option remains available. Use a separate Blank 3D Model project to compare both; existing model parts and starter projects stay protected. This is still approximate geometry, **not** semantic anatomy detection or automatic UV reconstruction. Device acceptance pending.
+
 
 ## v11.377 · Reference images now trace editable 2D outlines first
 
