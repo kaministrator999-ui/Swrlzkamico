@@ -50,8 +50,8 @@ def apply(html):
         "if(!g)return false;\n if(g.kind==='menu')se372MenuDragFinish(g,false);se372GuideStop(g);s.se372Sweep=null;\n s.gesture=null;",
         'cancel preview and restore menu')
     html=one(html,
-        "const pose=se340GripPose(g.record);if(!pose)return;\n  const gain=",
-        "const pose=se340GripPose(g.record);if(!pose)return;\n  if(g.kind==='menu'){se372MenuDragUpdate(g,pose);return;}\n  const gain=",
+        "const pose=se340GripPose(g.record);if(!pose)return;\n const gain=",
+        "const pose=se340GripPose(g.record);if(!pose)return;\n if(g.kind==='menu'){se372MenuDragUpdate(g,pose);return;}\n const gain=",
         'apply grip menu delta')
     html=one(html,
         "const result=se350Tools().updateGroup({translation:translation.toArray(),rotation:rotation.toArray(),scale});",
