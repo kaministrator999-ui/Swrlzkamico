@@ -44,8 +44,8 @@ def apply(html):
   "if(se376PanelMode(action))return true;\n  if(action==='exit'){void se340ModelXRExit();return true;}",
   'selector modes in original model XR menu actions')
  html=once(html,
-  "s.se372ProjectBusy=false;",
-  "s.se372ProjectBusy=false;s.se376SelectionMode='sweep';",
+  "s.se372Gizmo=null;s.se372Sweep=null;s.se372ProjectBusy=false;",
+  "s.se372Gizmo=null;s.se372Sweep=null;s.se372ProjectBusy=false;s.se376SelectionMode='sweep';",
   'default retains original sweep selection')
  html=once(html,
   "page:s.page,viewMode:s.viewMode,displayMode:s.displayMode,aimHand:s.aimHand,",
