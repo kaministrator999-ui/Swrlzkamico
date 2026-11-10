@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Sealed v11.375 Quest VR menu drag, group bounds, gizmo hover and project access."""
+"""Sealed v11.375 integrated §C image-to-editable Model Studio blockout."""
 from pathlib import Path
 import argparse,hashlib,json,subprocess,sys
 
@@ -58,7 +58,7 @@ for token in [
 
 ]:
     assert token in html,token
-assert html.count(" source.engine='§wyrl§ Engine · Maker v11.375';source.version=11.374;")==5
+assert html.count(" source.engine='§wyrl§ Engine · Maker v11.375';source.version=11.375;")==5
 # The project save handlers must be in the same authenticated Chat-host closure
 # as cloudRefs, RPC and the existing on-device library.
 assert html.index("const PROTOCOL='swrlz-forge-chat-v1'") < html.index('const se371CloudLinks=new Map();')
