@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.378",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_378_STABLE_3D_BLOCKOUT",
-  "reason": "Publish sealed §E v11.378 improved optional 3D blockout alongside existing editable 2D contour importer. The experimental 3D button now reads user-adjusted 2D silhouette geometry, produces three aligned independently editable native loft sections with stable centerline and bounded side-derived depth, and retains optional narrow detached accessory detection. No forced 3D generation, semantic anatomy claims, UV baking or new backend. Preserves protected blank-project clone, Undo/Save, §C panel, VR selector and 2D SVG export. Complete controlled source validation, 385 patch build, JS parse, contour and 3D synthetic tests, starter/account revision safeguards and VR smoke pass: Github run #42786657085. 9,500,980-byte artifact SHA-256 69a212ae9705ae80d3c7dcba835fdb3eb465cb0fcc7927d317d1388ab7aae67e. Owner phone/Quest 2 visual acceptance pending.",
-  "sourceCommit": "e825b506e1676f684db0fa1e0b5d0ba5ba5a496a",
-  "sourceIntegritySha256": "69a212ae9705ae80d3c7dcba835fdb3eb465cb0fcc7927d317d1388ab7aae67e"
+  "releaseVersion": "v11.380",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_380_ADVANCED_GRAPHICS_PERFORMANCE_TABS",
+  "reason": "Publish the governed §E v11.380 Graphics / Performance / VR settings and integrated Sheep Tag Quest visible-frame continuity fix. Existing graphics presets, saves, engine architecture, Quest input and XR compositor remain intact. Responsive controls add optional browser FXAA, anisotropic texture filtering, shadow coverage, authored LOD distances, foveation support and Sheep Tag XR entry resolution. Source reconstruction and full strict verifier passed in GitHub Actions run 42907770484: 387 patches, 9,524,157 exact HTML bytes, SHA-256 89392538043e679344ad5d20d31cd7e7a0522517e0209d5ba3d9f44b3c5cee9d. On-device Quest 2 hardware acceptance pending.",
+  "sourceCommit": "4a1ae440dd4f880c16ad240a7b4d2dbb4be82aee",
+  "sourceIntegritySha256": "89392538043e679344ad5d20d31cd7e7a0522517e0209d5ba3d9f44b3c5cee9d"
 }
