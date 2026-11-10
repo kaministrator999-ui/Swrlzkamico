@@ -22,12 +22,9 @@ def apply(html):
         if token not in js:raise AssertionError(('missing image blockout implementation',token))
     # All helper functions live within the existing credential-isolated
     # integrated §C host closure. No iframe credential/bytes crossing.
-    html=once(html,'if(ALLOWED_PARENTS.has(location.origin))queueMicrotask(mount);',
-              js+'\nif(ALLOWED_PARENTS.has(location.origin))queueMicrotask(mount);',
-              'integrated Chat-host blockout helpers')
-    html=once(html,'panel.append(frame);document.body.append(toggle,panel);',
-              'panel.append(frame);document.body.append(toggle,panel);se375Install();',
-              'one collapsible image flow alongside existing chat controls')
+    html=once(html,'const se371CloudLinks=new Map();',
+              js+'\nconst se371CloudLinks=new Map();',
+              'integrated Chat host helper inside existing project-save closure')
     for old,new,label in (
       ('SWYRL_ENGINE_DEPLOY_MARKER: V11_374_QUEST_VR_FEEDBACK',MARKER,'release marker'),
       ('ENGINE · MAKER v11.374','ENGINE · MAKER v11.375','header'),
