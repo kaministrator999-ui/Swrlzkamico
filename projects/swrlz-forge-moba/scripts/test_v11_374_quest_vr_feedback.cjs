@@ -31,7 +31,7 @@ const box=()=>({copy(v){this.value=v;return this},expandByScalar(v){this.pad=v;r
 const s={scene:{add:x=>calls.push(x)},selectedOutline:{visible:true,box:box()},se374MultiOutline:null,
  ui:{root:{position:new Vec(0,1,1),updateWorldMatrix:()=>{}}}};
 const sandbox={
- THREE:{Vector3:Vec,Box3:class{},Box3Helper:class{constructor(){this.box=box();this.material={};this.geometry={dispose(){}};this.visible=false;}updateMatrixWorld(){}removeFromParent(){}}},
+ THREE:{Vector3:Vec,Box3:class{},Box3Helper:class{constructor(){this.box=box();this.material={};this.userData={};this.geometry={dispose(){}};this.visible=false;}updateMatrixWorld(){}removeFromParent(){}}},
  se340XR:s,se340Cast:()=>({ray:{at:(d,out)=>out.copy(new Vec(d,1,1))}}),
 };
 sandbox.THREE.MathUtils={clamp:(n,lo,hi)=>Math.min(hi,Math.max(lo,n))};
