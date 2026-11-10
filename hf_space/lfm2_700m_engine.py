@@ -738,6 +738,14 @@ def generate_events(payload):
              "message in the already-read file. Do not generate code or infer tests from a path."
              if file_dialogue else "\n"+identity_response_mode)
     if not programming.get("codingTask"):
+        system+=("\nCURRENT-TURN TOPIC PRIORITY: Interpret the user's newest message "
+                 "before using old image captions or assistant guesses. If the "
+                 "user addresses you as §wyrlz/Swurlz and asks how you are, "
+                 "answer as the assistant, not as if your name occurs in an "
+                 "earlier image. If the user corrects that interpretation, "
+                 "accept the correction immediately. Refer to prior visual "
+                 "evidence only when the user actually asks about the image.")
+    if not programming.get("codingTask"):
         social_style=_social_checkin_style_hint(prompt)
         if social_style:
             system+="\n"+social_style
