@@ -13,32 +13,20 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 7
     steps:
-      - name: Diagnose Hugging Face runtime and 404 response
+      - name: Find canonical runtime host and exact Hub content
         shell: bash
         run: |
           python - <<'PY'
-          import urllib.request,urllib.error,json,re
-          urls=[
-          'https://huggingface.co/api/spaces/kamiloki/swrlz-forge-moba',
-          'https://huggingface.co/api/spaces/kamiloki/swrlz-forge-moba/runtime',
-          'https://huggingface.co/api/spaces/kamiloki/swrlz-forge-moba/tree/main?limit=1000',
-          'https://kamiloki-swrlz-forge-moba.hf.space/',
-          'https://huggingface.co/spaces/kamiloki/swrlz-forge-moba'
-          ]
-          for url in urls:
-            try:
-              with urllib.request.urlopen(urllib.request.Request(url,headers={'User-Agent':'Mozilla/5.0 §E-verification'}),timeout=30) as r:
-                b=r.read(30000)
-                if '/api/spaces/' in url and url.endswith('moba'):
-                  obj=json.loads(b);data={k:obj.get(k) for k in ('id','sha','lastModified','private','disabled','runtime','cardData','sdk')}
-                  print('SPACE_METADATA',json.dumps(data,default=str)[:5000],flush=True)
-                elif '/runtime' in url:print('SPACE_RUNTIME',b[:2000].decode(errors='replace'),flush=True)
-                elif '/tree/' in url:
-                  obj=json.loads(b);paths=[x['path'] for x in obj if x.get('path') in ('SOURCE.json','index.html','modeler.html','README.md')]
-                  print('SPACE_FILES',paths,flush=True)
-                else:print('LIVE_URL',url,'STATUS',r.status,'TITLE',re.findall(r'<title[^>]*>(.*?)</title>',b.decode(errors='replace'),re.I|re.S)[:2],flush=True)
-            except urllib.error.HTTPError as e:
-              b=e.read(16000).decode(errors='replace')
-              print('ERROR_URL',url,'CODE',e.code,'TITLE',re.findall(r'<title[^>]*>(.*?)</title>',b,re.I|re.S)[:2],'TEXT',re.sub(r'<[^>]+>',' ',b)[-500:].strip(),flush=True)
-            except Exception as e:print('ERROR_URL',url,repr(e),flush=True)
+          import urllib.request,json,re,hashlib
+          meta='https://huggingface.co/api/spaces/kamiloki/swrlz-forge-moba'
+          with urllib.request.urlopen(meta,timeout=30) as r: m=json.load(r)
+          print('HF_KEYS',sorted(m.keys()),flush=True)
+          for k in ['id','sha','lastModified','sdk','subdomain','host','runtime','cardData','disabled','private']:
+            print('HF_META',k,repr(m.get(k))[:1600],flush=True)
+          with urllib.request.urlopen('https://huggingface.co/spaces/kamiloki/swrlz-forge-moba',timeout=30) as r:page=r.read().decode('utf8','replace')
+          print('HF_SPACE_PAGE_HFSPACE_LINKS',list(dict.fromkeys(re.findall(r'https?[^"<>\\s]{0,140}hf\\.space[^"<>\\s]{0,140}',page)))[:20],flush=True)
+          src='https://huggingface.co/spaces/kamiloki/swrlz-forge-moba/resolve/main/'
+          for name in ['SOURCE.json','index.html','modeler.html']:
+            with urllib.request.urlopen(src+name,timeout=80) as r:b=r.read()
+            print('HUB_FILE',name,'bytes',len(b),'sha256',hashlib.sha256(b).hexdigest(),flush=True)
           PY
