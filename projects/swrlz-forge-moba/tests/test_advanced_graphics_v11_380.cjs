@@ -14,6 +14,7 @@ const c={performance:{now:()=>now},localStorage:{getItem(){return null},setItem(
 vm.runInNewContext(src,c,{filename:'engine_advanced_graphics_v11_380.js'});
 const api=c.window.SWYRL_ENGINE_ADVANCED_GRAPHICS_380;
 assert(api);
+assert.equal(typeof api.open,'function','integrated settings action exposed');
 assert.equal(api.snapshot().browserNativeAntialias,true);
 assert.equal(api.snapshot().anisotropy,'original');
 vm.runInNewContext("se380Prefs.aa='fxaa'",c);renderer.render(scene,{});
