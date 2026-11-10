@@ -87,6 +87,25 @@ function se378Blockout(){
     name:'Reference blockout · detached prop',position:[0,0,0],rotation:[0,0,0],
     scale:[1,1,1],path,radii,segments:12,color:'#957f9c',material:'matte'});break;}
   }
+  // Left-side staff can fall just OUTSIDE the Front view guide. Preserve
+  // the older independent narrow-prop scan instead of silently losing it.
+  if(parts.length===3){
+   const sample=se375Sample(),box={x:Math.max(0,se375Guides.front-.124),y:.20,w:.054,h:.42};
+   const hits=Array.from({length:16},(_,i)=>{
+    const y=.225+(.61-.225)*i/15;
+    return {y,shape:sample.scan(box,y)};
+   }).filter(p=>p.shape&&p.shape.width<se375Canvas.width*.025);
+   if(hits.length>=11){
+    const fw=(bounds.right-bounds.left)*se375Canvas.width;
+    const cx=(bounds.left+bounds.right)*se375Canvas.width/2;
+    const path=hits.map(p=>[se378Round(se378Clamp((p.shape.center-cx)/fw*2.2,-3,3)),
+      se378Round(.15+4.15*(se375Guides.lower-p.y)/(se375Guides.lower-se375Guides.upper)),0]);
+    const radii=hits.map(p=>se378Round(se378Clamp(p.shape.width/fw*.40,.025,.09)));
+    parts.push({op:'mesh.add',kind:'loft',name:'Reference blockout · detached prop',
+     position:[0,0,0],rotation:[0,0,0],scale:[1,1,1],
+     path,radii,segments:12,color:'#957f9c',material:'matte'});
+   }
+  }
  }
  return parts;
 }
