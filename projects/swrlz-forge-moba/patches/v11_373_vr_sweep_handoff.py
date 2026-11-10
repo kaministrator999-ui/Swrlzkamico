@@ -21,7 +21,7 @@ def apply(html):
   "deliver exact press hit")
  html=once(html,
   "function se372SweepStart(record,before){\n const s=se340XR,hit=record.hit;",
-  "function se372SweepStart(record,before,hit){\n const s=se340XR;",
+  "function se372SweepStart(record,before,hit){\n const s=se340XR;hit=hit||record.hit;",
   "avoid stale invalidated hover")
  for old,new,label in [
   ("SWYRL_ENGINE_DEPLOY_MARKER: V11_372_MODEL_VR_PHASE1",MARKER,"marker"),
