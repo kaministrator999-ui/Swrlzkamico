@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.373
+title: §wyrl§ Engine v11.374
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,10 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## v11.374 · VR Model Studio Quest 2 usability feedback
+
+The immersive VR tool console now supports pointer-anchored Grip window dragging instead of short hand-translation motion, without following head movement. A distinct expanding multi-selection Box3 helper encloses all selected parts; single selection keeps its original outline. Visible Move/Rotate/Scale gizmo handles now supply raycast hover hits to the controller pointer reticle. A top-level **Projects** tab makes **Save to Account**, local Save Project, and detached Clone Project discoverable. Existing Quest Touch models, dynamic labels, Undo/Redo, native mesh and UV content, starter immutability and authenticated account revision checks remain the same. Actual controller feel and cross-device account acceptance require owner Quest 2 testing.
 
 ## v11.373 · Reliable reversible mesh sweep in Model Studio VR
 
