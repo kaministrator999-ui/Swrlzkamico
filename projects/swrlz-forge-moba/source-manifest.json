@@ -1,10 +1,10 @@
 {
   "schema": "swrlz-forge-source-v2",
-  "name": "§wyrl§ Engine v11.371",
+  "name": "§wyrl§ Engine v11.372",
   "baseArtifact": "swrlz_forge_v4.html",
   "baseBytes": 99591,
   "baseSha256": "a8299fe89fbb98d15c6091751b7a66931a66efec8eec5cb464e1286f21895856",
-  "finalArtifact": "swyrl_engine_v11_371.html",
+  "finalArtifact": "swyrl_engine_v11_372.html",
   "encoding": "gzip+base64-chunks",
   "chunks": [
     "payload/part-01.txt",
@@ -392,7 +392,8 @@
     "patches/v11_368_uv_camera_alignment.py",
     "patches/v11_369_webxr_cliff_stone_clone.py",
     "patches/v11_370_cliff_surface_polish.py",
-    "patches/v11_371_safe_project_clone_save.py"
+    "patches/v11_371_safe_project_clone_save.py",
+    "patches/v11_372_model_vr_phase1.py"
   ],
   "finalBytes": 9431740,
   "finalSha256": "4b5ca289b86a6a6dadc5c3685adefcdfe05e1ede03cbfed0cda9bcb557ef8b3a"
