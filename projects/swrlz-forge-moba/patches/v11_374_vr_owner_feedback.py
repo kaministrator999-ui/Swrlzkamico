@@ -51,10 +51,6 @@ def apply(html):
   "record.dot.visible=!!(hit?.id||hit?.ui||hit?.gizmo)&&!!hit.point;",
   'show cursor reticle when pointing at gizmo')
  html=once(html,
-  "record.ray.material.color.setHex(hit?.ui?0xe1bbff:hit?.id?0x80f0c4:0xbda0ff);",
-  "record.ray.material.color.setHex(hit?.ui?0xe1bbff:hit?.gizmo?0xffd28a:hit?.id?0x80f0c4:0xbda0ff);",
-  'differentiate gizmo ray hover')
- html=once(html,
   "s.selectedOutline.box.union(se340PartBox(entry.mesh));}\n s.hoverOutline.visible=",
   "s.selectedOutline.box.union(se340PartBox(entry.mesh));}se374GroupBoundary(s,selectedIds);\n s.hoverOutline.visible=",
   'one distinct expanding multi-mesh selection boundary')
