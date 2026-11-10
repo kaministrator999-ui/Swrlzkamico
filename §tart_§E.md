@@ -1,3 +1,7 @@
+## §E v11.373 — Reversible VR sweep handoff correction (2026-11-10)
+
+The left-trigger multi-mesh gesture now receives the original target from the press before the native selector clears cached hover hits. It keeps tap-to-select and undo/redo, preserves preexisting selected parts on reverse swipes, and leaves VR menu grips, model transform grips, UV texture/account storage and Quest controller hints untouched. Automated source and regression checks are distinct from owner Quest 2 confirmation.
+
 ## §E v11.372 — Quest 2 Model Studio Phase 1 (2026-11-09)
 
 Our immediate implementation pass addresses existing-mesh manipulation before construction, rigging and animation. Native left-trigger hold can sweep-select meshes and reverse the same stroke to remove only freshly swept additions. Model transformation gizmos and a temporary Grip-activated controller guide clarify selected-pivot orientation, with optional axis-limited move/rotation. The orbit thumbstick corrects left/right direction and provides proportional speed. The tool menu can be dragged with Grip and hidden/restored; it does not follow real head movement or rotate with the mage. The VR Studio console exposes on-device Save, account synchronization and detached Clone; §E's ordinary toolbar also shows Save to Account using its existing account link. This checkpoint is source-validated; Quest 2 comfort and cross-device UV-texture persistence require owner testing after hosted publication.
