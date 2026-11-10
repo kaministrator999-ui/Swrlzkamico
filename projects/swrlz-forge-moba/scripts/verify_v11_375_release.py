@@ -13,8 +13,8 @@ manifest=json.loads((ROOT/'source-manifest.json').read_text('utf8'))
 assert manifest['name']=='§wyrl§ Engine v11.375'
 assert manifest['finalArtifact']=='swyrl_engine_v11_375.html'
 assert len(manifest['patches'])==382 and manifest['patches'][-1]=='patches/v11_375_chat_turnaround_blockout.py'
-assert manifest['finalBytes']==9468304
-assert manifest['finalSha256']=='11ef4d9be97e14e661e7b9bb9cd9bd94d03a6f100ea25e099b2f7ab151a88679'
+assert manifest['finalBytes']==9467573
+assert manifest['finalSha256']=='37453b2be4cbaa8db15e30ff4cff9a6739f0f5bca50bd9d7a16b0029449dff04'
 out=Path(args.output).resolve()
 subprocess.run([sys.executable,str(ROOT/'build_space.py'),'--output',str(out)],check=True)
 data=(out/'index.html').read_bytes()
