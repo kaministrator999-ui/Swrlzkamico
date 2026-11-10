@@ -1100,13 +1100,19 @@ def _companion_topic_shift_from_vision(prompt):
         r"\b(?:didn't|did not|don't|do not|wasn't|was not|not|never)\b.{0,100}"
         r"\b(?:image|picture|photo|mage|character|drawing|artwork)\b", text,
     ))
+    # A correction can change subjects without reusing the word "image".
+    # Do not interpret the assistant's name as an object in prior artwork.
+    # Only explicit addresses/corrections trigger this inference-only gate.
     explicit_redirect=bool(re.search(
-        r"\b(?:i meant (?:you|yourself|§wyrlz|swyrlz)|"
-        r"i was (?:asking|talking) (?:about|to) (?:you|§wyrlz|swyrlz))\b",
+        r"\b(?:i (?:meant|mean) (?:you|yourself|§wyrlz|swyrlz|swurlz)|"
+        r"i (?:was|am|'m) (?:asking|talking|speaking) (?:about|to) "
+        r"(?:you|yourself|§wyrlz|swyrlz|swurlz)|"
+        r"i (?:was|am|'m) not (?:asking|talking) about (?:the )?"
+        r"(?:image|picture|photo|mage|character|drawing|artwork))\b",
         text,
     ))
     return (social and (not image_reference or rejected_image)) or (
-        explicit_redirect and rejected_image
+        explicit_redirect and (not image_reference or rejected_image)
     )
 
 
