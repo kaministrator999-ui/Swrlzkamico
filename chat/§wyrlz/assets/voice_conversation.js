@@ -269,9 +269,9 @@
       let cut = sentence ? sentence.index + sentence[0].length : -1;
       if (cut < 0 && !final && speechPending.length >= 170) {
         cut = speechPending.lastIndexOf(" ", 170);
-        if (cut < 90) return;
+        if (cut < 90) break;
       }
-      if (cut < 0 && !final) return;
+      if (cut < 0 && !final) break;
       const portion = cut >= 0 ? speechPending.slice(0, cut) : speechPending;
       speechPending = cut >= 0 ? speechPending.slice(cut) : "";
       speechParts.push(...chunkSpeech(portion));
