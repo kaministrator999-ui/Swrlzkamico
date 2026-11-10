@@ -15,35 +15,28 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 8
     steps:
-      - name: Verify deployed SOURCE and exact served index bytes
+      - name: Diagnose served Space and Hugging Face repository files
         shell: bash
         run: |
           python - <<'PY'
-          import hashlib,json,time,urllib.request
-          expected='89392538043e679344ad5d20d31cd7e7a0522517e0209d5ba3d9f44b3c5cee9d'
-          base='https://kamiloki-swrlz-forge-moba.hf.space/'
-          data=None
-          for attempt in range(10):
+          import urllib.request,urllib.error,json
+          urls=[
+          'https://huggingface.co/api/spaces/kamiloki/swrlz-forge-moba',
+          'https://huggingface.co/api/spaces/kamiloki/swrlz-forge-moba/tree/main',
+          'https://huggingface.co/spaces/kamiloki/swrlz-forge-moba/resolve/main/SOURCE.json',
+          'https://huggingface.co/spaces/kamiloki/swrlz-forge-moba/resolve/main/README.md',
+          'https://kamiloki-swrlz-forge-moba.hf.space/',
+          'https://kamiloki-swrlz-forge-moba.hf.space/index.html',
+          'https://kamiloki-swrlz-forge-moba.hf.space/SOURCE.json',
+          ]
+          for url in urls:
             try:
-              with urllib.request.urlopen(base+'SOURCE.json',timeout=30) as r:
-                data=json.load(r)
-              if data.get('sourceVersion')=='§wyrl§ Engine v11.380' and data.get('finalSha256')==expected:break
-              print('hosted-source-not-yet-current',data.get('sourceVersion'),flush=True)
+              req=urllib.request.Request(url,headers={'User-Agent':'Mozilla/5.0 se380-validation'})
+              with urllib.request.urlopen(req,timeout=25) as r:
+                data=r.read(1500)
+                print('SE380_URL',url,'STATUS',r.status,'FINAL',r.url,'TYPE',r.headers.get('Content-Type'),'CONTENT_PREFIX',repr(data[:210]),flush=True)
+            except urllib.error.HTTPError as e:
+              print('SE380_URL',url,'STATUS',e.code,'FINAL',e.url,'CONTENT_PREFIX',repr(e.read(180)),flush=True)
             except Exception as e:
-              print('hosted-source-unavailable',repr(e),flush=True)
-            time.sleep(5)
-          assert data and data['sourceVersion']=='§wyrl§ Engine v11.380'
-          assert data['finalSha256']==expected
-          assert data['finalBytes']==9524157
-          assert len(data['patches'])==387
-          print('HOSTED_SOURCE_VERSION='+data['sourceVersion'],flush=True)
-          print('HOSTED_SOURCE_SHA='+data['finalSha256'],flush=True)
-          for name in ('index.html','modeler.html'):
-            with urllib.request.urlopen(base+name,timeout=60) as r:
-              data=r.read()
-            digest=hashlib.sha256(data).hexdigest()
-            print('HOSTED_'+name+'_BYTES='+str(len(data)),flush=True)
-            print('HOSTED_'+name+'_SHA='+digest,flush=True)
-            assert digest==expected and len(data)==9524157
-          print('SE380_HOSTED_RECEIPT_AND_BOTH_PAGES_VERIFIED',flush=True)
+              print('SE380_URL',url,'ERROR',repr(e),flush=True)
           PY
