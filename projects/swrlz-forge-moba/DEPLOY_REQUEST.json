@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.377",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_377_REFERENCE_OUTLINES",
-  "reason": "Publish sealed §E v11.377 trace-first image importer inside integrated §C: five-view local foreground/color-component outlines, rename/select/hide, touch-editable contour vertices, guide re-trace and SVG export. Previous loft generator remains explicitly experimental and not automatic. Preserve existing VR Model Studio, cloud project Save/Clone, starter protection and ordinary §C image transport. Full release verifier sealed 384 patches, 9,494,160-byte generated HTML SHA-256 596f2aebe170c8eef324452fff910aef45d08145930e8df8a4f379a17e906e70; dedicated GitHub check run #42784307155 PASS. Physical device acceptance pending.",
-  "sourceCommit": "d58a162f8d1f631a35d19b905683348a7391be00",
-  "sourceIntegritySha256": "596f2aebe170c8eef324452fff910aef45d08145930e8df8a4f379a17e906e70"
+  "releaseVersion": "v11.378",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_378_STABLE_3D_BLOCKOUT",
+  "reason": "Publish sealed §E v11.378 improved optional 3D blockout alongside existing editable 2D contour importer. The experimental 3D button now reads user-adjusted 2D silhouette geometry, produces three aligned independently editable native loft sections with stable centerline and bounded side-derived depth, and retains optional narrow detached accessory detection. No forced 3D generation, semantic anatomy claims, UV baking or new backend. Preserves protected blank-project clone, Undo/Save, §C panel, VR selector and 2D SVG export. Complete controlled source validation, 385 patch build, JS parse, contour and 3D synthetic tests, starter/account revision safeguards and VR smoke pass: Github run #42786657085. 9,500,980-byte artifact SHA-256 69a212ae9705ae80d3c7dcba835fdb3eb465cb0fcc7927d317d1388ab7aae67e. Owner phone/Quest 2 visual acceptance pending.",
+  "sourceCommit": "e825b506e1676f684db0fa1e0b5d0ba5ba5a496a",
+  "sourceIntegritySha256": "69a212ae9705ae80d3c7dcba835fdb3eb465cb0fcc7927d317d1388ab7aae67e"
 }
