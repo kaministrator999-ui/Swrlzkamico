@@ -27,13 +27,18 @@ class VisionConversationIsolationTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.scope = {"re": re, "copy": copy}
-        cls.scope["vision_handoff_from_message"] = lambda msg: (
-            {"description": "unverified"}
-            if msg.get("role") == "user"
-            and "[Uploaded image — vision description, not original pixels]" in msg.get("text", "")
-            else None
-        )
+        marker = "\n\n[Uploaded image — vision description, not original pixels]\n"
+        ending = "\n[/Uploaded image]"
+        def fake_handoff(msg):
+            source = str(msg.get("text") or "")
+            if msg.get("role") != "user" or not source.endswith(ending) or marker not in source:
+                return None
+            question, _, detail = source[:-len(ending)].rpartition(marker)
+            return {"questionSentToChatModel": question, "descriptionSentToChatModel": detail}
+        cls.scope["vision_handoff_from_message"] = fake_handoff
+        cls.current_question = staticmethod(load_function("station.py", "_current_vision_question", cls.scope))
         cls.topic_shift = staticmethod(load_function("station.py", "_companion_topic_shift_from_vision", cls.scope))
+        cls.inference_prompt = staticmethod(load_function("station.py", "_inference_prompt_after_vision", cls.scope))
         cls.project = staticmethod(load_function("station.py", "_history_projection", cls.scope))
 
     def test_current_social_message_addresses_assistant(self):
@@ -58,6 +63,16 @@ class VisionConversationIsolationTests(unittest.TestCase):
         ):
             with self.subTest(prompt=prompt):
                 self.assertFalse(self.topic_shift(prompt))
+
+    def test_carried_image_handoff_does_not_redefine_assistant_greeting(self):
+        marker = "\n\n[Uploaded image — vision description, not original pixels]\n"
+        ending = "\n[/Uploaded image]"
+        greeting = "How are you doing, §wyrlz?" + marker + "Mage L2 description" + ending
+        image_question = "What is on the back of the robe?" + marker + "Mage L2 description" + ending
+        self.assertTrue(self.topic_shift(greeting))
+        self.assertEqual(self.inference_prompt(greeting), "How are you doing, §wyrlz?")
+        self.assertFalse(self.topic_shift(image_question))
+        self.assertEqual(self.inference_prompt(image_question), image_question)
 
     def test_multiple_image_trials_are_isolated_only_when_conversation_shifts(self):
         img = "[Uploaded image — vision description, not original pixels]"
