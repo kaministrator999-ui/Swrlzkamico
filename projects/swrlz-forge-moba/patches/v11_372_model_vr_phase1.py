@@ -46,8 +46,8 @@ def apply(html):
         "if(g.kind==='menu'){se372MenuDragFinish(g,true);se340Notice('VR menu placed.');se340Publish();return true;}\n  if(g.kind==='view'){se340Notice('Workbench placed · model data unchanged.');",
         'commit spatial menu placement')
     html=one(html,
-        "if(!g)return false;\n  s.gesture=null;",
-        "if(!g)return false;\n  if(g.kind==='menu')se372MenuDragFinish(g,false);se372GuideStop(g);s.se372Sweep=null;\n  s.gesture=null;",
+        "if(!g)return false;\n s.gesture=null;",
+        "if(!g)return false;\n if(g.kind==='menu')se372MenuDragFinish(g,false);se372GuideStop(g);s.se372Sweep=null;\n s.gesture=null;",
         'cancel preview and restore menu')
     html=one(html,
         "const pose=se340GripPose(g.record);if(!pose)return;\n  const gain=",
