@@ -1,4 +1,4 @@
-/* §C voice conversation v1: browser STT/TTS, existing Station send authority. */
+/* §C voice conversation v2: sentence-by-sentence streaming TTS, canonical Station transport. */
 (() => {
   "use strict";
   const mic = document.getElementById("voiceConversationButton");
@@ -20,6 +20,12 @@
   let voiceEpoch = 0;
   let restartTimer = 0;
   let speechParts = [];
+  let speechPending = "";
+  let streamedReply = "";
+  let generationComplete = false;
+  let speakingStarted = false;
+  let speechBusy = false;
+  let activeSpeech = null;
 
   const trace = (event, data = {}) => {
     // Strictly state-only diagnostics; never record audio, transcription or reply text.
@@ -70,6 +76,12 @@
     abortRecognition();
     pendingId = "";
     speechParts = [];
+    speechPending = "";
+    streamedReply = "";
+    generationComplete = false;
+    speakingStarted = false;
+    speechBusy = false;
+    activeSpeech = null;
     try { synth?.cancel(); } catch (_) {}
     update("off", notice);
   };
@@ -90,6 +102,15 @@
     if (!enabled || !text.trim()) return;
     if (send.disabled) { fail("chat is busy"); return; }
     pendingId = "";
+    voiceEpoch++; // Invalidate callbacks from a previous spoken turn.
+    speechParts = [];
+    speechPending = "";
+    streamedReply = "";
+    generationComplete = false;
+    speakingStarted = false;
+    speechBusy = false;
+    activeSpeech = null;
+    try { synth?.cancel(); } catch (_) {}
     update("waiting", "Thinking · waiting for §wyrlz…");
     setPrompt(text.trim());
     // Use the canonical composer click, never a second, shadow chat transport.
@@ -187,39 +208,104 @@
     return chunks;
   };
 
-  const speak = reply => {
-    if (!enabled || phase !== "waiting") return;
+  const voiceChoice = () => {
+    const voices = synth?.getVoices?.() || [];
+    return voices.find(v => v.lang?.toLowerCase().startsWith("en") && v.default) ||
+           voices.find(v => v.lang?.toLowerCase().startsWith("en"));
+  };
+
+  const resumeAfterSpeech = () => {
+    // Never reopen the microphone while generation or synthesized speech is active.
+    if (!enabled || !generationComplete || speechBusy || speechParts.length || speechPending.trim()) return;
+    pendingId = "";
+    speakingStarted = false;
+    update("listening", "Listening · your turn…");
+    scheduleListen(200);
+  };
+
+  const playQueuedSpeech = () => {
+    if (!enabled || !["waiting", "speaking"].includes(phase) || speechBusy) return;
+    if (!speechParts.length) {
+      resumeAfterSpeech();
+      return;
+    }
     if (!synth || typeof window.SpeechSynthesisUtterance !== "function") {
       fail("speech playback unavailable"); return;
     }
-    speechParts = chunkSpeech(reply);
-    if (!speechParts.length) { fail("empty reply"); return; }
     abortRecognition();
-    const token = ++voiceEpoch;
-    update("speaking", "§wyrlz speaking · tap mic to stop");
-    const voices = synth.getVoices?.() || [];
-    const voice = voices.find(v => v.lang?.toLowerCase().startsWith("en") && v.default) ||
-                  voices.find(v => v.lang?.toLowerCase().startsWith("en"));
-    const playNext = () => {
-      if (!enabled || phase !== "speaking" || token !== voiceEpoch) return;
-      if (!speechParts.length) {
-        update("listening", "Listening · your turn…");
-        scheduleListen(200);
-        return;
-      }
-      const speech = new SpeechSynthesisUtterance(speechParts.shift());
-      speech.lang = voice?.lang || navigator.language || "en-US";
-      if (voice) speech.voice = voice;
-      speech.rate = 1;
-      speech.onend = playNext;
-      speech.onerror = event => {
-        if (token === voiceEpoch) fail("playback " + String(event.error || "error"));
-      };
-      try { synth.speak(speech); } catch (_) { fail("audio playback failed"); }
+    if (!speakingStarted) {
+      speakingStarted = true;
+      update("speaking", "§wyrlz speaking · reply may still be generating…");
+      trace("first-audio-queued", { streamed: !generationComplete });
+    }
+    const token = voiceEpoch;
+    const voice = voiceChoice();
+    const utterance = new SpeechSynthesisUtterance(speechParts.shift());
+    utterance.lang = voice?.lang || navigator.language || "en-US";
+    if (voice) utterance.voice = voice;
+    utterance.rate = 1;
+    speechBusy = true;
+    activeSpeech = utterance; // Keep utterance alive until Chrome announces completion.
+    utterance.onend = () => {
+      if (token !== voiceEpoch || !enabled) return;
+      speechBusy = false;
+      activeSpeech = null;
+      playQueuedSpeech();
     };
-    try { synth.cancel(); } catch (_) {}
-    playNext();
-    trace("speaking", { chunks: speechParts.length + 1 });
+    utterance.onerror = event => {
+      if (token === voiceEpoch && enabled)
+        fail("playback " + String(event.error || "error"));
+    };
+    try { synth.speak(utterance); } catch (_) { fail("audio playback failed"); }
+  };
+
+  const flushSpeech = final => {
+    // A partial Markdown code fence must not be spoken as executable source.
+    if (!final && (speechPending.match(/```/g) || []).length % 2 !== 0) return;
+    while (speechPending.trim()) {
+      // Speak natural sentence boundaries as they stream. Very long sentences
+      // get a bounded word-boundary fallback; do not wait for a full reply.
+      const sentence = /[.!?](?:["'”’)]]*)\s+/.exec(speechPending);
+      let cut = sentence ? sentence.index + sentence[0].length : -1;
+      if (cut < 0 && !final && speechPending.length >= 170) {
+        cut = speechPending.lastIndexOf(" ", 170);
+        if (cut < 90) return;
+      }
+      if (cut < 0 && !final) return;
+      const portion = cut >= 0 ? speechPending.slice(0, cut) : speechPending;
+      speechPending = cut >= 0 ? speechPending.slice(cut) : "";
+      speechParts.push(...chunkSpeech(portion));
+      if (!final && speechParts.length >= 32) break;
+    }
+    playQueuedSpeech();
+  };
+
+  const receiveDelta = text => {
+    if (generationComplete) return;
+    const fragment = String(text || "");
+    if (!fragment) return;
+    streamedReply += fragment;
+    speechPending += fragment;
+    // Protect the browser from unbounded buffered source in voice mode.
+    if (speechPending.length > 12000) {
+      fail("reply too large for streaming speech"); return;
+    }
+    flushSpeech(false);
+  };
+
+  const finishReply = text => {
+    if (!enabled || generationComplete) return;
+    const committed = String(text || "");
+    // Persisted Station text is authoritative. If stream deltas arrived, use
+    // only its unsent suffix; never re-speak the prefix on a terminal receipt.
+    if (committed && committed.startsWith(streamedReply))
+      speechPending += committed.slice(streamedReply.length);
+    else if (!streamedReply && committed)
+      speechPending += committed;
+    generationComplete = true;
+    flushSpeech(true);
+    if (!speechBusy && !speechParts.length)
+      resumeAfterSpeech();
   };
 
   mic.addEventListener("click", () => {
@@ -251,15 +337,22 @@
     if (event.detail?.phase === "failed" && event.detail.requestId === pendingId) fail("chat send failed");
   });
 
+  window.addEventListener("swrlz-voice-delta", event => {
+    if (!enabled || !pendingId || !["waiting", "speaking"].includes(phase)) return;
+    const { requestId, text } = event.detail || {};
+    if (String(requestId || "") !== pendingId) return;
+    receiveDelta(text);
+  });
+
   window.addEventListener("swrlz-voice-state", event => {
-    if (!enabled || phase !== "waiting" || !pendingId) return;
+    if (!enabled || !pendingId || !["waiting", "speaking"].includes(phase)) return;
     const { requestId, terminalType, text } = event.detail || {};
     if (String(requestId || "") !== pendingId) return;
     const terminal = String(terminalType || "").toUpperCase();
     if (terminal === "FAILED" || terminal === "CANCELLED") {
       fail("model generation " + terminal.toLowerCase());
-    } else if ((terminal === "COMPLETE" || terminal === "COMPLETED") && String(text || "").trim()) {
-      speak(text);
+    } else if (terminal === "COMPLETE" || terminal === "COMPLETED") {
+      finishReply(text);
     }
   });
 
