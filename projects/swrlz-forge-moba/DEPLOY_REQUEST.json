@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.381",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_381_XR_GUEST_HOST_SYNC",
-  "reason": "Publish §E v11.381 Quest VR guest LAN movement fix. Owner found phone-hosted Sheep Tag game buildings synchronized but guest Quest 3S sheep remained frozen at spawn and Quest stick could not move, while Quest browser host + phone guest worked. On immersive guests, run existing host-snapshot sheep interpolation from existing WebXR frame, and route actual Quest left-stick intent via already-authorized guest-stick-v2 network packet. Preserve host authority, building sync, collisions, browser RAF, touch controls, all other game modes, graphics and saves. Full sealed source verifier SUCCESS GitHub run 42920418534: 388 ordered patches, 9,530,598 bytes, SHA-256 10d562b9eecfd12a8bd967ce393d1018d1a6aeaaad11a753207f1c87e845e33a. Physical phone host/Quest 3S VR client acceptance still required.",
-  "sourceCommit": "f09d2b52d1fc6f2972615e20265be47a1e51ce39",
-  "sourceIntegritySha256": "10d562b9eecfd12a8bd967ce393d1018d1a6aeaaad11a753207f1c87e845e33a"
+  "releaseVersion": "v11.390",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_390_MODEL_VR_FLUENT_HOTKEYS",
+  "reason": "Owner requested comfortable fluent controller hotkeys for selecting, transforming and creating native models. Adds select-to-Grab with combined movement/wrist rotation, held-stick sizing, jump-free precision clutch, scoped A transform cycle, X+A Create and X+Trigger atomic duplication. Native primitive ghost previews confirm only on a fresh trigger press; Cancel/tracking/source changes and first Undo discard pending placement. New geometry hands directly to Grab. Preserves selected-only targets, full-selection focus, remapped sweeps, native draw-to-selected-extrude handoff, controller labels and current camera/graphics/guest synchronization. Full seal: 389 patches, 9569287 HTML bytes, 77 assets, 81 files. 54 focused groups and 15 actual IWER Quest workflows passed with zero errors; read-only 59-part mage preview and canceled creation ghosts preserved source/history. Physical headset comfort remains owner testing.",
+  "sourceCommit": "172649b17d1f86265443447dd189ffedb6b4cdca",
+  "sourceIntegritySha256": "5b1de0f292dd51ddfcad1becbaa59aadc6e464fcacbc44ca0ed86e57ee7fea0a"
 }
