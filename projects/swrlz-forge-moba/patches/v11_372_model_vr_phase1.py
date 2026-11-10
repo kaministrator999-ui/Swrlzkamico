@@ -36,10 +36,11 @@ def apply(html):
         "if(!g||!['view','group','two-hand','extrude'].includes(g.kind))return false;",
         "if(!g||!['view','menu','group','two-hand','extrude'].includes(g.kind))return false;",
         'menu drag gesture completion')
-    html=one(html,
-        "se340UpdateGesture();if(s.gesture!==g)return false;s.gesture=null;",
-        "se340UpdateGesture();if(s.gesture!==g)return false;s.gesture=null;se372GuideStop(g);",
-        'dispose grip guide at gesture completion')
+    # Both group-grip and trigger drawing commit with this expression;
+    # patch the earlier group-grip routine only.
+    needle="se340UpdateGesture();if(s.gesture!==g)return false;s.gesture=null;"
+    if html.count(needle)!=2:raise AssertionError(('finish functions changed',html.count(needle)))
+    html=html.replace(needle,needle+"se372GuideStop(g);",1)
     html=one(html,
         "if(g.kind==='view'){se340Notice('Workbench placed · model data unchanged.');",
         "if(g.kind==='menu'){se372MenuDragFinish(g,true);se340Notice('VR menu placed.');se340Publish();return true;}\n  if(g.kind==='view'){se340Notice('Workbench placed · model data unchanged.');",
