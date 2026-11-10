@@ -47,7 +47,7 @@ const baseline=JSON.stringify(parts);
 // Side image x offset cannot cause twisted / off-center geometry.
 setRegions(outline(.143,.15,.62,.052,.072),outline(.61,.20,.63,.035,.045),outline(.75,.16,.61,.045,.046));
 parts=vm.runInContext('se375Blockout()',sandbox);
-assert.deepEqual(parts.map(p=>p.path),JSON.parse(baseline).map(p=>p.path));
+assert.equal(JSON.stringify(parts.map(p=>p.path)),JSON.stringify(JSON.parse(baseline).map(p=>p.path)));
 vm.runInContext('se377.regions=[];',sandbox);
 assert.throws(()=>vm.runInContext('se375Blockout()',sandbox),/Front silhouette/);
 console.log('v11.378: three stable independently editable 3D lofts, side-depth cues, no corkscrew, 2D source safety PASS');
