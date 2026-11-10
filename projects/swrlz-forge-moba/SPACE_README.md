@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.372
+title: §wyrl§ Engine v11.373
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,10 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## v11.373 · Reliable reversible mesh sweep in Model Studio VR
+
+Corrects the held-left-trigger sweep start after native selection invalidated cached hover contact. Capture the original trigger hit once, carry it into the sweep session, retain preexisting selections, and remove only new meshes when retracing the same path. This narrowly scoped source repair preserves account-linked Save to Account, project identity/revision safeguards, Move/Rotate/Scale feedback, spatial menu grips, and Quest Touch controller models/labels. Owner Quest 2 acceptance remains pending.
 
 ## v11.372 · Quest 2 model manipulation and in-VR project save
 
