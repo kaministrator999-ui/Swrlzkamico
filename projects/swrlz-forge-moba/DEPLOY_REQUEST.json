@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.376",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_376_VR_SELECTOR_LASSO",
-  "reason": "Publish sealed §E v11.376 Quest VR Select tool: keep original left-trigger tap/add-and-retrace sweep selection, add a dedicated first-level Selector panel with Sweep, Front Lasso and Through Lasso submodes. In Lasso mode, hold Left Grip to draw a visible projected loop around overlapping character parts, release to add the intersecting meshes, front-depth filtering or all through-depth as selected; previously selected parts preserved and 32-part cap respected. Targeting a floating UI menu with Grip retains window-drag priority; outside selector lasso modes Left Grip retains workspace movement. B cancels preview. Contextual Quest controller hint updates; no change to controller models/quick-select/Undo/Redo, source meshes, §C v11.375 image-to-3D blockout, account Save to Account/UV preservation or starter/revision protection. 383 governed patches, HTML artifact 9,477,707 bytes and SHA-256 15363ce895a2b2787f83045972d3cd1aa044c3ec3f1d04c56918b3ae1e7dedad. Source and focused/legacy tests sealed green: GitHub workflow #42781519367. Owner Quest 2 usability acceptance remains pending.",
-  "sourceCommit": "6103f42db41c6c4423b9a970ccb1615d1a8c8136",
-  "sourceIntegritySha256": "15363ce895a2b2787f83045972d3cd1aa044c3ec3f1d04c56918b3ae1e7dedad"
+  "releaseVersion": "v11.377",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_377_REFERENCE_OUTLINES",
+  "reason": "Publish sealed §E v11.377 trace-first image importer inside integrated §C: five-view local foreground/color-component outlines, rename/select/hide, touch-editable contour vertices, guide re-trace and SVG export. Previous loft generator remains explicitly experimental and not automatic. Preserve existing VR Model Studio, cloud project Save/Clone, starter protection and ordinary §C image transport. Full release verifier sealed 384 patches, 9,494,160-byte generated HTML SHA-256 596f2aebe170c8eef324452fff910aef45d08145930e8df8a4f379a17e906e70; dedicated GitHub check run #42784307155 PASS. Physical device acceptance pending.",
+  "sourceCommit": "d58a162f8d1f631a35d19b905683348a7391be00",
+  "sourceIntegritySha256": "596f2aebe170c8eef324452fff910aef45d08145930e8df8a4f379a17e906e70"
 }
