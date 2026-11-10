@@ -13,8 +13,8 @@ manifest=json.loads((ROOT/'source-manifest.json').read_text('utf8'))
 assert manifest['name']=='§wyrl§ Engine v11.376'
 assert manifest['finalArtifact']=='swyrl_engine_v11_376.html'
 assert len(manifest['patches'])==383 and manifest['patches'][-1]=='patches/v11_376_vr_selector_lasso.py'
-assert manifest['finalBytes']==9467573
-assert manifest['finalSha256']=='37453b2be4cbaa8db15e30ff4cff9a6739f0f5bca50bd9d7a16b0029449dff04'
+assert manifest['finalBytes']==9477707
+assert manifest['finalSha256']=='15363ce895a2b2787f83045972d3cd1aa044c3ec3f1d04c56918b3ae1e7dedad'
 out=Path(args.output).resolve()
 subprocess.run([sys.executable,str(ROOT/'build_space.py'),'--output',str(out)],check=True)
 data=(out/'index.html').read_bytes()
