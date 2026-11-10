@@ -19,5 +19,22 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+      - name: Independent candidate bytes / SHA with current manifest
+        shell: bash
+        run: |
+          python - <<'PY'
+          import base64,gzip,hashlib,json,importlib.util
+          from pathlib import Path
+          root=Path('projects/swrlz-forge-moba').resolve()
+          m=json.loads((root/'source-manifest.json').read_text())
+          html=gzip.decompress(base64.b64decode(''.join((root/p).read_text().strip() for p in m['chunks']))).decode('utf8')
+          for i,rel in enumerate(m['patches']):
+            spec=importlib.util.spec_from_file_location('se380_'+str(i),root/rel)
+            mod=importlib.util.module_from_spec(spec);spec.loader.exec_module(mod)
+            html=mod.apply(html)
+          data=html.encode('utf8')
+          print('CURRENT_MANIFEST_BYTES='+str(len(data)),flush=True)
+          print('CURRENT_MANIFEST_SHA='+hashlib.sha256(data).hexdigest(),flush=True)
+          PY
       - name: Verify exact full source build and focused regressions
         run: python projects/swrlz-forge-moba/scripts/verify_v11_380_release.py --output dist/se380-candidate
