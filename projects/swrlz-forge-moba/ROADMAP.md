@@ -1,3 +1,11 @@
+## §E v11.380 · Practical and honest graphics quality/performance controls (2026-11-10)
+
+Integrate Graphics / Performance / VR tabs into the original settings window. Respect immutable WebGL hardware MSAA, offer optional non-VR FXAA, clamp anisotropy to device support and restore authored original texture settings, adjust only existing LOD entries and directional shadow coverage, and expose real WebXR foveation and Sheep Tag resolution at session entry. Do not introduce a duplicate renderer, an in-VR DOM panel, fake GPU timing, hidden gameplay actors or unsafely hot-swap XR eye buffers. Prioritize consistent Quest VR motion and verify phone/desktop layout as part of the same implementation.
+
+## §E v11.379 · Sheep Tag XR frame continuity (2026-11-10)
+
+Preserve genuine Quest overlay/focus recovery while preventing false focus-loss stalls on bounded visible gameplay callback gaps. Make the XR framebuffer scale honor preset at session start. Continue to evaluate native simulator 50ms delta clamps independently if perceived joystick starts/stops persist. No claims of confirmed device performance before Quest owner acceptance.
+
 ## §E v11.378 · Improved opt-in 3D blockout from 2D contour edits (2026-11-10)
 
 Owner wants to test both experimental branches, not discard the old generator. The old unrestricted full-row loft profile caused an overlapping rose-tornado result. Keep 2D first and add a more stable 3D path that reads confirmed front silhouette points, estimates side depth independently of view-panel X positions, smooths contour widths, and constrains three nonoverlapping vertical bands. Preserve detached narrow prop option, separate native mesh identity, existing blank-project cloning and native undo. Do not claim anatomical segmentation, semantic labels, rigged geometry, photogrammetry, or texture transfer. Next owner acceptance: compare 2D outlined mage against improved 3D silhouette from the same sheet on phone.
