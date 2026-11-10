@@ -1,3 +1,9 @@
+## §E v11.390 · Fluent controller selection, Grab and creation (2026-11-10)
+
+Selecting from Inspect now arms Grab: grip moves and turns the existing selection, the stick sizes it, and the off-hand trigger provides smooth fine motion. A taps cycle Move/Rotate/Scale; hold A for broader tools. X+A opens Create with native Cube/Sphere/Cylinder/Cone placement previews; X+Trigger duplicates a group in one Undo step. Confirmed creations and copies become the selection and hand directly to Grab. Cancel and tracking/source changes discard uncommitted previews.
+
+See [the v11.390 controller checkpoint](docs/MODEL_VR_FLUENT_HOTKEYS_V11_390.md) for controls, transaction boundaries and validation. Current Selector, menu drag, camera, image/UV, graphics and Quest guest synchronization work remains included.
+
 ## §E v11.381 · Quest multiplayer guest motion continuity (2026-11-10)
 
 Fix distinct VR-guest paths, not normal VR gameplay. When immersive as a non-host: advance replicated sheep actors from host snapshots on native XR callback (not page-only RAF); send headset joystick intent through current sequenced guest WebRTC command channel (not zero-strength pointer input). Avoid duplicate visual ticks, extra network loops, host-side position writes and changes to stable browser-host/phone-guest. Verify actual host snapshots, XR visual movement and controller return to neutral on exit. Owner to compare Quest 3S hosting browser versus joining phone-hosted immersive session, with real device acceptance.

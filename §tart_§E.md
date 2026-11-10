@@ -1,3 +1,9 @@
+## §E v11.390 · Fluent controller selection, Grab and creation (2026-11-10)
+
+Selecting from Inspect now arms Grab: grip moves and turns the existing selection, the stick sizes it, and the off-hand trigger provides smooth fine motion. A taps cycle Move/Rotate/Scale; hold A for broader tools. X+A opens Create with native Cube/Sphere/Cylinder/Cone placement previews; X+Trigger duplicates a group in one Undo step. Confirmed creations and copies become the selection and hand directly to Grab. Cancel and tracking/source changes discard uncommitted previews.
+
+See [the v11.390 controller checkpoint](projects/swrlz-forge-moba/docs/MODEL_VR_FLUENT_HOTKEYS_V11_390.md) for controls, transaction boundaries and validation. Current Selector, menu drag, camera, image/UV, graphics and Quest guest synchronization work remains included.
+
 ## §E v11.378 — Parallel 2D and improved 3D reference experiments (2026-11-10)
 
 Import a five-view sheet in §C; first inspect and correct 2D outlines (existing v11.377 workflow). The optional experimental 3D button now consumes those edited contours, generates three aligned native loft sections instead of twisted full-row loft bands, and uses bounded side-view depth. A detached slender prop may still be included. This is intentionally rough and untextured; use a fresh blank Model Studio project to test it separately without overwriting an existing mage or starter. Normal project clone/save protections remain. Physical device validation still required.

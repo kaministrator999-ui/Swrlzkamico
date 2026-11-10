@@ -1,3 +1,9 @@
+## §E v11.390 · Fluent controller selection, Grab and creation (2026-11-10)
+
+Selecting from Inspect now arms Grab: grip moves and turns the existing selection, the stick sizes it, and the off-hand trigger provides smooth fine motion. A taps cycle Move/Rotate/Scale; hold A for broader tools. X+A opens Create with native Cube/Sphere/Cylinder/Cone placement previews; X+Trigger duplicates a group in one Undo step. Confirmed creations and copies become the selection and hand directly to Grab. Cancel and tracking/source changes discard uncommitted previews.
+
+See [the v11.390 controller checkpoint](docs/MODEL_VR_FLUENT_HOTKEYS_V11_390.md) for controls, transaction boundaries and validation. Current Selector, menu drag, camera, image/UV, graphics and Quest guest synchronization work remains included.
+
 ## §E v11.381 · Quest 3S guest in phone-hosted Sheep Tag (2026-11-10)
 
 Owner A/B test: Quest 3S running local VR Sheep Tag had little visible lag, but when phone hosted LAN and Quest joined in immersive mode the host sheep/bot buildings updated while replica sheep remained frozen at the spawn and left-stick movement did nothing. Reversing the roles—Quest browser host, phone guest—worked. Source review found the guest's v11.156/v11.161 interpolator only ran through the ordinary browser RAF, which can be suppressed while WebXR presents, and the v11.167 guest joystick sender reads touch pointer state rather than the headset left controller. Append-only v11.381 routes guest visual reconciliation into the existing XR frame callback and sends bounded Quest controller intent using the established guest-stick-v2 packets. The usual browser guest RAF and touch sender resume outside XR, and the host still owns collisions, authority, physics, money, structures and capture. Focused Node regression passed; physical phone-host/Quest 3S guest retest needed.
