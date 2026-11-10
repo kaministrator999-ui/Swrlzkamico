@@ -1,0 +1,67 @@
+name: Guarded HF Chat CPU Sprint Trial
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".deploy/HF_CHAT_CPU_SPRINT_REQUEST.txt"
+permissions:
+  contents: read
+concurrency:
+  group: swrlz-hf-space-deployment
+  cancel-in-progress: false
+jobs:
+  sprint:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout deployment authorization
+        uses: actions/checkout@v4
+      - name: Verify approved existing-Space trial
+        id: request
+        shell: bash
+        run: |
+          set -euo pipefail
+          file=".deploy/HF_CHAT_CPU_SPRINT_REQUEST.txt"
+          test -f "$file"
+          get() { sed -n "s/^$1=//p" "$file" | tail -n 1; }
+          test "$(get TARGET)" = "kamiloki/Swyrlz"
+          test "$(get APPROVED)" = "1"
+          ref="$(get SOURCE_REF)"
+          nonce="$(get REQUEST_NONCE)"
+          [[ "$ref" =~ ^[a-f0-9]{40}$ ]] || { echo "::error::SOURCE_REF must be an immutable SHA"; exit 1; }
+          [[ "$nonce" =~ ^[A-Za-z0-9._-]{10,96}$ ]] || { echo "::error::Request nonce missing/invalid"; exit 1; }
+          echo "ref=$ref" >> "$GITHUB_OUTPUT"
+      - name: Checkout immutable reviewed CPU trial
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.request.outputs.ref }}
+          path: cpu-sprint-source
+          fetch-depth: 1
+      - name: Check exact engine and release script Python syntax
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m py_compile cpu-sprint-source/scripts/hf_cpu_sprint_release.py
+          python -m py_compile cpu-sprint-source/hf_space/lfm2_700m_engine.py
+          python -m py_compile cpu-sprint-source/hf_space/qwen3vl_local_server.py
+      - name: Install existing HF source client
+        run: python -m pip install 'huggingface_hub>=0.34,<2'
+      - name: Snapshot live model code and validate capacity-bounded trial
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          set -euo pipefail
+          python cpu-sprint-source/scripts/hf_cpu_sprint_release.py prepare
+      - name: Preserve original Space code before any publication
+        uses: actions/upload-artifact@v4
+        with:
+          name: hf-chat-cpu-sprint-rollback
+          path: cpu-sprint-rollback/
+          retention-days: 90
+          if-no-files-found: error
+      - name: Publish two-engine CPU trial only
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          set -euo pipefail
+          python cpu-sprint-source/scripts/hf_cpu_sprint_release.py publish
