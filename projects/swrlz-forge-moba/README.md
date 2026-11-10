@@ -1,3 +1,11 @@
+## §E v11.380 · Graphics, Performance and Quest tabs (2026-11-10)
+
+The existing Graphics & Performance window is organized into Graphics, Performance and VR sections without duplicating the presets, render scale, shadow quality, Mobile Boost or frame diagnostics. New controls include native-antialias capability reporting with optional browser-only FXAA, bounded anisotropic texture filtering that defaults to original authored values, distance for existing Three.js LODs, directional shadow coverage, WebXR foveation when supported, and a Sheep Tag stereo render-scale override applied at the next XR entry. Saved models, game input and WebXR tracking remain unchanged. Tested in focused Node VM and Chromium layouts at 390, 868 and 1280 pixels. Hardware Quest 2 acceptance pending.
+
+## §E v11.379 · Sheep Tag visible-frame stability (2026-11-10)
+
+A visible 170–650 ms gameplay callback gap no longer causes the Quest focus-loss adapter to impose an additional 300 ms input/camera hold when browser and headset both report visible. Actual OS interruptions and longer gaps retain existing guards. Low/Mobile versus High graphics presets now select different XR eye framebuffer scales at the next VR entry. This does not claim to resolve low headset FPS, reprojection judder or simulation delta clamps; owner headset A/B testing remains necessary.
+
 ## §E v11.378 · Stable 3D lofts using corrected 2D outlines (2026-11-10)
 
 Keep both experimental workflows in the existing §C image panel. 2D color-based contours stay editable and exportable as SVG. The optional 3D builder now uses those visible edited outlines as source, derives three native loft profiles along one stable axis, smooths jagged row measurements, bounds width and centerline travel, and uses side-view silhouettes for depth rather than comparing unrelated side-view X coordinates. This addresses the observed corkscrew/rose-tornado artifact without claiming perfect reconstruction. The optional narrow prop can still be generated independently, including props outside the front frame. Each test should use its own blank Model Studio project; existing starter/Save/Undo guardrails remain in place.

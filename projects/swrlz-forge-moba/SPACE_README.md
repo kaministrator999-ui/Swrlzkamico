@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.378
+title: §wyrl§ Engine v11.380
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,14 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## v11.380 · Graphics, Performance, VR tabs
+
+The original Graphics & Performance panel now has responsive Graphics, Performance and VR tabs. Existing settings are retained; additional controls provide optional browser-only FXAA, hardware-bounded anisotropic filtering, authored LOD distances, shadow camera coverage, Quest/WebXR foveation where supported, and Sheep Tag VR stereo resolution on next session entry. Diagnostics identify browser native AA and reported XR capabilities rather than inventing GPU metrics. Controls persist locally and do not alter game saves, joystick input or headset tracking. Physical Quest 2 testing is pending.
+
+## v11.379 · Visible Sheep Tag headset-frame recovery
+
+A bounded XR callback gap during explicitly visible gameplay no longer triggers the Quest OS-overlay camera/input suppression. Genuine OS focus loss, hidden/blurred XR states and longer callback gaps retain recovery. VR graphics presets now choose the Sheep Tag eye framebuffer scale at VR entry rather than always forcing 72%. Real 25-FPS comfort and movement still require physical Quest testing.
 
 ## v11.378 · Improved experimental 3D blockout from edited 2D contours
 
