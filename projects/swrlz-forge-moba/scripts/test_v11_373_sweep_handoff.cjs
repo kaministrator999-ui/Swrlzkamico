@@ -11,9 +11,9 @@ for(const needle of [
 ])assert.ok(html.includes(needle),'Missing press-hit handoff '+needle);
 const start=html.indexOf('/* SE372_MODEL_VR_PHASE1_START */'),end=html.indexOf('/* SE372_MODEL_VR_PHASE1_END */',start);
 assert.ok(start>=0&&end>start);
-let selections=['ear','staff-grip'];const record={targetTracked:true,hit:null};
+let now=0,selections=['ear','staff-grip'];const record={targetTracked:true,hit:null};
 const s={mode:'inspect',gesture:null,se372Sweep:null,inputSample:{buttons:{LT:{physical:true}}}};
-const sandbox={se340XR:s,performance:{now:()=>75},se340VisibleSession:()=>true,
+const sandbox={se340XR:s,performance:{now:()=>now},se340VisibleSession:()=>true,
  se350Tools:()=>({selection:()=>({ids:selections.slice()}),select:(part,{additive})=>{
   if(!additive)selections=[part];
   else if(selections.includes(part))selections=selections.filter(v=>v!==part);
@@ -25,9 +25,9 @@ vm.createContext(sandbox);
 vm.runInContext(html.slice(start,end),sandbox);
 sandbox.se372SweepStart(record,['ear'],{id:'staff-grip',ui:false,name:'Grip'});
 assert.ok(s.se372Sweep,'Starts from preserved hit even after hover invalidation');
-record.hit={id:'staff-tip',ui:false};sandbox.se372SweepFrame(s);
+now=50;record.hit={id:'staff-tip',ui:false};sandbox.se372SweepFrame(s);
 assert.deepEqual(selections,['ear','staff-grip','staff-tip']);
-record.hit={id:'staff-grip',ui:false};sandbox.se372SweepFrame(s);
+now=100;record.hit={id:'staff-grip',ui:false};sandbox.se372SweepFrame(s);
 assert.deepEqual(selections,['ear','staff-grip'],'Reverse only removes sweep-added part');
 assert.ok(selections.includes('ear'),'Existing selection preserved');
 console.log('v11.373 trigger-hit handoff and reverse sweep PASS');
