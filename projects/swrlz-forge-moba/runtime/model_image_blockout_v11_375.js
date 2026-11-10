@@ -103,24 +103,29 @@ function se375Blockout(){
  const slices=28,rows=[];
  for(let i=0;i<=slices;i++){
   const y=upper+(lower-upper)*i/slices;
-  const front=sample.scan(rect[0],y),side=sample.scan(rect[1],y),back=sample.scan(rect[3],y);
-  rows.push({y,front,side,back});
+  const front=sample.scan(rect[0],y),side=sample.scan(rect[1],y),right=sample.scan(rect[2],y),back=sample.scan(rect[3],y);
+  rows.push({y,front,side,right,back});
  }
  const validF=rows.map(r=>r.front?.width||0).filter(n=>n>0);
  const validS=rows.map(r=>r.side?.width||0).filter(n=>n>0);
- if(validF.length<14||validS.length<12)throw Error('Could not isolate front/side silhouettes. Adjust guides to fit full characters.');
- const widestF=Math.max(...validF),widestS=Math.max(...validS);
+ const validR=rows.map(r=>r.right?.width||0).filter(n=>n>0);
+ if(validF.length<14||validS.length<12||validR.length<12)throw Error('Could not isolate front and both side profiles. Adjust guides to fit full characters.');
+ const widestF=Math.max(...validF),widestS=Math.max(...validS,...validR);
+ const topRows=[.32,.35,.38,.41,.44].map(y=>sample.scan(rect[4],y)).filter(Boolean);
+ const topWidth=topRows.length?Math.max(...topRows.map(r=>r.width)):0;
+ // Top-view outline sets a bounded independent hood-depth cue.
+ const topAspect=topWidth?Math.max(.75,Math.min(1.25,topWidth/(rect[4].w*se375Canvas.width)*1.15)):1;
  if(widestF<se375Canvas.width*.045||widestS<se375Canvas.width*.025)
   throw Error('View guides are not covering enough of the figure.');
  const projectRows=rows.map((r,i)=>{
-  const near=sampleNearest(rows,i,'front'),side=sampleNearest(rows,i,'side'),rear=sampleNearest(rows,i,'back');
+  const near=sampleNearest(rows,i,'front'),side=sampleNearest(rows,i,'side'),right=sampleNearest(rows,i,'right'),rear=sampleNearest(rows,i,'back');
   const width=Math.max(near.width,rear?.width||0)*.5+(Math.min(near.width,rear?.width||near.width))*.5;
   const worldY=.15+4.15*(1-i/slices);
   return {worldY,
     x:(near.center-se375Guides.front*se375Canvas.width)/widestF*2.8,
-    z:(side.center-se375Guides.left*se375Canvas.width)/widestS*1.55,
+    z:((side.center-se375Guides.left*se375Canvas.width)-(right.center-se375Guides.right*se375Canvas.width))/widestS*.8,
     radius:Math.max(.08,Math.min(1.44,width/widestF*1.42)),
-    depth:Math.max(.18,Math.min(1.35,side.width/widestS*1.15))};
+    depth:Math.max(.18,Math.min(1.35,(side.width+right.width)/(2*widestS)*1.15))};
  });
  // Separate independently editable bands: these are geometric slices, not
  // claimed semantic recognition. Slice boundaries can be moved later by hand.
@@ -130,15 +135,35 @@ function se375Blockout(){
   {name:'Lower silhouette',start:18,end:24,color:sample.dominant(rect[0],.455,.548)},
   {name:'Foot silhouette',start:24,end:28,color:sample.dominant(rect[0],.548,lower)}
  ];
- return bands.map((band,index)=>{
+ const operations=bands.map((band,index)=>{
   const ring=projectRows.slice(band.start,band.end+1);
   const ratio=ring.reduce((sum,p)=>sum+p.depth/(p.radius||.1),0)/ring.length;
-  const zScale=Math.max(.38,Math.min(1.2,ratio));
+  const zScale=Math.max(.38,Math.min(1.2,ratio*(index===0?topAspect:1)));
   return {op:'mesh.add',kind:'loft',name:'Reference blockout '+(index+1)+' · '+band.name,
    position:[0,0,0],rotation:[0,0,0],scale:[1,1,zScale],
    path:ring.map(p=>[round(p.x),round(p.worldY),round(p.z)]),
    radii:ring.map(p=>round(p.radius)),segments:32,color:band.color,material:'matte'};
  });
+ // Detect a tall narrow separate prop to the left of the front-view figure.
+ // Opt-in and source-derived; do not invent a staff on every turnaround.
+ if(se375Id('Prop')?.checked){
+  const propBox={x:Math.max(0,se375Guides.front-.124),y:.20,w:.054,h:.42};
+  const observations=Array.from({length:16},(_,i)=>{
+   const y=.225+(.61-.225)*i/15;
+   return {y,shape:sample.scan(propBox,y)};
+  }).filter(p=>p.shape);
+  if(observations.length>=11){
+   const xBase=se375Guides.front*se375Canvas.width;
+   const staffPath=observations.map(p=>[
+     round((p.shape.center-xBase)/widestF*2.8),
+     round(.15+4.15*(lower-p.y)/(lower-upper)),.15]);
+   const staffRadii=observations.map(p=>round(Math.max(.027,Math.min(.10,p.shape.width/widestF*.22))));
+   operations.push({op:'mesh.add',kind:'loft',name:'Reference blockout · detached side prop',
+    position:[0,0,0],rotation:[0,0,0],scale:[1,1,1],path:staffPath,radii:staffRadii,
+    segments:12,color:sample.dominant(propBox,.34,.60),material:'matte'});
+  }
+ }
+ return operations;
 }
 function sampleNearest(rows,i,key){
  for(let delta=0;delta<rows.length;delta++){
@@ -202,6 +227,7 @@ function se375Install(){
   +'<div class="se375-body"><label>Five-view turnaround image<input id="se375File" type="file" accept="image/png,image/jpeg,image/webp"></label>'
   +'<canvas id="se375Preview" aria-label="Image preview with five view guides"></canvas>'
   +'<details><summary>Adjust view guides</summary><div id="se375Guides" class="se375-guides"></div></details>'
+  +'<label><input id="se375Prop" type="checkbox" checked> Include a separate slender side prop if detected</label>'
   +'<button id="se375Generate" type="button">Build rough 3D in viewport</button>'
   +'<p id="se375Status" role="status" aria-live="polite">Open a Blank 3D model first. This local silhouette experiment makes separate editable mesh sections—not an exact textured scan.</p></div>';
  host.append(section);
