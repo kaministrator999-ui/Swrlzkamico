@@ -1,3 +1,7 @@
+## §E v11.378 — Parallel 2D and improved 3D reference experiments (2026-11-10)
+
+Import a five-view sheet in §C; first inspect and correct 2D outlines (existing v11.377 workflow). The optional experimental 3D button now consumes those edited contours, generates three aligned native loft sections instead of twisted full-row loft bands, and uses bounded side-view depth. A detached slender prop may still be included. This is intentionally rough and untextured; use a fresh blank Model Studio project to test it separately without overwriting an existing mage or starter. Normal project clone/save protections remain. Physical device validation still required.
+
 ## §E v11.377 — Image reference → editable 2D outlines (2026-11-10)
 
 The original §C reference importer now proposes local color-region and silhouette traces before trying to construct any 3D meshes. The existing in-panel 2D work area offers five orthographic view choices, region selection and names, show/hide, vertex editing, re-tracing and SVG export. Automatic segmentation is only a draft; the mage's individual hood/face/robe pieces need user review. The experimental v11.375 rough 3D generator remains tucked away and must be explicitly chosen. No starter project or existing mesh is changed simply by loading an image. Owner phone/Quest trial follows deployment.
