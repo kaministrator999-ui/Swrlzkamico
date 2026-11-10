@@ -126,7 +126,9 @@ def _cpu_capacity():
 def _thread_plan():
     """Favor broad prompt-prefill parallelism while keeping token decode conservative."""
     capacity=_cpu_capacity()
-    return min(8,capacity),capacity
+    # Trial 10 decode threads on the previously measured 16-core Space;
+    # batch prefill remains bounded by the affinity/capacity contract.
+    return min(10,capacity),capacity
 
 def load(context=CONTEXT_TOKENS):
     global _model
