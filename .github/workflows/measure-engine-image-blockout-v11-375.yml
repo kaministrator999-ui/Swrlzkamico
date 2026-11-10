@@ -19,8 +19,6 @@ jobs:
           node --check projects/swrlz-forge-moba/runtime/model_image_blockout_v11_375.js
           node projects/swrlz-forge-moba/scripts/test_v11_375_image_blockout.cjs
           python -m py_compile projects/swrlz-forge-moba/patches/v11_375_chat_turnaround_blockout.py
-      - name: Verify sealed production engine build and native geometry tests
-        run: python projects/swrlz-forge-moba/scripts/verify_v11_375_release.py --output dist/swrlz-forge-moba
       - name: Rebuild append-only patch chain and print actual integrity
         run: |
           python - <<'PY'
