@@ -1,0 +1,17 @@
+/* §E v11.380 — extend the existing Graphics & Performance window. */
+#performanceSettings .perf-card{width:min(600px,96vw);max-height:min(88dvh,820px);overflow-y:auto;overscroll-behavior:contain}
+#performanceSettings #se380-tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin:10px 0 13px}
+#performanceSettings #se380-tabs button{padding:10px 6px;min-height:40px;border-radius:8px;border:1px solid #35536d;background:#11263a;color:#b9d4e8;font:700 12px/1.3 system-ui,sans-serif;cursor:pointer}
+#performanceSettings #se380-tabs button[aria-selected="true"]{background:#20546a;color:#efffff;border-color:#63b8c3;box-shadow:inset 0 -2px #73d6d0}
+#performanceSettings #se380-tabs button:focus-visible,#performanceSettings .se380-refresh:focus-visible{outline:2px solid #89ece4;outline-offset:2px}
+#performanceSettings .se380-panel[hidden]{display:none!important}
+#performanceSettings .se380-panel .perf-grid{grid-template-columns:repeat(2,minmax(0,1fr));align-items:stretch}
+#performanceSettings .se380-field-note{font:400 10px/1.45 system-ui,sans-serif;color:#9cb8c8;margin-top:6px}
+#performanceSettings .se380-panel .perf-field select{min-height:34px;color:#f2fbff;background:#092035;border:1px solid #47677c;border-radius:6px;padding:5px 7px;max-width:100%}
+#performanceSettings .se380-panel .perf-field{min-width:0}
+#performanceSettings .se380-panel .perf-note{line-height:1.55;margin:12px 0}
+#performanceSettings .se380-status{white-space:pre-wrap;overflow-wrap:anywhere;color:#c5e7ec;background:#091b2c;border:1px solid #365c70;border-radius:8px;padding:10px;font:500 10px/1.55 ui-monospace,monospace}
+#performanceSettings .se380-refresh{min-height:36px;padding:7px 10px;border:1px solid #507b8d;border-radius:7px;background:#13364b;color:#e9ffff}
+#performanceSettings #se189MobileBoost{margin:8px 0 12px;min-height:36px}
+#performanceSettings .se380-footer{position:sticky;bottom:-16px;z-index:2;background:#0d1724;border-top:1px solid #344a64;padding:10px 0 0}
+@media(max-width:620px){#performanceSettings{padding:6px}#performanceSettings .perf-card{width:min(100%,560px);padding:12px;max-height:94dvh}#performanceSettings .se380-panel .perf-grid{grid-template-columns:minmax(0,1fr)}#performanceSettings #se380-tabs button{font-size:11px}}
