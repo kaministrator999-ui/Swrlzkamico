@@ -45,4 +45,15 @@ Software verification does not establish physical Quest comfort, tracking feel, 
 
 The exact sealed artifact passed **15 end-to-end IWER controller workflows with zero page errors**. Four actual-Three/native resolver suites passed **54 groups** (22 input, 10 Grab pose, 15 native creation, seven flow/transaction checks); the updated spatial UI and controller-hint checks also passed. The full package rebuilt to matching index/Modeler HTML and verified all 77 asset hashes across 81 files.
 
-An additional read-only Quest-browser preview loaded the original 59-part mage, displayed native creation ghosts, canceled them, and restored the editor with serialized model data and history unchanged. A short rendered interaction recording accompanies the preview; this is emulation, not physical headset footage. Hosted receipts are recorded after deployment.
+An additional read-only Quest-browser preview loaded the original 59-part mage, displayed native creation ghosts, canceled them, and restored the editor with serialized model data and history unchanged. A short rendered interaction recording accompanies the preview; this is emulation, not physical headset footage. Hosted verification is complete.
+
+
+### Confirmed hosted delivery
+
+- Coherent source commit: `172649b17d1f86265443447dd189ffedb6b4cdca`.
+- Separate request-only commit: `1bdd5745d91b208687bcd9ea8e20ffcff231373c` (one commit, one changed deployment request).
+- Deployment [42925139497](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/42925139497): **SUCCESS**.
+- Hugging Face revision `c7f4338465507c430bb6398b050c589ea39a71e6`: **RUNNING**.
+- Official revision-pinned `SOURCE.json` matches the version, all 389 ordered patches, HTML size/hash and all 77 local asset receipts. Independently streamed hosted `index.html` and `modeler.html` each match **9,569,287 bytes**, SHA-256 `5b1de0f292dd51ddfcad1becbaa59aadc6e464fcacbc44ca0ed86e57ee7fea0a`.
+- The read-only mage run includes pending native creation previews and a canceled preview recording, with all 59 native targets visible, unchanged serialized model/history and native parent restoration.
+- No account or cloud model mutations were required. This closure changes documentation only and does not bump the runtime version or issue another deployment.
