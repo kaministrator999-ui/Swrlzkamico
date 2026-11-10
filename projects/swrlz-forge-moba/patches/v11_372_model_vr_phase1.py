@@ -16,7 +16,12 @@ def section(s,start,end,replacement,label):
     return s[:a]+replacement+s[b:]
 def apply(html):
     helper=(ROOT/'runtime/model_vr_phase1_v11_372.js').read_text('utf8')
+    bridge=(ROOT/'runtime/model_vr_projects_v11_372.js').read_text('utf8')
     assert 'SE372_MODEL_VR_PHASE1_START' in helper and 'function se372Frame(s)' in helper
+    assert 'SE372_VR_PROJECTS_IN_CHAT_CLOSURE_START' in bridge
+    html=one(html,'if(ALLOWED_PARENTS.has(location.origin))queueMicrotask(',
+        bridge+'\nif(ALLOWED_PARENTS.has(location.origin))queueMicrotask(',
+        'project account methods inside existing authenticated closure')
     html=section(html,'function se340PlacePalette(viewer){','function se340Recenter(',
         helper+"\nfunction se340PlacePalette(viewer){se372MenuPlace(viewer);}\n",
         'independent world workspace menu')
@@ -80,6 +85,10 @@ def apply(html):
         "for(const r of s.controllers){\n  se362ControllerDisconnected(r);",
         "se372Dispose();\n for(const r of s.controllers){\n  se362ControllerDisconnected(r);",
         'dispose phase 1 visual resources')
+    html=one(html,
+        "s.supported=true;s.busy=false;se340Notice(",
+        "window.SWYRL_ENGINE_VR_PROJECTS_372?.connect?.();s.supported=true;s.busy=false;se340Notice(",
+        'connect project backend on immersive entry')
     html=one(html,
         "s.session=requested;s.mode='inspect';s.precision=false;s.snap=false;s.paletteVisible=true;s.helpVisible=false;",
         "s.session=requested;s.mode='inspect';s.precision=false;s.snap=false;s.paletteVisible=true;s.helpVisible=false;s.se372MenuBase=null;s.se372Gizmo=null;s.se372Sweep=null;s.se372ProjectBusy=false;",
