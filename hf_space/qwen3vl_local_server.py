@@ -23,13 +23,23 @@ UPSTREAM_URL = "https://github.com/ggml-org/llama.cpp.git"
 SERVER_PORT = 16943
 SERVER_URL = f"http://127.0.0.1:{SERVER_PORT}"
 START_TIMEOUT = 240
-# The Space previously reported a 16-core CPU quota. Trial 8 decode / 14
-# image-prefill threads beyond the passing 6/12 profile; keep two cores of
-# quota headroom during prefill and retain a single serialized vision job.
-# Thread counts are configuration, NOT proof of speed or measured CPU usage.
-# Retain pinned weights, context, batch limits and cancellation semantics.
-DECODE_THREADS = 8
-BATCH_THREADS = 14
+# Aggressive CPU trial: 8/14 -> up to 12 decode / 16 image-prefill.
+# Use cgroup quota as the ceiling; affinity alone can expose host CPUs.
+# Model weights/context/batches, cancellation and serialized vision are unchanged.
+def _bounded_thread_plan(decode_target: int = 12, batch_target: int = 16) -> tuple[int, int]:
+    from runtime_capacity import runtime_capacity_snapshot
+    try:
+        available = len(os.sched_getaffinity(0))
+    except (AttributeError, OSError):
+        available = os.cpu_count() or 1
+    cap = max(1, min(16, int(available)))
+    cpu = runtime_capacity_snapshot().get("cpu") or {}
+    quota = cpu.get("limitCores")
+    if isinstance(quota, (int, float)) and not isinstance(quota, bool) and 0 < quota < 1e6:
+        cap = min(cap, max(1, int(quota)))
+    return min(decode_target, cap), min(batch_target, cap)
+
+DECODE_THREADS, BATCH_THREADS = _bounded_thread_plan()
 PARALLEL_REQUESTS = 1
 
 _build_lock = threading.Lock()
