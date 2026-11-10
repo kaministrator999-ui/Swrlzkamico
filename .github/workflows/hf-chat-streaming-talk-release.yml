@@ -1,0 +1,69 @@
+name: Guarded HF Chat Streaming Talk Release
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".deploy/HF_CHAT_STREAMING_TALK_REQUEST.txt"
+permissions:
+  contents: read
+concurrency:
+  group: swrlz-hf-space-deployment
+  cancel-in-progress: false
+jobs:
+  streaming-talk:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout production release request
+        uses: actions/checkout@v4
+      - name: Validate explicit scoped authorization
+        id: request
+        shell: bash
+        run: |
+          set -euo pipefail
+          file=".deploy/HF_CHAT_STREAMING_TALK_REQUEST.txt"
+          test -f "$file"
+          get() { sed -n "s/^$1=//p" "$file" | tail -n 1; }
+          test "$(get TARGET)" = "kamiloki/Swyrlz"
+          test "$(get APPROVED)" = "1"
+          ref="$(get SOURCE_REF)"
+          nonce="$(get REQUEST_NONCE)"
+          [[ "$ref" =~ ^[a-f0-9]{40}$ ]] || { echo "::error::SOURCE_REF must be a pinned commit"; exit 1; }
+          [[ "$nonce" =~ ^[A-Za-z0-9._-]{10,96}$ ]] || { echo "::error::Invalid release nonce"; exit 1; }
+          echo "ref=$ref" >> "$GITHUB_OUTPUT"
+      - name: Checkout immutable streaming voice source
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.request.outputs.ref }}
+          path: voice-streaming-source
+          fetch-depth: 1
+      - name: Validate voice controller, patcher, and tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --check voice-streaming-source/chat/§wyrlz/assets/voice_conversation.js
+          node --check voice-streaming-source/scripts/patch_hf_streaming_voice.cjs
+          node --check voice-streaming-source/scripts/test_chat_streaming_voice.cjs
+          node voice-streaming-source/scripts/test_chat_streaming_voice.cjs
+          python -m py_compile voice-streaming-source/scripts/publish_hf_streaming_voice.py
+      - name: Install existing HF Space client
+        run: python -m pip install 'huggingface_hub>=0.34,<2'
+      - name: Snapshot current live Chat and prepare additive streaming patch
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          set -euo pipefail
+          python voice-streaming-source/scripts/publish_hf_streaming_voice.py prepare
+      - name: Save original Chat HTML and Talk controller before any deployment
+        uses: actions/upload-artifact@v4
+        with:
+          name: hf-chat-streaming-talk-rollback
+          path: hf-streaming-voice-rollback/
+          retention-days: 90
+          if-no-files-found: error
+      - name: Atomically publish only two live Chat files
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          set -euo pipefail
+          python voice-streaming-source/scripts/publish_hf_streaming_voice.py publish
