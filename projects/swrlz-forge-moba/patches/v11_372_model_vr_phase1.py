@@ -128,8 +128,10 @@ def apply(html):
     html=one(html,
         "let name;\n if(mode==='clone'){",
         """if(mode==='account'&&(!ready||!se176AccountConnected)){
-  if(!ready&&frame&&!frame.src)frame.src=CHAT_ORIGIN+'/?forgeEmbed=1';
-  se371Display('Account not connected. Sign in through §E before Save to Account.',true);return;
+  if(!ready){if(frame&&!frame.src)frame.src=CHAT_ORIGIN+'/?forgeEmbed=1';
+   se371Display('Connecting account service. Press Save to Account again after connection.',true);return;}
+  // Reuse the verified Google sign-in popup without opening the Chat panel.
+  if(!se176AccountConnected){void signIn();return;}
  }
  let name;
  if(mode==='clone'){""",
