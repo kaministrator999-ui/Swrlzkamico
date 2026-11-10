@@ -214,3 +214,13 @@ function se375Install(){
  se375Id('File').onchange=event=>{const file=event.target.files?.[0];se375Load(file).catch(error=>se375Note(String(error?.message||error),true));};
  se375Id('Generate').onclick=()=>void se375Run();
 }
+
+// §C mounts lazily. Attach once when the authenticated Chat host panel appears,
+// rather than creating another editor window or altering its iframe transport.
+const se375Observer=new MutationObserver(()=>{
+ if(se375Id('Panel')){se375Observer.disconnect();return;}
+ se375Install();
+ if(se375Id('Panel'))se375Observer.disconnect();
+});
+if(document.documentElement)se375Observer.observe(document.documentElement,{childList:true,subtree:true});
+queueMicrotask(se375Install);
