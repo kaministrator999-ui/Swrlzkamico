@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="swrlz-chat-version" content="1.1.29">
+  <meta name="swrlz-chat-version" content="1.1.30">
   <meta name="theme-color" content="#010812">
   <title>Chat</title>
   <style>
@@ -1757,7 +1757,7 @@
       const workArtifactList = document.getElementById("workArtifactList");
       const workEvidenceCount = document.getElementById("workEvidenceCount");
       const workEvidenceList = document.getElementById("workEvidenceList");
-      const SWRLZ_CHAT_VERSION = "1.1.29";
+      const SWRLZ_CHAT_VERSION = "1.1.30";
       const navTraceId = "chat-ui-" + Date.now().toString(36) + "-" + crypto.getRandomValues(new Uint32Array(1))[0].toString(36);
       let lastUiStatusCamera = "";
       let companionState="idle";
@@ -3970,7 +3970,11 @@
             if(stationGeneration.requestId!==requestId||stationGeneration.threadId!==threadId||stationSettledRequests.has(stationRequestKey(requestId,threadId)))continue;
             stationGeneration.lastSeq=Number(event.seq||stationGeneration.lastSeq||0);
             if(event.type==="FORGE_BATCH_READY")window.SwrlzForgeEmbedV1?.forwardBatch(event);
-            if(event.type==="DELTA")stationGeneration.text=(stationGeneration.text||"")+String(event.text||"");
+            if(event.type==="DELTA"){
+              const deltaText=String(event.text||"");
+              stationGeneration.text=(stationGeneration.text||"")+deltaText;
+              if(deltaText)window.dispatchEvent(new CustomEvent("swrlz-voice-delta",{detail:{requestId,threadId,text:deltaText}}));
+            }
             else if(event.type==="WIDGET"&&event.widget&&typeof event.widget==="object")stationGeneration.widgets=[...(stationGeneration.widgets||[]),event.widget].slice(0,8);
             else stationGeneration.status=[...(stationGeneration.status||[]),{seq:event.seq,type:event.type,phase:event.phase||"",reason:event.reason||"",code:forgeFailureCodeV1(event),categories:Array.isArray(event.categories)?event.categories.slice(0,16):[],site:String(event.site||"").slice(0,180),url:String(event.url||"").slice(0,1000),provider:String(event.provider||"").slice(0,120),httpStatus:event.httpStatus??null,resultCount:event.resultCount??null,atUnixMs:Number(event.atUnixMs||0)||null,proposalReceipt:event.proposalReceipt&&typeof event.proposalReceipt==="object"?event.proposalReceipt:null}].slice(-256);
             if(event.terminal&&event.requestId===requestId)
