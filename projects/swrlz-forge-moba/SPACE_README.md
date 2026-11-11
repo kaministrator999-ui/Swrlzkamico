@@ -16,7 +16,7 @@ Model Studio VR adds **Create → Accessories → Hip pouch**: a rounded leather
 
 Aim freely or choose Surface fit against a character's hip. The preview holds its pose while the pointer operates the menu; the right stick turns/resizes it. After releasing the menu click, a fresh primary Trigger places the default eight editable native components as one selected group and one Undo step, ready for Grab. B or the first Y cancels an uncommitted preview. After placement, native mesh tools edit the components; the recipe controls do not persist as a parametric object. No saved cloud mage is modified by this checkpoint.
 
-See [the accessory workshop checkpoint](docs/MODEL_VR_ACCESSORY_WORKSHOP_V11_410.md) for the workflow, geometry and transaction boundaries. Source packaging, 17 native test groups, nine spatial UI checks and 12 controller workflows passed. Hosted confirmation is pending; physical Quest comfort remains owner acceptance.
+See [the accessory workshop checkpoint](docs/MODEL_VR_ACCESSORY_WORKSHOP_V11_410.md) for the workflow, geometry and transaction boundaries. The source package, 17 native test groups, nine spatial UI checks, 12 controller workflows and five disposable mage-reference checks passed. [Deployment 42961445702](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/42961445702) succeeded; the RUNNING hosted editor and Modeler match the exact tested source seal. Physical Quest comfort remains owner acceptance.
 
 ## §E rollback · v11.392 FOLLOW throttle withdrawn (2026-11-10)
 
