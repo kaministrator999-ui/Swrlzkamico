@@ -413,6 +413,6 @@
     "patches/v11_415_model_vr_iconography.py",
     "patches/v11_416_satchel_interactive_coach.py"
   ],
-  "finalBytes": 9712050,
-  "finalSha256": "5edd2029adb5f38050dd26e6123c977236c8792b9a58fcef3132f8e5c274e3a4"
+  "finalBytes": 9712154,
+  "finalSha256": "fbf93bdbe20fd3c9c5f08bb144c642f537ab3213ffc3c8d462e03eb4be7e31e9"
 }
