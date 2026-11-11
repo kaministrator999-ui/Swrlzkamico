@@ -406,6 +406,6 @@
     "patches/v11_390_model_vr_fluent_hotkeys.py",
     "patches/v11_391_sheep_quest_y_tools.py"
   ],
-  "finalBytes": 0,
-  "finalSha256": ""
+  "finalBytes": 9571193,
+  "finalSha256": "6c002024054723ed9352d86b4703fd22748f311b7abb86607f735ff2ec5b2809"
 }

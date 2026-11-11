@@ -18,6 +18,8 @@ jobs:
           node --check projects/swrlz-forge-moba/runtime/sheep_vr_y_tools_radial_v11_391.js
           python -m py_compile projects/swrlz-forge-moba/patches/v11_391_sheep_quest_y_tools.py
           node projects/swrlz-forge-moba/tests/test_sheep_vr_y_menu_v11_391.cjs
+      - name: Verify the fully sealed v11.391 release
+        run: python projects/swrlz-forge-moba/scripts/verify_v11_391_release.py --output /tmp/quest-y-391-verified
       - name: Produce complete candidate seal (not a deployment)
         run: |
           python - <<'PY'
