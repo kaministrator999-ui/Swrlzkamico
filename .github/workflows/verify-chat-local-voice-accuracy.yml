@@ -1,0 +1,28 @@
+name: Verify §C Local Speech Accuracy
+on:
+  push:
+    branches:
+      - fix/chat-local-voice-recognition-20261111
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  voice-accuracy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: Checkout source into existing voice fixture path
+        uses: actions/checkout@v4
+        with:
+          path: voice-turbo-source
+      - name: Validate local voice assets
+        run: |
+          node --check voice-turbo-source/chat/§wyrlz/assets/local_voice_vosk.js
+          node --check voice-turbo-source/chat/§wyrlz/assets/voice_conversation.js
+      - name: Run deterministic speech and caching regressions
+        run: |
+          node voice-turbo-source/scripts/test_chat_local_voice_accuracy_v6.cjs
+          node voice-turbo-source/scripts/test_chat_local_streaming_vosk.cjs
+          node voice-turbo-source/scripts/test_chat_local_vosk_recovery.cjs
+          node voice-turbo-source/scripts/test_chat_local_turbo.cjs
+          node voice-turbo-source/scripts/test_chat_streaming_voice.cjs
