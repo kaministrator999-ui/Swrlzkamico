@@ -1,4 +1,4 @@
-/* §C voice conversation v3: opt-in local streaming mic, incremental browser TTS, same Station. */
+/* §C voice conversation v4: reusable local ASR with silence finish, incremental browser TTS. */
 (() => {
   "use strict";
   const mic = document.getElementById("voiceConversationButton");
@@ -76,7 +76,7 @@
     voiceEpoch++;
     clearTimeout(restartTimer);
     abortRecognition();
-    window.SwrlzLocalVoice?.dispose();
+    window.SwrlzLocalVoice?.stop(); // Keep ready WASM model between Talk activations.
     pendingId = "";
     speechParts = [];
     speechPending = "";
@@ -344,7 +344,7 @@
     if (enabled) return;
     window.SwrlzLocalVoice?.dispose();
     update("off", voiceProvider.value === "local"
-      ? "Local streaming selected · first use downloads ~41 MB; no paid speech API. Tap Talk."
+      ? "Local stream selected · model is cached after first download. Tap Talk."
       : "Browser speech input selected · tap Talk.");
   });
 
@@ -381,6 +381,9 @@
   document.addEventListener("visibilitychange", () => {
     if (document.visibilityState !== "visible" && enabled) stop("Voice paused while Chat is in the background.");
   });
-  window.addEventListener("pagehide", () => { if (enabled) stop(); });
+  window.addEventListener("pagehide", () => {
+    if (enabled) stop();
+    window.SwrlzLocalVoice?.dispose(); // Full cleanup only when leaving page.
+  });
   update("off", "");
 })();
