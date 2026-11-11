@@ -39,7 +39,7 @@ for name,info in receipt['assets'].items():
  content=(out/name).read_bytes();assert len(content)==info['bytes'] and hashlib.sha256(content).hexdigest()==info['sha256'],name
 assert len([p for p in out.rglob('*') if p.is_file()])==81
 if args.request:
- request=json.loads((ROOT/'DEPLOY_REQUEST.json').read_text());assert request['releaseVersion']=='v11.391' and request['deployMarker']==MARKER
+ request=json.loads((ROOT/'DEPLOY_REQUEST.json').read_text());assert request['releaseVersion']=='v11.393' and request['deployMarker']==MARKER
  assert request['sourceIntegritySha256']==m['finalSha256'] and len(request['sourceCommit'])==40
 print(json.dumps({'status':'SEALED_SOURCE_VERIFIED','version':'v11.393','patches':len(m['patches']),
  'bytes':len(data),'sha256':m['finalSha256'],'assets':77,'physicalHeadsetAcceptance':False},indent=2))
