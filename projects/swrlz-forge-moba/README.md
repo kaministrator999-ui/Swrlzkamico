@@ -1,3 +1,7 @@
+## §E v11.414 · Actual tool button references in the Apprentice Satchel quest
+
+Every tutorial step now names its native modeling controls alongside compact visual replicas of their existing button labels and glyphs. Relevant action words within task/hint copy also get a small matching control preview. Immersive Model VR reuses the **existing VR tool console icon-drawing function** for the reference glyphs rather than inventing symbols. The guide distinguishes **Add sphere → Shape: box** in flat Model Studio from **Create → Cube** in VR. These are read-only references; no extra tool, project mutations or overlapping VR menus were introduced. Owner phone/Quest comfort testing remains pending.
+
 ## §E v11.413 · Apprentice Satchel VR quest and corrected hollow-pouch construction
 
 The modeling lesson now explains an actual floor-plus-four-walls hollow volume, with collapsible three-view concept drawings and a shortcut to the native modeling tools. Enter Model VR while the saved satchel project is open to see its **independent stationary world-space quest window**, controlled through the Meta controller rays. Quest progress and the regular editor share the same project-scoped checklist; Save Project / Save to Account remain authoritative. Head-following and separate XR loops are intentionally avoided. Headset acceptance remains pending.
