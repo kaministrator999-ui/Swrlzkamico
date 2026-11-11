@@ -1,3 +1,7 @@
+## §E v11.416 · Interactive satchel modeling coach
+
+The Apprentice Satchel tutor now incorporates source-control-grounded **Show Me** highlights on actual native buttons, a **non-editable 3D ghost** (blockout, floor and four walls, flap, strap, clasp), automated inspection of real scene parts with specific missing-piece feedback, and local **Save checkpoint / Confirm restore** supporting native Undo. Quest checkoffs travel with the existing project when deliberately saved to the account, while snapshots stay device-local. Model VR adds the same coach actions and a material/color row for selected meshes (leather, metal and shade) using native editor transactions; its separate tutorial window can be grip-moved without head follow. No automatic construction, starter mutation, new account backend or parallel XR loop. Source-sealed GitHub verification and physical user testing are distinct.
+
 ## §E v11.415 · Clear tool pictograms throughout Model Studio VR (2026-11-11)
 
 The independent world-space VR tool console now shows distinct pictograms for selection, swipe/front/through lasso, Save Project, Save to Account, Clone, Projects, menu controls, controller aim, display modes and labeled viewpoints. Move/Rotate/Scale/Grab retain their original actions; Rotate is visually different from Undo. Increment/decrement cards show +/- marks. Existing hover/selected/disabled feedback, controller mappings, save schema, XR loop and the v11.414 satchel tutorial's native button references remain intact. Physical headset readability remains owner acceptance testing.
