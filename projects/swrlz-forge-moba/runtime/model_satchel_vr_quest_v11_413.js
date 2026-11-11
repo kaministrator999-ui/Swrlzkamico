@@ -69,7 +69,10 @@
   const box=q();if(!box||!box.root.visible||!active()||!record?.targetTracked||!se340VisibleSession())return null;
   const ray=se340Cast(record);if(!ray)return null;
   box.root.updateWorldMatrix(true,true);
-  const intersections=ray.intersectObjects(box.buttons.filter(o=>o.visible),false);
+  // A visible panel background is also a hit target. Never pass a ray through
+  // tutorial text into editable geometry; folded state blocks only its fold tab.
+  const targets=box.folded?box.buttons.filter(o=>o.visible):[...box.buttons,box.panel];
+  const intersections=ray.intersectObjects(targets,false);
   const chosen=intersections[0];if(!chosen)return null;
   return {ui:true,quest:true,target:chosen.object,action:chosen.object.userData.se340Action,
    distance:chosen.distance,point:chosen.point};
@@ -116,8 +119,8 @@
    depthTest:false,depthWrite:false});
   const geo=new THREE.PlaneGeometry(W,H),panel=new THREE.Mesh(geo,material);
   panel.renderOrder=8300;panel.userData.editorOnly=true;root.add(panel);
-  const box={root,canvas,texture,buttons:[],owned:[geo,material,texture],
-   index:0,folded:false,message:'',signature:''};
+  const box={root,panel,canvas,texture,buttons:[],owned:[geo,material,texture],
+   index:Math.max(0,Math.min(6,Number(lesson()?.status()?.current)||0)),folded:false,message:'',signature:''};
   se340XR.se413Quest=box;
   makeButton(box,'se413-fold',882,15,130,92);
   makeButton(box,'se413-prev',34,657,185,85);
