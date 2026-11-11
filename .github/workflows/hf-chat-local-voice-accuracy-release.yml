@@ -1,0 +1,76 @@
+name: Guarded HF Local Speech Accuracy Release
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".deploy/HF_CHAT_LOCAL_ACCURACY_REQUEST.txt"
+permissions:
+  contents: read
+# Separate from a stale queued run. The Space revision lease in the publisher
+# prevents a concurrent source overwrite even when GitHub schedules separately.
+concurrency:
+  group: swrlz-hf-local-accuracy-release
+  cancel-in-progress: false
+jobs:
+  local-accuracy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Read approved immutable release request
+        uses: actions/checkout@v4
+      - name: Verify scoped request and no-paid-service approval
+        id: request
+        shell: bash
+        run: |
+          set -euo pipefail
+          file=".deploy/HF_CHAT_LOCAL_ACCURACY_REQUEST.txt"
+          test -f "$file"
+          get() { sed -n "s/^$1=//p" "$file" | tail -n 1; }
+          test "$(get TARGET)" = "kamiloki/Swyrlz"
+          test "$(get APPROVED)" = "1"
+          test "$(get NO_PAID_SPEECH_API)" = "1"
+          test "$(get NO_HARDWARE_UPGRADE)" = "1"
+          ref="$(get SOURCE_REF)"
+          nonce="$(get REQUEST_NONCE)"
+          [[ "$ref" =~ ^[a-f0-9]{40}$ ]] || { echo "::error::Source must be immutable SHA"; exit 1; }
+          [[ "$nonce" =~ ^[A-Za-z0-9._-]{10,96}$ ]] || { echo "::error::Invalid release nonce"; exit 1; }
+          echo "ref=$ref" >> "$GITHUB_OUTPUT"
+      - name: Checkout tested speech fix
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.request.outputs.ref }}
+          path: voice-turbo-source
+          fetch-depth: 1
+      - name: Validate speech assets and five offline regression suites
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --check voice-turbo-source/chat/§wyrlz/assets/local_voice_vosk.js
+          node --check voice-turbo-source/chat/§wyrlz/assets/voice_conversation.js
+          node voice-turbo-source/scripts/test_chat_streaming_voice.cjs
+          node voice-turbo-source/scripts/test_chat_local_streaming_vosk.cjs
+          node voice-turbo-source/scripts/test_chat_local_vosk_recovery.cjs
+          node voice-turbo-source/scripts/test_chat_local_turbo.cjs
+          node voice-turbo-source/scripts/test_chat_local_voice_accuracy_v6.cjs
+          python -m py_compile voice-turbo-source/scripts/publish_hf_local_accuracy.py
+      - name: Install existing Hugging Face source client
+        run: python -m pip install 'huggingface_hub>=0.34,<2'
+      - name: Check live version 1.1.36 and snapshot current files
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          set -euo pipefail
+          python voice-turbo-source/scripts/publish_hf_local_accuracy.py prepare
+      - name: Save pre-release Space source for rollback
+        uses: actions/upload-artifact@v4
+        with:
+          name: hf-chat-local-accuracy-rollback
+          path: hf-voice-accuracy-rollback/
+          retention-days: 90
+          if-no-files-found: error
+      - name: Deploy guarded 1.1.37 speech fix with revision lease
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          set -euo pipefail
+          python voice-turbo-source/scripts/publish_hf_local_accuracy.py publish
