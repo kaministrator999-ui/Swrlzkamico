@@ -52,7 +52,7 @@ for token in [
     '...se410AccessoryUI(),creationActive:',
     'SWYRL_ENGINE_TUTORIAL_412', 'se412Tutorials', 'se412Panel',
     'SE413_SATCHEL_VR_QUEST_START', 'SWYRL_ENGINE_TUTORIAL_VR_413',
-    'se413PaintDemo', 'se413Examples', 'se413VR',
+    'se413PaintDemo', 'se413Examples', 'se413InstallSatchelVR',
     'SE390_MODEL_VR_QUICK_CREATE_START', 'SE390_MODEL_VR_GRAB_POSE_START',
     'SE390_MODEL_VR_FLUENT_TOOLS_START', 'SE390_MODEL_VR_FLUENT_UI',
     'SE390_MODEL_VR_HOTKEY_HINTS_START', 'vrCreate:se390ModelCreate',
