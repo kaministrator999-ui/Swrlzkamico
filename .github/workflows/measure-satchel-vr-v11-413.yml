@@ -1,0 +1,40 @@
+name: Measure §E satchel VR v11.413 source
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/measure-satchel-vr-v11-413.yml"
+      - "projects/swrlz-forge-moba/source-manifest.json"
+      - "projects/swrlz-forge-moba/patches/v11_413_satchel_vr_tutorial.py"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  measure:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Build all ordered patches and measure exact candidate
+        run: |
+          python - <<'PY'
+          import pathlib,json,base64,gzip,hashlib,importlib.util,sys
+          root=pathlib.Path('projects/swrlz-forge-moba').resolve()
+          m=json.loads((root/'source-manifest.json').read_text())
+          raw=gzip.decompress(base64.b64decode(''.join((root/n).read_text().strip() for n in m['chunks'])))
+          assert len(raw)==m['baseBytes'] and hashlib.sha256(raw).hexdigest()==m['baseSha256']
+          html=raw.decode()
+          for i,rel in enumerate(m['patches']):
+              p=root/rel
+              spec=importlib.util.spec_from_file_location('measure_'+str(i),p)
+              mod=importlib.util.module_from_spec(spec);spec.loader.exec_module(mod)
+              html=mod.apply(html)
+          data=html.encode()
+          print('SATCHEL_VR_FINAL_BYTES='+str(len(data)))
+          print('SATCHEL_VR_FINAL_SHA256='+hashlib.sha256(data).hexdigest())
+          print('SATCHEL_VR_PATCHES='+str(len(m['patches'])))
+          assert 'SE413_SATCHEL_VR_QUEST_START' in html
+          assert 'V11_413_SATCHEL_VR_TUTORIAL' in html
+          PY
