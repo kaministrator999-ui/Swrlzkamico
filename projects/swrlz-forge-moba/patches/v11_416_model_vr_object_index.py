@@ -68,12 +68,24 @@ def apply(html):
     helper=(ROOT/'runtime/model_vr_object_index_v11_416.js').read_text(encoding='utf8')
     assert helper.count('SE416_MODEL_VR_OBJECT_INDEX_START')==1
     html=one(html,'function se340SyncUI(){',helper+'\nfunction se340SyncUI(){')
-    html=one(html,'  const state={...se410AccessoryUI(),creationActive:', '  se416UpdateHighlights(s,entries,selectedIds);\n  const state={...se416IndexState(s,entries,selectedIds),...se410AccessoryUI(),creationActive:')
-    html=one(html,"const s=se340XR;if(!s.session||!s.scene||!se340VisibleSession())return false;\n  if(action==='exit')",
-            "const s=se340XR;if(!s.session||!s.scene||!se340VisibleSession())return false;\n  if(action==='objects'||action.startsWith('index-'))return se416IndexAction(action,record);\n  if(action==='exit')")
+    # Keep all intervening patches' native VR state fields and append the index
+    # state only inside the established synchronization function.
+    a=html.index('function se340SyncUI(){')
+    b=html.index('function se340ModelXRAction(',a)
+    block=html[a:b]
+    assert block.count('const state={')==1, ('VR UI state not unique',block.count('const state={'))
+    block=block.replace('const state={',
+        'se416UpdateHighlights(s,entries,selectedIds);\\n  const state={...se416IndexState(s,entries,selectedIds),',1)
+    html=html[:a]+block+html[b:]
+    html=one(html,'function se340ModelXRAction(action,record=null){',
+             "function se340ModelXRAction(action,record=null){\\n  if(action==='objects'||action.startsWith('index-'))return se416IndexAction(action,record);")
     html=one(html,"['inspect','move','rotate','scale','undo','redo','focus'", "['objects','index-add','index-prev','index-next','inspect','move','rotate','scale','undo','redo','focus'")
-    html=one(html,"  se345RestoreDisplay();\n  try{se340Bridge()?.releaseRoot?.();",
-            "  se416DisposeHighlights(s);\n  se345RestoreDisplay();\n  try{se340Bridge()?.releaseRoot?.();")
+    a=html.index('function se340Cleanup(expected){')
+    b=html.index('async function se340ModelXRExit()',a)
+    block=html[a:b]
+    assert block.count('se345RestoreDisplay();')==1
+    block=block.replace('se345RestoreDisplay();','se416DisposeHighlights(s);\\n  se345RestoreDisplay();',1)
+    html=html[:a]+block+html[b:]
     for old,new in [
         ('SWYRL_ENGINE_DEPLOY_MARKER: V11_415_MODEL_VR_ICONOGRAPHY',MARKER),
         ('ENGINE · MAKER v11.415','ENGINE · MAKER v11.416'),
