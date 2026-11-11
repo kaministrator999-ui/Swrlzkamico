@@ -1,0 +1,73 @@
+name: Guarded HF Chat Local Turbo Speed Trial
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".deploy/HF_CHAT_VOICE_TURBO_REQUEST.txt"
+permissions:
+  contents: read
+concurrency:
+  group: swrlz-hf-space-deployment
+  cancel-in-progress: false
+jobs:
+  local-turbo:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout authorized deployment request
+        uses: actions/checkout@v4
+      - name: Check no-paid and immutable release authorization
+        id: request
+        shell: bash
+        run: |
+          set -euo pipefail
+          file=".deploy/HF_CHAT_VOICE_TURBO_REQUEST.txt"
+          test -f "$file"
+          get() { sed -n "s/^$1=//p" "$file" | tail -n 1; }
+          test "$(get TARGET)" = "kamiloki/Swyrlz"
+          test "$(get APPROVED)" = "1"
+          test "$(get NO_PAID_SPEECH_API)" = "1"
+          test "$(get NO_HARDWARE_UPGRADE)" = "1"
+          ref="$(get SOURCE_REF)"
+          nonce="$(get REQUEST_NONCE)"
+          [[ "$ref" =~ ^[a-f0-9]{40}$ ]] || { echo "::error::Need pinned source SHA"; exit 1; }
+          [[ "$nonce" =~ ^[A-Za-z0-9._-]{10,96}$ ]] || { echo "::error::Invalid nonce"; exit 1; }
+          echo "ref=$ref" >> "$GITHUB_OUTPUT"
+      - name: Checkout immutable reviewed Local Turbo source
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.request.outputs.ref }}
+          path: voice-turbo-source
+          fetch-depth: 1
+      - name: Validate browser speech modes and Turbo mock tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --check voice-turbo-source/chat/§wyrlz/assets/voice_conversation.js
+          node --check voice-turbo-source/chat/§wyrlz/assets/local_voice_vosk.js
+          node voice-turbo-source/scripts/test_chat_streaming_voice.cjs
+          node voice-turbo-source/scripts/test_chat_local_streaming_vosk.cjs
+          node voice-turbo-source/scripts/test_chat_local_vosk_recovery.cjs
+          node voice-turbo-source/scripts/test_chat_local_turbo.cjs
+          python -m py_compile voice-turbo-source/scripts/publish_hf_voice_turbo.py
+      - name: Install existing Hugging Face source client
+        run: python -m pip install 'huggingface_hub>=0.34,<2'
+      - name: Snapshot current HF Space and validate exact scoped Turbo patch
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          set -euo pipefail
+          python voice-turbo-source/scripts/publish_hf_voice_turbo.py prepare
+      - name: Preserve four original production source files for rollback
+        uses: actions/upload-artifact@v4
+        with:
+          name: hf-chat-local-turbo-rollback
+          path: hf-voice-turbo-rollback/
+          retention-days: 90
+          if-no-files-found: error
+      - name: Atomically publish Turbo Chat and max-quota CPU text trial
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          set -euo pipefail
+          python voice-turbo-source/scripts/publish_hf_voice_turbo.py publish
