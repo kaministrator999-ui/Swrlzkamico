@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.411",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_411_SHEEP_QUEST_AI_FRAME_BUDGET",
-  "reason": "Quest 3S solo immersive Sheep Tag gameplay stalls with many active NPC sheep while the menu is smooth; v11.392 camera throttle was rejected and reverted. v11.411 keeps v11.391 normal FOLLOW/FREE camera and v11.410 Model VR accessory workshop. Bound NPC base/site planning and 12-site house path/exit checks to 1 expensive planning candidate per game tick across the flock; cache exact same-tick entity visibility reads; preserve wide-map navigation, player movement and collision, non-VR and LAN paths. Complete source CI PASS: 392 patches, 9630511 bytes, SHA-256 96b67c9a8587487ad021d6a5b7c9b8eaa7a34325377271254f253074c66556d2, 77 assets, all inline JS, Quest controls and focused AI tests; hardware VR performance acceptance pending. Not a zero-lag guarantee.",
-  "sourceCommit": "2f9548579b56913f24881b5e78f443446d9b8be3",
-  "sourceIntegritySha256": "96b67c9a8587487ad021d6a5b7c9b8eaa7a34325377271254f253074c66556d2"
+  "releaseVersion": "v11.412",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_412_APPRENTICE_SATCHEL_TUTORIAL",
+  "reason": "Publish independently saved §E Apprentice Satchel tutorial in Projects > Tutorials: seven native modeling steps with movable compact quest dialog, hints, progress checks, and safe Save/Resume. Preserve all starters, VR accessory workshop, Quest game and account pipeline. Source release v11.412 sealed by GitHub Actions run 43106139979: 393 ordered patches, 9650504 exact HTML bytes, SHA-256 cc14381e3fcccc44bb1b94f4d0f0510b9d65eb39318276b0f43cb9621e90c187, 77 packaged assets, JS/source syntax and inherited regression checks PASS. Physical phone/Quest owner acceptance pending.",
+  "sourceCommit": "c687f424cbd95e180d90fe23092892d8a13cef6a",
+  "sourceIntegritySha256": "cc14381e3fcccc44bb1b94f4d0f0510b9d65eb39318276b0f43cb9621e90c187"
 }
