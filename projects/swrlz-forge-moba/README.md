@@ -1,3 +1,7 @@
+## §E v11.412 · Guided Apprentice Satchel model tutorial
+
+Projects → Tutorials now starts a cloned editable satchel lesson with seven real native modeling goals, hints, a movable checklist panel, basic source-backed completion checks and independent on-device progress. Existing Save Project / account project actions remain the way to save the model. This lesson does not insert a prebuilt bag or change original starter templates. Immersive VR tools remain separate. Follow RELEASE_PROCESS.md to validate/package/publish; source staging alone is not live deployment.
+
 ## §E v11.411 · Solo Quest Sheep Tag AI frame-budget optimization (2026-11-11)
 
 Quest 3S owner reports smooth menus but repeating freezes in active Sheep Tag gameplay that improve as living AI sheep disappear. The current NPC planner can evaluate multiple full-map route/build candidates synchronously. This patch distributes sheep base-selection and 12-site building-route checks at **one expensive planning candidate per game tick across the NPC flock**, only in solo immersive VR. NPC movement, controlled-sheep joystick movement, collision and original maze/sanctuary/wide-world path validation remain authoritative each frame; non-VR and multiplayer fallback remain unchanged. Identical same-update visibility queries reuse validated results. All v11.410 VR accessory workshop features and original v11.391 FOLLOW/FREE camera behavior are preserved. Physical Quest acceptance remains pending; elimination of all stutters is not yet established.
