@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.415",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_415_MODEL_VR_ICONOGRAPHY",
-  "reason": "Publish v11.415 clear line pictograms for every Model Studio VR tool/card/navigation action, including selection/sweep/front-through lasso, model Save/Account/Clone, camera directions, display modes, pointer calibration, separate Rotate/Undo, and +/- adjustment cues. Preserve v11.414 native-button satchel tutorial, world-space panel, controller mappings, source and model-save schema. 396 ordered patches; 9680840 HTML bytes; SHA-256 dc68891f8431b35ce9834a989446d921d8d84acb9d0d33a77534b55a45cdb1d0. Focused 36-action and full source-sealed package validation passed in GitHub Actions run 43117393029; physical Quest headset acceptance outstanding.",
-  "sourceCommit": "efd0ffed98fa4f0e0511ace480f287f40752a0b7",
-  "sourceIntegritySha256": "dc68891f8431b35ce9834a989446d921d8d84acb9d0d33a77534b55a45cdb1d0"
+  "releaseVersion": "v11.416",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_416_SATCHEL_INTERACTIVE_COACH",
+  "reason": "Publish source-sealed §E v11.416 interactive Apprentice Satchel Academy. Includes native Show Me highlights, transparent noneditable construction ghosts, 7-step real-model inspection and understandable missing-part feedback, safe project-specific checkpoints with confirmation/native Undo, quest progress in existing explicit project/account saves, and full VR tutor controls including material/color choices plus grip-movable independent world-space quest. Preserves canonical starters, projects, original VR tool console, Quest controls and Sheep Tag. Exact 397 ordered patches, 9712154 HTML bytes, SHA-256 fbf93bdbe20fd3c9c5f08bb144c642f537ab3213ffc3c8d462e03eb4be7e31e9. Full inherited release and Academy checks passed GitHub Actions 43122550378. Physical Quest 2/phone usability acceptance remains pending.",
+  "sourceCommit": "8f7fc0b3a8f728ca3115655d954c5ff79dc73506",
+  "sourceIntegritySha256": "fbf93bdbe20fd3c9c5f08bb144c642f537ab3213ffc3c8d462e03eb4be7e31e9"
 }
