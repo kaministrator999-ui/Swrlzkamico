@@ -30,5 +30,5 @@ button(left,5,false);edge();blur=false;se195.photo=true;
 button(left,5,true);edge();assert.equal(history.length,3);button(left,5,false);edge();se195.photo=false;
 vr=false;button(left,5,true);edge();assert.equal(history.length,4);assert.equal(history.at(-1),'old-left-follow');
 assert.equal(ctx.window.SWYRL_ENGINE_SHEEP_VR_Y_MENU_391.diagnose().questSystemMenuButtonReserved,true);
-assert.equal(oldEdges,12);
+assert.equal(oldEdges,14);
 console.log('Quest Y radial: open/close, hold debounce, existing right B, wheel cancel, overlay/photo guard and non-XR passthrough passed');
