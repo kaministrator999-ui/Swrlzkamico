@@ -413,6 +413,6 @@
     "patches/v11_415_model_vr_iconography.py",
     "patches/v11_416_model_vr_object_index.py"
   ],
-  "finalBytes": 0,
-  "finalSha256": ""
+  "finalBytes": 9690491,
+  "finalSha256": "501dc799aee7f9938182e4a596fe62f3715cb2ab849193eb4e671f7ab097b04e"
 }
