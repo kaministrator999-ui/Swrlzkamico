@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.412",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_412_APPRENTICE_SATCHEL_TUTORIAL",
-  "reason": "Publish independently saved §E Apprentice Satchel tutorial in Projects > Tutorials: seven native modeling steps with movable compact quest dialog, hints, progress checks, and safe Save/Resume. Preserve all starters, VR accessory workshop, Quest game and account pipeline. Source release v11.412 sealed by GitHub Actions run 43106139979: 393 ordered patches, 9650504 exact HTML bytes, SHA-256 cc14381e3fcccc44bb1b94f4d0f0510b9d65eb39318276b0f43cb9621e90c187, 77 packaged assets, JS/source syntax and inherited regression checks PASS. Physical phone/Quest owner acceptance pending.",
-  "sourceCommit": "c687f424cbd95e180d90fe23092892d8a13cef6a",
-  "sourceIntegritySha256": "cc14381e3fcccc44bb1b94f4d0f0510b9d65eb39318276b0f43cb9621e90c187"
+  "releaseVersion": "v11.413",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_413_SATCHEL_VR_TUTORIAL",
+  "reason": "Publish v11.413 Apprentice Satchel tutorial repairs and immersive Quest modeling guidance: real bottom/four-wall hollow bag instructions, collapsible front/side/top concept sketches, native tool shortcut, a fixed independent world-space VR quest panel with controller-ray Prev/Verify/Done/Next, safe background ray blocking, shared project-scoped on-device progress, and preserved native Save Project/account/VR controls. Exact source 394 ordered patches, 9665020 HTML bytes, SHA-256 ec73d3b28501256452a9d61bff5dbce2929bc32d538ca3d856004c8c7fec7b33; v11.413 sealed release verifier GitHub Actions run 43113371748 succeeded. Physical Quest 2 acceptance pending.",
+  "sourceCommit": "4981e0580f5603c34d03fed2fd636b6d7d182060",
+  "sourceIntegritySha256": "ec73d3b28501256452a9d61bff5dbce2929bc32d538ca3d856004c8c7fec7b33"
 }
