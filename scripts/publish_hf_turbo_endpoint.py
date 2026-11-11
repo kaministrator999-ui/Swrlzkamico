@@ -22,8 +22,8 @@ BEFORE = Path("hf-turbo-endpoint-rollback")
 AFTER = Path("hf-turbo-endpoint-candidate")
 SOURCE = Path("voice-turbo-source")
 TOKEN = os.environ.get("HF_TOKEN") or ""
-# Exact reviewed old on-device Vosk source from deployed §C 1.1.34:
-OLD_LOCAL_BLOB = "93fad46b77f71021b22f8c868da3d2eec8abe572"
+# Exact reviewed old on-device Vosk source from deployed §C 1.1.35:
+OLD_LOCAL_BLOB = "21e03c72471536d72de4ed70ae6d2808fd261164"
 
 def digest(b: bytes) -> str:
     return hashlib.sha256(b).hexdigest()
@@ -53,19 +53,19 @@ def prepare(api: HfApi) -> None:
     if not 10000<len(old_page)<2_000_000 or not 10000<len(old_local)<100000:
         raise RuntimeError("Unexpected live source size")
     if git_blob(old_local)!=OLD_LOCAL_BLOB:
-        raise RuntimeError("Live Turbo recognizer differs from approved §C 1.1.34")
+        raise RuntimeError("Live Turbo recognizer differs from approved §C 1.1.35")
     if 'swrlz-voice-delta' not in html or html.count('value="turbo"')!=1:
         raise RuntimeError("Live Talk or Local Turbo selector missing")
     version=re.search(r'<meta name="swrlz-chat-version" content="1\.1\.(\d+)">',html)
-    if not version or version.group(1)!="34":
-        raise RuntimeError("Live Chat must be v1.1.34; preserve newer updates")
+    if not version or version.group(1)!="35":
+        raise RuntimeError("Live Chat must be v1.1.35; preserve newer updates")
     revised=once(html,version.group(0),
-        '<meta name="swrlz-chat-version" content="1.1.35">',"meta")
-    revised=once(revised,'const SWRLZ_CHAT_VERSION = "1.1.34";',
-        'const SWRLZ_CHAT_VERSION = "1.1.35";',"js version")
+        '<meta name="swrlz-chat-version" content="1.1.36">',"meta")
+    revised=once(revised,'const SWRLZ_CHAT_VERSION = "1.1.35";',
+        'const SWRLZ_CHAT_VERSION = "1.1.36";',"js version")
     revised=once(revised,
-        '/chat/§wyrlz/assets/local_voice_vosk.js?v=1.1.34',
-        '/chat/§wyrlz/assets/local_voice_vosk.js?v=1.1.35',"asset cache bust")
+        '/chat/§wyrlz/assets/local_voice_vosk.js?v=1.1.35',
+        '/chat/§wyrlz/assets/local_voice_vosk.js?v=1.1.36',"asset cache bust")
     if revised.count('id="voiceConversationButton"')!=1 or revised.count('value="turbo"')!=1:
         raise RuntimeError("Chat UI controls changed unexpectedly")
 
@@ -73,7 +73,9 @@ def prepare(api: HfApi) -> None:
     local_text=new_local.decode("utf-8")
     required=("committedSegments", "fullTranscript()", "TURBO_QUIET_FINAL_MS = 1700",
               "turbo ? 2048 : 4096", "new available.KaldiRecognizer(sampleRate)",
-              'turbo ? 0.007 : 0.012', 'window.caches.open(MODEL_CACHE)')
+              'turbo ? 0.007 : 0.012', 'window.caches.open(MODEL_CACHE)',
+              "recognizer.retrieveFinalResult()", "finalResultAvailable",
+              "audio: turbo", 'Final transcription unavailable')
     if not all(marker in local_text for marker in required):
         raise RuntimeError("Reviewed Turbo accuracy guards incomplete")
 
@@ -103,7 +105,7 @@ def prepare(api: HfApi) -> None:
         PAGE:digest((AFTER/"index.html").read_bytes()),
         LOCAL:digest(new_local)
     }
-    manifest={"space":SPACE,"previousRevision":rev,"version":"1.1.35",
+    manifest={"space":SPACE,"previousRevision":rev,"version":"1.1.36",
               "before":files_before,"after":files_after,
               "changedPaths":[PAGE,LOCAL],"billingChange":"none"}
     (BEFORE/"manifest.json").write_text(json.dumps(manifest,indent=2),encoding="utf8")
@@ -127,13 +129,13 @@ def publish(api: HfApi) -> None:
         repo_id=SPACE,repo_type="space",parent_commit=rev,
         operations=[CommitOperationAdd(path_in_repo=path,path_or_fileobj=str(AFTER/filename))
                     for path,filename in files.items()],
-        commit_message="§C Local Turbo: preserve multi-phrase transcripts and wait through normal pauses")
+        commit_message="§C Local Turbo: native capture and flush queued Vosk words before sending")
     sha=str(getattr(receipt,"oid","") or api.repo_info(SPACE,repo_type="space").sha)
     for path in files:
         if digest(live_bytes(path,sha))!=manifest["after"][path]:
             raise RuntimeError("Published local Turbo file checksum mismatch "+path)
     print(json.dumps({"status":"HF_TURBO_ENDPOINT_SOURCE_PUBLISHED","space":SPACE,
-                      "revision":sha,"version":"1.1.35",
+                      "revision":sha,"version":"1.1.36",
                       "paths":list(files),"billingChange":"none",
                       "deviceAcceptance":"NOT_VERIFIED"}))
 
