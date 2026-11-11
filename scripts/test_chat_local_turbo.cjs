@@ -103,7 +103,7 @@ const source=fs.readFileSync("voice-turbo-source/chat/§wyrlz/assets/local_voice
   recognizers.at(-1).emit("partialresult",{partial:"hello"});
   speak(7,0);
   assert.equal(finals(first).length,0,"fast speaker's brief pause is not send");
-  speak(11,0);
+  speak(13,0);
   assert.equal(workerFinalizations,1,"sustained quiet requests final worker decode");
   assert.equal(finals(first).length,0,"latest partial cannot submit immediately");
   recognizers.at(-1).queuedFinal="hello how are you";
@@ -124,7 +124,7 @@ const source=fs.readFileSync("voice-turbo-source/chat/§wyrlz/assets/local_voice
   assert.equal(finals(second).length,0,"normal speaking pause must not send");
   speak(5,.009);
   recognizers.at(-1).emit("partialresult",{partial:"i think"});
-  speak(18,0);
+  speak(20,0);
   assert.equal(finals(second).length,0);
   assert.equal(workerFinalizations,2);
   recognizers.at(-1).queuedFinal="we should test that";
@@ -140,7 +140,7 @@ const source=fs.readFileSync("voice-turbo-source/chat/§wyrlz/assets/local_voice
   recognizers.at(-1).emit("partialresult",{partial:"hello how"});
   // Suppress the worker response: simulated decoding timeout.
   recognizers.at(-1).retrieveFinalResult=function(){workerFinalizations++;};
-  speak(18,0);
+  speak(20,0);
   assert.equal(finals(third).length,0);
   advance(2601);
   assert.equal(finals(third).length,0,"never commit incomplete partial on worker timeout");
