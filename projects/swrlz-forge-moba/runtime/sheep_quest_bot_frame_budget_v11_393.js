@@ -87,10 +87,10 @@ function se393PlanSheepBuild(unit){
   if(result.ok){
     const proposed={rules:s.rules,obstacles:[...stObstacles(),
       stFootprint(result.x,result.z,1.2,1.2)]};
-    const nav=stBuildNavigation(proposed,stUnitRadius(unit));
+    const nav=s.rules.bounds>80?null:stBuildNavigation(proposed,stUnitRadius(unit));
     const exits=[new THREE.Vector3(unit.base.x,0,unit.base.z+7.5),
       new THREE.Vector3(unit.base.x+7.5,0,unit.base.z)];
-    if(exits.some(p=>stFindPath(nav,unit.pos,p))&&
+    if(exits.some(p=>nav?stFindPath(nav,unit.pos,p):stVastFindPath(proposed,unit.pos,p,stUnitRadius(unit)))&&
        stIssueBuild(unit,scan.kind,x,z).ok){
       unit.aiIntent='build a compact maze with a viable sheep exit';
       unit.se393Build=null;se393Plan.buildFinished++;return true;
