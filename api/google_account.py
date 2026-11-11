@@ -41,7 +41,7 @@ def google_client_id() -> str:
     configured = os.environ.get("SWRLZ_GOOGLE_CLIENT_ID", "").strip()
     # Migrate the one known-bad OAuth identifier that was introduced during the
     # browser compatibility work. This keeps production healthy even when an old
-    # Vercel environment value survives after the source repair.
+    # stale hosting environment value survives after the source repair.
     if not configured or configured in RETIRED_GOOGLE_CLIENT_IDS:
         return DEFAULT_GOOGLE_CLIENT_ID
     return configured

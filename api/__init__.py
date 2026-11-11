@@ -1,1 +1,1 @@
-"""SWRLZ Vercel API package."""
+"""SWRLZ unified Hugging Face API package."""

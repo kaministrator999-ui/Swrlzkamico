@@ -60,7 +60,7 @@ app.mount("/api/chat", swrlz_chat_app, name="swrlz-chat")
 
 
 def _write_server_state() -> None:
-    payload = {"version": VERSION, "instanceId": INSTANCE, "startedAt": STARTED_AT, "deploymentCommit": os.environ.get("VERCEL_GIT_COMMIT_SHA", ""), "deploymentBranch": os.environ.get("VERCEL_GIT_COMMIT_REF", ""), "capabilities": CAPABILITIES}
+    payload = {"version": VERSION, "instanceId": INSTANCE, "startedAt": STARTED_AT, "deploymentCommit": os.environ.get("SWRLZ_DEPLOY_COMMIT", ""), "deploymentBranch": os.environ.get("SWRLZ_GITHUB_REF", ""), "capabilities": CAPABILITIES}
     SERVER_STATE.write_text(json.dumps(payload, separators=(",", ":")), "utf-8")
 
 _write_server_state()
@@ -187,7 +187,7 @@ def _generate_chat_token() -> dict:
 
 
 def _release_status() -> dict:
-    return {"ok":True,"runtimeVersion":VERSION,"instanceId":INSTANCE,"uptimeSeconds":round(time.time()-STARTED_AT,1),"deployedCommit":os.environ.get("VERCEL_GIT_COMMIT_SHA",""),"deployedBranch":os.environ.get("VERCEL_GIT_COMMIT_REF",""),"production":os.environ.get("VERCEL_ENV","")=="production","sourceExpectedVersion":VERSION}
+    return {"ok":True,"runtimeVersion":VERSION,"instanceId":INSTANCE,"uptimeSeconds":round(time.time()-STARTED_AT,1),"deployedCommit":os.environ.get("SWRLZ_DEPLOY_COMMIT",""),"deployedBranch":os.environ.get("SWRLZ_GITHUB_REF",""),"production":bool(os.environ.get("SPACE_ID") or os.environ.get("SWRLZ_ENV","")=="production"),"sourceExpectedVersion":VERSION}
 
 
 def _health_dashboard() -> dict:
@@ -201,10 +201,10 @@ def _health_dashboard() -> dict:
 
 @app.get("/")
 @app.get("/api")
-def root(): return {"ok":True,"service":"§wyrlz Unified Vercel Server","version":VERSION,"health":"/api/health","admin":"/api/admin","lalm":"/api/lalm","chat":"/api/chat","live":"/live/"}
+def root(): return {"ok":True,"service":"§wyrlz Hugging Face Unified Server","version":VERSION,"health":"/api/health","admin":"/api/admin","lalm":"/api/lalm","chat":"/api/chat","live":"/live/"}
 
 @app.get("/api/health")
-def health(): return {"ok":True,"version":VERSION,"routingReady":True,"runtimeBoundary":"single-api-index","instanceId":INSTANCE,"adminAuthConfigured":bool(TOKEN),**lalm_presence(),"storage":"Vercel /tmp is ephemeral and instance-local; Gate 5 loads/verifies R39 in the same invocation."}
+def health(): return {"ok":True,"version":VERSION,"routingReady":True,"runtimeBoundary":"single-api-index","instanceId":INSTANCE,"adminAuthConfigured":bool(TOKEN),**lalm_presence(),"storage":"Temporary process storage is ephemeral; Gate 5 loads/verifies R39 in the active server process."}
 
 @app.get("/api/lalm")
 def lalm():

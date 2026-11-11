@@ -132,9 +132,9 @@ def _server_status(server) -> dict[str, Any]:
         "instanceId": server.INSTANCE,
         "startedAt": server.STARTED_AT,
         "uptimeSeconds": round(time.time() - server.STARTED_AT, 2),
-        "deploymentCommit": os.environ.get("VERCEL_GIT_COMMIT_SHA", ""),
-        "deploymentBranch": os.environ.get("VERCEL_GIT_COMMIT_REF", ""),
-        "deploymentEnvironment": os.environ.get("VERCEL_ENV", ""),
+        "deploymentCommit": os.environ.get("SWRLZ_DEPLOY_COMMIT", ""),
+        "deploymentBranch": os.environ.get("SWRLZ_GITHUB_REF", ""),
+        "deploymentEnvironment": os.environ.get("SWRLZ_ENV", "huggingface" if os.environ.get("SPACE_ID") else ""),
         "capabilities": server.CAPABILITIES,
         "routes": {
             "server": "/server/",

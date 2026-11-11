@@ -41,9 +41,9 @@ def _manifest_candidates(root):
             yield resolved
 
 def _github_raw_url(rel):
-    owner=os.environ.get("VERCEL_GIT_REPO_OWNER") or os.environ.get("SWRLZ_GITHUB_OWNER") or "kaministrator999-ui"
-    repo=os.environ.get("VERCEL_GIT_REPO_SLUG") or os.environ.get("SWRLZ_GITHUB_REPO") or "Swrlzkamico"
-    ref=os.environ.get("VERCEL_GIT_COMMIT_SHA") or os.environ.get("VERCEL_GIT_COMMIT_REF") or os.environ.get("SWRLZ_GITHUB_REF") or "main"
+    owner=os.environ.get("SWRLZ_GITHUB_REPO_OWNER") or os.environ.get("SWRLZ_GITHUB_OWNER") or "kaministrator999-ui"
+    repo=os.environ.get("SWRLZ_GITHUB_REPO_SLUG") or os.environ.get("SWRLZ_GITHUB_REPO") or "Swrlzkamico"
+    ref=os.environ.get("SWRLZ_DEPLOY_COMMIT") or os.environ.get("SWRLZ_GITHUB_REF") or "main"
     path=urllib.parse.quote(str(rel).replace("\\","/"),safe="/")
     return f"https://raw.githubusercontent.com/{urllib.parse.quote(owner,safe='')}/{urllib.parse.quote(repo,safe='')}/{urllib.parse.quote(ref,safe='')}/{path}"
 

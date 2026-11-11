@@ -19,7 +19,7 @@ For Chat changes, edit the canonical clean-room Chat first, synchronize the HF d
 
 ## Repository lineage
 
-The repository intentionally preserves older Vercel-era files and receipts. Their presence must not be interpreted as current hosting intent. Where an old instruction conflicts with this hosting authority, treat the Vercel instruction as historical and follow the current Hugging Face path.
+Obsolete Vercel-specific deployment guides and manifests have been removed from the active tree; their prior revisions remain accessible in Git history. Legacy Queue and Blob integrations discovered during the audit must be migrated and verified before removing their credentials or deleting historical hosted resources. Where an older release record conflicts with this hosting policy, Hugging Face remains authoritative.
 
 ## Current migration state
 
