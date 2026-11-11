@@ -1,3 +1,7 @@
+## §E v11.416 · Interactive Apprentice Satchel training
+
+Open Projects → Tutorials → Apprentice Satchel. Press **Show Me** to highlight the original editor tool, or enable **Ghost guide** to see transparent sample placement without having the engine do the modeling. **Verify** checks the editable project's real geometry and material assignments and explains any unmet criteria. Use **Save checkpoint** to make a local, validated recovery snapshot; **Restore checkpoint** requires confirmation and retains native Undo. Only deliberate native Save to Account syncs the project and completed objectives—snapshot geometry remains local to the device. In Quest 2 Model VR, the quest includes Show, Ghost, Checkpoint, Restore, selected-mesh Leather/Metal/Shade, and grip-movable world-space placement independent of the model/camera. Phone/Quest physical testing still pending.
+
 ## §E v11.415 · Clear tool pictograms throughout Model Studio VR (2026-11-11)
 
 The independent world-space VR tool console now shows distinct pictograms for selection, swipe/front/through lasso, Save Project, Save to Account, Clone, Projects, menu controls, controller aim, display modes and labeled viewpoints. Move/Rotate/Scale/Grab retain their original actions; Rotate is visually different from Undo. Increment/decrement cards show +/- marks. Existing hover/selected/disabled feedback, controller mappings, save schema, XR loop and the v11.414 satchel tutorial's native button references remain intact. Physical headset readability remains owner acceptance testing.
