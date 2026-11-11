@@ -6,6 +6,13 @@ const fs=require("node:fs");
 const vm=require("node:vm");
 const js=fs.readFileSync("voice-streaming-source/chat/§wyrlz/assets/local_voice_vosk.js","utf8");
 (async()=>{
+  const waitFor = async (ready, message) => {
+    for (let i=0; i<100; i++) {
+      if (ready()) return;
+      await new Promise(resolve => setTimeout(resolve, 10));
+    }
+    assert.fail(message);
+  };
   let now=1000, downloads=0, saved=0, modelLoads=0, terminations=0;
   let audioBuffers=0, opened=0, closed=0;
   const recognizers=[],processors=[],voices=[],tracks=[],cacheMap=new Map();
@@ -58,7 +65,8 @@ const js=fs.readFileSync("voice-streaming-source/chat/§wyrlz/assets/local_voice
   async function openRec(){
     const r=new Rec();r.results=[];r.onresult=e=>{r.results.push(e.results[0]);if(e.results[0].isFinal)r.stop();};
     r.start();
-    for(let i=0;i<12;i++)await Promise.resolve();
+    await waitFor(() => window.SwrlzLocalVoice.active,
+                  "Local mic not active after async archive/cache and model initialization");
     assert.equal(window.SwrlzLocalVoice.active,true,"mic captures after model ready");
     return r;
   }
