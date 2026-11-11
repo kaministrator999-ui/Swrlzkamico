@@ -52,7 +52,7 @@ def enhance_ui(js):
    while(entries.length<9)entries.push(['','']);
    entries.push(['index-add','Multi select'],['index-prev','Previous'],['index-next','Next']);
   }""")
-    js=one(js,"const pageKey=wheelKind?'wheel-'+wheelKind:state.helpVisible?'guide':page;if(pageKey!==currentPage)installPage(pageKey);",
+    js=one(js,"pageKey=wheelKind?'wheel-'+wheelKind:state.helpVisible?'guide':page;if(pageKey!==currentPage)installPage(pageKey);",
     """const pageKey=wheelKind?'wheel-'+wheelKind:state.helpVisible?'guide':page==='objects'?page+':'+state.indexPage+':'+state.indexEntries.map(e=>String(e.id)+'='+String(e.name)).join('|'):page;if(pageKey!==currentPage){installPage(pageKey.startsWith('objects:')?'objects':pageKey);currentPage=pageKey;}""")
     # The list signature must not be mistaken for a page identifier on reinstallation.
     js=one(js,"const count=Math.max(Number(state.selectedCount)||0,state.selectedName?1:0),radius=", "const count=Math.max(Number(state.selectedCount)||0,state.selectedName?1:0),radius=")
