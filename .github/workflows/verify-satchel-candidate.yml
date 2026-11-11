@@ -1,57 +1,26 @@
-name: Verify §E satchel candidate
+name: Verify §E satchel sealed release
 on:
   push:
     branches: [main]
     paths:
       - ".github/workflows/verify-satchel-candidate.yml"
+      - "projects/swrlz-forge-moba/source-manifest.json"
       - "projects/swrlz-forge-moba/patches/v11_412_apprentice_satchel_tutorial.py"
   workflow_dispatch:
 permissions:
   contents: read
 jobs:
-  candidate:
+  sealed:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-      - name: Build exact prospective v11.412 source without modifying manifest
-        run: |
-          python - <<'PY'
-          import base64,gzip,hashlib,importlib.util,json,pathlib,sys
-          root=pathlib.Path('projects/swrlz-forge-moba').resolve()
-          manifest=json.loads((root/'source-manifest.json').read_text('utf8'))
-          packed=''.join((root/path).read_text('utf8').strip() for path in manifest['chunks'])
-          base=gzip.decompress(base64.b64decode(packed))
-          assert len(base)==manifest['baseBytes']
-          assert hashlib.sha256(base).hexdigest()==manifest['baseSha256']
-          html=base.decode('utf8')
-          def apply(rel,text):
-              spec=importlib.util.spec_from_file_location('candidate_'+pathlib.Path(rel).stem,root/rel)
-              mod=importlib.util.module_from_spec(spec)
-              spec.loader.exec_module(mod)
-              return mod.apply(text)
-          for rel in manifest['patches']:
-              html=apply(rel,html)
-          prior=html.encode('utf8')
-          assert len(prior)==manifest['finalBytes'], 'Current release byte count drift'
-          assert hashlib.sha256(prior).hexdigest()==manifest['finalSha256'], 'Current release SHA drift'
-          html=apply('patches/v11_412_apprentice_satchel_tutorial.py',html)
-          final=html.encode('utf8')
-          sha=hashlib.sha256(final).hexdigest()
-          print('SATCHEL_CANDIDATE_VERSION=v11.412')
-          print('SATCHEL_CANDIDATE_BYTES='+str(len(final)))
-          print('SATCHEL_CANDIDATE_SHA256='+sha)
-          assert b'SWYRL_ENGINE_TUTORIAL_412' in final
-          assert b'V11_412_APPRENTICE_SATCHEL_TUTORIAL' in final
-          assert b'v11.412' in final
-          pathlib.Path('satchel-candidate.json').write_text(json.dumps({'version':'v11.412','bytes':len(final),'sha256':sha,'patches':len(manifest['patches'])+1},indent=2)+'\n')
-          print('SATCHEL_CANDIDATE_BUILT')
-          PY
-      - name: Check lesson JavaScript syntax
-        run: node --check projects/swrlz-forge-moba/runtime/model_satchel_tutorial_v11_412.js
-      - uses: actions/upload-artifact@v4
+      - name: Verify complete v11.412 package and inherited native regressions
+        run: python projects/swrlz-forge-moba/scripts/verify_v11_412_release.py --output dist/swrlz-forge-moba
+      - name: Upload source receipt
+        uses: actions/upload-artifact@v4
         with:
-          name: satchel-source-integrity
-          path: satchel-candidate.json
+          name: swrlz-engine-v11-412-source
+          path: dist/swrlz-forge-moba/SOURCE.json
