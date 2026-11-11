@@ -1,3 +1,7 @@
+## §E v11.416 · VR Object Index, named multi-selection and mesh silhouettes (2026-11-11)
+
+The stationary Model Studio VR console now includes an **Objects** tab with the source model's named parts, nine per page. **Trigger** selects one part; **Multi: ON** makes each tap add/remove a part, using the existing native 32-mesh limit. Previous/Next browse without clearing selection. Each selected mesh gets its own luminous backface silhouette contour, while the existing group bounds, tool gizmo and controller selection remain intact. The highlight geometry is view-only and disposed on VR exit; saved models, rigging, materials and the single XR render loop are untouched. Quest 2 interaction and legibility need owner verification.
+
 ## §E v11.415 · Clear tool pictograms throughout Model Studio VR (2026-11-11)
 
 The independent world-space VR tool console now shows distinct pictograms for selection, swipe/front/through lasso, Save Project, Save to Account, Clone, Projects, menu controls, controller aim, display modes and labeled viewpoints. Move/Rotate/Scale/Grab retain their original actions; Rotate is visually different from Undo. Increment/decrement cards show +/- marks. Existing hover/selected/disabled feedback, controller mappings, save schema, XR loop and the v11.414 satchel tutorial's native button references remain intact. Physical headset readability remains owner acceptance testing.
