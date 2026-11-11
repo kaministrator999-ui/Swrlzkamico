@@ -6,6 +6,7 @@ on:
       - ".github/workflows/measure-satchel-vr-v11-413.yml"
       - "projects/swrlz-forge-moba/source-manifest.json"
       - "projects/swrlz-forge-moba/SPACE_README.md"
+      - "projects/swrlz-forge-moba/runtime/model_satchel_vr_quest_v11_413.js"
       - "projects/swrlz-forge-moba/patches/v11_413_satchel_vr_tutorial.py"
   workflow_dispatch:
 permissions:
