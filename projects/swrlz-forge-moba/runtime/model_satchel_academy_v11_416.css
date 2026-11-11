@@ -1,13 +1,13 @@
 /* SE416_SATCHEL_ACADEMY_STYLE_START */
-#se415Coach{border:1px solid #876cae;border-radius:9px;background:#271e34;padding:8px;margin:9px 0;display:grid;gap:7px}
-#se415Coach>strong{font:800 10px/1.3 system-ui,sans-serif;color:#dfc9fa;letter-spacing:.07em}
-.se415-coach-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
-#se412Panel .se415-coach-actions button{border:1px solid #9e83c7;border-radius:7px;background:#48345d;color:#fff;min-height:36px;font:650 11px/1.25 system-ui,sans-serif;padding:7px 6px;white-space:normal;cursor:pointer}
-#se412Panel .se415-coach-actions button[aria-pressed="true"]{background:#1e6257;border-color:#7fecd1}
-#se412Panel .se415-coach-actions button:disabled{opacity:.48;cursor:not-allowed}
-#se412Panel .se415-help{color:#cebbdc!important;font:10px/1.35 system-ui,sans-serif;margin:0!important}
-#modelAtelierPanel .se415-show-target{outline:3px solid #ecff7e!important;outline-offset:3px!important;box-shadow:0 0 0 6px #e7fd6a55,0 0 19px 5px #efff78bd!important;position:relative;z-index:25}
-@media(prefers-reduced-motion:no-preference){#modelAtelierPanel .se415-show-target{animation:se415ToolPulse 1.25s ease-in-out infinite alternate}
-@keyframes se415ToolPulse{from{box-shadow:0 0 0 3px #e7fd6a66,0 0 12px #efff78aa}to{box-shadow:0 0 0 8px #e7fd6a33,0 0 22px #efff78ef}}}
-@media(max-width:699px){#se415Coach{padding:6px;gap:5px}#se412Panel .se415-coach-actions button{font-size:10px;min-height:34px}}
+#se416Coach{border:1px solid #876cae;border-radius:9px;background:#271e34;padding:8px;margin:9px 0;display:grid;gap:7px}
+#se416Coach>strong{font:800 10px/1.3 system-ui,sans-serif;color:#dfc9fa;letter-spacing:.07em}
+.se416-coach-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+#se412Panel .se416-coach-actions button{border:1px solid #9e83c7;border-radius:7px;background:#48345d;color:#fff;min-height:36px;font:650 11px/1.25 system-ui,sans-serif;padding:7px 6px;white-space:normal;cursor:pointer}
+#se412Panel .se416-coach-actions button[aria-pressed="true"]{background:#1e6257;border-color:#7fecd1}
+#se412Panel .se416-coach-actions button:disabled{opacity:.48;cursor:not-allowed}
+#se412Panel .se416-help{color:#cebbdc!important;font:10px/1.35 system-ui,sans-serif;margin:0!important}
+#modelAtelierPanel .se416-show-target{outline:3px solid #ecff7e!important;outline-offset:3px!important;box-shadow:0 0 0 6px #e7fd6a55,0 0 19px 5px #efff78bd!important;position:relative;z-index:25}
+@media(prefers-reduced-motion:no-preference){#modelAtelierPanel .se416-show-target{animation:se416ToolPulse 1.25s ease-in-out infinite alternate}
+@keyframes se416ToolPulse{from{box-shadow:0 0 0 3px #e7fd6a66,0 0 12px #efff78aa}to{box-shadow:0 0 0 8px #e7fd6a33,0 0 22px #efff78ef}}}
+@media(max-width:699px){#se416Coach{padding:6px;gap:5px}#se412Panel .se416-coach-actions button{font-size:10px;min-height:34px}}
 /* SE416_SATCHEL_ACADEMY_STYLE_END */
