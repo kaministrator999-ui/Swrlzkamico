@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.410",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_410_MODEL_VR_ACCESSORY_WORKSHOP",
-  "reason": "Publish owner-requested native VR hip-pouch accessory workshop: Body/Details/Fit spatial panels, editable hollow body/flap/belt loops/clasp/stitching/emblem, coordinated colors, free or upright surface-fit preview, fresh-trigger atomic native placement selected for Grab. Exact sealed source passed 17 native geometry/transaction groups, nine real Three spatial UI groups and 12 actual IWER controller workflows with zero page errors. Preserve current v11.391 gameplay camera and Quest Y menu; v11.392 FOLLOW throttle remains excluded. 391 ordered patches, 9623744 HTML bytes, 77 assets, 81 packaged files. Physical Quest acceptance remains owner testing.",
-  "sourceCommit": "5db360a8635625025d10b3a148c0eca74a630648",
-  "sourceIntegritySha256": "2503918d25b268435e6f8c474c74f644386bc4000516dfadf9748a7149b57463"
+  "releaseVersion": "v11.411",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_411_SHEEP_QUEST_AI_FRAME_BUDGET",
+  "reason": "Quest 3S solo immersive Sheep Tag gameplay stalls with many active NPC sheep while the menu is smooth; v11.392 camera throttle was rejected and reverted. v11.411 keeps v11.391 normal FOLLOW/FREE camera and v11.410 Model VR accessory workshop. Bound NPC base/site planning and 12-site house path/exit checks to 1 expensive planning candidate per game tick across the flock; cache exact same-tick entity visibility reads; preserve wide-map navigation, player movement and collision, non-VR and LAN paths. Complete source CI PASS: 392 patches, 9630511 bytes, SHA-256 96b67c9a8587487ad021d6a5b7c9b8eaa7a34325377271254f253074c66556d2, 77 assets, all inline JS, Quest controls and focused AI tests; hardware VR performance acceptance pending. Not a zero-lag guarantee.",
+  "sourceCommit": "2f9548579b56913f24881b5e78f443446d9b8be3",
+  "sourceIntegritySha256": "96b67c9a8587487ad021d6a5b7c9b8eaa7a34325377271254f253074c66556d2"
 }
