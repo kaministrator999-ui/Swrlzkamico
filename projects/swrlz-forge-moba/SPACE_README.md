@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.414
+title: §wyrl§ Engine v11.415
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -10,6 +10,10 @@ header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
 
+
+## §E v11.415 · Clear tool pictograms throughout Model Studio VR (2026-11-11)
+
+The independent world-space VR tool console now shows distinct pictograms for selection, swipe/front/through lasso, Save Project, Save to Account, Clone, Projects, menu controls, controller aim, display modes and labeled viewpoints. Move/Rotate/Scale/Grab retain their original actions; Rotate is visually different from Undo. Increment/decrement cards show +/- marks. Existing hover/selected/disabled feedback, controller mappings, save schema, XR loop and the v11.414 satchel tutorial's native button references remain intact. Physical headset readability remains owner acceptance testing.
 
 ## §E v11.414 · Recognizable tool buttons beside tutorial instructions (2026-11-11)
 
