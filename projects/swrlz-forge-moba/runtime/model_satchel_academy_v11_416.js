@@ -3,7 +3,7 @@
  * source-owned tool highlights and separate, bounded recovery checkpoints.
  * Save to account uses the existing project serialization; no new backend.
  */
-(function se415SatchelAcademy(){
+(function se416SatchelAcademy(){
  'use strict';
  const LESSON='satchel-001',MAX_SNAPSHOTS=7,MAX_SNAPSHOT_BYTES=280000,MAX_TOTAL_BYTES=950000;
  let ghostEnabled=false,ghost=null,ghostFor=-1,highlight=null,flatPanel=null;
@@ -11,7 +11,7 @@
  const current=()=>api()?.status?.();
  const active=()=>current()?.active===true&&currentProject?.se412Tutorial===LESSON;
  const parts=()=>currentProject?.modelAtelier?.parts||[];
- const storedKey=()=> 'se415:satchel:checkpoints:'+String(currentProject?.instanceId||'');
+ const storedKey=()=> 'se416:satchel:checkpoints:'+String(currentProject?.instanceId||'');
  const $=(sel,root=document)=>root.querySelector(sel);
  const note=message=>{const el=$('#se412Note');if(el)el.textContent=message;};
  const bytes=value=>JSON.stringify(value).length;
@@ -92,11 +92,11 @@
  function syncProgress(done){
   if(!active())return;
   const now=Date.now(),arr=[...new Set(done)].filter(v=>Number.isInteger(v)&&v>=0&&v<7).sort((a,b)=>a-b);
-  currentProject.se415TutorialState={schema:'se415-quest-progress-v1',lesson:LESSON,done:arr,updatedAt:now};
+  currentProject.se416TutorialState={schema:'se416-quest-progress-v1',lesson:LESSON,done:arr,updatedAt:now};
   try{localStorage.setItem('se412:satchel:progress:'+currentProject.instanceId+':updatedAt',String(now));}catch(_){}
  }
- function snapshotMeta(){if(!active())return null;const v=currentProject.se415TutorialState;
-  return v&&v.schema==='se415-quest-progress-v1'?clone(v):null;}
+ function snapshotMeta(){if(!active())return null;const v=currentProject.se416TutorialState;
+  return v&&v.schema==='se416-quest-progress-v1'?clone(v):null;}
  function snapshots(){
   if(!active())return [];
   try{const value=JSON.parse(localStorage.getItem(storedKey())||'[]');
@@ -133,7 +133,7 @@
   return {ok:true,message:'Restored checkpoint from step '+(record.step+1)+'. Native Undo is available. Use Save Project to keep the recovered model.'};
  }
  function clearHighlight(){
-  if(highlight?.element)highlight.element.classList.remove('se415-show-target');
+  if(highlight?.element)highlight.element.classList.remove('se416-show-target');
   highlight=null;
   try{se340XR?.ui?.highlightTutorialAction?.(null);}catch(_){}
  }
@@ -157,7 +157,7 @@
   for(const ref of refs){
    const element=document.querySelector(ref.flat||'');
    if(element){
-    element.classList.add('se415-show-target');
+    element.classList.add('se416-show-target');
     element.scrollIntoView?.({behavior:'smooth',block:'nearest',inline:'nearest'});
     highlight={index,element,key:ref.key};
     return {ok:true,message:'Highlighted '+ref.name+' in the actual Model Studio controls. This is the real button/field—not the lesson preview.'};
@@ -205,11 +205,11 @@
  function renderFlat(panel,index){
   if(!panel||!active())return;
   flatPanel=panel;
-  let host=panel.querySelector('#se415Coach');
+  let host=panel.querySelector('#se416Coach');
   if(!host){
-   host=document.createElement('section');host.id='se415Coach';host.setAttribute('aria-label','Interactive satchel tutor');
+   host=document.createElement('section');host.id='se416Coach';host.setAttribute('aria-label','Interactive satchel tutor');
    const title=document.createElement('strong');title.textContent='INTERACTIVE COACH';host.append(title);
-   const row=document.createElement('div');row.className='se415-coach-actions';host.append(row);
+   const row=document.createElement('div');row.className='se416-coach-actions';host.append(row);
    for(const [id,label,handler] of [
     ['show','Show Me',()=>{const result=showMe(current()?.current||0,false);note(result.message);}],
     ['ghost','Ghost guide',()=>{ghostEnabled=!ghostEnabled;refreshGhost();renderFlat(panel,current()?.current||0);
@@ -222,18 +222,18 @@
       }else note(result.message);
     }]
    ]){
-    const b=document.createElement('button');b.type='button';b.id='se415-'+id;b.textContent=label;
+    const b=document.createElement('button');b.type='button';b.id='se416-'+id;b.textContent=label;
     b.addEventListener('click',handler);row.append(b);
    }
-   const small=document.createElement('p');small.className='se415-help';
+   const small=document.createElement('p');small.className='se416-help';
    small.textContent='Show Me highlights the native tool. Ghosts are non-editable examples. Checkpoints stay on this device; use Save to Account to sync the project and completed objectives.';
    host.append(small);
    const anchor=panel.querySelector('#se413Examples')||panel.querySelector('#se412Note');
    anchor?.before(host);
   }
-  $('#se415-ghost',host)?.setAttribute('aria-pressed',String(ghostEnabled));
+  $('#se416-ghost',host)?.setAttribute('aria-pressed',String(ghostEnabled));
   const last=snapshots().at(-1);
-  $('#se415-restore',host).disabled=!last;
+  $('#se416-restore',host).disabled=!last;
   if(ghostEnabled&&ghostFor!==index)refreshGhost();
   if(highlight&&!highlight.vr&&highlight.index!==index)clearHighlight();
  }
@@ -245,11 +245,11 @@
   cloudProgress:!!snapshotMeta(),progress:current()?.progress||0};}
  const baseSnapshot=se175Snapshot;
  se175Snapshot=function(...args){const row=baseSnapshot.apply(this,args);
-  const meta=snapshotMeta();if(meta&&row?.data?.project)row.data.project.se415TutorialState=meta;
+  const meta=snapshotMeta();if(meta&&row?.data?.project)row.data.project.se416TutorialState=meta;
   return row;};
  const baseProjectData=projectData;
  projectData=function(...args){const data=baseProjectData.apply(this,args);
-  const meta=snapshotMeta();if(meta&&data?.project)data.project.se415TutorialState=meta;
+  const meta=snapshotMeta();if(meta&&data?.project)data.project.se416TutorialState=meta;
   return data;};
  window.SWYRL_E_SATCHEL_ACADEMY_416=Object.freeze({
   verify:inspect,renderFlat,progressUpdate:syncProgress,saveCheckpoint,restoreCheckpoint,
