@@ -19,7 +19,7 @@ const code=fs.readFileSync("voice-streaming-source/chat/§wyrlz/assets/local_voi
   let modelLoads=0,workerTerminations=0,playedAudioFrames=0;
   const model = {
     KaldiRecognizer: class {
-      constructor(){this.listeners=new Map();this.removed=false;instances.push(this);}
+      constructor(sampleRate){assert.equal(sampleRate,48000,"Vosk must match AudioContext sampleRate");this.listeners=new Map();this.removed=false;instances.push(this);}
       on(event, fn){this.listeners.set(event,fn);}
       setWords(){}
       acceptWaveform(){playedAudioFrames++;}
@@ -32,7 +32,7 @@ const code=fs.readFileSync("voice-streaming-source/chat/§wyrlz/assets/local_voi
     Vosk:{createModel:async url=>{assert.match(url,/vosk-model-small-en-us-0\.15\.tar\.gz$/);modelLoads++;return model;}},
     dispatchEvent:event=>events.push(event.type),
     AudioContext:class {
-      constructor(){this.state="running";this.destination={};}
+      constructor(){this.sampleRate=48000;this.state="running";this.destination={};}
       createScriptProcessor(){return {connect(){},disconnect(){},onaudioprocess:null};}
       createMediaStreamSource(){return {connect(){},disconnect(){}};}
       createGain(){return {gain:{value:1},connect(){},disconnect(){}};}
