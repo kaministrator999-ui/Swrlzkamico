@@ -1,0 +1,20 @@
+name: Verify HF account migration
+on:
+  push:
+    paths:
+      - api/chat_state.py
+      - tests/test_chat_state_redis_cutover.py
+      - .github/workflows/verify-hf-account-migration.yml
+  workflow_dispatch:
+jobs:
+  migration:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Compile and verify account-state migration
+        run: |
+          python -m py_compile api/chat_state.py
+          python -m unittest discover -s tests -p 'test_chat_state_redis_cutover.py' -v

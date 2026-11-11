@@ -11,7 +11,6 @@ import json
 import os
 import time
 import urllib.parse
-import uuid
 from typing import Any
 
 import requests
@@ -24,7 +23,6 @@ from api.canonical_redis_state import store as canonical_redis_store
 APP_VERSION = "1.1.5"
 CONTRACT = "swrlz-chat-account-state-v1"
 MUTATION_CONTRACT = "swrlz-chat-account-mutation-v1"
-BLOB_API = "https://vercel.com/api/blob"
 PREFIX = "swrlz/chat/account-state/v1"
 MAX_STATE_BYTES = 2 * 1024 * 1024
 MAX_THREADS = 80
@@ -113,27 +111,39 @@ def _redis_key(user_id: str) -> str:
     return REDIS_PREFIX + hashlib.sha256(user_id.encode("utf-8")).hexdigest()
 
 
-def _read_state(user_id: str) -> dict[str, Any] | None:
-    """Prefer canonical Redis; migrate readable legacy Blob state when available."""
+def _validated_redis_state(raw: Any, user_id: str) -> dict[str, Any] | None:
+    if raw is None:
+        return None
     try:
-        raw = canonical_redis_store()._command("GET", _redis_key(user_id))
-        if raw:
-            value = json.loads(raw)
-            if isinstance(value, dict) and value.get("contract") == CONTRACT and value.get("userId") == user_id:
-                return value
-    except Exception:
-        pass
-    try:
-        legacy = _read_blob(user_id)
-    except Exception:
-        legacy = None
-    if legacy:
-        try:
-            canonical_redis_store()._command("SET", _redis_key(user_id), json.dumps(legacy, ensure_ascii=False, separators=(",", ":")))
-        except Exception:
-            pass
-    return legacy
+        value = json.loads(raw)
+    except (TypeError, ValueError) as exc:
+        raise RuntimeError("CHAT_STATE_REDIS_INVALID") from exc
+    if not isinstance(value, dict) or value.get("contract") != CONTRACT or value.get("userId") != user_id:
+        raise RuntimeError("CHAT_STATE_REDIS_INVALID")
+    return value
 
+
+def _read_state(user_id: str) -> dict[str, Any] | None:
+    """Fail closed on Redis failure; migrate old private state with an atomic NX claim."""
+    redis = canonical_redis_store()
+    key = _redis_key(user_id)
+    current = _validated_redis_state(redis._command("GET", key), user_id)
+    if current is not None:
+        return current
+    if not _blob_auth_candidates():
+        return None
+    legacy = _read_blob(user_id)
+    if legacy is None:
+        return None
+    body = json.dumps(legacy, ensure_ascii=False, separators=(",", ":"))
+    if len(body.encode("utf-8")) > MAX_STATE_BYTES:
+        raise RuntimeError("CHAT_STATE_TOO_LARGE")
+    redis._command("SET", key, body, "NX")
+    # A concurrent newer Redis writer wins; never overwrite its state.
+    persisted = _validated_redis_state(redis._command("GET", key), user_id)
+    if persisted is None:
+        raise RuntimeError("CHAT_STATE_MIGRATION_NOT_PERSISTED")
+    return persisted
 
 def _write_state(user_id: str, value: dict[str, Any]) -> None:
     body = json.dumps(value, ensure_ascii=False, separators=(",", ":"))
@@ -152,7 +162,7 @@ def _read_blob(user_id: str) -> dict[str, Any] | None:
         response = requests.get(_private_blob_url(store_id, user_id), headers={"authorization": f"Bearer {token}"}, timeout=(3, 10))
         _blob_trace("READ", auth_kind, index + 1, len(candidates), response.status_code, int((time.monotonic() - started) * 1000))
         if response.status_code == 404:
-            return None
+            continue
         if response.status_code in {401, 403} and index + 1 < len(candidates):
             last_status = response.status_code
             continue
@@ -164,44 +174,9 @@ def _read_blob(user_id: str) -> dict[str, Any] | None:
         if not isinstance(value, dict) or value.get("contract") != CONTRACT or value.get("userId") != user_id:
             raise RuntimeError("CHAT_STATE_INVALID")
         return value
-    raise RuntimeError(f"CHAT_STATE_BLOB_READ_HTTP_{last_status or 403}")
-
-
-def _blob_write_headers(token: str, store_id: str) -> dict[str, str]:
-    return {
-        "authorization": f"Bearer {token}",
-        "x-vercel-blob-store-id": store_id,
-        "x-api-version": "12",
-        "x-api-blob-request-attempt": "0",
-        "x-api-blob-request-id": f"{store_id}:{int(time.time()*1000)}:{uuid.uuid4().hex[:12]}",
-        "content-type": "application/json; charset=utf-8",
-        "x-content-type": "application/json; charset=utf-8",
-        "x-vercel-blob-access": "private",
-        "x-add-random-suffix": "0",
-        "x-allow-overwrite": "1",
-        "x-cache-control-max-age": "0",
-    }
-
-
-def _write_blob(user_id: str, value: dict[str, Any]) -> None:
-    candidates = _blob_auth_candidates()
-    if not candidates:
-        raise RuntimeError("CHAT_STATE_BLOB_NOT_CONFIGURED")
-    body = json.dumps(value, ensure_ascii=False, separators=(",", ":")).encode("utf-8")
-    if len(body) > MAX_STATE_BYTES:
-        raise RuntimeError("CHAT_STATE_TOO_LARGE")
-    last_status = 0
-    for index, (token, store_id, auth_kind) in enumerate(candidates):
-        started = time.monotonic()
-        response = requests.put(BLOB_API + "/", params={"pathname": _path(user_id)}, headers=_blob_write_headers(token, store_id), data=body, timeout=(3, 12))
-        _blob_trace("WRITE", auth_kind, index + 1, len(candidates), response.status_code, int((time.monotonic() - started) * 1000))
-        if response.status_code in {401, 403} and index + 1 < len(candidates):
-            last_status = response.status_code
-            continue
-        if response.ok:
-            return
-        raise RuntimeError(f"CHAT_STATE_BLOB_WRITE_HTTP_{response.status_code}")
-    raise RuntimeError(f"CHAT_STATE_BLOB_WRITE_HTTP_{last_status or 403}")
+    if last_status:
+        raise RuntimeError(f"CHAT_STATE_BLOB_READ_HTTP_{last_status}")
+    return None
 
 
 def _clean_state(raw: Any) -> dict[str, Any]:
@@ -415,9 +390,8 @@ async def get_state(request: Request):
     try:
         user_id = _user(request)
         value = _read_state(user_id)
-        token, store_id, auth_kind = _blob_auth()
         revision, state, _ = _state_value(value)
-        return JSONResponse({"ok": True, "contract": CONTRACT, "mutationContract": MUTATION_CONTRACT, "revision": revision, "updatedAt": int(value.get("updatedAt") or 0) if value else 0, "state": state if value else None, "stateAuthority": "server", "snapshotWriteAuthority": "retired", "storage": {"configured": bool(token and store_id), "access": "private", "authKind": auth_kind}}, headers=_headers())
+        return JSONResponse({"ok": True, "contract": CONTRACT, "mutationContract": MUTATION_CONTRACT, "revision": revision, "updatedAt": int(value.get("updatedAt") or 0) if value else 0, "state": state if value else None, "stateAuthority": "server", "snapshotWriteAuthority": "retired", "storage": {"configured": True, "backend": "redis-rest", "access": "private", "authKind": "redis-rest", "legacyReadConfigured": bool(_blob_auth_candidates())}}, headers=_headers())
     except AuthenticationError as exc:
         return _error(401, "ACCOUNT_SESSION_INVALID", str(exc))
     except Exception as exc:
