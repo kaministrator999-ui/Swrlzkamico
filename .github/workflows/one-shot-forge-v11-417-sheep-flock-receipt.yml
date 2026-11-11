@@ -41,3 +41,5 @@ jobs:
           assert "window.SWRLZ_FORGE_BUILD={version:'v11.417'" in html
           PY
           python "$ROOT/scripts/check_inline_js_syntax_v11_266.py" /tmp/se417-candidate.html
+
+# Recheck after upstream satchel v11.416 source/academy fix passed run 43121460339.
