@@ -43,3 +43,25 @@ jobs:
           python "$ROOT/scripts/check_inline_js_syntax_v11_266.py" /tmp/se417-candidate.html
 
 # Recheck after upstream satchel v11.416 source/academy fix passed run 43121460339.
+
+      - name: Verify full provisional v11.417 package without publishing
+        run: |
+          set -eu
+          ROOT=projects/swrlz-forge-moba
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path('projects/swrlz-forge-moba/source-manifest.json')
+          m=json.loads(p.read_text('utf8'))
+          if m['name']=='§wyrl§ Engine v11.415':
+            m['patches'].append('patches/v11_416_satchel_interactive_coach.py')
+          elif m['name']!='§wyrl§ Engine v11.416':
+            raise AssertionError('unexpected predecessor '+m['name'])
+          m['name']='§wyrl§ Engine v11.417'
+          m['patches'].append('patches/v11_417_sheep_flock_setup.py')
+          m['finalArtifact']='swyrl_engine_v11_417.html'
+          m['finalBytes']=9722952
+          m['finalSha256']='7d4a65e82145af9c913df8a1af31753a93a4fd66ecdb32df3e1a28b6356abae4'
+          p.write_text(json.dumps(m,indent=2)+'\n','utf8')
+          PY
+          python "$ROOT/scripts/verify_v11_417_release.py" --output /tmp/se417-governed
