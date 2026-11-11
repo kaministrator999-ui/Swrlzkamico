@@ -17,6 +17,25 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
+      - name: Measure candidate source after current release docs
+        run: |
+          python - <<'PY'
+          import pathlib,json,base64,gzip,hashlib,importlib.util
+          root=pathlib.Path('projects/swrlz-forge-moba').resolve()
+          m=json.loads((root/'source-manifest.json').read_text())
+          raw=gzip.decompress(base64.b64decode(''.join((root/n).read_text().strip() for n in m['chunks'])))
+          assert len(raw)==m['baseBytes'] and hashlib.sha256(raw).hexdigest()==m['baseSha256']
+          content=raw.decode()
+          for rel in m['patches']:
+              spec=importlib.util.spec_from_file_location('measure_'+pathlib.Path(rel).stem,root/rel)
+              module=importlib.util.module_from_spec(spec)
+              spec.loader.exec_module(module)
+              content=module.apply(content)
+          data=content.encode()
+          print('SATCHEL_FINAL_BYTES='+str(len(data)))
+          print('SATCHEL_FINAL_SHA256='+hashlib.sha256(data).hexdigest())
+          print('SATCHEL_PATCHES='+str(len(m['patches'])))
+          PY
       - name: Verify complete v11.412 package and inherited native regressions
         run: python projects/swrlz-forge-moba/scripts/verify_v11_412_release.py --output dist/swrlz-forge-moba
       - name: Upload source receipt
