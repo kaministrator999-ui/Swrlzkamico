@@ -1,4 +1,4 @@
-/* §C local streaming microphone v3: normal/local Turbo profiles with shared cached Vosk WASM.
+/* §C local streaming microphone v4: reliable multi-phrase Turbo capture; shared cached Vosk WASM.
  * No paid speech endpoint. Microphone samples never go to §C or a hosted ASR.
  * English ~41MB model and Apache-2.0 library download only after user opts in.
  * Existing Chat send, Station streaming, and browser TTS remain authoritative.
@@ -13,8 +13,10 @@
   const QUIET_FINAL_MS = 1200;
   const STALE_PARTIAL_MS = 2200;
   // Turbo is opt-in: retain the known-working local profile for comparison.
-  const TURBO_QUIET_FINAL_MS = 650;
-  const TURBO_STALE_PARTIAL_MS = 1100;
+  // 650ms ended turns while the speaker was pausing between words.
+  // Hold through natural conversational pauses and preserve Vosk segments.
+  const TURBO_QUIET_FINAL_MS = 1700;
+  const TURBO_STALE_PARTIAL_MS = 2800;
   let libraryPromise = null;
   let modelPromise = null;
   let model = null;
@@ -142,16 +144,12 @@
       }
       let context, processor, source, silentGain, recognizer;
       try {
+        // Avoid the forced 16kHz resampling path: on the Moto it reduces
+        // recognition quality. Use the native Web Audio rate, same as Local.
+        // Turbo still has smaller buffers and an adaptive turn endpointer.
         if (turbo) {
-          // Chrome Android normally runs at 48 kHz. Request a 16 kHz Web Audio
-          // graph so the browser does input resampling and Vosk decodes fewer
-          // samples; the actual context.sampleRate is still authoritative.
-          // Fall back to the device rate if 16 kHz is not supported.
-          try {
-            context = new AudioContextClass({ sampleRate: 16000, latencyHint: "interactive" });
-          } catch (_) {
-            context = new AudioContextClass({ latencyHint: "interactive" });
-          }
+          try { context = new AudioContextClass({ latencyHint: "interactive" }); }
+          catch (_) { context = new AudioContextClass(); }
         } else {
           context = new AudioContextClass();
         }
@@ -175,8 +173,12 @@
         let emitted = false;
         let reportedInput = false;
         let reportedStall = false;
+        const committedSegments = [];
+        let lastSegmentAt = 0;
         const quietWindowMs = turbo ? TURBO_QUIET_FINAL_MS : QUIET_FINAL_MS;
         const staleWindowMs = turbo ? TURBO_STALE_PARTIAL_MS : STALE_PARTIAL_MS;
+        const fullTranscript = () => [...committedSegments, latestPartial]
+          .filter(Boolean).join(" ").trim();
         const finishUtterance = text => {
           const words = String(text || "").trim();
           if (active !== token || emitted || !words) return;
@@ -189,15 +191,27 @@
           if (partial) {
             if (partial !== latestPartial) lastPartialAt = Date.now();
             latestPartial = partial;
-            onPartial?.(partial);
+            onPartial?.(turbo ? fullTranscript() : partial);
           }
         });
         recognizer.on("result", event => {
           if (active !== token || emitted) return;
           const transcription = String(event?.result?.text || "").trim();
-          finishUtterance(transcription || latestPartial);
+          if (!turbo) {
+            finishUtterance(transcription || latestPartial);
+            return;
+          }
+          // A Vosk "result" means the decoder ended a phrase, NOT that
+          // the person finished their entire message. Don't auto-send.
+          if (transcription) {
+            if (committedSegments[committedSegments.length - 1] !== transcription)
+              committedSegments.push(transcription);
+            latestPartial = "";
+            lastSegmentAt = Date.now();
+            onPartial?.(fullTranscript());
+          }
         });
-        processor = context.createScriptProcessor(turbo ? 1024 : 4096, 1, 1);
+        processor = context.createScriptProcessor(turbo ? 2048 : 4096, 1, 1);
         source = context.createMediaStreamSource(stream);
         silentGain = context.createGain();
         silentGain.gain.value = 0;
@@ -220,7 +234,9 @@
             count++;
           }
           const rms = Math.sqrt(power / Math.max(1, count));
-          if (rms >= 0.012) {
+          // A lower Turbo voice threshold catches softer speech, while the
+          // longer silence gate avoids mistaking a quick pause for a full turn.
+          if (rms >= (turbo ? 0.007 : 0.012)) {
             if (!firstLoudAt) firstLoudAt = now;
             lastLoudAt = now;
             loudFrames++;
@@ -235,18 +251,24 @@
           if (active !== token || emitted) return;
           const partialAge = lastPartialAt ? now - lastPartialAt : 0;
           const quiet = loudFrames >= 3 && lastLoudAt && now - lastLoudAt >= quietWindowMs;
-          const finalQuiet = quiet && partialAge >= (turbo ? 320 : 650);
-          // Turbo must never submit while the user is audibly continuing.
-          const notCurrentlySpeaking = !lastLoudAt || now - lastLoudAt >= 400;
-          const stalledPartial = lastPartialAt && partialAge >= staleWindowMs
-            && (!turbo || notCurrentlySpeaking);
-          if (latestPartial && (finalQuiet || stalledPartial)) {
+          const finalQuiet = quiet && partialAge >= 650;
+          const stalledPartial = lastPartialAt && partialAge >= staleWindowMs;
+          if (turbo) {
+            const speech = fullTranscript();
+            // Two separate gates: a sustained quiet interval AND a stable
+            // decoder transcript. A stale partial alone may not send mid-turn.
+            if (speech && quiet && (!lastSegmentAt || now - lastSegmentAt >= 350)
+                && (!lastPartialAt || partialAge >= 400
+                    || now - lastLoudAt >= quietWindowMs + 900))
+              finishUtterance(speech);
+          } else if (latestPartial && (finalQuiet || stalledPartial)) {
             finishUtterance(latestPartial);
-          } else if (frames >= 65 && !latestPartial && !reportedStall) {
+          }
+          if (frames >= 65 && !latestPartial && !committedSegments.length && !reportedStall) {
             reportedStall = true;
             onStatus?.("Microphone audio confirmed · waiting for local transcript…");
           } else if (firstLoudAt && loudFrames >= 8 &&
-                     now - firstLoudAt >= 15000 && !latestPartial) {
+                     now - firstLoudAt >= 15000 && !fullTranscript()) {
             onError?.("Microphone audio reached Vosk, but no words were recognized");
           }
         };
