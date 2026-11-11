@@ -4,7 +4,7 @@
 const assert=require("node:assert/strict");
 const fs=require("node:fs");
 const vm=require("node:vm");
-const js=fs.readFileSync("voice-source/chat/§wyrlz/assets/local_voice_vosk.js","utf8");
+const js=fs.readFileSync("voice-streaming-source/chat/§wyrlz/assets/local_voice_vosk.js","utf8");
 (async()=>{
   let now=1000, downloads=0, saved=0, modelLoads=0, terminations=0;
   let audioBuffers=0, opened=0, closed=0;
