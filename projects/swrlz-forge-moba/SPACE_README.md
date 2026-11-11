@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.413
+title: §wyrl§ Engine v11.414
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -10,6 +10,10 @@ header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
 
+
+## §E v11.414 · Recognizable tool buttons beside tutorial instructions (2026-11-11)
+
+The Apprentice Satchel quest now displays **visual miniatures of the real native Model Studio buttons next to the corresponding tool names** and within relevant instructions, including Scale, Move, Rotate, Add, Shape, Duplicate, Material, Color, Views, and Save Project. Miniatures read the current labels and CSS presentation of native buttons and are read-only; the actual buttons still perform edits. The matching VR quest uses the existing WebXR console's actual icon renderer beside Cube, Scale, Move, Rotate, Duplicate, Views and Save project, rather than creating an inconsistent icon set. The tutorial explicitly distinguishes the flat editor's **Add sphere → Shape: box** process from VR **Create → Cube**; Material/Color remain inspector fields instead of falsely implying a general VR material control. All lesson progress, cloned models and the existing world-space VR windows remain unchanged. Actual device acceptance remains pending.
 
 ## §E v11.413 · Apprentice Satchel on Quest (2026-11-11)
 
