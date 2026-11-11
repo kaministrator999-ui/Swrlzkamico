@@ -1323,10 +1323,11 @@
           <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="12" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21m-4 0h8"/></svg> Talk
         </button>
         <label class="voice-provider-label" for="voiceProviderSelect">Input
-          <select id="voiceProviderSelect" aria-label="Talk speech recognition mode" title="Browser default, or opt into ~41 MB on-device streaming transcription">
-            <option value="browser" selected>Browser</option>
-            <option value="local">Local stream · 41 MB</option>
-            <option value="turbo">Local Turbo · 41 MB</option>
+          <select id="voiceProviderSelect" aria-label="Talk speech recognition mode" title="Browser and Browser Turbo may use online speech recognition. Offline Local and Local Turbo use an optional ~41 MB on-device model.">
+            <option value="browser">Browser</option>
+            <option value="turbo" selected>Turbo · Browser recognition</option>
+            <option value="local">Local stream · offline · 41 MB</option>
+            <option value="local-turbo">Local Turbo · offline · 41 MB</option>
           </select>
         </label>
         <input id="imagePicker" type="file" accept="image/jpeg,image/png,image/webp" hidden>
