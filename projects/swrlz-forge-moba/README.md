@@ -1,3 +1,7 @@
+## §E v11.413 · Apprentice Satchel VR quest and corrected hollow-pouch construction
+
+The modeling lesson now explains an actual floor-plus-four-walls hollow volume, with collapsible three-view concept drawings and a shortcut to the native modeling tools. Enter Model VR while the saved satchel project is open to see its **independent stationary world-space quest window**, controlled through the Meta controller rays. Quest progress and the regular editor share the same project-scoped checklist; Save Project / Save to Account remain authoritative. Head-following and separate XR loops are intentionally avoided. Headset acceptance remains pending.
+
 ## §E v11.412 · Guided Apprentice Satchel model tutorial
 
 Projects → Tutorials now starts a cloned editable satchel lesson with seven real native modeling goals, hints, a movable checklist panel, basic source-backed completion checks and independent on-device progress. Existing Save Project / account project actions remain the way to save the model. This lesson does not insert a prebuilt bag or change original starter templates. Immersive VR tools remain separate. Follow RELEASE_PROCESS.md to validate/package/publish; source staging alone is not live deployment.
