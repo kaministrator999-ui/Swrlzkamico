@@ -1,3 +1,7 @@
+## §E rollback · v11.392 FOLLOW throttle withdrawn (2026-11-10)
+
+Owner Quest 3S retest: v11.392 slowed tracking of the controlled sheep, while full gameplay stalls continued (roughly 3s movement / 1s frozen) and scene glitches appeared even in FREE. The game menu remained smooth; lag decreased markedly after other sheep were captured. Therefore the v11.392 follow-camera throttle is **not active**. Production returns to the exact sealed v11.391 build (390 ordered source patches, SHA-256 6c002024054723ed9352d86b4703fd22748f311b7abb86607f735ff2ec5b2809). v11.392 source files remain in Git history for diagnosis but are intentionally excluded from the release manifest. Next investigation: per-sheep gameplay simulation, AI/pathfinding, fog, and render work while the match is active; no new hypothesis is called confirmed.
+
 ## §E v11.392 · Quest Sheep Tag stable FOLLOW camera (2026-11-10)
 
 Headset A/B established that FREE avoids the severe geometry repaint/distortion while occasional full XR frame stalls remain. This scoped candidate reduces FOLLOW reference-space changes (at least 140ms apart and 12cm of target movement, with a 62cm maximum per change), preserving native head tracking, FREE camera, all game/guest controls and authored content. Use Y → FOLLOW or FREE to compare on the headset. It does **not** claim to resolve the distinct remaining frame freezes. Device acceptance pending.
