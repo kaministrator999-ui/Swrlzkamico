@@ -1,0 +1,27 @@
+/* §E v11.416: focused Sheep Tag title-menu match setup on phone and desktop. */
+#st141RuntimeMenu .se416-backdrop{
+ position:absolute;inset:0;z-index:2;background:rgba(3,16,18,.79);
+ display:flex;align-items:center;justify-content:center;padding:clamp(12px,4vw,32px);
+ pointer-events:auto;overflow-y:auto;overscroll-behavior:contain;
+}
+#st141RuntimeMenu .se416-card{
+ width:min(100%,430px);max-height:100%;overflow-y:auto;box-sizing:border-box;
+ border-radius:20px;border:1px solid #e9d38e;
+ background:linear-gradient(145deg,#1c4843,#102d35);color:#fff8df;
+ padding:clamp(18px,4vw,28px);box-shadow:0 18px 62px #0009;
+ font:500 16px/1.4 system-ui,sans-serif;text-align:center;
+}
+#st141RuntimeMenu .se416-card small{color:#f3d68e;font-weight:800;letter-spacing:.17em;font-size:11px;}
+#st141RuntimeMenu .se416-card h2{font-size:clamp(24px,6vw,33px);margin:9px 0 2px;line-height:1.18;}
+#st141RuntimeMenu .se416-card p{margin:8px 0 16px;letter-spacing:normal;font-size:15px;line-height:1.4;}
+#st141RuntimeMenu .se416-counter{display:flex;align-items:center;justify-content:center;gap:18px;margin:10px 0;}
+#st141RuntimeMenu .se416-counter output{min-width:64px;font-size:50px;font-weight:900;color:#ffdf8f;font-variant-numeric:tabular-nums;}
+#st141RuntimeMenu .se416-card button{min-height:48px;box-shadow:none;font-size:16px;padding:9px 15px;touch-action:manipulation;}
+#st141RuntimeMenu .se416-counter button{min-width:62px;font-size:30px;padding:3px 12px;}
+#st141RuntimeMenu .se416-card button:disabled{opacity:.4;cursor:not-allowed;}
+#st141RuntimeMenu #se416Range{display:block;width:90%;margin:18px auto 4px;accent-color:#f8d27e;min-height:24px;cursor:pointer;}
+#st141RuntimeMenu .se416-note{color:#ddeddf;font-size:13px;margin-bottom:18px;}
+#st141RuntimeMenu .se416-actions{display:flex;gap:10px;}
+#st141RuntimeMenu .se416-actions button{flex:1;min-width:0;}
+#st141RuntimeMenu #se416Cancel{background:#31575a;border-color:#8eaeb2;color:#fff;}
+@media(max-width:380px){#st141RuntimeMenu .se416-actions{flex-direction:column;}#st141RuntimeMenu .se416-card{padding:16px;}}

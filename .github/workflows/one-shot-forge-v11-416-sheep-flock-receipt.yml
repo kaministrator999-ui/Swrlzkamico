@@ -1,0 +1,39 @@
+name: One-shot §E v11.416 Sheep Tag solo flock setup receipt
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/one-shot-forge-v11-416-sheep-flock-receipt.yml'
+permissions:
+  contents: read
+jobs:
+  receipt:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - name: Validate original source and measure candidate
+        run: |
+          set -eu
+          ROOT=projects/swrlz-forge-moba
+          node --check "$ROOT/runtime/sheep_team_setup_v11_416.js"
+          python -m py_compile "$ROOT/patches/v11_416_sheep_flock_setup.py"
+          python "$ROOT/build_space.py" --output /tmp/se416-base
+          python - <<'PY'
+          from pathlib import Path
+          import importlib.util,hashlib
+          root=Path('projects/swrlz-forge-moba')
+          spec=importlib.util.spec_from_file_location('se416',root/'patches/v11_416_sheep_flock_setup.py')
+          module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
+          html=module.apply(Path('/tmp/se416-base/index.html').read_text('utf8'))
+          payload=html.encode('utf8');Path('/tmp/se416-candidate.html').write_bytes(payload)
+          print('SE416_RECEIPT_BYTES='+str(len(payload)),flush=True)
+          print('SE416_RECEIPT_SHA256='+hashlib.sha256(payload).hexdigest(),flush=True)
+          assert html.count('SWYRL_ENGINE_SHEEP_TEAM_SETUP_416')>=1
+          assert html.count('se416FlockSetupStyles')==1
+          assert "window.SWRLZ_FORGE_BUILD={version:'v11.416'" in html
+          PY
+          python "$ROOT/scripts/check_inline_js_syntax_v11_266.py" /tmp/se416-candidate.html
