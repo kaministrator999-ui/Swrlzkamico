@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.414",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_414_SATCHEL_NATIVE_BUTTON_GUIDES",
-  "reason": "Publish §E v11.414 Apprentice Satchel native button visual references: regular editor uses read-only miniatures of actual buttons beside named tools and task/hint action words, VR quest reuses the existing model console's exact icon drawing function for controller-selectable tools. Explains Add sphere → Shape box (flat) versus Create → Cube (VR), and accurately labels Material/Color as inspector-only controls. Preserve all starter/project/saving/VR menus/Sheep Tag. Sealed package: 395 source patches, 9675600 HTML bytes, SHA-256 25b63d1cd9ac3985a9b0beef45ac5877c4af5996fddb6bcf2d47ede19c1710c2; GitHub run 43116790951 successful; physical phone/Quest acceptance pending.",
-  "sourceCommit": "1a46f288bca27b3f2b35ac8d1515aed4d5cd78da",
-  "sourceIntegritySha256": "25b63d1cd9ac3985a9b0beef45ac5877c4af5996fddb6bcf2d47ede19c1710c2"
+  "releaseVersion": "v11.415",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_415_MODEL_VR_ICONOGRAPHY",
+  "reason": "Publish v11.415 clear line pictograms for every Model Studio VR tool/card/navigation action, including selection/sweep/front-through lasso, model Save/Account/Clone, camera directions, display modes, pointer calibration, separate Rotate/Undo, and +/- adjustment cues. Preserve v11.414 native-button satchel tutorial, world-space panel, controller mappings, source and model-save schema. 396 ordered patches; 9680840 HTML bytes; SHA-256 dc68891f8431b35ce9834a989446d921d8d84acb9d0d33a77534b55a45cdb1d0. Focused 36-action and full source-sealed package validation passed in GitHub Actions run 43117393029; physical Quest headset acceptance outstanding.",
+  "sourceCommit": "efd0ffed98fa4f0e0511ace480f287f40752a0b7",
+  "sourceIntegritySha256": "dc68891f8431b35ce9834a989446d921d8d84acb9d0d33a77534b55a45cdb1d0"
 }
