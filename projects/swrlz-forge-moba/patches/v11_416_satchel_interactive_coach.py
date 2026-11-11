@@ -29,7 +29,7 @@ def apply(html):
     old="function getDone(){try{const a=JSON.parse(recall(key())||'[]');return Array.isArray(a)?new Set(a.filter(n=>Number.isInteger(n)&&n>=0&&n<steps.length)):new Set();}catch(_){return new Set();}}"
     new="""function getDone(){try{
   const local=JSON.parse(recall(key())||'[]'),localTime=Number(recall(key()+':updatedAt'))||0;
-  const remote=currentProject?.se415TutorialState;
+  const remote=currentProject?.se416TutorialState;
   const data=remote?.schema==='se416-quest-progress-v1'&&remote.lesson===LESSON&&Number(remote.updatedAt)>=localTime?remote.done:local;
   return Array.isArray(data)?new Set(data.filter(n=>Number.isInteger(n)&&n>=0&&n<steps.length)):new Set();
  }catch(_){return new Set();}}"""
@@ -51,7 +51,7 @@ def apply(html):
  steps:""")
     html=one(html,
       "  currentProject.se412Tutorial=data?.project?.se412Tutorial===LESSON?LESSON:null;",
-      "  currentProject.se412Tutorial=data?.project?.se412Tutorial===LESSON?LESSON:null;\n  currentProject.se415TutorialState=belongs()&&data?.project?.se415TutorialState?.schema==='se416-quest-progress-v1'?structuredClone(data.project.se415TutorialState):null;")
+      "  currentProject.se412Tutorial=data?.project?.se412Tutorial===LESSON?LESSON:null;\n  currentProject.se416TutorialState=belongs()&&data?.project?.se416TutorialState?.schema==='se416-quest-progress-v1'?structuredClone(data.project.se416TutorialState):null;")
     # Native VR card highlights work through the existing icon/canvas painter,
     # not a second copied palette.
     html=one(html,
