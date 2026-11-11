@@ -1,13 +1,14 @@
-/* §C voice conversation v2: sentence-by-sentence streaming TTS, canonical Station transport. */
+/* §C voice conversation v3: opt-in local streaming mic, incremental browser TTS, same Station. */
 (() => {
   "use strict";
   const mic = document.getElementById("voiceConversationButton");
+  const voiceProvider = document.getElementById("voiceProviderSelect");
   const status = document.getElementById("voiceConversationStatus");
   const prompt = document.getElementById("prompt");
   const send = document.getElementById("sendButton");
   const normalMic = document.getElementById("micButton");
   const imageAttachment = document.getElementById("imageAttachment");
-  const Recognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  const BrowserRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
   const synth = window.speechSynthesis;
   if (!mic || !status || !prompt || !send) return;
 
@@ -47,6 +48,7 @@
     mic.setAttribute("aria-pressed", String(enabled));
     mic.setAttribute("aria-label", enabled ? "End live voice conversation" : "Start live voice conversation");
     mic.dataset.voiceState = nextPhase;
+    if (voiceProvider) voiceProvider.disabled = enabled;
     status.textContent = label || "";
     status.hidden = !label;
     document.body.classList.toggle("voice-session-label", Boolean(label));
@@ -74,6 +76,7 @@
     voiceEpoch++;
     clearTimeout(restartTimer);
     abortRecognition();
+    window.SwrlzLocalVoice?.dispose();
     pendingId = "";
     speechParts = [];
     speechPending = "";
@@ -120,7 +123,9 @@
 
   function listen() {
     if (!enabled || recognition || phase === "waiting" || phase === "speaking") return;
-    if (!Recognition) { fail("speech recognition unavailable in this browser"); return; }
+    const local = voiceProvider?.value === "local";
+    const Recognition = local ? window.SwrlzLocalSpeechRecognition : BrowserRecognition;
+    if (!Recognition) { fail(local ? "local recognition component unavailable" : "speech recognition unavailable in this browser"); return; }
     heard = "";
     let handled = false;
     const instance = new Recognition();
@@ -150,7 +155,9 @@
       if (recognition !== instance || !enabled) return;
       const code = String(event.error || "unknown");
       if (code === "no-speech" || code === "aborted") return;
-      if (["not-allowed", "service-not-allowed", "audio-capture", "network", "language-not-supported"].includes(code)) {
+      if (code === "local-engine") {
+        fail(String(event.detail || "local recognition unavailable").slice(0,160));
+      } else if (["not-allowed", "service-not-allowed", "audio-capture", "network", "language-not-supported"].includes(code)) {
         fail("microphone/recognition " + code);
       } else {
         trace("recognition-error", { code });
@@ -174,9 +181,9 @@
       }
     };
     try {
-      update("listening", "Listening · speak now…");
+      update("listening", local ? "Local streaming · loading on-device engine…" : "Listening · speak now…");
       instance.start();
-      trace("recognition-start");
+      trace("recognition-start", { engine: local ? "local-vosk" : "browser" });
     } catch (_) {
       recognition = null;
       fail("microphone could not start");
@@ -310,8 +317,10 @@
 
   mic.addEventListener("click", () => {
     if (enabled) { stop(); return; }
-    if (!Recognition || !synth || typeof window.SpeechSynthesisUtterance !== "function") {
-      fail("browser speech input/output not supported"); return;
+    const local = voiceProvider?.value === "local";
+    if ((local ? !window.SwrlzLocalSpeechRecognition : !BrowserRecognition) ||
+        !synth || typeof window.SpeechSynthesisUtterance !== "function") {
+      fail("selected speech input/output not supported"); return;
     }
     if (prompt.value.trim()) {
       update("off", "Finish or clear your typed draft before voice mode."); return;
@@ -329,6 +338,19 @@
     pendingId = "";
     emptyAttempts = 0;
     listen();
+  });
+
+  voiceProvider?.addEventListener("change", () => {
+    if (enabled) return;
+    window.SwrlzLocalVoice?.dispose();
+    update("off", voiceProvider.value === "local"
+      ? "Local streaming selected · first use downloads ~41 MB; no paid speech API. Tap Talk."
+      : "Browser speech input selected · tap Talk.");
+  });
+
+  window.addEventListener("swrlz-local-voice-status", event => {
+    if (enabled && phase === "listening" && voiceProvider?.value === "local")
+      update("listening", String(event.detail?.label || "Local streaming · listening…"));
   });
 
   window.addEventListener("swrlz-voice-turn", event => {
