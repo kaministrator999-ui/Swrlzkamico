@@ -11,6 +11,12 @@ short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
 
 
+## §E v11.416 · Interactive Apprentice Satchel Academy (2026-11-11)
+
+The Apprentice Satchel tutorial now offers **Show Me** highlighting of real Model Studio tool controls, toggleable scene-owned **transparent ghost geometry** for each construction stage, and geometry-based **Verify** feedback about the floor, four surrounding walls, flap, strap segments, smaller details and leather/metal materials. Its illustrated controls are guidance, not duplicate editing tools, and the ghost cannot be selected or saved as model geometry. Verification is deliberately conservative: complex geometry and final save still require manual confirmation.
+
+Each independent tutorial project may store **up to seven bounded, device-local recovery checkpoints**. Restoring requires confirmation and uses the native model editor's history so Undo remains available. Completed lesson objectives are serialized with the existing native project/account-save data and synchronize only after the user explicitly saves the project to their account; checkpoint geometry itself is not cloud-synced. In VR, the independent world-space quest adds Show, Ghost, Checkpoint, Restore and a selectable-part Leather/Metal/Shade control row, with the native tool menu retained and grip-repositioning only of the quest window. Physical Quest and phone acceptance is pending.
+
 ## §E v11.415 · Clear tool pictograms throughout Model Studio VR (2026-11-11)
 
 The independent world-space VR tool console now shows distinct pictograms for selection, swipe/front/through lasso, Save Project, Save to Account, Clone, Projects, menu controls, controller aim, display modes and labeled viewpoints. Move/Rotate/Scale/Grab retain their original actions; Rotate is visually different from Undo. Increment/decrement cards show +/- marks. Existing hover/selected/disabled feedback, controller mappings, save schema, XR loop and the v11.414 satchel tutorial's native button references remain intact. Physical headset readability remains owner acceptance testing.
