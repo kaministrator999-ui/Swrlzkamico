@@ -55,8 +55,8 @@ def apply(html):
     # Native VR card highlights work through the existing icon/canvas painter,
     # not a second copied palette.
     html=one(html,
-      "   if(!item.id)return;const disabled=!enabled(item.id),on=active(item),over=hoveredItem===item,down=pressedItem===item;",
-      "   if(!item.id)return;const disabled=!enabled(item.id),on=active(item),over=hoveredItem===item,down=pressedItem===item,tutorialOn=state.tutorialHighlight===item.id;")
+      "  if(!item.id)return;const disabled=!enabled(item.id),on=active(item),over=hoveredItem===item,down=pressedItem===item;",
+      "  if(!item.id)return;const disabled=!enabled(item.id),on=active(item),over=hoveredItem===item,down=pressedItem===item,tutorialOn=state.tutorialHighlight===item.id;")
     html=one(html,
       "key=JSON.stringify([item.id,text,sub,disabled,on,over,down,!!wheelKind,",
       "key=JSON.stringify([item.id,text,sub,disabled,on,over,down,tutorialOn,!!wheelKind,")
