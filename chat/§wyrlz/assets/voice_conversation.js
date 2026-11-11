@@ -1,4 +1,4 @@
-/* §C voice conversation v4: reusable local ASR with silence finish, incremental browser TTS. */
+/* §C voice conversation v5: opt-in Turbo local ASR, early-phrase TTS, latency timing. */
 (() => {
   "use strict";
   const mic = document.getElementById("voiceConversationButton");
@@ -27,6 +27,9 @@
   let speakingStarted = false;
   let speechBusy = false;
   let activeSpeech = null;
+  let submittedAt = 0;
+  let firstDeltaAt = 0;
+  const turboSelected = () => voiceProvider?.value === "turbo";
 
   const trace = (event, data = {}) => {
     // Strictly state-only diagnostics; never record audio, transcription or reply text.
@@ -85,6 +88,8 @@
     speakingStarted = false;
     speechBusy = false;
     activeSpeech = null;
+    submittedAt = 0;
+    firstDeltaAt = 0;
     try { synth?.cancel(); } catch (_) {}
     update("off", notice);
   };
@@ -114,6 +119,8 @@
     speechBusy = false;
     activeSpeech = null;
     try { synth?.cancel(); } catch (_) {}
+    submittedAt = Date.now();
+    firstDeltaAt = 0;
     update("waiting", "Thinking · waiting for §wyrlz…");
     setPrompt(text.trim());
     // Use the canonical composer click, never a second, shadow chat transport.
@@ -123,12 +130,13 @@
 
   function listen() {
     if (!enabled || recognition || phase === "waiting" || phase === "speaking") return;
-    const local = voiceProvider?.value === "local";
+    const local = voiceProvider?.value === "local" || turboSelected();
     const Recognition = local ? window.SwrlzLocalSpeechRecognition : BrowserRecognition;
     if (!Recognition) { fail(local ? "local recognition component unavailable" : "speech recognition unavailable in this browser"); return; }
     heard = "";
     let handled = false;
     const instance = new Recognition();
+    if (local && turboSelected()) instance.turbo = true;
     recognition = instance;
     instance.lang = navigator.language || "en-US";
     instance.continuous = false; // Android Chrome does not honor continuous=true.
@@ -181,9 +189,9 @@
       }
     };
     try {
-      update("listening", local ? "Local streaming · loading on-device engine…" : "Listening · speak now…");
+      update("listening", local ? (turboSelected() ? "Turbo · preparing local engine…" : "Local streaming · loading on-device engine…") : "Listening · speak now…");
       instance.start();
-      trace("recognition-start", { engine: local ? "local-vosk" : "browser" });
+      trace("recognition-start", { engine: local ? (turboSelected() ? "local-vosk-turbo" : "local-vosk") : "browser" });
     } catch (_) {
       recognition = null;
       fail("microphone could not start");
@@ -242,15 +250,18 @@
     abortRecognition();
     if (!speakingStarted) {
       speakingStarted = true;
-      update("speaking", "§wyrlz speaking · reply may still be generating…");
-      trace("first-audio-queued", { streamed: !generationComplete });
+      const latencyMs = submittedAt ? Date.now() - submittedAt : 0;
+      update("speaking", (turboSelected() ? "Turbo · " : "") +
+        "§wyrlz speaking" + (latencyMs ? " · first audio queued " + (latencyMs / 1000).toFixed(1) + "s" : "") +
+        (generationComplete ? "" : " · still generating…"));
+      trace("first-audio-queued", { streamed: !generationComplete, submitToSpeechMs: latencyMs });
     }
     const token = voiceEpoch;
     const voice = voiceChoice();
     const utterance = new SpeechSynthesisUtterance(speechParts.shift());
     utterance.lang = voice?.lang || navigator.language || "en-US";
     if (voice) utterance.voice = voice;
-    utterance.rate = 1;
+    utterance.rate = turboSelected() ? 1.14 : 1;
     speechBusy = true;
     activeSpeech = utterance; // Keep utterance alive until Chrome announces completion.
     utterance.onend = () => {
@@ -274,9 +285,10 @@
       // get a bounded word-boundary fallback; do not wait for a full reply.
       const sentence = /[.!?](?:["'”’)]*)\s+/.exec(speechPending);
       let cut = sentence ? sentence.index + sentence[0].length : -1;
-      if (cut < 0 && !final && speechPending.length >= 170) {
-        cut = speechPending.lastIndexOf(" ", 170);
-        if (cut < 90) break;
+      const earlyPhraseLimit = turboSelected() ? 95 : 170;
+      if (cut < 0 && !final && speechPending.length >= earlyPhraseLimit) {
+        cut = speechPending.lastIndexOf(" ", earlyPhraseLimit);
+        if (cut < (turboSelected() ? 45 : 90)) break;
       }
       if (cut < 0 && !final) break;
       const portion = cut >= 0 ? speechPending.slice(0, cut) : speechPending;
@@ -291,6 +303,13 @@
     if (generationComplete) return;
     const fragment = String(text || "");
     if (!fragment) return;
+    if (!firstDeltaAt && submittedAt) {
+      firstDeltaAt = Date.now();
+      const ms = firstDeltaAt - submittedAt;
+      if (phase === "waiting")
+        update("waiting", "First generated text " + (ms / 1000).toFixed(1) + "s after send · preparing speech…");
+      trace("first-text-delta", { submitToFirstDeltaMs: ms });
+    }
     streamedReply += fragment;
     speechPending += fragment;
     // Protect the browser from unbounded buffered source in voice mode.
@@ -317,7 +336,7 @@
 
   mic.addEventListener("click", () => {
     if (enabled) { stop(); return; }
-    const local = voiceProvider?.value === "local";
+    const local = voiceProvider?.value === "local" || turboSelected();
     if ((local ? !window.SwrlzLocalSpeechRecognition : !BrowserRecognition) ||
         !synth || typeof window.SpeechSynthesisUtterance !== "function") {
       fail("selected speech input/output not supported"); return;
@@ -343,13 +362,15 @@
   voiceProvider?.addEventListener("change", () => {
     if (enabled) return;
     window.SwrlzLocalVoice?.dispose();
-    update("off", voiceProvider.value === "local"
-      ? "Local stream selected · model is cached after first download. Tap Talk."
-      : "Browser speech input selected · tap Talk.");
+    update("off", turboSelected()
+      ? "Local Turbo selected · 16 kHz + faster end-of-speech, same cached model. Tap Talk."
+      : voiceProvider.value === "local"
+        ? "Local stream selected · standard settings. Tap Talk."
+        : "Browser speech input selected · tap Talk.");
   });
 
   window.addEventListener("swrlz-local-voice-status", event => {
-    if (enabled && phase === "listening" && voiceProvider?.value === "local")
+    if (enabled && phase === "listening" && (voiceProvider?.value === "local" || turboSelected()))
       update("listening", String(event.detail?.label || "Local streaming · listening…"));
   });
 
