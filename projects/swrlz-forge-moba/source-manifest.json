@@ -411,6 +411,6 @@
     "patches/v11_413_satchel_vr_tutorial.py",
     "patches/v11_414_satchel_native_tool_button_references.py"
   ],
-  "finalBytes": 9675331,
-  "finalSha256": "3265384cba178849ac30ababdd20ccb9c991a4ee20a27106e503ad3f189a99f7"
+  "finalBytes": 9675600,
+  "finalSha256": "25b63d1cd9ac3985a9b0beef45ac5877c4af5996fddb6bcf2d47ede19c1710c2"
 }
