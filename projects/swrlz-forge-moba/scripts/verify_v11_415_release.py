@@ -57,7 +57,7 @@ for token in [
     'se413PaintDemo', 'se413Examples', 'se413InstallSatchelVR',
     'SE414_SATCHEL_NATIVE_TOOL_REFERENCES_START', 'SWYRL_E_SATCHEL_BUTTON_GUIDE_414',
     'drawGuideIcon:(ctx,action,x,y,size,color)', 'se414ToolGuide',
-    'SE415_MODEL_VR_ICONOGRAPHY', 'se415Icons',
+    'SE415_MODEL_VR_ICONOGRAPHY', 'se414Icons',
     'SE390_MODEL_VR_QUICK_CREATE_START', 'SE390_MODEL_VR_GRAB_POSE_START',
     'SE390_MODEL_VR_FLUENT_TOOLS_START', 'SE390_MODEL_VR_FLUENT_UI',
     'SE390_MODEL_VR_HOTKEY_HINTS_START', 'vrCreate:se390ModelCreate',
