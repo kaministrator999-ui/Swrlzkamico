@@ -31,7 +31,8 @@ assert len(m['patches']) == 394
 assert m['patches'][-4:] == [
     'patches/v11_410_model_vr_accessory_workshop.py',
     'patches/v11_411_sheep_quest_ai_frame_budget.py',
-    'patches/v11_413_apprentice_satchel_tutorial.py']
+    'patches/v11_412_apprentice_satchel_tutorial.py',
+    'patches/v11_413_satchel_vr_tutorial.py']
 assert m['finalBytes'] > 9_650_504
 assert re.fullmatch('[0-9a-f]{64}', m['finalSha256'])
 
@@ -67,7 +68,7 @@ for token in ['SWYRL_ENGINE_SHEEP_AI_FRAME_BUDGET_411','se411PlanSheepBuild(unit
 for marker in ['SE410_ACCESSORY_GEOMETRY_START', 'SE410_MODEL_ACCESSORY_BRIDGE_START',
                'SE410_MODEL_VR_ACCESSORY_WORKSHOP_START', 'SE410_MODEL_VR_ACCESSORY_UI']:
     assert html.count(marker) == 1, marker
-assert html.count(" source.engine='§wyrl§ Engine · Maker v11.413';source.version=11.412;") == 5
+assert html.count(" source.engine='§wyrl§ Engine · Maker v11.413';source.version=11.413;") == 5
 subprocess.run([sys.executable, str(ROOT / 'scripts/check_inline_js_syntax_v11_266.py'),
                 str(out / 'index.html')], check=True)
 runtime_files = [f'{name}_v11_390.js' for name in [
@@ -84,7 +85,8 @@ for name in runtime_files:
     subprocess.run(['node', '--check', str(p)], check=True)
     assert 'requestAnimationFrame(' not in p.read_text(), name
     assert 'setAnimationLoop(' not in p.read_text(), name
-subprocess.run(['node', '--check', str(ROOT / 'runtime/model_satchel_tutorial_v11_413.js')], check=True)
+subprocess.run(['node', '--check', str(ROOT / 'runtime/model_satchel_tutorial_v11_412.js')], check=True)
+assert (ROOT / 'runtime/model_satchel_tutorial_v11_412.css').is_file()
 assert (ROOT / 'runtime/model_satchel_tutorial_v11_413.css').is_file()
 subprocess.run(['node', str(ROOT / 'tests/test_sheep_vr_y_menu_v11_391.cjs')], check=True)
 subprocess.run(['node', str(ROOT / 'tests/test_sheep_quest_ai_frame_budget_v11_411.cjs')], check=True)
