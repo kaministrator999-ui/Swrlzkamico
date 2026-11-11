@@ -1,0 +1,30 @@
+name: Verify §E v11.416 interactive Satchel Academy
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/verify-satchel-academy-v11-416.yml"
+      - "projects/swrlz-forge-moba/scripts/verify_v11_416_release.py"
+      - "projects/swrlz-forge-moba/source-manifest.json"
+      - "projects/swrlz-forge-moba/patches/v11_416_satchel_interactive_coach.py"
+      - "projects/swrlz-forge-moba/runtime/model_satchel_*_v11_416.js"
+      - "projects/swrlz-forge-moba/tests/satchel_academy_v11_416.cjs"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  sealed:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Verify exact sealed academy HTML and regressions
+        run: python projects/swrlz-forge-moba/scripts/verify_v11_416_release.py --output dist/swrlz-forge-moba
+      - name: Preserve source integrity receipt
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: swrlz-engine-v11-416-satchel-academy
+          path: dist/swrlz-forge-moba/SOURCE.json
