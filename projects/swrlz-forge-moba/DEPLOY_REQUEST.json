@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.391",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_391_SHEEP_QUEST_Y_TOOLS_RADIAL",
-  "reason": "ROLLBACK requested by Quest 3S tester: v11.392 follow throttle slows camera tracking and does not fix gameplay 3-second movement / 1-second freeze, while free-camera scene glitches persist. Restore exact previously source-sealed v11.391 build: 390 active patches, 9571193 HTML bytes, SHA-256 6c002024054723ed9352d86b4703fd22748f311b7abb86607f735ff2ec5b2809, already previously CI/deploy validated. Keep v11.392 source as inactive historical record. Investigate gameplay-specific per-sheep simulation/render/AI and intermittent XR callback stalls separately; no new camera patch in rollback.",
-  "sourceCommit": "e8a989f4106e46748d360c9a4bed5ecebdfd475e",
-  "sourceIntegritySha256": "6c002024054723ed9352d86b4703fd22748f311b7abb86607f735ff2ec5b2809"
+  "releaseVersion": "v11.410",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_410_MODEL_VR_ACCESSORY_WORKSHOP",
+  "reason": "Publish owner-requested native VR hip-pouch accessory workshop: Body/Details/Fit spatial panels, editable hollow body/flap/belt loops/clasp/stitching/emblem, coordinated colors, free or upright surface-fit preview, fresh-trigger atomic native placement selected for Grab. Exact sealed source passed 17 native geometry/transaction groups, nine real Three spatial UI groups and 12 actual IWER controller workflows with zero page errors. Preserve current v11.391 gameplay camera and Quest Y menu; v11.392 FOLLOW throttle remains excluded. 391 ordered patches, 9623744 HTML bytes, 77 assets, 81 packaged files. Physical Quest acceptance remains owner testing.",
+  "sourceCommit": "5db360a8635625025d10b3a148c0eca74a630648",
+  "sourceIntegritySha256": "2503918d25b268435e6f8c474c74f644386bc4000516dfadf9748a7149b57463"
 }
