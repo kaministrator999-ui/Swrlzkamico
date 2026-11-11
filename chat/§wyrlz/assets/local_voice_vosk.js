@@ -1,4 +1,4 @@
-/* §C local streaming microphone v2: cached Vosk WASM and bounded end-of-utterance detection.
+/* §C local streaming microphone v3: normal/local Turbo profiles with shared cached Vosk WASM.
  * No paid speech endpoint. Microphone samples never go to §C or a hosted ASR.
  * English ~41MB model and Apache-2.0 library download only after user opts in.
  * Existing Chat send, Station streaming, and browser TTS remain authoritative.
@@ -12,6 +12,9 @@
   // a partial transcript can remain forever without a terminal event.
   const QUIET_FINAL_MS = 1200;
   const STALE_PARTIAL_MS = 2200;
+  // Turbo is opt-in: retain the known-working local profile for comparison.
+  const TURBO_QUIET_FINAL_MS = 650;
+  const TURBO_STALE_PARTIAL_MS = 1100;
   let libraryPromise = null;
   let modelPromise = null;
   let model = null;
@@ -119,7 +122,7 @@
     }).catch(() => {});
   };
 
-  const start = async ({ onPartial, onFinal, onStatus, onError }) => {
+  const start = async ({ onPartial, onFinal, onStatus, onError, turbo = false }) => {
     stop();
     const token = generation;
     active = token;
@@ -139,7 +142,19 @@
       }
       let context, processor, source, silentGain, recognizer;
       try {
-        context = new AudioContextClass();
+        if (turbo) {
+          // Chrome Android normally runs at 48 kHz. Request a 16 kHz Web Audio
+          // graph so the browser does input resampling and Vosk decodes fewer
+          // samples; the actual context.sampleRate is still authoritative.
+          // Fall back to the device rate if 16 kHz is not supported.
+          try {
+            context = new AudioContextClass({ sampleRate: 16000, latencyHint: "interactive" });
+          } catch (_) {
+            context = new AudioContextClass({ latencyHint: "interactive" });
+          }
+        } else {
+          context = new AudioContextClass();
+        }
         if (typeof context.createScriptProcessor !== "function")
           throw new Error("Streaming audio processor unavailable");
         // Vosk-browser 0.0.5 MUST receive the actual Web Audio sample rate.
@@ -160,6 +175,8 @@
         let emitted = false;
         let reportedInput = false;
         let reportedStall = false;
+        const quietWindowMs = turbo ? TURBO_QUIET_FINAL_MS : QUIET_FINAL_MS;
+        const staleWindowMs = turbo ? TURBO_STALE_PARTIAL_MS : STALE_PARTIAL_MS;
         const finishUtterance = text => {
           const words = String(text || "").trim();
           if (active !== token || emitted || !words) return;
@@ -180,7 +197,7 @@
           const transcription = String(event?.result?.text || "").trim();
           finishUtterance(transcription || latestPartial);
         });
-        processor = context.createScriptProcessor(4096, 1, 1);
+        processor = context.createScriptProcessor(turbo ? 1024 : 4096, 1, 1);
         source = context.createMediaStreamSource(stream);
         silentGain = context.createGain();
         silentGain.gain.value = 0;
@@ -217,9 +234,12 @@
           catch (_) { onError?.("Local speech decoder rejected microphone audio"); return; }
           if (active !== token || emitted) return;
           const partialAge = lastPartialAt ? now - lastPartialAt : 0;
-          const quiet = loudFrames >= 3 && lastLoudAt && now - lastLoudAt >= QUIET_FINAL_MS;
-          const finalQuiet = quiet && partialAge >= 650;
-          const stalledPartial = lastPartialAt && partialAge >= STALE_PARTIAL_MS;
+          const quiet = loudFrames >= 3 && lastLoudAt && now - lastLoudAt >= quietWindowMs;
+          const finalQuiet = quiet && partialAge >= (turbo ? 320 : 650);
+          // Turbo must never submit while the user is audibly continuing.
+          const notCurrentlySpeaking = !lastLoudAt || now - lastLoudAt >= 400;
+          const stalledPartial = lastPartialAt && partialAge >= staleWindowMs
+            && (!turbo || notCurrentlySpeaking);
           if (latestPartial && (finalQuiet || stalledPartial)) {
             finishUtterance(latestPartial);
           } else if (frames >= 65 && !latestPartial && !reportedStall) {
@@ -238,7 +258,7 @@
         microphone = { stream, context, source, processor, silentGain, recognizer, watchdog: 0 };
         if (context.state === "suspended") await context.resume();
         if (active === token) {
-          onStatus?.("Vosk " + sampleRate + " Hz · checking microphone audio…");
+          onStatus?.((turbo ? "Turbo " : "Vosk ") + sampleRate + " Hz · checking microphone audio…");
           microphone.watchdog = setTimeout(() => {
             if (active === token && !frames)
               onError?.("Mic opened, but browser delivered no audio frames");
@@ -267,6 +287,7 @@
       this.continuous = false;
       this.interimResults = true;
       this.maxAlternatives = 1;
+      this.turbo = false;
       this.onresult = null;
       this.onerror = null;
       this.onend = null;
@@ -279,6 +300,7 @@
       // lifecycle and finish one utterance before sending to LALM Station.
       // Local stream begins asynchronously while the model downloads.
       void start({
+        turbo: this.turbo === true,
         onPartial: value => {
           if (this._running) this.onresult?.({ results: [{ isFinal: false, 0: { transcript: value } }] });
         },
