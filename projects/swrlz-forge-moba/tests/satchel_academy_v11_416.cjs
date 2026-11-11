@@ -82,7 +82,7 @@ assert.equal(academy.verify(6).ok,null,'Save must not be falsely auto-certified'
 academy.progressUpdate(done);
 const meta=model.se416TutorialState;
 assert.equal(meta.schema,'se416-quest-progress-v1');
-assert.deepEqual(meta.done,[1,2]);
+assert.equal(JSON.stringify(meta.done),'[1,2]','Cross-context project progress persisted');
 assert.equal(ctx.se175Snapshot().data.project.se416TutorialState.lesson,'satchel-001');
 assert.equal(ctx.projectData().project.se416TutorialState.lesson,'satchel-001');
 assert.equal(academy.showMe(0,false).ok,true);
