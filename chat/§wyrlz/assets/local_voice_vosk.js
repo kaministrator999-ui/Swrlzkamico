@@ -10,6 +10,7 @@
   let libraryPromise = null;
   let modelPromise = null;
   let model = null;
+  let modelEpoch = 0;
   let microphone = null;
   let active = null;
   let generation = 0;
@@ -44,6 +45,7 @@
 
   const loadModel = async status => {
     if (model) return model;
+    const epoch = modelEpoch;
     if (!modelPromise) {
       modelPromise = (async () => {
         status?.("Loading local recognition · ~41 MB model download…");
@@ -53,7 +55,9 @@
         return loaded;
       })().catch(error => { modelPromise = null; throw error; });
     }
-    model = await modelPromise;
+    const loaded = await modelPromise;
+    if (epoch !== modelEpoch) return null;
+    model = loaded;
     return model;
   };
 
@@ -66,11 +70,12 @@
   const dispose = () => {
     stop();
     // If model initialization is still underway, terminate it when it resolves.
+    ++modelEpoch;
     const oldPromise = modelPromise;
     model = null;
     modelPromise = null;
     if (oldPromise) void oldPromise.then(m => {
-      if (m && model !== m) try { m.terminate(); } catch (_) {}
+      try { m?.terminate?.(); } catch (_) {}
     }).catch(() => {});
   };
 
@@ -80,7 +85,7 @@
     active = token;
     try {
       const available = await loadModel(onStatus);
-      if (active !== token) return;
+      if (active !== token || !available) return;
       const AudioContextClass = window.AudioContext || window.webkitAudioContext;
       if (!navigator.mediaDevices?.getUserMedia || !AudioContextClass)
         throw new Error("Microphone audio capture is unsupported");
@@ -157,6 +162,7 @@
       this._running = true;
       // Native SpeechRecognition-shaped adapter: retain canonical Talk turn
       // lifecycle and finish one utterance before sending to LALM Station.
+      // Local stream begins asynchronously while the model downloads.
       void start({
         onPartial: value => {
           if (this._running) this.onresult?.({ results: [{ isFinal: false, 0: { transcript: value } }] });
