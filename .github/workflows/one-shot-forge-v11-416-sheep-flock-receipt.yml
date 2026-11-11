@@ -20,6 +20,7 @@ jobs:
           set -eu
           ROOT=projects/swrlz-forge-moba
           node --check "$ROOT/runtime/sheep_team_setup_v11_416.js"
+          node "$ROOT/tests/test_sheep_flock_setup_v11_416.cjs"
           python -m py_compile "$ROOT/patches/v11_416_sheep_flock_setup.py"
           python "$ROOT/build_space.py" --output /tmp/se416-base
           python - <<'PY'

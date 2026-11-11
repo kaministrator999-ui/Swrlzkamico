@@ -126,6 +126,9 @@ se195Options=function(mode=se195.mode,page=se195.page){
 };
 const se416PriorVRAction=se195HandleAction;
 se195HandleAction=function(action,record){
+ // The older PLAY handler hides the radial after dispatch. Intercept it so
+ // Quest users can actually see and operate the new setup page.
+ if(se195.mode==='menu'&&action==='start'&&se195.page==='main')return se416Show();
  if(se195.mode==='menu'&&se195.page==='aiSetup'){
   if(action==='se416Minus'||action==='se416Plus'){
    se416SetCount(se416Count()+(action==='se416Plus'?1:-1));
