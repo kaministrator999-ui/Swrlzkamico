@@ -26,7 +26,7 @@ ap.add_argument('--three-module', default=os.environ.get('SWYRLZ_THREE_MODULE'),
 args = ap.parse_args()
 m = json.loads((ROOT / 'source-manifest.json').read_text())
 assert m['name'] == '§wyrl§ Engine ' + VERSION
-assert m['finalArtifact'] == 'swyrl_engine_v11_415.html'
+assert m['finalArtifact'] == 'swyrl_engine_v11_416.html'
 assert len(m['patches']) == 397
 assert m['patches'][-7:] == [
     'patches/v11_410_model_vr_accessory_workshop.py',
