@@ -38,3 +38,5 @@ jobs:
           assert "window.SWRLZ_FORGE_BUILD={version:'v11.416'" in html
           PY
           python "$ROOT/scripts/check_inline_js_syntax_v11_266.py" /tmp/se416-candidate.html
+
+# v11.416: package receipt rebuild after narrow HTML-head anchor repair.

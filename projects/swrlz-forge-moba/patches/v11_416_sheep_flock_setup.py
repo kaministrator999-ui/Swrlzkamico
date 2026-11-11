@@ -17,7 +17,8 @@ def apply(html):
     assert 'SWYRL_ENGINE_SHEEP_AI_FRAME_BUDGET_411' in html
     html=one(html,'if(ALLOWED_PARENTS.has(location.origin))queueMicrotask(',
       js+'\nif(ALLOWED_PARENTS.has(location.origin))queueMicrotask(')
-    html=one(html,'</head>','<style id="se416FlockSetupStyles">\n'+css+'\n</style>\n</head>')
+    assert '</head>' in html and html.index('</head>')<html.index('<body'), 'head insertion missing'
+    html=html.replace('</head>','<style id="se416FlockSetupStyles">\n'+css+'\n</style>\n</head>',1)
     for old,new in [
       ('SWYRL_ENGINE_DEPLOY_MARKER: V11_415_MODEL_VR_ICONOGRAPHY',MARKER),
       ('ENGINE · MAKER v11.415','ENGINE · MAKER v11.416'),
