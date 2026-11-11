@@ -142,7 +142,14 @@
         context = new AudioContextClass();
         if (typeof context.createScriptProcessor !== "function")
           throw new Error("Streaming audio processor unavailable");
-        recognizer = new available.KaldiRecognizer();
+        // Vosk-browser 0.0.5 MUST receive the actual Web Audio sample rate.
+        // Android can use 48 kHz even if getUserMedia requested 16 kHz.
+        // Omitting this argument leaves the WASM recognizer uninitialized:
+        // mic RMS still works, but the worker never produces words.
+        const sampleRate = Number(context.sampleRate);
+        if (!Number.isFinite(sampleRate) || sampleRate < 8000 || sampleRate > 192000)
+          throw new Error("Browser did not provide a valid microphone sample rate");
+        recognizer = new available.KaldiRecognizer(sampleRate);
         recognizer.setWords?.(false);
         let latestPartial = "";
         let lastPartialAt = 0;
@@ -231,7 +238,7 @@
         microphone = { stream, context, source, processor, silentGain, recognizer, watchdog: 0 };
         if (context.state === "suspended") await context.resume();
         if (active === token) {
-          onStatus?.("Local model ready · checking microphone audio…");
+          onStatus?.("Vosk " + sampleRate + " Hz · checking microphone audio…");
           microphone.watchdog = setTimeout(() => {
             if (active === token && !frames)
               onError?.("Mic opened, but browser delivered no audio frames");
