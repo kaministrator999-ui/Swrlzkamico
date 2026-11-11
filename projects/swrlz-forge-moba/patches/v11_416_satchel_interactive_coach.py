@@ -87,7 +87,7 @@ def apply(html):
     html=one(html,
       "  for(const btn of box.buttons)btn.visible=!box.folded||btn.userData.se340Action==='se413-fold';",
       """  for(const btn of box.buttons){
-   const mode=btn.userData.se415Coach;
+   const mode=btn.userData.se416Coach;
    btn.visible=box.folded?btn.userData.se340Action==='se413-fold':
     mode?mode==='mode'?index===5:mode===(box.coachMode==='material'&&index===5?'material':'guide'):true;
   }""")
@@ -114,7 +114,7 @@ def apply(html):
     html=one(html,'if(ALLOWED_PARENTS.has(location.origin))queueMicrotask(',
       academy+'\n'+vr+'\nif(ALLOWED_PARENTS.has(location.origin))queueMicrotask(')
     assert html.index('</head>')<html.index('<body')
-    html=html.replace('</head>','<style id="se415SatchelAcademy">'+css+'</style>\n</head>',1)
+    html=html.replace('</head>','<style id="se416SatchelAcademy">'+css+'</style>\n</head>',1)
     for old,new in [
       ('SWYRL_ENGINE_DEPLOY_MARKER: V11_415_MODEL_VR_ICONOGRAPHY',MARKER),
       ('ENGINE · MAKER v11.415','ENGINE · MAKER v11.416'),
@@ -124,7 +124,7 @@ def apply(html):
     ]:html=one(html,old,new)
     old=" source.engine='§wyrl§ Engine · Maker v11.415';source.version=11.415;"
     if html.count(old)!=5:raise AssertionError(('v11.416 provenance',html.count(old)))
-    html=html.replace(old," source.engine='§wyrl§ Engine · Maker v11.416';source.version=11.415;")
+    html=html.replace(old," source.engine='§wyrl§ Engine · Maker v11.416';source.version=11.416;")
     at=html.index('const SE_RELEASE_NOTES=')+len('const SE_RELEASE_NOTES=')
     notes,n=json.JSONDecoder().raw_decode(html[at:])
     notes.setdefault('history',[]).insert(0,{'version':'v11.415','changes':notes.get('changes',[])})
