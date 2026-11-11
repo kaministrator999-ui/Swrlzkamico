@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.411
+title: §wyrl§ Engine v11.412
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,10 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.412 · Apprentice Satchel guided Model Studio quest (2026-11-11)
+
+Projects gains a dedicated **Tutorials** tab and the first beginner quest, **Apprentice Satchel**. Starting the quest creates an editable, independent native Model Studio project with one practice cube. Seven objectives teach sizing the pouch, constructing a real hollow opening, making a flap and shoulder strap, adding a buckle, assigning leather/metal materials, and inspecting/saving the result. The movable, collapsible quest dialog explains tool choices and provides hints, checkoffs and step navigation. Two basic checks inspect the actual model proportions and material assignments; advanced shape objectives use explicit human visual confirmation instead of claiming automatic geometry recognition. Progress is local to the independent saved project; existing Save Project and Save to Account are authoritative. No canonical starter or saved mage is overwritten. This first pass targets standard Model Studio; the separate immersive VR control panel is preserved.
 
 ## §E v11.411 · Solo Quest Sheep Tag AI frame-budget optimization (2026-11-11)
 
