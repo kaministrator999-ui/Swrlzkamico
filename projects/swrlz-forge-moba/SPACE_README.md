@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.390
+title: §wyrl§ Engine v11.391
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,10 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.391 · Left Y opens Sheep Tag VR tools (2026-11-10)
+
+Meta Quest Browser reserves the physical left Menu button. In immersive Sheep Tag, press the available left **Y** face button once to toggle the existing tools radial. The main radial gives immediate **FOLLOW** / **FREE** camera actions; X skill selection, A building, right B camera free and L3 Nerd Stats are unchanged. This is not a binding for the system Menu button. Hardware Quest verification pending.
 
 ## §E v11.390 · Fluent controller selection, Grab and creation (2026-11-10)
 
