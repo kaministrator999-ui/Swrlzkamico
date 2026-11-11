@@ -1,4 +1,4 @@
-/* §C local streaming microphone v4: reliable multi-phrase Turbo capture; shared cached Vosk WASM.
+/* §C local streaming microphone v5: flush Vosk's queued final audio before finishing Turbo turns.
  * No paid speech endpoint. Microphone samples never go to §C or a hosted ASR.
  * English ~41MB model and Apache-2.0 library download only after user opts in.
  * Existing Chat send, Station streaming, and browser TTS remain authoritative.
@@ -31,6 +31,8 @@
     if (!previous) return;
     previous.processor.onaudioprocess = null;
     if (previous.watchdog) clearTimeout(previous.watchdog);
+    if (previous.finalizeTimeout) clearTimeout(previous.finalizeTimeout);
+    if (previous.finalizeSettle) clearTimeout(previous.finalizeSettle);
     try { previous.processor.disconnect(); } catch (_) {}
     try { previous.source.disconnect(); } catch (_) {}
     try { previous.silentGain.disconnect(); } catch (_) {}
@@ -175,6 +177,11 @@
         let reportedStall = false;
         const committedSegments = [];
         let lastSegmentAt = 0;
+        let finalRequested = false;
+        let finalResultSeen = false;
+        let finalSettleTimer = 0;
+        let finalDeadlineTimer = 0;
+        let lastAudioAt = 0;
         const quietWindowMs = turbo ? TURBO_QUIET_FINAL_MS : QUIET_FINAL_MS;
         const staleWindowMs = turbo ? TURBO_STALE_PARTIAL_MS : STALE_PARTIAL_MS;
         const fullTranscript = () => [...committedSegments, latestPartial]
@@ -183,7 +190,39 @@
           const words = String(text || "").trim();
           if (active !== token || emitted || !words) return;
           emitted = true;
+          if (finalSettleTimer) clearTimeout(finalSettleTimer);
+          if (finalDeadlineTimer) clearTimeout(finalDeadlineTimer);
           onFinal?.(words); // Talk calls recognizer.stop() and canonical send.
+        };
+        const finalFallback = () => {
+          if (active !== token || emitted) return;
+          const words = fullTranscript();
+          if (words) finishUtterance(words);
+          else onError?.("The speech decoder returned no words; retry or use Browser input");
+        };
+        const settleFinal = () => {
+          if (!turbo || !finalRequested || active !== token || emitted) return;
+          if (finalSettleTimer) clearTimeout(finalSettleTimer);
+          // Vosk's WASM worker returns asynchronously. Give the last result
+          // room to arrive after queued partials and phrase-boundary results.
+          finalSettleTimer = setTimeout(() => {
+            if (active === token && !emitted && finalResultSeen)
+              finalFallback();
+          }, 550);
+          if (microphone) microphone.finalizeSettle = finalSettleTimer;
+        };
+        const requestFinal = () => {
+          if (!turbo || finalRequested || emitted || active !== token) return;
+          finalRequested = true;
+          onStatus?.("Speech finished · completing local transcription…");
+          // Vosk accepts audio on a Web Worker: do not submit the most recent
+          // partial before already-queued audio has been decoded and flushed.
+          if (typeof recognizer.retrieveFinalResult === "function") {
+            try { recognizer.retrieveFinalResult(); }
+            catch (_) { /* legacy build: bounded partial fallback below */ }
+          }
+          finalDeadlineTimer = setTimeout(finalFallback, 2600);
+          if (microphone) microphone.finalizeTimeout = finalDeadlineTimer;
         };
         recognizer.on("partialresult", event => {
           if (active !== token || emitted) return;
@@ -210,6 +249,10 @@
             lastSegmentAt = Date.now();
             onPartial?.(fullTranscript());
           }
+          if (finalRequested) {
+            finalResultSeen = true;
+            settleFinal();
+          }
         });
         processor = context.createScriptProcessor(turbo ? 2048 : 4096, 1, 1);
         source = context.createMediaStreamSource(stream);
@@ -226,6 +269,7 @@
           if (!pcm?.length) return;
           frames++;
           const now = Date.now();
+          lastAudioAt = now;
           // Lightweight energy-based end-of-utterance detection. The audio
           // remains local; only an RMS number is observed, never persisted.
           let power = 0, count = 0;
@@ -245,22 +289,24 @@
             reportedInput = true;
             onStatus?.("Local microphone audio received · listening…");
           }
-          // Always feed Vosk; do not let the energy meter suppress speech.
-          try { recognizer.acceptWaveform(input); }
-          catch (_) { onError?.("Local speech decoder rejected microphone audio"); return; }
+          // After final flush is requested, no further chunks can be queued:
+          // otherwise the worker may finalize before processing new audio.
+          if (!finalRequested) {
+            try { recognizer.acceptWaveform(input); }
+            catch (_) { onError?.("Local speech decoder rejected microphone audio"); return; }
+          }
           if (active !== token || emitted) return;
           const partialAge = lastPartialAt ? now - lastPartialAt : 0;
           const quiet = loudFrames >= 3 && lastLoudAt && now - lastLoudAt >= quietWindowMs;
           const finalQuiet = quiet && partialAge >= 650;
           const stalledPartial = lastPartialAt && partialAge >= staleWindowMs;
           if (turbo) {
-            const speech = fullTranscript();
-            // Two separate gates: a sustained quiet interval AND a stable
-            // decoder transcript. A stale partial alone may not send mid-turn.
-            if (speech && quiet && (!lastSegmentAt || now - lastSegmentAt >= 350)
-                && (!lastPartialAt || partialAge >= 400
-                    || now - lastLoudAt >= quietWindowMs + 900))
-              finishUtterance(speech);
+            // Silence only signals that the microphone turn may be over.
+            // It does NOT make the latest partial Vosk transcript complete.
+            // Flush worker decoding first, even if no partial arrived yet.
+            if (quiet && !finalRequested &&
+                (!lastSegmentAt || now - lastSegmentAt >= 350))
+              requestFinal();
           } else if (latestPartial && (finalQuiet || stalledPartial)) {
             finishUtterance(latestPartial);
           }
@@ -277,7 +323,8 @@
         source.connect(processor);
         processor.connect(silentGain);
         silentGain.connect(context.destination);
-        microphone = { stream, context, source, processor, silentGain, recognizer, watchdog: 0 };
+        microphone = { stream, context, source, processor, silentGain, recognizer,
+                       watchdog: 0, finalizeTimeout: 0, finalizeSettle: 0 };
         if (context.state === "suspended") await context.resume();
         if (active === token) {
           onStatus?.((turbo ? "Turbo " : "Vosk ") + sampleRate + " Hz · checking microphone audio…");
