@@ -1,0 +1,50 @@
+name: Measure §E v11.415 interactive satchel academy
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/measure-satchel-academy-v11-415.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  measure:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Build all patches and measure Academy v11.415
+        run: |
+          python - <<'PY'
+          import pathlib,json,base64,gzip,hashlib,importlib.util,subprocess,sys,tempfile
+          root=pathlib.Path("projects/swrlz-forge-moba").resolve()
+          m=json.loads((root/"source-manifest.json").read_text())
+          assert m["name"]=="§wyrl§ Engine v11.414" and len(m["patches"])==395
+          raw=gzip.decompress(base64.b64decode("".join((root/n).read_text().strip() for n in m["chunks"])))
+          assert len(raw)==m["baseBytes"] and hashlib.sha256(raw).hexdigest()==m["baseSha256"]
+          html=raw.decode()
+          def apply(rel,n):
+              global html
+              spec=importlib.util.spec_from_file_location("candidate_"+str(n),root/rel)
+              module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
+              html=module.apply(html)
+          for i,rel in enumerate(m["patches"]):apply(rel,i)
+          assert len(html.encode())==m["finalBytes"] and hashlib.sha256(html.encode()).hexdigest()==m["finalSha256"]
+          apply("patches/v11_415_satchel_interactive_coach.py",len(m["patches"]))
+          data=html.encode("utf8")
+          assert "SE415_SATCHEL_ACADEMY_START" in html
+          assert "SE415_SATCHEL_VR_COACH_START" in html
+          assert "SE415_SATCHEL_NATIVE_BRIDGE_START" in html
+          assert "SWYRL_ENGINE_DEPLOY_MARKER: V11_415_SATCHEL_INTERACTIVE_COACH" in html
+          temp=pathlib.Path(tempfile.gettempdir())/"se415_candidate.html"
+          temp.write_bytes(data)
+          subprocess.run([sys.executable,str(root/"scripts/check_inline_js_syntax_v11_266.py"),str(temp)],check=True)
+          for name in ["model_satchel_academy_v11_415.js","model_satchel_vr_coach_v11_415.js","model_satchel_native_bridge_v11_415.js"]:
+              subprocess.run(["node","--check",str(root/"runtime"/name)],check=True)
+          subprocess.run(["node",str(root/"tests"/"satchel_academy_v11_415.cjs")],check=True)
+          print("SATCHEL_ACADEMY_FINAL_BYTES="+str(len(data)))
+          print("SATCHEL_ACADEMY_FINAL_SHA256="+hashlib.sha256(data).hexdigest())
+          print("SATCHEL_ACADEMY_PATCHES="+str(len(m["patches"])+1))
+          PY
