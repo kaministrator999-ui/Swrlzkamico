@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.391",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_391_SHEEP_QUEST_Y_TOOLS_RADIAL",
-  "reason": "Quest Browser reserves the left Touch controller Menu button, so bind the exposed left Y face button to open/close the EXISTING Sheep Tag VR tools radial with FOLLOW and FREE. Keep X skill, A build, L3 Nerd Stats, and right B free-camera commands unchanged. Full source rebuilt and sealed: 390 ordered patches, 9571193 HTML bytes, SHA-256 6c002024054723ed9352d86b4703fd22748f311b7abb86607f735ff2ec5b2809, 77 assets; dedicated Node input test and full release verifier passed. Quest hardware acceptance pending.",
-  "sourceCommit": "662a42c44644255425743b403c3a694f198c6f24",
-  "sourceIntegritySha256": "6c002024054723ed9352d86b4703fd22748f311b7abb86607f735ff2ec5b2809"
+  "releaseVersion": "v11.392",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_392_SHEEP_VR_STABLE_FOLLOW",
+  "reason": "Quest 3S immersive Sheep Tag owner A/B: FREE stops continuous repaint/geometry distortion and most stutter; short hard freezes remain. v11.392 bounds FOLLOW XR reference-space writes to at least 140ms apart with >=12cm target error and <=62cm step, preserving v11.211 focus-return guard, initial framing, native headset tracking, FREE camera, host/guest simulation, controls and saves. Full sealed source tested: 391 patches, 9574057 bytes, SHA-256 21a35d72b22be9359564f4dd2cfe8ac8623b5760948ae741ae769fe9a62abcff, 77 assets; Node regression and complete verifier success. Quest hardware retest pending; independent callback-freeze root cause not claimed fixed.",
+  "sourceCommit": "8da1d0638e97347b87a34c5157fc018a99c44ed6",
+  "sourceIntegritySha256": "21a35d72b22be9359564f4dd2cfe8ac8623b5760948ae741ae769fe9a62abcff"
 }
