@@ -1,0 +1,46 @@
+name: Read-only Hugging Face storage inventory
+on:
+  push:
+    paths:
+      - '.github/workflows/read-only-hf-storage-inventory.yml'
+      - 'docs/HF_VERCEL_RETIREMENT_GATE.md'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  storage-inventory:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install Hub client
+        run: python -m pip install 'huggingface_hub>=0.35,<2'
+      - name: Inspect existing Space without mutation
+        env:
+          HF_TOKEN: "${{ secrets.HF_TOKEN }}"
+        shell: bash
+        run: |
+          python - <<'PY'
+          import os
+          from huggingface_hub import HfApi
+          token = os.environ.get("HF_TOKEN") or None
+          api = HfApi(token=token)
+          try:
+              runtime = api.get_space_runtime("kamiloki/Swyrlz")
+          except Exception as exc:
+              print("::warning::Space volume inventory unavailable; credentials, API support or access may be missing (" + type(exc).__name__ + ")")
+          else:
+              volumes = getattr(runtime, "volumes", None)
+              if volumes is None:
+                  print("::warning::Space runtime API did not return a volume inventory.")
+              else:
+                  types = [getattr(volume, "type", None) for volume in volumes]
+                  bucket_count = sum(kind == "bucket" for kind in types)
+                  print("Existing Space: kamiloki/Swyrlz")
+                  print("Attached volume count: " + str(len(types)))
+                  print("Durable bucket volume count: " + str(bucket_count))
+                  if not bucket_count:
+                      print("::warning::No writable HF bucket volume confirmed; collector Blob retirement remains blocked.")
+          PY

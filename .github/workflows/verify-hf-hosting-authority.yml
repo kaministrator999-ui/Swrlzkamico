@@ -1,0 +1,21 @@
+name: Guard Hugging Face hosting authority
+on:
+  push:
+    paths:
+      - pyproject.toml
+      - README.md
+      - 'api/**'
+      - 'queues/**'
+      - '.github/workflows/**'
+      - 'tests/test_hf_hosting_authority.py'
+  workflow_dispatch:
+jobs:
+  no-provider-regression:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Verify hosting authority and legacy boundaries
+        run: python -m unittest discover -s tests -p test_hf_hosting_authority.py -v
