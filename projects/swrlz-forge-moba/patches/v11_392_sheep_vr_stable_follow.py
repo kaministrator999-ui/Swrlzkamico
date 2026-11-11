@@ -4,7 +4,7 @@ Owner test: FREE stopped repainting/geometric distortion; small hard freezes
 persisted. Avoid mutating XR reference space every headset display frame.
 """
 from pathlib import Path
-import json
+import json,sys
 ROOT=Path(__file__).resolve().parents[1]
 MARKER='SWYRL_ENGINE_DEPLOY_MARKER: V11_392_SHEEP_VR_STABLE_FOLLOW'
 def once(s,old,new,label):
@@ -15,8 +15,8 @@ def once(s,old,new,label):
                       'const delta=remaining.multiplyScalar(1-Math.exp(-timeStep*9));',
                       'se200.applied.copy(wanted);'):
             i=s.find(token)
-            print('SE392_LOOKUP',repr(token),'count',s.count(token),'at',i,flush=True)
-            if i>=0:print('SE392_CONTEXT',repr(s[max(0,i-160):i+850]),flush=True)
+            print('SE392_LOOKUP',repr(token),'count',s.count(token),'at',i,flush=True,file=sys.stderr)
+            if i>=0:print('SE392_CONTEXT',repr(s[max(0,i-160):i+850]),flush=True,file=sys.stderr)
     if n!=1:raise AssertionError(('v11.392',label,n,old[:90]))
     return s.replace(old,new,1)
 def apply(html):
