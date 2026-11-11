@@ -21,7 +21,8 @@ def apply(html):
                      'const se371PriorSnapshot=se175Snapshot;', 'const se320ProjectDataBase=projectData;',
                      'window.SWRLZ_FORGE_BUILD='):
         if required not in html: raise AssertionError(('v11.412 prerequisite',required))
-    html=one(html, '</head>', '<style id="se412TutorialStyles">'+css+'</style>\n</head>')
+    assert html.index('</head>') < html.index('<body')
+    html=html.replace('</head>', '<style id="se412TutorialStyles">'+css+'</style>\n</head>', 1)
     html=one(html, 'if(ALLOWED_PARENTS.has(location.origin))queueMicrotask(',
                 js+'\nif(ALLOWED_PARENTS.has(location.origin))queueMicrotask(')
     for old,new in [
