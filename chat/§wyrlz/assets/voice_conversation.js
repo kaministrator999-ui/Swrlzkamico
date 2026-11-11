@@ -1,4 +1,4 @@
-/* §C voice conversation v5: opt-in Turbo local ASR, early-phrase TTS, latency timing. */
+/* §C voice conversation v6: Browser Turbo accuracy + fast reply speech; retain independent offline Local/Local Turbo. */
 (() => {
   "use strict";
   const mic = document.getElementById("voiceConversationButton");
@@ -29,7 +29,12 @@
   let activeSpeech = null;
   let submittedAt = 0;
   let firstDeltaAt = 0;
+  // Turbo uses browser speech recognition, not the downloaded Vosk model.
+  // Keep on-device Local Turbo as a separate choice for offline use.
   const turboSelected = () => voiceProvider?.value === "turbo";
+  const localTurboSelected = () => voiceProvider?.value === "local-turbo";
+  const localSelected = () => voiceProvider?.value === "local" || localTurboSelected();
+  const fastSpeechSelected = () => turboSelected() || localTurboSelected();
 
   const trace = (event, data = {}) => {
     // Strictly state-only diagnostics; never record audio, transcription or reply text.
@@ -130,13 +135,13 @@
 
   function listen() {
     if (!enabled || recognition || phase === "waiting" || phase === "speaking") return;
-    const local = voiceProvider?.value === "local" || turboSelected();
+    const local = localSelected();
     const Recognition = local ? window.SwrlzLocalSpeechRecognition : BrowserRecognition;
     if (!Recognition) { fail(local ? "local recognition component unavailable" : "speech recognition unavailable in this browser"); return; }
     heard = "";
     let handled = false;
     const instance = new Recognition();
-    if (local && turboSelected()) instance.turbo = true;
+    if (localTurboSelected()) instance.turbo = true;
     recognition = instance;
     // The bundled offline Vosk model is en-US; Browser input may use device locale.
     instance.lang = local ? "en-US" : (navigator.language || "en-US");
@@ -190,9 +195,9 @@
       }
     };
     try {
-      update("listening", local ? (turboSelected() ? "Turbo · preparing local engine…" : "Local streaming · loading on-device engine…") : "Listening · speak now…");
+      update("listening", local ? (localTurboSelected() ? "Local Turbo · preparing offline recognizer…" : "Local stream · loading offline recognizer…") : (turboSelected() ? "Browser Turbo · listening…" : "Listening · speak now…"));
       instance.start();
-      trace("recognition-start", { engine: local ? (turboSelected() ? "local-vosk-turbo" : "local-vosk") : "browser" });
+      trace("recognition-start", { engine: local ? (localTurboSelected() ? "local-vosk-turbo" : "local-vosk") : (turboSelected() ? "browser-turbo" : "browser") });
     } catch (_) {
       recognition = null;
       fail("microphone could not start");
@@ -252,7 +257,7 @@
     if (!speakingStarted) {
       speakingStarted = true;
       const latencyMs = submittedAt ? Date.now() - submittedAt : 0;
-      update("speaking", (turboSelected() ? "Turbo · " : "") +
+      update("speaking", (fastSpeechSelected() ? "Turbo · " : "") +
         "§wyrlz speaking" + (latencyMs ? " · first audio queued " + (latencyMs / 1000).toFixed(1) + "s" : "") +
         (generationComplete ? "" : " · still generating…"));
       trace("first-audio-queued", { streamed: !generationComplete, submitToSpeechMs: latencyMs });
@@ -262,7 +267,7 @@
     const utterance = new SpeechSynthesisUtterance(speechParts.shift());
     utterance.lang = voice?.lang || navigator.language || "en-US";
     if (voice) utterance.voice = voice;
-    utterance.rate = turboSelected() ? 1.14 : 1;
+    utterance.rate = fastSpeechSelected() ? 1.14 : 1;
     speechBusy = true;
     activeSpeech = utterance; // Keep utterance alive until Chrome announces completion.
     utterance.onend = () => {
@@ -286,10 +291,10 @@
       // get a bounded word-boundary fallback; do not wait for a full reply.
       const sentence = /[.!?](?:["'”’)]*)\s+/.exec(speechPending);
       let cut = sentence ? sentence.index + sentence[0].length : -1;
-      const earlyPhraseLimit = turboSelected() ? 95 : 170;
+      const earlyPhraseLimit = fastSpeechSelected() ? 95 : 170;
       if (cut < 0 && !final && speechPending.length >= earlyPhraseLimit) {
         cut = speechPending.lastIndexOf(" ", earlyPhraseLimit);
-        if (cut < (turboSelected() ? 45 : 90)) break;
+        if (cut < (fastSpeechSelected() ? 45 : 90)) break;
       }
       if (cut < 0 && !final) break;
       const portion = cut >= 0 ? speechPending.slice(0, cut) : speechPending;
@@ -337,7 +342,7 @@
 
   mic.addEventListener("click", () => {
     if (enabled) { stop(); return; }
-    const local = voiceProvider?.value === "local" || turboSelected();
+    const local = localSelected();
     if ((local ? !window.SwrlzLocalSpeechRecognition : !BrowserRecognition) ||
         !synth || typeof window.SpeechSynthesisUtterance !== "function") {
       fail("selected speech input/output not supported"); return;
@@ -364,14 +369,16 @@
     if (enabled) return;
     window.SwrlzLocalVoice?.dispose();
     update("off", turboSelected()
-      ? "Local Turbo selected · native microphone rate, careful phrase ending, cached model. Tap Talk."
-      : voiceProvider.value === "local"
-        ? "Local stream selected · standard settings. Tap Talk."
-        : "Browser speech input selected · tap Talk.");
+      ? "Browser Turbo · browser recognition, faster reply playback. May use an online speech service. Tap Talk."
+      : localTurboSelected()
+        ? "Offline Local Turbo · on-device Vosk with faster playback. Tap Talk."
+        : voiceProvider.value === "local"
+          ? "Offline Local stream · on-device Vosk. Tap Talk."
+          : "Browser speech input selected · tap Talk.");
   });
 
   window.addEventListener("swrlz-local-voice-status", event => {
-    if (enabled && phase === "listening" && (voiceProvider?.value === "local" || turboSelected()))
+    if (enabled && phase === "listening" && localSelected())
       update("listening", String(event.detail?.label || "Local streaming · listening…"));
   });
 
