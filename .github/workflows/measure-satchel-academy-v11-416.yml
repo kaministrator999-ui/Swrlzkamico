@@ -4,6 +4,9 @@ on:
     branches: [main]
     paths:
       - ".github/workflows/measure-satchel-academy-v11-416.yml"
+      - "projects/swrlz-forge-moba/patches/v11_416_satchel_interactive_coach.py"
+      - "projects/swrlz-forge-moba/runtime/model_satchel_*_v11_416.js"
+      - "projects/swrlz-forge-moba/tests/satchel_academy_v11_416.cjs"
   workflow_dispatch:
 permissions:
   contents: read
