@@ -5,6 +5,13 @@ const vm = require("node:vm");
 const code=fs.readFileSync("voice-streaming-source/chat/§wyrlz/assets/local_voice_vosk.js","utf8");
 
 (async () => {
+  const waitFor = async (ready, message) => {
+    for (let i=0; i<100; i++) {
+      if (ready()) return;
+      await new Promise(resolve => setTimeout(resolve, 10));
+    }
+    assert.fail(message);
+  };
   const recognized=[];
   const micStreams=[];
   const instances=[];
@@ -52,7 +59,7 @@ const code=fs.readFileSync("voice-streaming-source/chat/§wyrlz/assets/local_voi
   first.onresult=e=>{const value=e.results[0];transcripts.push([value.isFinal,value[0].transcript]);if(value.isFinal)final++;};
   first.onend=()=>ended++;
   first.start();
-  for(let i=0;i<10;i++)await Promise.resolve();
+  await waitFor(() => window.SwrlzLocalVoice.active, "First local microphone never became ready");
   assert.equal(modelLoads,1,"model loads only on opt-in");
   assert.equal(micStreams.length,1,"captures microphone exactly once");
   assert.equal(window.SwrlzLocalVoice.active,true);
@@ -69,7 +76,7 @@ const code=fs.readFileSync("voice-streaming-source/chat/§wyrlz/assets/local_voi
 
   const second=new Rec();
   second.start();
-  for(let i=0;i<10;i++)await Promise.resolve();
+  await waitFor(() => window.SwrlzLocalVoice.active, "Second local microphone never became ready");
   assert.equal(modelLoads,1,"reuse local model for the next turn");
   assert.equal(micStreams.length,2);
   second.abort();
