@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.416
+title: §wyrl§ Engine v11.417
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,11 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.417 · Model VR Object Index and mesh silhouette (2026-11-11)
+
+The world-space VR console now lists named model parts with a nine-per-page Object Index, supports single and additive/toggle multi-selection, and outlines selected meshes individually. The v11.416 Satchel Academy remains integrated, with physical Quest testing pending.
+
 
 
 ## §E v11.416 · Interactive Apprentice Satchel Academy (2026-11-11)
