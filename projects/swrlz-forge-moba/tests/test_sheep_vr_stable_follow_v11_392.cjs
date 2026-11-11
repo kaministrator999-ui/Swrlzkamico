@@ -1,0 +1,20 @@
+const assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm');
+const path=require('node:path');
+const src=fs.readFileSync(path.join(__dirname,'../runtime/sheep_vr_stable_follow_v11_392.js'),'utf8');
+let starts=0;
+const ctx={window:{},se193XRStart:()=>{starts++;return 'ok'},se181XR:{session:{}},
+renderer:{xr:{isPresenting:true}},se193XRGameActive:()=>true,se193:{follow:true}};
+vm.createContext(ctx);vm.runInContext(src,ctx);
+const run=(d,at)=>ctx.se392FollowPlan(d,at),mark=(at,step)=>ctx.se392FollowCommit(at,step);
+assert.equal(run(.05,1000),0);
+assert.ok(run(3,1000)>.5);mark(1000,.62);
+assert.equal(run(.8,1060),0);
+assert.equal(run(.8,1139),0);
+const step=run(.8,1140);assert.ok(step>0&&step<=.62);mark(1140,step);
+assert.equal(run(.1,1400),0);
+assert.equal(run(10,1600),.62);
+assert.equal(ctx.window.SWYRL_ENGINE_SHEEP_STABLE_FOLLOW_392.diagnose().freeCameraUntouched,true);
+assert.equal(ctx.se193XRStart(),'ok');assert.equal(starts,1);
+const snap=ctx.window.SWYRL_ENGINE_SHEEP_STABLE_FOLLOW_392.diagnose();
+assert.equal(snap.referenceWrites,0);assert.equal(snap.intervalMs,140);
+console.log('stable FOLLOW: cadence, short distance, max step, reference-write telemetry, XR reset passed');
