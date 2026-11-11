@@ -270,9 +270,9 @@ def install(server) -> None:
                 rows = list(_RECENT)[-safe_limit:]
         return JSONResponse({"ok": True, "count": len(rows), "latestServerSeq": latest_seq, "after": after, "events": rows}, headers={"Cache-Control": "no-store"})
 
-    # Vercel's function destination path is /api/chat.py. The public diagnostic
-    # route is marked by vercel.json with a private query flag, so intercept it
-    # before FastAPI route matching. This avoids depending on Vercel's internal
+    # Legacy routed Chat diagnostics use an internal query flag; intercept
+    # before FastAPI route matching to keep the existing diagnostic contract
+    # independent of any specific hosting provider's internal
     # ASGI pathname semantics while keeping api/chat.py as the single owner.
     @app.middleware("http")
     async def chat_client_debug_middleware(request: Request, call_next):
@@ -583,7 +583,7 @@ def install(server) -> None:
             "kind": "diagnostics",
             "ready": True,
             "path": "/api/chat/client-debug",
-            "detail": "Bounded browser boot checkpoints are emitted to Vercel runtime logs and retained briefly in-process for direct inspection.",
+            "detail": "Bounded browser boot checkpoints are emitted to server logs and retained briefly in-process for direct inspection.",
         }
         capabilities["chat-canonical-turn-state"] = {
             "kind": "durable-user-state",

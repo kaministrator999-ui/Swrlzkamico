@@ -43,14 +43,14 @@ for directory in (RUNTIME_ROOT, LIVE_WEB_ROOT):
     directory.mkdir(parents=True, exist_ok=True)
 
 app = FastAPI(
-    title="SWRLZ Vercel Chat Bridge",
+    title="SWRLZ Chat Bridge",
     version=APP_VERSION,
     docs_url=None,
     redoc_url=None,
     openapi_url=None,
 )
 
-# /api/chat is a file-routed Vercel function, so diagnostics must be installed
+# /api/chat retains an independent routed app; diagnostics must be installed
 # on this app rather than api/index.py or a competing nested api/chat/* file.
 from api.chat_client_debug import install as _install_chat_client_debug, _lockdown as _chat_lockdown
 _install_chat_client_debug(app)
@@ -360,7 +360,7 @@ def _encode_event(event: dict[str, Any]) -> bytes:
 
 def _local_not_ready_stream(request_id: str) -> Iterator[bytes]:
     yield _encode_event(
-        _bridge_event(1, "STARTED", request_id, phase="ANALYZING_REQUEST", reason="Request admitted by the Vercel chat bridge."),
+        _bridge_event(1, "STARTED", request_id, phase="ANALYZING_REQUEST", reason="Request admitted by the Chat bridge."),
     )
     yield _encode_event(
         _bridge_event(

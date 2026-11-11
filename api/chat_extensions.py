@@ -120,7 +120,7 @@ def _research_context(bundle: dict[str, Any]) -> dict[str, Any]:
 
 def _local_stream(payload):
     request_id=payload["requestId"]; LOCAL_CANCELLED.discard(request_id); seq=1
-    yield chat._encode_event(chat._bridge_event(seq,"STARTED",request_id,phase="ANALYZING_REQUEST",reason="Request admitted by the local R39 Vercel inference bridge.")); seq+=1
+    yield chat._encode_event(chat._bridge_event(seq,"STARTED",request_id,phase="ANALYZING_REQUEST",reason="Request admitted by the local R39 inference bridge.")); seq+=1
     research_requested=online_research_requested(payload.get("profileId"))
     if research_requested:
         engine,source=_engine(); planning_started=time.perf_counter()
