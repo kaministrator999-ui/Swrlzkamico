@@ -146,6 +146,10 @@
   clearHighlight();
   const refs=window.SWYRL_E_SATCHEL_BUTTON_GUIDE_414?.references(index)||[];
   if(vr){
+   if(index===5){const quest=se340XR?.se413Quest;
+    if(quest){quest.coachMode='material';quest.signature='';}
+    return {ok:true,message:'Material controls are shown inside this world-space quest. Select a real part, then use Leather, Metal or Shade.'};
+   }
    const s=se340XR,action=selectedAction(index);
    if(!s?.ui||!action)return {ok:false,message:'This is an inspector-only step. In VR use the Materials row in the quest window.'};
    const page=action==='create-box'?'create':action==='save-local'?'projects':action==='cameras'?'views':'tools';
