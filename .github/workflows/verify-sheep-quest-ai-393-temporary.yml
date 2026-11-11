@@ -1,0 +1,37 @@
+name: Temporary §E v11.393 Quest AI candidate seal
+on:
+  push:
+    branches: [fix/sheep-quest-bot-planning-v11-393]
+permissions:
+  contents: read
+jobs:
+  candidate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Validate planner syntax and scheduling behavior
+        run: |
+          node --check projects/swrlz-forge-moba/runtime/sheep_quest_bot_frame_budget_v11_393.js
+          python -m py_compile projects/swrlz-forge-moba/patches/v11_393_sheep_quest_ai_frame_budget.py
+          node projects/swrlz-forge-moba/tests/test_sheep_quest_ai_frame_budget_v11_393.cjs
+      - name: Calculate exact source seal after all 391 patches
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import json,hashlib,subprocess,sys
+          root=Path('projects/swrlz-forge-moba')
+          source=root/'source-manifest.json'
+          manifest=json.loads(source.read_text())
+          assert manifest['patches'][-1]=='patches/v11_393_sheep_quest_ai_frame_budget.py'
+          manifest['finalSha256']=''
+          manifest['finalBytes']=0
+          source.write_text(json.dumps(manifest,ensure_ascii=False,indent=2)+'\n')
+          with open('/tmp/quest393-build.log','w') as log:
+              subprocess.run([sys.executable,str(root/'build_space.py'),'--output','/tmp/quest393'],check=True,stdout=log)
+          output=Path('/tmp/quest393/index.html').read_bytes()
+          assert b'SWYRL_ENGINE_SHEEP_AI_FRAME_BUDGET_393' in output
+          print('SEAL_RECEIPT_393 '+json.dumps({'bytes':len(output),'sha256':hashlib.sha256(output).hexdigest(),'patches':len(manifest['patches'])}))
+          PY

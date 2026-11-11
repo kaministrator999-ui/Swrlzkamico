@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.391
+title: §wyrl§ Engine v11.393
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,10 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.393 · Quest Sheep Tag AI planning frame budget (2026-11-10)
+
+The Quest 3S owner reports smooth menus but repeated 3-second movement/1-second freezes during play, improving as NPC sheep disappear. Code inspection found that a sheep's base selection and 12-site maze construction plan synchronously perform multiple full-map path and navigation-grid checks. This release runs at most **one such NPC planning candidate per game frame across the flock** in **solo immersive VR**, continuing the original decision over consecutive frames. Bot movement, controlled sheep motion and collision remain frame-by-frame, and the unchanged original non-VR and LAN AI code path is retained. Repeated visibility checks for the same entity within the same simulation update are memoized with navigation, movement and capture invalidation. The v11.391 Quest Y menu and previous camera behavior stay intact. This change is an optimization candidate, not a claim of proven zero-lag Quest performance.
 
 ## §E rollback · v11.392 FOLLOW throttle withdrawn (2026-11-10)
 
