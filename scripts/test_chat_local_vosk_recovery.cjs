@@ -14,6 +14,21 @@ const js=fs.readFileSync("voice-turbo-source/chat/§wyrlz/assets/local_voice_vos
     assert.fail(message);
   };
   let now=1000, downloads=0, saved=0, modelLoads=0, terminations=0;
+  let timerId=0;
+  const timers=new Map();
+  const schedule=(fn,ms=0)=>{
+    const id=++timerId;timers.set(id,{due:now+ms,fn});return id;
+  };
+  const advance=ms=>{
+    now+=ms;
+    for(let guard=0;guard<40;guard++){
+      const due=[...timers.entries()].filter(([,t])=>t.due<=now)
+        .sort((a,b)=>a[1].due-b[1].due);
+      if(!due.length)return;
+      for(const [id,t] of due)if(timers.delete(id))t.fn();
+    }
+    assert.fail("Unbounded timer loop");
+  };
   let audioBuffers=0, opened=0, closed=0;
   const recognizers=[],processors=[],voices=[],tracks=[],cacheMap=new Map();
   const downloadedResponse={
@@ -38,6 +53,9 @@ const js=fs.readFileSync("voice-turbo-source/chat/§wyrlz/assets/local_voice_vos
           on(type,fn){this.listeners.set(type,fn);}
           emit(type,value){this.listeners.get(type)?.({result:value});}
           acceptWaveform(buf){assert.ok(buf.getChannelData);audioBuffers++;}
+          retrieveFinalResult(){
+            schedule(()=>this.emit("result",{text:this.finalText||"hey how are you"}),400);
+          }
           remove(){this.removed=true;}
         },
         terminate(){terminations++;}
@@ -56,7 +74,7 @@ const js=fs.readFileSync("voice-turbo-source/chat/§wyrlz/assets/local_voice_vos
   const navigator={mediaDevices:{getUserMedia:async()=>{let track={ended:false,stop(){this.ended=true;}};tracks.push(track);return {getTracks:()=>[track]};}}};
   const DateFake=class extends Date {static now(){return now;}};
   const scope={window,navigator,Date:DateFake,console,
-    setTimeout:()=>1,clearTimeout:()=>{},
+    setTimeout:schedule,clearTimeout:id=>timers.delete(id),
     fetch:async url=>{assert.ok(url.includes("vosk-model-small-en-us-0.15.tar.gz"));downloads++;return downloadedResponse;},
     CustomEvent:class{constructor(type,options){this.type=type;this.detail=options?.detail;}}
   };
@@ -74,16 +92,21 @@ const js=fs.readFileSync("voice-turbo-source/chat/§wyrlz/assets/local_voice_vos
   assert.equal(downloads,1,"first explicit opt-in downloads exactly once");
   assert.equal(saved,1,"one cache entry persists model");
   assert.equal(modelLoads,1);
-  const p=processors.at(-1);
   const sendFrame=(amplitude,step=100)=>{
     now+=step;
-    p.onaudioprocess?.({inputBuffer:{getChannelData(){return new Float32Array(256).fill(amplitude);}}});
+    processors.at(-1).onaudioprocess?.({
+      inputBuffer:{getChannelData(){return new Float32Array(256).fill(amplitude);}}
+    });
+    advance(0);
   };
   for(let i=0;i<5;i++)sendFrame(.065);
   recognizers.at(-1).emit("partialresult",{partial:"hey how are you"});
   assert.equal(first.results.at(-1).isFinal,false,"partial transcript visible before submission");
-  for(let i=0;i<18;i++)sendFrame(0);
-  assert.equal(first.results.filter(x=>x.isFinal).length,1,"silence submits best partial even if Vosk never emits result");
+  for(let i=0;i<24;i++)sendFrame(0);
+  assert.equal(first.results.filter(x=>x.isFinal).length,0,
+    "silence must wait for decoder rather than sending a partial");
+  advance(401);advance(551);
+  assert.equal(first.results.filter(x=>x.isFinal).length,1);
   assert.equal(first.results.at(-1)[0].transcript,"hey how are you");
   assert.equal(tracks[0].ended,true);
   assert.equal(recognizers[0].removed,true);
@@ -92,8 +115,15 @@ const js=fs.readFileSync("voice-turbo-source/chat/§wyrlz/assets/local_voice_vos
   const second=await openRec();
   assert.equal(downloads,1,"second activation must not download");
   assert.equal(modelLoads,1,"same ready WASM model reused");
+  for(let i=0;i<5;i++)sendFrame(.065);
   recognizers.at(-1).emit("result",{text:"thanks"});
+  assert.equal(second.results.filter(x=>x.isFinal).length,0,
+    "early Vosk final is only a phrase result");
+  recognizers.at(-1).finalText="thanks";
+  for(let i=0;i<24;i++)sendFrame(0);
+  advance(401);advance(551);
   assert.equal(second.results.at(-1)[0].transcript,"thanks");
+  assert.equal(second.results.at(-1).isFinal,true);
   assert.equal(tracks[1].ended,true);
   window.SwrlzLocalVoice.dispose();
   for(let i=0;i<6;i++)await Promise.resolve();
