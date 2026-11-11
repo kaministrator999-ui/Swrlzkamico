@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="swrlz-chat-version" content="1.1.30">
+  <meta name="swrlz-chat-version" content="1.1.31">
   <meta name="theme-color" content="#010812">
   <title>Chat</title>
   <style>
@@ -979,6 +979,11 @@
     .voice-conversation-button[data-voice-state="speaking"]{color:#e3c9ff;border-color:rgba(165,120,255,.72);background:rgba(68,35,88,.72)}
     .voice-conversation-status{flex:1 1 100%;padding:3px 6px;border-radius:8px;background:rgba(4,23,40,.88);color:#c3ecff;font-size:11px;line-height:15px;overflow-wrap:anywhere}
     .voice-conversation-status[hidden]{display:none}
+    /* Opt-in local microphone mode remains alongside the working browser recognizer. */
+    .voice-provider-label{display:inline-flex;align-items:center;gap:5px;min-height:30px;padding:0 5px;border-radius:8px;border:1px solid rgba(128,169,203,.32);color:#c3ecff;font-size:11px}
+    .voice-provider-label select{max-width:170px;min-width:0;padding:4px 6px;border:0;border-radius:6px;background:rgba(4,23,40,.95);color:#edf8ff;font:inherit}
+    .voice-provider-label select:focus-visible{outline:2px solid #73d5ff;outline-offset:2px}
+    .voice-provider-label select:disabled{opacity:.72}
   </style>
   <script src="/chat/§wyrlz/assets/forge-embed-v1.js"></script>
   <script src="https://accounts.google.com/gsi/client" async defer></script>
@@ -1317,6 +1322,12 @@
         <button class="composer-media-button voice-conversation-button" id="voiceConversationButton" type="button" aria-label="Start live voice conversation" aria-pressed="false" title="Voice chat: speak, hear the reply, then speak again. Uses browser speech recognition and text-to-speech.">
           <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="12" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21m-4 0h8"/></svg> Talk
         </button>
+        <label class="voice-provider-label" for="voiceProviderSelect">Input
+          <select id="voiceProviderSelect" aria-label="Talk speech recognition mode" title="Browser default, or opt into ~41 MB on-device streaming transcription">
+            <option value="browser" selected>Browser</option>
+            <option value="local">Local stream · 41 MB</option>
+          </select>
+        </label>
         <input id="imagePicker" type="file" accept="image/jpeg,image/png,image/webp" hidden>
         <div class="image-attachment" id="imageAttachment" hidden>
           <img id="imageAttachmentThumbnail" alt="Image preview">
@@ -1757,7 +1768,7 @@
       const workArtifactList = document.getElementById("workArtifactList");
       const workEvidenceCount = document.getElementById("workEvidenceCount");
       const workEvidenceList = document.getElementById("workEvidenceList");
-      const SWRLZ_CHAT_VERSION = "1.1.30";
+      const SWRLZ_CHAT_VERSION = "1.1.31";
       const navTraceId = "chat-ui-" + Date.now().toString(36) + "-" + crypto.getRandomValues(new Uint32Array(1))[0].toString(36);
       let lastUiStatusCamera = "";
       let companionState="idle";
@@ -5303,6 +5314,7 @@
       });
     })();
   </script>
+  <script src="/chat/§wyrlz/assets/local_voice_vosk.js" defer></script>
   <script src="/chat/§wyrlz/assets/voice_conversation.js" defer></script>
   <script src="/chat/§wyrlz/assets/chat-updates-v1.js" defer></script>
 </body>
