@@ -1,0 +1,24 @@
+name: Test §E satchel academy v11.416 native XR tutor
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/test-satchel-academy-v11-416.yml"
+      - "projects/swrlz-forge-moba/runtime/model_satchel_academy_v11_416.js"
+      - "projects/swrlz-forge-moba/runtime/model_satchel_native_bridge_v11_416.js"
+      - "projects/swrlz-forge-moba/runtime/model_satchel_vr_coach_v11_416.js"
+      - "projects/swrlz-forge-moba/tests/satchel_academy_v11_416.cjs"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  targeted:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify independent tutorial logic and XR actions
+        run: |
+          node --check projects/swrlz-forge-moba/runtime/model_satchel_academy_v11_416.js
+          node --check projects/swrlz-forge-moba/runtime/model_satchel_native_bridge_v11_416.js
+          node --check projects/swrlz-forge-moba/runtime/model_satchel_vr_coach_v11_416.js
+          node projects/swrlz-forge-moba/tests/satchel_academy_v11_416.cjs
