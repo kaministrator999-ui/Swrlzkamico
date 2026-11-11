@@ -170,7 +170,7 @@
         onFinal: value => {
           if (this._running) this.onresult?.({ results: [{ isFinal: true, 0: { transcript: value } }] });
         },
-        onStatus: label => window.dispatchEvent(new CustomEvent("swrlz-local-voice-status", { detail: { label } })),
+        onStatus: label => { if (this._running) window.dispatchEvent(new CustomEvent("swrlz-local-voice-status", { detail: { label } })); },
         onError: reason => {
           if (!this._running) return;
           this.onerror?.({ error: "local-engine", detail: reason });
