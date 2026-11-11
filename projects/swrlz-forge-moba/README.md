@@ -1,3 +1,7 @@
+## §E v11.411 · Solo Quest Sheep Tag AI frame-budget optimization (2026-11-11)
+
+Quest 3S owner reports smooth menus but repeating freezes in active Sheep Tag gameplay that improve as living AI sheep disappear. The current NPC planner can evaluate multiple full-map route/build candidates synchronously. This patch distributes sheep base-selection and 12-site building-route checks at **one expensive planning candidate per game tick across the NPC flock**, only in solo immersive VR. NPC movement, controlled-sheep joystick movement, collision and original maze/sanctuary/wide-world path validation remain authoritative each frame; non-VR and multiplayer fallback remain unchanged. Identical same-update visibility queries reuse validated results. All v11.410 VR accessory workshop features and original v11.391 FOLLOW/FREE camera behavior are preserved. Physical Quest acceptance remains pending; elimination of all stutters is not yet established.
+
 ## §E v11.410 · VR accessory workshop (2026-11-11)
 
 Model Studio VR adds **Create → Accessories → Hip pouch**: a rounded leather bag with a curved flap, belt loops, closure strap, clasp, edge stitching and a leaf/star emblem. Separate **Body**, **Details** and **Fit** pages adjust a live preview with coordinated leather colors, readable dimensions and clear selected states. The starting body is approximately **14 cm high** in the immersive workspace; it scales with the placement controls.
