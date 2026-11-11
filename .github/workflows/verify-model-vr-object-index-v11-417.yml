@@ -40,7 +40,7 @@ jobs:
               print(f'SE417_COMPUTED_BYTES={got_bytes}',flush=True)
               print(f'SE417_COMPUTED_SHA256={got_sha}',flush=True)
               if (want_sha,want_bytes)!=(got_sha,got_bytes):
-                  raise SystemExit('Update source-manifest.json to the computed v11.416 seal.')
+                  raise SystemExit('Update source-manifest.json to the computed v11.417 seal.')
           finally:
               p.write_text(original)
           PY
