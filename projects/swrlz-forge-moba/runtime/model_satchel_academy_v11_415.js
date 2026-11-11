@@ -106,9 +106,9 @@
  }
  function saveCheckpoint(){
   if(!modelReady())return {ok:false,message:'Open your tutorial project before saving a checkpoint.'};
-  if(se340XR?.gesture||se340XR?.se390Creation)return {ok:false,message:'Finish or cancel the current VR modeling gesture first.'};
+  if(window.SWYRL_E_SATCHEL_NATIVE_415?.busy?.())return {ok:false,message:'Finish or cancel the current VR modeling gesture first.'};
   const stamp=current()?.current||0,copy=clone(parts()),done=api().steps().filter(r=>r.done).map(r=>r.index);
-  if(copy.length>MODEL_ATELIER_LIMIT||copy.some(p=>!checkPart(p)))return {ok:false,message:'Model parts could not be validated. Native model unchanged.'};
+  if(!window.SWYRL_E_SATCHEL_NATIVE_415?.validate?.(copy))return {ok:false,message:'Model parts could not be validated. Native model unchanged.'};
   const record={schema:1,lesson:LESSON,projectId:currentProject.instanceId,step:stamp,
    title:api().steps()[stamp]?.title||'Lesson checkpoint',savedAt:Date.now(),parts:copy,done};
   if(bytes(record)>MAX_SNAPSHOT_BYTES)return {ok:false,message:'This model is too large for lightweight local tutorial checkpoints. Use native Save Project instead.'};
@@ -124,12 +124,9 @@
   if(!record)return {ok:false,message:'No saved checkpoint on this device.'};
   if(!options.confirmed)return {ok:false,requiresConfirmation:true,
    message:'Restore step '+(record.step+1)+' checkpoint? This replaces the current editable parts. Native Undo can reverse this restore.'};
-  if(se340XR?.gesture||se340XR?.se390Creation)return {ok:false,message:'Finish or cancel your current VR edit first.'};
   const copy=clone(record.parts);
-  if(copy.length<1||copy.length>MODEL_ATELIER_LIMIT||new Set(copy.map(p=>p.id)).size!==copy.length||
-   copy.some(p=>!checkPart(p)))return {ok:false,message:'Saved checkpoint geometry failed native validation. No parts were changed.'};
-  checkpoint();const data=currentProject.modelAtelier;data.parts.splice(0,data.parts.length,...copy);
-  selection=null;atelierMeshIds=[];signalEdited();
+  const restored=window.SWYRL_E_SATCHEL_NATIVE_415?.restore?.(copy);
+  if(!restored?.ok)return restored||{ok:false,message:'Native checkpoint bridge unavailable.'};
   api().applyProgress(record.done);
   api().choose(record.step);
   refreshGhost();
@@ -185,6 +182,7 @@
  }
  function refreshGhost(){
   disposeGhost();
+  const modelRoot=window.SWYRL_E_SATCHEL_NATIVE_415?.root?.();
   if(!ghostEnabled||!modelReady()||!modelRoot||typeof THREE==='undefined'||!modelRoot.isObject3D)return;
   const index=current()?.current||0,group=new THREE.Group();
   group.name='Tutorial ghost guides · not editable';group.userData.editorOnly=true;
@@ -245,8 +243,6 @@
  function inspectAPI(){return {active:active(),ghost:ghostEnabled,ghostMeshes:ghost?.children.length||0,
   highlighted:highlight?.key||highlight?.action||null,checkpoints:snapshots().length,
   cloudProgress:!!snapshotMeta(),progress:current()?.progress||0};}
- const baseRenderParts=renderParts;
- renderParts=function(...args){const value=baseRenderParts.apply(this,args);onRenderParts();return value;};
  const baseSnapshot=se175Snapshot;
  se175Snapshot=function(...args){const row=baseSnapshot.apply(this,args);
   const meta=snapshotMeta();if(meta&&row?.data?.project)row.data.project.se415TutorialState=meta;
@@ -258,7 +254,7 @@
  window.SWYRL_E_SATCHEL_ACADEMY_415=Object.freeze({
   verify:inspect,renderFlat,progressUpdate:syncProgress,saveCheckpoint,restoreCheckpoint,
   showMe,setGhost(value){ghostEnabled=!!value;refreshGhost();return ghostEnabled;},
-  ghost:()=>ghostEnabled,refreshGhost,clearHighlight,snapshotMeta,inspect:inspectAPI
+  ghost:()=>ghostEnabled,refreshGhost,onNativeRender:onRenderParts,clearHighlight,snapshotMeta,inspect:inspectAPI
  });
 })();
  /* SE415_SATCHEL_ACADEMY_END */
