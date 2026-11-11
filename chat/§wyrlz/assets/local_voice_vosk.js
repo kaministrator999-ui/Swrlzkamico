@@ -1,4 +1,4 @@
-/* §C local streaming microphone v5: flush Vosk's queued final audio before finishing Turbo turns.
+/* §C local streaming microphone v6: preserve all spoken phrases, capture soft speech and flush both Local/Turbo turns.
  * No paid speech endpoint. Microphone samples never go to §C or a hosted ASR.
  * English ~41MB model and Apache-2.0 library download only after user opts in.
  * Existing Chat send, Station streaming, and browser TTS remain authoritative.
@@ -10,13 +10,10 @@
   const MODEL_CACHE = "swrlz-vosk-en-015-v1";
   // Vosk's native final event depends on enough trailing silence. On Android
   // a partial transcript can remain forever without a terminal event.
-  const QUIET_FINAL_MS = 1200;
-  const STALE_PARTIAL_MS = 2200;
-  // Turbo is opt-in: retain the known-working local profile for comparison.
-  // 650ms ended turns while the speaker was pausing between words.
-  // Hold through natural conversational pauses and preserve Vosk segments.
-  const TURBO_QUIET_FINAL_MS = 1700;
-  const TURBO_STALE_PARTIAL_MS = 2800;
+  // A brief pause is not the end of the user's message. Both input profiles
+  // retain words from multiple Vosk phrase results and flush the worker once.
+  const QUIET_FINAL_MS = 2300;
+  const TURBO_QUIET_FINAL_MS = 1900;
   let libraryPromise = null;
   let modelPromise = null;
   let model = null;
@@ -138,12 +135,11 @@
         throw new Error("Microphone audio capture is unsupported");
       const stream = await navigator.mediaDevices.getUserMedia({
         video: false,
-        // Turbo avoids forcing 16 kHz at capture, too. Otherwise Android may
-        // resample once for getUserMedia, then again for Web Audio decoding.
-        // Use native mic input and pass the resulting context rate to Vosk.
-        audio: turbo
-          ? { echoCancellation: true, noiseSuppression: true, channelCount: 1 }
-          : { echoCancellation: true, noiseSuppression: true, channelCount: 1, sampleRate: 16000 }
+        // Let Android capture at its natural rate for BOTH local modes.
+        // The decoder receives the actual AudioContext.sampleRate below;
+        // forcing 16 kHz here can add unnecessary resampling and distort words.
+        audio: { echoCancellation: true, noiseSuppression: true,
+                 autoGainControl: true, channelCount: 1 }
       });
       if (active !== token) {
         stream.getTracks().forEach(track => track.stop());
@@ -189,7 +185,6 @@
         let finalDeadlineTimer = 0;
         let lastAudioAt = 0;
         const quietWindowMs = turbo ? TURBO_QUIET_FINAL_MS : QUIET_FINAL_MS;
-        const staleWindowMs = turbo ? TURBO_STALE_PARTIAL_MS : STALE_PARTIAL_MS;
         const fullTranscript = () => [...committedSegments, latestPartial]
           .filter(Boolean).join(" ").trim();
         const finishUtterance = text => {
@@ -216,7 +211,7 @@
           }
         };
         const settleFinal = () => {
-          if (!turbo || !finalRequested || active !== token || emitted) return;
+          if (!finalRequested || active !== token || emitted) return;
           if (finalSettleTimer) clearTimeout(finalSettleTimer);
           // Vosk's WASM worker returns asynchronously. Give the last result
           // room to arrive after queued partials and phrase-boundary results.
@@ -227,7 +222,7 @@
           if (microphone) microphone.finalizeSettle = finalSettleTimer;
         };
         const requestFinal = () => {
-          if (!turbo || finalRequested || emitted || active !== token) return;
+          if (finalRequested || emitted || active !== token) return;
           finalRequested = true;
           onStatus?.("Speech finished · completing local transcription…");
           // Vosk accepts audio on a Web Worker: do not submit the most recent
@@ -248,36 +243,38 @@
           const partial = String(event?.result?.partial || "").trim();
           if (partial) {
             if (partial !== latestPartial) lastPartialAt = Date.now();
-            latestPartial = partial;
-            onPartial?.(turbo ? fullTranscript() : partial);
+            // A queued partial may repeat a phrase that has already been
+            // committed. Do not display it twice or append it to the next turn.
+            const prior = committedSegments.join(" ").trim().toLowerCase();
+            latestPartial = prior && (partial.toLowerCase() === prior ||
+              prior.endsWith(" " + partial.toLowerCase())) ? "" : partial;
+            onPartial?.(fullTranscript());
           }
         });
         recognizer.on("result", event => {
           if (active !== token || emitted) return;
           const transcription = String(event?.result?.text || "").trim();
-          if (!turbo) {
-            finishUtterance(transcription || latestPartial);
-            return;
-          }
-          // A Vosk "result" means the decoder ended a phrase, NOT that
-          // the person finished their entire message. Don't auto-send.
+          // A Vosk "result" ends a decoder phrase, not the user's turn.
+          // This applies to BOTH local profiles: never auto-send on first result.
           if (transcription) {
-            // A final result may contain an updated version of the most
-            // recent partial; merge that into the phrase history once.
-            const preceding = fullTranscript();
-            const lowerPreceding = preceding.toLowerCase();
+            // Compare only with COMMITTED results, never provisional partials.
+            // The old equality check cleared a matching partial WITHOUT saving
+            // its finalized text, silently dropping the first spoken words.
+            const committed = committedSegments.join(" ").trim();
+            const lowerCommitted = committed.toLowerCase();
             const lowerResult = transcription.toLowerCase();
-            if (lowerResult === lowerPreceding || lowerPreceding.endsWith(" " + lowerResult)) {
-              latestPartial = "";
-            } else if (lowerResult.startsWith(lowerPreceding + " ")) {
+            if (lowerCommitted && (lowerResult === lowerCommitted ||
+                lowerCommitted.endsWith(" " + lowerResult))) {
+              // The worker repeated an already committed phrase.
+            } else if (lowerCommitted && lowerResult.startsWith(lowerCommitted + " ")) {
+              // The worker returned a more complete replacement transcript.
               committedSegments.length = 0;
               committedSegments.push(transcription);
-              latestPartial = "";
             } else {
-              // Vosk sent a separate phrase. Do not lose earlier phrases.
+              // First final phrase or genuinely new phrase.
               committedSegments.push(transcription);
-              latestPartial = "";
             }
+            latestPartial = "";
             lastSegmentAt = Date.now();
             onPartial?.(fullTranscript());
           }
@@ -328,20 +325,16 @@
             catch (_) { onError?.("Local speech decoder rejected microphone audio"); return; }
           }
           if (active !== token || emitted) return;
-          const partialAge = lastPartialAt ? now - lastPartialAt : 0;
-          const quiet = loudFrames >= 3 && lastLoudAt && now - lastLoudAt >= quietWindowMs;
-          const finalQuiet = quiet && partialAge >= 650;
-          const stalledPartial = lastPartialAt && partialAge >= staleWindowMs;
-          if (turbo) {
-            // Silence only signals that the microphone turn may be over.
-            // It does NOT make the latest partial Vosk transcript complete.
-            // Flush worker decoding first, even if no partial arrived yet.
-            if (quiet && !finalRequested &&
-                (!lastSegmentAt || now - lastSegmentAt >= 350))
-              requestFinal();
-          } else if (latestPartial && (finalQuiet || stalledPartial)) {
-            finishUtterance(latestPartial);
-          }
+          // Soft speech can produce Vosk words below a fixed RMS threshold.
+          // Recognized-word activity keeps the turn alive even if the mic's
+          // loud-frame detector missed it. Never close on a stale partial
+          // while new words may still be arriving from the worker.
+          const lastSpeechAt = Math.max(lastLoudAt, lastPartialAt, lastSegmentAt);
+          const hasSpeech = loudFrames >= 3 || Boolean(fullTranscript());
+          const quiet = hasSpeech && lastSpeechAt && now - lastSpeechAt >= quietWindowMs;
+          if (quiet && !finalRequested &&
+              (!lastSegmentAt || now - lastSegmentAt >= 350))
+            requestFinal();
           if (frames >= 65 && !latestPartial && !committedSegments.length && !reportedStall) {
             reportedStall = true;
             onStatus?.("Microphone audio confirmed · waiting for local transcript…");
