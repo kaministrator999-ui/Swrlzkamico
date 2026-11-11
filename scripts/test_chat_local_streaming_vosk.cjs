@@ -47,7 +47,11 @@ const code=fs.readFileSync("voice-streaming-source/chat/§wyrlz/assets/local_voi
     micStreams.push(stream);
     return stream;
   }}};
-  const sandbox={window,navigator,document:{},CustomEvent:class{constructor(type,opts){this.type=type;this.detail=opts?.detail;}},console};
+  // vm.runInNewContext does not provide browser timer APIs automatically.
+  // The production mic watchdog requires them even when audio is mocked.
+  const sandbox={window,navigator,document:{},
+    setTimeout:()=>1,clearTimeout:()=>{},
+    CustomEvent:class{constructor(type,opts){this.type=type;this.detail=opts?.detail;}},console};
   vm.runInNewContext(code,sandbox);
   assert.ok(window.SwrlzLocalVoice);
   assert.ok(window.SwrlzLocalSpeechRecognition);
