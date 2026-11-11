@@ -309,7 +309,9 @@
           const rms = Math.sqrt(power / Math.max(1, count));
           // A lower Turbo voice threshold catches softer speech, while the
           // longer silence gate avoids mistaking a quick pause for a full turn.
-          if (rms >= (turbo ? 0.007 : 0.012)) {
+          // Softer phone microphones need a less aggressive energy gate.
+          // Text changes still count as activity independently of RMS.
+          if (rms >= (turbo ? 0.006 : 0.008)) {
             if (!firstLoudAt) firstLoudAt = now;
             lastLoudAt = now;
             loudFrames++;
