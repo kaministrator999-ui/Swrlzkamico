@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.413
+title: §wyrl§ Engine v11.414
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -10,6 +10,10 @@ header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
 
+
+## §E v11.414 · Model VR pictograms (2026-11-11)
+
+Model Studio's existing independent world-space Quest console now has distinct, readable line icons for selecting/swiping/lasso depth, Move/Rotate/Scale/Grab, projects and device/account saves, display modes, camera directions, pointer calibration, reset and visibility. Adjustment buttons show plus/minus badges without changing their existing hover/selected/disabled styling or hit targets. Tools still show labels and contextual instructions; unknown future actions display a neutral settings glyph rather than a question mark. No control binding, project document or VR rendering loop changes.
 
 ## §E v11.413 · Apprentice Satchel on Quest (2026-11-11)
 
