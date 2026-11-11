@@ -55,7 +55,7 @@ def enhance_ui(js):
        "   else{path([[-19,-14],[19,-14]]);path([[-19,0],[19,0]]);path([[-19,14],[19,14]]);circle(-6,-14,4);circle(8,0,4);circle(-3,14,4);}")
     # Paired adjustment controls need a + / - cue in addition to their common icon.
     js = one(js,
-        "    else{icon(c,iconType(item.id),56,h*.39,43,ink);c.textAlign='left';",
+        "   else{icon(c,iconType(item.id),56,h*.39,43,ink);c.textAlign='left';",
         """    else{icon(c,iconType(item.id),56,h*.39,43,ink);
      if(/-(?:plus|minus)$/.test(item.id)){
       c.beginPath();c.arc(76,h*.24,17,0,Math.PI*2);
