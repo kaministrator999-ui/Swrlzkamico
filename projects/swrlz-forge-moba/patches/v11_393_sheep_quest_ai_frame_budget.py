@@ -20,27 +20,28 @@ def apply(html):
         assert required in runtime,required
     assert 'SWYRL_ENGINE_SHEEP_VR_Y_MENU_391' in html
     assert 'SWYRL_ENGINE_SHEEP_PURSUIT_306' in html
-    archive=(ROOT/'runtime/archive_sheep_game.js').read_text('utf8')
-    prefix='if(unit.order)return;if(!unit.base)unit.base=stChooseBase(unit);'
-    start=archive.index(prefix)
-    end=archive.index('if(s.elapsed>=unit.nextWanderAt)',start)
-    original=archive[start:end]
-    # The non-XR branch literally retains the prior exact native planner.
-    new="""if(unit.order){if(se393Active())se393CancelSheepPlan(unit);return;}
+    # Prior patches also protect the wide-map sanctuary and avoid huge
+    # navigation arrays for 256m maps. Snapshot their effective source and
+    # preserve it VERBATIM in the desktop / LAN fallback branch.
+    prefix=('if(unit.order)return;if(unit.base&&Math.hypot('
+      'unit.base.x-s.pen.x,unit.base.z-s.pen.z)<stSanctuaryRadius()+4.5)')
+    assert html.count(prefix)==1,('effective Quest sheep planner',html.count(prefix))
+    start=html.index(prefix)
+    end=html.index('if(s.elapsed>=unit.nextWanderAt)',start)
+    original=html[start:end]
+    fallback=original[len('if(unit.order)return;'):]
+    next_block="""if(unit.order){if(se393Active())se393CancelSheepPlan(unit);return;}
   if(se393Active()){
+    if(unit.base&&Math.hypot(unit.base.x-s.pen.x,unit.base.z-s.pen.z)<
+       stSanctuaryRadius()+4.5){
+      unit.base=null;unit.se393Base=null;unit.se393Build=null;
+    }
     if(!unit.base&&!se393ChooseSheepBase(unit))return;
+    if(!unit.base){unit.aiIntent='seek clear building ground outside the sanctuary';return;}
     if(se393PlanSheepBuild(unit))return;
   }else{
-    """+original[len('if(unit.order)return;'):]+"\n  }\n  "
-    if html.count(original)!=1:
-      import sys
-      for token in (prefix,"if(!unit.base)","stChooseBase(unit)",
-                    "if(s.elapsed>=unit.nextBuildAt)","stIssueBuild(unit,kind"):
-        i=html.find(token)
-        print('SE393_ANCHOR',repr(token),'hits',html.count(token),'index',i,
-              'around',repr(html[max(0,i-130):i+2100]) if i>=0 else '',
-              file=sys.stderr,flush=True)
-    html=one(html,original,new,'original NPC base/build block')
+    """+fallback+"\n  }\n  "
+    html=one(html,original,next_block,'effective NPC base/build with sanctuary')
     prior_guard=('if(unit.captured||unit.isIllusion||unit.archiveRoute||'
       '(!unit.se256Escape&&s.elapsed<unit.botAt))return;'
       'if(!unit.se256Escape)unit.botAt=s.elapsed+1.1;')
