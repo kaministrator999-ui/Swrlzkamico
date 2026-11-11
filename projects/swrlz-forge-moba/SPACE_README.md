@@ -1,3 +1,7 @@
+## §E v11.413 · Apprentice Satchel on Quest (2026-11-11)
+
+The standard Model Studio tutorial now uses a supported beginner hollow-bag workflow: turn the practice box into a bottom slab, then add four thin wall boxes, rather than suggesting a one-click inset on a solid primitive. The quest offers compact front/side/top concept diagrams and a native-tool shortcut. On Meta Quest Browser, start or resume the independent satchel project first, enter Model VR, and use the separate fixed world-space quest window with controller rays: Prev, Verify, Done/Reopen and Next. The panel is **not head-following** and follows only an explicit recenter; the original world-space VR tool menu and native geometry tools remain unchanged. Lesson progress is shared with the regular Model Studio through the same project ID and device-local checklist. The model still uses Save Project / Save to Account. Complex geometry steps remain owner-confirmed; headset comfort and final UX are pending physical testing.
+
 ---
 title: §wyrl§ Engine v11.412
 emoji: 🐉
