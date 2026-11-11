@@ -68,7 +68,7 @@ def apply(html):
     helper=(ROOT/'runtime/model_vr_object_index_v11_416.js').read_text(encoding='utf8')
     assert helper.count('SE416_MODEL_VR_OBJECT_INDEX_START')==1
     html=one(html,'function se340SyncUI(){',helper+'\nfunction se340SyncUI(){')
-    html=one(html,'  const state={selectedRegionId:', '  se416UpdateHighlights(s,entries,selectedIds);\n  const state={...se416IndexState(s,entries,selectedIds),selectedRegionId:')
+    html=one(html,'  const state={...se410AccessoryUI(),creationActive:', '  se416UpdateHighlights(s,entries,selectedIds);\n  const state={...se416IndexState(s,entries,selectedIds),...se410AccessoryUI(),creationActive:')
     html=one(html,"const s=se340XR;if(!s.session||!s.scene||!se340VisibleSession())return false;\n  if(action==='exit')",
             "const s=se340XR;if(!s.session||!s.scene||!se340VisibleSession())return false;\n  if(action==='objects'||action.startsWith('index-'))return se416IndexAction(action,record);\n  if(action==='exit')")
     html=one(html,"['inspect','move','rotate','scale','undo','redo','focus'", "['objects','index-add','index-prev','index-next','inspect','move','rotate','scale','undo','redo','focus'")
