@@ -414,6 +414,6 @@
     "patches/v11_416_satchel_interactive_coach.py",
     "patches/v11_417_model_vr_object_index.py"
   ],
-  "finalBytes": 0,
-  "finalSha256": ""
+  "finalBytes": 9722094,
+  "finalSha256": "69e8480cde5b7027577882e3c18dbbadf338049bfde37bb7d4c3129a563e3e76"
 }
