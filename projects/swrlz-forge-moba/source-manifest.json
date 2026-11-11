@@ -1,10 +1,10 @@
 {
   "schema": "swrlz-forge-source-v2",
-  "name": "§wyrl§ Engine v11.412",
+  "name": "§wyrl§ Engine v11.413",
   "baseArtifact": "swrlz_forge_v4.html",
   "baseBytes": 99591,
   "baseSha256": "a8299fe89fbb98d15c6091751b7a66931a66efec8eec5cb464e1286f21895856",
-  "finalArtifact": "swyrl_engine_v11_412.html",
+  "finalArtifact": "swyrl_engine_v11_413.html",
   "encoding": "gzip+base64-chunks",
   "chunks": [
     "payload/part-01.txt",
@@ -407,8 +407,9 @@
     "patches/v11_391_sheep_quest_y_tools.py",
     "patches/v11_410_model_vr_accessory_workshop.py",
     "patches/v11_411_sheep_quest_ai_frame_budget.py",
-    "patches/v11_412_apprentice_satchel_tutorial.py"
+    "patches/v11_412_apprentice_satchel_tutorial.py",
+    "patches/v11_413_satchel_vr_tutorial.py"
   ],
-  "finalBytes": 9650504,
-  "finalSha256": "cc14381e3fcccc44bb1b94f4d0f0510b9d65eb39318276b0f43cb9621e90c187"
+  "finalBytes": 0,
+  "finalSha256": "0000000000000000000000000000000000000000000000000000000000000000"
 }
