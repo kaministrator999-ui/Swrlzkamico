@@ -7,6 +7,7 @@ on:
       - 'api/account_routes_v2.py'
       - 'api/lalm_station.py'
       - 'queues/swrlz_generation_v3.py'
+      - 'api/chat_transcript_store.py'
       - 'pyproject.toml'
       - 'tests/test_hf_generation_dispatch.py'
       - '.github/workflows/verify-hf-native-generation.yml'
@@ -20,7 +21,7 @@ jobs:
         with:
           python-version: '3.12'
       - name: Compile HF generation boundary
-        run: python -m py_compile api/hf_generation_dispatch.py api/account_routes.py api/account_routes_v2.py api/lalm_station.py queues/swrlz_generation_v3.py
+        run: python -m py_compile api/hf_generation_dispatch.py api/account_routes.py api/account_routes_v2.py api/lalm_station.py queues/swrlz_generation_v3.py api/chat_transcript_store.py
       - name: Run dispatch contract tests
         run: python -m unittest discover -s tests -p test_hf_generation_dispatch.py -v
       - name: No external hosting queue dependency

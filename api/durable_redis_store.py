@@ -119,9 +119,8 @@ def _loads_record(cls, raw: str | bytes | None):
 def _env_first(*names: str) -> str:
     """Return the first configured environment value without exposing it.
 
-    SWRLZ-specific names remain authoritative overrides. Vercel/Upstash KV REST
-    names are accepted as a zero-copy compatibility path so credentials do not
-    need to be duplicated into additional project secrets.
+    SWRLZ-specific names remain authoritative overrides. Compatible KV REST
+    aliases are accepted without duplicating existing Redis credentials.
     """
     for name in names:
         value = os.environ.get(name, "").strip()
@@ -137,13 +136,13 @@ class RedisRestChatStore(DurableChatStore):
       SWRLZ_REDIS_REST_URL
       SWRLZ_REDIS_REST_TOKEN
 
-    Compatible Vercel/Upstash integration variables:
+    Compatible Redis REST integration aliases:
       KV_REST_API_URL
       KV_REST_API_TOKEN
 
     SWRLZ-specific variables win when both are configured. The implementation
     uses ordinary Redis commands over the provider REST boundary and never
-    treats Vercel /tmp or process memory as authoritative user state.
+    treats temporary process storage or memory as authoritative user state.
     """
 
     def __init__(self, url: str, token: str, *, prefix: str = "swrlz:v1") -> None:

@@ -19,7 +19,7 @@ For Chat changes, edit the canonical clean-room Chat first, synchronize the HF d
 
 ## Repository lineage
 
-Obsolete Vercel-specific deployment guides and manifests have been removed from the active tree; their prior revisions remain accessible in Git history. The legacy Queue subscriber has been replaced with an HF process-owned dispatcher. Generations are still recorded in Redis, but an HF process restart can interrupt an in-flight task. Legacy Blob account/transcript integrations still require migration and verification before removing credentials or deleting historical hosted resources. Where an older release record conflicts with this hosting policy, Hugging Face remains authoritative.
+Obsolete Vercel-specific deployment guides and manifests have been removed from the active tree; their prior revisions remain accessible in Git history. The legacy Queue subscriber has been replaced with an HF process-owned dispatcher. Generations are still recorded in Redis, but an HF process restart can interrupt an in-flight task. Temporary generation transcript checkpoints now use Redis with a 30-minute TTL. Legacy Blob account-state migration and collector storage still require verification before removing credentials or deleting historical hosted resources. Where an older release record conflicts with this hosting policy, Hugging Face remains authoritative.
 
 ## Current migration state
 
