@@ -39,7 +39,7 @@ assert.equal(ctx.se393ChooseSheepBase(two),true);
 assert.equal(ctx.se393ChooseSheepBase(third),false);
 step();
 assert.equal(ctx.se393ChooseSheepBase(third),true);
-assert.equal(pathCalls,3,'each base candidate evaluated once');
+assert.equal(pathCalls,2,'one candidate is correctly rejected inside the central pen');
 step();
 assert.equal(ctx.se393PlanSheepBuild(one),true,'first site rejected');
 assert.equal(issued,0);
