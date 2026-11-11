@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.392",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_392_SHEEP_VR_STABLE_FOLLOW",
-  "reason": "Quest 3S immersive Sheep Tag owner A/B: FREE stops continuous repaint/geometry distortion and most stutter; short hard freezes remain. v11.392 bounds FOLLOW XR reference-space writes to at least 140ms apart with >=12cm target error and <=62cm step, preserving v11.211 focus-return guard, initial framing, native headset tracking, FREE camera, host/guest simulation, controls and saves. Full sealed source tested: 391 patches, 9574057 bytes, SHA-256 21a35d72b22be9359564f4dd2cfe8ac8623b5760948ae741ae769fe9a62abcff, 77 assets; Node regression and complete verifier success. Quest hardware retest pending; independent callback-freeze root cause not claimed fixed.",
-  "sourceCommit": "8da1d0638e97347b87a34c5157fc018a99c44ed6",
-  "sourceIntegritySha256": "21a35d72b22be9359564f4dd2cfe8ac8623b5760948ae741ae769fe9a62abcff"
+  "releaseVersion": "v11.391",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_391_SHEEP_QUEST_Y_TOOLS_RADIAL",
+  "reason": "ROLLBACK requested by Quest 3S tester: v11.392 follow throttle slows camera tracking and does not fix gameplay 3-second movement / 1-second freeze, while free-camera scene glitches persist. Restore exact previously source-sealed v11.391 build: 390 active patches, 9571193 HTML bytes, SHA-256 6c002024054723ed9352d86b4703fd22748f311b7abb86607f735ff2ec5b2809, already previously CI/deploy validated. Keep v11.392 source as inactive historical record. Investigate gameplay-specific per-sheep simulation/render/AI and intermittent XR callback stalls separately; no new camera patch in rollback.",
+  "sourceCommit": "e8a989f4106e46748d360c9a4bed5ecebdfd475e",
+  "sourceIntegritySha256": "6c002024054723ed9352d86b4703fd22748f311b7abb86607f735ff2ec5b2809"
 }
