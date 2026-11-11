@@ -20,7 +20,7 @@ for token in [MARKER,"window.SWRLZ_FORGE_BUILD={version:'v11.391'",'<title>§wyr
  'SWYRL_ENGINE_ADVANCED_GRAPHICS_380','SWYRL_ENGINE_SHEEP_XR_GUEST_381','SWYRL_ENGINE_SHEEP_VR_Y_MENU_391','se378Blockout','se366ImportAuthored',
  'se356ApplyCameraOrbit','SE362_CONTROLLER_HINTS_START','SWYRL_ENGINE_SAFE_PROJECTS_371']:
  assert token in html,token
-assert html.count(" source.engine='§wyrl§ Engine · Maker v11.391';source.version=11.390;")==5
+assert html.count(" source.engine='§wyrl§ Engine · Maker v11.391';source.version=11.391;")==5
 subprocess.run([sys.executable,str(ROOT/'scripts/check_inline_js_syntax_v11_266.py'),str(out/'index.html')],check=True)
 for name in ['model_vr_quick_create','model_vr_grab','model_vr_fluent_tools','model_vr_hotkey_hints','model_vr_input_profile','model_studio_vr_ui']:
  p=ROOT/'runtime'/f'{name}_v11_390.js';subprocess.run(['node','--check',str(p)],check=True)
