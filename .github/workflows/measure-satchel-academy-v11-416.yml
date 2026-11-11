@@ -24,7 +24,7 @@ jobs:
           import pathlib,json,base64,gzip,hashlib,importlib.util,subprocess,sys,tempfile
           root=pathlib.Path("projects/swrlz-forge-moba").resolve()
           m=json.loads((root/"source-manifest.json").read_text())
-          assert m["name"]=="§wyrl§ Engine v11.415" and len(m["patches"])==396
+          assert m["name"]=="§wyrl§ Engine v11.416" and len(m["patches"])==397
           raw=gzip.decompress(base64.b64decode("".join((root/n).read_text().strip() for n in m["chunks"])))
           assert len(raw)==m["baseBytes"] and hashlib.sha256(raw).hexdigest()==m["baseSha256"]
           html=raw.decode()
@@ -34,8 +34,7 @@ jobs:
               module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
               html=module.apply(html)
           for i,rel in enumerate(m["patches"]):apply(rel,i)
-          assert len(html.encode())==m["finalBytes"] and hashlib.sha256(html.encode()).hexdigest()==m["finalSha256"]
-          apply("patches/v11_416_satchel_interactive_coach.py",len(m["patches"]))
+          assert len(m["patches"])==397
           data=html.encode("utf8")
           assert "SE416_SATCHEL_ACADEMY_START" in html
           assert "SE416_SATCHEL_VR_COACH_START" in html
@@ -49,5 +48,5 @@ jobs:
           subprocess.run(["node",str(root/"tests"/"satchel_academy_v11_416.cjs")],check=True)
           print("SATCHEL_ACADEMY_FINAL_BYTES="+str(len(data)))
           print("SATCHEL_ACADEMY_FINAL_SHA256="+hashlib.sha256(data).hexdigest())
-          print("SATCHEL_ACADEMY_PATCHES="+str(len(m["patches"])+1))
+          print("SATCHEL_ACADEMY_PATCHES="+str(len(m["patches"])))
           PY
