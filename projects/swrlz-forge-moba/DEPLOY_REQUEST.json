@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.390",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_390_MODEL_VR_FLUENT_HOTKEYS",
-  "reason": "Owner requested comfortable fluent controller hotkeys for selecting, transforming and creating native models. Adds select-to-Grab with combined movement/wrist rotation, held-stick sizing, jump-free precision clutch, scoped A transform cycle, X+A Create and X+Trigger atomic duplication. Native primitive ghost previews confirm only on a fresh trigger press; Cancel/tracking/source changes and first Undo discard pending placement. New geometry hands directly to Grab. Preserves selected-only targets, full-selection focus, remapped sweeps, native draw-to-selected-extrude handoff, controller labels and current camera/graphics/guest synchronization. Full seal: 389 patches, 9569287 HTML bytes, 77 assets, 81 files. 54 focused groups and 15 actual IWER Quest workflows passed with zero errors; read-only 59-part mage preview and canceled creation ghosts preserved source/history. Physical headset comfort remains owner testing.",
-  "sourceCommit": "172649b17d1f86265443447dd189ffedb6b4cdca",
-  "sourceIntegritySha256": "5b1de0f292dd51ddfcad1becbaa59aadc6e464fcacbc44ca0ed86e57ee7fea0a"
+  "releaseVersion": "v11.391",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_391_SHEEP_QUEST_Y_TOOLS_RADIAL",
+  "reason": "Quest Browser reserves the left Touch controller Menu button, so bind the exposed left Y face button to open/close the EXISTING Sheep Tag VR tools radial with FOLLOW and FREE. Keep X skill, A build, L3 Nerd Stats, and right B free-camera commands unchanged. Full source rebuilt and sealed: 390 ordered patches, 9571193 HTML bytes, SHA-256 6c002024054723ed9352d86b4703fd22748f311b7abb86607f735ff2ec5b2809, 77 assets; dedicated Node input test and full release verifier passed. Quest hardware acceptance pending.",
+  "sourceCommit": "662a42c44644255425743b403c3a694f198c6f24",
+  "sourceIntegritySha256": "6c002024054723ed9352d86b4703fd22748f311b7abb86607f735ff2ec5b2809"
 }
