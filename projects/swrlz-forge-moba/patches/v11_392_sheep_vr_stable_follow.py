@@ -4,19 +4,11 @@ Owner test: FREE stopped repainting/geometric distortion; small hard freezes
 persisted. Avoid mutating XR reference space every headset display frame.
 """
 from pathlib import Path
-import json,sys
+import json
 ROOT=Path(__file__).resolve().parents[1]
 MARKER='SWYRL_ENGINE_DEPLOY_MARKER: V11_392_SHEEP_VR_STABLE_FOLLOW'
 def once(s,old,new,label):
     n=s.count(old)
-    if n!=1 and label=='v11.200 follow reference-space writes':
-        for token in ('const remaining=wanted.sub(se200.applied);',
-                      'se200.applied.add(delta);se200.referenceWrites++;',
-                      'const delta=remaining.multiplyScalar(1-Math.exp(-timeStep*9));',
-                      'se200.applied.copy(wanted);'):
-            i=s.find(token)
-            print('SE392_LOOKUP',repr(token),'count',s.count(token),'at',i,flush=True,file=sys.stderr)
-            if i>=0:print('SE392_CONTEXT',repr(s[max(0,i-160):i+850]),flush=True,file=sys.stderr)
     if n!=1:raise AssertionError(('v11.392',label,n,old[:90]))
     return s.replace(old,new,1)
 def apply(html):
@@ -27,7 +19,7 @@ def apply(html):
     before="""  const remaining=wanted.sub(se200.applied);
   if(remaining.lengthSq()<.000625){se200.idleFrames++;return;}
   const delta=remaining.multiplyScalar(1-Math.exp(-timeStep*9));
-  const maxStep=timeStep*13;
+  const maxStep=timeStep*(se211CameraSoftReturn()?3.2:13);
   if(maxStep>0&&delta.length()>maxStep)delta.setLength(maxStep);
   if(delta.lengthSq()<.000004){se200.idleFrames++;return;}
   if(se195MoveRig(delta.x,delta.y,delta.z)){
@@ -44,7 +36,7 @@ def apply(html):
   }else{
     // FREE is preserved as the owner's validated low-distortion fallback.
     delta=remaining.multiplyScalar(1-Math.exp(-timeStep*9));
-    const maxStep=timeStep*13;
+    const maxStep=timeStep*(se211CameraSoftReturn()?3.2:13);
     if(maxStep>0&&delta.length()>maxStep)delta.setLength(maxStep);
   }
   if(delta.lengthSq()<.000004){se200.idleFrames++;return;}
