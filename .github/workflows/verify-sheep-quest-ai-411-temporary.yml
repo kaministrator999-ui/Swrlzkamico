@@ -1,36 +1,16 @@
-name: Temporary §E v11.411 Quest AI candidate seal
+name: Temporary §E v11.411 Quest AI complete source verification
 on:
   push:
     branches: [fix/sheep-quest-ai-budget-v11-411]
 permissions:
   contents: read
 jobs:
-  seal:
+  verify:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      - name: Check AI scheduler and patch syntax
-        run: |
-          node --check projects/swrlz-forge-moba/runtime/sheep_quest_bot_frame_budget_v11_411.js
-          python -m py_compile projects/swrlz-forge-moba/patches/v11_411_sheep_quest_ai_frame_budget.py
-          node projects/swrlz-forge-moba/tests/test_sheep_quest_ai_frame_budget_v11_411.cjs
-      - name: Compute full candidate source integrity
-        run: |
-          python - <<'PY'
-          from pathlib import Path
-          import json,hashlib,subprocess,sys
-          root=Path('projects/swrlz-forge-moba');f=root/'source-manifest.json'
-          m=json.loads(f.read_text())
-          assert m['patches'][-2:]==['patches/v11_410_model_vr_accessory_workshop.py','patches/v11_411_sheep_quest_ai_frame_budget.py']
-          m['finalSha256']='';m['finalBytes']=0
-          f.write_text(json.dumps(m,ensure_ascii=False,indent=2)+'\n')
-          with open('/tmp/quest411-build.log','w') as log:
-              subprocess.run([sys.executable,str(root/'build_space.py'),'--output','/tmp/quest411-candidate'],check=True,stdout=log)
-          data=Path('/tmp/quest411-candidate/index.html').read_bytes()
-          assert b'SWYRL_ENGINE_SHEEP_AI_FRAME_BUDGET_411' in data
-          assert b'SE410_MODEL_VR_ACCESSORY_WORKSHOP_START' in data
-          print('SEAL_RECEIPT_411 '+json.dumps({'bytes':len(data),'sha256':hashlib.sha256(data).hexdigest(),'patches':len(m['patches'])}))
-          PY
+      - name: Verify source seal, 392 patches, all JS, Model VR and Quest AI tests
+        run: python projects/swrlz-forge-moba/scripts/verify_v11_411_release.py --output /tmp/quest411-verified

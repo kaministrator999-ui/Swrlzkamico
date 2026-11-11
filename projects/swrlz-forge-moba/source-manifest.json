@@ -408,6 +408,6 @@
     "patches/v11_410_model_vr_accessory_workshop.py",
     "patches/v11_411_sheep_quest_ai_frame_budget.py"
   ],
-  "finalBytes": 0,
-  "finalSha256": ""
+  "finalBytes": 9630511,
+  "finalSha256": "96b67c9a8587487ad021d6a5b7c9b8eaa7a34325377271254f253074c66556d2"
 }
