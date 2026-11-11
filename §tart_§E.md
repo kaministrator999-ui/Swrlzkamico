@@ -1,3 +1,7 @@
+## §E v11.413 · Interactive satchel tutorial in Model VR (2026-11-11)
+
+**Projects → Tutorials → Apprentice Satchel** starts a safe independent practice model. The corrected step 2 turns the practice cube into a floor and adds four thin wall boxes, giving the bag an actual hollow open top. The regular Model Studio lesson now shows collapsible front/side/top diagrams and can focus the native tool category. On the Quest Browser, open the lesson, enter **Model VR**, and use a **stationary world-space tutorial window** with controller-ray Prev/Verify/Done/Next actions. It does not follow the head or orbit, does not replace the existing floating model tool console, and shares the device-local progress keyed to that saved model project. Save Project and optional account sync remain separate. On-headset interaction needs owner verification.
+
 ## §E v11.412 · Apprentice Satchel tutorial (2026-11-11)
 
 The first tutorial project adds **Projects → Tutorials → Apprentice Satchel**. Start an independent beginner model from a practice cube, follow seven mesh/material/save objectives in a movable/collapsible quest panel, and resume on the same device. Real model geometry and native Save Project remain the source of truth. Basic shape and material checks can read native data; hollow geometry, flap and strap placement require user visual confirmation. No original starter or cloud mage is modified by the tutorial. Existing VR modeling and accessories remain intact. Actual deployment must be confirmed against the v11.412 source seal.
