@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="swrlz-chat-version" content="1.1.32">
+  <meta name="swrlz-chat-version" content="1.1.34">
   <meta name="theme-color" content="#010812">
   <title>Chat</title>
   <style>
@@ -1326,6 +1326,7 @@
           <select id="voiceProviderSelect" aria-label="Talk speech recognition mode" title="Browser default, or opt into ~41 MB on-device streaming transcription">
             <option value="browser" selected>Browser</option>
             <option value="local">Local stream · 41 MB</option>
+            <option value="turbo">Local Turbo · 41 MB</option>
           </select>
         </label>
         <input id="imagePicker" type="file" accept="image/jpeg,image/png,image/webp" hidden>
@@ -1768,7 +1769,7 @@
       const workArtifactList = document.getElementById("workArtifactList");
       const workEvidenceCount = document.getElementById("workEvidenceCount");
       const workEvidenceList = document.getElementById("workEvidenceList");
-      const SWRLZ_CHAT_VERSION = "1.1.32";
+      const SWRLZ_CHAT_VERSION = "1.1.34";
       const navTraceId = "chat-ui-" + Date.now().toString(36) + "-" + crypto.getRandomValues(new Uint32Array(1))[0].toString(36);
       let lastUiStatusCamera = "";
       let companionState="idle";
@@ -5314,8 +5315,8 @@
       });
     })();
   </script>
-  <script src="/chat/§wyrlz/assets/local_voice_vosk.js?v=1.1.32" defer></script>
-  <script src="/chat/§wyrlz/assets/voice_conversation.js?v=1.1.32" defer></script>
+  <script src="/chat/§wyrlz/assets/local_voice_vosk.js?v=1.1.34" defer></script>
+  <script src="/chat/§wyrlz/assets/voice_conversation.js?v=1.1.34" defer></script>
   <script src="/chat/§wyrlz/assets/chat-updates-v1.js" defer></script>
 </body>
 </html>
