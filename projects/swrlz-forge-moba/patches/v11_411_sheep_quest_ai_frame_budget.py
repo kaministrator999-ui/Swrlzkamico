@@ -68,7 +68,7 @@ def apply(html):
     provenance=" source.engine='§wyrl§ Engine · Maker v11.410';source.version=11.410;"
     assert html.count(provenance)==5,('v11.411 provenance',html.count(provenance))
     html=html.replace(provenance,
-       " source.engine='§wyrl§ Engine · Maker v11.411';source.version=11.393;")
+       " source.engine='§wyrl§ Engine · Maker v11.411';source.version=11.411;")
     key='const SE_RELEASE_NOTES=';at=html.index(key)+len(key)
     notes,n=json.JSONDecoder().raw_decode(html[at:])
     if not any(x.get('version')=='v11.410' for x in notes.get('history',[])):
