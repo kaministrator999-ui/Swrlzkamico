@@ -33,7 +33,7 @@ const js=fs.readFileSync("voice-streaming-source/chat/§wyrlz/assets/local_voice
       modelLoads++;
       return {
         KaldiRecognizer:class {
-          constructor(){this.listeners=new Map();this.removed=false;recognizers.push(this);}
+          constructor(sampleRate){assert.equal(sampleRate,16000,"Vosk must match AudioContext sampleRate");this.listeners=new Map();this.removed=false;recognizers.push(this);}
           setWords(){}
           on(type,fn){this.listeners.set(type,fn);}
           emit(type,value){this.listeners.get(type)?.({result:value});}
@@ -45,7 +45,7 @@ const js=fs.readFileSync("voice-streaming-source/chat/§wyrlz/assets/local_voice
     }},
     dispatchEvent(){},
     AudioContext:class {
-      constructor(){this.state="running";this.destination={};}
+      constructor(){this.sampleRate=16000;this.state="running";this.destination={};}
       createScriptProcessor(){const p={connect(){},disconnect(){},onaudioprocess:null};processors.push(p);return p;}
       createMediaStreamSource(){return {connect(){},disconnect(){}};}
       createGain(){return {gain:{value:1},connect(){},disconnect(){}};}
