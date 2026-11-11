@@ -289,7 +289,7 @@
   // punctuation keeps the synthesized voice intelligible on Android.
   const firstTurboPhraseCut = buffer => {
     const minimum = 28;
-    const preferred = 58;
+    const preferred = 52;
     const upper = 84;
     if (buffer.length < minimum) return -1;
     const pause = /[,;:—–](?:["'”’)]*)\s+/g;
