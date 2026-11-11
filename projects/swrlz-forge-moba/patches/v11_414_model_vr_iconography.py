@@ -48,10 +48,10 @@ def enhance_ui(js):
                 '/* SE410_MODEL_VR_ACCESSORY_UI */\n/* SE414_MODEL_VR_ICONOGRAPHY */')
     js = one(js, ' function iconType(id){\n',
                 ' function iconType(id){\n' + ICON_ROUTING)
-    js = one(js, "   if(type==='eye'){", ICON_DRAW)
+    js = one(js, "  if(type==='eye'){", ICON_DRAW)
     # Unknown future controls show neutral adjustment sliders, never a '?'.
     js = one(js,
-       "   else{circle(0,0,20);c.font='700 29px system-ui,sans-serif';c.textAlign='center';c.textBaseline='middle';c.fillText('?',0,1);}",
+       "  else{circle(0,0,20);c.font='700 29px system-ui,sans-serif';c.textAlign='center';c.textBaseline='middle';c.fillText('?',0,1);}",
        "   else{path([[-19,-14],[19,-14]]);path([[-19,0],[19,0]]);path([[-19,14],[19,14]]);circle(-6,-14,4);circle(8,0,4);circle(-3,14,4);}")
     # Paired adjustment controls need a + / - cue in addition to their common icon.
     js = one(js,
