@@ -28,3 +28,19 @@ The existing Space is `kamiloki/Swyrlz`. Recent HF work integrates the Glitch Dr
 ## Governance
 
 Project Start, Roadmap, version authorities, deployment documentation, and future follow-through must describe Hugging Face as the current hosting authority and Vercel as retired. Historical records should be preserved rather than rewritten or deleted.
+
+## Hosting cleanup migration status (2026-11-11)
+
+- The active deployment gate is `.github/workflows/manual-hf-space.yml`; its
+  validation, pinned source, rollback snapshot, and exact-Space checks must remain.
+- Vercel-only live collector verification workflow and probes were retired
+  because they point to the obsolete Vercel host and require old credentials.
+- Legacy Vercel Blob account-state read fallback (`api/chat_state.py`) remains
+  temporarily to support migration of any historical account state to Redis.
+  Verify state parity and data retention before removing that path or deleting
+  the old project or Blob store.
+- The frozen-web collector still has legacy Blob storage expectations on its
+  runtime branch. Its persistence must be migrated before removing old storage.
+- Browser localStorage compatibility keys and older stream contract identifiers
+  are intentionally preserved to avoid discarding user cache/session data.
+- These GitHub changes have not themselves deployed the new runtime to HF.
