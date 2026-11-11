@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
-"""Verify the exact source-sealed fluent Model VR controller release."""
+"""Verify the exact source-sealed Sheep Tag Quest Y-menu release."""
 from pathlib import Path
 import argparse,hashlib,json,subprocess,sys
 ROOT=Path(__file__).resolve().parents[1]
 MARKER='SWYRL_ENGINE_DEPLOY_MARKER: V11_391_SHEEP_QUEST_Y_TOOLS_RADIAL'
 ap=argparse.ArgumentParser();ap.add_argument('--output',required=True);ap.add_argument('--request',action='store_true');args=ap.parse_args()
 m=json.loads((ROOT/'source-manifest.json').read_text())
-assert m['name']=='§wyrl§ Engine v11.391' and m['finalArtifact']=='swyrl_engine_v11_390.html'
+assert m['name']=='§wyrl§ Engine v11.391' and m['finalArtifact']=='swyrl_engine_v11_391.html'
 assert len(m['patches'])==390 and m['patches'][-1]=='patches/v11_391_sheep_quest_y_tools.py'
 assert m['finalBytes']>9_530_598 and len(m['finalSha256'])==64
 out=Path(args.output).resolve();subprocess.run([sys.executable,str(ROOT/'build_space.py'),'--output',str(out)],check=True)
