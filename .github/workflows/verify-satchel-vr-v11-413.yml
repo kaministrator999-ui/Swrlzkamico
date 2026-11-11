@@ -1,0 +1,24 @@
+name: Verify §E v11.413 Quest satchel sealed source
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/verify-satchel-vr-v11-413.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  sealed:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Verify complete v11.413 package, JS syntax, saved assets and relevant regressions
+        run: python projects/swrlz-forge-moba/scripts/verify_v11_413_release.py --output dist/swrlz-forge-moba
+      - name: Upload source receipt
+        uses: actions/upload-artifact@v4
+        with:
+          name: swrlz-engine-v11-413-source
+          path: dist/swrlz-forge-moba/SOURCE.json
