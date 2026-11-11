@@ -1,0 +1,37 @@
+name: Temporary Quest Y menu v11.391 seal proof
+on:
+  push:
+    branches:
+      - fix/quest-left-y-tools-radial-391
+permissions:
+  contents: read
+jobs:
+  seal:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Static and focused smoke checks
+        run: |
+          node --check projects/swrlz-forge-moba/runtime/sheep_vr_y_tools_radial_v11_391.js
+          python -m py_compile projects/swrlz-forge-moba/patches/v11_391_sheep_quest_y_tools.py
+          node projects/swrlz-forge-moba/tests/test_sheep_vr_y_menu_v11_391.cjs
+      - name: Produce complete candidate seal (not a deployment)
+        run: |
+          python - <<'PY'
+          import json, pathlib, hashlib, subprocess, sys
+          root=pathlib.Path('projects/swrlz-forge-moba')
+          manifest=root/'source-manifest.json'
+          m=json.loads(manifest.read_text())
+          assert m['patches'][-1]=='patches/v11_391_sheep_quest_y_tools.py'
+          m['finalSha256']=''
+          m['finalBytes']=0
+          manifest.write_text(json.dumps(m,ensure_ascii=False,indent=2)+'\n')
+          with open('/tmp/build-quest-y-391.log','w') as log:
+              subprocess.run([sys.executable,str(root/'build_space.py'),'--output','/tmp/quest-y-391-seal'],check=True,stdout=log)
+          html=pathlib.Path('/tmp/quest-y-391-seal/index.html').read_bytes()
+          print('SEAL_RECEIPT_391 '+json.dumps({'bytes':len(html),'sha256':hashlib.sha256(html).hexdigest(),'patches':len(m['patches'])}))
+          assert b'SWYRL_ENGINE_SHEEP_VR_Y_MENU_391' in html
+          PY

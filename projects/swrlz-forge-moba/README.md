@@ -1,3 +1,7 @@
+## §E v11.391 · Left Y opens Sheep Tag VR tools (2026-11-10)
+
+Meta Quest Browser reserves the physical left Menu button. In immersive Sheep Tag, press the available left **Y** face button once to toggle the existing tools radial. The main radial gives immediate **FOLLOW** / **FREE** camera actions; X skill selection, A building, right B camera free and L3 Nerd Stats are unchanged. This is not a binding for the system Menu button. Hardware Quest verification pending.
+
 ## §E v11.390 · Fluent controller selection, Grab and creation (2026-11-10)
 
 Selecting from Inspect now arms Grab: grip moves and turns the existing selection, the stick sizes it, and the off-hand trigger provides smooth fine motion. A taps cycle Move/Rotate/Scale; hold A for broader tools. X+A opens Create with native Cube/Sphere/Cylinder/Cone placement previews; X+Trigger duplicates a group in one Undo step. Confirmed creations and copies become the selection and hand directly to Grab. Cancel and tracking/source changes discard uncommitted previews.
