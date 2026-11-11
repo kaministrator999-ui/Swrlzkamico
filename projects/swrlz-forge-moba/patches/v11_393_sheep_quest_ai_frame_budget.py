@@ -32,6 +32,14 @@ def apply(html):
     if(se393PlanSheepBuild(unit))return;
   }else{
     """+original[len('if(unit.order)return;'):]+"\n  }\n  "
+    if html.count(original)!=1:
+      import sys
+      for token in (prefix,"if(!unit.base)","stChooseBase(unit)",
+                    "if(s.elapsed>=unit.nextBuildAt)","stIssueBuild(unit,kind"):
+        i=html.find(token)
+        print('SE393_ANCHOR',repr(token),'hits',html.count(token),'index',i,
+              'around',repr(html[max(0,i-130):i+2100]) if i>=0 else '',
+              file=sys.stderr,flush=True)
     html=one(html,original,new,'original NPC base/build block')
     prior_guard=('if(unit.captured||unit.isIllusion||unit.archiveRoute||'
       '(!unit.se256Escape&&s.elapsed<unit.botAt))return;'
