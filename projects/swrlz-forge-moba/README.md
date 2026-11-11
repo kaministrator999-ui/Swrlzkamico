@@ -1,3 +1,11 @@
+## §E v11.410 · VR accessory workshop (2026-11-11)
+
+Model Studio VR adds **Create → Accessories → Hip pouch**: a rounded leather bag with a curved flap, belt loops, closure strap, clasp, edge stitching and a leaf/star emblem. Separate **Body**, **Details** and **Fit** pages adjust a live preview with coordinated leather colors, readable dimensions and clear selected states. The starting body is approximately **14 cm high** in the immersive workspace; it scales with the placement controls.
+
+Aim freely or choose Surface fit against a character's hip. The preview holds its pose while the pointer operates the menu; the right stick turns/resizes it. After releasing the menu click, a fresh primary Trigger places the default eight editable native components as one selected group and one Undo step, ready for Grab. B or the first Y cancels an uncommitted preview. After placement, native mesh tools edit the components; the recipe controls do not persist as a parametric object. No saved cloud mage is modified by this checkpoint.
+
+See [the accessory workshop checkpoint](docs/MODEL_VR_ACCESSORY_WORKSHOP_V11_410.md) for the workflow, geometry and transaction boundaries. Source packaging, 17 native test groups, nine spatial UI checks and 12 controller workflows passed. Hosted confirmation is pending; physical Quest comfort remains owner acceptance.
+
 ## §E rollback · v11.392 FOLLOW throttle withdrawn (2026-11-10)
 
 Owner Quest 3S retest: v11.392 slowed tracking of the controlled sheep, while full gameplay stalls continued (roughly 3s movement / 1s frozen) and scene glitches appeared even in FREE. The game menu remained smooth; lag decreased markedly after other sheep were captured. Therefore the v11.392 follow-camera throttle is **not active**. Production returns to the exact sealed v11.391 build (390 ordered source patches, SHA-256 6c002024054723ed9352d86b4703fd22748f311b7abb86607f735ff2ec5b2809). v11.392 source files remain in Git history for diagnosis but are intentionally excluded from the release manifest. Next investigation: per-sheep gameplay simulation, AI/pathfinding, fog, and render work while the match is active; no new hypothesis is called confirmed.
