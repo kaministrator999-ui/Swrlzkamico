@@ -2,7 +2,7 @@
 const assert = require("node:assert/strict");
 const fs = require("node:fs");
 const vm = require("node:vm");
-const code=fs.readFileSync("voice-streaming-source/chat/§wyrlz/assets/local_voice_vosk.js","utf8");
+const code=fs.readFileSync("voice-turbo-source/chat/§wyrlz/assets/local_voice_vosk.js","utf8");
 
 (async () => {
   const waitFor = async (ready, message) => {
