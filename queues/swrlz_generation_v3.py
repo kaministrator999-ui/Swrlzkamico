@@ -8,7 +8,6 @@ import threading
 from dataclasses import replace
 from typing import Any
 
-from vercel.queue import subscribe
 
 from api.durable_chat_contract import GenerationEventRecord
 from api.durable_redis_store import RedisRestChatStore
@@ -65,7 +64,7 @@ def _resource_camera(bucket: str, phase: str, *, request_id: str = "", **fields:
 
 
 def _camera(stage: str, *, request_id: str = "", **fields: Any) -> None:
-    """Emit one durable-subscriber boundary camera line for Vercel runtime logs."""
+    """Emit one worker boundary camera line for Hugging Face server logs."""
     record = {
         "camera": "SWRLZ_WORKSTATION_SUBSCRIBER",
         "stage": stage,
@@ -131,7 +130,6 @@ def _append(store, *, user_id: str, request_id: str, event: dict[str, Any]) -> N
     ))
 
 
-@subscribe(topic="swrlz-generation")
 async def generate_swrlz_response(payload) -> None:
     raw_payload = getattr(payload, "payload", payload)
     data = dict(raw_payload or {})

@@ -12,7 +12,7 @@ from typing import Any
 
 from fastapi import Request
 from fastapi.responses import JSONResponse, StreamingResponse
-from vercel.queue import send as queue_send
+from api.hf_generation_dispatch import send as queue_send
 
 from api.google_account import AuthenticationError, user_id_from_request
 from api.chat_state import _read_state, _state_value, _headers

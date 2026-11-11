@@ -16,15 +16,14 @@ from api.google_account import (
 
 
 async def _enqueue_generation(payload: dict[str, Any], *, request_id: str) -> None:
-    """Publish durable generation using the public Vercel Python Queues API.
+    """Dispatch a Redis-recorded generation job on the Hugging Face server.
 
-    request_id is already persisted as the idempotent job key in Redis before this call.
-    Vercel Queues provides at-least-once delivery; the worker therefore re-checks terminal
-    state before doing model work.
+    The process-local worker re-checks the canonical job state before model work.
+    A running generation is not guaranteed to survive a host restart.
     """
-    from vercel.queue import send
+    from api.hf_generation_dispatch import send
 
-    await send(_base.QUEUE_TOPIC, payload)
+    await send(_base.QUEUE_TOPIC, payload, idempotency_key=request_id)
 
 
 def _stateless_profile(identity: dict[str, Any]) -> dict[str, Any]:

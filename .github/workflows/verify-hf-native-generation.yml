@@ -1,0 +1,33 @@
+name: Verify HF-native generation dispatch
+on:
+  push:
+    paths:
+      - 'api/hf_generation_dispatch.py'
+      - 'api/account_routes.py'
+      - 'api/account_routes_v2.py'
+      - 'api/lalm_station.py'
+      - 'queues/swrlz_generation_v3.py'
+      - 'pyproject.toml'
+      - 'tests/test_hf_generation_dispatch.py'
+      - '.github/workflows/verify-hf-native-generation.yml'
+  workflow_dispatch:
+jobs:
+  syntax-and-dispatch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Compile HF generation boundary
+        run: python -m py_compile api/hf_generation_dispatch.py api/account_routes.py api/account_routes_v2.py api/lalm_station.py queues/swrlz_generation_v3.py
+      - name: Run dispatch contract tests
+        run: python -m unittest discover -s tests -p test_hf_generation_dispatch.py -v
+      - name: No external hosting queue dependency
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          for path in ['api/account_routes.py','api/account_routes_v2.py','api/lalm_station.py','queues/swrlz_generation_v3.py','pyproject.toml']:
+              value=Path(path).read_text(encoding='utf-8')
+              assert 'vercel.queue' not in value and 'vercel-queue' not in value, path
+          PY

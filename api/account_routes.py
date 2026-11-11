@@ -157,11 +157,9 @@ def _authenticated(request: Request) -> tuple[RedisRestChatStore, str] | JSONRes
 
 
 async def _enqueue_generation(payload: dict[str, Any], *, request_id: str) -> None:
-    from vercel.queue import QueueClient
+    from api.hf_generation_dispatch import send
 
-    region = os.environ.get("SWRLZ_QUEUE_REGION", "iad1").strip() or "iad1"
-    queue = QueueClient(region=region)
-    await queue.send(QUEUE_TOPIC, payload, idempotency_key=request_id)
+    await send(QUEUE_TOPIC, payload, idempotency_key=request_id)
 
 
 def install(server) -> None:
