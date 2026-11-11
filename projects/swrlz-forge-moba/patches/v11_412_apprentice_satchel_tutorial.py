@@ -19,7 +19,7 @@ def apply(html):
     css=(ROOT/'runtime/model_satchel_tutorial_v11_412.css').read_text('utf8')
     for required in ('function loadCourierProject(', 'async function se371Clone(',
                      'const se371PriorSnapshot=se175Snapshot;', 'const se320ProjectDataBase=projectData;',
-                     'window.SWYRLZ_FORGE_BUILD='):
+                     'window.SWRLZ_FORGE_BUILD='):
         if required not in html: raise AssertionError(('v11.412 prerequisite',required))
     html=one(html, '</head>', '<style id="se412TutorialStyles">'+css+'</style>\n</head>')
     html=one(html, 'if(ALLOWED_PARENTS.has(location.origin))queueMicrotask(',
