@@ -3,7 +3,7 @@ on:
   push:
     branches: [main]
     paths:
-      - ".github/workflows/measure-satchel-academy-v11-415.yml"
+      - ".github/workflows/measure-satchel-academy-v11-416.yml"
   workflow_dispatch:
 permissions:
   contents: read
