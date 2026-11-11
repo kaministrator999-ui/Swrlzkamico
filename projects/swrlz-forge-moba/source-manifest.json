@@ -407,6 +407,6 @@
     "patches/v11_391_sheep_quest_y_tools.py",
     "patches/v11_392_sheep_vr_stable_follow.py"
   ],
-  "finalBytes": 0,
-  "finalSha256": ""
+  "finalBytes": 9574057,
+  "finalSha256": "21a35d72b22be9359564f4dd2cfe8ac8623b5760948ae741ae769fe9a62abcff"
 }

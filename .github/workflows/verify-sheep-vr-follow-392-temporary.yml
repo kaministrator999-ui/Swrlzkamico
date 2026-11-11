@@ -12,24 +12,6 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      - name: Syntax and focused follow tests
+      - name: Verify complete v11.392 release seal, syntax and focused input
         run: |
-          node --check projects/swrlz-forge-moba/runtime/sheep_vr_stable_follow_v11_392.js
-          python -m py_compile projects/swrlz-forge-moba/patches/v11_392_sheep_vr_stable_follow.py
-          node projects/swrlz-forge-moba/tests/test_sheep_vr_stable_follow_v11_392.cjs
-      - name: Calculate candidate HTML integrity seal
-        run: |
-          python - <<'PY'
-          from pathlib import Path
-          import json,hashlib,subprocess,sys
-          root=Path('projects/swrlz-forge-moba')
-          src=root/'source-manifest.json';m=json.loads(src.read_text())
-          assert m['patches'][-1]=='patches/v11_392_sheep_vr_stable_follow.py'
-          m['finalBytes']=0;m['finalSha256']=''
-          src.write_text(json.dumps(m,ensure_ascii=False,indent=2)+'\n')
-          with open('/tmp/quest-follow-build.log','w') as log:
-              subprocess.run([sys.executable,str(root/'build_space.py'),'--output','/tmp/sheep-stable-follow-392'],check=True,stdout=log)
-          html=Path('/tmp/sheep-stable-follow-392/index.html').read_bytes()
-          assert b'SWYRL_ENGINE_SHEEP_STABLE_FOLLOW_392' in html
-          print('SEAL_RECEIPT_392 '+json.dumps({'bytes':len(html),'sha256':hashlib.sha256(html).hexdigest(),'patches':len(m['patches'])}))
-          PY
+          python projects/swrlz-forge-moba/scripts/verify_v11_392_release.py --output /tmp/sheep-follow-392-verified
