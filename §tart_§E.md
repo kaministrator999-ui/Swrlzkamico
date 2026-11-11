@@ -1,3 +1,7 @@
+## §E v11.412 · Apprentice Satchel tutorial (2026-11-11)
+
+The first tutorial project adds **Projects → Tutorials → Apprentice Satchel**. Start an independent beginner model from a practice cube, follow seven mesh/material/save objectives in a movable/collapsible quest panel, and resume on the same device. Real model geometry and native Save Project remain the source of truth. Basic shape and material checks can read native data; hollow geometry, flap and strap placement require user visual confirmation. No original starter or cloud mage is modified by the tutorial. Existing VR modeling and accessories remain intact. Actual deployment must be confirmed against the v11.412 source seal.
+
 ## §E v11.410 · VR accessory workshop (2026-11-11)
 
 Model Studio VR adds **Create → Accessories → Hip pouch**: a rounded leather bag with a curved flap, belt loops, closure strap, clasp, edge stitching and a leaf/star emblem. Separate **Body**, **Details** and **Fit** pages adjust a live preview with coordinated leather colors, readable dimensions and clear selected states. The starting body is approximately **14 cm high** in the immersive workspace; it scales with the placement controls.
