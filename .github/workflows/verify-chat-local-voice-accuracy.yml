@@ -1,8 +1,9 @@
-name: Verify §C Local Speech Accuracy
+name: Verify §C Browser Turbo and Local Speech
 on:
   push:
     branches:
       - fix/chat-local-voice-recognition-20261111
+      - fix/chat-browser-turbo-20261111
   workflow_dispatch:
 permissions:
   contents: read
@@ -26,3 +27,4 @@ jobs:
           node voice-turbo-source/scripts/test_chat_local_vosk_recovery.cjs
           node voice-turbo-source/scripts/test_chat_local_turbo.cjs
           node voice-turbo-source/scripts/test_chat_streaming_voice.cjs
+          node voice-turbo-source/scripts/test_chat_browser_turbo.cjs
