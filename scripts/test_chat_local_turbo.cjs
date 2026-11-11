@@ -12,7 +12,7 @@ const source=fs.readFileSync("voice-turbo-source/chat/§wyrlz/assets/local_voice
   const waitFor=async ready=>{for(let i=0;i<100;i++){if(ready())return;await new Promise(done=>setTimeout(done,10));}assert.fail("Microphone never ready");};
   let now=1000, nextTimer=1, sampleRate=48000, loads=0, framesDecoded=0, workerFinalizations=0;
   let fallbackNative=false;
-  const timers=new Map(),contexts=[],processors=[],recognizers=[],tracks=[];
+  const timers=new Map(),contexts=[],processors=[],recognizers=[],tracks=[],constraintsSeen=[];
   const setClockTimeout=(fn,ms)=>{
     const id=nextTimer++;timers.set(id,{fn,due:now+ms});return id;
   };
@@ -62,7 +62,8 @@ const source=fs.readFileSync("voice-turbo-source/chat/§wyrlz/assets/local_voice
       resume(){return Promise.resolve();}
     }
   };
-  const navigator={mediaDevices:{async getUserMedia(){
+  const navigator={mediaDevices:{async getUserMedia(constraints){
+    constraintsSeen.push(constraints);
     const track={stopped:false,stop(){this.stopped=true;}};
     tracks.push(track);return {getTracks(){return [track];}};
   }}};
@@ -96,6 +97,7 @@ const source=fs.readFileSync("voice-turbo-source/chat/§wyrlz/assets/local_voice
   const first=await begin();
   assert.equal(contexts[0].latencyHint,"interactive");
   assert.equal(contexts[0].sampleRate,undefined,"native device sample rate");
+  assert.equal(constraintsSeen[0].audio.sampleRate,undefined,"Turbo must not force 16kHz mic capture");
   assert.equal(processors[0].size,2048);
   speak(8);
   recognizers.at(-1).emit("partialresult",{partial:"hello"});
@@ -115,6 +117,7 @@ const source=fs.readFileSync("voice-turbo-source/chat/§wyrlz/assets/local_voice
   sampleRate=44100;fallbackNative=true;
   const second=await begin();
   assert.equal(contexts.at(-1).sampleRate,undefined);
+  assert.equal(constraintsSeen.at(-1).audio.sampleRate,undefined,"fallback remains native mic capture");
   speak(5,.009);
   recognizers.at(-1).emit("result",{text:"well"});
   speak(10,0);
@@ -130,6 +133,19 @@ const source=fs.readFileSync("voice-turbo-source/chat/§wyrlz/assets/local_voice
   assert.equal(finals(second).length,1);
   assert.equal(finals(second)[0].text,"well we should test that","worker final replaces provisional incomplete partial");
   assert.equal(tracks[1].stopped,true);
+  // If a worker does not answer its explicit final-flush request, its old
+  // provisional partial must NOT be silently sent as an incomplete message.
+  const third=await begin();
+  speak(6,.009);
+  recognizers.at(-1).emit("partialresult",{partial:"hello how"});
+  // Suppress the worker response: simulated decoding timeout.
+  recognizers.at(-1).retrieveFinalResult=function(){workerFinalizations++;};
+  speak(18,0);
+  assert.equal(finals(third).length,0);
+  advance(2601);
+  assert.equal(finals(third).length,0,"never commit incomplete partial on worker timeout");
+  third.abort();
+  assert.equal(tracks[2].stopped,true);
   assert.equal(loads,1,"cached Vosk model reused");
   assert.ok(framesDecoded>20);
   window.SwrlzLocalVoice.dispose();
