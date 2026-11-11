@@ -1,3 +1,7 @@
+## §E v11.415 · Clear tool pictograms throughout Model Studio VR (2026-11-11)
+
+The independent world-space VR tool console now shows distinct pictograms for selection, swipe/front/through lasso, Save Project, Save to Account, Clone, Projects, menu controls, controller aim, display modes and labeled viewpoints. Move/Rotate/Scale/Grab retain their original actions; Rotate is visually different from Undo. Increment/decrement cards show +/- marks. Existing hover/selected/disabled feedback, controller mappings, save schema, XR loop and the v11.414 satchel tutorial's native button references remain intact. Physical headset readability remains owner acceptance testing.
+
 ## §E v11.414 · Tool buttons shown beside their tutorial names (2026-11-11)
 
 In Projects → Tutorials → Apprentice Satchel, each action instruction now shows a miniature of the existing §E control beside the corresponding tool name. On the phone/desktop, those previews reuse the native button labels, glyphs and presentation. Inside Model VR, the quest shows icons drawn by §E's existing VR menu icon renderer for the actual controller-selectable tool. The tutorial explains the correct Add sphere then Shape → box sequence in the flat editor, versus Create → Cube in VR. The preview chips are not duplicate controls, and canonical starter/project saves, tool panels, and world-space Quest behavior remain unchanged. Hardware acceptance pending.
