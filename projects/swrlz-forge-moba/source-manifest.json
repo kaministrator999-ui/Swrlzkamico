@@ -407,6 +407,6 @@
     "patches/v11_391_sheep_quest_y_tools.py",
     "patches/v11_393_sheep_quest_ai_frame_budget.py"
   ],
-  "finalBytes": 0,
-  "finalSha256": ""
+  "finalBytes": 9578346,
+  "finalSha256": "8ef6007d32aa5b0c574ba5c90eb94fb7dbcda7896bc122ae92673d34d5c4ae06"
 }
