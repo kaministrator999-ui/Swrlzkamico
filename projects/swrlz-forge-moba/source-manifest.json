@@ -409,6 +409,6 @@
     "patches/v11_411_sheep_quest_ai_frame_budget.py",
     "patches/v11_412_apprentice_satchel_tutorial.py"
   ],
-  "finalBytes": 9651071,
-  "finalSha256": "cb586e6a2649e40f730570684e5284c343eb2639ef66d2ddcf8f6d1418456b14"
+  "finalBytes": 9650504,
+  "finalSha256": "cc14381e3fcccc44bb1b94f4d0f0510b9d65eb39318276b0f43cb9621e90c187"
 }
