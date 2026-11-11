@@ -138,7 +138,8 @@
     const instance = new Recognition();
     if (local && turboSelected()) instance.turbo = true;
     recognition = instance;
-    instance.lang = navigator.language || "en-US";
+    // The bundled offline Vosk model is en-US; Browser input may use device locale.
+    instance.lang = local ? "en-US" : (navigator.language || "en-US");
     instance.continuous = false; // Android Chrome does not honor continuous=true.
     instance.interimResults = true;
     instance.maxAlternatives = 1;
@@ -363,7 +364,7 @@
     if (enabled) return;
     window.SwrlzLocalVoice?.dispose();
     update("off", turboSelected()
-      ? "Local Turbo selected · 16 kHz + faster end-of-speech, same cached model. Tap Talk."
+      ? "Local Turbo selected · native microphone rate, careful phrase ending, cached model. Tap Talk."
       : voiceProvider.value === "local"
         ? "Local stream selected · standard settings. Tap Talk."
         : "Browser speech input selected · tap Talk.");
