@@ -138,7 +138,12 @@
         throw new Error("Microphone audio capture is unsupported");
       const stream = await navigator.mediaDevices.getUserMedia({
         video: false,
-        audio: { echoCancellation: true, noiseSuppression: true, channelCount: 1, sampleRate: 16000 }
+        // Turbo avoids forcing 16 kHz at capture, too. Otherwise Android may
+        // resample once for getUserMedia, then again for Web Audio decoding.
+        // Use native mic input and pass the resulting context rate to Vosk.
+        audio: turbo
+          ? { echoCancellation: true, noiseSuppression: true, channelCount: 1 }
+          : { echoCancellation: true, noiseSuppression: true, channelCount: 1, sampleRate: 16000 }
       });
       if (active !== token) {
         stream.getTracks().forEach(track => track.stop());
@@ -179,6 +184,7 @@
         let lastSegmentAt = 0;
         let finalRequested = false;
         let finalResultSeen = false;
+        let finalResultAvailable = false;
         let finalSettleTimer = 0;
         let finalDeadlineTimer = 0;
         let lastAudioAt = 0;
@@ -197,8 +203,17 @@
         const finalFallback = () => {
           if (active !== token || emitted) return;
           const words = fullTranscript();
-          if (words) finishUtterance(words);
-          else onError?.("The speech decoder returned no words; retry or use Browser input");
+          if (finalResultSeen && words) {
+            finishUtterance(words);
+          } else if (!finalResultAvailable && words) {
+            // A legacy Vosk build has no explicit final flush. Preserve the
+            // previous fallback for that specific compatibility case.
+            finishUtterance(words);
+          } else {
+            // A partial is provisional. Never silently send "hello how"
+            // while the final worker response is missing or empty.
+            onError?.("Final transcription unavailable; review the visible words or use Browser input");
+          }
         };
         const settleFinal = () => {
           if (!turbo || !finalRequested || active !== token || emitted) return;
@@ -218,8 +233,12 @@
           // Vosk accepts audio on a Web Worker: do not submit the most recent
           // partial before already-queued audio has been decoded and flushed.
           if (typeof recognizer.retrieveFinalResult === "function") {
-            try { recognizer.retrieveFinalResult(); }
-            catch (_) { /* legacy build: bounded partial fallback below */ }
+            try {
+              recognizer.retrieveFinalResult();
+              finalResultAvailable = true;
+            } catch (_) {
+              finalResultAvailable = false;
+            }
           }
           finalDeadlineTimer = setTimeout(finalFallback, 2600);
           if (microphone) microphone.finalizeTimeout = finalDeadlineTimer;
@@ -243,9 +262,22 @@
           // A Vosk "result" means the decoder ended a phrase, NOT that
           // the person finished their entire message. Don't auto-send.
           if (transcription) {
-            if (committedSegments[committedSegments.length - 1] !== transcription)
+            // A final result may contain an updated version of the most
+            // recent partial; merge that into the phrase history once.
+            const preceding = fullTranscript();
+            const lowerPreceding = preceding.toLowerCase();
+            const lowerResult = transcription.toLowerCase();
+            if (lowerResult === lowerPreceding || lowerPreceding.endsWith(" " + lowerResult)) {
+              latestPartial = "";
+            } else if (lowerResult.startsWith(lowerPreceding + " ")) {
+              committedSegments.length = 0;
               committedSegments.push(transcription);
-            latestPartial = "";
+              latestPartial = "";
+            } else {
+              // Vosk sent a separate phrase. Do not lose earlier phrases.
+              committedSegments.push(transcription);
+              latestPartial = "";
+            }
             lastSegmentAt = Date.now();
             onPartial?.(fullTranscript());
           }
