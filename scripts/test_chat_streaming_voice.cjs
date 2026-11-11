@@ -2,7 +2,7 @@
 const assert=require("node:assert/strict");
 const fs=require("node:fs");
 const vm=require("node:vm");
-const code=fs.readFileSync("voice-streaming-source/chat/§wyrlz/assets/voice_conversation.js","utf8");
+const code=fs.readFileSync("voice-turbo-source/chat/§wyrlz/assets/voice_conversation.js","utf8");
 const eventMap=new Map();
 const synth={spoken:[],live:null,cancels:0,
   getVoices:()=>[{lang:"en-US",default:true}],
