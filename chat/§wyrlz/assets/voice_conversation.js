@@ -1,4 +1,4 @@
-/* §C voice conversation v6: Browser Turbo accuracy + fast reply speech; retain independent offline Local/Local Turbo. */
+/* §C voice conversation v7: Browser Turbo recognition + natural early-phrase streaming speech; retain offline modes. */
 (() => {
   "use strict";
   const mic = document.getElementById("voiceConversationButton");
@@ -283,14 +283,40 @@
     try { synth.speak(utterance); } catch (_) { fail("audio playback failed"); }
   };
 
+  // Browser Turbo can begin speaking before a full sentence exists. Wait for
+  // a completed word/clause instead of chopping off the model's newest token.
+  // Shorter utterances reduce time-to-first-audio; preserving full words and
+  // punctuation keeps the synthesized voice intelligible on Android.
+  const firstTurboPhraseCut = buffer => {
+    const minimum = 28;
+    const preferred = 58;
+    const upper = 84;
+    if (buffer.length < minimum) return -1;
+    const pause = /[,;:—–](?:["'”’)]*)\s+/g;
+    let match;
+    while ((match = pause.exec(buffer))) {
+      const end = match.index + match[0].length;
+      if (end >= minimum && end <= upper) return end;
+    }
+    if (buffer.length < preferred) return -1;
+    // Consume only text through a complete word; hold a potentially
+    // unfinished token until the next streamed delta arrives.
+    const split = buffer.lastIndexOf(" ", preferred);
+    return split >= minimum ? split + 1 : -1;
+  };
+
   const flushSpeech = final => {
     // A partial Markdown code fence must not be spoken as executable source.
     if (!final && (speechPending.match(/```/g) || []).length % 2 !== 0) return;
     while (speechPending.trim()) {
-      // Speak natural sentence boundaries as they stream. Very long sentences
-      // get a bounded word-boundary fallback; do not wait for a full reply.
       const sentence = /[.!?](?:["'”’)]*)\s+/.exec(speechPending);
       let cut = sentence ? sentence.index + sentence[0].length : -1;
+      // Only Browser Turbo gets low-latency phrase splitting. Browser and both
+      // Local profiles preserve their prior sentence/fallback boundaries.
+      if (!final && turboSelected()) {
+        const phrase = firstTurboPhraseCut(speechPending);
+        if (phrase > 0 && (cut < 0 || phrase < cut)) cut = phrase;
+      }
       const earlyPhraseLimit = fastSpeechSelected() ? 95 : 170;
       if (cut < 0 && !final && speechPending.length >= earlyPhraseLimit) {
         cut = speechPending.lastIndexOf(" ", earlyPhraseLimit);
