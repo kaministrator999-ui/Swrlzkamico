@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.391
+title: §wyrl§ Engine v11.392
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,10 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.392 · Quest Sheep Tag stable FOLLOW camera (2026-11-10)
+
+Headset A/B established that FREE avoids the severe geometry repaint/distortion while occasional full XR frame stalls remain. This scoped candidate reduces FOLLOW reference-space changes (at least 140ms apart and 12cm of target movement, with a 62cm maximum per change), preserving native head tracking, FREE camera, all game/guest controls and authored content. Use Y → FOLLOW or FREE to compare on the headset. It does **not** claim to resolve the distinct remaining frame freezes. Device acceptance pending.
 
 ## §E v11.391 · Left Y opens Sheep Tag VR tools (2026-11-10)
 
