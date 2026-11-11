@@ -1,0 +1,47 @@
+name: Measure §E v11.414 satchel button guide candidate
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/measure-satchel-tool-buttons-v11-414.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  measure:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Measure actual complete HTML with the v11.414 append-only candidate
+        run: |
+          python - <<'PY'
+          import pathlib,json,base64,gzip,hashlib,importlib.util,subprocess,sys,tempfile
+          root=pathlib.Path("projects/swrlz-forge-moba").resolve()
+          m=json.loads((root/"source-manifest.json").read_text())
+          assert m["name"]=="§wyrl§ Engine v11.413"
+          raw=gzip.decompress(base64.b64decode("".join((root/n).read_text().strip() for n in m["chunks"])))
+          assert len(raw)==m["baseBytes"] and hashlib.sha256(raw).hexdigest()==m["baseSha256"]
+          html=raw.decode()
+          def apply(rel,n):
+              global html
+              spec=importlib.util.spec_from_file_location("candidate_"+str(n),root/rel)
+              module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
+              html=module.apply(html)
+          for i,rel in enumerate(m["patches"]):apply(rel,i)
+          assert len(html.encode())==m["finalBytes"] and hashlib.sha256(html.encode()).hexdigest()==m["finalSha256"]
+          apply("patches/v11_414_satchel_native_tool_button_references.py",len(m["patches"]))
+          data=html.encode("utf8")
+          assert "SE414_SATCHEL_NATIVE_TOOL_REFERENCES_START" in html
+          assert "drawGuideIcon:(ctx,action,x,y,size,color)=>icon(ctx,iconType(action),x,y,size,color)" in html
+          assert "SWYRL_ENGINE_DEPLOY_MARKER: V11_414_SATCHEL_NATIVE_BUTTON_GUIDES" in html
+          temp=pathlib.Path(tempfile.gettempdir())/"se414_candidate.html"
+          temp.write_bytes(data)
+          subprocess.run([sys.executable,str(root/"scripts/check_inline_js_syntax_v11_266.py"),str(temp)],check=True)
+          subprocess.run(["node","--check",str(root/"runtime/model_satchel_tool_references_v11_414.js")],check=True)
+          print("SATCHEL_BUTTON_FINAL_BYTES="+str(len(data)))
+          print("SATCHEL_BUTTON_FINAL_SHA256="+hashlib.sha256(data).hexdigest())
+          print("SATCHEL_BUTTON_PATCHES="+str(len(m["patches"])+1))
+          PY
