@@ -81,14 +81,15 @@ def prepare(api:HfApi)->None:
         raise RuntimeError("Voice asset cache-bust missing or duplicated")
     local_new=(AFTER/"local_voice_vosk.js").read_text(encoding="utf8")
     voice_new=(AFTER/"voice_conversation.js").read_text(encoding="utf8")
-    if not all(marker in local_new for marker in [
+    required_local_markers = [
         "window.caches.open(MODEL_CACHE)", "QUIET_FINAL_MS",
         "latestPartial", "finishUtterance", "audio reached",
-        "Microphone audio received", "watchdog"
-    ]):
-        # Only exact reviewed code is accepted. In particular, a fresh model
-        # download on each activation and a partial-only infinite listen fail.
-        raise RuntimeError("Vosk recovery invariants missing")
+        "Local microphone audio received", "watchdog",
+    ]
+    missing = [marker for marker in required_local_markers if marker not in local_new]
+    if missing:
+        # Keep the compatibility guard, but report precisely what drifted.
+        raise RuntimeError("Vosk recovery invariants missing: " + ", ".join(missing))
     if "window.SwrlzLocalVoice?.stop()" not in voice_new or "send.click()" not in voice_new:
         raise RuntimeError("Talk session reuse or canonical send lost")
     for i,source in enumerate(re.findall(r'<script(?:\s[^>]*)?>([\s\S]*?)</script>',patched)):
