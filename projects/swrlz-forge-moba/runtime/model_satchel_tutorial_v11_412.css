@@ -1,0 +1,44 @@
+/* §E v11.412 · satellite quest panel lives inside the modeling scene,
+   independent of camera and editable geometry. */
+#se412Tutorials {padding:16px 20px 28px;overflow-y:auto;color:#eee2fb}
+#se412Tutorials h3 {margin:0 0 8px;font-size:18px}
+#se412Tutorials p {font-size:13px;line-height:1.5;max-width:54rem}
+#se412LibraryActions {display:flex;gap:10px;flex-wrap:wrap;margin:18px 0}
+#se412LibraryActions button {min-height:42px;padding:10px 15px;border:1px solid #a880d2;background:#44305b;color:#fff;border-radius:10px;cursor:pointer}
+#se412LibraryActions button:first-child {background:#68418c}
+#se412Panel[hidden],#se412Tutorials[hidden] {display:none!important}
+#se412Panel {position:absolute;right:12px;top:72px;z-index:24;width:min(325px,calc(100% - 24px));max-height:min(68dvh,560px);display:flex;flex-flow:column nowrap;border:1px solid #b187d6;border-radius:13px;background:rgba(28,20,39,.96);box-shadow:0 14px 45px #0009;color:#f6ebff;font:13px/1.4 system-ui,sans-serif;pointer-events:auto;overflow:hidden;touch-action:auto}
+#se412Panel header {display:flex;align-items:center;gap:9px;padding:10px 12px;border-bottom:1px solid #71568c;background:#362548;cursor:grab;touch-action:none;user-select:none}
+#se412Panel header strong{min-width:0;flex:1;font-size:13px}
+#se412Panel header span{color:#d9c1eb;font-size:11px;white-space:nowrap}
+#se412Panel header button{min-width:32px;min-height:32px;border:1px solid #a984c4;border-radius:7px;background:#4d3466;color:#fff;font-size:18px}
+#se412Panel .se412-content{overflow-y:auto;overscroll-behavior:contain;padding:11px 12px 14px;min-height:0;scrollbar-width:thin}
+#se412Panel.collapsed{max-height:54px;width:min(305px,calc(100% - 24px))}
+#se412Panel.collapsed .se412-content{display:none}
+#se412Panel .se412-bar{height:6px;background:#534164;border-radius:99px;overflow:hidden;margin-bottom:9px}
+#se412Meter{height:100%;background:#85d9ae;transition:width .15s linear}
+#se412Checks{display:grid;gap:3px;max-height:134px;overflow-y:auto;margin-bottom:11px}
+#se412Checks button{width:100%;text-align:left;font:11px/1.35 system-ui,sans-serif;white-space:normal;padding:6px 8px;min-height:30px;color:#d4c7e3;border:1px solid #514067;background:#292037;border-radius:6px}
+#se412Checks button.active{background:#4d3369;color:#fff;border-color:#b486df}
+#se412Panel h3{font-size:14px;line-height:1.35;margin:8px 0 5px}
+#se412Tool{display:block;font-size:11px;color:#c4a5ea;margin-bottom:5px}
+#se412Panel p{margin:6px 0 9px;font-size:12px;line-height:1.48;color:#efe9f5}
+#se412Why{color:#d6c4eb!important}
+#se412Panel details{border:1px solid #71598b;border-radius:7px;padding:6px 9px;background:#322544}
+#se412Panel summary{font-size:12px;cursor:pointer;color:#e7d4ff;min-height:28px}
+#se412Note{min-height:0;color:#b4e8ca!important}
+#se412Panel .se412-actions{display:grid;grid-template-columns:36px 1fr 1fr 36px;gap:5px;margin-top:9px}
+#se412Panel .se412-actions button{min-height:38px;white-space:normal;min-width:0;padding:5px 4px;background:#503668;border:1px solid #9872b6;border-radius:8px;color:#fff;font:11px/1.2 system-ui,sans-serif}
+#se412Panel .se412-actions button:disabled{opacity:.35}
+#se412Panel #se412Mark{background:#2e604e;border-color:#70bba0}
+#se412Victory{border-top:1px solid #668a77;margin-top:12px!important;padding-top:10px;color:#b3ffd3!important;font-weight:650}
+#se412Panel button:focus-visible,#se412Tutorials button:focus-visible{outline:2px solid #f5d6ff;outline-offset:2px}
+@media(max-width:699px){
+ #se412Panel{top:10px;right:8px;width:min(290px,calc(100% - 16px));max-height:min(43dvh,340px);font-size:12px}
+ #se412Panel .se412-content{padding:8px 9px}
+ #se412Checks{max-height:73px}
+ #se412Panel .se412-actions{grid-template-columns:29px 1fr 1fr 29px}
+ #se412Panel .se412-actions button{font-size:10px;min-height:33px}
+ #se412Tutorials{padding:12px}
+}
+@media(prefers-reduced-motion:reduce){#se412Meter{transition:none}}
