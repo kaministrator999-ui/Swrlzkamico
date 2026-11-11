@@ -17,6 +17,24 @@ jobs:
           python-version: "3.11"
       - name: Verify complete v11.413 package, JS syntax, saved assets and relevant regressions
         run: python projects/swrlz-forge-moba/scripts/verify_v11_413_release.py --output dist/swrlz-forge-moba
+      - name: Check XR ownership and quest ray-block contract
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          root=Path("projects/swrlz-forge-moba")
+          js=(root/"runtime/model_satchel_vr_quest_v11_413.js").read_text()
+          html=Path("dist/swrlz-forge-moba/index.html").read_text()
+          for part in ("box.root.position.copy(ui.root.localToWorld", 
+                       "box.folded?box.buttons.filter(o=>o.visible):[...box.buttons,box.panel]",
+                       "se340Trigger=function(record,additive=false)", 
+                       "se340Cleanup=function(...a){dispose();"):
+              assert part in js,part
+          for absent in ("setAnimationLoop(", "requestAnimationFrame(", ".camera.add(root)"):
+              assert absent not in js,absent
+          assert "Build real open-top walls" in html
+          assert "SE413_SATCHEL_VR_QUEST_START" in html
+          print("SATCHEL_VR_WORLD_SPACE_RAY_GUARD_PASS")
+          PY
       - name: Upload source receipt
         uses: actions/upload-artifact@v4
         with:
