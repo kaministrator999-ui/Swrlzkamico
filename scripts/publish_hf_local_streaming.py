@@ -77,12 +77,9 @@ def prepare(api: HfApi) -> None:
         raise RuntimeError("Canonical Chat transport/recognizer selector missing")
     if not all(value in local_content for value in [
         "new available.KaldiRecognizer()", "echoCancellation: true",
-        "script.crossOrigin", "model.terminate", "source.connect(processor)"
+        "script.crossOrigin", "m?.terminate?.()", "source.connect(processor)"
     ]):
-        # The model termination is implemented through a model-promise
-        # disposal callback; its exact syntax is deliberately checked.
-        if "m?.terminate?.()" not in local_content:
-            raise RuntimeError("Local microphone lifecycle incomplete")
+        raise RuntimeError("Local microphone lifecycle incomplete")
     for i,code in enumerate(re.findall(r'<script(?:\s[^>]*)?>([\s\S]*?)</script>',page)):
         if code.strip():
             file=AFTER/f"inline-{i}.js"
