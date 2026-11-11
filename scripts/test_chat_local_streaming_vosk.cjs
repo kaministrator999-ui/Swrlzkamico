@@ -2,92 +2,107 @@
 const assert = require("node:assert/strict");
 const fs = require("node:fs");
 const vm = require("node:vm");
-const code=fs.readFileSync("voice-turbo-source/chat/§wyrlz/assets/local_voice_vosk.js","utf8");
-
+const code = fs.readFileSync("voice-turbo-source/chat/§wyrlz/assets/local_voice_vosk.js", "utf8");
 (async () => {
-  const waitFor = async (ready, message) => {
-    for (let i=0; i<100; i++) {
-      if (ready()) return;
-      await new Promise(resolve => setTimeout(resolve, 10));
+  let now=1000, nextTimer=1, loads=0, terminations=0, waveformChunks=0, flushes=0;
+  const timers=new Map(), recognizers=[], processors=[], tracks=[];
+  const schedule=(fn,ms=0)=>{const id=nextTimer++;timers.set(id,{due:now+ms,fn});return id;};
+  const advance=ms=>{
+    now+=ms;
+    for(let guard=0;guard<40;guard++){
+      const due=[...timers.entries()].filter(([,x])=>x.due<=now).sort((a,b)=>a[1].due-b[1].due);
+      if(!due.length)return;
+      for(const [id,x] of due){if(timers.delete(id))x.fn();}
     }
-    assert.fail(message);
+    assert.fail("Timer recursion");
   };
-  const recognized=[];
-  const micStreams=[];
-  const instances=[];
-  const events=[];
-  let modelLoads=0,workerTerminations=0,playedAudioFrames=0;
-  const model = {
-    KaldiRecognizer: class {
-      constructor(sampleRate){assert.equal(sampleRate,48000,"Vosk must match AudioContext sampleRate");this.listeners=new Map();this.removed=false;instances.push(this);}
-      on(event, fn){this.listeners.set(event,fn);}
+  const model={
+    KaldiRecognizer:class{
+      constructor(sampleRate){assert.equal(sampleRate,48000);this.listeners=new Map();recognizers.push(this);}
+      on(type,fn){this.listeners.set(type,fn);}
       setWords(){}
-      acceptWaveform(){playedAudioFrames++;}
+      acceptWaveform(){waveformChunks++;}
+      emit(type,result){this.listeners.get(type)?.({result});}
+      retrieveFinalResult(){flushes++;schedule(()=>this.emit("result",{text:this.finalText||""}),400);}
       remove(){this.removed=true;}
-      emit(name,result){this.listeners.get(name)?.({result});}
     },
-    terminate(){workerTerminations++;}
+    terminate(){terminations++;}
   };
   const window={
-    Vosk:{createModel:async url=>{assert.match(url,/vosk-model-small-en-us-0\.15\.tar\.gz$/);modelLoads++;return model;}},
-    dispatchEvent:event=>events.push(event.type),
-    AudioContext:class {
+    Vosk:{async createModel(){loads++;return model;}},
+    dispatchEvent(){},
+    AudioContext:class{
       constructor(){this.sampleRate=48000;this.state="running";this.destination={};}
-      createScriptProcessor(){return {connect(){},disconnect(){},onaudioprocess:null};}
+      createScriptProcessor(size){
+        assert.equal(size,4096);
+        const processor={onaudioprocess:null,connect(){},disconnect(){}};
+        processors.push(processor);return processor;
+      }
       createMediaStreamSource(){return {connect(){},disconnect(){}};}
       createGain(){return {gain:{value:1},connect(){},disconnect(){}};}
-      close(){this.closed=true;return Promise.resolve();}
+      close(){return Promise.resolve();}
       resume(){return Promise.resolve();}
     }
   };
-  const navigator={mediaDevices:{getUserMedia:async constraints=>{
-    assert.equal(constraints.audio.echoCancellation,true);
+  const navigator={mediaDevices:{async getUserMedia({audio}){
+    assert.equal(audio.sampleRate,undefined);
+    assert.equal(audio.autoGainControl,true);
     const track={stopped:false,stop(){this.stopped=true;}};
-    const stream={track,getTracks:()=>[track]};
-    micStreams.push(stream);
-    return stream;
+    tracks.push(track);return {getTracks:()=>[track]};
   }}};
-  // vm.runInNewContext does not provide browser timer APIs automatically.
-  // The production mic watchdog requires them even when audio is mocked.
-  const sandbox={window,navigator,document:{},
-    setTimeout:()=>1,clearTimeout:()=>{},
-    CustomEvent:class{constructor(type,opts){this.type=type;this.detail=opts?.detail;}},console};
-  vm.runInNewContext(code,sandbox);
-  assert.ok(window.SwrlzLocalVoice);
-  assert.ok(window.SwrlzLocalSpeechRecognition);
-
-  const Rec=window.SwrlzLocalSpeechRecognition;
-  const first=new Rec();
-  const transcripts=[];
-  let final=0,ended=0;
-  first.onresult=e=>{const value=e.results[0];transcripts.push([value.isFinal,value[0].transcript]);if(value.isFinal)final++;};
-  first.onend=()=>ended++;
-  first.start();
-  await waitFor(() => window.SwrlzLocalVoice.active, "First local microphone never became ready");
-  assert.equal(modelLoads,1,"model loads only on opt-in");
-  assert.equal(micStreams.length,1,"captures microphone exactly once");
-  assert.equal(window.SwrlzLocalVoice.active,true);
-  instances[0].emit("partialresult",{partial:"hey how"});
-  instances[0].emit("result",{text:"hey how are you"});
-  assert.equal(transcripts.length,2);
-  assert.deepEqual(transcripts.map(x=>x[1]),["hey how","hey how are you"]);
-  assert.equal(final,1);
-  first.stop();
+  const ClockDate=class extends Date{static now(){return now;}};
+  vm.runInNewContext(code,{window,navigator,Date:ClockDate,console,
+    setTimeout:schedule,clearTimeout:id=>timers.delete(id),
+    CustomEvent:class{constructor(type,opts){this.type=type;this.detail=opts?.detail;}}
+  });
+  async function waitForMic(){
+    for(let i=0;i<100&&!window.SwrlzLocalVoice.active;i++)
+      await new Promise(resolve=>setTimeout(resolve,5));
+    assert.ok(window.SwrlzLocalVoice.active);
+  }
+  const rec=new window.SwrlzLocalSpeechRecognition();
+  let ended=0;
+  const text=[];
+  rec.onresult=event=>{
+    const result=event.results[0];
+    text.push({final:result.isFinal,text:result[0].transcript});
+    if(result.isFinal)rec.stop();
+  };
+  rec.onend=()=>ended++;
+  rec.start();await waitForMic();
+  assert.equal(loads,1);
+  function frames(n,amplitude){
+    for(let i=0;i<n;i++){
+      now+=100;
+      processors.at(-1).onaudioprocess({inputBuffer:{getChannelData(){
+        return new Float32Array(4096).fill(amplitude);
+      }}});
+      advance(0);
+    }
+  }
+  frames(5,.03);
+  recognizers[0].emit("partialresult",{partial:"hey how"});
+  recognizers[0].emit("result",{text:"hey how"});
+  assert.equal(text.at(-1).text,"hey how","matching partial and result must retain words");
+  assert.equal(text.filter(x=>x.final).length,0,"Vosk phrase end must not trigger send");
+  recognizers[0].finalText="are you";
+  frames(24,0);
+  assert.equal(flushes,1,"silence flushes worker");
+  assert.equal(text.filter(x=>x.final).length,0);
+  advance(401);advance(551);
+  assert.equal(text.at(-1).text,"hey how are you");
+  assert.equal(text.at(-1).final,true);
   assert.equal(ended,1);
-  assert.equal(micStreams[0].track.stopped,true,"microphone tracks stopped on utterance end");
-  assert.equal(instances[0].removed,true,"recognizer disposed after utterance");
-  assert.equal(workerTerminations,0,"keep model ready across conversation turns");
-
-  const second=new Rec();
-  second.start();
-  await waitFor(() => window.SwrlzLocalVoice.active, "Second local microphone never became ready");
-  assert.equal(modelLoads,1,"reuse local model for the next turn");
-  assert.equal(micStreams.length,2);
+  assert.equal(tracks[0].stopped,true);
+  assert.equal(recognizers[0].removed,true);
+  const second=new window.SwrlzLocalSpeechRecognition();
+  second.start();await waitForMic();
+  assert.equal(loads,1,"cache ready model across turns");
   second.abort();
-  assert.equal(micStreams[1].track.stopped,true);
+  assert.equal(tracks[1].stopped,true);
   window.SwrlzLocalVoice.dispose();
-  for(let i=0;i<10;i++)await Promise.resolve();
-  assert.equal(workerTerminations,1,"free WASM model when Talk turns off");
-  assert.equal(playedAudioFrames,0,"no fabricated audio frames");
-  console.log("PASS: local-only ASR, per-turn microphone teardown, partial/final callbacks, model reuse and worker termination");
+  for(let i=0;i<5;i++)await Promise.resolve();
+  assert.equal(terminations,1);
+  assert.ok(waveformChunks>=25);
+  console.log("PASS: local speech retained until final flush, phrase preservation, mic teardown and model reuse");
 })().catch(error=>{console.error(error);process.exitCode=1;});
