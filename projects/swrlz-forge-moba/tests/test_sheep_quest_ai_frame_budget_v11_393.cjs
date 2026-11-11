@@ -9,7 +9,7 @@ class V3{
   add(v){this.x+=v.x;this.y+=v.y;this.z+=v.z;return this;}
   distanceToSquared(v){return (this.x-v.x)**2+(this.y-v.y)**2+(this.z-v.z)**2;}
 }
-let xr=true,seen=0,pathCalls=0,checks=0,issued=0;
+let xr=true,seen=0,pathCalls=0,checks=0,issued=0,vastPaths=0,gridBuilds=0;
 const sheep=n=>({id:'sheep-'+n,kind:'sheep',pos:new V3(n*10,0,0),
   home:new V3(n*10,0,0),botIndex:n,nextBuildAt:0,phase:n,base:null});
 const one=sheep(0),two=sheep(1),third=sheep(2);
@@ -23,7 +23,8 @@ const ctx={window:{},THREE:{Vector3:V3},stSession:state,
   stPath:(_start,target)=>{pathCalls++;return [target];},
   stCanBuild:(_kind,x,z)=>{checks++;return {ok:checks>=3,x,z};},
   stObstacles:()=>[],stFootprint:(x,z)=>({x,z,halfX:1.2,halfZ:1.2}),
-  stBuildNavigation:()=>({}),stFindPath:()=>[new V3(1,0,1)],
+  stBuildNavigation:()=>{gridBuilds++;return {};},stFindPath:()=>[new V3(1,0,1)],
+  stVastFindPath:()=>{vastPaths++;return [new V3(1,0,1)];},
   stIssueBuild:()=>{issued++;return {ok:true};},
   stSeenByRole:entity=>{seen++;return !entity.captured;}
 };
@@ -51,6 +52,8 @@ assert.equal(checks,2);
 step();
 assert.equal(ctx.se393PlanSheepBuild(one),true,'third site accepted');
 assert.equal(checks,3);assert.equal(issued,1);
+assert.equal(gridBuilds,0,'vast-map bot validation must not allocate huge nav grids');
+assert.equal(vastPaths,1,'original vast-map reachability route stays active');
 assert.equal(one.se393Build,null);
 assert.equal(one.aiIntent,'build a compact maze with a viable sheep exit');
 d=ctx.window.SWYRL_ENGINE_SHEEP_AI_FRAME_BUDGET_393.diagnose();
