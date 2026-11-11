@@ -1,4 +1,4 @@
-/* §C experimental local streaming microphone: on-device Vosk WASM.
+/* §C local streaming microphone v2: cached Vosk WASM and bounded end-of-utterance detection.
  * No paid speech endpoint. Microphone samples never go to §C or a hosted ASR.
  * English ~41MB model and Apache-2.0 library download only after user opts in.
  * Existing Chat send, Station streaming, and browser TTS remain authoritative.
@@ -7,6 +7,11 @@
   "use strict";
   const LIBRARY_URL = "https://cdn.jsdelivr.net/npm/vosk-browser@0.0.5/dist/vosk.js";
   const MODEL_URL = "https://huggingface.co/Andesprit/vosk-small/resolve/main/vosk-model-small-en-us-0.15.tar.gz";
+  const MODEL_CACHE = "swrlz-vosk-en-015-v1";
+  // Vosk's native final event depends on enough trailing silence. On Android
+  // a partial transcript can remain forever without a terminal event.
+  const QUIET_FINAL_MS = 1200;
+  const STALE_PARTIAL_MS = 2200;
   let libraryPromise = null;
   let modelPromise = null;
   let model = null;
@@ -20,6 +25,7 @@
     microphone = null;
     if (!previous) return;
     previous.processor.onaudioprocess = null;
+    if (previous.watchdog) clearTimeout(previous.watchdog);
     try { previous.processor.disconnect(); } catch (_) {}
     try { previous.source.disconnect(); } catch (_) {}
     try { previous.silentGain.disconnect(); } catch (_) {}
@@ -43,16 +49,50 @@
     return libraryPromise;
   };
 
+  const archiveSource = async status => {
+    // CacheStorage preserves the ~41 MB compressed model across page reloads.
+    // Browsers may evict it under storage pressure; never require persistence.
+    if (!window.caches || !window.URL?.createObjectURL)
+      return { url: MODEL_URL, revoke: () => {} };
+    let cache = null;
+    try { cache = await window.caches.open(MODEL_CACHE); } catch (_) {}
+    if (!cache) return { url: MODEL_URL, revoke: () => {} };
+    let response = null;
+    try { response = await cache.match(MODEL_URL); } catch (_) {}
+    if (response) {
+      status?.("Opening cached local speech model…");
+    } else {
+      status?.("Downloading local speech model · first use ~41 MB…");
+      response = await fetch(MODEL_URL, { mode: "cors", credentials: "omit" });
+      if (!response.ok || response.type === "opaque")
+        throw new Error("Local speech model download failed");
+      // A cache-write failure must not waste the successfully fetched model.
+      try { await cache.put(MODEL_URL, response.clone()); } catch (_) {}
+    }
+    const blob = await response.blob();
+    if (blob.size < 35_000_000 || blob.size > 50_000_000)
+      throw new Error("Local speech model archive was incomplete");
+    const url = window.URL.createObjectURL(blob);
+    return { url, revoke: () => window.URL.revokeObjectURL(url) };
+  };
+
   const loadModel = async status => {
     if (model) return model;
     const epoch = modelEpoch;
     if (!modelPromise) {
       modelPromise = (async () => {
-        status?.("Loading local recognition · ~41 MB model download…");
+        status?.("Preparing on-device speech recognition…");
         const library = await loadLibrary();
-        const loaded = await library.createModel(MODEL_URL);
-        if (!loaded || typeof loaded.KaldiRecognizer !== "function") throw new Error("Local model initialization failed");
-        return loaded;
+        const archive = await archiveSource(status);
+        try {
+          status?.("Initializing cached local speech engine…");
+          const loaded = await library.createModel(archive.url);
+          if (!loaded || typeof loaded.KaldiRecognizer !== "function")
+            throw new Error("Local model initialization failed");
+          return loaded;
+        } finally {
+          archive.revoke();
+        }
       })().catch(error => { modelPromise = null; throw error; });
     }
     const loaded = await modelPromise;
@@ -104,31 +144,99 @@
           throw new Error("Streaming audio processor unavailable");
         recognizer = new available.KaldiRecognizer();
         recognizer.setWords?.(false);
+        let latestPartial = "";
+        let lastPartialAt = 0;
+        let lastLoudAt = 0;
+        let firstLoudAt = 0;
+        let loudFrames = 0;
+        let frames = 0;
+        let emitted = false;
+        let reportedInput = false;
+        let reportedStall = false;
+        const finishUtterance = text => {
+          const words = String(text || "").trim();
+          if (active !== token || emitted || !words) return;
+          emitted = true;
+          onFinal?.(words); // Talk calls recognizer.stop() and canonical send.
+        };
         recognizer.on("partialresult", event => {
-          if (active === token && event?.result?.partial)
-            onPartial?.(String(event.result.partial));
+          if (active !== token || emitted) return;
+          const partial = String(event?.result?.partial || "").trim();
+          if (partial) {
+            if (partial !== latestPartial) lastPartialAt = Date.now();
+            latestPartial = partial;
+            onPartial?.(partial);
+          }
         });
         recognizer.on("result", event => {
+          if (active !== token || emitted) return;
           const transcription = String(event?.result?.text || "").trim();
-          if (active === token && transcription) onFinal?.(transcription);
+          finishUtterance(transcription || latestPartial);
         });
         processor = context.createScriptProcessor(4096, 1, 1);
         source = context.createMediaStreamSource(stream);
         silentGain = context.createGain();
         silentGain.gain.value = 0;
         processor.onaudioprocess = event => {
-          if (active !== token) return;
-          try { recognizer.acceptWaveform(event.inputBuffer); }
-          catch (_) { onError?.("Local recognition audio processing failed"); }
+          if (active !== token || emitted) return;
+          const input = event?.inputBuffer;
+          if (!input?.getChannelData) {
+            onError?.("Microphone supplied no audio buffer");
+            return;
+          }
+          const pcm = input.getChannelData(0);
+          if (!pcm?.length) return;
+          frames++;
+          const now = Date.now();
+          // Lightweight energy-based end-of-utterance detection. The audio
+          // remains local; only an RMS number is observed, never persisted.
+          let power = 0, count = 0;
+          for (let i = 0; i < pcm.length; i += 32) {
+            power += pcm[i] * pcm[i];
+            count++;
+          }
+          const rms = Math.sqrt(power / Math.max(1, count));
+          if (rms >= 0.012) {
+            if (!firstLoudAt) firstLoudAt = now;
+            lastLoudAt = now;
+            loudFrames++;
+          }
+          if (!reportedInput && frames >= 3) {
+            reportedInput = true;
+            onStatus?.("Local microphone audio received · listening…");
+          }
+          // Always feed Vosk; do not let the energy meter suppress speech.
+          try { recognizer.acceptWaveform(input); }
+          catch (_) { onError?.("Local speech decoder rejected microphone audio"); return; }
+          if (active !== token || emitted) return;
+          const partialAge = lastPartialAt ? now - lastPartialAt : 0;
+          const quiet = loudFrames >= 3 && lastLoudAt && now - lastLoudAt >= QUIET_FINAL_MS;
+          const finalQuiet = quiet && partialAge >= 650;
+          const stalledPartial = lastPartialAt && partialAge >= STALE_PARTIAL_MS;
+          if (latestPartial && (finalQuiet || stalledPartial)) {
+            finishUtterance(latestPartial);
+          } else if (frames >= 65 && !latestPartial && !reportedStall) {
+            reportedStall = true;
+            onStatus?.("Microphone audio confirmed · waiting for local transcript…");
+          } else if (firstLoudAt && loudFrames >= 8 &&
+                     now - firstLoudAt >= 15000 && !latestPartial) {
+            onError?.("Microphone audio reached Vosk, but no words were recognized");
+          }
         };
         // A silent destination connection keeps ScriptProcessor pumping.
         // No monitor/audio feedback through speakers.
         source.connect(processor);
         processor.connect(silentGain);
         silentGain.connect(context.destination);
-        microphone = { stream, context, source, processor, silentGain, recognizer };
+        microphone = { stream, context, source, processor, silentGain, recognizer, watchdog: 0 };
         if (context.state === "suspended") await context.resume();
-        if (active === token) onStatus?.("Local streaming · listening on this device…");
+        if (active === token) {
+          onStatus?.("Local model ready · checking microphone audio…");
+          microphone.watchdog = setTimeout(() => {
+            if (active === token && !frames)
+              onError?.("Mic opened, but browser delivered no audio frames");
+          }, 5000);
+        }
       } catch (error) {
         processor?.disconnect?.();
         source?.disconnect?.();
