@@ -28,7 +28,7 @@ m = json.loads((ROOT / 'source-manifest.json').read_text())
 assert m['name'] == '§wyrl§ Engine ' + VERSION
 assert m['finalArtifact'] == 'swyrl_engine_v11_417.html'
 assert len(m['patches']) == 398
-assert m['patches'][-6:] == [
+assert m['patches'][-7:] == [
     'patches/v11_411_sheep_quest_ai_frame_budget.py',
     'patches/v11_412_apprentice_satchel_tutorial.py',
     'patches/v11_413_satchel_vr_tutorial.py',
