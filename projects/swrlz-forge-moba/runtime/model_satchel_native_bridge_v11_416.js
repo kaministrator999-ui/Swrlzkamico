@@ -2,7 +2,7 @@
  * Lives in the native Model Atelier lexical scope and delegates only validated
  * edits. The tutorial cannot mutate meshes through cloned button previews.
  */
-(function se415ExposeNativeSatchel(){
+(function se416ExposeNativeSatchel(){
  'use strict';
  const lesson=()=>currentProject?.se412Tutorial==='satchel-001';
  function valid(parts){
