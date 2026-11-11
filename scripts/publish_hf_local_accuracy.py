@@ -61,10 +61,10 @@ def prepare(api: HfApi) -> None:
         raise RuntimeError("Live Chat must be v1.1.36; preserve newer updates")
     revised=once(html,version.group(0),
         '<meta name="swrlz-chat-version" content="1.1.37">',"meta")
-    revised=once(revised,'const SWRLZ_CHAT_VERSION = "1.1.37";',
+    revised=once(revised,'const SWRLZ_CHAT_VERSION = "1.1.36";',
         'const SWRLZ_CHAT_VERSION = "1.1.37";',"js version")
     revised=once(revised,
-        '/chat/§wyrlz/assets/local_voice_vosk.js?v=1.1.37',
+        '/chat/§wyrlz/assets/local_voice_vosk.js?v=1.1.36',
         '/chat/§wyrlz/assets/local_voice_vosk.js?v=1.1.37',"asset cache bust")
     if revised.count('id="voiceConversationButton"')!=1 or revised.count('value="turbo"')!=1:
         raise RuntimeError("Chat UI controls changed unexpectedly")
