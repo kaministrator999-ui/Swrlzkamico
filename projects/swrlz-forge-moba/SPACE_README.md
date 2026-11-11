@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.415
+title: §wyrl§ Engine v11.416
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -10,6 +10,10 @@ header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
 
+
+## §E v11.416 · Object Index and per-mesh selection silhouettes (2026-11-11)
+
+Model Studio VR now has an **Objects** tab for named mesh selection and additive/toggle multi-selection across paged objects. Every selected mesh receives a transient silhouette accent; the original single/multi transform and selection system remains authoritative. The tab is part of the existing independently positioned world-space console and is not head-following. Quest 2 acceptance test remains pending.
 
 ## §E v11.415 · Clear tool pictograms throughout Model Studio VR (2026-11-11)
 
