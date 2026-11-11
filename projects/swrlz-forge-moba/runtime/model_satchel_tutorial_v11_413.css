@@ -1,0 +1,11 @@
+/* §E v11.413: concise, collapsible three-angle visual modeling examples. */
+#se413Examples {margin:9px 0;border:1px solid #665080;border-radius:8px;background:#221b30;padding:7px 9px;}
+#se413Examples summary {cursor:pointer;color:#e5ceff;min-height:28px;font-size:12px;}
+#se413Views {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin:7px 0 3px;}
+#se413Views>div {min-width:0;text-align:center;border-radius:7px;border:1px solid #58466b;background:#32243f;padding:3px;}
+#se413Views small {display:block;color:#d7bef3;font-size:10px;}
+#se413Views svg {display:block;max-width:100%;height:auto;aspect-ratio:124/87;}
+#se413Examples p {font-size:10px!important;line-height:1.3!important;color:#c7b7db!important;margin:7px 0 2px!important;}
+#se412Panel .se413-tool-link {display:block;width:100%;min-height:35px;margin-top:7px;background:#513969;border:1px solid #9980bf;border-radius:7px;color:#f7ebff;font-size:11px;cursor:pointer;}
+#se412Panel .se413-tool-link:focus-visible {outline:2px solid white;}
+@media(max-width:699px){#se413Views{gap:3px}#se413Examples{padding:6px}#se413Views small{font-size:9px}}
