@@ -22,8 +22,9 @@ def apply(html):
           projects+'\n window.SWYRL_ENGINE_TUTORIAL_412=Object.freeze(')
  html=one(html,"window.SWRLZ_FORGE_BUILD={version:'v11.422'",
           levels+"\nwindow.SWRLZ_FORGE_BUILD={version:'v11.422'")
- html=one(html,'</head>',
-          '<style id="se423ProjectMenuScroll">'+css+'</style>\n</head>')
+ assert html.index('</head>')<html.index('<body')
+ html=html.replace('</head>',
+          '<style id="se423ProjectMenuScroll">'+css+'</style>\n</head>',1)
  for old,new in [
   ('SWYRL_ENGINE_DEPLOY_MARKER: V11_422_PROJECT_TUTORIAL_HUB_RECOVERY',MARKER),
   ('ENGINE · MAKER v11.422','ENGINE · MAKER v11.423'),
