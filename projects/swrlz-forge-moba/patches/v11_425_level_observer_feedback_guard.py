@@ -100,3 +100,5 @@ seLevelsEnsureUI=function se425EnsureLevels(...args){
  return html[:at]+json.dumps(notes,ensure_ascii=False,separators=(',',':')).replace('</','<\\/')+html[at+n:]
 
 # Source-chain test entry: the 406-patch candidate requires live Chromium acceptance.
+
+# Re-run acceptance after the inherited boot gate's 11-second watchdog.
