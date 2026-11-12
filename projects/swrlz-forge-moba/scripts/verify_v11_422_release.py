@@ -119,8 +119,16 @@ runtime_files += [
 for name in runtime_files:
     p = ROOT / 'runtime' / name
     subprocess.run(['node', '--check', str(p)], check=True)
-    assert 'requestAnimationFrame(' not in p.read_text(), name
-    assert 'setAnimationLoop(' not in p.read_text(), name
+    js = p.read_text()
+    if name == 'project_tutorial_hub_recovery_v11_422.js':
+        # Exactly two one-shot Projects-dialog scheduling calls; not an
+        # independent rendering or WebXR frame loop.
+        assert js.count('requestAnimationFrame(') == 2, name
+        assert js.count('requestAnimationFrame(schedule)') == 2, name
+        assert 'setAnimationLoop(' not in js, name
+    else:
+        assert 'requestAnimationFrame(' not in js, name
+        assert 'setAnimationLoop(' not in js, name
 subprocess.run(['node', '--check', str(ROOT / 'runtime/model_satchel_tutorial_v11_412.js')], check=True)
 subprocess.run(['node', str(ROOT / 'tests/satchel_academy_v11_416.cjs')], check=True)
 subprocess.run(['node', str(ROOT / 'tests/model_vr_menu_stability_v11_421.cjs')], check=True)
