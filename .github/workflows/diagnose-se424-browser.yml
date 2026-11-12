@@ -1,0 +1,26 @@
+name: Diagnose §E real browser startup and project tabs
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/diagnose-se424-browser.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  diagnose:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Build source sealed v11.423 engine page
+        run: python projects/swrlz-forge-moba/scripts/verify_v11_423_release.py --output /tmp/se-browser-boot
+      - name: Install headless Chromium
+        run: |
+          npm install --no-save playwright@1.56.1
+          npx playwright install --with-deps --only-shell chromium
+      - name: Load native project hub and viewport with real page scripts
+        run: node projects/swrlz-forge-moba/tests/diagnose_browser_boot_v11_424.cjs
