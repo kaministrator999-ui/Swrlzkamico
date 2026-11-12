@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.417
+title: §wyrl§ Engine v11.418
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,10 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.418 · Sheep Tag AI flock selector (2026-11-11)
+
+**Main Menu → Start Game** now asks how many AI sheep teammates should join your solo match. Select **0–5** on the starter map (up to 8 when authored sheep spawns allow) using +/−, the range control or the Quest VR radial menu; **Start Match** launches the existing game with that roster. The player-controlled sheep is not counted as an AI teammate. These are session-only changes: saved maps, wolf AI and multiplayer match authority remain unchanged. Retains v11.417 Model VR Object Index, highlighting and v11.416 Satchel Academy. Physical Quest acceptance remains pending.
 
 ## §E v11.417 · Model VR Object Index and mesh silhouette (2026-11-11)
 
