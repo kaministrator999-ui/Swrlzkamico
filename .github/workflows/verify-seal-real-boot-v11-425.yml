@@ -5,6 +5,7 @@ on:
     paths:
       - ".github/workflows/verify-seal-real-boot-v11-425.yml"
       - "projects/swrlz-forge-moba/patches/v11_425_level_observer_feedback_guard.py"
+      - "projects/swrlz-forge-moba/tests/ui_real_boot_v11_425.cjs"
   workflow_dispatch:
 permissions:
   contents: write
