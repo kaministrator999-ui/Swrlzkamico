@@ -1,0 +1,48 @@
+name: Measure §E v11.418 Sheep Tag flock source and verify
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/measure-v11-418-sheep-team-seal.yml'
+permissions:
+  contents: read
+jobs:
+  receipt:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - name: Apply Sheep Tag flock to the shipped sealed v11.417
+        run: |
+          set -eu
+          ROOT=projects/swrlz-forge-moba
+          node --check "$ROOT/runtime/sheep_team_setup_v11_416.js"
+          node "$ROOT/tests/test_sheep_flock_setup_v11_416.cjs"
+          python -m py_compile "$ROOT/patches/v11_418_sheep_flock_setup.py"
+          python "$ROOT/build_space.py" --output /tmp/se417-base > /tmp/se417-source-build.json
+          python - <<'PY'
+          from pathlib import Path
+          import importlib.util,hashlib,json
+          root=Path('projects/swrlz-forge-moba')
+          raw=Path('/tmp/se417-base/index.html').read_bytes()
+          spec=importlib.util.spec_from_file_location('flock',root/'patches/v11_418_sheep_flock_setup.py')
+          module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
+          output=module.apply(raw.decode('utf8')).encode('utf8')
+          Path('/tmp/se418-candidate.html').write_bytes(output)
+          h=hashlib.sha256(output).hexdigest()
+          print('SE418_RECEIPT_BYTES='+str(len(output)),flush=True)
+          print('SE418_RECEIPT_SHA256='+h,flush=True)
+          mpath=root/'source-manifest.json'
+          m=json.loads(mpath.read_text('utf8'))
+          assert m['name']=='§wyrl§ Engine v11.417'
+          assert m['patches'][-1]=='patches/v11_417_model_vr_object_index.py'
+          m.update(name='§wyrl§ Engine v11.418',finalArtifact='swyrl_engine_v11_418.html',finalBytes=len(output),finalSha256=h)
+          m['patches'].append('patches/v11_418_sheep_flock_setup.py')
+          mpath.write_text(json.dumps(m,indent=2)+'\n','utf8')
+          PY
+          python "$ROOT/scripts/check_inline_js_syntax_v11_266.py" /tmp/se418-candidate.html
+      - name: Validate the complete provisional sealed v11.418 package
+        run: python projects/swrlz-forge-moba/scripts/verify_v11_418_release.py --output /tmp/se418-verified
