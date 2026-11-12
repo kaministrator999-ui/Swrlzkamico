@@ -61,7 +61,14 @@ setTimeout(()=>{if(!complete){console.error('SE425_BOOT_TIMEOUT: browser never s
  assert.ok(snap.levels?.owned,'current scene owns its level package');
  assert.ok(snap.levelBarAttached&&snap.levelBarVisible,'native level selector must be visible');
  assert.ok(snap.footer.includes('170 parts'),'authored 170-part Dragon Den must be populated');
- await bounded(page.locator('#projectBtn').click({timeout:6000,force:true}),'Projects open');
+ // The first-run release notes are modal; dismiss them using the real Continue
+ // control before interacting with the editor, exactly as a human must.
+ const whatsNew=page.locator('#seReleaseNotesDialog');
+ if(await whatsNew.count()&&await whatsNew.evaluate(el=>el.open)){
+  await bounded(page.locator('#seReleaseNotesClose').click({timeout:6000}),'Dismiss release notes');
+  console.log('SE425_RELEASE_NOTES_DISMISSED');
+ }
+ await bounded(page.locator('#projectBtn').click({timeout:6000}),'Projects open');
  await page.waitForTimeout(250);
  const open=await bounded(page.evaluate(()=>{
   const hub=document.querySelector('#projectHub');
