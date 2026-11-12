@@ -48,3 +48,5 @@ def apply(html):
    'Provide focused runtime diagnostics for Project hub and level controls, without adding a frame loop or changing Sheep Tag gameplay.'
   ])
  return html[:at]+json.dumps(notes,ensure_ascii=False,separators=(',',':')).replace('</','<\\/')+html[at+n:]
+
+# Seal trigger: the native starter and level recovery are integrated after v11.422.
