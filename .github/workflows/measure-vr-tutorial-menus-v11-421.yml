@@ -3,7 +3,7 @@ on:
   push:
     branches: [main]
     paths:
-      - ".github/workflows/measure-vr-tutorial-menus-v11-420.yml"
+      - ".github/workflows/measure-vr-tutorial-menus-v11-421.yml"
       - "projects/swrlz-forge-moba/patches/v11_421_vr_tutorial_menu_interaction.py"
       - "projects/swrlz-forge-moba/runtime/model_vr_menu_stability_v11_421.js"
       - "projects/swrlz-forge-moba/tests/model_vr_menu_stability_v11_421.cjs"
