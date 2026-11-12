@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.424
+title: §wyrl§ Engine v11.425
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -10,6 +10,10 @@ header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
 
+
+## §E v11.425 · Responsive editor startup and stable level controls (2026-11-12)
+
+A full mobile-sized Chromium run confirmed that the restored 170-part Embervault Dragon Den, Project Levels selector, all three native Projects tabs, vertical project-window scrolling, Tutorials and My Projects switching work after a targeted startup repair. The cause was a v11.423 level-toolbar observer feedback loop that reacted to harmless control reordering, moved DOM controls and rebuilt selectors repeatedly. The v11.425 correction leaves attached controls in the editor's chosen position and reattaches them only after actual detachment, preserving project/account data and level packs. Real Moto and Quest acceptance remains to be checked.
 
 ## §E v11.424 · Fix full editor startup (2026-11-11)
 
