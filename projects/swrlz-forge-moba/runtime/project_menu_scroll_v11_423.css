@@ -1,0 +1,26 @@
+/* §E v11.423 - native Projects dialog remains scrollable with three tabs. */
+#projectHub.project-hub.show .project-window{
+ touch-action:pan-y!important;
+ overflow-y:auto!important;
+ overflow-x:hidden!important;
+ overscroll-behavior-y:contain;
+ -webkit-overflow-scrolling:touch;
+ scrollbar-width:auto;
+ min-height:0!important;
+}
+#projectHub.project-hub.show :is(.se170-hub-pane,.project-grid,.se170-project-list,.project-card,.se170-hub-tabs){
+ touch-action:pan-y;
+}
+#projectHub.project-hub.show .se170-hub-tabs{
+ display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;
+ gap:4px!important;
+}
+#projectHub.project-hub.show .se170-hub-tabs button{
+ min-width:0!important;min-height:44px!important;
+ flex:unset!important;white-space:normal!important;overflow-wrap:break-word;
+}
+@media(max-height:500px){
+ #projectHub.project-hub.show .project-window{
+  max-height:calc(100dvh - 12px)!important;
+ }
+}
