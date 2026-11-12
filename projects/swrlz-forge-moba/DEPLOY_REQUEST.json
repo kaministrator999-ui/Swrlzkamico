@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.422",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_422_PROJECT_TUTORIAL_HUB_RECOVERY",
-  "reason": "Deploy full source-verified §E v11.422 Projects tutorial tab recovery. The tutorial installer no longer silently gives up if native Starter/My Projects tabs load later or are reconstructed; scoped DOM recovery and single native se170 tab-state navigation restore the missing Tutorials pane and button. Three-tab responsive layout remains visible on Moto/Quest. Keeps all starter cards, original account projects, local/model tutorial progress and existing Save Project/Save to Account; no project reset. 403 ordered patches, 9754056 exact HTML bytes, SHA-256 7582a70536e745f923eb2e4689013c59d9d7ef5b7c75f509aa03fa96301504f7. GitHub Actions full source and regression verification successful run 43149209045, focused simulated DOM recovery test successful. Physical Quest/phone acceptance pending.",
-  "sourceCommit": "0a449735d2b3a75441bedf476cb530bb9582613d",
-  "sourceIntegritySha256": "7582a70536e745f923eb2e4689013c59d9d7ef5b7c75f509aa03fa96301504f7"
+  "releaseVersion": "v11.423",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_423_PROJECT_LEVEL_MENU_RECOVERY",
+  "reason": "Publish source-sealed §E v11.423 restoring Starter Projects, My Projects and Tutorials tab navigation, vertical phone/Quest project-dialog scrolling, and existing game-editor Project Levels selector after toolbar rebuilds. Preserve account saves, starter cards, saved level collection and tutorial progress. 404 verified patches; source bytes 9763237; SHA-256 264d34832be20d6bcbe59945fa35eb4e54a029e77263173883f4506146426c97. Source verified by GitHub Actions measurement run 43152854361; targeted v11.423 UI controls test and full package verifier are required by deployment workflow. Physical Moto/Quest acceptance pending.",
+  "sourceCommit": "d187628aba4ce988ae797100090ffdcdaf4fb71e",
+  "sourceIntegritySha256": "264d34832be20d6bcbe59945fa35eb4e54a029e77263173883f4506146426c97"
 }
