@@ -1,0 +1,66 @@
+name: Measure and seal §E v11.423 project and level menu recovery
+on:
+  push:
+    branches: [main]
+    paths:
+      - "projects/swrlz-forge-moba/patches/v11_423_project_level_menu_recovery.py"
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  seal:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Verify runtime and inherited project recovery
+        run: |
+          node --check projects/swrlz-forge-moba/runtime/project_menu_recovery_v11_423.js
+          node --check projects/swrlz-forge-moba/runtime/level_selector_recovery_v11_423.js
+          node projects/swrlz-forge-moba/tests/project_tutorial_hub_recovery_v11_422.cjs
+      - name: Measure 404-patch source and seal manifest
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import json,base64,gzip,hashlib,importlib.util,subprocess,sys,tempfile
+          root=Path('projects/swrlz-forge-moba').resolve()
+          path=root/'source-manifest.json'
+          manifest=json.loads(path.read_text('utf8'))
+          assert manifest['name']=='§wyrl§ Engine v11.423', manifest['name']
+          assert len(manifest['patches'])==404
+          assert manifest['patches'][-1]=='patches/v11_423_project_level_menu_recovery.py'
+          data=gzip.decompress(base64.b64decode(''.join((root/p).read_text().strip() for p in manifest['chunks'])))
+          assert len(data)==manifest['baseBytes'] and hashlib.sha256(data).hexdigest()==manifest['baseSha256']
+          source=data.decode('utf8')
+          for i,rel in enumerate(manifest['patches']):
+              p=root/rel
+              spec=importlib.util.spec_from_file_location('engine_patch_'+str(i),p)
+              module=importlib.util.module_from_spec(spec)
+              spec.loader.exec_module(module)
+              source=module.apply(source)
+          raw=source.encode('utf8')
+          for marker in ('SE423_PROJECT_MENU_RECOVERY_START',
+                         'SE423_LEVEL_SELECTOR_RECOVERY_START',
+                         'SWYRL_ENGINE_DEPLOY_MARKER: V11_423_PROJECT_LEVEL_MENU_RECOVERY'):
+              assert marker in source,marker
+          html=Path(tempfile.gettempdir())/'se423_engine.html'
+          html.write_bytes(raw)
+          subprocess.run([sys.executable,str(root/'scripts/check_inline_js_syntax_v11_266.py'),str(html)],check=True)
+          manifest.update(finalBytes=len(raw),finalSha256=hashlib.sha256(raw).hexdigest())
+          path.write_text(json.dumps(manifest,ensure_ascii=False,indent=2)+'\n','utf8')
+          print('SE423_SOURCE_BYTES='+str(len(raw)))
+          print('SE423_SOURCE_SHA256='+manifest['finalSha256'])
+          print('SE423_SOURCE_PATCHES='+str(len(manifest['patches'])))
+          PY
+      - name: Commit verified source integrity seal
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add projects/swrlz-forge-moba/source-manifest.json
+          git diff --cached --exit-code && exit 0 || true
+          git commit -m "release(§E): seal measured v11.423 project and level controls"
+          git push origin HEAD:main
