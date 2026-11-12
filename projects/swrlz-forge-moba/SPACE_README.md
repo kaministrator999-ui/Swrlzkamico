@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.421
+title: §wyrl§ Engine v11.422
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -10,6 +10,10 @@ header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
 
+
+## §E v11.422 · Projects Tutorials tab recovery (2026-11-11)
+
+The native Projects dialog now reliably exposes **Starter Projects / My Projects / Tutorials** together in a compact, responsive tab row on phone and Quest screens. Apprentice Satchel no longer depends on one lucky mount order: when the native se170 project hub appears late, the tutorial installer invokes it and adds the tutorial entry; a scoped observer recovers missing panes or tabs after dialog reconstruction. All three choices use the original native project tab selection, so inactive panels are hidden correctly instead of overlapping. The tutorial Start/Resume actions still operate on the existing independent model project, local progress and explicit Save Project/Save to Account flows. Starter cards and saved account projects are not rebuilt, deleted, or replaced. A read-only diagnostic inspection hook is available to verify tab registration. Browser/device acceptance remains pending.
 
 ## §E v11.421 · Reliable Model VR tutorial interaction (2026-11-11)
 
