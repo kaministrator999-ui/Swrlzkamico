@@ -1,3 +1,7 @@
+## §E v11.424 · Normal project library and scene startup
+
+When the engine starts, it should load the default authored scene, register Starter Projects / My Projects / Tutorials, and expose the Project Levels control when the selected project supports multiple levels. The v11.424 fix addresses a JavaScript startup error from the Sheep Tag VR team selector, not missing project data. Existing saves are preserved. A full mobile-browser startup check complements the source-sealed build, followed by owner device confirmation.
+
 ## §E v11.423 · Projects tabs and game levels
 
 Open **Projects** to use **Starter Projects**, **My Projects**, or **Tutorials**, and swipe vertically inside the project window to scroll through all starters on Android/Quest. When opening Sheep Tag or another multi-level game project in Edit mode, **Project Levels** is reattached beside the editor Play controls if the toolbar was rebuilt. Saved levels and satchel progress are preserved; device acceptance follows the published build.
