@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.424",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_424_SHEEP_MENU_SCOPE_STARTUP",
-  "reason": "Deploy source-sealed §E v11.424 scope repair for browser-confirmed ReferenceError se416Show is not defined. The v11.420 Sheep Tag setup radial bridge now runs in the lexical closure that defines the se416Show teammate selector, preserving original menu behavior. Previous v11.423 failed full-browser bootstrap with only starter categories and 0 scene actors. New v11.424 Chromium check with automatic default scene load intentionally disabled confirms native Starter Projects, My Projects and Tutorials tabs, plus the Starter Games/Models/Particles categories all register without a page exception. Source 405 patches, 9764128 bytes, SHA-256 be34cded54e74ebd9f7983cb92fc1ee36ed734e826296312430f2395eba0cb47. Actual default-scene startup continues to stall in headless SwiftShader testing, so phone/Quest 3D scene acceptance remains unconfirmed; do not claim fully fixed. Preserve saved projects and scene data.",
-  "sourceCommit": "51fef89a568e730a8d64b364ede8da13eb431f0b",
-  "sourceIntegritySha256": "be34cded54e74ebd9f7983cb92fc1ee36ed734e826296312430f2395eba0cb47"
+  "releaseVersion": "v11.425",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_425_LEVEL_OBSERVER_FEEDBACK_GUARD",
+  "reason": "Publish source-sealed §wyrl§ Engine v11.425 after GitHub Actions real mobile-sized Chromium acceptance run 43175884164 passed. Fix a self-triggering level toolbar MutationObserver introduced by v11.423: restore only detached controls and preserve existing editor-chosen ordering; prevent repeated UI select/DOM rebuilding that blocked the startup splash. Verified end-to-end: normal 170-part Dragon Den loads, native level selector is visible, startup reaches Workspace ready, Starter Projects/My Projects/Tutorials navigation and vertical Projects scrolling operate, and both My Projects and Tutorials panes are clickable after the normal first-launch update modal is dismissed. Existing saved projects, level packs, original Sheep Tag/VR interactions and account storage untouched. Exact 406-patch bytes 9765730; SHA256 6bf6ef747c2beb07426ffcb27b9a3c0e483a437b8dad55ae90899d87ab56df1d. Owner Moto/Quest acceptance pending.",
+  "sourceCommit": "981d382577a4118091dff22be4a6b25b35a1d822",
+  "sourceIntegritySha256": "6bf6ef747c2beb07426ffcb27b9a3c0e483a437b8dad55ae90899d87ab56df1d"
 }
