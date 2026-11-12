@@ -422,6 +422,6 @@
     "patches/v11_424_sheep_menu_scope_startup.py",
     "patches/v11_425_level_observer_feedback_guard.py"
   ],
-  "finalBytes": 0,
-  "finalSha256": ""
+  "finalBytes": 9765730,
+  "finalSha256": "6bf6ef747c2beb07426ffcb27b9a3c0e483a437b8dad55ae90899d87ab56df1d"
 }
