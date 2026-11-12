@@ -1,3 +1,7 @@
+## §E v11.421 · More usable Model VR satchel window
+
+Projects → Tutorials → Apprentice Satchel → Resume → Enter Model VR. The tutorial now appears only after headset placement is ready, independently to the right of the normal world-space tools. Aim the Quest controller ray at a tutorial button and press Trigger; selected controls visibly highlight. Grip the tutorial window and move/rotate your controller to reposition it, then release. Model camera orbit should no longer relocate the menu, and the larger tool and tutorial labels should be easier to read. Model controls and Sheep Tag are unchanged; physical Quest 2 confirmation remains outstanding.
+
 ## §E v11.420 · Sheep Tag VR team-size menu interaction fix
 
 In Quest VR, use the same controller ray and trigger as the original Sheep Tag main menu: select **PLAY**, then use **− 1 SHEEP**, **+ 1 SHEEP**, **NO AI SHEEP**, **START MATCH**, or **CANCEL**. The chosen number is displayed at the top of the selector. The panel and button hit areas stay in place as you change counts, so hovering or repeatedly pressing a button no longer rebuilds the whole menu. The existing phone/desktop slider and the v11.419 congestion fix remain unchanged. Quest 2 device confirmation remains pending.
