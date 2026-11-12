@@ -1,3 +1,7 @@
+## §E v11.422 · Projects library tab reliability
+
+Open **Projects** to find **Starter Projects | My Projects | Tutorials**. The Tutorials tab now installs after the native project hub is ready and restores itself after the hub is rebuilt, including on narrow phone/Quest layouts. Start new satchel quest or Resume continues using your original independent tutorial project and existing Save Project/Account controls. No project reset, duplicate starter, or new storage backend was added. Physical Android/Quest validation is still pending.
+
 ## §E v11.421 · More usable Model VR satchel window
 
 Projects → Tutorials → Apprentice Satchel → Resume → Enter Model VR. The tutorial now appears only after headset placement is ready, independently to the right of the normal world-space tools. Aim the Quest controller ray at a tutorial button and press Trigger; selected controls visibly highlight. Grip the tutorial window and move/rotate your controller to reposition it, then release. Model camera orbit should no longer relocate the menu, and the larger tool and tutorial labels should be easier to read. Model controls and Sheep Tag are unchanged; physical Quest 2 confirmation remains outstanding.
