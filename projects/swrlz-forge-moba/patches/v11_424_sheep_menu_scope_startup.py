@@ -58,3 +58,5 @@ def apply(html):
   'Verify in an actual browser with a mobile viewport, not only simulated DOM or JavaScript syntax checks.'
  ])
  return html[:at]+json.dumps(notes,ensure_ascii=False,separators=(',',':')).replace('</','<\\/')+html[at+n:]
+
+# v11.424 source-seal trigger after the 405-patch manifest is staged.
