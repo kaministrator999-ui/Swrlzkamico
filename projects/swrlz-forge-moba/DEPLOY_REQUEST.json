@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.420",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_420_SHEEP_SETUP_MENU_CONTROLS",
-  "reason": "Publish v11.420 Sheep Tag Quest AI teammate-count menu input integration. Owner observed plus/minus dialog not interacting like the original game main menu. Reuse the identical native controller-ray/trigger radial selection, retain 3D button mesh identities after count changes, update only count-heading and action-label textures, show clear min/max states, and replace nonfunctional count wedge with No AI Sheep action. Preserve original mobile/desktop dialog, v11.419 solo Quest AI congestion routing, v11.418 saved-map-safe teammate roster, v11.417 VR Object Index, v11.416 Satchel Academy and multiplayer authority. 401 ordered patches, 77 assets, 9741699 HTML bytes, SHA256 e1fa54fcfe5e1ff07e7b6afd623e4d116d1ef50cbac7e4b35bc5b5f4f30feb2e. Full source-sealed regression and XR UI interaction tests passed GitHub run 43138325136; owner physical Quest acceptance pending.",
-  "sourceCommit": "fdfce089d0c694981bb794ccfc35939071064e02",
-  "sourceIntegritySha256": "e1fa54fcfe5e1ff07e7b6afd623e4d116d1ef50cbac7e4b35bc5b5f4f30feb2e"
+  "releaseVersion": "v11.421",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_421_VR_TUTORIAL_MENU_INTERACTION",
+  "reason": "Publish source-verified §E v11.421 Quest 2 VR tutorial interaction/legibility repair: delay tutorial window until tracked viewer recenter, place independently beside native tool console, keep position and grip-dragged orientation during camera orbit/recenter, fix controller ray selection beyond 1.2m empty-space fallback while preserving nearer real model/tool hits, add native hover/press feedback, increase physical menu text size and angled filtering. Preserve VR Object Index, 7-step Apprentice Satchel, Sheep Tag v11.420 AI setup, existing saves and XR loop. Full 402-patch reconstruction and inherited regression checks passed GitHub Actions 43139488305. 9747997 HTML bytes SHA-256 7761eca6b24b06a4c470d3b27c8197030e37c08312def02f07107eaf9999a752. Physical Quest 2 acceptance remains pending.",
+  "sourceCommit": "16007da94d2ed6fe28de5c7cea216595905fe608",
+  "sourceIntegritySha256": "7761eca6b24b06a4c470d3b27c8197030e37c08312def02f07107eaf9999a752"
 }
