@@ -420,6 +420,6 @@
     "patches/v11_422_project_tutorial_hub_recovery.py",
     "patches/v11_423_project_level_menu_recovery.py"
   ],
-  "finalBytes": 0,
-  "finalSha256": ""
+  "finalBytes": 9763237,
+  "finalSha256": "264d34832be20d6bcbe59945fa35eb4e54a029e77263173883f4506146426c97"
 }
