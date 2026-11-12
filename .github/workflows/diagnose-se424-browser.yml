@@ -17,8 +17,8 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-      - name: Build source sealed v11.423 engine page
-        run: python projects/swrlz-forge-moba/scripts/verify_v11_423_release.py --output /tmp/se-browser-boot
+      - name: Build source sealed v11.424 engine page
+        run: python projects/swrlz-forge-moba/scripts/verify_v11_424_release.py --output /tmp/se-browser-boot
       - name: Install headless Chromium
         run: |
           npm install --no-save playwright@1.56.1
