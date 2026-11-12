@@ -418,6 +418,6 @@
     "patches/v11_420_sheep_setup_menu_controls.py",
     "patches/v11_421_vr_tutorial_menu_interaction.py"
   ],
-  "finalBytes": 9747587,
-  "finalSha256": "f109f7cd7162da1eff9113ea2974342074fd28a0977603e38f0684d844bb2db3"
+  "finalBytes": 9747997,
+  "finalSha256": "7761eca6b24b06a4c470d3b27c8197030e37c08312def02f07107eaf9999a752"
 }
