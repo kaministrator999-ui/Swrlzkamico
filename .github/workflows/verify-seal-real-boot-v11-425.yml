@@ -1,0 +1,71 @@
+name: Verify and seal §E v11.425 responsive real-browser startup
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/verify-seal-real-boot-v11-425.yml"
+      - "projects/swrlz-forge-moba/patches/v11_425_level_observer_feedback_guard.py"
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  full-boot:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Reconstruct exact patch chain, verify observer fix and compute source seal
+        run: |
+          python - <<'PY'
+          import pathlib,json,base64,gzip,hashlib,importlib.util,sys
+          root=pathlib.Path('projects/swrlz-forge-moba').resolve()
+          path=root/'source-manifest.json'
+          m=json.loads(path.read_text('utf8'))
+          assert m['name']=='§wyrl§ Engine v11.425',m['name']
+          assert m['finalArtifact']=='swyrl_engine_v11_425.html'
+          assert len(m['patches'])==406,len(m['patches'])
+          assert m['patches'][-1]=='patches/v11_425_level_observer_feedback_guard.py'
+          raw=gzip.decompress(base64.b64decode(''.join((root/p).read_text().strip() for p in m['chunks'])))
+          assert len(raw)==m['baseBytes'] and hashlib.sha256(raw).hexdigest()==m['baseSha256']
+          src=raw.decode('utf8')
+          for i,rel in enumerate(m['patches']):
+              spec=importlib.util.spec_from_file_location('se425_'+str(i),root/rel)
+              module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
+              src=module.apply(src)
+          assert src.count('SE425_LEVEL_UI_OBSERVER_GUARD')==1
+          assert src.count('se423RepairLevels(){')==1
+          assert src.count('se423WatchLevelToolbar(){')==1
+          assert 'bar.nextSibling!==currentPlay' not in src
+          assert 'SWYRL_ENGINE_DEPLOY_MARKER: V11_425_LEVEL_OBSERVER_FEEDBACK_GUARD' in src
+          assert "window.SWRLZ_FORGE_BUILD={version:'v11.425'" in src
+          content=src.encode('utf8')
+          m['finalBytes']=len(content);m['finalSha256']=hashlib.sha256(content).hexdigest()
+          path.write_text(json.dumps(m,ensure_ascii=False,indent=2)+'\n','utf8')
+          print('SE425_CANDIDATE_SEAL='+json.dumps({'bytes':len(content),'sha256':m['finalSha256'],
+            'patches':len(m['patches'])}))
+          PY
+      - name: Package and verify exact source
+        run: |
+          python projects/swrlz-forge-moba/build_space.py --output /tmp/se425-acceptance
+          python projects/swrlz-forge-moba/scripts/check_inline_js_syntax_v11_266.py /tmp/se425-acceptance/index.html
+          node projects/swrlz-forge-moba/tests/project_tutorial_hub_recovery_v11_422.cjs
+          node projects/swrlz-forge-moba/tests/project_level_controls_v11_423.cjs
+      - name: Install Chromium mobile browser
+        run: |
+          npm install --no-save playwright@1.56.1
+          npx playwright install --with-deps --only-shell chromium
+      - name: Test real default scene and all native Projects tabs with no observer caps
+        run: node projects/swrlz-forge-moba/tests/ui_real_boot_v11_425.cjs
+      - name: Commit validated source hash only after real-browser pass
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add projects/swrlz-forge-moba/source-manifest.json
+          git diff --cached --quiet && exit 0 || true
+          git commit -m "release(§E): seal browser-verified v11.425 startup unfreeze"
+          git push origin HEAD:main
