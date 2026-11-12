@@ -6,6 +6,7 @@ on:
     branches: [main]
     paths:
       - '.github/workflows/verify-forge-v11-418-sheep-release.yml'
+      - 'projects/swrlz-forge-moba/scripts/verify_v11_418_release.py'
 permissions:
   contents: read
 jobs:

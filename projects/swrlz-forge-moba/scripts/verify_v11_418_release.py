@@ -84,7 +84,7 @@ for token in ['SWYRL_ENGINE_SHEEP_AI_FRAME_BUDGET_411','se411PlanSheepBuild(unit
 for marker in ['SE410_ACCESSORY_GEOMETRY_START', 'SE410_MODEL_ACCESSORY_BRIDGE_START',
                'SE410_MODEL_VR_ACCESSORY_WORKSHOP_START', 'SE410_MODEL_VR_ACCESSORY_UI']:
     assert html.count(marker) == 1, marker
-assert html.count(" source.engine='§wyrl§ Engine · Maker v11.418';source.version=11.417;") == 5
+assert html.count(" source.engine='§wyrl§ Engine · Maker v11.418';source.version=11.418;") == 5
 subprocess.run([sys.executable, str(ROOT / 'scripts/check_inline_js_syntax_v11_266.py'),
                 str(out / 'index.html')], check=True)
 runtime_files = [f'{name}_v11_390.js' for name in [
