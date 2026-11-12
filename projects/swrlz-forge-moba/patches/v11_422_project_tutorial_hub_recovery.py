@@ -29,8 +29,9 @@ def apply(html):
         assert required in old,('v11.422 original tutorial hub missing',required)
     assert 'SE422_PROJECT_TUTORIAL_HUB_RECOVERY_START' not in html
     html=html[:a]+js+'\n'+html[b:]
-    assert html.count('function installLibrary(){')==1
-    assert html.count('SWYRL_ENGINE_PROJECT_TUTORIAL_HUB_422')==1
+    assert js.count('function installLibrary(){')==1
+    assert html[a:a+len(js)+1].count('function installLibrary(){')==1
+    assert 'SWYRL_ENGINE_PROJECT_TUTORIAL_HUB_422' in html[a:a+len(js)+1]
     assert html.index('</head>')<html.index('<body')
     html=html.replace('</head>','<style id="se422ProjectTutorialTabs">'+css+'</style>\n</head>',1)
     for old,new in [
