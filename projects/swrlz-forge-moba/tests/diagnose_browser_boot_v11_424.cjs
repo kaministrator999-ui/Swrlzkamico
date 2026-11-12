@@ -3,6 +3,11 @@ const {chromium}=require('playwright');
 const fs=require('node:fs'),path=require('node:path');
 const root='/tmp/se-browser-boot';
 (async()=>{
+ const htmlLines=fs.readFileSync(path.join(root,'index.html'),'utf8').split('\n');
+ const around=htmlLines.slice(74958,74970).map((s,i)=>(74959+i)+': '+s);
+ const symbolRefs=htmlLines.flatMap((s,i)=>s.includes('se416Show')?[{line:i+1,text:s.slice(0,240)}]:[]);
+ console.log('SE424_SOURCE_74964 '+JSON.stringify(around));
+ console.log('SE424_SOURCE_SHOW_REFS '+JSON.stringify(symbolRefs.slice(0,30)));
  const browser=await chromium.launch({headless:true,args:['--no-sandbox','--enable-unsafe-swiftshader','--disable-web-security']});
  const page=await browser.newPage({viewport:{width:390,height:820},isMobile:true,hasTouch:true});
  const errors=[];
