@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.418",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_418_SHEEP_FLOCK_SETUP",
-  "reason": "Publish source-sealed Sheep Tag solo AI sheep team-count chooser before Start Game. Default starter map 0–5 AI teammates; touch/desktop dialog plus Quest VR radial control; roster changes only active solo match, preserves player sheep, wolf rules, LAN authority, native map and saves. Preserve published v11.417 VR Object Index and v11.416 Satchel Academy. 399 patches, 77 assets, 9733089 HTML bytes, SHA256 12229a3edcd1d18fee1507cfa152d200494fc526f92d0767f834d82f6918b18a. Full source-sealed CI verification and functional regression passed in GitHub run 43130901752; physical Quest acceptance remains pending.",
-  "sourceCommit": "0033b300f914e4c74d9384fd68f1c291f981af1d",
-  "sourceIntegritySha256": "12229a3edcd1d18fee1507cfa152d200494fc526f92d0767f834d82f6918b18a"
+  "releaseVersion": "v11.419",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_419_SHEEP_CONGESTION_BUDGET",
+  "reason": "Publish v11.419 solo Quest Sheep Tag AI congestion performance correction: limit all AI sheep movement/collision route searches to one per game tick, probe only one rotating back-out trail candidate per recovery instead of many synchronous A* paths, and stagger backoff for blocked house lanes and failed crowd routes. Preserve v11.418 AI teammate count, human sheep input, unthrottled normal movement, LAN multiplayer, native building rules and all v11.417 VR Object Index / v11.416 Satchel features. 400 source patches, 77 assets, 9737449 HTML bytes, SHA256 0575a493931d9a202e6f31ff7008d578e07c82c689c922aff5d4ca4b3032c02c. Complete source-sealed package/syntax and functional regression passed GitHub run 43136800375. Owner Quest headset performance acceptance remains pending.",
+  "sourceCommit": "2641ca509162262e5ca644cbc7f3b785e082c9cd",
+  "sourceIntegritySha256": "0575a493931d9a202e6f31ff7008d578e07c82c689c922aff5d4ca4b3032c02c"
 }
