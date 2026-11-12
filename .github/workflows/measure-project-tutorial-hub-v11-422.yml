@@ -1,0 +1,54 @@
+name: Measure §E v11.422 restored Projects Tutorials tab
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/measure-project-tutorial-hub-v11-422.yml"
+      - "projects/swrlz-forge-moba/patches/v11_422_project_tutorial_hub_recovery.py"
+      - "projects/swrlz-forge-moba/runtime/project_tutorial_hub_recovery_v11_422.js"
+      - "projects/swrlz-forge-moba/runtime/project_tutorial_hub_recovery_v11_422.css"
+      - "projects/swrlz-forge-moba/tests/project_tutorial_hub_recovery_v11_422.cjs"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  measure:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Verify native three-tab recovery using simulated DOM
+        run: node projects/swrlz-forge-moba/tests/project_tutorial_hub_recovery_v11_422.cjs
+      - name: Reconstruct 403-patch engine candidate and verify inline JS
+        run: |
+          python - <<'PY'
+          import pathlib,json,base64,gzip,hashlib,importlib.util,subprocess,sys,tempfile
+          root=pathlib.Path("projects/swrlz-forge-moba").resolve()
+          m=json.loads((root/"source-manifest.json").read_text())
+          assert m["name"]=="§wyrl§ Engine v11.421" and len(m["patches"])==402
+          raw=gzip.decompress(base64.b64decode("".join((root/n).read_text().strip() for n in m["chunks"])))
+          assert len(raw)==m["baseBytes"] and hashlib.sha256(raw).hexdigest()==m["baseSha256"]
+          html=raw.decode()
+          def apply(rel,n):
+              global html
+              spec=importlib.util.spec_from_file_location("release_"+str(n),root/rel)
+              module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
+              html=module.apply(html)
+          for i,rel in enumerate(m["patches"]):apply(rel,i)
+          assert len(html.encode())==m["finalBytes"] and hashlib.sha256(html.encode()).hexdigest()==m["finalSha256"]
+          apply("patches/v11_422_project_tutorial_hub_recovery.py",len(m["patches"]))
+          data=html.encode("utf8")
+          for token in ["SE422_PROJECT_TUTORIAL_HUB_RECOVERY_START",
+                        "SWYRL_ENGINE_PROJECT_TUTORIAL_HUB_422",
+                        "SWYRL_ENGINE_DEPLOY_MARKER: V11_422_PROJECT_TUTORIAL_HUB_RECOVERY",
+                        "#projectHub .se170-hub-tabs"]:
+              assert token in html,token
+          temp=pathlib.Path(tempfile.gettempdir())/"se422_project_hub.html";temp.write_bytes(data)
+          subprocess.run([sys.executable,str(root/"scripts/check_inline_js_syntax_v11_266.py"),str(temp)],check=True)
+          subprocess.run(["node","--check",str(root/"runtime/project_tutorial_hub_recovery_v11_422.js")],check=True)
+          print("TUTORIAL_HUB_422_FINAL_BYTES="+str(len(data)))
+          print("TUTORIAL_HUB_422_FINAL_SHA256="+hashlib.sha256(data).hexdigest())
+          print("TUTORIAL_HUB_422_PATCHES="+str(len(m["patches"])+1))
+          PY
