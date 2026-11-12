@@ -50,8 +50,8 @@ assert len(data) == m['finalBytes']
 assert hashlib.sha256(data).hexdigest() == m['finalSha256']
 html = data.decode()
 for token in [
-    MARKER, "window.SWRLZ_FORGE_BUILD={version:'v11.418'",
-    '<title>§wyrl§ Engine · Maker v11.418</title>',
+    MARKER, "window.SWRLZ_FORGE_BUILD={version:'v11.419'",
+    '<title>§wyrl§ Engine · Maker v11.419</title>',
     'SE410_ACCESSORY_GEOMETRY_START', 'SE410_MODEL_ACCESSORY_BRIDGE_START',
     'SE410_MODEL_VR_ACCESSORY_WORKSHOP_START', 'SE410_MODEL_VR_ACCESSORY_UI',
     'vrAccessory:se410ModelAccessory', 'se410AccessoryFrame(s,dt)',
