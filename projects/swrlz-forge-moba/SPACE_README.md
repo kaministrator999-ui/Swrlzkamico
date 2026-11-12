@@ -10,6 +10,12 @@ header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
 
+## §E v11.431 · Easier touch and VR transform handles (2026-11-12)
+
+Move, Rotate and Scale gain easier targets using the existing native transformation transactions. Mobile handles retain useful screen size across zoom and projection changes, with padded touch picking and nearest-handle selection. VR uses larger visible handles and bounded invisible pick shells, consistent hover/grip contact and clearer axis feedback. Menus retain pointer priority; hidden handles remain unavailable.
+
+See [the transform-handle report](docs/MODEL_GIZMO_ACCESS_V11_431.md) for controls, limits and verification. The exact source package, all 90 focused native groups and 11 final IWER checks passed. Final touch/mouse checks and hosted publication are pending. Physical Quest comfort remains owner acceptance testing.
+
 ## §E v11.430 · Visual teaching and manual mesh workshop (2026-11-12)
 
 Model Studio keeps its existing editor and adds optional shared tool lessons with meaningful icons, Before/During/After diagrams, selection requirements and practical examples. The existing inspector exposes component modes, direct primitive choice, persistent assembly controls and contextual operation availability. A UV-seam vertex-selection mapping defect is fixed.
