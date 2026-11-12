@@ -27,13 +27,15 @@ setTimeout(()=>{if(!complete){console.error('SE425_BOOT_TIMEOUT: browser never s
   return route.fulfill({status:200,contentType:type,body:fs.readFileSync(target)});
  });
  await page.goto('https://kamiloki-swrlz-forge-moba.hf.space/index.html',{waitUntil:'commit',timeout:18000});
- await page.waitForTimeout(4200);
+ // The inherited startup gate has an 11-second safety watchdog; test beyond it.
+ await page.waitForTimeout(12800);
  const get=()=>page.evaluate(()=>{
   const levels=window.SWYRL_ENGINE_LEVELS?.status?.();
   const hub=document.querySelector('#projectHub');
   const bars=document.querySelectorAll('#st141LevelBar');
   return {
-   version:window.SWRLZ_FORGE_BUILD?.version,
+   version:window.SWRLZ_FORGE_BUILD?.version, documentState:document.readyState,
+   elapsedMs:Math.round(performance.now()),startupPending:!!window.se128StartupPending,
    ready:document.documentElement.classList.contains('se127-editor-ready'),
    splash:document.querySelector('#se185BootStage')?.textContent||'',
    actors:document.querySelector('footer')?.textContent?.match(/(\d+)\s+(?:objects|actors)/)?.[1]||'',
