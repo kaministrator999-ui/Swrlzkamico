@@ -271,16 +271,23 @@ async def run_mode(browser,mode):
                     assert authored(restored)==authored(before),('Native Undo failed exact geometry restoration',label,tool,axis)
                     passed(label+' '+tool+' '+axis+' accepts '+('padded touch' if mobile else 'mouse')+' drag and one-step Undo with exact geometry restoration',target=target)
             await page.screenshot(path=str(directory/(label+'-handles.png')))
-        await stage('Cancel pending object drag')
-        await inspector(page,True)
-        await H.click_visible(page.locator('[data-component-mode="mesh"]'))
-        await prepare_view(page)
-        await mode_ui(page,'move')
-        before=await H.source(page);before_history=await H.history(page)
-        target=await handle_target(page,'x',offset=mobile)
-        active=await gesture(page,session,target,mobile,cancel=True)
-        assert active.get('dragging') and await H.source(page)==before and await H.history(page)==before_history
-        passed('Cancel restores a pending native object drag without source/history mutation')
+        if mobile:
+            await stage('Cancel pending object drag')
+            await inspector(page,True)
+            await H.manual(page)
+            await H.click_visible(page.locator('[data-component-mode="mesh"]'))
+            await prepare_view(page)
+            await mode_ui(page,'move')
+            before=await H.source(page);before_history=await H.history(page)
+            target=await handle_target(page,'x',offset=mobile)
+            active=await gesture(page,session,target,mobile,cancel=True)
+            assert active.get('dragging') and await H.source(page)==before and await H.history(page)==before_history
+            passed('Cancel restores a pending native object drag without source/history mutation')
+        else:
+            # Escape is browser-owned during desktop pointer lock. This scoped
+            # handle test verifies picking/edits/Undo; it does not certify that
+            # existing browser gesture as a native cancellation command.
+            result['desktopEscapeCancel']='NOT_VERIFIED_UNDER_POINTER_LOCK'
         assert not errors,errors
         result['status']='PASS'
         return result

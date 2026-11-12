@@ -2,7 +2,7 @@
 
 Move, Rotate and Scale gain easier targets using the existing native transformation transactions. Mobile handles retain useful screen size across zoom and projection changes, with padded touch picking and nearest-handle selection. VR uses larger visible handles and bounded invisible pick shells, consistent hover/grip contact and clearer axis feedback. Menus retain pointer priority; hidden handles remain unavailable.
 
-See [the transform-handle report](docs/MODEL_GIZMO_ACCESS_V11_431.md) for controls, limits and verification. The exact source package, all 90 focused native groups and 11 final IWER checks passed. Final touch/mouse checks and hosted publication are pending. Physical Quest comfort remains owner acceptance testing.
+See [the transform-handle report](docs/MODEL_GIZMO_ACCESS_V11_431.md) for controls, limits and verification. Live publication is confirmed: [source 7a21152](https://github.com/kaministrator999-ui/Swrlzkamico/commit/7a21152f6bd159c51ebf85b593ed4381735b9b8b), [separate request 07c4b89](https://github.com/kaministrator999-ui/Swrlzkamico/commit/07c4b893be7260ebc03809ebd63afd6cca23b5b5) and [successful deployment](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/43319424881). The exact source package, all 90 focused native groups and 11 IWER checks passed. Browser checks cover 20 distinct transform cases per mouse/touch profile, with exact authored-geometry Undo, Android cancellation and desktop hover feedback. Both hosted HTML entry points and the 77-asset source receipt match the tested build. The detailed report records the unchanged desktop pointer-lock Escape limitation. Physical Quest comfort remains owner acceptance testing.
 
 ## §E v11.430 · Visual teaching and manual mesh workshop (2026-11-12)
 
