@@ -145,9 +145,9 @@ def apply(html):
       ("window.SWRLZ_FORGE_BUILD={version:'v11.420'","window.SWRLZ_FORGE_BUILD={version:'v11.421'"),
       ('<title>§wyrl§ Engine · Maker v11.420</title>','<title>§wyrl§ Engine · Maker v11.421</title>')
     ]:html=once(html,old,new)
-    old=" source.engine='§wyrl§ Engine · Maker v11.421';source.version=11.421;"
+    old=" source.engine='§wyrl§ Engine · Maker v11.420';source.version=11.420;"
     if html.count(old)!=5:raise AssertionError(('v11.421 provenance',html.count(old)))
-    html=html.replace(old," source.engine='§wyrl§ Engine · Maker v11.420';source.version=11.420;")
+    html=html.replace(old," source.engine='§wyrl§ Engine · Maker v11.421';source.version=11.421;")
     at=html.index('const SE_RELEASE_NOTES=')+len('const SE_RELEASE_NOTES=')
     notes,n=json.JSONDecoder().raw_decode(html[at:])
     notes.setdefault('history',[]).insert(0,{'version':'v11.420','changes':notes.get('changes',[])})
