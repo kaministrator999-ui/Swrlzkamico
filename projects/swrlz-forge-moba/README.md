@@ -1,3 +1,7 @@
+## §E v11.425 · Fix Project Levels observer feedback and synchronizing startup freeze
+
+The v11.423 level-selector recovery repeatedly moved already-attached controls and refreshed menus in a MutationObserver callback, causing a self-sustaining DOM/microtask loop during startup. v11.425 changes recovery to act only on truly detached nodes. End-to-end mobile Chromium acceptance with the original 170-part Dragon Den and real rendering enabled verifies Workspace ready, hydrated levels, native Starter Projects/My Projects/Tutorials controls, scrollable Projects window, and clickable account/tutorial tabs after dismissing normal release notes. Existing authored scenes, account saves, starter templates and Quest controller behavior remain untouched.
+
 ## §E v11.424 · Restore full browser startup after Sheep Tag VR scope error
 
 A live Chromium mobile repro of v11.423 showed missing My Projects/Tutorials, zero loaded levels and zero actors. The actual cause was a `ReferenceError` from a v11.420 Sheep Tag wrapper accessing `se416Show` outside its owning closure. Relocate the original wrapper inside the same scope as the v11.418 setup functions; retain the native AI radial interactions, account project storage, and project starter data. Block deployment on a real browser startup regression that asserts native tabs and authored scene/level data are initialized.
