@@ -1,3 +1,7 @@
+## §E v11.425 · Browser-verified startup feedback-loop repair (2026-11-12)
+
+The apparent “Synchronizing scene and tools” freeze persisted even after the v11.424 Sheep Tag scope fix. Real browser instrumentation traced a hot feedback loop to the v11.423 level toolbar observer, which moved existing nodes and rebuilt select options, retriggering itself. v11.425 makes attached controls stable and only repairs detached elements. Automated mobile Chromium acceptance passed: full Embervault scene (170 parts), level picker, three main Projects tabs, scrollable menu and clickable My Projects/Tutorials panes. Physical device acceptance remains pending.
+
 ## §E v11.424 · Browser-proven startup unblocking (2026-11-11)
 
 The owner's screenshots showed Starter Games/Models/Particles categories but no native My Projects/Tutorials tabs, and a blank Game Engine viewport with zero actors. Real Chromium confirmed a startup-halting ReferenceError at the global v11.420 Sheep Tag AI-menu bridge, which referenced `se416Show` from the wrong lexical scope. Correct the code placement, test full-page browser boot, and preserve existing account saves, authored level packs, and the VR radial count selection. Do not rely on isolated DOM harnesses alone for startup acceptance.
