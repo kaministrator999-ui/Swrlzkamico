@@ -1,10 +1,10 @@
 {
   "schema": "swrlz-forge-source-v2",
-  "name": "§wyrl§ Engine v11.422",
+  "name": "§wyrl§ Engine v11.423",
   "baseArtifact": "swrlz_forge_v4.html",
   "baseBytes": 99591,
   "baseSha256": "a8299fe89fbb98d15c6091751b7a66931a66efec8eec5cb464e1286f21895856",
-  "finalArtifact": "swyrl_engine_v11_422.html",
+  "finalArtifact": "swyrl_engine_v11_423.html",
   "encoding": "gzip+base64-chunks",
   "chunks": [
     "payload/part-01.txt",
@@ -417,8 +417,9 @@
     "patches/v11_419_sheep_congestion_budget.py",
     "patches/v11_420_sheep_setup_menu_controls.py",
     "patches/v11_421_vr_tutorial_menu_interaction.py",
-    "patches/v11_422_project_tutorial_hub_recovery.py"
+    "patches/v11_422_project_tutorial_hub_recovery.py",
+    "patches/v11_423_project_level_menu_recovery.py"
   ],
-  "finalBytes": 9754056,
-  "finalSha256": "7582a70536e745f923eb2e4689013c59d9d7ef5b7c75f509aa03fa96301504f7"
+  "finalBytes": 0,
+  "finalSha256": ""
 }
