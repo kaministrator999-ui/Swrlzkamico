@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.418
+title: §wyrl§ Engine v11.419
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,10 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.419 · Bounded Sheep Tag AI collision recovery (2026-11-11)
+
+An owner-observed Quest freeze occurs when several AI sheep converge on recently built farm lanes and try to pass between houses. The existing v11.411 optimizer budgeted AI building-site selection, but collision back-out could still launch many complete A* route searches in one update. This release caps **solo Quest NPC sheep traffic/path recalculations at one per game tick across the flock**, rotates at most one back-out trail candidate per recovery attempt, and staggers blocked-lane retry timeouts. No extra render loop, no actor or building removal, no saved-scene changes. The human-controlled sheep, LAN multiplayer, non-VR logic, and sheep construction rules remain unchanged. Includes read-only traffic diagnostics. Source and syntax checks do not establish Quest hardware FPS; physical headset acceptance is pending.
 
 ## §E v11.418 · Sheep Tag AI flock selector (2026-11-11)
 
