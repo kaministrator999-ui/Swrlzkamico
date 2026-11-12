@@ -1,0 +1,30 @@
+name: Verify §E v11.422 Projects Tutorials recovery
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/verify-project-tutorial-hub-v11-422.yml"
+      - "projects/swrlz-forge-moba/scripts/verify_v11_422_release.py"
+      - "projects/swrlz-forge-moba/source-manifest.json"
+      - "projects/swrlz-forge-moba/patches/v11_422_project_tutorial_hub_recovery.py"
+      - "projects/swrlz-forge-moba/runtime/project_tutorial_hub_recovery_v11_422.js"
+      - "projects/swrlz-forge-moba/tests/project_tutorial_hub_recovery_v11_422.cjs"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  sealed:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Verify exact 403-patch package and all inherited regressions
+        run: python projects/swrlz-forge-moba/scripts/verify_v11_422_release.py --output dist/swrlz-forge-moba
+      - name: Preserve source receipt
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: swrlz-engine-v11-422-projects-tutorial-hub
+          path: dist/swrlz-forge-moba/SOURCE.json
