@@ -13,13 +13,19 @@ const root='/tmp/se-browser-boot';
  const page=await browser.newPage({viewport:{width:390,height:820},isMobile:true,hasTouch:true});
  const errors=[];
  page.on('pageerror',e=>{const message='PAGE_ERROR '+e.stack;errors.push(message);console.log('SE424_EARLY_ERROR '+message);});
- page.on('console',m=>{if(m.type()==='error'||m.type()==='warning')errors.push('CONSOLE '+m.type()+' '+m.text());});
+ page.on('console',m=>{if(m.text().includes('SE425'))console.log('SE425_CONSOLE '+m.text());if(m.type()==='error'||m.type()==='warning')errors.push('CONSOLE '+m.type()+' '+m.text());});
  page.on('requestfailed',r=>errors.push('REQUEST '+r.url()+' '+r.failure()?.errorText));
  await page.route('https://kamiloki-swrlz-forge-moba.hf.space/**',async route=>{
   const u=new URL(route.request().url());
   const filepath=path.join(root,decodeURIComponent(u.pathname).replace(/^\//,'')||'index.html');
   if(!filepath.startsWith(root)||!fs.existsSync(filepath)||!fs.statSync(filepath).isFile())return route.fulfill({status:404,body:'Not found'});
-  const b=fs.readFileSync(filepath);
+  let b=fs.readFileSync(filepath);
+  if(filepath.endsWith('index.html')){
+   const src=b.toString('utf8');
+   const target='installPerformanceSettings();applyPerformanceSettings();se128LaunchStartupProject();';
+   console.log('SE425_DEFAULT_BOOT_ANCHOR '+(src.split(target).length-1));
+   b=Buffer.from(src.replace(target,'installPerformanceSettings();applyPerformanceSettings();console.log("SE425_DEFAULT_STARTUP_SKIPPED");'),'utf8');
+  }
   const ext=path.extname(filepath).toLowerCase();
   const c={'.html':'text/html','.json':'application/json','.js':'text/javascript','.css':'text/css','.jpg':'image/jpeg','.png':'image/png','.webp':'image/webp'}[ext]||'application/octet-stream';
   return route.fulfill({status:200,body:b,contentType:c});
