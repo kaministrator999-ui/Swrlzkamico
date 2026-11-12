@@ -15,6 +15,19 @@ def once(html,old,new):
     if n!=1:raise AssertionError(('v11.420 anchor',old[:150],n))
     return html.replace(old,new,1)
 
+def scoped(src,start,end,old,new):
+    a=src.index(start);b=src.index(end,a)+len(end)
+    return src[:a]+once(src[a:b],old,new)+src[b:]
+
+def quest(src,old,new):
+    return scoped(src,'/* SE413_SATCHEL_VR_QUEST_START','/* SE413_SATCHEL_VR_QUEST_END */',old,new)
+
+def coach(src,old,new):
+    return scoped(src,'/* SE416_SATCHEL_VR_COACH_START','/* SE416_SATCHEL_VR_COACH_END */',old,new)
+
+def menu(src,old,new):
+    return scoped(src,'/* SE360_MODEL_VR_UI_START */','/* SE360_MODEL_VR_UI_END */',old,new)
+
 def apply(html):
     assert 'SE413_SATCHEL_VR_QUEST_START' in html
     assert 'SE416_SATCHEL_VR_COACH_START' in html
@@ -52,53 +65,53 @@ def apply(html):
   box.positioned=true;box.root.visible=true;
   box.root.updateWorldMatrix(true,true);
  }"""
-    html=once(html,old,new)
-    html=once(html,"const LESSON='satchel-001', W=.70,H=.525,PX=1024,PY=768;",
+    html=quest(html,old,new)
+    html=quest(html,"const LESSON='satchel-001', W=.70,H=.525,PX=1024,PY=768;",
       "const LESSON='satchel-001', W=.87,H=.653,PX=1024,PY=768;")
-    html=once(html,"  const root=new THREE.Group();root.name='Apprentice Satchel · fixed world-space quest';",
+    html=quest(html,"  const root=new THREE.Group();root.name='Apprentice Satchel · fixed world-space quest';",
       "  const root=new THREE.Group();root.name='Apprentice Satchel · fixed world-space quest';root.visible=false;")
-    html=once(html,
+    html=quest(html,
       "  const texture=new THREE.CanvasTexture(canvas);texture.colorSpace=THREE.SRGBColorSpace;",
       "  const texture=new THREE.CanvasTexture(canvas);texture.colorSpace=THREE.SRGBColorSpace;texture.minFilter=THREE.LinearMipmapLinearFilter;texture.magFilter=THREE.LinearFilter;texture.anisotropy=8;texture.generateMipmaps=true;")
-    html=once(html,
+    html=quest(html,
       "  const material=new THREE.MeshBasicMaterial({map:texture,transparent:true,side:THREE.DoubleSide,\n   depthTest:false,depthWrite:false});",
       "  const material=new THREE.MeshBasicMaterial({map:texture,transparent:true,side:THREE.DoubleSide,\n   depthTest:false,depthWrite:false,toneMapped:false});")
-    html=once(html,
+    html=quest(html,
       "  mesh.userData.se340Action=id;mesh.userData.editorOnly=true;",
       "  mesh.userData.se340Action=id;mesh.userData.editorOnly=true;mesh.userData.se340UI=true;")
-    html=once(html,
+    html=quest(html,
       "   index:Math.max(0,Math.min(6,Number(lesson()?.status()?.current)||0)),folded:false,message:'',signature:''};",
       "   index:Math.max(0,Math.min(6,Number(lesson()?.status()?.current)||0)),folded:false,message:'',signature:'',positioned:false,userPositioned:false,hoverAction:null,pressedAction:null};")
 
     # Native menu text is legible when it occupies adequate visual angle;
     # anisotropic filtering improves oblique viewing on mobile WebXR.
-    html=once(html,
+    html=menu(html,
       "  const root=new T.Group();root.name='Model Studio · spatial console';",
       "  const root=new T.Group();root.name='Model Studio · spatial console';root.scale.setScalar(1.16);")
-    html=once(html,
+    html=menu(html,
       "texture.generateMipmaps=true;texture.anisotropy=2;textures.add(texture);",
       "texture.generateMipmaps=true;texture.anisotropy=8;textures.add(texture);")
 
     # Preserve the original draw pipeline and native ray actions. Draw a
     # focused border on the *same canvas buttons* when an actual XR ray hovers.
-    html=once(html,
+    html=quest(html,
       "const signature=JSON.stringify([box.folded,index,rows.map(r=>r.done),box.message,st.projectId,box.coachMode,box.confirmRestore,window.SWYRL_E_SATCHEL_ACADEMY_416?.ghost?.()]);",
       "const signature=JSON.stringify([box.folded,index,rows.map(r=>r.done),box.message,st.projectId,box.coachMode,box.confirmRestore,window.SWYRL_E_SATCHEL_ACADEMY_416?.ghost?.(),box.hoverAction,box.pressedAction]);")
-    html=once(html,
+    html=quest(html,
       "   c.fillText(label,x+w/2,y+53);c.textAlign='left';",
       """   if(box.hoverAction===action||box.pressedAction===action){
     c.strokeStyle=box.pressedAction===action?'#dcffad':'#91f8ee';
     c.lineWidth=6;c.strokeRect(x+4,y+4,w-8,77);
    }
    c.fillText(label,x+w/2,y+53);c.textAlign='left';""")
-    html=once(html,
+    html=coach(html,
       "   c.fillText(text,x+52,y+29);",
       """   c.fillText(text,x+52,y+29);
    if(box.hoverAction===action||box.pressedAction===action){
     c.strokeStyle=box.pressedAction===action?'#dcffad':'#91f8ee';
     c.lineWidth=5;c.strokeRect(x+3,y+3,w-6,h-6);
    }""")
-    html=once(html,
+    html=coach(html,
       "   c.fillText(mode==='guide'?'MATERIALS':'GUIDE',807,66);c.textAlign='left';",
       """   c.fillText(mode==='guide'?'MATERIALS':'GUIDE',807,66);c.textAlign='left';
    if(box.hoverAction==='se416-mode'){
@@ -108,16 +121,16 @@ def apply(html):
     # The existing native controller grip hooks already dispatch into the
     # tutorial. Complete that implementation with rotation and a durable
     # 'user positioned' flag so ordinary orbit/recenter never reattaches it.
-    html=once(html,
+    html=coach(html,
       "    box.drag={record,origin:box.root.position.clone(),hand:pose.position.clone()};",
       "    box.drag={record,origin:box.root.position.clone(),hand:pose.position.clone(),originQuat:box.root.quaternion.clone(),handQuat:pose.quaternion.clone()};")
-    html=once(html,
+    html=coach(html,
       "  box.root.position.copy(drag.origin).add(delta);\n  box.root.updateWorldMatrix(true,true);",
       """  box.root.position.copy(drag.origin).add(delta);
   if(pose.quaternion&&drag.handQuat&&drag.originQuat)
    box.root.quaternion.copy(pose.quaternion).multiply(drag.handQuat.clone().invert()).multiply(drag.originQuat);
   box.root.updateWorldMatrix(true,true);""")
-    html=once(html,
+    html=coach(html,
       "   box.drag=null;box.message='Quest window placed independently in world space.';",
       "   box.drag=null;box.userPositioned=true;box.message='Quest window placed independently in world space.';")
 
