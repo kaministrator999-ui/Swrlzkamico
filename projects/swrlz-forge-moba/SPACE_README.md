@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.419
+title: §wyrl§ Engine v11.420
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,10 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.420 · Sheep Tag VR teammate setup with stable menu controls (2026-11-11)
+
+The Quest in-world **Choose AI Sheep** menu now uses the exact same original controller-ray/trigger selection flow and stable button targets as the game main menu. Updating the team size no longer destroys/recreates the radial button meshes. The selected count is visible in the radial heading, all five wedges have meaningful actions (minus, plus, No AI Sheep, Start Match, Cancel), and min/max actions show clear feedback. Existing phone/desktop dialog behavior is unchanged. Preserves v11.419 AI collision-recovery frame budget, v11.418 solo team size, v11.417 VR Object Index and v11.416 Satchel Academy. Source and UI interaction regression tests pass; real Quest physical acceptance remains pending.
 
 ## §E v11.419 · Bounded Sheep Tag AI collision recovery (2026-11-11)
 
