@@ -419,6 +419,6 @@
     "patches/v11_421_vr_tutorial_menu_interaction.py",
     "patches/v11_422_project_tutorial_hub_recovery.py"
   ],
-  "finalBytes": 9753754,
-  "finalSha256": "e16d2cc24301318ed18a44a5e183d70575abd3317f17d36c8de16f5411f3938e"
+  "finalBytes": 9754056,
+  "finalSha256": "7582a70536e745f923eb2e4689013c59d9d7ef5b7c75f509aa03fa96301504f7"
 }
