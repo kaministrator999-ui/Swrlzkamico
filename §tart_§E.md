@@ -1,3 +1,7 @@
+## §E v11.418 · Pick AI Sheep teammates before starting Sheep Tag
+
+Open Sheep Tag's main menu, choose **Start Game**, then set how many AI sheep should help your player sheep (**0–5** on the default map). Use +/− or the slider on your phone, or use the Quest radial menu's **−1 / +1 / START MATCH** buttons while in VR. **Start Match** begins the normal game with your selected team. This is a per-match choice; the edited map, wolf team and multiplayer matches are unchanged. All v11.417 Model VR Object Index and v11.416 Apprentice Satchel Academy features remain available.
+
 ## §E v11.416 · Interactive Apprentice Satchel training
 
 Open Projects → Tutorials → Apprentice Satchel. Press **Show Me** to highlight the original editor tool, or enable **Ghost guide** to see transparent sample placement without having the engine do the modeling. **Verify** checks the editable project's real geometry and material assignments and explains any unmet criteria. Use **Save checkpoint** to make a local, validated recovery snapshot; **Restore checkpoint** requires confirmation and retains native Undo. Only deliberate native Save to Account syncs the project and completed objectives—snapshot geometry remains local to the device. In Quest 2 Model VR, the quest includes Show, Ghost, Checkpoint, Restore, selected-mesh Leather/Metal/Shade, and grip-movable world-space placement independent of the model/camera. Phone/Quest physical testing still pending.
