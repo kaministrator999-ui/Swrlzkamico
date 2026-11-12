@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.422
+title: §wyrl§ Engine v11.423
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -10,6 +10,10 @@ header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
 
+
+## §E v11.423 · Projects menu, scrolling and editor levels (2026-11-11)
+
+The native Projects dialog repairs missing Starter Projects, My Projects and Tutorials tabs without replacing the owner's starter cards or account project records. The dialog restores touch scrolling and keeps the three tab headings visible on narrow phone/Quest screens. The game editor reattaches its existing Project Levels selector and next-level controls after toolbar reconstruction, and preserves all authored level snapshots. Existing saved project and tutorial data are untouched. Physical device verification remains the owner's final acceptance check.
 
 ## §E v11.422 · Projects Tutorials tab recovery (2026-11-11)
 
