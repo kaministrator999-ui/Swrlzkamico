@@ -1,3 +1,7 @@
+## §E v11.425 · Stable startup and original Project Level tools
+
+The startup splash proceeds to the normal populated workspace; mobile Chromium verified the 170-part Embervault Dragon Den, attached Project Levels selector, and functional Starter Projects / My Projects / Tutorials navigation. Projects is vertically scrollable. The fix stops a previously introduced level-toolbar repair feedback loop without recreating saved scenes, resetting level data, or changing Quest controls. Confirm behavior on the actual Moto and Quest devices after the deployment.
+
 ## §E v11.424 · Normal project library and scene startup
 
 When the engine starts, it should load the default authored scene, register Starter Projects / My Projects / Tutorials, and expose the Project Levels control when the selected project supports multiple levels. The v11.424 fix addresses a JavaScript startup error from the Sheep Tag VR team selector, not missing project data. Existing saves are preserved. A full mobile-browser startup check complements the source-sealed build, followed by owner device confirmation.
