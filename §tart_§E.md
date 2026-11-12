@@ -1,3 +1,11 @@
+## §E v11.430 · Visual teaching and manual mesh workshop (2026-11-12)
+
+Model Studio keeps its existing editor and adds optional shared tool lessons with meaningful icons, Before/During/After diagrams, selection requirements and practical examples. The existing inspector exposes component modes, direct primitive choice, persistent assembly controls and contextual operation availability. A UV-seam vertex-selection mapping defect is fixed.
+
+A manual **Cube → editable mesh → flat face region → Inset → inward Extrude** workflow creates connected native geometry with real previews and one Undo step per Apply. Bounded planar Solidify and the existing split/refine/fill/winding tools share the workflow. Native views gain true orthographic/perspective projection, six exact directions, group/component/all framing and a compact orientation control; VR retains its perspective camera and independent world-space console.
+
+See [the visual workshop checkpoint](projects/swrlz-forge-moba/docs/MODEL_STUDIO_VISUAL_WORKSHOP_V11_430.md) and [the source audit](projects/swrlz-forge-moba/docs/MODEL_STUDIO_AUDIT_V11_430.md) for controls and limits. General bevel, merge/weld, bridge/loop tools, unrestricted mirror and several advanced construction/constraint tools remain incomplete. The sealed source package and 67 focused local groups passed, along with 12 desktop, 12 Android touch-profile, nine IWER controller and five startup/Projects checks on the exact artifact, with no page errors. The v11.425 updates are preserved. Hosted confirmation is pending. Physical Quest acceptance remains owner testing.
+
 ## §E v11.425 · Stable startup and original Project Level tools
 
 The startup splash proceeds to the normal populated workspace; mobile Chromium verified the 170-part Embervault Dragon Den, attached Project Levels selector, and functional Starter Projects / My Projects / Tutorials navigation. Projects is vertically scrollable. The fix stops a previously introduced level-toolbar repair feedback loop without recreating saved scenes, resetting level data, or changing Quest controls. Confirm behavior on the actual Moto and Quest devices after the deployment.

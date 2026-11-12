@@ -1,3 +1,11 @@
+## §E v11.430 · Visual teaching and manual mesh workshop (2026-11-12)
+
+Model Studio keeps its existing editor and adds optional shared tool lessons with meaningful icons, Before/During/After diagrams, selection requirements and practical examples. The existing inspector exposes component modes, direct primitive choice, persistent assembly controls and contextual operation availability. A UV-seam vertex-selection mapping defect is fixed.
+
+A manual **Cube → editable mesh → flat face region → Inset → inward Extrude** workflow creates connected native geometry with real previews and one Undo step per Apply. Bounded planar Solidify and the existing split/refine/fill/winding tools share the workflow. Native views gain true orthographic/perspective projection, six exact directions, group/component/all framing and a compact orientation control; VR retains its perspective camera and independent world-space console.
+
+See [the visual workshop checkpoint](docs/MODEL_STUDIO_VISUAL_WORKSHOP_V11_430.md) and [the source audit](docs/MODEL_STUDIO_AUDIT_V11_430.md) for controls and limits. General bevel, merge/weld, bridge/loop tools, unrestricted mirror and several advanced construction/constraint tools remain incomplete. The sealed source package and 67 focused local groups passed, along with 12 desktop, 12 Android touch-profile, nine IWER controller and five startup/Projects checks on the exact artifact, with no page errors. The v11.425 updates are preserved. Hosted confirmation is pending. Physical Quest acceptance remains owner testing.
+
 ## §E v11.425 · Browser-verified startup feedback-loop repair (2026-11-12)
 
 The apparent “Synchronizing scene and tools” freeze persisted even after the v11.424 Sheep Tag scope fix. Real browser instrumentation traced a hot feedback loop to the v11.423 level toolbar observer, which moved existing nodes and rebuilt select options, retriggering itself. v11.425 makes attached controls stable and only repairs detached elements. Automated mobile Chromium acceptance passed: full Embervault scene (170 parts), level picker, three main Projects tabs, scrollable menu and clickable My Projects/Tutorials panes. Physical device acceptance remains pending.

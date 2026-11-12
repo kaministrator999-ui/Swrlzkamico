@@ -1,0 +1,20 @@
+/* SE430_MODEL_STUDIO_CAMERA_STYLE_START */
+#modelAtelierPanel .se430-camera-controls{display:flex;align-items:center;flex-wrap:wrap;gap:5px;padding:4px 0 7px;border-bottom:1px solid #48556a;margin-bottom:6px}
+#modelAtelierPanel .se430-camera-control-label{color:#c6d3e3;font-size:11px;font-weight:700;margin-right:4px}
+#modelAtelierPanel .se430-camera-controls button{min-height:34px;padding:6px 9px;color:#dfeafa;background:#202b40;border:1px solid #526480;border-radius:7px;font-size:12px}
+#modelAtelierPanel .se430-camera-controls button[aria-pressed=true]{background:#284c57;border-color:#95e7d7;color:#e5fff9;box-shadow:inset 0 -2px #8fe7cf}
+#modelAtelierPanel .se430-camera-controls button:disabled{opacity:.45}
+#modelAtelierPanel .se430-camera-orientation{position:absolute;right:9px;top:88px;width:112px;height:120px;z-index:175;border:1px solid #58697f;border-radius:12px;background:#151d30e8;box-shadow:0 5px 16px #0005;pointer-events:none;user-select:none;touch-action:none;backdrop-filter:blur(5px)}
+#modelAtelierPanel .se430-camera-orientation[hidden]{display:none!important}
+#modelAtelierPanel .se430-camera-orientation svg{position:absolute;inset:0;width:112px;height:96px;overflow:visible}
+#modelAtelierPanel .se430-camera-orientation line{stroke-width:1.6;stroke-linecap:round;opacity:.75}
+#modelAtelierPanel .se430-camera-orientation .se430-axis-x{--axis:#f39f9c;stroke:#f39f9c}
+#modelAtelierPanel .se430-camera-orientation .se430-axis-y{--axis:#a8e8b3;stroke:#a8e8b3}
+#modelAtelierPanel .se430-camera-orientation .se430-axis-z{--axis:#9ec9ff;stroke:#9ec9ff}
+#modelAtelierPanel .se430-camera-orientation button{position:absolute;width:34px;height:34px;min-width:34px;min-height:34px;padding:0;border:1px solid var(--axis);border-radius:50%;background:#192638;color:var(--axis);font:700 10px system-ui,sans-serif;transform:translate(-50%,-50%);pointer-events:auto;transition:left .12s ease-out,top .12s ease-out,background .12s}
+#modelAtelierPanel .se430-camera-orientation button:hover,#modelAtelierPanel .se430-camera-orientation button:focus-visible{background:#38536a;outline:2px solid #d7edff;outline-offset:1px}
+#modelAtelierPanel .se430-camera-orientation button[aria-pressed=true]{background:var(--axis);color:#14202b}
+#modelAtelierPanel .se430-camera-orientation output{display:block;position:absolute;left:3px;right:3px;bottom:6px;text-align:center;font-size:10px;line-height:12px;color:#dce5f1;white-space:normal}
+@media(max-width:600px){#modelAtelierPanel .se430-camera-controls button{min-height:40px;font-size:12px}#modelAtelierPanel .se430-camera-orientation{right:5px}}
+@media(prefers-reduced-motion:reduce){#modelAtelierPanel .se430-camera-orientation button{transition:none}}
+/* SE430_MODEL_STUDIO_CAMERA_STYLE_END */

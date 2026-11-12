@@ -1,0 +1,35 @@
+# Model Studio audit and first overhaul
+
+The pre-change audit inspected the effective v11.410 Model Studio, the v11.411 source manifest, native geometry/selection/camera modules, contextual inspector, project safeguards and immersive workspace. Findings below distinguish implementation evidence from later functional verification. The overhaul follows `AGENTS.md` and `RELEASE_PROCESS.md` and keeps the existing editor and native save format.
+
+| Area | Before this checkpoint | First implementation |
+| --- | --- | --- |
+| Primitives and object transforms | Real cube/sphere/cylinder/cone, move/rotate/scale, duplicate and delete. New-object defaults and scattered controls impede discovery. | Direct primitive choice through the existing Add control; contextual identification and guidance. |
+| Multi-selection and grouping | Real desktop and VR selection; native flat assemblies preserve separate meshes/materials. Assemblies are hard to find. Join is destructive and is not welding. | Expose and explain existing controls; preserve native assembly authority. |
+| Vertex/edge/face editing | Real tap/multi/box/lasso selection, highlights and sparse saved component transforms. Face means triangle. Vertex ordinals are incorrectly resolved across duplicated UV vertices. | Correct ordinal mapping; keep component mode and selection state visible. |
+| Manual topology | Numeric split-edge, vertex move, triangle delete, local triangle refinement, planar boundary fill and winding repair exist. | Bring valid operations into a common contextual workflow with actual requirements and reasons. |
+| Extrusion | Native single-triangle extrusion and VR outline thickness exist; neither is a general polygon-region operator. | Connected coplanar region selection, convex planar inset and signed connected region extrusion with real sidewalls. |
+| Editable conversion | Existing Bake creates a reduced LOD copy; no direct exact primitive conversion. | Explicit supported plain-primitive conversion with UV regeneration warning and compatibility guards. |
+| Surface thickness | General manual Solidify is missing; generators contain special-case shells. | Bounded entire-planar-open-patch Solidify, with validation and honest restrictions. |
+| Organic modeling | Real push/smooth/flatten/inflate/pinch/translate sculpt, density/refinement, region deformation, taper-related authored controls. | Reuse and explain these operations; do not label triangle subdivision as automatic rounding. |
+| Advanced topology gaps | General bevel, vertex weld/merge, boundary-loop bridge, detached-region split and quad loop-cut/slide are absent. | Document as incomplete; educational examples must not supply fake Apply controls. |
+| Mirror, alignment and pivots | Sculpt X symmetry works. General mirror, align/distribute, custom-pivot UI and general vertex/surface snapping are missing. Native object scale must stay positive. | Preserve working symmetry/constraints and identify remaining gaps explicitly. |
+| Cameras and display | Six approximate perspective directions, free orbit/pan/zoom, primary-only framing, real shaded/wire/overlay/X-ray and advanced clipping. True native orthographic and orientation widget are missing. | Accurate six-axis views, true orthographic/perspective, selection-group/all framing and compact orientation control using the existing camera/renderer. |
+| References | Portable four-image reference studio, alignment, camera matching, comparison and independent movable/pinned windows exist. | Preserve and make guidance discoverable; exact view matching uses the improved camera path. |
+| Beginner guidance | Contextual inspector proxies original controls; help is generic, numeric IDs dominate topology. Component controls can be hidden by unified-inspector CSS. | One reusable icon/teaching catalog and collapsible Before/During/After diagrams inside that inspector; responsive selection context and a manual container walkthrough. |
+| VR | Native mesh selection/transforms, sculpt, outline creation, world-space movable menus, camera orbit, history and project actions exist. No generic vertex/edge editing. Profile mirror/preview actions have no effective handlers. | Preserve existing spatial windows and distinguish platform support; share teaching and use the native face-region transaction path where implemented. |
+| Persistence | Native topology/UV/material/rig/animation, Undo/Redo, import/export, reference records and safe save/clone safeguards exist. | New topology tools validate before one native checkpoint, reject incompatible indexed data, and retain the existing schema and starter-copy rules. |
+
+The v11.410 pouch's shared textual group and transient selection are not a persisted `meshGroups` assembly. The manual teaching workflow uses ordinary primitives and topology operations, not that accessory generator.
+
+Native indexed meshes are limited to 9,000 vertices and 16,000 triangles, positions within ±100 and UVs within ±20. A topology replacement must not silently reapply old sculpt indices, rig weights, animation or painted texture correspondence. Existing complex projects remain editable through their established tools when a new operation cannot preserve those relationships.
+
+Source evidence includes `model_atelier_components_v11_75.js`, `model_atelier_topology_lod_v11_38.js`, `model_atelier_face_extrude_v11_50.js`, `model_atelier_adaptive_topology_v11_46.js`, `model_atelier_boundary_cap_v11_48.js`, `model_atelier_topology_audit_v11_44.js`, `model_atelier_mesh_groups_v11_74.js`, `model_atelier_viewport_v11_21.js`, `model_atelier_reference_studio_v11_22.js`, `model_atelier_floating_references_v11_57.js`, `model_atelier_unified_modes_v11_119.js`, `model_vr_native_tools_v11_350.js`, `model_vr_sculpt_draw_v11_350.js` and `project_safe_save_v11_371.js`.
+
+## Current-main reconciliation
+
+Before publication, the implementation was rebased onto current **v11.425**, preserving its complete ordered source lineage. That newer source already adds the asset-specific Satchel Academy and native button references, improved VR iconography, tutorial highlights, the Object Index, scaled/filtered VR labels and world-space menu stabilization. Those features remain available; the general manual modeling workflow does not replace the Academy or pretend its asset-specific automatic checkoff understands arbitrary inset containers.
+
+The v11.422–v11.425 Projects/tutorial/level controls and startup observer feedback fix are also retained, along with the latest game setup/congestion changes and unrelated §C work. The new VR UI was merged with the effective v11.425 implementation rather than replacing it with its older v11.410 ancestor. Seven additional actual-Three preservation groups check native icons, button-reference API, tutorial highlight, Object Index, physical scale/filtering, shared lessons and resource ownership.
+
+See [the release and verification report](MODEL_STUDIO_VISUAL_WORKSHOP_V11_430.md) for final source, browser, publication and hosted receipts. The remaining roadmap items above are not a claim that every requested advanced modeling operation is finished.

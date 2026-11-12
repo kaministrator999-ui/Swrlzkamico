@@ -1,0 +1,70 @@
+/* SE430_MODEL_BEGINNER_UI_CSS_START */
+html #modelAtelierPanel[data-se430-beginner] *{box-sizing:border-box}
+html #modelAtelierPanel[data-se430-beginner] :is(.atelier-inspector,.atelier-context-body,.atelier-context-right,#atelierContextFields,.atelier-actions,.atelier-head){min-width:0!important}
+html #modelAtelierPanel[data-se430-beginner] .atelier-context-field{min-width:0;max-width:100%}
+html #modelAtelierPanel[data-se430-beginner] .atelier-context-field :is(input,select,textarea){width:100%;min-width:0;max-width:100%;min-height:39px}
+html #modelAtelierPanel[data-se430-beginner] .atelier-context-field>button{display:flex;align-items:center;justify-content:center;white-space:normal!important;width:100%;min-width:0;min-height:39px}
+html #modelAtelierPanel[data-se430-beginner] :is(.se430-icon){vertical-align:middle;flex:0 0 auto;margin-right:6px;pointer-events:none}
+html #modelAtelierPanel[data-se430-beginner] #modelAtelierToolRail button,html #modelAtelierPanel[data-se430-beginner] #seAtelierModes button{display:inline-flex;align-items:center;justify-content:center}
+html #modelAtelierPanel[data-se430-beginner] #se430SelectionContext{display:block!important;flex:0 0 auto;padding:8px!important;margin:0!important;border-bottom:1px solid #456579;background:#172e3c;color:#e9f6fa}
+html #modelAtelierPanel[data-se430-beginner] #se430SelectionSummary{display:block;font:700 12px/1.35 system-ui;overflow-wrap:anywhere}
+html #modelAtelierPanel[data-se430-beginner] #se430SelectionHint{font:11px/1.4 system-ui;color:#bad3de;margin:4px 0}
+html #modelAtelierPanel[data-se430-beginner] #se430SelectionContext [data-component-controls]{position:static!important;inset:auto!important;transform:none!important;width:100%!important;max-width:100%!important;margin:5px 0 0!important;padding:0!important;border:0!important;background:transparent!important;box-shadow:none!important;display:block!important}
+html #modelAtelierPanel[data-se430-beginner] #se430SelectionContext :is(.atelier-component-modes,.atelier-component-tools){display:flex!important;flex-wrap:wrap!important;gap:4px!important;max-width:100%;padding:0!important}
+html #modelAtelierPanel[data-se430-beginner] #se430SelectionContext button{flex:1 1 58px;min-height:35px!important;margin:0!important;padding:6px 8px!important;font-size:11px!important}
+html #modelAtelierPanel[data-se430-beginner] #se430SelectionContext [data-component-count]{display:none}
+html #modelAtelierPanel[data-se430-beginner] #se430ContextTools{display:block;width:100%;margin:4px 0!important;background:#25495b;border-color:#629f9e;color:#d8fff0}
+html #modelAtelierPanel[data-se430-beginner] #se430ContextTools[hidden]{display:none!important}
+html #modelAtelierPanel[data-se430-beginner] .se430-component-options>summary{min-height:28px;padding:5px 0;font:600 11px/1.35 system-ui;color:#bedee7;cursor:pointer}
+html #modelAtelierPanel[data-se430-beginner] #se430SelectionContext[data-mode="mesh"] .se430-component-options{display:none}
+html #modelAtelierPanel[data-se430-beginner].se-inspector-mode-view:not(.atelier-tools-closed) .atelier-inspector>#se430SelectionContext{display:block!important}
+html #modelAtelierPanel[data-se430-beginner].se-inspector-mode-view:not(.atelier-tools-closed) .atelier-inspector>#seAtelierModes:not([hidden]){display:flex!important;position:relative!important;inset:auto!important;transform:none!important;width:100%!important;max-width:100%!important;height:44px!important;max-height:44px!important;flex:0 0 44px!important;flex-flow:row nowrap!important;gap:4px!important;overflow-x:auto!important;overflow-y:hidden!important;margin:0!important;padding:4px!important;border:0!important;border-bottom:1px solid #456579!important;border-radius:0!important;box-shadow:none!important;background:#1a3040!important}
+html #modelAtelierPanel[data-se430-beginner].se-inspector-mode-view:not(.atelier-tools-closed) .atelier-inspector>#seAtelierModes:not([hidden]) button{flex:0 0 auto!important;min-height:36px!important;white-space:nowrap!important;padding:5px 8px!important;font-size:11px!important}
+html #modelAtelierPanel[data-se430-beginner] .se430-native-workshop{border:1px solid #4c7184;border-radius:9px;padding:9px;margin:8px 0;color:#e1eef6;min-width:0}
+html #modelAtelierPanel[data-se430-beginner] .se430-native-workshop label{display:block;margin:7px 0;font-size:12px}
+html #modelAtelierPanel[data-se430-beginner] .se430-native-workshop :is(input,select){display:block;width:100%;min-height:38px}
+html #modelAtelierPanel[data-se430-beginner] .se430-native-actions{display:flex;flex-wrap:wrap;gap:6px}
+html #modelAtelierPanel[data-se430-beginner] .se430-native-actions button{flex:1 1 115px;min-height:39px;white-space:normal}
+html #modelAtelierPanel[data-se430-beginner] :is(.se430-tool-help,.se430-manual-lesson){border:1px solid #527487;border-radius:10px;background:#142a38;margin:8px 0;color:#e4f4f6;overflow:hidden}
+html #modelAtelierPanel[data-se430-beginner] :is(.se430-tool-help,.se430-manual-lesson)>summary{display:flex;align-items:center;gap:4px;cursor:pointer;padding:9px;font:700 12px/1.4 system-ui;min-height:42px;color:#b9f3dd}
+html #modelAtelierPanel[data-se430-beginner] .se430-help-toggle{margin-left:auto;white-space:nowrap;font-size:10px;color:#a9c9d4}
+html #modelAtelierPanel[data-se430-beginner] .se430-help-content{padding:0 9px 9px;font:12px/1.5 system-ui}
+html #modelAtelierPanel[data-se430-beginner] .se430-help-content p{margin:6px 0}
+html #modelAtelierPanel[data-se430-beginner] #se430ToolDemo{display:block;width:100%;height:auto;max-height:190px;border:1px solid #385263;border-radius:8px;background:#101b2a}
+html #modelAtelierPanel[data-se430-beginner] .se430-help-content dl{margin:8px 0}.se430-help-content dt{font-weight:700;color:#abdfdb}.se430-help-content dd{margin:0 0 7px;color:#d5e4ed}
+html #modelAtelierPanel[data-se430-beginner] .se430-help-limit{color:#f0d298}
+html #modelAtelierPanel[data-se430-beginner] .se430-study-label{font-size:11px;display:block;margin-top:8px}
+html #modelAtelierPanel[data-se430-beginner] .se430-study-label select{width:100%;min-height:38px;margin-top:4px}
+html #modelAtelierPanel[data-se430-beginner] .se430-manual-lesson p{padding:0 9px;font:11px/1.5 system-ui;color:#c8dce5}
+html #modelAtelierPanel[data-se430-beginner] .se430-manual-lesson ol{padding:0 10px 0 32px;font:12px/1.4 system-ui}
+html #modelAtelierPanel[data-se430-beginner] .se430-manual-lesson li{margin-bottom:9px}
+html #modelAtelierPanel[data-se430-beginner] .se430-manual-lesson li button{display:block;min-height:36px;margin:3px 0 4px}
+html #modelAtelierPanel[data-se430-beginner] #se430VisibleReason{font:12px/1.5 system-ui;color:#badde4;background:#173442;border-left:3px solid #7fcbb6;padding:8px;border-radius:4px;overflow-wrap:anywhere}
+html #modelAtelierPanel[data-se430-beginner] #modelAtelierPrimitiveKind{min-height:37px;max-width:135px}
+html #modelAtelierPanel[data-se430-beginner] .atelier-head{max-width:100%;overflow:visible}
+html #modelAtelierPanel[data-se430-beginner] .atelier-actions{flex-wrap:wrap!important;justify-content:flex-end}
+html #modelAtelierPanel[data-se430-beginner] #seAtelierViewMenu[open] .atelier-top-camera{left:0!important;right:auto!important;max-width:min(340px,calc(100vw - 24px))!important}
+@media(max-width:699px){
+ html #modelAtelierPanel[data-se430-beginner] .atelier-head{display:flex!important;flex-wrap:wrap!important;gap:5px!important;align-items:center!important;padding:5px!important}
+ html #modelAtelierPanel[data-se430-beginner] .atelier-head>strong{font-size:11px!important;max-width:calc(100% - 86px)!important;flex:1 1 160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;order:0}
+ html #modelAtelierPanel[data-se430-beginner] #se320ModelProjects{order:0;min-width:60px!important}
+ html #modelAtelierPanel[data-se430-beginner] .atelier-actions{order:1!important;flex:1 1 100%!important;justify-content:space-between!important;margin:0!important;gap:4px!important}
+ html #modelAtelierPanel[data-se430-beginner] .atelier-actions>button,html #modelAtelierPanel[data-se430-beginner] .atelier-actions>details>summary{font-size:11px!important;padding:6px 8px!important;min-height:36px!important}
+ html #modelAtelierPanel[data-se430-beginner] .se251-external-layout{order:2!important;flex:1 1 170px!important;max-width:100%;font-size:10px}
+ html #modelAtelierPanel[data-se430-beginner] .atelier-head>.se320-diagnostics-slot{order:3!important}
+ html #modelAtelierPanel[data-se430-beginner] .atelier-camera-help{display:none!important}
+ html #modelAtelierPanel[data-se430-beginner][data-se251-layout=compact] .atelier-body{grid-template-rows:minmax(min(220px,30dvh),1fr) 54px minmax(0,36dvh)!important}
+ html #modelAtelierPanel[data-se430-beginner][data-se251-layout=compact][data-se320-inspector-collapsed=true] .atelier-body{grid-template-rows:minmax(min(220px,30dvh),1fr) 54px 0px!important}
+ html #modelAtelierPanel[data-se430-beginner][data-se251-layout=compact].se-inspector-mode-view .atelier-inspector{position:relative!important;inset:auto!important;transform:none!important;height:100%!important;max-height:100%!important;min-height:0!important;display:block!important;overflow-x:hidden!important;overflow-y:auto!important;overscroll-behavior:contain;touch-action:pan-y}
+ html #modelAtelierPanel[data-se430-beginner][data-se251-layout=compact].se-inspector-mode-view #atelierContextWorkbench{position:relative!important;inset:auto!important;height:auto!important;max-height:none!important;min-height:240px!important;flex:none!important;overflow:visible!important}
+ html #modelAtelierPanel[data-se430-beginner][data-se251-layout=compact] :is(.atelier-context-body,.atelier-context-right,#atelierContextFields){height:auto!important;max-height:none!important;overflow:visible!important;min-height:0!important}
+ html #modelAtelierPanel[data-se430-beginner] #se430SelectionContext{padding:6px!important}
+ html #modelAtelierPanel[data-se430-beginner] #se430SelectionHint{display:none}
+ html #modelAtelierPanel[data-se430-beginner] #se430SelectionContext button{min-height:34px!important;padding:4px 6px!important}
+ html #modelAtelierPanel[data-se430-beginner] #seAtelierModes{max-width:calc(100vw - 12px)!important;left:6px!important;right:6px!important;width:auto!important}
+ html #modelAtelierPanel[data-se430-beginner] .atelier-context-right{padding:7px!important}
+ html #modelAtelierPanel[data-se430-beginner] .atelier-context-title{font-size:11px!important;min-height:28px!important}
+ html #modelAtelierPanel[data-se430-beginner] #atelierContextPath{display:none}
+ html #modelAtelierPanel[data-se430-beginner] #se430ToolDemo{max-height:150px}
+}
+/* SE430_MODEL_BEGINNER_UI_CSS_END */
