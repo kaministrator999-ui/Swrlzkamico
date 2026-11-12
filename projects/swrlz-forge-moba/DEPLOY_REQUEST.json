@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.430",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_430_MODEL_STUDIO_VISUAL_WORKSHOP",
-  "reason": "Publish source-sealed Model Studio visual workshop: shared semantic icons, optional animated teaching and contextual requirements, native manual cube-to-container inset/extrusion with safe preview/apply/cancel and Undo/Redo, bounded planar topology tools, exact orthographic/perspective views and framing, world-space VR manual face tools, UV-seam vertex-selection correction and safe independent starter-clone saving. Preserves all current v11.425 source including Satchel Academy, Object Index, stable VR menus, Projects/levels/startup and game/Chat updates. Exact 407-patch source: 9894655 HTML bytes; SHA256 fee6c64e7263311aa0bc5dca8e1d4abe9d66bb92c39da7df80d92f5565e02774; 77 assets. Passed 67 focused native groups, 12 desktop, 12 Android touch-profile, nine IWER controller and five startup/Projects checks, zero page errors. General bevel/weld/bridge/loop tools remain incomplete; physical Quest comfort/performance and account cloud saves require owner acceptance.",
-  "sourceCommit": "d995a3c1b0b0ccf450398a8bcd9c9a2088b6befb",
-  "sourceIntegritySha256": "fee6c64e7263311aa0bc5dca8e1d4abe9d66bb92c39da7df80d92f5565e02774"
+  "releaseVersion": "v11.431",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_431_MODEL_GIZMO_ACCESS",
+  "reason": "Publish easier native Model Studio transform handles: stable screen size, 44px touch targets, padded shaft picking, nearest visible rotation arcs, mouse hover correction and active-axis feedback. VR uses thicker visible handles, bounded invisible ray targets, shared hover/grip contact, brief entry haptics and main/Academy spatial-menu priority. Native transforms, Undo, tracking/cancel safeguards, project geometry and independent world-space menus preserved. Exact 408-patch source: 9913140 HTML bytes, SHA256 06e08dd6620102862ed333fbf6fa51fcf29024c67903378db2a0d2e81ad10396; 77 assets. Passed 90 focused native groups and 11 exact-artifact IWER checks including every supported VR axis, Undo, cancel, tracking, menus and exit. Actual browser mouse/touch object Move/Rotate/Scale axes and component transformations verified with native Undo; physical Quest/Android ergonomics require owner acceptance. VR Scale retains supported uniform scalar behavior.",
+  "sourceCommit": "7a21152f6bd159c51ebf85b593ed4381735b9b8b",
+  "sourceIntegritySha256": "06e08dd6620102862ed333fbf6fa51fcf29024c67903378db2a0d2e81ad10396"
 }
