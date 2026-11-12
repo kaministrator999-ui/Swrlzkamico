@@ -1,3 +1,7 @@
+## §E v11.418 · Choose the AI sheep flock before Sheep Tag Start Game (2026-11-11)
+
+On the Sheep Tag starter's main menu, **Start Game** now opens a match-setup dialog to choose the number of AI sheep allies, from zero through five on the standard map. Touch/desktop can use +/− or a slider, and Quest VR uses the existing game-controller radial menu. **Start Match** launches the native solo match using the selected spawned sheep, preserving the human player, wolves, editable map and LAN multiplayer logic. The choice does not alter saved project actors; native Stop restores the authoring view. The v11.417 named VR Object Index and mesh outlines remain present. Focused simulator/controller tests and sealed source verification are separate from on-device Quest acceptance.
+
 ## §E v11.417 · VR Object Index and per-mesh silhouette (2026-11-11)
 
 A new **Objects** tab in the existing stationary Model Studio VR console lists native part names, nine per page. Trigger selects one part; Multi ON toggles additive selection (32-part native limit), with Previous/Next browsing. Individual selected meshes receive temporary backface silhouette contours, without editing native model geometry or changing the XR render loop. Existing group bounds, controller transformations and the v11.416 Satchel Academy remain unchanged. Quest 2 headset testing is still pending.
