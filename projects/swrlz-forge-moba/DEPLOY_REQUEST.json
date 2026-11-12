@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.419",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_419_SHEEP_CONGESTION_BUDGET",
-  "reason": "Publish v11.419 solo Quest Sheep Tag AI congestion performance correction: limit all AI sheep movement/collision route searches to one per game tick, probe only one rotating back-out trail candidate per recovery instead of many synchronous A* paths, and stagger backoff for blocked house lanes and failed crowd routes. Preserve v11.418 AI teammate count, human sheep input, unthrottled normal movement, LAN multiplayer, native building rules and all v11.417 VR Object Index / v11.416 Satchel features. 400 source patches, 77 assets, 9737449 HTML bytes, SHA256 0575a493931d9a202e6f31ff7008d578e07c82c689c922aff5d4ca4b3032c02c. Complete source-sealed package/syntax and functional regression passed GitHub run 43136800375. Owner Quest headset performance acceptance remains pending.",
-  "sourceCommit": "2641ca509162262e5ca644cbc7f3b785e082c9cd",
-  "sourceIntegritySha256": "0575a493931d9a202e6f31ff7008d578e07c82c689c922aff5d4ca4b3032c02c"
+  "releaseVersion": "v11.420",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_420_SHEEP_SETUP_MENU_CONTROLS",
+  "reason": "Publish v11.420 Sheep Tag Quest AI teammate-count menu input integration. Owner observed plus/minus dialog not interacting like the original game main menu. Reuse the identical native controller-ray/trigger radial selection, retain 3D button mesh identities after count changes, update only count-heading and action-label textures, show clear min/max states, and replace nonfunctional count wedge with No AI Sheep action. Preserve original mobile/desktop dialog, v11.419 solo Quest AI congestion routing, v11.418 saved-map-safe teammate roster, v11.417 VR Object Index, v11.416 Satchel Academy and multiplayer authority. 401 ordered patches, 77 assets, 9741699 HTML bytes, SHA256 e1fa54fcfe5e1ff07e7b6afd623e4d116d1ef50cbac7e4b35bc5b5f4f30feb2e. Full source-sealed regression and XR UI interaction tests passed GitHub run 43138325136; owner physical Quest acceptance pending.",
+  "sourceCommit": "fdfce089d0c694981bb794ccfc35939071064e02",
+  "sourceIntegritySha256": "e1fa54fcfe5e1ff07e7b6afd623e4d116d1ef50cbac7e4b35bc5b5f4f30feb2e"
 }
