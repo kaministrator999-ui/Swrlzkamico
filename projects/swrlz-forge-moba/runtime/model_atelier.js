@@ -147,7 +147,13 @@ const ModelAtelier=(()=>{
   function pointerMove(e){
     if(!pressed)return;const dx=e.clientX-pressed.x,dy=e.clientY-pressed.y;
     if(Math.hypot(dx,dy)>5)pressed.moved=true;
-    if(pressed.moved){orbit.yaw=pressed.yaw-dx*.008;orbit.pitch=Math.max(-.85,Math.min(1.1,pressed.pitch+dy*.006));cameraUpdate();}
+    if(pressed.moved){
+      // Touch drags move the camera in the finger's direction; keep desktop mouse orbit unchanged.
+      const touch=e.pointerType==='touch';
+      orbit.yaw=pressed.yaw+(touch?dx:-dx)*.008;
+      orbit.pitch=Math.max(-.85,Math.min(1.1,pressed.pitch+(touch?-dy:dy)*.006));
+      cameraUpdate();
+    }
   }
   function pointerUp(e){
     if(!pressed)return;const hit=!pressed.moved;pressed=null;
