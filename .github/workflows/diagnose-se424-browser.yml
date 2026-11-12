@@ -4,6 +4,7 @@ on:
     branches: [main]
     paths:
       - ".github/workflows/diagnose-se424-browser.yml"
+      - "projects/swrlz-forge-moba/tests/diagnose_browser_boot_v11_424.cjs"
   workflow_dispatch:
 permissions:
   contents: read
