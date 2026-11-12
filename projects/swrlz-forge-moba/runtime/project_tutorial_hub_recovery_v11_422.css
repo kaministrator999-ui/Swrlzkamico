@@ -1,0 +1,19 @@
+/* §E v11.422 · all three native Projects tabs remain visible on Quest/phone. */
+#projectHub .se170-hub-tabs{
+ display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px;
+ align-items:stretch;overflow:visible;
+}
+#projectHub .se170-hub-tabs button[role="tab"]{
+ box-sizing:border-box;min-width:0;min-height:48px;flex:none;
+ padding:7px 5px;font:700 12px/1.22 system-ui,sans-serif;
+ white-space:normal;overflow-wrap:normal;word-break:normal;text-align:center;
+}
+#projectHub .se170-hub-tabs #se412Tab[aria-selected="true"]{
+ background:#304262;border-color:#88cffa;color:#fff;
+}
+#projectHub #se412Tutorials[hidden]{display:none!important;}
+#projectHub #se412Tutorials:not([hidden]){display:block;}
+@media(max-width:480px){
+ #projectHub .se170-hub-tabs{gap:3px;padding:9px 7px 0;}
+ #projectHub .se170-hub-tabs button[role="tab"]{font-size:11px;padding:6px 3px;min-height:46px;}
+}
