@@ -1,3 +1,7 @@
+## §E v11.423 · Native Projects and level-selector continuity (2026-11-11)
+
+Owner reported missing My Projects / Tutorials tabs, non-scrolling Starter Projects menu, and a missing game-editor level selector. Preserve the native se170 project library, se412 tutorial actions, and se141 authored level records. Reattach lost DOM controls after partial reconstruction, restore vertical touch scrolling, and verify the exact bundled source before publishing. Device acceptance follows the deployed build.
+
 ## §E v11.420 · Consistent Sheep Tag VR main-menu and teammate-selector controls (2026-11-11)
 
 The owner observed that **adding/removing AI sheep after Start Game** did not respond like the primary main menu. The setup used the same native Quest radial, but rebuilt all its interactive meshes after each increment/decrement, losing stable hover/ray targets. Keep the standard original ray/trigger dispatch, update count labels/textures without replacing button meshes, move the count from a nonfunctional fake button to the header, and make the remaining five radial buttons actionable. Preserve Quest play, v11.419 congestion budget, user-controlled sheep, LAN and non-VR workflow. Physical Quest test remains the final UI acceptance gate.
