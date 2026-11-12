@@ -22,6 +22,9 @@ setTimeout(()=>{if(!done){console.log('SE425_WATCHDOG_TERMINATE');process.exit(3
   if(m.type()==='error')errors.push('console:'+t);
  });
  let altered=HTML;
+ const stopTick='setSessionButtons();tick();';
+ console.log('SE425_BOOT_TICK_COUNT',altered.split(stopTick).length-1);
+ altered=altered.replace(stopTick,"setSessionButtons();console.log('SE425_BOOT_TICK_DISABLED');");
  altered=altered.replace(original,"console.log('SE425_BEFORE_STARTER');"+original+"console.log('SE425_AFTER_STARTER');");
  altered=altered.replace(/function loadCanonicalGlitchDen\(\)\s*\{/,match=>match+"console.log('SE425_DEN_ENTER');");
  const denStart=altered.indexOf('function loadCanonicalGlitchDen(){');
