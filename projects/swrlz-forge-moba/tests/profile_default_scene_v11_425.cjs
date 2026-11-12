@@ -71,13 +71,16 @@ setTimeout(()=>{if(!done){console.log('SE425_WATCHDOG_TERMINATE');process.exit(3
     });
    }
   };
-  window.queueMicrotask=callback=>originalQueue.call(window,()=>{
-   taskTotal++;
-   if([300,1000,2500].includes(taskTotal))console.log('SE425_MICROTASK_TOTAL',taskTotal);
-   if(taskTotal>3500)return;
-   const before=active;
-   try{callback();}finally{active=before;}
-  });
+  window.queueMicrotask=callback=>{
+   const origin=active;
+   return originalQueue.call(window,()=>{
+    taskTotal++;
+    if([300,1000,2500].includes(taskTotal))console.log('SE425_MICROTASK_TOTAL',taskTotal);
+    if(taskTotal>3500)return;
+    const before=active;active=origin;
+    try{callback();}finally{active=before;}
+   });
+  };
   window.__SE425_OBSERVER_COUNTS=()=>({serial,total,taskTotal,
    writers:[...writes.entries()].sort((a,b)=>b[1].writes-a[1].writes).slice(0,16).map(([id,state])=>({id,...state,creation:origins.get(id)}))});
  });
