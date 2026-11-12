@@ -1,0 +1,27 @@
+name: Profile §E v11.424 default scene initialization
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/profile-engine-startup-v11-425.yml"
+      - "projects/swrlz-forge-moba/tests/profile_default_scene_v11_425.cjs"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  profile:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Build sealed engine
+        run: python projects/swrlz-forge-moba/build_space.py --output /tmp/se425-browser
+      - name: Install headless Chromium
+        run: |
+          npm install --no-save playwright@1.56.1
+          npx playwright install --with-deps --only-shell chromium
+      - name: Capture startup call markers and CPU profile
+        run: node projects/swrlz-forge-moba/tests/profile_default_scene_v11_425.cjs
