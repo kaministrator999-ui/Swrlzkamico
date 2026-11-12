@@ -22,8 +22,8 @@ const root='/tmp/se-browser-boot';
   let b=fs.readFileSync(filepath);
   if(filepath.endsWith('index.html')){
    const src=b.toString('utf8');
-   const target='installPerformanceSettings();applyPerformanceSettings();se128LaunchStartupProject();';
-   console.log('SE425_DEFAULT_BOOT_ANCHOR '+(src.split(target).length-1));
+   const target='se128LaunchStartupProject();';
+   console.log('SE425_LAUNCH_CALL_COUNT '+(src.split(target).length-1));
    b=Buffer.from(src.replace(target,'installPerformanceSettings();applyPerformanceSettings();console.log("SE425_DEFAULT_STARTUP_SKIPPED");'),'utf8');
   }
   const ext=path.extname(filepath).toLowerCase();
