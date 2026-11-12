@@ -1,0 +1,42 @@
+name: Measure sealed §E v11.421 VR tutorial menu artifact
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/measure-vr-tutorial-menus-sealed-v11-421.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  measure:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Reconstruct every sealed patch and print exact final bytes
+        run: |
+          python - <<'PY'
+          import pathlib,json,base64,gzip,hashlib,importlib.util,subprocess,sys,tempfile
+          root=pathlib.Path("projects/swrlz-forge-moba").resolve()
+          m=json.loads((root/"source-manifest.json").read_text())
+          assert m["name"]=="§wyrl§ Engine v11.421" and len(m["patches"])==402
+          assert m["patches"][-1]=="patches/v11_421_vr_tutorial_menu_interaction.py"
+          raw=gzip.decompress(base64.b64decode("".join((root/n).read_text().strip() for n in m["chunks"])))
+          assert len(raw)==m["baseBytes"] and hashlib.sha256(raw).hexdigest()==m["baseSha256"]
+          html=raw.decode()
+          for i,rel in enumerate(m["patches"]):
+              spec=importlib.util.spec_from_file_location("release_"+str(i),root/rel)
+              module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
+              html=module.apply(html)
+          data=html.encode("utf8")
+          assert "SWYRL_ENGINE_VR_MENU_STABILITY_421" in html
+          assert "SWYRL_ENGINE_DEPLOY_MARKER: V11_421_VR_TUTORIAL_MENU_INTERACTION" in html
+          temp=pathlib.Path(tempfile.gettempdir())/"se421_sealed.html";temp.write_bytes(data)
+          subprocess.run([sys.executable,str(root/"scripts/check_inline_js_syntax_v11_266.py"),str(temp)],check=True)
+          subprocess.run(["node",str(root/"tests/model_vr_menu_stability_v11_421.cjs")],check=True)
+          print("VR_MENU_421_FINAL_BYTES="+str(len(data)))
+          print("VR_MENU_421_FINAL_SHA256="+hashlib.sha256(data).hexdigest())
+          print("VR_MENU_421_PATCHES="+str(len(m["patches"])))
+          PY
