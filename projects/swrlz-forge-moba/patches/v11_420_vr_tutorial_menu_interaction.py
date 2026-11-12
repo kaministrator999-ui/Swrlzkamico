@@ -86,8 +86,8 @@ def apply(html):
     # Native menu text is legible when it occupies adequate visual angle;
     # anisotropic filtering improves oblique viewing on mobile WebXR.
     html=menu(html,
-      "  const root=new T.Group();root.name='Model Studio · spatial console';",
-      "  const root=new T.Group();root.name='Model Studio · spatial console';root.scale.setScalar(1.16);")
+      "root.name='Model Studio · spatial console';",
+      "root.name='Model Studio · spatial console';root.scale.setScalar(1.16);")
     html=menu(html,
       "texture.generateMipmaps=true;texture.anisotropy=2;textures.add(texture);",
       "texture.generateMipmaps=true;texture.anisotropy=8;textures.add(texture);")
