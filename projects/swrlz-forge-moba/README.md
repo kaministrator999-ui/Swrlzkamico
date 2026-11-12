@@ -1,3 +1,7 @@
+## §E v11.423 · Recover native Projects navigation, scrolling and levels
+
+Recover all three original Projects tabs and enable touch scrolling inside the modal on Quest and Android. Reattach an existing game-editor level selector if the editor toolbar is rebuilt, and recover the project-root marker for older saved multi-level bundles. No new project storage, level resets, duplicate cards, or independent render loop. Source-sealed package and targeted DOM/level controls checks required before deployment.
+
 ## §E v11.422 · Restore reliable native Projects → Tutorials tab
 
 The project hub now initializes its **Starter Projects, My Projects, Tutorials** tabs even when native Chat/project initialization occurs late. The Apprentice Satchel menu is automatically restored if its button/pane is removed by a project-dialog rebuild; a single scoped MutationObserver and idempotent registration avoid duplicate tabs or competing project dialogs. Native selection hides the other panes correctly. All three tabs fit in one responsive row on Android/Quest. Model projects and account saves are unchanged. Tests include a synthetic DOM reconstruction of the missing-tab failure plus the complete source-sealed verifier.
