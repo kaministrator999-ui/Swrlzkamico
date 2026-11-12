@@ -1,3 +1,7 @@
+## §E v11.422 · Restore reliable native Projects → Tutorials tab
+
+The project hub now initializes its **Starter Projects, My Projects, Tutorials** tabs even when native Chat/project initialization occurs late. The Apprentice Satchel menu is automatically restored if its button/pane is removed by a project-dialog rebuild; a single scoped MutationObserver and idempotent registration avoid duplicate tabs or competing project dialogs. Native selection hides the other panes correctly. All three tabs fit in one responsive row on Android/Quest. Model projects and account saves are unchanged. Tests include a synthetic DOM reconstruction of the missing-tab failure plus the complete source-sealed verifier.
+
 ## §E v11.421 · Quest 2 tutorial panel / controller-ray fix
 
 The Apprentice Satchel lesson panel is now independently placed beside the native VR tool console only after headset recenter. It stays scene-owned when the camera orbits. Native Trigger ray selection works at actual menu distances beyond the former fallback 1.2m hit, preserving real foreground tool/model picks; the panel shows live hover and press highlights. Grip the lesson window to move/rotate it and release to keep its new world-space placement. Both VR menus use larger physical label sizes and stronger anisotropic canvas texture filtering. No duplicate XR loop or tool menu, save changes, head-following HUD, or model-geometry modifications. Physical Quest 2 readability and controller acceptance pending.
