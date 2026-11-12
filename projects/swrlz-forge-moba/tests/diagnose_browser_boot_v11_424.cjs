@@ -1,4 +1,5 @@
 'use strict';
+setTimeout(()=>{console.error('SE424_HARD_WATCHDOG_TIMEOUT');process.exit(3);},65000);
 const {chromium}=require('playwright');
 const fs=require('node:fs'),path=require('node:path');
 const root='/tmp/se-browser-boot';
@@ -48,5 +49,6 @@ const root='/tmp/se-browser-boot';
  const after=await bound(snapshot(),'AFTER_OPEN_SNAPSHOT').catch(e=>({error:e.message}));
  console.log('SE424_BOOT_AFTER_OPEN '+JSON.stringify(after));
  console.log('SE424_BOOT_ERRORS '+JSON.stringify(errors.slice(0,45)));
- await Promise.race([browser.close(),new Promise(resolve=>setTimeout(resolve,12000))]);
+ await Promise.race([browser.close(),new Promise(resolve=>setTimeout(resolve,8000))]);
+ process.exit(0);
 })().catch(e=>{console.error('SE424_DIAGNOSTIC_FAILURE',e);process.exitCode=1});
