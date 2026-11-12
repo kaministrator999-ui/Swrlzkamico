@@ -1,3 +1,7 @@
+## §E v11.424 · Restore full browser startup after Sheep Tag VR scope error
+
+A live Chromium mobile repro of v11.423 showed missing My Projects/Tutorials, zero loaded levels and zero actors. The actual cause was a `ReferenceError` from a v11.420 Sheep Tag wrapper accessing `se416Show` outside its owning closure. Relocate the original wrapper inside the same scope as the v11.418 setup functions; retain the native AI radial interactions, account project storage, and project starter data. Block deployment on a real browser startup regression that asserts native tabs and authored scene/level data are initialized.
+
 ## §E v11.423 · Recover native Projects navigation, scrolling and levels
 
 Recover all three original Projects tabs and enable touch scrolling inside the modal on Quest and Android. Reattach an existing game-editor level selector if the editor toolbar is rebuilt, and recover the project-root marker for older saved multi-level bundles. No new project storage, level resets, duplicate cards, or independent render loop. Source-sealed package and targeted DOM/level controls checks required before deployment.
