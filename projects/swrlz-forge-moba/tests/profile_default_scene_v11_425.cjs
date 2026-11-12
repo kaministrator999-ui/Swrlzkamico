@@ -16,6 +16,34 @@ setTimeout(()=>{if(!done){console.log('SE425_WATCHDOG_TERMINATE');process.exit(3
  const cd=await page.context().newCDPSession(page);
  await cd.send('Profiler.enable');await cd.send('Profiler.start');
  const errors=[],markers=[];
+ await page.addInitScript(()=>{
+  const Native=window.MutationObserver,originalQueue=window.queueMicrotask;
+  let serial=0,total=0,taskTotal=0;
+  const reported=new Set();
+  window.MutationObserver=class SE425TrackedObserver extends Native{
+   constructor(callback){
+    const id=++serial,creation=(new Error().stack||'').split('\n').slice(1,6).join(' | ');
+    let count=0;
+    super((records,observer)=>{
+     count++;total++;
+     if([25,100,300,800].includes(count)){
+      console.log('SE425_OBSERVER_HOT',JSON.stringify({id,count,total,creation,
+       recordTypes:records.slice(0,4).map(r=>r.type+':'+(r.target?.id||r.target?.nodeName||'?'))}));
+     }
+     if(total===1500)console.log('SE425_OBSERVER_GLOBAL_LIMIT',JSON.stringify({total,id,count,creation}));
+     if(count>800||total>3000)return;
+     callback(records,observer);
+    });
+   }
+  };
+  window.queueMicrotask=callback=>originalQueue.call(window,()=>{
+   taskTotal++;
+   if([300,1000,2500].includes(taskTotal))console.log('SE425_MICROTASK_TOTAL',taskTotal);
+   if(taskTotal>3500)return;
+   callback();
+  });
+  window.__SE425_OBSERVER_COUNTS=()=>({serial,total,taskTotal});
+ });
  page.on('pageerror',e=>{errors.push(e.stack);console.log('SE425_PAGE_ERROR',e.message);});
  page.on('console',m=>{
   const t=m.text();if(t.startsWith('SE425_')){markers.push(t);console.log('SE425_BROWSER',t);}
@@ -66,7 +94,7 @@ setTimeout(()=>{if(!done){console.log('SE425_WATCHDOG_TERMINATE');process.exit(3
    splash:document.getElementById('se185BootStage')?.textContent,
    version:window.SWRLZ_FORGE_BUILD?.version,
    tabs:[...document.querySelectorAll('.se170-hub-tabs button')].map(x=>x.textContent),
-   editor:window.SWYRL_ENGINE_LEVELS?.status?.(),
+   editor:window.SWYRL_ENGINE_LEVELS?.status?.(),observerCounts:window.__SE425_OBSERVER_COUNTS?.(),
    actorsText:[...document.querySelectorAll('footer')].map(x=>x.innerText.slice(0,150))})),
    new Promise((_,rej)=>setTimeout(()=>rej(Error('DOM snapshot blocked')),3500))]);
   console.log('SE425_DOM',JSON.stringify(shot));
