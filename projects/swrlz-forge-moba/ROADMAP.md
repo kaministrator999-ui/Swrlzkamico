@@ -1,3 +1,7 @@
+## §E v11.420 · Consistent Sheep Tag VR main-menu and teammate-selector controls (2026-11-11)
+
+The owner observed that **adding/removing AI sheep after Start Game** did not respond like the primary main menu. The setup used the same native Quest radial, but rebuilt all its interactive meshes after each increment/decrement, losing stable hover/ray targets. Keep the standard original ray/trigger dispatch, update count labels/textures without replacing button meshes, move the count from a nonfunctional fake button to the header, and make the remaining five radial buttons actionable. Preserve Quest play, v11.419 congestion budget, user-controlled sheep, LAN and non-VR workflow. Physical Quest test remains the final UI acceptance gate.
+
 ## §E v11.419 · AI sheep traffic-congestion frame budget (2026-11-11)
 
 An owner reproduction placed several AI sheep between newly built houses where sheep clearance is only about 0.06 native units in a standard 0.6-unit farm gap. This can trap a flock into synchronized yield and repath attempts. Preserve normal collisions but cap aggregate **solo Quest AI sheep** path recalculations to one per match tick, check one rotating yield route per blocked recovery, and use short staggered backoffs after blocked buildings or failed crowd paths. Preserve v11.418 per-match team selector, original human input and LAN. Device-side FPS and gameplay responsiveness remain subject to actual Quest testing.
