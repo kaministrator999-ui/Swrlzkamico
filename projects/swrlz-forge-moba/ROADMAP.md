@@ -1,3 +1,7 @@
+## §E v11.419 · AI sheep traffic-congestion frame budget (2026-11-11)
+
+An owner reproduction placed several AI sheep between newly built houses where sheep clearance is only about 0.06 native units in a standard 0.6-unit farm gap. This can trap a flock into synchronized yield and repath attempts. Preserve normal collisions but cap aggregate **solo Quest AI sheep** path recalculations to one per match tick, check one rotating yield route per blocked recovery, and use short staggered backoffs after blocked buildings or failed crowd paths. Preserve v11.418 per-match team selector, original human input and LAN. Device-side FPS and gameplay responsiveness remain subject to actual Quest testing.
+
 ## §E v11.418 · Sheep Tag solo AI teammate-count setup (2026-11-11)
 
 The main menu's Start Game flow opens a team-size chooser before native Sheep Tag Play. A starter-map owner may choose 0–5 non-player sheep teammates, using mobile/desktop buttons or the Quest in-world radial selector; game maps with additional authored sheep cap the chooser at eight and at the number of available spawns. Only the active solo match roster changes. This adds no new XR loop, no new AI code or spawn mutations and never hijacks multiplayer's host-authorized start. Source-sealed release and on-headset acceptance are separate.
