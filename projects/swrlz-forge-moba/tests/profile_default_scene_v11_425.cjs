@@ -6,6 +6,10 @@ const HTML=fs.readFileSync(path.join(ROOT,'index.html'),'utf8');
 let done=false;
 setTimeout(()=>{if(!done){console.log('SE425_WATCHDOG_TERMINATE');process.exit(3);}},45000);
 (async()=>{
+ const sourceLines=HTML.split('\n');
+ for(const [first,last] of [[62249,62275],[62428,62479],[59500,59519],[60934,60947],[61966,61982],[69317,69333],[73420,73435]]){
+  console.log('SE426_SOURCE_'+first,JSON.stringify(sourceLines.slice(first-1,last).map((line,j)=>(first+j)+':'+line)));
+ }
  const original='se128LaunchStartupProject();';
  console.log('SE425_BUILD',JSON.stringify({bytes:Buffer.byteLength(HTML),launchCalls:HTML.split(original).length-1,
    denDeclarations:(HTML.match(/function loadCanonicalGlitchDen\(\)\s*\{/g)||[]).length,
@@ -18,12 +22,42 @@ setTimeout(()=>{if(!done){console.log('SE425_WATCHDOG_TERMINATE');process.exit(3
  const errors=[],markers=[];
  await page.addInitScript(()=>{
   const Native=window.MutationObserver,originalQueue=window.queueMicrotask;
-  let serial=0,total=0,taskTotal=0;
+  let serial=0,total=0,taskTotal=0,active=0;
+  const writes=new Map(), origins=new Map();
+  const note=(kind,node)=>{
+   if(!active)return;
+   const state=writes.get(active)||{writes:0,kinds:{},tags:{}};
+   state.writes++;state.kinds[kind]=(state.kinds[kind]||0)+1;
+   const tag=node?.id||node?.nodeName||'?';
+   state.tags[tag]=(state.tags[tag]||0)+1;
+   writes.set(active,state);
+   if([100,400,900].includes(state.writes))
+    console.log('SE426_ACTIVE_WRITER',JSON.stringify({id:active,...state,creation:origins.get(active)}));
+  };
+  for(const name of ['appendChild','insertBefore','removeChild','replaceChild','replaceChildren']){
+   const proto=name==='replaceChildren'?Element.prototype:Node.prototype;
+   const raw=proto[name];
+   if(typeof raw!=='function')continue;
+   proto[name]=function(...args){note(name,this);return raw.apply(this,args);};
+  }
+  for(const name of ['setAttribute','removeAttribute']){
+   const raw=Element.prototype[name];
+   Element.prototype[name]=function(...args){note(name,this);return raw.apply(this,args);};
+  }
+  for(const [proto,name] of [[Node.prototype,'textContent'],[Element.prototype,'innerHTML']]){
+   const d=Object.getOwnPropertyDescriptor(proto,name);
+   if(d?.configurable&&d.set)Object.defineProperty(proto,name,{
+    configurable:true,enumerable:d.enumerable,
+    get:d.get,set(value){note(name,this);return d.set.call(this,value);}
+   });
+  }
+
   const reported=new Set();
   window.MutationObserver=class SE425TrackedObserver extends Native{
    constructor(callback){
     const id=++serial,creation=(new Error().stack||'').split('\n').slice(1,6).join(' | ');
     let count=0;
+    origins.set(id,creation);
     super((records,observer)=>{
      count++;total++;
      if([25,100,300,800].includes(count)){
@@ -32,7 +66,8 @@ setTimeout(()=>{if(!done){console.log('SE425_WATCHDOG_TERMINATE');process.exit(3
      }
      if(total===1500)console.log('SE425_OBSERVER_GLOBAL_LIMIT',JSON.stringify({total,id,count,creation}));
      if(count>800||total>3000)return;
-     callback(records,observer);
+     const before=active;active=id;
+     try{callback(records,observer);}finally{active=before;}
     });
    }
   };
@@ -40,9 +75,11 @@ setTimeout(()=>{if(!done){console.log('SE425_WATCHDOG_TERMINATE');process.exit(3
    taskTotal++;
    if([300,1000,2500].includes(taskTotal))console.log('SE425_MICROTASK_TOTAL',taskTotal);
    if(taskTotal>3500)return;
-   callback();
+   const before=active;
+   try{callback();}finally{active=before;}
   });
-  window.__SE425_OBSERVER_COUNTS=()=>({serial,total,taskTotal});
+  window.__SE425_OBSERVER_COUNTS=()=>({serial,total,taskTotal,
+   writers:[...writes.entries()].sort((a,b)=>b[1].writes-a[1].writes).slice(0,16).map(([id,state])=>({id,...state,creation:origins.get(id)}))});
  });
  page.on('pageerror',e=>{errors.push(e.stack);console.log('SE425_PAGE_ERROR',e.message);});
  page.on('console',m=>{
