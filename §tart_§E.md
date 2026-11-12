@@ -1,3 +1,7 @@
+## §E v11.423 · Projects tabs and game levels
+
+Open **Projects** to use **Starter Projects**, **My Projects**, or **Tutorials**, and swipe vertically inside the project window to scroll through all starters on Android/Quest. When opening Sheep Tag or another multi-level game project in Edit mode, **Project Levels** is reattached beside the editor Play controls if the toolbar was rebuilt. Saved levels and satchel progress are preserved; device acceptance follows the published build.
+
 ## §E v11.422 · Projects library tab reliability
 
 Open **Projects** to find **Starter Projects | My Projects | Tutorials**. The Tutorials tab now installs after the native project hub is ready and restores itself after the hub is rebuilt, including on narrow phone/Quest layouts. Start new satchel quest or Resume continues using your original independent tutorial project and existing Save Project/Account controls. No project reset, duplicate starter, or new storage backend was added. Physical Android/Quest validation is still pending.
