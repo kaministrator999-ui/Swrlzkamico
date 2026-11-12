@@ -1,0 +1,30 @@
+name: Verify §E v11.421 Quest tutorial menu stability
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/verify-vr-tutorial-menus-v11-421.yml"
+      - "projects/swrlz-forge-moba/scripts/verify_v11_421_release.py"
+      - "projects/swrlz-forge-moba/source-manifest.json"
+      - "projects/swrlz-forge-moba/patches/v11_421_vr_tutorial_menu_interaction.py"
+      - "projects/swrlz-forge-moba/runtime/model_vr_menu_stability_v11_421.js"
+      - "projects/swrlz-forge-moba/tests/model_vr_menu_stability_v11_421.cjs"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  sealed:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Verify exact source-sealed engine and Quest menu input/UX regression
+        run: python projects/swrlz-forge-moba/scripts/verify_v11_421_release.py --output dist/swrlz-forge-moba
+      - name: Preserve complete source receipt
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: swrlz-engine-v11-420-vr-menu-verification
+          path: dist/swrlz-forge-moba/SOURCE.json
