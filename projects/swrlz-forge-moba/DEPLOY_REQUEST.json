@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.421",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_421_VR_TUTORIAL_MENU_INTERACTION",
-  "reason": "Publish source-verified §E v11.421 Quest 2 VR tutorial interaction/legibility repair: delay tutorial window until tracked viewer recenter, place independently beside native tool console, keep position and grip-dragged orientation during camera orbit/recenter, fix controller ray selection beyond 1.2m empty-space fallback while preserving nearer real model/tool hits, add native hover/press feedback, increase physical menu text size and angled filtering. Preserve VR Object Index, 7-step Apprentice Satchel, Sheep Tag v11.420 AI setup, existing saves and XR loop. Full 402-patch reconstruction and inherited regression checks passed GitHub Actions 43139488305. 9747997 HTML bytes SHA-256 7761eca6b24b06a4c470d3b27c8197030e37c08312def02f07107eaf9999a752. Physical Quest 2 acceptance remains pending.",
-  "sourceCommit": "16007da94d2ed6fe28de5c7cea216595905fe608",
-  "sourceIntegritySha256": "7761eca6b24b06a4c470d3b27c8197030e37c08312def02f07107eaf9999a752"
+  "releaseVersion": "v11.422",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_422_PROJECT_TUTORIAL_HUB_RECOVERY",
+  "reason": "Deploy full source-verified §E v11.422 Projects tutorial tab recovery. The tutorial installer no longer silently gives up if native Starter/My Projects tabs load later or are reconstructed; scoped DOM recovery and single native se170 tab-state navigation restore the missing Tutorials pane and button. Three-tab responsive layout remains visible on Moto/Quest. Keeps all starter cards, original account projects, local/model tutorial progress and existing Save Project/Save to Account; no project reset. 403 ordered patches, 9754056 exact HTML bytes, SHA-256 7582a70536e745f923eb2e4689013c59d9d7ef5b7c75f509aa03fa96301504f7. GitHub Actions full source and regression verification successful run 43149209045, focused simulated DOM recovery test successful. Physical Quest/phone acceptance pending.",
+  "sourceCommit": "0a449735d2b3a75441bedf476cb530bb9582613d",
+  "sourceIntegritySha256": "7582a70536e745f923eb2e4689013c59d9d7ef5b7c75f509aa03fa96301504f7"
 }
