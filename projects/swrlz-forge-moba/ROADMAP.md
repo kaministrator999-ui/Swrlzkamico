@@ -1,3 +1,7 @@
+## §E v11.424 · Browser-proven startup unblocking (2026-11-11)
+
+The owner's screenshots showed Starter Games/Models/Particles categories but no native My Projects/Tutorials tabs, and a blank Game Engine viewport with zero actors. Real Chromium confirmed a startup-halting ReferenceError at the global v11.420 Sheep Tag AI-menu bridge, which referenced `se416Show` from the wrong lexical scope. Correct the code placement, test full-page browser boot, and preserve existing account saves, authored level packs, and the VR radial count selection. Do not rely on isolated DOM harnesses alone for startup acceptance.
+
 ## §E v11.423 · Native Projects and level-selector continuity (2026-11-11)
 
 Owner reported missing My Projects / Tutorials tabs, non-scrolling Starter Projects menu, and a missing game-editor level selector. Preserve the native se170 project library, se412 tutorial actions, and se141 authored level records. Reattach lost DOM controls after partial reconstruction, restore vertical touch scrolling, and verify the exact bundled source before publishing. Device acceptance follows the deployed build.
