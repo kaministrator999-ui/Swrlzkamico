@@ -1,3 +1,7 @@
+## §E v11.420 · Sheep Tag VR team-size menu interaction fix
+
+In Quest VR, use the same controller ray and trigger as the original Sheep Tag main menu: select **PLAY**, then use **− 1 SHEEP**, **+ 1 SHEEP**, **NO AI SHEEP**, **START MATCH**, or **CANCEL**. The chosen number is displayed at the top of the selector. The panel and button hit areas stay in place as you change counts, so hovering or repeatedly pressing a button no longer rebuilds the whole menu. The existing phone/desktop slider and the v11.419 congestion fix remain unchanged. Quest 2 device confirmation remains pending.
+
 ## §E v11.419 · Quest Sheep Tag congestion recovery
 
 If several sheep enter a tight passage between houses, the engine now limits **AI sheep** collision-recovery route searches in solo Quest play to one per simulation tick and staggers failed-path retries. Their movement and building rules are still active; your controlled sheep and multiplayer input are not throttled. To compare the effect, use the v11.418 **Start Game → AI sheep count** dialog and try the same houses with **0, 2, then 5** AI teammates; note whether headset freezes still occur at the crowded gap. The v11.417 Object Index and v11.416 Satchel tutorial are retained. Quest performance acceptance pending.
