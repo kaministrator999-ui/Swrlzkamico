@@ -421,6 +421,6 @@
     "patches/v11_423_project_level_menu_recovery.py",
     "patches/v11_424_sheep_menu_scope_startup.py"
   ],
-  "finalBytes": 0,
-  "finalSha256": ""
+  "finalBytes": 9764128,
+  "finalSha256": "be34cded54e74ebd9f7983cb92fc1ee36ed734e826296312430f2395eba0cb47"
 }
