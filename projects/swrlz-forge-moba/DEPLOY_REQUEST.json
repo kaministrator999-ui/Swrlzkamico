@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.417",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_417_MODEL_VR_OBJECT_INDEX",
-  "reason": "Publish source-sealed §E v11.417 VR Object Index: native named part list (nine per page), single selection and additive/toggle multi-selection to 32 native model parts; individual per-mesh selection silhouettes and persistent existing group box; preserving v11.416 Satchel Academy, stationary world-space console, controllers, model source and save schema, single XR loop. 398 ordered patches, 9722094 HTML bytes, SHA-256 69e8480cde5b7027577882e3c18dbbadf338049bfde37bb7d4c3129a563e3e76. Full source-sealed CI verified in GitHub run 43123995901. Physical Quest 2 acceptance pending.",
-  "sourceCommit": "c6482ede70773555359873de31a4115fe667c9f7",
-  "sourceIntegritySha256": "69e8480cde5b7027577882e3c18dbbadf338049bfde37bb7d4c3129a563e3e76"
+  "releaseVersion": "v11.418",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_418_SHEEP_FLOCK_SETUP",
+  "reason": "Publish source-sealed Sheep Tag solo AI sheep team-count chooser before Start Game. Default starter map 0–5 AI teammates; touch/desktop dialog plus Quest VR radial control; roster changes only active solo match, preserves player sheep, wolf rules, LAN authority, native map and saves. Preserve published v11.417 VR Object Index and v11.416 Satchel Academy. 399 patches, 77 assets, 9733089 HTML bytes, SHA256 12229a3edcd1d18fee1507cfa152d200494fc526f92d0767f834d82f6918b18a. Full source-sealed CI verification and functional regression passed in GitHub run 43130901752; physical Quest acceptance remains pending.",
+  "sourceCommit": "0033b300f914e4c74d9384fd68f1c291f981af1d",
+  "sourceIntegritySha256": "12229a3edcd1d18fee1507cfa152d200494fc526f92d0767f834d82f6918b18a"
 }
