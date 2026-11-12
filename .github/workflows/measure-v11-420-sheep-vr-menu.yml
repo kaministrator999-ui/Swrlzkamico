@@ -4,6 +4,7 @@ on:
     branches: [main]
     paths:
       - '.github/workflows/measure-v11-420-sheep-vr-menu.yml'
+      - 'projects/swrlz-forge-moba/tests/test_sheep_setup_menu_controls_v11_420.cjs'
 permissions:
   contents: read
 jobs:

@@ -16,7 +16,7 @@ const ctx={
  seLevels:{records,playingMenu:true,overlay:{}},
  seLevelsCurrent:()=>records.get('menu'),
  se195:{mode:'menu',page:'main',visible:true,radial:null,buttons:[],textures:[],lastAction:''},
- se195Text(text){const t=tex();this.se195.textures.push(t);return t;},
+ se195Text(text){const t=tex();ctx.se195.textures.push(t);return t;},
  se195MakeRadial(){rebuilds++;},
  se195Page(page){
   ctx.se195.page=page;ctx.se195.visible=true;
