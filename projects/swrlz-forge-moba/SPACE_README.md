@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.420
+title: §wyrl§ Engine v11.421
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,11 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+
+## §E v11.421 · Reliable Model VR tutorial interaction (2026-11-11)
+
+Apprentice Satchel's VR quest now stays hidden until the native headset viewer pose is calibrated, then appears once to the side of the normal tools console as an independently placed **world-space menu**, not a child of the model or the camera. Aim a controller and press Trigger to select the lesson's actual buttons. Real ray intersections take precedence over the old default 1.2m empty-space target; genuinely nearer model and tool controls still receive their native input. The native controller ray/reticle and highlighted hover/press borders show interactive targets. Hold Grip against the tutorial window to **move and rotate the entire window**, then release to leave it there; ordinary camera orbit and recenter do not overwrite that position. Both the regular VR tool menu and lesson window are physically larger with stronger angled-texture filtering for improved Quest 2 legibility. Existing §E modeling, VR object index, Sheep Tag setup and save controls are preserved. Automated source and controller tests are distinct from physical Quest 2 acceptance.
 
 ## §E v11.420 · Sheep Tag VR teammate setup with stable menu controls (2026-11-11)
 
