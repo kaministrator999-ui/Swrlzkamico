@@ -1,0 +1,37 @@
+name: Measure §E v11.419 Sheep Tag congestion candidate
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/measure-v11-419-sheep-congestion.yml'
+permissions:
+  contents: read
+jobs:
+  measure:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - name: Prove rate limit and assemble new release from v11.418 source
+        run: |
+          set -eu
+          ROOT=projects/swrlz-forge-moba
+          node --check "$ROOT/runtime/sheep_congestion_budget_v11_419.js"
+          node "$ROOT/tests/test_sheep_congestion_budget_v11_419.cjs"
+          python -m py_compile "$ROOT/patches/v11_419_sheep_congestion_budget.py"
+          python "$ROOT/build_space.py" --output /tmp/se418-base >/tmp/se418-base-source.json
+          python - <<'PY'
+          from pathlib import Path
+          import hashlib,importlib.util
+          root=Path('projects/swrlz-forge-moba')
+          spec=importlib.util.spec_from_file_location('se419',root/'patches/v11_419_sheep_congestion_budget.py')
+          module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
+          html=module.apply(Path('/tmp/se418-base/index.html').read_text('utf8')).encode('utf8')
+          Path('/tmp/se419-candidate.html').write_bytes(html)
+          print('SE419_CANDIDATE_BYTES='+str(len(html)),flush=True)
+          print('SE419_CANDIDATE_SHA256='+hashlib.sha256(html).hexdigest(),flush=True)
+          PY
+          python "$ROOT/scripts/check_inline_js_syntax_v11_266.py" /tmp/se419-candidate.html
