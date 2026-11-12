@@ -1,0 +1,58 @@
+name: Seal §E v11.424 real-browser startup recovery
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/seal-sheep-menu-scope-v11-424.yml"
+      - "projects/swrlz-forge-moba/patches/v11_424_sheep_menu_scope_startup.py"
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  seal:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Measure source with corrected sheep radial lexical scope
+        run: |
+          python - <<'PY'
+          import pathlib,json,base64,gzip,hashlib,importlib.util,sys,subprocess,tempfile
+          root=pathlib.Path('projects/swrlz-forge-moba').resolve()
+          path=root/'source-manifest.json';m=json.loads(path.read_text('utf8'))
+          assert m['name']=='§wyrl§ Engine v11.424'
+          assert m['finalArtifact']=='swyrl_engine_v11_424.html'
+          assert len(m['patches'])==405 and m['patches'][-1]=='patches/v11_424_sheep_menu_scope_startup.py'
+          b=gzip.decompress(base64.b64decode(''.join((root/p).read_text().strip() for p in m['chunks'])))
+          assert len(b)==m['baseBytes'] and hashlib.sha256(b).hexdigest()==m['baseSha256']
+          html=b.decode('utf8')
+          for i,rel in enumerate(m['patches']):
+              spec=importlib.util.spec_from_file_location('se424_'+str(i),root/rel)
+              module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
+              html=module.apply(html)
+          assert html.count('const se420PreviousShow=se416Show;')==1
+          assert html.index('function se416Show(){')<html.index('const se420PreviousShow=se416Show;')
+          assert html.count('/* SE424_SHEEP_MENU_SCOPE_START */')==1
+          assert 'SE423_PROJECT_MENU_RECOVERY_START' in html and 'SE423_LEVEL_SELECTOR_RECOVERY_START' in html
+          assert 'SWYRL_ENGINE_DEPLOY_MARKER: V11_424_SHEEP_MENU_SCOPE_STARTUP' in html
+          raw=html.encode('utf8')
+          tmp=pathlib.Path(tempfile.gettempdir())/'se424_scope_checked.html';tmp.write_bytes(raw)
+          subprocess.run([sys.executable,str(root/'scripts/check_inline_js_syntax_v11_266.py'),str(tmp)],check=True)
+          m['finalBytes']=len(raw);m['finalSha256']=hashlib.sha256(raw).hexdigest()
+          path.write_text(json.dumps(m,ensure_ascii=False,indent=2)+'\n','utf8')
+          print('SE424_SCOPE_SEAL '+json.dumps({'version':m['name'],'bytes':m['finalBytes'],
+                     'sha256':m['finalSha256'],'patches':len(m['patches'])}))
+          PY
+      - name: Commit exact source integrity receipt
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add projects/swrlz-forge-moba/source-manifest.json
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "release(§E): seal v11.424 startup scope correction"
+          git push origin HEAD:main
