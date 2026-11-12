@@ -1,0 +1,48 @@
+name: Verify §E v11.417 VR Object Index and outlines
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "projects/swrlz-forge-moba/patches/v11_417_model_vr_object_index.py"
+      - "projects/swrlz-forge-moba/runtime/model_vr_object_index_v11_417.js"
+      - "projects/swrlz-forge-moba/source-manifest.json"
+      - "projects/swrlz-forge-moba/scripts/verify_v11_417_release.py"
+      - "projects/swrlz-forge-moba/tests/test_model_vr_object_index_v11_417.py"
+      - "projects/swrlz-forge-moba/tests/model_vr_object_index_v11_417.cjs"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  vr-object-index:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Verify native selection index and silhouette lifecycle
+        run: python projects/swrlz-forge-moba/tests/test_model_vr_object_index_v11_417.py
+      - name: Compute and confirm exact source integrity seal
+        run: |
+          python - <<'PY'
+          import hashlib,json,pathlib,subprocess,sys
+          root=pathlib.Path('projects/swrlz-forge-moba')
+          p=root/'source-manifest.json'
+          original=p.read_text()
+          manifest=json.loads(original)
+          want_sha=manifest['finalSha256'];want_bytes=manifest['finalBytes']
+          manifest.update(finalSha256='',finalBytes=0)
+          p.write_text(json.dumps(manifest,ensure_ascii=False))
+          try:
+              subprocess.run([sys.executable,str(root/'build_space.py'),'--output','/tmp/se417-source'],check=True)
+              data=pathlib.Path('/tmp/se417-source/index.html').read_bytes()
+              got_sha=hashlib.sha256(data).hexdigest();got_bytes=len(data)
+              print(f'SE417_COMPUTED_BYTES={got_bytes}',flush=True)
+              print(f'SE417_COMPUTED_SHA256={got_sha}',flush=True)
+              if (want_sha,want_bytes)!=(got_sha,got_bytes):
+                  raise SystemExit('Update source-manifest.json to the computed v11.417 seal.')
+          finally:
+              p.write_text(original)
+          PY
+      - name: Validate release and inherited controls
+        run: python projects/swrlz-forge-moba/scripts/verify_v11_417_release.py --output dist/swrlz-forge-moba

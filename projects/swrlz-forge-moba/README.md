@@ -1,3 +1,7 @@
+## §E v11.417 · VR Object Index and per-mesh silhouette (2026-11-11)
+
+A new **Objects** tab in the existing stationary Model Studio VR console lists native part names, nine per page. Trigger selects one part; Multi ON toggles additive selection (32-part native limit), with Previous/Next browsing. Individual selected meshes receive temporary backface silhouette contours, without editing native model geometry or changing the XR render loop. Existing group bounds, controller transformations and the v11.416 Satchel Academy remain unchanged. Quest 2 headset testing is still pending.
+
 ## §E v11.416 · Interactive satchel modeling coach
 
 The Apprentice Satchel tutor now incorporates source-control-grounded **Show Me** highlights on actual native buttons, a **non-editable 3D ghost** (blockout, floor and four walls, flap, strap, clasp), automated inspection of real scene parts with specific missing-piece feedback, and local **Save checkpoint / Confirm restore** supporting native Undo. Quest checkoffs travel with the existing project when deliberately saved to the account, while snapshots stay device-local. Model VR adds the same coach actions and a material/color row for selected meshes (leather, metal and shade) using native editor transactions; its separate tutorial window can be grip-moved without head follow. No automatic construction, starter mutation, new account backend or parallel XR loop. Source-sealed GitHub verification and physical user testing are distinct.

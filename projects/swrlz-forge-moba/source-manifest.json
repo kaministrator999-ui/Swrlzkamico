@@ -1,10 +1,10 @@
 {
   "schema": "swrlz-forge-source-v2",
-  "name": "§wyrl§ Engine v11.416",
+  "name": "§wyrl§ Engine v11.417",
   "baseArtifact": "swrlz_forge_v4.html",
   "baseBytes": 99591,
   "baseSha256": "a8299fe89fbb98d15c6091751b7a66931a66efec8eec5cb464e1286f21895856",
-  "finalArtifact": "swyrl_engine_v11_416.html",
+  "finalArtifact": "swyrl_engine_v11_417.html",
   "encoding": "gzip+base64-chunks",
   "chunks": [
     "payload/part-01.txt",
@@ -411,8 +411,9 @@
     "patches/v11_413_satchel_vr_tutorial.py",
     "patches/v11_414_satchel_native_tool_button_references.py",
     "patches/v11_415_model_vr_iconography.py",
-    "patches/v11_416_satchel_interactive_coach.py"
+    "patches/v11_416_satchel_interactive_coach.py",
+    "patches/v11_417_model_vr_object_index.py"
   ],
-  "finalBytes": 9712154,
-  "finalSha256": "fbf93bdbe20fd3c9c5f08bb144c642f537ab3213ffc3c8d462e03eb4be7e31e9"
+  "finalBytes": 9722094,
+  "finalSha256": "69e8480cde5b7027577882e3c18dbbadf338049bfde37bb7d4c3129a563e3e76"
 }
