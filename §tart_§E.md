@@ -1,3 +1,7 @@
+## §E v11.419 · Quest Sheep Tag congestion recovery
+
+If several sheep enter a tight passage between houses, the engine now limits **AI sheep** collision-recovery route searches in solo Quest play to one per simulation tick and staggers failed-path retries. Their movement and building rules are still active; your controlled sheep and multiplayer input are not throttled. To compare the effect, use the v11.418 **Start Game → AI sheep count** dialog and try the same houses with **0, 2, then 5** AI teammates; note whether headset freezes still occur at the crowded gap. The v11.417 Object Index and v11.416 Satchel tutorial are retained. Quest performance acceptance pending.
+
 ## §E v11.418 · Pick AI Sheep teammates before starting Sheep Tag
 
 Open Sheep Tag's main menu, choose **Start Game**, then set how many AI sheep should help your player sheep (**0–5** on the default map). Use +/− or the slider on your phone, or use the Quest radial menu's **−1 / +1 / START MATCH** buttons while in VR. **Start Match** begins the normal game with your selected team. This is a per-match choice; the edited map, wolf team and multiplayer matches are unchanged. All v11.417 Model VR Object Index and v11.416 Apprentice Satchel Academy features remain available.
