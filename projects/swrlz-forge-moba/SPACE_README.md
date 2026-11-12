@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.423
+title: §wyrl§ Engine v11.424
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -10,6 +10,10 @@ header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
 
+
+## §E v11.424 · Fix full editor startup (2026-11-11)
+
+A real Chromium mobile-screen reproduction of the live v11.423 page exposed a synchronous JavaScript error: `ReferenceError: se416Show is not defined`. The Sheep Tag VR setup patch was running outside the lexical scope containing its original setup function, aborting all subsequent startup logic. v11.424 relocates the same v11.420 radial bridge into its owning closure. This restores execution of normal Starter Projects / My Projects / Tutorials tab registration, authored Project Levels loading and the default scene. The Sheep Tag AI count controls and original user saves are preserved. Real-browser regression and owner acceptance are required before declaring the issue resolved.
 
 ## §E v11.423 · Projects menu, scrolling and editor levels (2026-11-11)
 
