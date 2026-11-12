@@ -17,7 +17,7 @@ import sys
 
 ROOT = Path(__file__).resolve().parents[1]
 VERSION = 'v11.420'
-MARKER = 'SWYRL_ENGINE_DEPLOY_MARKER: V11_420_VR_TUTORIAL_MENU_INTERACTION'
+MARKER = 'SWYRL_ENGINE_DEPLOY_MARKER: V11_420_SHEEP_SETUP_MENU_CONTROLS'
 ap = argparse.ArgumentParser()
 ap.add_argument('--output', required=True)
 ap.add_argument('--request', action='store_true')
@@ -39,7 +39,7 @@ assert m['patches'][-11:] == [
     'patches/v11_417_model_vr_object_index.py',
     'patches/v11_418_sheep_flock_setup.py',
     'patches/v11_419_sheep_congestion_budget.py',
-    'patches/v11_420_vr_tutorial_menu_interaction.py']
+    'patches/v11_420_sheep_setup_menu_controls.py']
 assert m['finalBytes'] > 9_737_449
 assert re.fullmatch('[0-9a-f]{64}', m['finalSha256'])
 
@@ -63,8 +63,6 @@ for token in [
     'SE414_SATCHEL_NATIVE_TOOL_REFERENCES_START', 'SWYRL_E_SATCHEL_BUTTON_GUIDE_414',
     'drawGuideIcon:(ctx,action,x,y,size,color)', 'se414ToolGuide',
     'SE415_MODEL_VR_ICONOGRAPHY', 'se414Icons',
-    'SE420_MODEL_VR_MENU_STABILITY_START', 'SWYRL_ENGINE_VR_MENU_STABILITY_420',
-    'panelParentIsScene', 'panelPositioned', 'panelUserPositioned',
     'SE416_SATCHEL_ACADEMY_START', 'SWYRL_E_SATCHEL_ACADEMY_416',
     'SE416_SATCHEL_VR_COACH_START', 'SWYRL_E_SATCHEL_VR_COACH_416',
     'SE416_SATCHEL_NATIVE_BRIDGE_START', 'SWYRL_E_SATCHEL_NATIVE_416',
@@ -73,6 +71,8 @@ for token in [
     'SWYRL_ENGINE_SHEEP_TEAM_SETUP_416', 'se416ShowBrowser()', 'se416Confirm()',
     'SE419_SHEEP_CONGESTION_BUDGET_START', 'SWYRL_ENGINE_SHEEP_CONGESTION_419',
     'se419TrafficPermit(unit)', 'se419TrafficPause(unit,.72)', 'se419TryYield',
+    'SWYRL_ENGINE_SHEEP_SETUP_MENU_420','se420SyncFlockMenu()',
+    'se420SwapMenuTexture(mesh,label)', 'stableNativeRayTargets:true',
     'se417IndexAction(action,record)', 'se417IndexState(s,entries,selectedIds)',
     'se417UpdateHighlights(s,entries,selectedIds)', 'se417DisposeHighlights(s)',
     'SE390_MODEL_VR_QUICK_CREATE_START', 'SE390_MODEL_VR_GRAB_POSE_START',
@@ -102,13 +102,13 @@ runtime_files += [
     'model_studio_vr_ui_v11_410.js', 'model_vr_accessory_workshop_v11_410.js',
     'sheep_vr_y_tools_radial_v11_391.js',
     'model_satchel_vr_quest_v11_413.js',
-    'model_vr_menu_stability_v11_420.js',
     'model_satchel_tool_references_v11_414.js',
     'model_satchel_academy_v11_416.js', 'model_satchel_vr_coach_v11_416.js',
     'model_satchel_native_bridge_v11_416.js',
     'model_vr_object_index_v11_417.js',
     'sheep_team_setup_v11_416.js',
-    'sheep_congestion_budget_v11_419.js']
+    'sheep_congestion_budget_v11_419.js',
+    'sheep_setup_menu_controls_v11_420.js']
 for name in runtime_files:
     p = ROOT / 'runtime' / name
     subprocess.run(['node', '--check', str(p)], check=True)
@@ -116,9 +116,9 @@ for name in runtime_files:
     assert 'setAnimationLoop(' not in p.read_text(), name
 subprocess.run(['node', '--check', str(ROOT / 'runtime/model_satchel_tutorial_v11_412.js')], check=True)
 subprocess.run(['node', str(ROOT / 'tests/satchel_academy_v11_416.cjs')], check=True)
-subprocess.run(['node', str(ROOT / 'tests/model_vr_menu_stability_v11_420.cjs')], check=True)
 subprocess.run(['node', str(ROOT / 'tests/test_sheep_flock_setup_v11_416.cjs')], check=True)
 subprocess.run(['node', str(ROOT / 'tests/test_sheep_congestion_budget_v11_419.cjs')], check=True)
+subprocess.run(['node', str(ROOT / 'tests/test_sheep_setup_menu_controls_v11_420.cjs')], check=True)
 assert (ROOT / 'runtime/sheep_team_setup_v11_416.css').is_file()
 assert (ROOT / 'runtime/model_satchel_tutorial_v11_412.css').is_file()
 assert (ROOT / 'runtime/model_satchel_tutorial_v11_413.css').is_file()
