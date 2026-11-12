@@ -1,3 +1,7 @@
+## §E v11.418 · Sheep Tag solo AI teammate-count setup (2026-11-11)
+
+The main menu's Start Game flow opens a team-size chooser before native Sheep Tag Play. A starter-map owner may choose 0–5 non-player sheep teammates, using mobile/desktop buttons or the Quest in-world radial selector; game maps with additional authored sheep cap the chooser at eight and at the number of available spawns. Only the active solo match roster changes. This adds no new XR loop, no new AI code or spawn mutations and never hijacks multiplayer's host-authorized start. Source-sealed release and on-headset acceptance are separate.
+
 ## §E v11.410 · VR accessory workshop (2026-11-11)
 
 Model Studio VR adds **Create → Accessories → Hip pouch**: a rounded leather bag with a curved flap, belt loops, closure strap, clasp, edge stitching and a leaf/star emblem. Separate **Body**, **Details** and **Fit** pages adjust a live preview with coordinated leather colors, readable dimensions and clear selected states. The starting body is approximately **14 cm high** in the immersive workspace; it scales with the placement controls.
