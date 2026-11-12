@@ -1,4 +1,6 @@
 name: Verify §E v11.418 sealed Sheep Tag flock release
+# The release seal is measured on the complete 399-patch manifest build,
+# not a one-off appended-patch HTML candidate (which omits a history entry).
 on:
   push:
     branches: [main]
@@ -19,35 +21,3 @@ jobs:
         run: |
           set -eu
           python projects/swrlz-forge-moba/scripts/verify_v11_418_release.py --output /tmp/se418-full
-      - name: Diagnose source differences if verification failed
-        if: failure()
-        run: |
-          set -eu
-          python - <<'PY'
-          from pathlib import Path
-          import hashlib,importlib.util,json,subprocess,sys
-          root=Path('projects/swrlz-forge-moba')
-          mp=root/'source-manifest.json'
-          m=json.loads(mp.read_text('utf8'))
-          m['finalSha256']='';m['finalBytes']=0
-          mp.write_text(json.dumps(m,indent=2)+'\n','utf8')
-          subprocess.run([sys.executable,str(root/'build_space.py'),'--output','/tmp/direct418'],check=True,stdout=subprocess.DEVNULL)
-          direct=Path('/tmp/direct418/index.html').read_bytes()
-          assert m['patches'][-1]=='patches/v11_418_sheep_flock_setup.py'
-          m['patches'].pop()
-          m.update(name='§wyrl§ Engine v11.417',finalArtifact='swyrl_engine_v11_417.html',finalBytes=9722094,
-                   finalSha256='69e8480cde5b7027577882e3c18dbbadf338049bfde37bb7d4c3129a563e3e76')
-          mp.write_text(json.dumps(m,indent=2)+'\n','utf8')
-          subprocess.run([sys.executable,str(root/'build_space.py'),'--output','/tmp/se417-base'],check=True,stdout=subprocess.DEVNULL)
-          base=Path('/tmp/se417-base/index.html').read_text('utf8')
-          spec=importlib.util.spec_from_file_location('sheep',root/'patches/v11_418_sheep_flock_setup.py')
-          module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
-          candidate=module.apply(base).encode('utf8')
-          sha=lambda b:hashlib.sha256(b).hexdigest()
-          print('DIRECT_418',len(direct),sha(direct),flush=True)
-          print('MANUAL_418',len(candidate),sha(candidate),flush=True)
-          i=next((k for k,(a,b) in enumerate(zip(direct,candidate)) if a!=b),min(len(direct),len(candidate)))
-          print('FIRST_MISMATCH',i,flush=True)
-          print('DIRECT_NEAR',repr(direct[max(0,i-200):i+350].decode('utf8','replace')),flush=True)
-          print('MANUAL_NEAR',repr(candidate[max(0,i-200):i+350].decode('utf8','replace')),flush=True)
-          PY

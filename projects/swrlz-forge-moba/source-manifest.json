@@ -415,6 +415,6 @@
     "patches/v11_417_model_vr_object_index.py",
     "patches/v11_418_sheep_flock_setup.py"
   ],
-  "finalBytes": 9732976,
-  "finalSha256": "f4859758a1074b417f72916454ea75d11c600985ba54c854d1025aaa97714831"
+  "finalBytes": 9733089,
+  "finalSha256": "12229a3edcd1d18fee1507cfa152d200494fc526f92d0767f834d82f6918b18a"
 }
