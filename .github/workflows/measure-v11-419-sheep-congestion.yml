@@ -35,3 +35,26 @@ jobs:
           print('SE419_CANDIDATE_SHA256='+hashlib.sha256(html).hexdigest(),flush=True)
           PY
           python "$ROOT/scripts/check_inline_js_syntax_v11_266.py" /tmp/se419-candidate.html
+      - name: Measure exact 400-patch release output with normal source builder
+        run: |
+          set -eu
+          python - <<'PY'
+          from pathlib import Path
+          import json,subprocess,sys,hashlib
+          root=Path('projects/swrlz-forge-moba')
+          p=root/'source-manifest.json'
+          m=json.loads(p.read_text('utf8'))
+          assert m['name']=='§wyrl§ Engine v11.418'
+          assert len(m['patches'])==399
+          assert m['patches'][-1]=='patches/v11_418_sheep_flock_setup.py'
+          m.update(name='§wyrl§ Engine v11.419',finalArtifact='swyrl_engine_v11_419.html',
+                   finalBytes=0,finalSha256='')
+          m['patches'].append('patches/v11_419_sheep_congestion_budget.py')
+          p.write_text(json.dumps(m,indent=2)+'\n','utf8')
+          subprocess.run([sys.executable,str(root/'build_space.py'),'--output','/tmp/se419-full'],check=True,stdout=subprocess.DEVNULL)
+          html=Path('/tmp/se419-full/index.html').read_bytes()
+          print('SE419_FULL_BYTES='+str(len(html)),flush=True)
+          print('SE419_FULL_SHA256='+hashlib.sha256(html).hexdigest(),flush=True)
+          assert b'SE419_SHEEP_CONGESTION_BUDGET_START' in html
+          assert b'SWYR' in html
+          PY
