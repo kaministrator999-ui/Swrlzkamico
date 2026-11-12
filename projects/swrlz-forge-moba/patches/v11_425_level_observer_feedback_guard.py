@@ -98,3 +98,5 @@ seLevelsEnsureUI=function se425EnsureLevels(...args){
    'Require real-browser startup acceptance with the 170-part Dragon Den, populated level selector and three Project tabs before publishing.'
   ])
  return html[:at]+json.dumps(notes,ensure_ascii=False,separators=(',',':')).replace('</','<\\/')+html[at+n:]
+
+# Source-chain test entry: the 406-patch candidate requires live Chromium acceptance.
