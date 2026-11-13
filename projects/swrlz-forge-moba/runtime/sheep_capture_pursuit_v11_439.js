@@ -86,23 +86,20 @@ stLanesSegmentOccupant=function(unit,a,b){
   unit.se439SweptContact={sheep:blocker,session:s,at:s.elapsed};
  return blocker;
 };
-function se439CaptureProbe(wolf,s){
- // Same capture conditions and same 1.05 radius as native stUpdateWolf.
- for(const sheep of s.units){
-  if(sheep.kind!=='sheep'||sheep.captured)continue;
-  if(se439SoloXR(s))se439Telemetry.eligibleChecks++;
-  if(s.elapsed<sheep.invulnerableUntil)continue;
-  const dx=wolf.pos.x-sheep.pos.x,dz=wolf.pos.z-sheep.pos.z;
-  if(dx*dx+dz*dz>=1.05**2)continue;
-  if(se439SoloXR(s))se439Telemetry.inRangeChecks++;
-  stCapture(sheep,wolf);
- }
-}
 const se439PriorWolfUpdate=stUpdateWolf;
 stUpdateWolf=function(wolf,dt){
  const s=stSession;
  if(!se439SoloXR(s))return se439PriorWolfUpdate.apply(this,arguments);
- se439Reset(s);wolf.se439SweptContact=null;se439UpdatingWolf=wolf;
+ se439Reset(s);
+ // Observe candidate counts without replacing or duplicating the native
+ // capture scan. The native movement and capture decision remain unchanged.
+ for(const target of s.units){
+  if(target.kind!=='sheep'||target.captured||s.elapsed<target.invulnerableUntil)continue;
+  se439Telemetry.eligibleChecks++;
+  const dx=wolf.pos.x-target.pos.x,dz=wolf.pos.z-target.pos.z;
+  if(dx*dx+dz*dz<1.05**2)se439Telemetry.inRangeChecks++;
+ }
+ wolf.se439SweptContact=null;se439UpdatingWolf=wolf;
  let result;
  try{result=se439PriorWolfUpdate.apply(this,arguments);}
  finally{se439UpdatingWolf=null;}
