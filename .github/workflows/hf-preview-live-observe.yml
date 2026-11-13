@@ -1,0 +1,26 @@
+name: Observe §C live 16K rollout read-only
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/hf-preview-live-observe.yml"]
+permissions: {contents: read}
+jobs:
+  observe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    steps:
+      - run: python -m pip install 'huggingface_hub>=0.34,<2'
+      - run: |
+          python - <<'PY'
+          import json,urllib.request
+          from huggingface_hub import HfApi
+          api=HfApi();rev=api.repo_info("kamiloki/Swyrlz",repo_type="space").sha
+          print("LIVE_PREVIEW_REVISION",rev,flush=True)
+          url="https://kamiloki-swyrlz.hf.space/api/hf/qwen35-ready"
+          try:
+              with urllib.request.urlopen(url,timeout=20) as r:
+                  data=json.load(r)
+              print("LIVE_PREVIEW_STATUS",json.dumps(data,sort_keys=True),flush=True)
+          except Exception as e:
+              print("LIVE_PREVIEW_STATUS_ERROR",type(e).__name__,flush=True)
+          PY
