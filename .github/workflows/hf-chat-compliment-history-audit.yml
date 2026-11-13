@@ -1,0 +1,39 @@
+name: Inspect §C compliment history and budget routing
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/hf-chat-compliment-history-audit.yml"]
+permissions: { contents: read }
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 7
+    steps:
+      - uses: actions/checkout@v4
+      - run: python -m pip install 'huggingface_hub>=0.34,<2'
+      - name: Inspect live code without touching user data
+        shell: bash
+        run: |
+          python - <<'PY'
+          import ast,json,re
+          from pathlib import Path
+          from huggingface_hub import HfApi,hf_hub_download
+          space="kamiloki/Swyrlz"; rev=HfApi().repo_info(space,repo_type="space").sha
+          print("LIVE_SOURCE_REVISION",rev,flush=True)
+          for file, names in [
+             ("brain_programming.py",("programming_intent",)),
+             ("lfm2_700m_engine.py",("response_budget","_qwen35_plain_social_turn","_fit_messages","_wyrlz_active_profile")),
+          ]:
+              s=Path(hf_hub_download(space,file,repo_type="space",revision=rev)).read_text()
+              tree=ast.parse(s)
+              for item in tree.body:
+                  if isinstance(item, (ast.FunctionDef,ast.AsyncFunctionDef)) and item.name in names:
+                      source=ast.get_source_segment(s,item)
+                      print("LIVE_FUNCTION",file,item.name,"\n"+source[:18000],flush=True)
+              if file=="lfm2_700m_engine.py":
+                  lines=s.splitlines()
+                  for j,line in enumerate(lines):
+                      if "response_budget(programming,prompt)" in line or "source_sized_budget(model,programming,history,budget_policy)" in line:
+                          print("LIVE_BUDGET_CALL",json.dumps({"line":j+1,"code":lines[max(0,j-10):min(len(lines),j+24)]}),flush=True)
+          print("HISTORY_AUDIT_COMPLETE",flush=True)
+          PY
