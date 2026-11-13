@@ -5,15 +5,25 @@ ROOT=Path(__file__).resolve().parents[1]
 MARKER='SWYRL_ENGINE_DEPLOY_MARKER: V11_436_CUBE_EXTRUDE_SATCHEL_CAVITY'
 def one(src,old,new):
  count=src.count(old)
- if count!=1:raise AssertionError(('v11.436 anchor',count,old[:120]))
- return src.replace(old,new,1)
+ if count==1:return src.replace(old,new,1)
+ if count>1:raise AssertionError(('v11.436 ambiguous exact anchor',count,old[:120]))
+ # Earlier append-only source patches sometimes shift only indentation.
+ # Require exactly one whitespace-normalized match, never an approximate
+ # semantic match, before changing an embedded historical module.
+ import re
+ chunks=re.split(r'\\s+',old.strip())
+ regex=r'\\s+'.join(re.escape(chunk) for chunk in chunks)
+ matches=list(re.finditer(regex,src))
+ if len(matches)!=1:raise AssertionError(('v11.436 anchor',len(matches),old[:120]))
+ match=matches[0]
+ return src[:match.start()]+new.strip()+src[match.end():]
 def apply(html):
  cavity=(ROOT/'runtime/se436_satchel_cavity.js').read_text('utf8')
  handoff=(ROOT/'runtime/se436_vr_cube_extrude.js').read_text('utf8')
  html=one(html,'/* SE416_SATCHEL_ACADEMY_START',cavity+'\n/* SE416_SATCHEL_ACADEMY_START')
  html=one(html,'installPerformanceSettings();se189InstallPerfUI();',handoff+'\ninstallPerformanceSettings();se189InstallPerfUI();')
  html=one(html,
-  "{title:'Shape a hollow opening',tool:'Topology · Face / Extrude',task:'Turn the solid body into an open-top pouch. Select the top face, inset its boundary, then extrude the inner face downward; inspect inside from above.',why:'An inset creates an inner border. A downward extrusion makes an interior. A dark top surface alone is not a cavity.',hint:'Use the actual topology/face editing controls. If the chosen mesh cannot be inset yet, convert it to editable topology first. Do not mark this complete until you can see interior walls.'},",
+  "{title:'Build real open-top walls',tool:'Meshes · Add box / Transform',task:'Resize the practice cube into a thin bottom slab. Add four separate thin box meshes for the front, back, left and right walls. Align their edges, but leave the top truly open.',why:'Four real walls around a thin floor create an actual empty volume. The current native Face Extrude works on selected triangle faces, not one-click insets of an entire solid cube.',hint:'Select Practice cube and lower its Y height for the floor. Use Add Box four times; make each wall thin, place it around the floor and leave its top uncovered. Orbit above and look through the opening.'},",
   "{title:'Inset and extrude one hollow body',tool:'Manual mesh · Convert / Inset / Extrude',task:'Keep your original practice cube as one body. Convert it to editable mesh, Trigger or tap its top face, apply Inset to create a rim, then Extrude the retained inner face inward. Preview and Apply each step; leave a floor.',why:'A connected inset and inward extrusion make a real open cavity in ONE mesh. No floor box or four wall cubes are needed.',hint:'In VR use Mesh tools → Manual modeling → Make editable. Trigger the top face, choose Inset (about 0.2), Preview and Apply. Then Extrude, press In/out for negative depth (try −0.3), Preview and Apply. In the flat editor use Topology → Manual mesh modeling. Inspect from above.'},")
  html=one(html,
   "   const all=parts(),s=structure(),boxCount=s.boxes.length;",
