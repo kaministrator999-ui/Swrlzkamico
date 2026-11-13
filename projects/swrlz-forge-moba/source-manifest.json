@@ -425,6 +425,6 @@
     "patches/v11_431_model_gizmo_access.py",
     "patches/v11_432_mobile_camera_orbit.py"
   ],
-  "finalBytes": 9913596,
-  "finalSha256": "23b270b66c2381bd1f4f6423886cce25126e56384785857f36cf8026edf56b55"
+  "finalBytes": 9913162,
+  "finalSha256": "ae386647683a6f84cefb837bc9e1fabe9f745386172d352e73fad67e51a1cfbc"
 }
