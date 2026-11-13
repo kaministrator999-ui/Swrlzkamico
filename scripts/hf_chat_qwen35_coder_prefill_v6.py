@@ -96,7 +96,8 @@ FAST_CODE_ROUTER=r'''def _swrlz_standalone_code_prefill(prompt,programming,paylo
 
 
 def _swrlz_compact_standalone_code_system(prompt,programming,
-                                         custom_assistant_profile,user_profile):
+                                         custom_assistant_profile,user_profile,
+                                         authored_profile):
     """Grounded original role and nonoptional code-truth/acceptance policy."""
     text=(
         "You are §wyrlz. Implement the user's exact coding request as usable "
@@ -105,7 +106,7 @@ def _swrlz_compact_standalone_code_system(prompt,programming,
         "verified execution receipt. The deterministic code validator remains "
         "authoritative. Keep the answer focused; no unasked extras.\n"
         "AUTHORED §WYRLZ CORE:\n"
-        +_wyrlz_active_profile(prompt,programming,brief=True)
+        +authored_profile(prompt,programming,brief=True)
         +"\nMANDATORY CODE-TRUTH POLICY:\n"+CODE_TRUTH_POLICY
         +"\nRESPONSE MODE:\n"+_response_mode(prompt,programming)
     )
@@ -137,7 +138,8 @@ FAST_POLICY_NEW=r'''    if not source_change_mode:
         prompt,programming,payload,history,source_change_mode)
     if simple_code_prefill:
         system=_swrlz_compact_standalone_code_system(
-            prompt,programming,custom_assistant_profile,user_profile)
+            prompt,programming,custom_assistant_profile,user_profile,
+            _wyrlz_active_profile)
     started=time.perf_counter()'''
 
 RESOURCE_OLD=r'''        yield {"type":"RESOURCE","cpuCapacity":_cpu_capacity(),"decodeThreads":_thread_plan()[0],"batchThreads":_thread_plan()[1],"maxResponseTokens":response_tokens}'''

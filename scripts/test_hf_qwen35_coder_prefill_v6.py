@@ -65,7 +65,10 @@ assert not qualifies(example,p|{"intentContract":{"originalRequest":example,
     "largeData":"x"*6000}}, {},[],None)
 assert not qualifies(example,p|{"intentContract":{"languageContract":{
     "artifactType":"repository"}}}, {},[],None)
-text=short_policy(example,p,"Prefer precise explanations","Name: Test User")
+text=short_policy(example,p,"Prefer precise explanations","Name: Test User",
+                  namespace["_wyrlz_active_profile"])
+# A helper defined outside generate_events must not rely on its local import.
+namespace.pop("_wyrlz_active_profile")
 assert "§wyrlzara ∞ Mirror Muse" in text
 assert "SAVED ASSISTANT CUSTOMIZATION" in text
 assert "Name: Test User" in text
