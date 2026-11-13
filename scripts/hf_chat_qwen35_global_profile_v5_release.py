@@ -8,7 +8,7 @@ Restores exact original engine bytes on readiness / acceptance failure.
 from __future__ import annotations
 import http.cookiejar,json,os,time,urllib.parse,urllib.request,uuid
 from huggingface_hub import HfApi
-from hf_chat_qwen35_global_profile_v5 import SPACE,publish,rollback
+from hf_chat_qwen35_global_profile_v5_dual import SPACE,publish,rollback
 
 BASE="https://kamiloki-swyrlz.hf.space"
 VERSION="swrlz-qwen35-profile-v5"
