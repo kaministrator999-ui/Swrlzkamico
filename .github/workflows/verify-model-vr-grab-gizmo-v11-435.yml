@@ -1,0 +1,44 @@
+name: Verify §E v11.435 sealed VR Grab gizmos
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/verify-model-vr-grab-gizmo-v11-435.yml"
+      - "projects/swrlz-forge-moba/scripts/verify_v11_435_release.py"
+      - "projects/swrlz-forge-moba/tests/model_vr_grab_gizmo_v11_435.mjs"
+      - "projects/swrlz-forge-moba/tests/model_camera_preferences_preserved_v11_435.mjs"
+      - "projects/swrlz-forge-moba/patches/v11_435_model_vr_grab_gizmo.py"
+      - "projects/swrlz-forge-moba/runtime/model_vr_grab_gizmo_v11_435.js"
+      - "projects/swrlz-forge-moba/source-manifest.json"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - name: Install native Three.js test dependency
+        run: npm install --no-save --ignore-scripts --no-audit --no-fund three@0.169.0
+      - name: Check versioned sealed source, 77 assets and preserved workflows
+        run: |
+          python projects/swrlz-forge-moba/scripts/verify_v11_435_release.py --output /tmp/se435-certified --three-module node_modules/three/build/three.module.js
+      - name: Assert both modeler and editor use identical sealed source
+        run: |
+          python - <<'PY'
+          import pathlib,hashlib,json
+          out=pathlib.Path('/tmp/se435-certified')
+          m=json.loads(pathlib.Path('projects/swrlz-forge-moba/source-manifest.json').read_text())
+          html=(out/'index.html').read_bytes()
+          assert html==(out/'modeler.html').read_bytes()
+          assert hashlib.sha256(html).hexdigest()==m['finalSha256']
+          assert len(html)==m['finalBytes']
+          source=json.loads((out/'SOURCE.json').read_text())
+          assert source['finalSha256']==m['finalSha256'] and len(source['assets'])==77
+          print('V11_435_SEALED_BUILD_PASS',m['finalBytes'],m['finalSha256'],len(source['patches']))
+          PY
