@@ -1,0 +1,5 @@
+TARGET=kamiloki/Swyrlz
+APPROVED=1
+CHANGE_SCOPE=social-ack-inference-history-only
+SOURCE_REF=ac80f5bae44963a490b7ede973fa089cc4a116a0
+REQUEST_NONCE=ack-context-20261113-v1-0001
