@@ -8,6 +8,7 @@ on:
       - "scripts/hf_chat_qwen35_9b_runtime.py"
       - "scripts/hf_qwen35_free_cpu_release.py"
       - ".github/workflows/hf-qwen35-free-cpu-validate.yml"
+      - ".github/workflows/hf-qwen35-free-cpu-release.yml"
 permissions:
   contents: read
 jobs:
