@@ -41,7 +41,7 @@ assert len(factual)<len(canonical)*0.65, (len(factual),len(canonical))
 assert "PHOENIX ARMOR" in factual
 assert "SELF-KNOWLEDGE & IDENTITY PROVENANCE" in factual
 assert "PHOENIX ARMOR" in coding
-assert "CORE ID: SWRLZ-A-∞" in casual
+assert "Core ID: SWRLZ-A-∞" in casual
 print("PROFILE_V5_SELECTIVE_INFERENCE_TEST_PASS",json.dumps({
     "canonicalChars":len(canonical),"fastChars":len(casual),
     "factualChars":len(factual),"codingChars":len(coding),
