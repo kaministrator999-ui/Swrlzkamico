@@ -1,0 +1,48 @@
+name: Verify §E v11.438 worker bridge candidate
+on:
+  push:
+    branches: [main]
+    paths:
+      - "projects/swrlz-forge-moba/source-manifest.json"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  worker-seal:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Check new native Worker and tests
+        run: |
+          node --check projects/swrlz-forge-moba/runtime/engine_simulation_render_bridge_v11_438.js
+          node projects/swrlz-forge-moba/tests/test_engine_render_bridge_v11_438.cjs
+          node projects/swrlz-forge-moba/tests/test_sheep_congestion_budget_v11_419.cjs
+          node projects/swrlz-forge-moba/tests/test_sheep_territory_capture_v11_437.cjs
+      - name: Assemble full patch lineage and validate generated HTML
+        run: |
+          python projects/swrlz-forge-moba/build_space.py --output /tmp/swrlz-se438
+          python projects/swrlz-forge-moba/scripts/check_inline_js_syntax_v11_266.py /tmp/swrlz-se438/index.html
+          python - <<'PY'
+          import pathlib,hashlib,json
+          root=pathlib.Path('/tmp/swrlz-se438')
+          p=root/'index.html'
+          html=p.read_bytes()
+          src=html.decode()
+          assert html==(root/'modeler.html').read_bytes()
+          assert 'SE438_ENGINE_SIMULATION_RENDER_BRIDGE_START' in src
+          assert 'SWYRL_ENGINE_DEPLOY_MARKER: V11_438_RENDER_SIMULATION_BRIDGE' in src
+          assert "window.SWRLZ_FORGE_BUILD={version:'v11.438'" in src
+          assert "source.version=11.438" in src
+          assert 'se438Route(unit,unit.pos,aim,radius)' in src
+          assert 'window.SWYRL_ENGINE_SHEEP_TERRITORY_CAPTURE_437=' in src
+          m=json.loads(pathlib.Path('projects/swrlz-forge-moba/source-manifest.json').read_text())
+          assert m['name']=='§wyrl§ Engine v11.438'
+          assert len(m['patches'])==415
+          assert m['patches'][-1]=='patches/v11_438_engine_simulation_render_bridge.py'
+          print('SE438_SOURCE_SEAL_BYTES',len(html),flush=True)
+          print('SE438_SOURCE_SEAL_SHA256',hashlib.sha256(html).hexdigest(),flush=True)
+          print('SE438_SOURCE_VERIFIED',flush=True)
+          PY
