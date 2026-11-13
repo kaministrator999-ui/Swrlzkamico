@@ -432,6 +432,6 @@
     "patches/v11_438_engine_simulation_render_bridge.py",
     "patches/v11_439_sheep_capture_pursuit.py"
   ],
-  "finalBytes": null,
-  "finalSha256": null
+  "finalBytes": 9967451,
+  "finalSha256": "1b837415765c159041bec244cadf5673b8fdb2865c73afea16555bbc7c6fa910"
 }
