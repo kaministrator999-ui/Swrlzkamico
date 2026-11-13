@@ -1,0 +1,87 @@
+name: Guarded §C bare-ack history optimization live release
+on:
+  push:
+    branches: [main]
+    paths: [".deploy/HF_CHAT_ACK_CONTEXT_REQUEST.txt"]
+permissions:
+  contents: read
+concurrency:
+  group: swrlz-hf-space-deployment
+  cancel-in-progress: false
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 39
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate existing Space and source-only authorization
+        id: approval
+        shell: bash
+        run: |
+          set -euo pipefail
+          request=.deploy/HF_CHAT_ACK_CONTEXT_REQUEST.txt
+          test -f "$request"
+          get() { sed -n "s/^$1=//p" "$request" | tail -n 1; }
+          test "$(get TARGET)" = "kamiloki/Swyrlz"
+          test "$(get APPROVED)" = "1"
+          test "$(get CHANGE_SCOPE)" = "social-ack-inference-history-only"
+          ref="$(get SOURCE_REF)"
+          nonce="$(get REQUEST_NONCE)"
+          [[ "$ref" =~ ^[a-f0-9]{40}$ ]]
+          [[ "$nonce" =~ ^[a-z0-9-]{12,96}$ ]]
+          echo "ref=$ref" >> "$GITHUB_OUTPUT"
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.approval.outputs.ref }}
+          path: ack-source
+          fetch-depth: 1
+      - name: Install Hugging Face source tooling
+        run: python -m pip install 'huggingface_hub>=0.34,<2'
+      - name: Validate AST, pinned original live source, profile and negative routes
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd ack-source
+          python -m py_compile scripts/hf_chat_ack_context.py scripts/probe_chat_ack_context.py
+          python -u scripts/hf_chat_ack_context.py inspect
+      - name: Preserve exact full source bytes before any HF mutation
+        shell: bash
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import hashlib,json,os
+          from pathlib import Path
+          from huggingface_hub import HfApi,hf_hub_download
+          space="kamiloki/Swyrlz"
+          api=HfApi(token=os.environ["HF_TOKEN"])
+          revision=api.repo_info(space,repo_type="space").sha
+          f=Path(hf_hub_download(space,"lfm2_700m_engine.py",
+                         revision=revision,repo_type="space",token=api.token))
+          folder=Path("ack-source-rollback");folder.mkdir()
+          data=f.read_bytes()
+          (folder/"lfm2_700m_engine.py").write_bytes(data)
+          (folder/"manifest.json").write_text(json.dumps({
+               "source":revision,"sha256":hashlib.sha256(data).hexdigest(),
+               "files":["lfm2_700m_engine.py"],"modelChanged":False,
+               "paidHardwareChange":False}))
+          print("ACK_CONTEXT_EXACT_PREVIOUS_SOURCE_SAVED",revision,flush=True)
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: swrlz-ack-context-previous-exact-source
+          path: ack-source-rollback/
+          retention-days: 14
+          if-no-files-found: error
+      - name: Publish on exact current HF source and verify new worker or roll back
+        shell: bash
+        timeout-minutes: 33
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          SWRLZ_ACK_CONTEXT_APPROVED: "1"
+        run: |
+          set -euo pipefail
+          cd ack-source
+          python -u scripts/hf_chat_ack_context.py publish
+          echo "ACK_CONTEXT_LIVE_RELEASE_VALIDATED"
