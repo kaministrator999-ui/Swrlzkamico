@@ -7,6 +7,8 @@ on:
       - "scripts/benchmark_hf_qwen35_coder_prefill_v6.py"
       - "scripts/hf_chat_qwen35_coder_prefill_v6.py"
       - "scripts/test_hf_qwen35_coder_prefill_v6.py"
+      - "scripts/hf_chat_qwen35_coder_prefill_v6_release.py"
+      - ".github/workflows/hf-qwen35-coder-prefill-v6-release.yml"
       - "scripts/test_hf_qwen35_coder_prefill_v6.py"
       - ".github/workflows/hf-qwen35-coder-prefill-v6-validate.yml"
 permissions:
@@ -28,7 +30,7 @@ jobs:
         run: |
           set -e
           if test -f scripts/hf_chat_qwen35_coder_prefill_v6.py; then
-            python -m py_compile scripts/hf_chat_qwen35_coder_prefill_v6.py scripts/test_hf_qwen35_coder_prefill_v6.py
+            python -m py_compile scripts/hf_chat_qwen35_coder_prefill_v6.py scripts/test_hf_qwen35_coder_prefill_v6.py scripts/hf_chat_qwen35_coder_prefill_v6_release.py
             python -u scripts/test_hf_qwen35_coder_prefill_v6.py
             python -u scripts/hf_chat_qwen35_coder_prefill_v6.py inspect
           fi
