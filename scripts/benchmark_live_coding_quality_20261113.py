@@ -129,6 +129,12 @@ def probe(case):
         "contextTokens":budget.get("estimatedInputTokens"),
         "systemTokens":(budget.get("tokenBreakdown") or {}).get("system"),
         "historyMessagesKept":budget.get("historyMessagesKept"),
+        "queueWaitMs":active.get("queueWaitMs"),
+        "acceptedAtUnixMs":active.get("acceptedAtUnixMs"),
+        "startedAtUnixMs":active.get("startedAtUnixMs"),
+        "completedAtUnixMs":active.get("completedAtUnixMs"),
+        "stationTiming":{k:v for k,v in (active.get("stationTiming") or {}).items()
+              if any(word in k.lower() for word in ("wait","duration","latency","ms","seconds"))},
         "candidateStatus":validation.get("status"),
         "firstNativeTokenMs":attempts[-1].get("firstTokenLatencyMs") if attempts else None,
         "generationMs":gen.get("totalCandidateGenerationMs"),
