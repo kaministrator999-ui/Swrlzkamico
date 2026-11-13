@@ -1,0 +1,30 @@
+name: Validate §C natural conversation v4 and max available CPU
+on:
+  push:
+    branches: [tune/chat-qwen35-conversation-profile-v4-20261113]
+    paths:
+      - "scripts/hf_chat_qwen35_conversation_v4.py"
+      - "scripts/test_hf_qwen35_conversation_v4.py"
+      - "scripts/hf_chat_qwen35_conversation_v4_release.py"
+      - ".github/workflows/hf-qwen35-conversation-v4-validate.yml"
+      - ".github/workflows/hf-qwen35-conversation-v4-release.yml"
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install read-only HF client
+        run: python -m pip install 'huggingface_hub>=0.34,<2'
+      - name: Verify code, classifier, hardware and exact live overlay
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m py_compile scripts/hf_chat_qwen35_conversation_v4.py scripts/test_hf_qwen35_conversation_v4.py
+          if test -f scripts/hf_chat_qwen35_conversation_v4_release.py; then
+            python -m py_compile scripts/hf_chat_qwen35_conversation_v4_release.py
+          fi
+          python scripts/test_hf_qwen35_conversation_v4.py
+          python scripts/hf_chat_qwen35_conversation_v4.py inspect
