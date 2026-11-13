@@ -1,0 +1,88 @@
+name: Guarded §C coding prefill v6 with source-preserving validation
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".deploy/HF_CHAT_QWEN35_CODER_V6_REQUEST.txt"
+permissions:
+  contents: read
+concurrency:
+  group: swrlz-hf-space-deployment
+  cancel-in-progress: false
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 39
+    steps:
+      - uses: actions/checkout@v4
+      - name: Require exact source, existing Space and authorized request
+        id: approval
+        shell: bash
+        run: |
+          set -euo pipefail
+          request=.deploy/HF_CHAT_QWEN35_CODER_V6_REQUEST.txt
+          test -f "$request"
+          get() { sed -n "s/^$1=//p" "$request" | tail -n 1; }
+          test "$(get TARGET)" = "kamiloki/Swyrlz"
+          test "$(get APPROVED)" = "1"
+          ref="$(get SOURCE_REF)"
+          nonce="$(get REQUEST_NONCE)"
+          [[ "$ref" =~ ^[a-f0-9]{40}$ ]]
+          [[ "$nonce" =~ ^[a-z0-9-]{10,96}$ ]]
+          echo "ref=$ref" >> "$GITHUB_OUTPUT"
+          echo "§C shared Qwen3.5-9B in existing Space; no new model, hardware or paid services"
+      - name: Checkout pinned code and acceptance tests
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.approval.outputs.ref }}
+          path: coder-source
+          fetch-depth: 1
+      - name: Install current Hub source client
+        run: python -m pip install 'huggingface_hub>=0.34,<2'
+      - name: Preflight static routes, profile and exact live source
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd coder-source
+          python -m py_compile scripts/hf_chat_qwen35_coder_prefill_v6.py scripts/test_hf_qwen35_coder_prefill_v6.py scripts/hf_chat_qwen35_coder_prefill_v6_release.py
+          python scripts/test_hf_qwen35_coder_prefill_v6.py
+          python scripts/hf_chat_qwen35_coder_prefill_v6.py inspect
+      - name: Preserve immutable exact prior backend
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json,os
+          from pathlib import Path
+          from huggingface_hub import HfApi,hf_hub_download
+          api=HfApi(token=os.environ['HF_TOKEN'])
+          revision=api.repo_info('kamiloki/Swyrlz',repo_type='space').sha
+          folder=Path('qwen35-coder-v6-original')
+          folder.mkdir()
+          for name in ('qwen_coder_engine.py','lfm2_700m_engine.py',
+                       'qwen35_single_runtime.py','station.py','coder_model_config.py'):
+              source=hf_hub_download('kamiloki/Swyrlz',name,revision=revision,
+                                      repo_type='space',token=api.token)
+              (folder/name).write_bytes(Path(source).read_bytes())
+          (folder/'revision.json').write_text(json.dumps({
+              'space':'kamiloki/Swyrlz','revision':revision}))
+          print('CODER_V6_ORIGINAL_SOURCE_SNAPSHOT',revision,flush=True)
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: qwen35-coder-v6-exact-previous-sources
+          path: qwen35-coder-v6-original/
+          retention-days: 14
+          if-no-files-found: error
+      - name: Publish only coder route and require measured response improvement
+        shell: bash
+        timeout-minutes: 32
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          SWRLZ_QWEN35_CODER_V6_APPROVED: "1"
+        run: |
+          set -euo pipefail
+          cd coder-source
+          python -u scripts/hf_chat_qwen35_coder_prefill_v6_release.py
+          echo "CODER_V6_LIVE_BENCHMARK_ACCEPTED"
