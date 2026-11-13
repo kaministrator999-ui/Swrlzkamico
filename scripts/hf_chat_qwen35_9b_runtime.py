@@ -42,6 +42,7 @@ _guard = threading.RLock()
 _build_lock = threading.RLock()
 _server_process = None
 _instance = None
+_warmed = False
 _file_cache: dict[str, str] = {}
 
 
@@ -237,6 +238,8 @@ def load(model_path: str | None = None, projector_path: str | None = None):
 
 def warmup():
     """Verify actual tokenization and generation before reporting ready."""
+    global _warmed
+    _warmed = False
     model = load()
     if not model.tokenize(b"ready", add_bos=False):
         raise RuntimeError("QWEN35_TOKENIZER_NOT_READY")
@@ -245,4 +248,10 @@ def warmup():
         max_tokens=8, temperature=0.0, stream=True))
     if not any(event.get("choices") for event in response):
         raise RuntimeError("QWEN35_INFERENCE_NOT_READY")
+    _warmed = True
     return {"model": MODEL_LABEL, "ready": True, "threads": DECODE_THREADS, "context": CONTEXT_TOKENS}
+
+
+def ready() -> bool:
+    """Read-only readiness after one verified warm decode, not model-download status."""
+    return _warmed and _instance is not None and _healthy()
