@@ -1,0 +1,146 @@
+{
+  "schema": "swrlz-github-programming-attempt-log-v1",
+  "requestId": "d16f4364-796f-4b9d-8992-ce61b06aad29",
+  "modelId": "700m",
+  "eventType": "PROGRAMMING_GENERATION_TELEMETRY",
+  "sourceRef": "f149dd857e3d9219f5cae7da0286b5dbfec85c42",
+  "persistedAtUnixMs": 1794600254967,
+  "diagnostic": {
+    "schema": "swrlz-station-programming-log-v1",
+    "generationTelemetry": {
+      "schema": "swrlz-programming-generation-telemetry-v1",
+      "attemptCount": 1,
+      "regenerationCount": 0,
+      "firstCandidateRejected": false,
+      "finalAcceptedAttempt": 1,
+      "finalCandidateStatus": "PASS",
+      "guardedTurn": true,
+      "repairTurn": false,
+      "strictLanguage": true,
+      "modelLoadLatencyMs": 21.136,
+      "visibleFirstDeltaLatencyMs": 42418.848,
+      "engineTotalLatencyMs": 42418.915,
+      "totalCandidateGenerationMs": 42395.677,
+      "attempts": [
+        {
+          "schema": "swrlz-candidate-attempt-v1",
+          "attempt": 1,
+          "trigger": "initial",
+          "durationMs": 42395.677,
+          "firstTokenLatencyMs": 37607.514,
+          "deltaChunks": 63,
+          "finishReason": "stop",
+          "requestedMaxTokens": 4096,
+          "usage": {},
+          "candidateFingerprint": "3e8d187e34120bc5",
+          "changedFromPreviousAttempt": null,
+          "changedFromRepairTarget": null,
+          "validationStatus": "PASS",
+          "validationReasons": [],
+          "accepted": true
+        }
+      ]
+    },
+    "stationTiming": {
+      "acceptedAtUnixMs": 1794600212541,
+      "startedAtUnixMs": 1794600212543,
+      "completedAtUnixMs": 1794600254966,
+      "queueWaitMs": 2,
+      "stationRunMs": 42423,
+      "endToEndMs": 42425
+    },
+    "responseResourceUsage": {
+      "schema": "swrlz-response-resource-usage-v1",
+      "scope": "shared-cgroup-v2",
+      "source": "cgroup-v2",
+      "isolatedModelAttribution": false,
+      "wallTimeMs": 42422,
+      "capacity": {
+        "cpuLimitCores": 16.0,
+        "cpuLimitState": "measured",
+        "memoryLimitBytes": 104000000000,
+        "memoryLimitState": "measured"
+      },
+      "observed": {
+        "cgroupCpuUsageUsecDelta": 618163456,
+        "averageCgroupCpuCores": 14.572,
+        "memoryStartBytes": 9328726016,
+        "memoryEndBytes": 9632526336,
+        "memoryEndMinusStartBytes": 303800320,
+        "memoryPeakSampledBytes": 9632628736,
+        "memoryPeakAboveStartBytes": 303902720,
+        "memorySampleCount": 44,
+        "memorySamplingIntervalMs": 1000
+      },
+      "attribution": "Shared container readings include concurrent work; they are not exclusive CPU/RAM use by this model.",
+      "routeId": "700m",
+      "configuredEngineThreadBudget": {
+        "cpuCapacity": 16,
+        "decodeThreads": 16,
+        "batchThreads": 16,
+        "maxResponseTokens": 4096
+      },
+      "outcome": "COMPLETE"
+    },
+    "candidateValidation": {
+      "status": "PASS",
+      "reasons": [],
+      "detectedLanguages": [
+        "python"
+      ],
+      "activeRepairConstraints": {
+        "dependencyPolicy": "evidence-bounded",
+        "unavailableDependencies": [],
+        "carriedUnavailableDependencies": []
+      },
+      "behaviorLedger": {
+        "currentScore": null,
+        "bestKnownScore": null,
+        "regressedCases": [],
+        "resolvedCases": [],
+        "preservePassingCases": [],
+        "rebaseRecommended": false,
+        "bestKnownArtifact": null,
+        "repairBaseMode": "latest-failing-source"
+      },
+      "structuredReceipt": {},
+      "executionVerified": false,
+      "verificationState": "NOT_EXECUTION_VERIFIED"
+    },
+    "repairConstraints": {
+      "schema": "swrlz-repair-constraints-v1",
+      "dependencyPolicy": "evidence-bounded",
+      "unavailableDependencies": [],
+      "forbiddenDependencies": [],
+      "currentReceiptDependencies": [],
+      "addedDependencies": [],
+      "carriedUnavailableDependencies": [],
+      "releasedDependencies": [],
+      "constraintCount": 0
+    },
+    "behaviorLedger": {
+      "currentScore": null,
+      "bestKnownScore": null,
+      "regressedCases": [],
+      "resolvedCases": [],
+      "preservePassingCases": [],
+      "rebaseRecommended": false,
+      "bestKnownArtifact": null,
+      "repairBaseMode": "latest-failing-source"
+    },
+    "behaviorRepairBase": {
+      "mode": "latest-failing-source",
+      "sourceFingerprint": null,
+      "artifactId": "",
+      "revision": 0,
+      "sourceHash": ""
+    },
+    "structuredReceipt": {},
+    "artifactReceipt": {
+      "action": "ARTIFACT_CREATED",
+      "revision": 1,
+      "sourceHash": "7de3e35e019e4cd599bdc6fd9145cbdf535e1ceca025ae80c006035cff94c24d",
+      "reason": null
+    }
+  }
+}
