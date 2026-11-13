@@ -17,8 +17,8 @@ def apply(html):
     source=(ROOT/'runtime/engine_simulation_render_bridge_v11_438.js').read_text('utf-8')
     assert 'SE438_ENGINE_SIMULATION_RENDER_BRIDGE_START' in source
     assert 'setAnimationLoop(' not in source and 'requestAnimationFrame(' not in source
-    start=html.index('function stMoveUnit(unit,target,dt){')
-    end=html.index('function stCanBuild(',start)
+    start=html.index('stMoveUnit = function(unit,target,dt) {')
+    end=html.index('function stLanesSheepApproach(',start)
     block=html[start:end]
     # The standard AI path search in the v11.419 congestion-aware movement
     # branch is a pure numeric A* computation and can use the worker. Alternate
