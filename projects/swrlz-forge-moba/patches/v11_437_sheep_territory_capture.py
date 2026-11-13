@@ -2,7 +2,7 @@
 from pathlib import Path
 import json
 ROOT=Path(__file__).resolve().parents[1]
-MARKER='SWYRL_ENGINE_DEPLOY_MARKER: V11_436_SHEEP_TERRITORY_CAPTURE'
+MARKER='SWYRL_ENGINE_DEPLOY_MARKER: V11_437_SHEEP_TERRITORY_CAPTURE'
 def one(source,old,new,label):
  n=source.count(old)
  assert n==1,('v11.437',label,n,old[:125])
@@ -13,7 +13,7 @@ def scoped(source,start,end,old,new,label):
  assert section.count(old)==1,('v11.437',label,section.count(old),old[:110])
  return source[:a]+section.replace(old,new,1)+source[b:]
 def apply(html):
- js=(ROOT/'runtime/sheep_territory_capture_v11_436.js').read_text('utf8')
+ js=(ROOT/'runtime/sheep_territory_capture_v11_437.js').read_text('utf8')
  assert 'SE437_SHEEP_TERRITORY_CAPTURE_START' in js
  # Both the desktop/native sheep base chooser and Quest's time-sliced chooser
  # stop importing every sheep-owned house into their candidate territories.

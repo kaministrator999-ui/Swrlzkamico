@@ -3,7 +3,7 @@ on:
   push:
     branches: [main]
     paths:
-      - "projects/swrlz-forge-moba/patches/v11_436_sheep_territory_capture.py"
+      - "projects/swrlz-forge-moba/patches/v11_437_sheep_territory_capture.py"
 permissions:
   contents: read
 jobs:
@@ -16,8 +16,8 @@ jobs:
           python-version: "3.11"
       - name: Check new JavaScript and territory behavior
         run: |
-          node --check projects/swrlz-forge-moba/runtime/sheep_territory_capture_v11_436.js
-          node projects/swrlz-forge-moba/tests/test_sheep_territory_capture_v11_436.cjs
+          node --check projects/swrlz-forge-moba/runtime/sheep_territory_capture_v11_437.js
+          node projects/swrlz-forge-moba/tests/test_sheep_territory_capture_v11_437.cjs
       - name: Rebuild proposed 413-patch release without changing previous seal
         run: |
           python - <<'PY'
@@ -25,7 +25,7 @@ jobs:
           p=pathlib.Path('projects/swrlz-forge-moba/source-manifest.json')
           m=json.loads(p.read_text())
           assert m['name']=='§wyrl§ Engine v11.436'
-          m['patches'].append('patches/v11_436_sheep_territory_capture.py')
+          m['patches'].append('patches/v11_437_sheep_territory_capture.py')
           m['name']='§wyrl§ Engine v11.437'
           m['finalArtifact']='swyrl_engine_v11_436.html'
           m['finalSha256']=None

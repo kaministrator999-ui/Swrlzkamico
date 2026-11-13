@@ -18,7 +18,7 @@ const sandbox={THREE:{Vector3:V},window:{},stSession:s,renderer:{xr:{isPresentin
  stMakeSpirit:()=>({serial:++made}),stStop:()=>{},stUpdate:()=>{},
  stCapture:unit=>{unit.captured=true},console};
 vm.createContext(sandbox);
-vm.runInContext(fs.readFileSync(require('node:path').join(__dirname,'../runtime/sheep_territory_capture_v11_436.js'),'utf8'),sandbox);
+vm.runInContext(fs.readFileSync(require('node:path').join(__dirname,'../runtime/sheep_territory_capture_v11_437.js'),'utf8'),sandbox);
 assert.equal(vm.runInContext('se437BaseAllowed(stSession.units[1],new THREE.Vector3(-9,0,-8))',sandbox),false);
 assert.equal(vm.runInContext('se437BuildAllowed(stSession.units[1],-10,-9)',sandbox),false);
 assert.equal(vm.runInContext('se437BaseCandidates(stSession.units[1]).length',sandbox),13);
