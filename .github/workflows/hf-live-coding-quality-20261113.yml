@@ -1,0 +1,71 @@
+name: Live §C coding correctness and latency benchmark (read-only)
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/hf-live-coding-quality-20261113.yml"
+permissions:
+  contents: read
+concurrency:
+  group: swrlz-readonly-9b-coder-benchmark
+  cancel-in-progress: false
+jobs:
+  benchmark:
+    runs-on: ubuntu-latest
+    timeout-minutes: 23
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate benchmark syntax and grading harness
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m py_compile scripts/benchmark_live_coding_quality_20261113.py
+          python - <<'PY'
+          from scripts.benchmark_live_coding_quality_20261113 import CASES, score
+          samples={
+            "python_square": "def square(n):\n    return n * n\n",
+            "python_repair": "def square(n):\n    return n ** 2\n",
+            "python_prime": (
+              "def is_prime(n):\n"
+              "    if n < 2: return False\n"
+              "    for i in range(2, int(n**0.5)+1):\n"
+              "        if n%i==0: return False\n"
+              "    return True\n"
+            ),
+            "python_intervals":(
+              "def merge_intervals(intervals):\n"
+              "    out=[]\n"
+              "    for s,e in sorted(intervals):\n"
+              "        if out and s <= out[-1][1]:\n"
+              "            out[-1][1]=max(out[-1][1],e)\n"
+              "        else:\n"
+              "            out.append([s,e])\n"
+              "    return out\n"
+            ),
+            "javascript_palindrome": (
+              "function isPalindrome(text) {\n"
+              "  const cleaned=text.toLowerCase().replace(/[^a-z0-9]/g,'');\n"
+              "  return cleaned===cleaned.split('').reverse().join('');\n"
+              "}\n"
+            ),
+          }
+          for case in CASES:
+              result=score(case,{"response":samples[case["id"]],
+                    "terminal":"COMPLETE","id":case["id"],
+                    "firstTextSec":0,"totalSec":0,"outputChars":0})
+              quality=result["quality"]
+              assert quality["passed"]==quality["total"],(case["id"],quality)
+          print("LIVE_CODER_TEST_HARNESS_PASS",len(CASES),flush=True)
+          PY
+      - name: Live anonymous Qwen3.5-9B coding outputs and actual unit tests
+        shell: bash
+        run: |
+          set -o pipefail
+          python -u scripts/benchmark_live_coding_quality_20261113.py | tee live-coding-quality-results.log
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: swrlz-live-coding-quality-20261113
+          path: live-coding-quality-results.log
+          if-no-files-found: ignore
+          retention-days: 14
