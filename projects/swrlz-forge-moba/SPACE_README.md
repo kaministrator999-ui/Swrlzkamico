@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.436
+title: §wyrl§ Engine v11.437
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,16 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.437 · Sheep Tag independent AI bases and smoother captures (2026-11-12)
+
+Solo sheep teammates no longer select home-building plots by following the human player's houses. Their Quest and desktop AI planners now choose staggered candidates based on each sheep's authored home, with spacing around player construction and other assigned sheep territories. The existing v11.411 path-planning quota and v11.419 congestion safeguards are unchanged.
+
+Captures already coalesced building navigation invalidations and deferred material disposal; those protections remain. The Quest game now gradually prepares up to four unattached spirit visuals for reuse when wolves tag sheep, reducing synchronous work during capture. The new diagnosis reports spirit-cache hits/misses and JavaScript capture cost, not GPU or headset compositor frame time.
+
+The 414-patch v11.437 candidate source was assembled and checked for inline JavaScript syntax, with focused territory/spirit tests. Exact 9,947,658-byte HTML receipt: `b1bfaf78a0c16c87ed96f826e574e857c904a85746f6707dccf1505d148be309`. Physical Quest acceptance is pending. See `docs/SHEEP_TERRITORY_CAPTURE_V11_437.md`.
+
+
 
 ## §E v11.436 · Cube face Extrude and one-mesh Satchel (2026-11-12)
 
