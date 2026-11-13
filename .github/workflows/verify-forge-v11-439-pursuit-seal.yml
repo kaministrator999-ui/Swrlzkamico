@@ -39,7 +39,6 @@ jobs:
             'SWYRL_ENGINE_DEPLOY_MARKER: V11_439_SHEEP_CAPTURE_PURSUIT',
             "window.SWRLZ_FORGE_BUILD={version:'v11.439'",
             'se439DirectChase(unit,aim,context)?',
-            'se439CaptureProbe(unit,s);',
             'SE438_ENGINE_SIMULATION_RENDER_BRIDGE_START',
             'SE437_SHEEP_TERRITORY_CAPTURE_START',
             'SE434_SHEEP_VISUAL_BATCH_START',
