@@ -1,0 +1,21 @@
+name: Diagnose §C emoji followup latency
+on:
+  push:
+    branches: [fix/chat-qwen35-emoji-social-routing-20261113]
+    paths:
+      - "scripts/probe_hf_qwen35_emoji_social.py"
+      - ".github/workflows/hf-qwen35-emoji-social-diagnose.yml"
+permissions:
+  contents: read
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 9
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install current public HF read-only client
+        run: python -m pip install 'huggingface_hub>=0.34,<2'
+      - name: Verify social predicate and measure one anonymous emoji followup
+        run: |
+          python -m py_compile scripts/probe_hf_qwen35_emoji_social.py
+          python -u scripts/probe_hf_qwen35_emoji_social.py
