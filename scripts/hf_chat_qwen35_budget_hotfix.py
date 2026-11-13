@@ -16,6 +16,7 @@ import re
 import sys
 import tempfile
 import time
+from typing import Any
 import urllib.request
 
 from huggingface_hub import HfApi, CommitOperationAdd, hf_hub_download
@@ -72,7 +73,7 @@ def test_budget(source: str) -> None:
     fn = next(n for n in parsed.body if isinstance(n, ast.FunctionDef) and n.name == "response_budget")
     isolated = ast.Module(body=[fn], type_ignores=[])
     ast.fix_missing_locations(isolated)
-    ns = {"re": re, "expanded_project_delivery": lambda programming, prompt: False}
+    ns = {"re": re, "Any": Any, "expanded_project_delivery": lambda programming, prompt: False}
     exec(compile(isolated, "<response-budget-unit>", "exec"), ns)
     budget = ns["response_budget"]
     assert budget({}, "Hey how are you?")["tokens"] == 1024
