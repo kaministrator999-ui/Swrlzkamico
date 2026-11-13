@@ -1,12 +1,12 @@
 # §E v11.434 — Crowded Sheep Tag VR and editor rendering
 
-Date: 2026-11-13. Scope: the existing Sheep Tag renderer, native XR visibility recovery, and shared game-editor shadow rendering. Publication status: local sealed build and focused verification passed; source publication and separate deployment request pending. Physical Quest acceptance remains pending.
+Date: 2026-11-13. Scope: the existing Sheep Tag renderer, native XR visibility recovery, and shared game-editor shadow rendering. Publication status: source on `main`, separate deployment request succeeded, hosted artifacts verified against the sealed build. Physical Quest acceptance remains pending.
 
 ## Findings from the actual implementation
 
 Existing v11.265 runtime building batching, v11.379 frame-cadence safeguards, v11.411 AI building-candidate budgets and v11.419 collision/path budgets were already present. The native seven-bot simulation can construct 76 houses without adding a generator or altering the saved starter. The crowded browser profile was dominated by rendering rather than native `stUpdate` CPU time.
 
-The XR observer also treated a long callback gap as inferred OS focus loss. When rendering repeatedly stalled, that inference could pause camera/input and hide/restore large cosmetic layers despite a visibly active native XR session. A real Meta-menu return resets timing, consistent with the owner's report of temporary recovery. This is an application-side explanation supported by source and emulation; physical Quest compositor flashing/warping was not directly observed here.
+The XR observer also treated a long callback gap as inferred OS focus loss. When rendering repeatedly stalled, that inference could pause camera/input and hide/restore large cosmetic layers despite a visibly active native XR session. A real Meta-menu return resets timing. The owner's clarified symptom starts approximately 20 seconds into play even without head movement: severe lag and screen corruption delay Meta's own OS menu, then the active overlay temporarily improves rendering. That points to sustained workload/backlog as well as possible recovery amplification. The false-focus behavior is an application-side defect supported by source and emulation; it is not established as the sole cause of the physical Quest symptom. Physical compositor flashing/warping and OS-overlay latency were not directly observed here.
 
 The native teammate occlusion path used the desktop perspective camera even during XR. Some useful existing runtime building batching did not cover equivalent authored editor buildings or other compatible scenery. Static game-editor shadows were regenerated during camera-only movement.
 
@@ -64,4 +64,6 @@ Chromium used software rendering and small per-view samples. Its callback timing
 
 ## Publication
 
-Source commit, separate request, workflow and hosted artifact receipt will be recorded here after verification. No live claim is made from local checks alone.
+Live publication verified: [source 638bffb](https://github.com/kaministrator999-ui/Swrlzkamico/commit/638bffbd009119f4838cc3d41043ddcf96c4d1d0), [separate request 20453bf](https://github.com/kaministrator999-ui/Swrlzkamico/commit/20453bf770f988a79e3e792de556b33e66d9bf70), and [successful deployment](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/43352719088). The Space is RUNNING at HF revision `2c4fc0698772efd1663444a0c54a7f55ed15e1e5`; both hosted HTML entry points and all 77 asset receipts match the sealed build. The owner's approximately 20-second onset, delayed Meta OS menu and temporary improvement with the overlay remain physical Quest acceptance cases; this release does not claim that complete symptom is confirmed resolved.
+
+Independent revision-pinned downloads of `index.html` and `modeler.html` each measured 9,930,780 bytes and SHA-256 `7aa4640a5b02b6c43eb54fe28d28dbf503cd52f1c571c98c0ee455d659395fd8`. Hosted `SOURCE.json` agrees with the complete 411-patch lineage, source version and all 77 local asset receipts. Receipt: `/workspace/scratch/sheep434-hosted-receipt.json`. This final publication documentation leaves the deployed runtime artifact unchanged.
