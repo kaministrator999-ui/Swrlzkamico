@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.438
+title: §wyrl§ Engine v11.439
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,10 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.439 · Smooth moving-sheep pursuit and capture tracing (2026-11-13)
+
+SOLO VR wolves now use a direct approach when a moving sheep is visible in a clear lane instead of repeatedly probing up to nine A* routes; heavier decisions are paced across game ticks. A physical movement step that crosses the existing capture radius but is stopped by sheep-body collision can now capture once, respecting invulnerability. New diagnostics measure pursuit work, actual capture CPU, capture-frame and following-frame CPU separately. Rendering, WebXR tracking, LAN authority, previous worker/batching and Model Studio remain native. Physical Quest acceptance pending.
 
 ## §E v11.438 · Render continuity and solo-XR pathfinding Worker (2026-11-13)
 
