@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.431",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_431_MODEL_GIZMO_ACCESS",
-  "reason": "Publish easier native Model Studio transform handles: stable screen size, 44px touch targets, padded shaft picking, nearest visible rotation arcs, mouse hover correction and active-axis feedback. VR uses thicker visible handles, bounded invisible ray targets, shared hover/grip contact, brief entry haptics and main/Academy spatial-menu priority. Native transforms, Undo, tracking/cancel safeguards, project geometry and independent world-space menus preserved. Exact 408-patch source: 9913140 HTML bytes, SHA256 06e08dd6620102862ed333fbf6fa51fcf29024c67903378db2a0d2e81ad10396; 77 assets. Passed 90 focused native groups and 11 exact-artifact IWER checks including every supported VR axis, Undo, cancel, tracking, menus and exit. Actual browser mouse/touch object Move/Rotate/Scale axes and component transformations verified with native Undo; physical Quest/Android ergonomics require owner acceptance. VR Scale retains supported uniform scalar behavior.",
-  "sourceCommit": "7a21152f6bd159c51ebf85b593ed4381735b9b8b",
-  "sourceIntegritySha256": "06e08dd6620102862ed333fbf6fa51fcf29024c67903378db2a0d2e81ad10396"
+  "releaseVersion": "v11.432",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_432_MOBILE_CAMERA_ORBIT",
+  "reason": "Publish final assembled native Model Studio mobile orbit correction. Touch swipes orbit camera in drag direction; preserve desktop mouse orbit, tap selection, two-finger pinch/pan, Quest VR controls, geometry and Undo. Historical source anchors preserved. 409 ordered source patches; 9,913,162 final HTML bytes, SHA256 ae386647683a6f84cefb837bc9e1fabe9f745386172d352e73fad67e51a1cfbc. Dedicated built-HTML orbit regression and release integrity gate required before upload.",
+  "sourceCommit": "622f7cb45a0346d07e4c15c1576cf7ad0826fb1f",
+  "sourceIntegritySha256": "ae386647683a6f84cefb837bc9e1fabe9f745386172d352e73fad67e51a1cfbc"
 }
