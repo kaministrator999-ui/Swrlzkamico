@@ -81,6 +81,16 @@ def probe(label,prompt):
     print("CODER_V6_BENCHMARK",json.dumps(rec),flush=True)
     return rec,reply
 
+def is_live_version_accepted(candidate):
+    """A stale or transitioning HF worker is pending, not a tested regression."""
+    if PROFILE not in candidate.get("flags",[]):
+        return False
+    if (candidate.get("terminal") not in ("COMPLETE","COMPLETED")
+        or not candidate.get("isCode") or not candidate.get("coderRouteSeen")
+        or candidate.get("status")!="PASS"):
+        raise RuntimeError("Live new-version coding request failed acceptance")
+    return True
+
 def acceptance(api,revision):
     deadline=time.monotonic()+1050
     attempt=0
@@ -92,11 +102,7 @@ def acceptance(api,revision):
         try:
             model_ready()
             candidate,_=probe("short-function",SIMPLE)
-            if PROFILE in candidate["flags"]:
-                if (candidate["terminal"] not in ("COMPLETE","COMPLETED")
-                    or not candidate["isCode"] or not candidate["coderRouteSeen"]
-                    or candidate["status"]!="PASS"):
-                    raise RuntimeError("Live new-version coding request failed acceptance")
+            if is_live_version_accepted(candidate):
                 result=candidate
                 print("CODER_V6_WARMUP_CONFIRMED",json.dumps({"attempts":attempt}),flush=True)
                 break
