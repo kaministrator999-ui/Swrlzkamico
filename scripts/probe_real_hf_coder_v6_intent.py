@@ -8,6 +8,7 @@ def stub(name,**methods):
     m=types.ModuleType(name)
     for k,v in methods.items():setattr(m,k,v)
     sys.modules[name]=m
+stub("project_archive",source_fences=lambda text: [])
 stub("source_answer_articulation_v230",lesson_kind=lambda prompt,history:None)
 stub("programming_repair_context",candidate_source_fingerprint=lambda *a,**kw:"")
 stub("response_cognition",requests_web_source=lambda *a,**kw:False,
