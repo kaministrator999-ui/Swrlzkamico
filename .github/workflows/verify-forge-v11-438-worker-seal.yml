@@ -4,6 +4,8 @@ on:
     branches: [main]
     paths:
       - "projects/swrlz-forge-moba/source-manifest.json"
+      - ".github/workflows/verify-forge-v11-438-worker-seal.yml"
+      - "projects/swrlz-forge-moba/patches/v11_438_engine_simulation_render_bridge.py"
   workflow_dispatch:
 permissions:
   contents: read
