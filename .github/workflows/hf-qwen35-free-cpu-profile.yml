@@ -1,0 +1,31 @@
+name: Inspect §C free hardware profile for 9B latency
+on:
+  push:
+    branches: [tune/chat-qwen35-free-cpu-profile-20261113]
+    paths:
+      - ".github/workflows/hf-qwen35-free-cpu-profile.yml"
+permissions:
+  contents: read
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - name: Read existing public runtime capacity and 9B readiness
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json,urllib.request,time
+          base='https://kamiloki-swyrlz.hf.space'
+          for endpoint in ('/api/hf/runtime-capacity','/api/hf/qwen35-ready','/api/hf/models'):
+              started=time.monotonic()
+              try:
+                  request=urllib.request.Request(base+endpoint,headers={'Cache-Control':'no-cache','User-Agent':'Swrlz-ReadOnly-Hardware-Profile'})
+                  with urllib.request.urlopen(request,timeout=30) as response:
+                      data=json.load(response)
+                  if endpoint.endswith('models'):
+                      data={'routes':[{'model_id':x.get('model_id'),'checkpoint':x.get('checkpoint')} for x in data.get('models',[])]}
+                  print('PROBE',endpoint,json.dumps({'status':'ok','latencyMs':round((time.monotonic()-started)*1000),'observation':data},sort_keys=True),flush=True)
+              except Exception as e:
+                  print('PROBE',endpoint,json.dumps({'status':'unavailable','errorType':type(e).__name__,'elapsedMs':round((time.monotonic()-started)*1000)}),flush=True)
+          PY
