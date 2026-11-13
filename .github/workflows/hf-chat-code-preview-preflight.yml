@@ -25,3 +25,5 @@ jobs:
           path: qwen35-code-preview-backup/
           retention-days: 14
           if-no-files-found: error
+
+# revalidate source script after Python syntax correction
