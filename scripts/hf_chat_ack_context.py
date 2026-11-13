@@ -175,14 +175,32 @@ def main():
     if os.environ.get("SWRLZ_ACK_CONTEXT_APPROVED")!="1" or not api.token:
         raise RuntimeError("Explicit HF deployment authorization required")
     old_rev,before,after=prepare(api)
+    # Actual same-input 18-thread baseline, with session-private diagnostics.
+    from probe_chat_ack_context import conversation, verify_live
+    prompts=("Hey, how are you?", "Doing well, just checking in.", "Nice!", "Good job!")
+    baseline=conversation(prompts)[-1]
+    if baseline["historyKept"] is None or baseline["historyKept"]<5:
+        raise RuntimeError("Baseline history is not measurable or already compacted")
+    print("ACK_CONTEXT_BASELINE",json.dumps({"firstTextSec":baseline["firstTextSec"],
+          "totalSec":baseline["totalSec"],"historyKept":baseline["historyKept"]}),flush=True)
     now=write_revision(api,old_rev,after,
         "§C: shorten inference history only for standalone social acknowledgments")
     try:
         wait_ready(api,now)
         # A new worker has been observed. A separate synthetic request
         # checks the new per-turn telemetry and guarded routes.
-        from probe_chat_ack_context import verify_live
-        verify_live()
+        candidate=verify_live()
+        # Preserve the experienced first-text latency, not just source shape.
+        # Allow a small fixed warm-cache jitter but no large regression.
+        if candidate["firstTextSec"] is None or baseline["firstTextSec"] is None:
+            raise RuntimeError("First-visible-token timing missing")
+        allowed=baseline["firstTextSec"]*1.2+0.8
+        if candidate["firstTextSec"]>allowed:
+            raise RuntimeError("Ack first-text latency regressed against same-turn baseline")
+        print("ACK_CONTEXT_TIMING_ACCEPTED",json.dumps({
+            "baselineFirstTextSec":baseline["firstTextSec"],
+            "candidateFirstTextSec":candidate["firstTextSec"],
+            "maximumAcceptableSec":round(allowed,2)}),flush=True)
         print("ACK_CONTEXT_LIVE_ACCEPTED",json.dumps({
             "revision":now,"source":old_rev,"model":"Qwen3.5-9B",
             "threads":18,"responseTextCanned":False}),flush=True)
