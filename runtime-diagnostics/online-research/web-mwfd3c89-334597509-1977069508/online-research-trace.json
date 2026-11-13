@@ -1,0 +1,408 @@
+{
+  "schema": "swrlz-github-online-research-trace-v1",
+  "requestId": "web-mwfd3c89-334597509-1977069508",
+  "modelId": "700m",
+  "eventType": "ONLINE_RESEARCH_TRACE",
+  "sourceRef": "f149dd857e3d9219f5cae7da0286b5dbfec85c42",
+  "persistedAtUnixMs": 1794597634614,
+  "diagnostic": {
+    "schema": "swrlz-online-research-log-v1",
+    "research": {
+      "contract": "swrlz-online-camera-v1",
+      "observabilityRevision": "v181-song-metadata-clean-form-integrity",
+      "kind": "search",
+      "status": "OK",
+      "reason": "freshness-intent",
+      "provider": "bounded-web-search-chain-v1",
+      "resultCount": 8,
+      "widgetKinds": [
+        "search-results"
+      ],
+      "sourceCount": 8,
+      "locationRequired": false,
+      "usedExplicitClientLocation": false,
+      "elapsedMs": 4381,
+      "lyricsSourceAttemptCount": 0,
+      "lyricsFetchDebug": [],
+      "blockedLyricsSourceFamilies": [],
+      "musicStructureDebug": null,
+      "candidateAdmissionDebug": [
+        {
+          "query": "Lol I'm at work right now till 8 pm or so",
+          "title": "League of Legends Homepage",
+          "url": "https://www.leagueoflegends.com/",
+          "source": "www.leagueoflegends.com",
+          "rank": 1,
+          "allowed": true,
+          "reason": "NON_LYRICS_PASS",
+          "neededHits": 0,
+          "matchedTerms": [],
+          "coreTerms": [],
+          "snippetPreview": "League of Legends is a team-based game with over 140 champions to make epic plays with. Play now for free."
+        },
+        {
+          "query": "Lol I'm at work right now till 8 pm or so",
+          "title": "League of Legends Download | North America",
+          "url": "https://www.leagueoflegends.com/en-us/download/",
+          "source": "www.leagueoflegends.com",
+          "rank": 2,
+          "allowed": true,
+          "reason": "NON_LYRICS_PASS",
+          "neededHits": 0,
+          "matchedTerms": [],
+          "coreTerms": [],
+          "snippetPreview": "League of Legends is a team-based game with over 140 champions to make epic plays with. Play now for free."
+        },
+        {
+          "query": "Lol I'm at work right now till 8 pm or so",
+          "title": "LoL Esports | SCHEDULE",
+          "url": "https://lolesports.com/en-US",
+          "source": "lolesports.com",
+          "rank": 3,
+          "allowed": true,
+          "reason": "NON_LYRICS_PASS",
+          "neededHits": 0,
+          "matchedTerms": [],
+          "coreTerms": [],
+          "snippetPreview": "2 days ago · The best place to watch LoL Esports and earn rewards!"
+        },
+        {
+          "query": "Lol I'm at work right now till 8 pm or so",
+          "title": "LOL - Wikipedia",
+          "url": "https://en.wikipedia.org/wiki/LOL",
+          "source": "en.wikipedia.org",
+          "rank": 4,
+          "allowed": true,
+          "reason": "NON_LYRICS_PASS",
+          "neededHits": 0,
+          "matchedTerms": [],
+          "coreTerms": [],
+          "snippetPreview": "LOL, or lol, is an acronym for \" laughing out loud \", [1][2][3][4] and a popular element of Internet slang, which can be used to indicate …"
+        },
+        {
+          "query": "Lol I'm at work right now till 8 pm or so",
+          "title": "League of Legends - Sign in",
+          "url": "https://login.leagueoflegends.com/",
+          "source": "login.leagueoflegends.com",
+          "rank": 5,
+          "allowed": true,
+          "reason": "NON_LYRICS_PASS",
+          "neededHits": 0,
+          "matchedTerms": [],
+          "coreTerms": [],
+          "snippetPreview": "This site is protected by hCaptcha and its Privacy Policy and Terms of Service apply."
+        },
+        {
+          "query": "Lol I'm at work right now till 8 pm or so",
+          "title": "英雄联盟官方网站 - 英雄联盟全新官方网站-腾讯游戏",
+          "url": "https://lol.qq.com/main.shtml",
+          "source": "lol.qq.com",
+          "rank": 6,
+          "allowed": true,
+          "reason": "NON_LYRICS_PASS",
+          "neededHits": 0,
+          "matchedTerms": [],
+          "coreTerms": [],
+          "snippetPreview": "英雄联盟官方网站，海量风格各异的英雄，丰富、便捷的物品合成系统，游戏内置的匹配、排行和竞技系统，独创的“召唤师”系统及技 …"
+        },
+        {
+          "query": "Lol I'm at work right now till 8 pm or so",
+          "title": "LoL Tier List Patch 16.22: Best Champions by Role (Top, Jungle, Mid ...",
+          "url": "https://www.op.gg/lol/champions",
+          "source": "www.op.gg",
+          "rank": 7,
+          "allowed": true,
+          "reason": "NON_LYRICS_PASS",
+          "neededHits": 0,
+          "matchedTerms": [],
+          "coreTerms": [],
+          "snippetPreview": "Champion tier list for patch 16.22 ranked by win rate, pick rate and ban rate across all roles. Updated daily from millions of Ranked …"
+        },
+        {
+          "query": "Lol I'm at work right now till 8 pm or so",
+          "title": "LoL Esports - YouTube",
+          "url": "https://www.youtube.com/@lolesports",
+          "source": "www.youtube.com",
+          "rank": 8,
+          "allowed": true,
+          "reason": "NON_LYRICS_PASS",
+          "neededHits": 0,
+          "matchedTerms": [],
+          "coreTerms": [],
+          "snippetPreview": "Are you looking to up your game or keep track of all things in the League of Legends pro scene? You've come to the right place. …"
+        }
+      ],
+      "songIdentity": {},
+      "songDiscoveryPlan": [],
+      "lyricsRescueSearchDebug": [],
+      "lyricsMaxPageAttempts": 0,
+      "lyricsFallbackExhausted": false,
+      "rawPromptStored": false
+    },
+    "trace": [
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794597630231,
+        "phase": "RESEARCH_STARTED",
+        "activity": "Online research started",
+        "provider": "bounded-web-search-chain-v1",
+        "site": "",
+        "url": ""
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794597630239,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794597630400,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "activity": "No usable results from provider",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "httpStatus": 202,
+        "resultCount": 0
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794597630440,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794597630617,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "activity": "No usable results from provider",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "httpStatus": 202,
+        "resultCount": 0
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794597630617,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794597631968,
+        "phase": "SEARCH_PROVIDER_RESULTS",
+        "activity": "Search results found",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "httpStatus": 200,
+        "resultCount": 8
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794597631968,
+        "phase": "SEARCH_PROVIDER_SELECTED",
+        "activity": "Using bing-html",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "resultCount": 8
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794597631970,
+        "phase": "PAGE_FETCH_STARTED",
+        "activity": "Visiting result page",
+        "provider": "web-page",
+        "site": "lolesports.com",
+        "url": "https://lolesports.com/en-US"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794597632101,
+        "phase": "PAGE_FETCH_ERROR",
+        "activity": "Page fetch failed",
+        "provider": "web-page",
+        "site": "lolesports.com",
+        "url": "https://lolesports.com/en-US",
+        "errorType": "ValueError"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794597632103,
+        "phase": "PAGE_FETCH_STARTED",
+        "activity": "Visiting result page",
+        "provider": "web-page",
+        "site": "www.leagueoflegends.com",
+        "url": "https://www.leagueoflegends.com/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794597632265,
+        "phase": "PAGE_FETCH_COMPLETE",
+        "activity": "Page fetched",
+        "provider": "web-page",
+        "site": "www.leagueoflegends.com",
+        "url": "https://www.leagueoflegends.com/en-us/",
+        "httpStatus": 200,
+        "responseBytes": 259491
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794597632267,
+        "phase": "PAGE_FETCH_STARTED",
+        "activity": "Visiting result page",
+        "provider": "web-page",
+        "site": "en.wikipedia.org",
+        "url": "https://en.wikipedia.org/wiki/LOL"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794597632453,
+        "phase": "PAGE_FETCH_COMPLETE",
+        "activity": "Page fetched",
+        "provider": "web-page",
+        "site": "en.wikipedia.org",
+        "url": "https://en.wikipedia.org/wiki/LOL",
+        "httpStatus": 200,
+        "responseBytes": 345072
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794597632457,
+        "phase": "PAGE_FETCH_STARTED",
+        "activity": "Visiting result page",
+        "provider": "web-page",
+        "site": "www.leagueoflegends.com",
+        "url": "https://www.leagueoflegends.com/en-us/download/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794597632583,
+        "phase": "PAGE_FETCH_COMPLETE",
+        "activity": "Page fetched",
+        "provider": "web-page",
+        "site": "www.leagueoflegends.com",
+        "url": "https://www.leagueoflegends.com/en-us/download/",
+        "httpStatus": 200,
+        "responseBytes": 56389
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794597632586,
+        "phase": "PAGE_FETCH_STARTED",
+        "activity": "Visiting result page",
+        "provider": "web-page",
+        "site": "www.op.gg",
+        "url": "https://www.op.gg/lol/champions"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794597632623,
+        "phase": "PAGE_FETCH_ERROR",
+        "activity": "Page fetch failed",
+        "provider": "web-page",
+        "site": "www.op.gg",
+        "url": "https://www.op.gg/lol/champions",
+        "errorType": "HTTPError"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794597632627,
+        "phase": "PAGE_FETCH_STARTED",
+        "activity": "Visiting result page",
+        "provider": "web-page",
+        "site": "www.youtube.com",
+        "url": "https://www.youtube.com/@lolesports"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794597632851,
+        "phase": "PAGE_FETCH_ERROR",
+        "activity": "Page fetch failed",
+        "provider": "web-page",
+        "site": "www.youtube.com",
+        "url": "https://www.youtube.com/@lolesports",
+        "errorType": "ValueError"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794597632853,
+        "phase": "PAGE_FETCH_STARTED",
+        "activity": "Visiting result page",
+        "provider": "web-page",
+        "site": "login.leagueoflegends.com",
+        "url": "https://login.leagueoflegends.com/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794597633706,
+        "phase": "PAGE_FETCH_COMPLETE",
+        "activity": "Page fetched",
+        "provider": "web-page",
+        "site": "authenticate.riotgames.com",
+        "url": "https://authenticate.riotgames.com/",
+        "httpStatus": 200,
+        "responseBytes": 7123
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794597633708,
+        "phase": "PAGE_FETCH_STARTED",
+        "activity": "Visiting result page",
+        "provider": "web-page",
+        "site": "lol.qq.com",
+        "url": "https://lol.qq.com/main.shtml"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794597634611,
+        "phase": "PAGE_FETCH_COMPLETE",
+        "activity": "Page fetched",
+        "provider": "web-page",
+        "site": "lol.qq.com",
+        "url": "https://lol.qq.com/main.shtml",
+        "httpStatus": 200,
+        "responseBytes": 50396
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794597634612,
+        "phase": "RESEARCH_COMPLETE",
+        "activity": "Online research complete",
+        "provider": "bounded-web-search-chain-v1",
+        "site": "",
+        "url": "",
+        "resultCount": 8
+      }
+    ],
+    "sourceSites": [
+      "lolesports.com",
+      "www.leagueoflegends.com",
+      "en.wikipedia.org",
+      "www.op.gg",
+      "www.youtube.com",
+      "authenticate.riotgames.com",
+      "lol.qq.com"
+    ],
+    "widgetKinds": [
+      "search-results"
+    ],
+    "requestedModelId": "700m",
+    "selectedModelId": "700m",
+    "rawPromptStored": false,
+    "historyStored": false,
+    "preciseLocationStored": false
+  }
+}
