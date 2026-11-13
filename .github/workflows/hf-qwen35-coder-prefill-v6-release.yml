@@ -44,8 +44,9 @@ jobs:
         run: |
           set -euo pipefail
           cd coder-source
-          python -m py_compile scripts/hf_chat_qwen35_coder_prefill_v6.py scripts/test_hf_qwen35_coder_prefill_v6.py scripts/hf_chat_qwen35_coder_prefill_v6_release.py
+          python -m py_compile scripts/hf_chat_qwen35_coder_prefill_v6.py scripts/test_hf_qwen35_coder_prefill_v6.py scripts/hf_chat_qwen35_coder_prefill_v6_release.py scripts/test_hf_qwen35_coder_v6_release_gate.py
           python scripts/test_hf_qwen35_coder_prefill_v6.py
+          python scripts/test_hf_qwen35_coder_v6_release_gate.py
           python scripts/hf_chat_qwen35_coder_prefill_v6.py inspect
       - name: Preserve immutable exact prior backend
         env:
