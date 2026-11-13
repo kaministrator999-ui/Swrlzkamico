@@ -63,7 +63,7 @@ jobs:
       - name: Build exact-source 9B candidate without publishing
         shell: bash
         run: |
-          python -m py_compile scripts/hf_chat_qwen35_9b_integration.py scripts/hf_chat_qwen35_9b_runtime.py
+          python -m py_compile scripts/hf_chat_qwen35_9b_integration.py scripts/hf_chat_qwen35_9b_runtime.py scripts/hf_chat_qwen35_9b_release.py
           python scripts/test_hf_chat_qwen35_9b_runtime.py
           python scripts/hf_chat_qwen35_9b_integration.py prepare
           python - <<'PY'
