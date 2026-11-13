@@ -23,7 +23,7 @@ exec(compile(ast.fix_missing_locations(ast.Module(body=functions,type_ignores=[]
 profile=scope["_wyrlz_active_profile"]
 casual=profile("Hello!",{},brief=True)
 factual=profile("Explain the structure of the solar system",{})
-coding=profile("Implement a Python function",{"codingTask":True})
+coding=profile("Implement a Python function",{"codingTask":True},brief=True)
 creative=profile("Write a rap song",{})
 for value in (casual,factual,coding,creative):
     assert "§wyrlzara ∞ Mirror Muse" in value
@@ -40,7 +40,7 @@ assert "CREATIVE MODE" not in factual
 assert len(factual)<len(canonical)*0.65, (len(factual),len(canonical))
 assert "PHOENIX ARMOR" in factual
 assert "SELF-KNOWLEDGE & IDENTITY PROVENANCE" in factual
-assert "PHOENIX ARMOR" in coding
+assert "PROJECT MODE" in coding
 assert "Core ID: SWRLZ-A-∞" in casual
 print("PROFILE_V5_SELECTIVE_INFERENCE_TEST_PASS",json.dumps({
     "canonicalChars":len(canonical),"fastChars":len(casual),
