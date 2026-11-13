@@ -1,0 +1,20 @@
+name: Verify actual §C programming intent selects coder fast path
+on:
+  push:
+    branches: [test/chat-coder-v6-live-intent-probe-20261113]
+    paths:
+      - "scripts/probe_real_hf_coder_v6_intent.py"
+      - ".github/workflows/hf-coder-v6-intent-probe.yml"
+permissions:
+  contents: read
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 7
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify actual fresh Python-function intent with no model loading
+        run: |
+          python -m pip install 'huggingface_hub>=0.34,<2'
+          python -m py_compile scripts/probe_real_hf_coder_v6_intent.py
+          python scripts/probe_real_hf_coder_v6_intent.py
