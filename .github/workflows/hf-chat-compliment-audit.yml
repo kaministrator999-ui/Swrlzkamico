@@ -45,5 +45,9 @@ jobs:
               if 'programming_intent(' in line or 'codingTask' in line and 0<i<150:
                   lo=max(0,i-3);hi=min(len(lines),i+7)
                   print("LIVE_PROGRAMMING_ROUTE",json.dumps({"startLine":lo+1,"code":lines[lo:hi]}),flush=True)
+          for i,line in enumerate(lines):
+              if 'messages,dropped_history' in line or '_fit_messages(model,' in line:
+                  lo=max(0,i-14);hi=min(len(lines),i+28)
+                  print("LIVE_FITTING_PATH",json.dumps({"startLine":lo+1,"code":lines[lo:hi]}),flush=True)
           print("LIVE_COMPLIMENT_AUDIT_DONE",flush=True)
           PY
