@@ -47,23 +47,27 @@ _file_cache: dict[str, str] = {}
 
 
 def _cpu_threads() -> int:
+    """Use only CPUs actually available to this Space, not host CPU count."""
     try:
         affinity = len(os.sched_getaffinity(0))
     except (OSError, AttributeError):
         affinity = os.cpu_count() or 1
-    allowed = max(1, min(2, int(affinity)))
-    # Constrain to cgroup quota; affinity alone may expose all host cores.
+    capacity = max(1, min(16, int(affinity)))
+    # Visible CPU quota is authoritative if affinity exposes more host cores.
     try:
         quota, period = Path("/sys/fs/cgroup/cpu.max").read_text().split()[:2]
         if quota != "max" and int(period) > 0:
-            allowed = min(allowed, max(1, int(int(quota) / int(period))))
+            capacity = min(capacity, max(1, int(int(quota) / int(period))))
     except (ValueError, OSError, IndexError):
         pass
-    return allowed
+    return capacity
 
 
-DECODE_THREADS = _cpu_threads()
-BATCH_THREADS = DECODE_THREADS
+CPU_CAPACITY = _cpu_threads()
+# Balanced profile: decode is memory-bandwidth-sensitive, prefill parallelizes.
+# swrlz-qwen35-cpu-v2; safe on 2-vCPU fallback and available 16-core cgroups.
+DECODE_THREADS = min(10, CPU_CAPACITY)
+BATCH_THREADS = min(16, CPU_CAPACITY)
 
 
 def _verified_asset(filename: str) -> str:
@@ -159,8 +163,8 @@ def _launch(model_path: str, projector_path: str) -> None:
         binary, "--model", model_path, "--mmproj", projector_path,
         "--host", "127.0.0.1", "--port", str(SERVER_PORT),
         "--ctx-size", str(CONTEXT_TOKENS), "--threads", str(DECODE_THREADS),
-        "--threads-batch", str(BATCH_THREADS), "--batch-size", "256",
-        "--ubatch-size", "128", "--parallel", str(PARALLEL_REQUESTS),
+        "--threads-batch", str(BATCH_THREADS), "--batch-size", "512",
+        "--ubatch-size", "256", "--parallel", str(PARALLEL_REQUESTS),
         "--jinja",
     ]
     if _server_process is not None and _server_process.poll() is None:
@@ -249,7 +253,9 @@ def warmup():
     if not any(event.get("choices") for event in response):
         raise RuntimeError("QWEN35_INFERENCE_NOT_READY")
     _warmed = True
-    return {"model": MODEL_LABEL, "ready": True, "threads": DECODE_THREADS, "context": CONTEXT_TOKENS}
+    return {"model": MODEL_LABEL, "ready": True, "threads": DECODE_THREADS,
+            "batchThreads": BATCH_THREADS, "context": CONTEXT_TOKENS,
+            "cpuCapacity": CPU_CAPACITY, "profile": "swrlz-qwen35-cpu-v2"}
 
 
 def ready() -> bool:
