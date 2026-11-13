@@ -48,3 +48,6 @@ jobs:
           print('SE438_SOURCE_SEAL_SHA256',hashlib.sha256(html).hexdigest(),flush=True)
           print('SE438_SOURCE_VERIFIED',flush=True)
           PY
+      - name: Verify complete sealed release and all inherited regression gates
+        run: |
+          python projects/swrlz-forge-moba/scripts/verify_v11_438_release.py --output /tmp/swrlz-se438-full
