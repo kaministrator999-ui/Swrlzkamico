@@ -28,7 +28,7 @@ for name in ['sheep_visual_batch_v11_434.js','sheep_visible_frame_recovery_v11_4
 subprocess.run([sys.executable,str(ROOT/'scripts/check_inline_js_syntax_v11_266.py'),str(out/'index.html')],check=True)
 for name in ['test_sheep_quest_ai_frame_budget_v11_411.cjs','test_sheep_congestion_budget_v11_419.cjs','test_sheep_vr_frame_cadence_v11_379.cjs','sheep_visible_recovery_v11_434.cjs']:
  subprocess.run(['node',str(ROOT/'tests'/name)],check=True)
-subprocess.run(['node',str(ROOT/'tests/model_camera_preferences_preserved_v11_435.mjs'),str(out/'index.html')],check=True)
+subprocess.run(['node',str(ROOT/'tests/model_camera_preferences_preserved_v11_436.mjs'),str(out/'index.html')],check=True)
 if A.three_module:
  three=Path(A.three_module).resolve();assert three.is_file()
  subprocess.run(['node',str(ROOT/'tests/sheep_visual_batch_v11_434.mjs'),str(three),str(out/'index.html')],check=True)
