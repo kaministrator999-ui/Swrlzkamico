@@ -1,0 +1,45 @@
+name: Compute §E v11.432 mobile camera artifact receipt
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "projects/swrlz-forge-moba/patches/v11_432_mobile_camera_orbit.py"
+      - ".github/workflows/measure-engine-mobile-orbit-v11-432.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  compute:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Compute exact patched artifact before sealing manifest
+        run: |
+          python - <<'PY'
+          import base64, gzip, hashlib, importlib.util, json
+          from pathlib import Path
+          root=Path('projects/swrlz-forge-moba')
+          m=json.loads((root/'source-manifest.json').read_text())
+          assert m['name']=='§wyrl§ Engine v11.431',m['name']
+          patches=m['patches']+['patches/v11_432_mobile_camera_orbit.py']
+          encoded=''.join((root/p).read_text().strip() for p in m['chunks'])
+          data=gzip.decompress(base64.b64decode(encoded))
+          assert hashlib.sha256(data).hexdigest()==m['baseSha256']
+          assert len(data)==m['baseBytes']
+          html=data.decode()
+          for i,rel in enumerate(patches):
+              path=root/rel
+              spec=importlib.util.spec_from_file_location('swrlz_'+str(i),path)
+              module=importlib.util.module_from_spec(spec)
+              spec.loader.exec_module(module)
+              html=module.apply(html)
+          assert 'SWYRL_ENGINE_DEPLOY_MARKER: V11_432_MOBILE_CAMERA_ORBIT' in html
+          assert html.count("const touch=e.pointerType==='touch';")==1
+          assert "window.SWRLZ_FORGE_BUILD={version:'v11.432'" in html
+          final=html.encode()
+          Path('/tmp/swyrlz-v11-432.html').write_bytes(final)
+          print('SE432_ARTIFACT_RESULT='+json.dumps({'bytes':len(final),'sha256':hashlib.sha256(final).hexdigest(),'patches':len(patches)},sort_keys=True),flush=True)
+          PY
+          python projects/swrlz-forge-moba/scripts/check_inline_js_syntax_v11_266.py /tmp/swyrlz-v11-432.html
