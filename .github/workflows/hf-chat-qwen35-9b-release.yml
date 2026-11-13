@@ -1,0 +1,88 @@
+name: Guarded §C Qwen3.5-9B single-model trial
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".deploy/HF_CHAT_QWEN35_REQUEST.txt"
+permissions:
+  contents: read
+concurrency:
+  group: swrlz-hf-space-deployment
+  cancel-in-progress: false
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Read explicitly approved existing-Space trial request
+        uses: actions/checkout@v4
+      - name: Validate target, approval and immutable source
+        id: authorize
+        shell: bash
+        run: |
+          set -euo pipefail
+          request=.deploy/HF_CHAT_QWEN35_REQUEST.txt
+          test -f "$request"
+          get() { sed -n "s/^$1=//p" "$request" | tail -n 1; }
+          test "$(get TARGET)" = "kamiloki/Swyrlz"
+          test "$(get APPROVED)" = "1"
+          source_ref="$(get SOURCE_REF)"
+          nonce="$(get REQUEST_NONCE)"
+          [[ "$source_ref" =~ ^[a-f0-9]{40}$ ]]
+          [[ "$nonce" =~ ^[a-z0-9-]{10,96}$ ]]
+          echo "sha=$source_ref" >> "$GITHUB_OUTPUT"
+          echo "Authorized revision=$source_ref existing Space only; unchanged hardware"
+      - name: Checkout exact reviewed candidate
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.authorize.outputs.sha }}
+          path: trial-source
+          fetch-depth: 1
+      - name: Install existing Hub client
+        run: python -m pip install 'huggingface_hub>=0.34,<2'
+      - name: Verify local integration adapter and construct exact live overlay
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd trial-source
+          python -m py_compile scripts/hf_chat_qwen35_9b_runtime.py scripts/hf_chat_qwen35_9b_integration.py scripts/hf_chat_qwen35_9b_release.py
+          python scripts/test_hf_chat_qwen35_9b_runtime.py
+          python scripts/hf_chat_qwen35_9b_integration.py prepare
+          python - <<'PY'
+          import ast,json
+          from pathlib import Path
+          root=Path('qwen35-candidate')
+          m=json.loads((root/'CANDIDATE.json').read_text())
+          assert len(m['files'])==8 and not m['published']
+          for r in m['files']:
+              p=root/r['path']
+              if p.suffix=='.py': ast.parse(p.read_text(),filename=r['path'])
+          assert '"qwen3.5-9b"' in (root/'station.py').read_text()
+          assert '        raise' in (root/'app.py').read_text()
+          print('EXACT_LIVE_SOURCE_GUARDED_9B_PREPARED',m['previousRevision'])
+          PY
+      - name: Preserve exact pre-upgrade source for rollback
+        uses: actions/upload-artifact@v4
+        with:
+          name: qwen35-9b-rollback-exact-source
+          path: |
+            trial-source/qwen35-rollback/
+            trial-source/qwen35-candidate/CANDIDATE.json
+          retention-days: 14
+          if-no-files-found: error
+      - name: Publish to existing Space and require verified native warmup
+        timeout-minutes: 35
+        shell: bash
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          SWRLZ_QWEN35_APPROVED: "1"
+        run: |
+          set -euo pipefail
+          cd trial-source
+          python scripts/hf_chat_qwen35_9b_release.py publish
+          if ! python scripts/hf_chat_qwen35_9b_release.py verify; then
+              echo "::error::9B runtime acceptance failed; attempting guarded exact-source rollback"
+              python scripts/hf_chat_qwen35_9b_release.py rollback
+              exit 1
+          fi
+          echo "QWEN35_9B_LIVE_ACCEPTED_AND_READY"

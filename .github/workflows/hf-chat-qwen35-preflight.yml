@@ -1,0 +1,100 @@
+name: Inspect current §C production for Qwen3.5-9B integration
+on:
+  push:
+    branches: [experiment/chat-qwen35-9b-20261112]
+    paths:
+      - ".github/workflows/hf-chat-qwen35-preflight.yml"
+      - "scripts/hf_chat_qwen35_9b_integration.py"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  preflight:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install public Hub inspection client
+        run: python -m pip install 'huggingface_hub>=0.34,<2'
+      - name: Inspect live Space source without mutating it
+        shell: bash
+        run: |
+          python - <<'PY'
+          from huggingface_hub import HfApi, hf_hub_download
+          import hashlib, json, re, pathlib
+          api=HfApi()
+          space='kamiloki/Swyrlz'
+          info=api.repo_info(space,repo_type='space')
+          names=set(api.list_repo_files(space,repo_type='space',revision=info.sha))
+          wanted=('app.py','model_router.py','lfm2_700m_engine.py','qwen_coder_engine.py','chat_vision.py','qwen3vl_local_server.py','requirements.txt','README.md','station.py','coder_model_config.py')
+          print('LIVE_REVISION',info.sha,'FILES',len(names))
+          print('RESOURCE_PROBE_ONLY: no changes to Hugging Face Space or its hardware')
+          patterns={
+            'app.py': ('def _warm_backends','def available_models','def respond','set_generator','from lfm2_700m_engine','from qwen_coder_engine'),
+            'model_router.py': ('def routes','def dispatch','ModelRoute("stock"','ModelRoute("700m"','ModelRoute("coder"'),
+            'lfm2_700m_engine.py': ('def load','def _thread_plan','def generate_events','def _fit_messages'),
+            'qwen_coder_engine.py': ('def load','def generate_events'),
+            'chat_vision.py': ('MODEL_REPO','MODEL_FILE','PROJECTOR_FILE','def _load_local_model','def prewarm_local_model'),
+            'qwen3vl_local_server.py': ('LLAMA_CPP_COMMIT','def _exe_path','def _ensure_running','class LocalQwen3VL','def load'),
+            'README.md': ('preload_from_hub',),
+            'station.py': ('def set_generator','def models'),
+          }
+          for path in wanted:
+            if path not in names:
+              print('MISSING',path)
+              continue
+            data=pathlib.Path(hf_hub_download(space,path,repo_type='space',revision=info.sha)).read_bytes()
+            print('FILE',path,'BYTES',len(data),'SHA256',hashlib.sha256(data).hexdigest())
+            text=data.decode('utf-8')
+            lines=text.splitlines()
+            if path=='requirements.txt':
+              print('DEPENDENCIES',json.dumps([line for line in lines if line and not line.startswith('--')]))
+            if path=='README.md':
+              print('SPACE_METADATA',json.dumps(lines[:15]))
+            for needle in patterns.get(path,()):
+              found=[i for i,line in enumerate(lines) if needle in line]
+              print('SEAM',path,needle,'MATCHES',len(found))
+              for i in found[:2]:
+                excerpt=lines[i:min(len(lines),i+(12 if needle.startswith('def ') or needle.startswith('class ') else 2))]
+                print('SOURCE',path,i+1,json.dumps(excerpt))
+          print('PREFLIGHT_COMPLETE_READ_ONLY')
+          PY
+
+      - name: Build exact-source 9B candidate without publishing
+        shell: bash
+        run: |
+          python -m py_compile scripts/hf_chat_qwen35_9b_integration.py scripts/hf_chat_qwen35_9b_runtime.py scripts/hf_chat_qwen35_9b_release.py
+          python scripts/test_hf_chat_qwen35_9b_runtime.py
+          python scripts/hf_chat_qwen35_9b_integration.py prepare
+          python - <<'PY'
+          from pathlib import Path
+          import ast, json
+          root=Path('qwen35-candidate')
+          manifest=json.loads((root/'CANDIDATE.json').read_text())
+          assert manifest['published'] is False
+          assert manifest['productionMutation'] is False
+          assert manifest['hardwareChange'] is False
+          assert len(manifest['files']) == 8
+          for record in manifest['files']:
+              path=root/record['path']
+              assert path.exists(), record
+              if path.suffix == '.py':
+                  ast.parse(path.read_text('utf-8'), filename=record['path'])
+          app=(root/'app.py').read_text()
+          assert 'from qwen35_single_runtime import warmup' in app
+          assert '"HF_WARMUP_FAILED"' in app and '        raise' in app
+          assert '@app.get("/api/hf/qwen35-ready")' in (root/'station.py').read_text()
+          assert 'threading.Thread(target=_warm_backends' not in app
+          assert 'from lfm2_700m_engine import generate_events as original_generate' in app
+          for name in ('qwen_coder_engine.py','lfm2_700m_engine.py'):
+              s=(root/name).read_text()
+              assert 'return qwen35_load()' in s
+              assert 'CONTEXT_TOKENS=8192' in s
+              assert 'LARGE_OUTPUT_TOKENS=6144' in s
+          vision=(root/'chat_vision.py').read_text()
+          assert 'from qwen35_single_runtime import load' in vision
+          assert 'VISION_MODEL_VARIANT = "qwen3.5-9b"' in vision
+          routes=(root/'model_router.py').read_text()
+          assert routes.count('twoody/Qwen3.5-9B-GGUF@') >= 3
+          print('QWEN35_STATIC_CANDIDATE_ACCEPTED',manifest['previousRevision'])
+          PY
