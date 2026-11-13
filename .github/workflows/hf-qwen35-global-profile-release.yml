@@ -44,9 +44,11 @@ jobs:
         run: |
           set -euo pipefail
           cd profile-source
-          python -m py_compile scripts/hf_chat_qwen35_global_profile_v5.py scripts/test_hf_qwen35_global_profile_v5.py scripts/hf_chat_qwen35_global_profile_v5_release.py
+          python -m py_compile scripts/hf_chat_qwen35_global_profile_v5.py scripts/test_hf_qwen35_global_profile_v5.py scripts/hf_chat_qwen35_global_profile_v5_dual.py scripts/test_hf_chat_qwen35_global_profile_v5_dual.py scripts/hf_chat_qwen35_global_profile_v5_release.py
           python scripts/test_hf_qwen35_global_profile_v5.py
           python scripts/hf_chat_qwen35_global_profile_v5.py inspect
+          python scripts/test_hf_chat_qwen35_global_profile_v5_dual.py
+          python scripts/hf_chat_qwen35_global_profile_v5_dual.py inspect
       - name: Capture exact previous §C engine files
         shell: bash
         env:
@@ -60,7 +62,7 @@ jobs:
           revision=api.repo_info("kamiloki/Swyrlz",repo_type="space").sha
           folder=Path("qwen35-profile-v5-rollback")
           folder.mkdir()
-          for name in ("lfm2_700m_engine.py","station.py","qwen35_single_runtime.py"):
+          for name in ("lfm2_700m_engine.py","qwen_coder_engine.py","station.py","qwen35_single_runtime.py"):
               file=hf_hub_download("kamiloki/Swyrlz",name,repo_type="space",
                                    revision=revision,token=api.token)
               (folder/name).write_bytes(Path(file).read_bytes())
