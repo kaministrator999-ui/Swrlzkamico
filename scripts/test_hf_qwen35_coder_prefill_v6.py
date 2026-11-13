@@ -19,6 +19,26 @@ p={"codingTask":True,
        "languageContract":{"explicit":True,"language":"python"}}}
 example="Write a short Python function that returns the square of an integer, and show one example."
 assert qualifies(example,p,{},[],None)
+# Production brain_programming always includes schema-shaped default telemetry.
+# It must not force a 2,705-token system prompt for a new standalone function.
+default_ledger={"schema":"swrlz-behavior-ledger-v1",
+                "suiteKey":"","currentPassingCases":[],"currentFailingCases":[],
+                "knownPassingCases":[],"regressedCases":[],"bestKnownArtifact":None}
+default_repair={"schema":"swrlz-repair-constraints-v1",
+                "unavailableDependencies":[],"forbiddenDependencies":[],
+                "currentReceiptDependencies":[]}
+assert qualifies(example,p|{"behaviorLedger":default_ledger,
+                            "repairConstraints":default_repair}, {}, [], None)
+assert not qualifies(example,p|{"behaviorLedger":{
+   **default_ledger,"currentFailingCases":["square(3)"]}}, {}, [], None)
+assert not qualifies(example,p|{"repairConstraints":{
+   **default_repair,"unavailableDependencies":["x"]}}, {}, [], None)
+assert qualifies(example,p|{"intentContract":{
+    "originalRequest":example,
+    "must":["Write a short Python function"],
+    "languageContract":{"explicit":True,"language":"python"},
+    "acceptanceEvidence":["technical-validity"]*18
+}}, {}, [], None)
 assert qualifies("Create a simple Python function that adds two integers.",p,{},[],None)
 assert qualifies("Show a short JavaScript function for reversing a string.",p,{},[],None)
 for prompt in (
@@ -33,7 +53,7 @@ assert not qualifies(example,{"codingTask":False},{},[],None)
 for progkey in (
     "failureEvidence","canonicalCarry","artifactContinuation",
     "artifactMutationRequested","artifactTargetId","needsFailureEvidence",
-    "newProject","failureHistory","behaviorLedger","activeRepairConstraints",
+    "newProject","failureHistory","activeRepairConstraints",
 ):
     assert not qualifies(example,p|{progkey:True},{},[],None),progkey
 for payloadkey in ("nativeEditorEvidence","onlineContext","projectThreadEvidence",
@@ -42,7 +62,7 @@ for payloadkey in ("nativeEditorEvidence","onlineContext","projectThreadEvidence
 assert not qualifies(example,p,{},[{"role":"user","content":"prior source"}],None)
 assert not qualifies(example,p,{},[],"candidate")
 assert not qualifies(example,p|{"intentContract":{"originalRequest":example,
-    "largeData":"x"*1500}}, {},[],None)
+    "largeData":"x"*6000}}, {},[],None)
 assert not qualifies(example,p|{"intentContract":{"languageContract":{
     "artifactType":"repository"}}}, {},[],None)
 text=short_policy(example,p,"Prefer precise explanations","Name: Test User")
