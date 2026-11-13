@@ -1,0 +1,44 @@
+name: Inspect §C source-fit and stream points precisely
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/hf-code-context-targeted-audit.yml"]
+permissions: {contents: read}
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - run: python -m pip install 'huggingface_hub>=0.34,<2'
+      - run: |
+          python - <<'PY'
+          import json,ast
+          from pathlib import Path
+          from huggingface_hub import HfApi,hf_hub_download
+          S="kamiloki/Swyrlz";rev=HfApi().repo_info(S,repo_type="space").sha
+          print("TARGETED_REV",rev,flush=True)
+          ranges={
+            "qwen35_single_runtime.py":[(15,59),(140,192),(216,248)],
+            "qwen_coder_engine.py":[(1,35),(219,283),(900,1050),(1060,1210),(1210,1360),(1360,1490)],
+            "lfm2_700m_engine.py":[(13,35),(230,285),(1120,1180),(1180,1260)],
+            "station.py":[(700,786),(1330,1361),(1450,1503),(1525,1550)],
+            "programming_repair_context.py":[(1,95)],
+            "programming_telemetry.py":[(31,70)],
+          }
+          for name,rs in ranges.items():
+              f=Path(hf_hub_download(S,name,repo_type="space",revision=rev)).read_text()
+              l=f.splitlines()
+              print("TARGETED_FILE",name,"lines",len(l),flush=True)
+              if name=="programming_repair_context.py":
+                  tree=ast.parse(f)
+                  for t in tree.body:
+                      if isinstance(t,ast.FunctionDef) and t.name in ("response_budget","source_sized_budget","long_delivery_policy"):
+                          print("TARGETED_FUNCTION",json.dumps({"file":name,"function":t.name,
+                             "source":ast.get_source_segment(f,t)},ensure_ascii=False),flush=True)
+              for a,b in rs:
+                  if a>len(l):continue
+                  print("TARGETED_RANGE",json.dumps({"file":name,"start":a,"end":min(b,len(l)),
+                    "code":[str(i+1)+" "+l[i] for i in range(a-1,min(b,len(l)))]},
+                    ensure_ascii=False),flush=True)
+          print("TARGETED_AUDIT_COMPLETE",flush=True)
+          PY
