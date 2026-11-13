@@ -1,5 +1,4 @@
 """§E v11.432 — non-destructive mobile Model Studio orbit direction correction."""
-from datetime import date
 import json
 
 MARKER = 'SWYRL_ENGINE_DEPLOY_MARKER: V11_432_MOBILE_CAMERA_ORBIT'
@@ -10,6 +9,8 @@ def one(html, before, after):
     return html.replace(before, after, 1)
 
 def apply(html):
+    # Fix the final assembled editor. Historical patches depend on the
+    # original native source, and a pre-assembly mutation breaks their anchors.
     # Operate on the assembled editor: the base runtime file by itself is NOT the
     # published artifact. Keep the latest v11.430 camera pitch bounds.
     old = 'orbit.yaw=pressed.yaw-dx*.008;orbit.pitch=THREE.MathUtils.clamp(pressed.pitch+dy*.006,-Math.PI/2+.001,Math.PI/2-.001);'

@@ -5,7 +5,11 @@ import vm from 'node:vm';
 import assert from 'node:assert/strict';
 import {fileURLToPath} from 'node:url';
 
-const runtime=fs.readFileSync(path.resolve(path.dirname(fileURLToPath(import.meta.url)),'../runtime/model_atelier.js'),'utf8');
+assert.ok(process.argv[2],'Pass the generated §E index.html to test the SHIPPED implementation');
+const full=fs.readFileSync(path.resolve(process.argv[2]),'utf8');
+const atelierStart=full.indexOf('const ModelAtelier=(()=>{');
+assert.ok(atelierStart>=0,'Missing assembled Model Atelier');
+const runtime=full.slice(atelierStart);
 function nativeFunction(name){
   const start=runtime.indexOf('function '+name+'(');
   assert.ok(start>=0,'Missing native '+name);
@@ -21,6 +25,7 @@ const source=Object.freeze({parts:[{id:'part-1'}]});
 const initial=JSON.stringify(source);
 const calls={camera:0,select:[],capture:[]};
 const context={
+  THREE:{MathUtils:{clamp:(v,lo,hi)=>Math.max(lo,Math.min(hi,v))}},
   pressed:null,orbit:{yaw:.3,pitch:.19,distance:9},
   renderer:{domElement:{setPointerCapture:id=>calls.capture.push(id),getBoundingClientRect:()=>({left:0,top:0,width:400,height:300})}},
   camera:{},modelRoot:{children:[{isMesh:true,userData:{atelierId:'part-1'}}]},
@@ -65,8 +70,8 @@ assert.deepEqual(calls.select,['part-1']);
 reset();
 vm.runInContext('pointerDown(event)',Object.assign(context,{event:e('touch',100,100)}));
 vm.runInContext('pointerMove(event)',Object.assign(context,{event:e('touch',100,-1000)}));
-near(context.orbit.pitch,1.1);
+near(context.orbit.pitch,Math.PI/2-.001);
 vm.runInContext('pointerMove(event)',Object.assign(context,{event:e('touch',100,1000)}));
-near(context.orbit.pitch,-.85);
+near(context.orbit.pitch,-Math.PI/2+.001);
 assert.equal(JSON.stringify(source),initial,'Orbit cannot edit saved geometry');
-console.log('MODEL_ATELIER_MOBILE_ORBIT_V11_431_PASS');
+console.log('MODEL_ATELIER_MOBILE_ORBIT_V11_432_PASS');
