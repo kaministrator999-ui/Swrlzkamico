@@ -1,0 +1,39 @@
+name: Inspect §C actual thread headroom without changing Space
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/hf-qwen35-thread-capacity.yml"
+permissions:
+  contents: read
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Read live 9B thread allocation and cgroup capacity
+        run: |
+          python - <<'PY'
+          import json, urllib.request, urllib.error, time
+          base="https://kamiloki-swyrlz.hf.space"
+          for path in ("/api/hf/qwen35-ready", "/api/hf/runtime-capacity"):
+              started=time.monotonic()
+              try:
+                  req=urllib.request.Request(base+path,headers={
+                      "Cache-Control":"no-cache",
+                      "User-Agent":"Swyrlz-Thread-Capacity-ReadOnly-20261113"})
+                  with urllib.request.urlopen(req,timeout=35) as response:
+                      body=json.load(response)
+                  if path.endswith("qwen35-ready"):
+                      wanted={k:body.get(k) for k in (
+                          "model","ready","profile","cpuCapacity",
+                          "decodeThreads","batchThreads","batchSize","microBatchSize")}
+                  else:
+                      wanted={"cpu":body.get("cpu"),"hardwareTier":body.get("hardwareTier")}
+                  print("SWRLZ_THREAD_CAPACITY",path,
+                        json.dumps({"data":wanted,"elapsedMs":round((time.monotonic()-started)*1000)}),
+                        flush=True)
+              except Exception as exc:
+                  print("SWRLZ_THREAD_CAPACITY_ERROR",path,type(exc).__name__,str(exc)[:180],flush=True)
+                  raise
+          PY
