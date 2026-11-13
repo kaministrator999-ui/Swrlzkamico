@@ -93,7 +93,7 @@ FULL_PROFILE_OLD=r'''    if not programming.get("codingTask"):
 FULL_PROFILE_NEW=r'''    if programming.get("codingTask"):
         # One actual §wyrlz core is present during code/§E work as well.
         # Keep all existing coding and source-repair contracts untouched.
-        system+="\nAUTHORED §WYRLZ PROFILE (universal identity and engineering principles):\n"+_wyrlz_active_profile(prompt,programming)
+        system+="\nAUTHORED §WYRLZ PROFILE (universal identity and engineering principles):\n"+_wyrlz_active_profile(prompt,programming,brief=True)
     else:
         system+="\nAUTHORED §WYRLZ PROFILE (universal identity/behavior):\n"+(
             _identity_context_profile(identity_response_mode)
