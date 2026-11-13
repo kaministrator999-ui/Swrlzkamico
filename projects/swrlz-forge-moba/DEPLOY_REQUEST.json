@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.432",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_432_MOBILE_CAMERA_ORBIT",
-  "reason": "Publish final assembled native Model Studio mobile orbit correction. Touch swipes orbit camera in drag direction; preserve desktop mouse orbit, tap selection, two-finger pinch/pan, Quest VR controls, geometry and Undo. Historical source anchors preserved. 409 ordered source patches; 9,913,162 final HTML bytes, SHA256 ae386647683a6f84cefb837bc9e1fabe9f745386172d352e73fad67e51a1cfbc. Dedicated built-HTML orbit regression and release integrity gate required before upload. Release verifier corrected to use v11.432 artifact name and source provenance. Assembled-HTML camera test isolates the actual shipped orbit calculation from browser-owned pointer dispatch.",
-  "sourceCommit": "b3f87e6a81aad8e3170e8c27f7d8aeb788a790c4",
-  "sourceIntegritySha256": "ae386647683a6f84cefb837bc9e1fabe9f745386172d352e73fad67e51a1cfbc"
+  "releaseVersion": "v11.433",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_433_CAMERA_PREFERENCES_TOUCH_GIZMOS",
+  "reason": "Publish saved Model Studio Camera settings > Invert touch orbit, default follow-finger with option for original reversed mobile drag, and more accessible Move/Rotate/Scale touch hit areas (56px touch pick diameter, 28px touch shaft corridor, subtly larger visible grips). Desktop/VR picking unchanged, no changes to mesh geometry, pinch/pan, Undo, scene project schema. Measured 410 ordered patches, generated HTML 9917228 bytes, SHA256 025700cca295b514f510ace13bcf091593724a5a46c8180ed442dea1a0a4894d. Run guarded exact-source packaging and camera-preferences regression before uploading to the existing Hugging Face Space.",
+  "sourceCommit": "3aa9175f22472f7f718afc8ef3afe15fe5535ae4",
+  "sourceIntegritySha256": "025700cca295b514f510ace13bcf091593724a5a46c8180ed442dea1a0a4894d"
 }
