@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.439",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_439_SHEEP_CAPTURE_PURSUIT",
-  "reason": "Release sealed §E v11.439: fix repeated synchronous wolf A* approach scans while chasing a constantly moving sheep, pace SOLO XR wolf decisions, and register a legal swept 1.05-radius tag even when the 0.09 movement step is rejected by collision. Keep native one-shot capture scan, invulnerability, unchanged LAN authority, v11.438 Worker, v11.434 rendering and Model Studio. Add stage-specific CPU approach/capture/frame diagnostics. Focused 3-wolf collision test and complete inherited regressions PASSED Actions run 43385150244. 416 ordered patches, 77 assets, 9,967,451 bytes, SHA-256 1b837415765c159041bec244cadf5673b8fdb2865c73afea16555bbc7c6fa910. Physical Quest frame-pacing and final-capture acceptance pending.",
-  "sourceCommit": "0dc23b4f69fceccaa83bc6575d2407da5e1ecdb5",
-  "sourceIntegritySha256": "1b837415765c159041bec244cadf5673b8fdb2865c73afea16555bbc7c6fa910"
+  "releaseVersion": "v11.440",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_440_MODEL_TOOLS_VALIDATION",
+  "reason": "Publish eight Model Studio corrections: preserve native open-outline thickness alongside cube face Extrude; valid VR Subdivide minimum; cancel old preview on guide tool changes; touch silhouette vertex/edge picking; loaded assembly-motion menu refresh; current native controller/menu matrices; invisible menu ray exclusion; accessory preview prerequisites. Preserve incoming v11.438 render bridge/v11.439 wolf pursuit and all project/storage/geometry authorities. Local sealed417patch/77asset package passed224native modeling groups plus camera preferences and exact final Android smoke3/3; prior compatible candidate also passed14mobiletool,21touchgizmo and11IWERgizmo checks. Known IWER Bottom-to-Isometric transitioned Trigger miss remains explicit; no physical Quest/Android or universal tool claim. Build exact source before upload.",
+  "sourceCommit": "dd5a81fe9ebac40066a3f777c1c903a321833eda",
+  "sourceIntegritySha256": "e02a42f710d46eeeb16caeefac412472f3d057d4b73ac3dc806ce0e8ab5f1ffa"
 }
