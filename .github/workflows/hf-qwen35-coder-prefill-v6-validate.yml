@@ -1,7 +1,7 @@
 name: §C Qwen3.5-9B coder prefill audit and candidate validation
 on:
   push:
-    branches: [tune/chat-qwen35-coder-prefill-v6-20261113, fix/chat-qwen35-coder-v6-guarded-warmup-20261113, fix/chat-qwen35-coder-v6-eligibility-20261113]
+    branches: [tune/chat-qwen35-coder-prefill-v6-20261113, fix/chat-qwen35-coder-v6-guarded-warmup-20261113, fix/chat-qwen35-coder-v6-eligibility-20261113, fix/chat-coder-v6-profile-scope-20261113]
     paths:
       - "scripts/audit_hf_qwen35_coder_prefill_v6.py"
       - "scripts/benchmark_hf_qwen35_coder_prefill_v6.py"
