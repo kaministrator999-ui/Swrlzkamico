@@ -36,7 +36,24 @@ FAST_CODE_ROUTER=r'''def _swrlz_standalone_code_prefill(prompt,programming,paylo
         "failureEvidence","canonicalCarry","repairDirection",
         "artifactContinuation","artifactMutationRequested","artifactTargetId",
         "needsFailureEvidence","priorProgrammingState","newProject",
-        "failureHistory","behaviorLedger","activeRepairConstraints",
+        "failureHistory","activeRepairConstraints",
+    )):
+        return False
+    # The router ALWAYS supplies a schema-only behavior ledger and a repair
+    # constraints dictionary, even for a brand new standalone function.  Do
+    # not mistake empty metadata wrappers for active repair evidence.
+    ledger=programming.get("behaviorLedger")
+    if isinstance(ledger,dict) and any(ledger.get(k) for k in (
+        "suiteKey","currentFailingCases","knownPassingCases","preservePassingCases",
+        "regressedCases","resolvedCases","currentTestedArtifact",
+        "bestKnownArtifact","currentScore","bestKnownScore",
+    )):
+        return False
+    repair_constraints=programming.get("repairConstraints")
+    if isinstance(repair_constraints,dict) and any(repair_constraints.get(k) for k in (
+        "unavailableDependencies","forbiddenDependencies",
+        "currentReceiptDependencies","carriedUnavailableDependencies",
+        "addedDependencies",
     )):
         return False
     if any(payload.get(k) for k in (
@@ -69,7 +86,7 @@ FAST_CODE_ROUTER=r'''def _swrlz_standalone_code_prefill(prompt,programming,paylo
     contract=programming.get("intentContract")
     if isinstance(contract,dict):
         # Never truncate a hard user constraint for a supposed speed shortcut.
-        if len(json.dumps(contract,ensure_ascii=False))>1300:
+        if len(json.dumps(contract,ensure_ascii=False))>4500:
             return False
         if (contract.get("artifactType") in ("web-page","application","repository")
             or (contract.get("languageContract") or {}).get("artifactType")
