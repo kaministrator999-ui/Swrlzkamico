@@ -39,7 +39,7 @@ def apply(html):
 .model-atelier #se433CameraSettings :focus-visible{outline:2px solid #73e2ee;outline-offset:2px}
 @media(max-width:600px){.model-atelier #se433CameraSettings .se433-camera-settings-body{left:auto;right:0}}
 </style>"""
-    html=one(html,'</head>',css+'\n</head>')
+    html=html.replace('</head>',css+'\n</head>',1)
     for before,after in [
         ('SWYRL_ENGINE_DEPLOY_MARKER: V11_432_MOBILE_CAMERA_ORBIT',MARKER),
         ('ENGINE · MAKER v11.432','ENGINE · MAKER v11.433'),
