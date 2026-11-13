@@ -1,0 +1,62 @@
+name: Inspect §C actual 9B context and coding stream routing
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/hf-code-context-stream-audit.yml"]
+permissions:
+  contents: read
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - run: python -m pip install 'huggingface_hub>=0.34,<2'
+      - name: Read current Hugging Face source and output grounded excerpts
+        shell: bash
+        run: |
+          python - <<'PY'
+          import ast,json,re
+          from pathlib import Path
+          from huggingface_hub import HfApi,hf_hub_download
+          S="kamiloki/Swyrlz"; api=HfApi()
+          revision=api.repo_info(S,repo_type="space").sha
+          print("LIVE_CODE_CONTEXT_REVISION",revision,flush=True)
+          for name in ("qwen35_single_runtime.py","qwen_coder_engine.py",
+                       "lfm2_700m_engine.py","station.py","programming_telemetry.py",
+                       "programming_response_budget.py","coder_model_config.py"):
+              try: code=Path(hf_hub_download(S,name,repo_type="space",revision=revision)).read_text()
+              except Exception as e: print("SOURCE_UNAVAILABLE",name,type(e).__name__,flush=True);continue
+              print("SOURCE_FILE",name,"chars",len(code),flush=True)
+              lines=code.splitlines()
+              hits=[]
+              patterns={
+                "qwen35_single_runtime.py":r"CONTEXT_TOKENS|n_ctx|n_batch|n_ubatch|kv_overrides|memory|context|Llama\\(|cache_prompt|thread|def load\\(",
+                "qwen_coder_engine.py":r"CONTEXT_TOKENS|CONTEXT_SAFETY|MIN_OUTPUT|source_sized_budget|response_budget|_fit_messages|buffered_chat_completion|candidate|validation|DELTA|STATUS|GENERATION_TELEMETRY|SOURCE|fitted_prompt|create_chat_completion|response_tokens|RESOURCE|PROJECT",
+                "lfm2_700m_engine.py":r"CONTEXT_TOKENS|CONTEXT_SAFETY|MIN_OUTPUT|source_sized_budget|response_budget|_fit_messages|buffered_chat_completion|candidate|validation|DELTA|STATUS|GENERATION_TELEMETRY|response_tokens|create_chat_completion",
+                "station.py":r"def stream_generation\\(|elif kind==|if kind==|\\\"DELTA\\\"|\\\"CONTEXT\\\"|\\\"STATUS\\\"|def _snapshot\\(|contextBudget|generationTelemetry|def send\\(|/api/lalm_station",
+                "programming_telemetry.py":r"def buffered_chat_completion\\(|def candidate_attempt_receipt\\(",
+                "programming_response_budget.py":r"def response_budget\\(|def source_sized_budget\\(|CONTEXT_TOKENS|4096|8192|tier|tokens",
+                "coder_model_config.py":r"CONTEXT_TOKENS|RESPONSE_TOKENS|OUTPUT_TOKENS",
+              }
+              match=re.compile(patterns[name],re.I)
+              hits=[i for i,line in enumerate(lines) if match.search(line)]
+              print("MATCHES",json.dumps({"file":name,"lines":[i+1 for i in hits][:110]}),flush=True)
+              keep=set()
+              for i in hits[:55]:
+                  for j in range(max(0,i-3),min(len(lines),i+10)):
+                      keep.add(j)
+              if name=="qwen_coder_engine.py":
+                  for idx in range(min(len(lines),90)):keep.add(idx)
+              for i in sorted(keep):
+                  print("CODE_LINE",json.dumps({"file":name,"line":i+1,"code":lines[i]},ensure_ascii=False),flush=True)
+              tree=ast.parse(code)
+              for f in tree.body:
+                  if isinstance(f,(ast.FunctionDef,ast.AsyncFunctionDef)) and (
+                      f.name in ("source_sized_budget","response_budget","buffered_chat_completion",
+                                 "_fit_messages","_fit_repair_messages","generate_events","load")):
+                      if f.name=="generate_events":continue
+                      src=ast.get_source_segment(code,f)
+                      print("SOURCE_FUNCTION",json.dumps({"file":name,"name":f.name,
+                                               "source":src[:16000]},ensure_ascii=False),flush=True)
+          print("CODE_CONTEXT_SOURCE_AUDIT_COMPLETE",flush=True)
+          PY
