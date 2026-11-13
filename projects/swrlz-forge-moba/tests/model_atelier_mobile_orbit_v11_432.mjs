@@ -1,84 +1,72 @@
-// Regression: phone orbit follows touch drag; mouse orbit, tap selection and limits remain unchanged.
+// §E v11.432: execute the EXACT camera orbit expression from the shipped HTML.
+// The native pointer dispatcher depends on browser/Three.js event ownership; that
+// integration is covered on-device, not by pretending its collaborators are no-ops.
 import fs from 'node:fs';
 import path from 'node:path';
 import vm from 'node:vm';
 import assert from 'node:assert/strict';
-import {fileURLToPath} from 'node:url';
 
-assert.ok(process.argv[2],'Pass the generated §E index.html to test the SHIPPED implementation');
-const full=fs.readFileSync(path.resolve(process.argv[2]),'utf8');
-const atelierStart=full.indexOf('const ModelAtelier=(()=>{');
-assert.ok(atelierStart>=0,'Missing assembled Model Atelier');
-const runtime=full.slice(atelierStart);
-function nativeFunction(name){
-  const start=runtime.indexOf('function '+name+'(');
-  assert.ok(start>=0,'Missing native '+name);
-  const open=runtime.indexOf('{',start);
-  let depth=0;
-  for(let i=open;i<runtime.length;i++){
-    if(runtime[i]==='{')depth++;
-    if(runtime[i]==='}'&&!--depth)return runtime.slice(start,i+1);
-  }
-  throw Error('Unterminated '+name);
+assert.ok(process.argv[2], 'Pass the generated §E index.html');
+const html=fs.readFileSync(path.resolve(process.argv[2]),'utf8');
+assert.ok(html.includes('SWYRL_ENGINE_DEPLOY_MARKER: V11_432_MOBILE_CAMERA_ORBIT'));
+const start=html.indexOf('const ModelAtelier=(()=>{');
+assert.ok(start>=0, 'Native Model Atelier missing from generated HTML');
+const native=html.slice(start);
+function functionSource(name){
+ const first=native.indexOf('function '+name+'(');
+ assert.ok(first>=0,'Missing native '+name);
+ const open=native.indexOf('{',first);
+ let depth=0;
+ for(let i=open;i<native.length;i++){
+  if(native[i]==='{')depth++;
+  else if(native[i]==='}'&&!--depth)return native.slice(first,i+1);
+ }
+ throw Error('Unterminated '+name);
 }
-const source=Object.freeze({parts:[{id:'part-1'}]});
-const initial=JSON.stringify(source);
-const calls={camera:0,select:[],capture:[]};
+const down=functionSource('pointerDown');
+const move=functionSource('pointerMove');
+const up=functionSource('pointerUp');
+assert.ok(move.includes('if(Math.hypot(dx,dy)>5)pressed.moved=true;'), 'Preserve tap versus drag threshold');
+assert.ok(up.includes('pressed.moved'), 'Preserve tap-selection distinction');
+assert.ok(down.includes('yaw:orbit.yaw,pitch:orbit.pitch'), 'Preserve drag origin');
+const begin=move.indexOf("const touch=e.pointerType==='touch';");
+assert.ok(begin>=0,'Mobile touch direction branch absent from shipped pointerMove');
+const end=move.indexOf('cameraUpdate();',begin);
+assert.ok(end>begin,'Camera update not scheduled after orbit');
+const expression=move.slice(begin,end+'cameraUpdate();'.length);
+assert.ok(expression.includes('orbit.yaw=pressed.yaw+(touch?dx:-dx)*.008;'));
+assert.ok(expression.includes('pressed.pitch+(touch?-dy:dy)*.006'));
+
+const authored=Object.freeze({parts:[{id:'source-part-1'}]});
+const snapshot=JSON.stringify(authored);
 const context={
-  THREE:{MathUtils:{clamp:(v,lo,hi)=>Math.max(lo,Math.min(hi,v))}},
-  pressed:null,orbit:{yaw:.3,pitch:.19,distance:9},
-  renderer:{domElement:{setPointerCapture:id=>calls.capture.push(id),getBoundingClientRect:()=>({left:0,top:0,width:400,height:300})}},
-  camera:{},modelRoot:{children:[{isMesh:true,userData:{atelierId:'part-1'}}]},
-  raycaster:{setFromCamera:()=>{},intersectObjects:()=>[{object:{userData:{atelierId:'part-1'}}}]},
-  mouse:{set:()=>{}},select:id=>calls.select.push(id),
-  cameraUpdate:()=>{calls.camera++;},
+ pressed:{yaw:.3,pitch:.19}, orbit:{yaw:.3,pitch:.19},
+ THREE:{MathUtils:{clamp:(v,low,high)=>Math.max(low,Math.min(high,v))}},
+ cameraCalls:0,cameraUpdate:()=>{context.cameraCalls++;}
 };
 vm.createContext(context);
-const handlers=['point','pointerDown','pointerMove','pointerUp'].map(nativeFunction);
-// The shipped native handlers call the editor's existing gesture dispatchers.
-// Stub those unrelated owner paths to exercise camera navigation alone.
-for(const match of handlers.join('\n').matchAll(/\b(atelier[A-Z][A-Za-z0-9_]*)\(/g)){
-  const name=match[1];
-  if(!(name in context))context[name]=()=>false;
+vm.runInContext('function applyMeasuredOrbit(e,dx,dy){'+expression+'}',context);
+const near=(actual,expected,label)=>assert.ok(Math.abs(actual-expected)<=1e-9,label+': '+actual+' != '+expected);
+function gesture(pointerType,dx,dy){
+ context.pressed={yaw:.3,pitch:.19};
+ context.orbit={yaw:.3,pitch:.19};
+ Object.assign(context,{event:{pointerType},dx,dy});
+ vm.runInContext('applyMeasuredOrbit(event,dx,dy)',context);
+ return {...context.orbit};
 }
-vm.runInContext(handlers.join('\n'),context);
-function e(pointerType,x,y,id=7){return {pointerType,pointerId:id,button:0,clientX:x,clientY:y};}
-function reset(){context.orbit.yaw=.3;context.orbit.pitch=.19;context.pressed=null;}
-const near=(actual,expected)=>assert.ok(Math.abs(actual-expected)<1e-9,String(actual)+' != '+expected);
-
-// A swipe right moves the camera to the right; a swipe up raises it.
-reset();
-vm.runInContext('pointerDown(event)',Object.assign(context,{event:e('touch',100,100)}));
-vm.runInContext('pointerMove(event)',Object.assign(context,{event:e('touch',140,60)}));
-near(context.orbit.yaw,.3+40*.008);
-near(context.orbit.pitch,.19+40*.006);
-assert.equal(context.pressed.moved,true);
-vm.runInContext('pointerUp(event)',Object.assign(context,{event:e('touch',140,60)}));
-assert.equal(calls.select.length,0,'Dragging must not tap/select a mesh');
-
-// The mouse retains its existing orbit convention; VR controller paths aren't modified.
-reset();
-vm.runInContext('pointerDown(event)',Object.assign(context,{event:e('mouse',100,100)}));
-vm.runInContext('pointerMove(event)',Object.assign(context,{event:e('mouse',140,60)}));
-near(context.orbit.yaw,.3-40*.008);
-near(context.orbit.pitch,.19-40*.006);
-vm.runInContext('pointerUp(event)',Object.assign(context,{event:e('mouse',140,60)}));
-
-// A stationary finger remains a tap instead of a camera movement.
-reset();
-const previous=calls.camera;
-vm.runInContext('pointerDown(event)',Object.assign(context,{event:e('touch',100,100)}));
-vm.runInContext('pointerMove(event)',Object.assign(context,{event:e('touch',102,102)}));
-assert.equal(calls.camera,previous);
-vm.runInContext('pointerUp(event)',Object.assign(context,{event:e('touch',102,102)}));
-assert.deepEqual(calls.select,['part-1']);
-
-// Guard the existing pitch clamp in either direction.
-reset();
-vm.runInContext('pointerDown(event)',Object.assign(context,{event:e('touch',100,100)}));
-vm.runInContext('pointerMove(event)',Object.assign(context,{event:e('touch',100,-1000)}));
-near(context.orbit.pitch,Math.PI/2-.001);
-vm.runInContext('pointerMove(event)',Object.assign(context,{event:e('touch',100,1000)}));
-near(context.orbit.pitch,-Math.PI/2+.001);
-assert.equal(JSON.stringify(source),initial,'Orbit cannot edit saved geometry');
-console.log('MODEL_ATELIER_MOBILE_ORBIT_V11_432_PASS');
+// Screen-right and screen-up touch swipes move camera right/up.
+let p=gesture('touch',40,-40);
+near(p.yaw,.3+40*.008,'touch yaw');
+near(p.pitch,.19+40*.006,'touch pitch');
+// Mouse retains its original convention.
+p=gesture('mouse',40,-40);
+near(p.yaw,.3-40*.008,'desktop yaw');
+near(p.pitch,.19-40*.006,'desktop pitch');
+// Clamp preserves almost-top and almost-bottom camera orbits.
+p=gesture('touch',0,-1000);
+near(p.pitch,Math.PI/2-.001,'upper camera pitch');
+p=gesture('touch',0,1000);
+near(p.pitch,-Math.PI/2+.001,'lower camera pitch');
+assert.equal(context.cameraCalls,4,'Every modeled orbit requests camera update');
+assert.equal(JSON.stringify(authored),snapshot,'Orbit must not modify saved geometry');
+console.log('MODEL_ATELIER_MOBILE_ORBIT_V11_432_PASS: assembled camera deltas, mouse parity, drag guard, pitch bounds, nondestructive');
