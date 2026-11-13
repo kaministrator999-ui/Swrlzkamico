@@ -26,7 +26,7 @@ ap.add_argument('--three-module', default=os.environ.get('SWYRLZ_THREE_MODULE'),
 args = ap.parse_args()
 m = json.loads((ROOT / 'source-manifest.json').read_text())
 assert m['name'] == '§wyrl§ Engine ' + VERSION
-assert m['finalArtifact'] == 'swyrl_engine_v11_431.html'
+assert m['finalArtifact'] == 'swyrl_engine_v11_432.html'
 assert len(m['patches']) == 409
 assert m['patches'][-4:] == [
     'patches/v11_425_level_observer_feedback_guard.py',
@@ -78,7 +78,7 @@ for marker in [
     'SE410_ACCESSORY_GEOMETRY_START', 'SE410_MODEL_ACCESSORY_BRIDGE_START',
     'SE410_MODEL_VR_ACCESSORY_WORKSHOP_START', 'SE410_MODEL_VR_ACCESSORY_UI']:
     assert html.count(marker) == 1, marker
-assert html.count(" source.engine='§wyrl§ Engine · Maker v11.432';source.version=11.431;") == 5
+assert html.count(" source.engine='§wyrl§ Engine · Maker v11.432';source.version=11.432;") == 5
 subprocess.run([sys.executable, str(ROOT / 'scripts/check_inline_js_syntax_v11_266.py'),
                 str(out / 'index.html')], check=True)
 subprocess.run(['node', str(ROOT / 'tests/model_atelier_mobile_orbit_v11_432.mjs'), str(out / 'index.html')], check=True)
