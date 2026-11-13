@@ -1,0 +1,83 @@
+name: Guarded §C 9B latency v3 and prompt prefill optimization
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".deploy/HF_CHAT_QWEN35_LATENCY_V3_REQUEST.txt"
+permissions:
+  contents: read
+concurrency:
+  group: swrlz-hf-space-deployment
+  cancel-in-progress: false
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 38
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify current Space and explicit pinned-source owner authorization
+        id: approval
+        shell: bash
+        run: |
+          set -euo pipefail
+          request=.deploy/HF_CHAT_QWEN35_LATENCY_V3_REQUEST.txt
+          test -f "$request"
+          get() { sed -n "s/^$1=//p" "$request" | tail -n 1; }
+          test "$(get TARGET)" = "kamiloki/Swyrlz"
+          test "$(get APPROVED)" = "1"
+          ref="$(get SOURCE_REF)"
+          nonce="$(get REQUEST_NONCE)"
+          [[ "$ref" =~ ^[a-f0-9]{40}$ ]]
+          [[ "$nonce" =~ ^[a-z0-9-]{10,96}$ ]]
+          echo "ref=$ref" >> "$GITHUB_OUTPUT"
+          echo "Authorized minimal in-place §C latency optimization; no hardware tier changes"
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.approval.outputs.ref }}
+          path: latency-source
+          fetch-depth: 1
+      - name: Install existing Hugging Face Hub client
+        run: python -m pip install 'huggingface_hub>=0.34,<2'
+      - name: Validate source and hardware constraints before modifying Space
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd latency-source
+          python -m py_compile scripts/hf_chat_qwen35_latency_v3.py scripts/hf_chat_qwen35_latency_v3_release.py scripts/test_hf_chat_qwen35_latency_v3.py
+          python scripts/test_hf_chat_qwen35_latency_v3.py
+          python scripts/hf_chat_qwen35_latency_v3.py inspect
+      - name: Preserve exact previous source and revision
+        shell: bash
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          python - <<'PY'
+          import json,os
+          from pathlib import Path
+          from huggingface_hub import HfApi,hf_hub_download
+          api=HfApi(token=os.environ['HF_TOKEN'])
+          sha=api.repo_info('kamiloki/Swyrlz',repo_type='space').sha
+          folder=Path('qwen35-latency-v3-original')
+          folder.mkdir()
+          for name in ('qwen35_single_runtime.py','station.py','lfm2_700m_engine.py'):
+              path=hf_hub_download('kamiloki/Swyrlz',name,repo_type='space',revision=sha,token=api.token)
+              (folder/name).write_bytes(Path(path).read_bytes())
+          (folder/'source-revision.json').write_text(json.dumps({'space':'kamiloki/Swyrlz','sha':sha}))
+          print('LATENCY_V3_EXACT_ROLLBACK_SNAPSHOT',sha,flush=True)
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: qwen35-latency-v3-original-source
+          path: qwen35-latency-v3-original/
+          retention-days: 14
+          if-no-files-found: error
+      - name: Publish, verify warmup, measure actual response; roll back if broken
+        timeout-minutes: 31
+        shell: bash
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          SWRLZ_QWEN35_LATENCY_V3_APPROVED: "1"
+        run: |
+          set -euo pipefail
+          cd latency-source
+          python scripts/hf_chat_qwen35_latency_v3_release.py
