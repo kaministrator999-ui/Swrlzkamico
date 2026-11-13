@@ -137,6 +137,9 @@ def patch_engine(source):
         '+_wyrlz_active_profile(prompt,programming,brief=True)+"\\n"+_role_frame(user_profile))')
     source=replace_unique(source,fast,fast_updated,"social-profile-origin")
     source=replace_unique(source,REPAIR_ANCHOR,REPAIR_INJECTION,"repair-profile")
+    source=replace_unique(source,'yield {"type":"CONTEXT","phase":"BUDGETED",',
+        'yield {"type":"CONTEXT","phase":"BUDGETED","profileComposerVersion":"swrlz-qwen35-profile-v5",',
+        "inference-profile-composer-diagnostic")
     ast.parse(source,filename=ENGINE)
     return source
 
@@ -158,6 +161,7 @@ def verify_profile_source(before,after):
     assert "SAVED ASSISTANT PROFILE CUSTOMIZATION" in patched
     assert "AUTHORED §WYRLZ ENGINEERING PROFILE" in patched
     assert "SAVED ASSISTANT CUSTOMIZATION" in patched
+    assert '"profileComposerVersion":"swrlz-qwen35-profile-v5"' in patched
     for anchor in ("def _fit_messages(","def _fit_repair_messages(",
                    "def generate_events(payload):","source_sized_budget(",
                    "programming_library_context(programming)",
