@@ -1,3 +1,7 @@
+## §E v11.437 · Sheep Tag territory separation and prepared capture effects
+
+The native SOLO Sheep Tag AI no longer treats other sheep-owned houses as shared base candidates. Each NPC evaluates staggered sites around its own authored home, avoids crowding the player's building plots and other assigned sheep bases, and retains one-at-a-time Quest planning plus per-frame collision/path quotas. The existing captured-sheep building cleanup is already batched and remains unchanged; up to four unattached spirit visuals are gradually created for reuse during wolf capture. This avoids repeated synchronous visual construction when the pool is ready. Counts, saves, LAN, controller handling and §E Model Studio v11.436 extrusion are preserved. Verified 414 patches, 9,947,658 HTML bytes, SHA-256 `b1bfaf78a0c16c87ed96f826e574e857c904a85746f6707dccf1505d148be309`. Physical Quest playtest remains pending.
+
 ## §E v11.436 · Cube face Extrude and one-mesh Satchel (2026-11-12)
 
 The VR Extrude tool now recognizes selected cubes and editable topology and routes them through the existing native Manual mesh workshop. A plain cube converts to welded editable geometry; Trigger selects a face, then Preview and Apply commit a real extrusion. The previous drawn-outline extrusion remains available. For hollow shapes, Inset the top face first, then Extrude inward using a negative amount.

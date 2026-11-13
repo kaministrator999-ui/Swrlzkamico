@@ -1,3 +1,7 @@
+## §E v11.437 · Sheep Tag territory separation and prepared capture effects
+
+The native SOLO Sheep Tag AI no longer treats other sheep-owned houses as shared base candidates. Each NPC evaluates staggered sites around its own authored home, avoids crowding the player's building plots and other assigned sheep bases, and retains one-at-a-time Quest planning plus per-frame collision/path quotas. The existing captured-sheep building cleanup is already batched and remains unchanged; up to four unattached spirit visuals are gradually created for reuse during wolf capture. This avoids repeated synchronous visual construction when the pool is ready. Counts, saves, LAN, controller handling and §E Model Studio v11.436 extrusion are preserved. Verified 414 patches, 9,947,658 HTML bytes, SHA-256 `b1bfaf78a0c16c87ed96f826e574e857c904a85746f6707dccf1505d148be309`. Physical Quest playtest remains pending.
+
 ## §E v11.434 · Crowded Sheep Tag VR recovery and rendering (2026-11-13)
 
 Crowded Sheep Tag no longer interprets a bounded slow frame as a Quest menu interruption while the native XR session remains visibly active. Real menu pauses and controller-release protection remain in place. Compatible scenery and authored building meshes share draw submissions while retaining their original triangles, normals, UVs and materials; the game editor also reuses unchanged shadows during camera movement. Busy VR prioritizes controlled/selected sheep occlusion outlines on Auto/Low/Medium, and High retains all teammate outlines. Occlusion checks now use the native XR camera.
