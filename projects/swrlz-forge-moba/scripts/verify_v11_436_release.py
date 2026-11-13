@@ -4,7 +4,7 @@ import argparse,hashlib,json,re,subprocess,sys
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
 P=argparse.ArgumentParser(description=__doc__);P.add_argument('--output',required=True);P.add_argument('--request',action='store_true');P.add_argument('--three-module');A=P.parse_args()
-m=json.loads((ROOT/'source-manifest.json').read_text());assert m['name']=='§wyrl§ Engine v11.436';assert m['finalArtifact']=='swyrl_engine_v11_435.html';assert len(m['patches'])==413
+m=json.loads((ROOT/'source-manifest.json').read_text());assert m['name']=='§wyrl§ Engine v11.436';assert m['finalArtifact']=='swyrl_engine_v11_436.html';assert len(m['patches'])==413
 assert m['patches'][-6:]==['patches/v11_431_model_gizmo_access.py','patches/v11_432_mobile_camera_orbit.py','patches/v11_433_model_camera_preferences.py','patches/v11_434_sheep_crowded_vr.py','patches/v11_435_model_vr_grab_gizmo.py','patches/v11_436_cube_extrude_satchel.py']
 out=Path(A.output).resolve();subprocess.run([sys.executable,str(ROOT/'build_space.py'),'--output',str(out)],check=True)
 data=(out/'index.html').read_bytes();assert data==(out/'modeler.html').read_bytes();assert len(data)==m['finalBytes'];assert hashlib.sha256(data).hexdigest()==m['finalSha256'];html=data.decode()
