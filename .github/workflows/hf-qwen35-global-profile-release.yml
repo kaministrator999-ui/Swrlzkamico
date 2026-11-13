@@ -1,0 +1,88 @@
+name: Guarded §C 9B global §wyrlz profile and response optimization
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".deploy/HF_CHAT_QWEN35_GLOBAL_PROFILE_V5_REQUEST.txt"
+permissions:
+  contents: read
+concurrency:
+  group: swrlz-hf-space-deployment
+  cancel-in-progress: false
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify explicit owner-scoped existing-Space authorization
+        id: approval
+        shell: bash
+        run: |
+          set -euo pipefail
+          request=.deploy/HF_CHAT_QWEN35_GLOBAL_PROFILE_V5_REQUEST.txt
+          test -f "$request"
+          get() { sed -n "s/^$1=//p" "$request" | tail -n 1; }
+          test "$(get TARGET)" = "kamiloki/Swyrlz"
+          test "$(get APPROVED)" = "1"
+          ref="$(get SOURCE_REF)"
+          nonce="$(get REQUEST_NONCE)"
+          [[ "$ref" =~ ^[a-f0-9]{40}$ ]]
+          [[ "$nonce" =~ ^[a-z0-9-]{10,96}$ ]]
+          echo "ref=$ref" >> "$GITHUB_OUTPUT"
+          echo "Existing §C Space only; no model weights, §E files or paid hardware changes"
+      - name: Checkout verified immutable source
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.approval.outputs.ref }}
+          path: profile-source
+          fetch-depth: 1
+      - name: Install existing Hugging Face Hub client
+        run: python -m pip install 'huggingface_hub>=0.34,<2'
+      - name: Verify canonical profile, preserved source and Python syntax
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd profile-source
+          python -m py_compile scripts/hf_chat_qwen35_global_profile_v5.py scripts/test_hf_qwen35_global_profile_v5.py scripts/hf_chat_qwen35_global_profile_v5_release.py
+          python scripts/test_hf_qwen35_global_profile_v5.py
+          python scripts/hf_chat_qwen35_global_profile_v5.py inspect
+      - name: Capture exact previous §C engine files
+        shell: bash
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          python - <<'PY'
+          import json,os
+          from pathlib import Path
+          from huggingface_hub import HfApi,hf_hub_download
+          api=HfApi(token=os.environ["HF_TOKEN"])
+          revision=api.repo_info("kamiloki/Swyrlz",repo_type="space").sha
+          folder=Path("qwen35-profile-v5-rollback")
+          folder.mkdir()
+          for name in ("lfm2_700m_engine.py","station.py","qwen35_single_runtime.py"):
+              file=hf_hub_download("kamiloki/Swyrlz",name,repo_type="space",
+                                   revision=revision,token=api.token)
+              (folder/name).write_bytes(Path(file).read_bytes())
+          (folder/"sourceRevision.json").write_text(json.dumps({
+              "space":"kamiloki/Swyrlz","revision":revision
+          }),encoding="utf-8")
+          print("EXACT_SWRLZ_PROFILE_V5_ROLLBACK_SNAPSHOT",revision)
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: qwen35-profile-v5-source-rollback
+          path: qwen35-profile-v5-rollback/
+          retention-days: 14
+          if-no-files-found: error
+      - name: Publish minimal current-source overlay and verify all inference paths
+        timeout-minutes: 32
+        shell: bash
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          SWRLZ_QWEN35_PROFILE_V5_APPROVED: "1"
+        run: |
+          set -euo pipefail
+          cd profile-source
+          python -u scripts/hf_chat_qwen35_global_profile_v5_release.py
+          echo "QWEN35_PROFILE_V5_LIVE_ACCEPTED"
