@@ -18,7 +18,7 @@ for token in [marker,"window.SWRLZ_FORGE_BUILD={version:'v11.435'",'<title>§wyr
  'SE435_MODEL_VR_GRAB_GIZMO_START','SWYRL_ENGINE_MODEL_VR_GRAB_GIZMO',
  'se435PreviousGizmoFrame','se435PreviousBeginGrab']:
  assert token in html,token
-assert html.count(" source.engine='§wyrl§ Engine · Maker v11.435';source.version=11.434;")==5
+assert html.count(" source.engine='§wyrl§ Engine · Maker v11.435';source.version=11.435;")==5
 subprocess.run(['node','--check',str(ROOT/'runtime/model_vr_grab_gizmo_v11_435.js')],check=True)
 for name in ['sheep_visual_batch_v11_434.js','sheep_visible_frame_recovery_v11_434.js','sheep_xray_policy_v11_434.js','engine_editor_shadow_cache_v11_434.js']:
  p=ROOT/'runtime'/name;subprocess.run(['node','--check',str(p)],check=True);s=p.read_text();assert 'requestAnimationFrame(' not in s and 'setAnimationLoop(' not in s and 'getViewerPose(' not in s
