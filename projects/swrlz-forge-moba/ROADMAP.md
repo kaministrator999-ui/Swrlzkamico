@@ -1,3 +1,9 @@
+## §E v11.440 · Model Studio VR and mobile tool audit (2026-11-13)
+
+The existing modeling workshop gains eight focused corrections: drawn VR outlines keep their native grip-thickness tool alongside the cube face-Extrude shortcut; VR Subdivide respects its valid 0.025 minimum; touch Vertex/Edge picks tolerate small silhouette misses; changing tools through the mobile lesson cancels the previous geometry preview; accessory shape/detail/fit cards explain their preview prerequisite; loaded assembly-motion choices refresh correctly; and VR picking uses current controller/menu transforms while excluding hidden cards. The v11.435 Grab handles, v11.436 connected satchel lesson, v11.437 Sheep Tag changes and existing projects remain in the ordered source.
+
+See [the tool audit and official modeling-reference comparison](docs/MODEL_TOOLS_AUDIT_V11_440.md) for the actual VR/mobile capability matrix, native transactions, browser interactions, incomplete tools and physical-device limits. Verification and hosted publication results are recorded there as they complete; source discovery and menu navigation are distinguished from successful modeling operations.
+
 ## §E v11.439 · Wolf pursuit workload and swept capture (2026-11-13)
 
 Native source revealed the frequent nine-candidate A* approach probe under moving targets and a narrow collision/capture clearance window. Implemented SOLO XR direct unobstructed wolf pursuit, one heavy wolf decision per simulation tick, a precise swept-contact check using the original capture radius, and per-stage CPU timings/counters. No additional XR render loop, player movement change or LAN host mutation. Accept with physical Quest tests involving three wolves following one moving sheep, protected rescue targets, dense buildings, and final-capture win transition.

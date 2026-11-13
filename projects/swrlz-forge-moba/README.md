@@ -1,3 +1,9 @@
+## §E v11.440 · Model Studio VR and mobile tool audit (2026-11-13)
+
+The existing modeling workshop gains eight focused corrections: drawn VR outlines keep their native grip-thickness tool alongside the cube face-Extrude shortcut; VR Subdivide respects its valid 0.025 minimum; touch Vertex/Edge picks tolerate small silhouette misses; changing tools through the mobile lesson cancels the previous geometry preview; accessory shape/detail/fit cards explain their preview prerequisite; loaded assembly-motion choices refresh correctly; and VR picking uses current controller/menu transforms while excluding hidden cards. The v11.435 Grab handles, v11.436 connected satchel lesson, v11.437 Sheep Tag changes and existing projects remain in the ordered source.
+
+See [the tool audit and official modeling-reference comparison](docs/MODEL_TOOLS_AUDIT_V11_440.md) for the actual VR/mobile capability matrix, native transactions, browser interactions, incomplete tools and physical-device limits. Verification and hosted publication results are recorded there as they complete; source discovery and menu navigation are distinguished from successful modeling operations.
+
 ## §E v11.439 · Moving-sheep pursuit and capture contact (2026-11-13)
 
 Quest testing identified small hitches while three wolves followed a sheep that kept moving. Native pursuit could run up to nine A* approach probes whenever the moving target exceeded a 0.2-unit cache threshold. v11.439 uses a direct unobstructed approach, keeps collision validation, paces expensive wolf decisions across SOLO XR ticks, and handles legitimate 1.05-unit capture contact crossed by a 0.09-unit blocked movement step. Capture diagnostics now distinguish pre-capture approach CPU, actual capture CPU, capture-frame CPU and post-capture frame cost. The existing path Worker, scene batching, ownership, invulnerability, LAN authority and Model Studio are preserved. Physical Quest capture/frame-time acceptance remains pending.
