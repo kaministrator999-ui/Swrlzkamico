@@ -26,7 +26,3 @@ jobs:
             python scripts/test_hf_chat_qwen35_latency_v3.py
             python scripts/hf_chat_qwen35_latency_v3.py inspect
           fi
-      - name: Measure one anonymous live text response (no user data)
-        shell: bash
-        run: |
-          python scripts/probe_chat_qwen35_latency.py
