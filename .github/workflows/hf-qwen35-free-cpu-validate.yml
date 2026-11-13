@@ -1,0 +1,32 @@
+name: Validate §C 9B available CPU profile tuning
+on:
+  push:
+    branches: [tune/chat-qwen35-free-cpu-profile-20261113]
+    paths:
+      - "scripts/hf_qwen35_free_cpu_tune.py"
+      - ".github/workflows/hf-qwen35-free-cpu-validate.yml"
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install read-only HF Hub client
+        run: python -m pip install 'huggingface_hub>=0.34,<2'
+      - name: Validate exact live source and profile change (never publish)
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m py_compile scripts/hf_qwen35_free_cpu_tune.py
+          python scripts/hf_qwen35_free_cpu_tune.py inspect
+          python - <<'PY'
+          from scripts.hf_qwen35_free_cpu_tune import patch_runtime, patch_station, OLD_CPU, NEW_CPU, OLD_ARGS, NEW_ARGS, OLD_WARM, NEW_WARM, OLD_READY, NEW_READY
+          assert 'min(2,' in OLD_CPU and 'min(16,' in NEW_CPU
+          assert '"--batch-size", "256"' in OLD_ARGS
+          assert '"--batch-size", "512"' in NEW_ARGS
+          assert '"profile": "swrlz-qwen35-cpu-v2"' in NEW_READY
+          assert 'cpuCapacity' in NEW_WARM
+          print('CPU_FREE_TIER_PROFILE_PATCH_UNIT_PASS')
+          PY
