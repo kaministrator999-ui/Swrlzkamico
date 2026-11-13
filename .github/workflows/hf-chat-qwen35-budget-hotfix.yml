@@ -1,0 +1,52 @@
+name: Guarded §C Qwen3.5-9B greeting budget hotfix
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".deploy/HF_CHAT_QWEN35_BUDGET_REQUEST.txt"
+permissions:
+  contents: read
+concurrency:
+  group: swrlz-hf-space-deployment
+  cancel-in-progress: false
+jobs:
+  hotfix:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify exact owner-approved source and target
+        id: approval
+        shell: bash
+        run: |
+          set -euo pipefail
+          request=.deploy/HF_CHAT_QWEN35_BUDGET_REQUEST.txt
+          test -f "$request"
+          get() { sed -n "s/^$1=//p" "$request" | tail -n 1; }
+          test "$(get TARGET)" = "kamiloki/Swyrlz"
+          test "$(get APPROVED)" = "1"
+          sha="$(get SOURCE_REF)"
+          nonce="$(get REQUEST_NONCE)"
+          [[ "$sha" =~ ^[a-f0-9]{40}$ ]]
+          [[ "$nonce" =~ ^[a-z0-9-]{10,96}$ ]]
+          echo "source=$sha" >> "$GITHUB_OUTPUT"
+          echo "Authorized guarded 9B source budget hotfix, no model/hardware changes"
+      - name: Checkout exact tested hotfix
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.approval.outputs.source }}
+          path: budget-source
+          fetch-depth: 1
+      - name: Install existing Hugging Face client
+        run: python -m pip install 'huggingface_hub>=0.34,<2'
+      - name: Patch only the live response budget with rollback protection
+        shell: bash
+        timeout-minutes: 10
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          SWRLZ_BUDGET_APPROVED: "1"
+        run: |
+          set -euo pipefail
+          cd budget-source
+          python -m py_compile scripts/hf_chat_qwen35_budget_hotfix.py
+          python scripts/hf_chat_qwen35_budget_hotfix.py publish
