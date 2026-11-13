@@ -1,0 +1,32 @@
+name: Inspect exact §C stream consumer and provisional render hooks
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/hf-chat-stream-hook-audit.yml"]
+permissions: {contents: read}
+jobs:
+  read:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - run: python -m pip install 'huggingface_hub>=0.34,<2'
+      - shell: bash
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          from huggingface_hub import HfApi,hf_hub_download
+          space="kamiloki/Swyrlz";rev=HfApi().repo_info(space,repo_type="space").sha
+          text=Path(hf_hub_download(space,"chat/§wyrlz/index.html",revision=rev,repo_type="space")).read_text()
+          lines=text.splitlines()
+          print("SWRLZ_CHAT_REV",rev,"LINES",len(lines),flush=True)
+          needles=("/api/lalm_station/stream","streamGeneration","stationStream","streamRequest","readStream","getReader()","stationGeneration","type==='DELTA'","type===\"DELTA\"","event.type","evt.type","kind==='DELTA'","kind===\"DELTA\"","renderMessages","renderMessage","msgList","messageList")
+          for needle in needles:
+              hits=[i for i,line in enumerate(lines) if needle in line]
+              print("STREAM_ANCHOR",json.dumps({"needle":needle,"lines":[i+1 for i in hits][:55]}),flush=True)
+              for i in hits[:4]:
+                  a=max(0,i-12);b=min(len(lines),i+30)
+                  print("STREAM_RANGE",json.dumps({"needle":needle,"line":i+1,
+                      "code":[str(j+1)+" "+lines[j][:500] for j in range(a,b)]},ensure_ascii=False),flush=True)
+          print("STREAM_HOOK_AUDIT_DONE",flush=True)
+          PY
