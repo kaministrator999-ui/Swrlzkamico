@@ -7,6 +7,7 @@ on:
       - "scripts/benchmark_hf_qwen35_coder_prefill_v6.py"
       - "scripts/hf_chat_qwen35_coder_prefill_v6.py"
       - "scripts/test_hf_qwen35_coder_prefill_v6.py"
+      - "scripts/test_hf_qwen35_coder_prefill_v6.py"
       - ".github/workflows/hf-qwen35-coder-prefill-v6-validate.yml"
 permissions:
   contents: read
@@ -31,13 +32,3 @@ jobs:
             python -u scripts/test_hf_qwen35_coder_prefill_v6.py
             python -u scripts/hf_chat_qwen35_coder_prefill_v6.py inspect
           fi
-
-  measured-baseline:
-    runs-on: ubuntu-latest
-    timeout-minutes: 7
-    steps:
-      - uses: actions/checkout@v4
-      - name: Measure one synthetic coding request and bounded context breakdown
-        run: |
-          python -m py_compile scripts/benchmark_hf_qwen35_coder_prefill_v6.py
-          python -u scripts/benchmark_hf_qwen35_coder_prefill_v6.py
