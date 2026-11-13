@@ -1,0 +1,50 @@
+name: Measure and test §E v11.435 VR Grab gizmos
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/measure-model-vr-grab-gizmo-v11-435.yml"
+      - "projects/swrlz-forge-moba/runtime/model_vr_grab_gizmo_v11_435.js"
+      - "projects/swrlz-forge-moba/patches/v11_435_model_vr_grab_gizmo.py"
+      - "projects/swrlz-forge-moba/tests/model_vr_grab_gizmo_v11_435.mjs"
+      - "projects/swrlz-forge-moba/source-manifest.json"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  measure:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - name: Rebuild and measure complete source without changing repository seal
+        run: |
+          python - <<'PY'
+          import hashlib,json,pathlib,subprocess,sys
+          root=pathlib.Path('projects/swrlz-forge-moba')
+          manifest=root/'source-manifest.json'
+          original=manifest.read_text()
+          m=json.loads(original)
+          assert m['name']=='§wyrl§ Engine v11.435'
+          assert len(m['patches'])==412
+          assert m['patches'][-1]=='patches/v11_435_model_vr_grab_gizmo.py'
+          m['finalSha256']='';m['finalBytes']=0
+          manifest.write_text(json.dumps(m,ensure_ascii=False))
+          try:
+              subprocess.run([sys.executable,str(root/'build_space.py'),'--output','/tmp/se435-release'],check=True)
+              data=pathlib.Path('/tmp/se435-release/index.html').read_bytes()
+              print('SE435_COMPUTED_BYTES='+str(len(data)),flush=True)
+              print('SE435_COMPUTED_SHA256='+hashlib.sha256(data).hexdigest(),flush=True)
+          finally:
+              manifest.write_text(original)
+          PY
+      - name: Check generated script and preserve real Three.js interactions
+        run: |
+          node --check projects/swrlz-forge-moba/runtime/model_vr_grab_gizmo_v11_435.js
+          python projects/swrlz-forge-moba/scripts/check_inline_js_syntax_v11_266.py /tmp/se435-release/index.html
+          npm install --no-save --ignore-scripts --no-audit --no-fund three@0.169.0
+          node projects/swrlz-forge-moba/tests/model_vr_grab_gizmo_v11_435.mjs node_modules/three/build/three.module.js
