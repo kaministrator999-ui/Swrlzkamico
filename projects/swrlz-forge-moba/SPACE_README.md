@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.437
+title: §wyrl§ Engine v11.438
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,10 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.438 · Render continuity and solo-XR pathfinding Worker (2026-11-13)
+
+Solo VR NPC primary A* pathfinding can now run in a bounded Worker using immutable numeric navigation data. Scene state, physics, headset rendering, LAN networking and controlled sheep movement stay native. Stale worker results are discarded on session, target or navigation changes, and unsupported workers fall back to existing paths. Engine diagnostics separate simulation CPU time, rendering submission CPU time, worker completions and XR callback gaps, but do not measure GPU/compositor time or guarantee zero frame stalls. Existing game, editor, VR controls and v11.437 capture pooling remain intact. Physical Quest acceptance still required.
 
 ## §E v11.437 · Sheep Tag independent AI bases and smoother captures (2026-11-12)
 
