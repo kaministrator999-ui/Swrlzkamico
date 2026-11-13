@@ -35,7 +35,9 @@ HELPER=r'''def _qwen35_bare_ack(prompt):
 HOOK='''    ack_fast_route=False
     ack_history_compacted=False
 '''
-HISTORY_PATCH='''        if _qwen35_bare_ack(prompt):
+HISTORY_PATCH='''        if (_qwen35_bare_ack(prompt) and not source_change_mode and
+                _qwen35_plain_social_turn(prompt, programming, payload,
+                    file_dialogue, concise_identity_turn or identity_followup)):
             ack_fast_route=True
             # The model needs the immediate exchange, not an old 16-turn
             # replay just to acknowledge praise. Stored history is untouched.
