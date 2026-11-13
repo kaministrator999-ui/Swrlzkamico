@@ -11,8 +11,8 @@ def one(src,old,new):
  # Require exactly one whitespace-normalized match, never an approximate
  # semantic match, before changing an embedded historical module.
  import re
- chunks=re.split(r'\\s+',old.strip())
- regex=r'\\s+'.join(re.escape(chunk) for chunk in chunks)
+ chunks=re.split(r'\s+',old.strip())
+ regex=r'\s+'.join(re.escape(chunk) for chunk in chunks)
  matches=list(re.finditer(regex,src))
  if len(matches)!=1:raise AssertionError(('v11.436 anchor',len(matches),old[:120]))
  match=matches[0]
