@@ -1,0 +1,25 @@
+name: Diagnose §C simple-code first token and queue timing (read-only)
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/hf-live-coder-queue-diagnostic-20261113.yml"
+permissions:
+  contents: read
+jobs:
+  benchmark:
+    runs-on: ubuntu-latest
+    timeout-minutes: 9
+    steps:
+      - uses: actions/checkout@v4
+      - name: Recheck same simple-code prompt with actual execution tests
+        run: |
+          python -m py_compile scripts/benchmark_live_coding_quality_20261113.py
+          python - <<'PY'
+          from scripts.benchmark_live_coding_quality_20261113 import CASES,ready,probe,score,emit
+          assert ready().get("model")=="qwen3.5-9b"
+          result=score(CASES[0],probe(CASES[0]))
+          emit("LIVE_CODER_REPEAT_DIAGNOSTIC",result)
+          assert result["terminal"] in ("COMPLETE","COMPLETED")
+          assert result["quality"]["passed"]==result["quality"]["total"]
+          PY
