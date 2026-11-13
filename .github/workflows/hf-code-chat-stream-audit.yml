@@ -22,7 +22,7 @@ jobs:
               except Exception as e:print("CHAT_SRC_MISSING",name,type(e).__name__,flush=True);continue
               lines=txt.splitlines()
               print("CHAT_SRC_FILE",name,"chars",len(txt),"lines",len(lines),flush=True)
-              match=re.compile(r"/api/lalm_station/stream|activeGeneration|event\\.type|evt\\.type|message\\.type|DELTA|\\bfetch\\b|ReadableStream|getReader\\(|ndjson|textContent|message-list|messageList|message-container|messageContainer|\\.appendChild\\(|assistant-message|assistantMessage|renderChat",re.I)
+              match=re.compile(r"/api/lalm_station/stream|activeGeneration|event\\.type|evt\\.type|message\\.type|DELTA|\\bfetch\\b|ReadableStream|getReader\\(|ndjson|textContent|message-list|messageList|message-container|messageContainer|\\.appendChild\\(|assistant-message|assistantMessage|renderChat".replace(chr(92)*2,chr(92)),re.I)
               hits=[i for i,l in enumerate(lines) if match.search(l)]
               print("CHAT_SRC_MATCHES",json.dumps({"file":name,"hits":[i+1 for i in hits][:250]},ensure_ascii=False),flush=True)
               for i in hits[:85]:
