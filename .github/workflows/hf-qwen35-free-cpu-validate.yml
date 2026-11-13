@@ -19,7 +19,8 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          python -m py_compile scripts/hf_qwen35_free_cpu_tune.py
+          python -m py_compile scripts/hf_qwen35_free_cpu_tune.py scripts/hf_chat_qwen35_9b_runtime.py scripts/test_hf_qwen35_free_cpu_profile.py
+          python scripts/test_hf_qwen35_free_cpu_profile.py
           python scripts/hf_qwen35_free_cpu_tune.py inspect
           python - <<'PY'
           from scripts.hf_qwen35_free_cpu_tune import patch_runtime, patch_station, OLD_CPU, NEW_CPU, OLD_ARGS, NEW_ARGS, OLD_WARM, NEW_WARM, OLD_READY, NEW_READY
