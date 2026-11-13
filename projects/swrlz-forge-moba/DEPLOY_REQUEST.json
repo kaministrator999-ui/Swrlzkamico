@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.440",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_440_MODEL_TOOLS_VALIDATION",
-  "reason": "Publish eight Model Studio corrections: preserve native open-outline thickness alongside cube face Extrude; valid VR Subdivide minimum; cancel old preview on guide tool changes; touch silhouette vertex/edge picking; loaded assembly-motion menu refresh; current native controller/menu matrices; invisible menu ray exclusion; accessory preview prerequisites. Preserve incoming v11.438 render bridge/v11.439 wolf pursuit and all project/storage/geometry authorities. Local sealed417patch/77asset package passed224native modeling groups plus camera preferences and exact final Android smoke3/3; prior compatible candidate also passed14mobiletool,21touchgizmo and11IWERgizmo checks. Known IWER Bottom-to-Isometric transitioned Trigger miss remains explicit; no physical Quest/Android or universal tool claim. Build exact source before upload.",
-  "sourceCommit": "dd5a81fe9ebac40066a3f777c1c903a321833eda",
-  "sourceIntegritySha256": "e02a42f710d46eeeb16caeefac412472f3d057d4b73ac3dc806ce0e8ab5f1ffa"
+  "releaseVersion": "v11.441",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_441_SATCHEL_VR_WORKFLOW",
+  "reason": "Publish the verified manual VR satchel lesson: one ordinary cube to connected Inset/inward Extrude body, native drawn/thickened pointed flap and open-center U strap, fitted clasp and actual leather/metal. Tutorial starts clear of the model at its right, both controllers Grip-move the independent window, and real emulated head movement preserves its pose. Visible quest Trigger/Grip own input across nearer geometry; hidden rows cannot intercept materials; ghost uses the native scene-root API; sphere verification matches native geometry. Final exact418patch/77asset package passed261native modeling groups plus camera preferences and all5complete IWER controller groups, including Preview/Cancel/Apply/Undo/Redo, checkpoints, both Save/reopens, all7progress flags,100triangles4editableparts, no page errors. Preserve newest owner Sheep/Chat source and existing project/storage authorities. Physical Quest/Android and account sync untested; known Bottom-to-Isometric IWER transition remains documented. Build exact source before publication.",
+  "sourceCommit": "2998acc5c2ee0a751a3ff4c5a6c399bc124e728b",
+  "sourceIntegritySha256": "62d71652fdf0bf91054e8899cf8f9a775ab12105ab451f15f3b9891b914ad82e"
 }
