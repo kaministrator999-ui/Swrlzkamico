@@ -74,7 +74,7 @@ jobs:
           assert manifest['published'] is False
           assert manifest['productionMutation'] is False
           assert manifest['hardwareChange'] is False
-          assert len(manifest['files']) == 7
+          assert len(manifest['files']) == 8
           for record in manifest['files']:
               path=root/record['path']
               assert path.exists(), record
@@ -82,6 +82,8 @@ jobs:
                   ast.parse(path.read_text('utf-8'), filename=record['path'])
           app=(root/'app.py').read_text()
           assert 'from qwen35_single_runtime import warmup' in app
+          assert '"HF_WARMUP_FAILED"' in app and '        raise' in app
+          assert '@app.get("/api/hf/qwen35-ready")' in (root/'station.py').read_text()
           assert 'threading.Thread(target=_warm_backends' not in app
           assert 'from lfm2_700m_engine import generate_events as original_generate' in app
           for name in ('qwen_coder_engine.py','lfm2_700m_engine.py'):
