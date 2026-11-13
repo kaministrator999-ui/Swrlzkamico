@@ -1,0 +1,29 @@
+name: Verify §C 16K update preserves casual and small-code responsiveness
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/hf-context16k-chat-regression.yml"]
+permissions: {contents: read}
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Chat first-text regression, same resident model
+        run: |
+          set -euo pipefail
+          python -u scripts/probe_chat_qwen35_two_turns.py
+      - name: Small Python coding correctness and latency regression
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from scripts.benchmark_live_coding_quality_20261113 import CASES,ready,probe,score,emit
+          r=ready()
+          assert r.get("ready") is True and r.get("model")=="qwen3.5-9b"
+          assert r.get("decodeThreads")==18 and r.get("batchThreads")==18
+          answer=score(CASES[0],probe(CASES[0]))
+          emit("CONTEXT16K_CODE_REGRESSION",answer)
+          assert answer["terminal"] in ("COMPLETE","COMPLETED")
+          assert answer["quality"]["passed"]==answer["quality"]["total"]
+          PY
