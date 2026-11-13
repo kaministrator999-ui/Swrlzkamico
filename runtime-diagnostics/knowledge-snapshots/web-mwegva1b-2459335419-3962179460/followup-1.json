@@ -1,0 +1,15 @@
+{
+  "schema": "swrlz-knowledge-followup-v1",
+  "requestId": "web-mwegva1b-2459335419-3962179460",
+  "modelId": "700m",
+  "eventType": "KNOWLEDGE_ACQUISITION_FOLLOWUP_1",
+  "sourceRef": "f149dd857e3d9219f5cae7da0286b5dbfec85c42",
+  "persistedAtUnixMs": 1794549719045,
+  "diagnostic": {
+    "schema": "swrlz-knowledge-followup-v1",
+    "parentRequestId": "web-mwegva1b-2459335419-3962179460",
+    "turnIndex": 1,
+    "userText": "Hey how are you?",
+    "capturedAtUnixMs": 1794549719044
+  }
+}
