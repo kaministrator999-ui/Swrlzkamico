@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.434
+title: §wyrl§ Engine v11.435
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,12 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.435 · VR Grab transformation handles (2026-11-12)
+
+Selected meshes in Model Studio VR now display the same concept of a pivot-anchored transformation gizmo as mobile, even in the automatic **Grab** mode. Existing colored XYZ Move arrows remain independently ray-selectable: gripping an arrow starts the native axis-constrained Move preview, while gripping elsewhere keeps free-form Grab (translation, wrist rotation and stick scaling). Dedicated Move, Rotate and uniform Scale modes keep their existing handles. The VR tools menu, selected-mesh project, Undo and mobile gizmos are unchanged.
+
+The real Three.js r169 regression passed five groups covering Grab visibility, selection-pivot axis rays, constrained movement, free-form fallback, menu pointer priority, explicit modes and no-selection hiding. The complete 412-patch source was reconstructed and its inline JavaScript syntax checked at **9,933,817 bytes**, SHA-256 `19d7464f80b572d6ace882ccac4a93cd8f9d96a370b13661d1b3c4ae9c7cdc84`. Physical Quest 2 selection and long-session performance still require owner testing. See [the v11.435 model gizmo checkpoint](docs/MODEL_VR_GRAB_GIZMO_V11_435.md) for verification and release history.
 
 ## §E v11.434 · Crowded Sheep Tag VR recovery and rendering (2026-11-13)
 

@@ -428,6 +428,6 @@
     "patches/v11_434_sheep_crowded_vr.py",
     "patches/v11_435_model_vr_grab_gizmo.py"
   ],
-  "finalBytes": 9930780,
-  "finalSha256": "7aa4640a5b02b6c43eb54fe28d28dbf503cd52f1c571c98c0ee455d659395fd8"
+  "finalBytes": 9933817,
+  "finalSha256": "19d7464f80b572d6ace882ccac4a93cd8f9d96a370b13661d1b3c4ae9c7cdc84"
 }
