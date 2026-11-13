@@ -1,0 +1,7 @@
+TARGET=kamiloki/Swyrlz
+APPROVED=1
+CHANGE_SCOPE=existing-project-output-token-auto-continuation-only
+CONTEXT_TOKENS=16384
+THREADS=18
+SOURCE_REF=047a4f1847b90a585b3b6a8ebc2340c7d5ef2386
+REQUEST_NONCE=code-output-limit-resume-20261113-stage-v2-0001
