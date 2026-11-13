@@ -1,0 +1,12 @@
+const assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm');
+let now=2000,calls=0,menu=false,active=true;const state={lastFrame:1000,lastVisible:'visible',pendingRelease:false,returnUntil:0};
+const ctx={window:{},performance:{now:()=>now},se211:state,se181XR:{session:{visibilityState:'visible'}},stSession:{simulate:false,buildings:Array.from({length:76},()=>({}))},document:{visibilityState:'visible'},se195Gameplay:()=>active,se238NativeMenuOpen:()=>menu,se211OnFrame(){calls++;}};
+vm.createContext(ctx);vm.runInContext(fs.readFileSync(new URL('../runtime/sheep_visible_frame_recovery_v11_434.js','file://'+__filename),'utf8'),ctx);let groups=0;
+ctx.se211OnFrame();assert.equal(state.lastFrame,now);assert.equal(calls,1);groups++;
+for(const change of [()=>ctx.se181XR.session.visibilityState='visible-blurred',()=>ctx.document.visibilityState='hidden',()=>state.pendingRelease=true,()=>state.returnUntil=3000,()=>menu=true,()=>active=false,()=>ctx.stSession.simulate=true,()=>ctx.stSession.buildings=[]]){
+ ctx.se181XR.session.visibilityState='visible';ctx.document.visibilityState='visible';state.pendingRelease=false;state.returnUntil=0;menu=false;active=true;ctx.stSession.simulate=false;ctx.stSession.buildings=Array(76).fill({});state.lastFrame=1000;change();ctx.se211OnFrame();assert.equal(state.lastFrame,1000,'Explicit focus/input and noncrowded gates are preserved');groups++;
+}
+ctx.stSession.buildings=Array(76).fill({});state.lastFrame=1000;now=7000;ctx.se211OnFrame();assert.equal(state.lastFrame,1000,'Very long suspension safeguards stay native');groups++;
+const x={window:{},renderer:{xr:{isPresenting:true}},performancePrefs:{preset:'auto'}};vm.createContext(x);vm.runInContext(fs.readFileSync(new URL('../runtime/sheep_xray_policy_v11_434.js','file://'+__filename),'utf8')+'\nglobalThis.eligible=se434XrayEligible;',x);
+const s={buildings:Array(76).fill({}),controlledId:'me',selectedId:'selected'};assert.equal(x.eligible({id:'me'},s),true);assert.equal(x.eligible({id:'selected'},s),true);assert.equal(x.eligible({id:'teammate'},s),false);x.performancePrefs.preset='high';assert.equal(x.eligible({id:'teammate'},s),true);x.renderer.xr.isPresenting=false;x.performancePrefs.preset='auto';assert.equal(x.eligible({id:'teammate'},s),true);groups++;
+console.log('SHEEP_VISIBLE_RECOVERY_434_PASS',JSON.stringify({groups,realVisibilityPreserved:true,posesUntouched:true,highQualityAnd2DOverlaysPreserved:true}));

@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.433
+title: §wyrl§ Engine v11.434
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,12 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.434 · Crowded Sheep Tag VR recovery and rendering (2026-11-13)
+
+Crowded Sheep Tag no longer interprets a bounded slow frame as a Quest menu interruption while the native XR session remains visibly active. Real menu pauses and controller-release protection remain in place. Compatible scenery and authored building meshes share draw submissions while retaining their original triangles, normals, UVs and materials; the game editor also reuses unchanged shadows during camera movement. Busy VR prioritizes controlled/selected sheep occlusion outlines on Auto/Low/Medium, and High retains all teammate outlines. Occlusion checks now use the native XR camera.
+
+The sealed build passed 34 new focused native test groups, existing AI/frame-budget checks, and preservation checks for v11.433 camera preferences and larger mobile gizmo targets. An emulated stereo stress match kept eight sheep alive while seven AI teammates built 76 houses, then passed head movement and menu-return checks. The matching editor fixture dropped from 4,414 to 2,416 draw calls with the same 515,659 triangles (45.3% fewer calls). These software-rendered checks establish application behavior, not physical Quest FPS or compositor acceptance. See [the crowded VR report](docs/SHEEP_CROWDED_VR_V11_434.md) for evidence, limits and publication status.
 
 ## §E v11.433 · Camera settings and easier mobile gizmos (2026-11-12)
 
