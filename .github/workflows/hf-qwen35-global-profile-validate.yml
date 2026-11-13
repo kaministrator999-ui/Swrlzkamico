@@ -1,7 +1,7 @@
 name: Validate §C global §wyrlz profile and 9B prompt efficiency
 on:
   push:
-    branches: [tune/chat-qwen35-global-profile-20261113]
+    branches: [tune/chat-qwen35-global-profile-20261113, fix/chat-qwen35-unified-profile-coder-20261113]
     paths:
       - "scripts/hf_chat_qwen35_global_profile_v5.py"
       - "scripts/test_hf_qwen35_global_profile_v5.py"
