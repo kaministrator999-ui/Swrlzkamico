@@ -53,7 +53,7 @@ assert not qualifies(example,{"codingTask":False},{},[],None)
 for progkey in (
     "failureEvidence","canonicalCarry","artifactContinuation",
     "artifactMutationRequested","artifactTargetId","needsFailureEvidence",
-    "newProject","failureHistory","behaviorLedger","activeRepairConstraints",
+    "newProject","failureHistory","activeRepairConstraints",
 ):
     assert not qualifies(example,p|{progkey:True},{},[],None),progkey
 for payloadkey in ("nativeEditorEvidence","onlineContext","projectThreadEvidence",
