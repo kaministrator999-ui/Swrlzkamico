@@ -6,6 +6,8 @@ on:
       - "scripts/probe_chat_qwen35_latency.py"
       - ".github/workflows/hf-chat-qwen35-latency-preflight.yml"
       - "scripts/hf_chat_qwen35_latency_v3.py"
+      - "scripts/hf_chat_qwen35_latency_v3_release.py"
+      - ".github/workflows/hf-chat-qwen35-latency-v3-release.yml"
       - "scripts/test_hf_chat_qwen35_latency_v3.py"
 permissions:
   contents: read
@@ -22,7 +24,7 @@ jobs:
           python -m pip install 'huggingface_hub>=0.34,<2'
           python -m py_compile scripts/probe_chat_qwen35_latency.py
           if test -f scripts/hf_chat_qwen35_latency_v3.py; then
-            python -m py_compile scripts/hf_chat_qwen35_latency_v3.py scripts/test_hf_chat_qwen35_latency_v3.py
+            python -m py_compile scripts/hf_chat_qwen35_latency_v3.py scripts/hf_chat_qwen35_latency_v3_release.py scripts/test_hf_chat_qwen35_latency_v3.py
             python scripts/test_hf_chat_qwen35_latency_v3.py
             python scripts/hf_chat_qwen35_latency_v3.py inspect
           fi
