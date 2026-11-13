@@ -1,0 +1,27 @@
+name: Preflight §C 16K source+preview candidate (read-only)
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/hf-chat-code-preview-preflight.yml"]
+permissions: {contents: read}
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install source inspect dependencies
+        run: python -m pip install 'huggingface_hub>=0.34,<2'
+      - name: Validate exact live source anchors Python JavaScript semantics and 16K capacity
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m py_compile scripts/hf_chat_code_context_preview_v1.py
+          python -u scripts/hf_chat_code_context_preview_v1.py snapshot
+          echo "CODE_PREVIEW_READ_ONLY_PREFLIGHT_PASS"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: swrlz-code-preview-audit-exact-source
+          path: qwen35-code-preview-backup/
+          retention-days: 14
+          if-no-files-found: error
