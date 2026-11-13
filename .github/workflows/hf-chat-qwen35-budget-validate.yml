@@ -1,0 +1,40 @@
+name: Validate §C Qwen3.5-9B greeting budget hotfix
+on:
+  push:
+    branches: [fix/chat-qwen35-9b-budget-20261112]
+    paths:
+      - "scripts/hf_chat_qwen35_budget_hotfix.py"
+      - ".github/workflows/hf-chat-qwen35-budget-validate.yml"
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Hub reader
+        run: python -m pip install 'huggingface_hub>=0.34,<2'
+      - name: Validate exact live 9B token policy without mutation
+        shell: bash
+        run: |
+          python -m py_compile scripts/hf_chat_qwen35_budget_hotfix.py
+          python - <<'PY'
+          from huggingface_hub import HfApi,hf_hub_download
+          from pathlib import Path
+          from scripts.hf_chat_qwen35_budget_hotfix import SPACE, PATH, MODEL_FILE, candidate, test_budget
+          hub=HfApi()
+          rev=hub.repo_info(SPACE, repo_type="space").sha
+          names=set(hub.list_repo_files(SPACE,repo_type="space",revision=rev))
+          assert PATH in names and MODEL_FILE in names
+          model=Path(hf_hub_download(SPACE,MODEL_FILE,repo_type="space",revision=rev)).read_text()
+          assert 'Qwen3.5-9B' in model
+          before=Path(hf_hub_download(SPACE,PATH,repo_type="space",revision=rev)).read_text()
+          after=candidate(before)
+          test_budget(after)
+          assert before.count('return {"tier":"normal","tokens":4096,"stagedDelivery":False}') == 2
+          assert after.count('return {"tier":"normal","tokens":4096,"stagedDelivery":False}') == 0
+          assert before[:before.index("def response_budget(")] == after[:after.index("def response_budget(")]
+          assert before[before.index("def source_sized_budget("):] == after[after.index("def source_sized_budget("):]
+          print('READ_ONLY_QWEN35_HOTFIX_CANDIDATE_PASS',rev)
+          PY
