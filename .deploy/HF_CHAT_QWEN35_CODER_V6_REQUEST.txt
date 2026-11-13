@@ -1,0 +1,4 @@
+TARGET=kamiloki/Swyrlz
+APPROVED=1
+SOURCE_REF=dd202bd9bf179b3ce356ddb64933e9d936a8ab45
+REQUEST_NONCE=qwen35-coder-prefill-v6-20261113-1420
