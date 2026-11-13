@@ -38,7 +38,7 @@ jobs:
                 "programming_response_budget.py":r"def response_budget\\(|def source_sized_budget\\(|CONTEXT_TOKENS|4096|8192|tier|tokens",
                 "coder_model_config.py":r"CONTEXT_TOKENS|RESPONSE_TOKENS|OUTPUT_TOKENS",
               }
-              match=re.compile(patterns[name],re.I)
+              match=re.compile(patterns[name].replace(chr(92)*2,chr(92)),re.I)
               hits=[i for i,line in enumerate(lines) if match.search(line)]
               print("MATCHES",json.dumps({"file":name,"lines":[i+1 for i in hits][:110]}),flush=True)
               keep=set()
