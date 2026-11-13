@@ -141,7 +141,7 @@ SOCIAL_FUNCTION='''def _qwen35_plain_social_turn(prompt, programming, payload, f
         r"|(?:pretty|really) (?:good|great|fine|okay)(?: actually| thanks| today)?"
         r"|(?:doing|i'?m doing) (?:good|great|fine|okay|alright)(?: thanks)?"
         r"|that took (?:a while|forever|so long)(?: for you to respond)?(?: lol| lmao)?"
-        r"|(?:lol|lmao|haha|hahaha|yep|yeah|exactly|nice|cool|awesome)"
+        r"|(?:lol|lmao|lmfao|haha|hahaha|yep|yeah|exactly|nice|cool|awesome)"
         r")[!?. ,]*",clean,re.I))
 
 '''
