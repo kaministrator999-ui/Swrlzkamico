@@ -1,3 +1,7 @@
+## §E v11.439 · Wolf pursuit workload and swept capture (2026-11-13)
+
+Native source revealed the frequent nine-candidate A* approach probe under moving targets and a narrow collision/capture clearance window. Implemented SOLO XR direct unobstructed wolf pursuit, one heavy wolf decision per simulation tick, a precise swept-contact check using the original capture radius, and per-stage CPU timings/counters. No additional XR render loop, player movement change or LAN host mutation. Accept with physical Quest tests involving three wolves following one moving sheep, protected rescue targets, dense buildings, and final-capture win transition.
+
 ## §E v11.438 · Render-continuity worker boundary (2026-11-13)
 
 Implemented an isolated, session-safe solo-XR NPC pathfinding worker plus engine-owned frame timing metrics, preserving native WebXR, player controls, LAN, collision, v11.411/v11.419 budgets, v11.434 rendering optimizations and v11.437 capture pooling. This moves one expensive pure computation off the render thread without pretending physics, all gameplay logic, GPU work or compositor timing are fully independent. Next step after live Quest acceptance: profile remaining capture/gameplay frame spikes, then identify additional pure jobs safe to migrate; do not offload THREE scene mutations or headset poses.
