@@ -1,0 +1,7 @@
+TARGET=kamiloki/Swyrlz
+APPROVED=1
+CHANGE_SCOPE=coding-context16k-provisional-draft-only
+MODEL=qwen3.5-9b
+THREADS=18
+SOURCE_REF=c8a69fe15e91d9624c8bac2a95fdb7c690a29bdd
+REQUEST_NONCE=swrlz-code-context16k-preview-20261113-r1
