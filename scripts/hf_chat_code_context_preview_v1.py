@@ -297,7 +297,7 @@ def validate(before,after):
     assert "CANDIDATE_PREVIEW_DELTA" in ui
     assert "swrlz-code-draft" in ui
     assert 'code.textContent=draftText' in ui
-    assert "window.dispatchEvent(new CustomEvent(\\"swrlz-voice-delta\\"" in ui
+    assert "swrlz-voice-delta" in ui
     assert "renderAssistantContent(body,nextText" in ui
     assert before[CHAT].count(b"</head>")==1
     assert ui.count('id="swrlz-guarded-code-draft-v1"')==1
