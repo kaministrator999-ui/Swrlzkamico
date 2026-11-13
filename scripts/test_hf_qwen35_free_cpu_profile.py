@@ -2,7 +2,7 @@
 import ast
 from pathlib import Path
 from types import SimpleNamespace
-from scripts.hf_qwen35_free_cpu_tune import patch_runtime, patch_station, test_profile
+from hf_qwen35_free_cpu_tune import test_profile
 
 source=Path("scripts/hf_chat_qwen35_9b_runtime.py").read_text("utf-8")
 test_profile(source)
