@@ -1,0 +1,55 @@
+name: Verify §E v11.439 pursuit and capture candidate
+on:
+  push:
+    branches: [main]
+    paths:
+      - "projects/swrlz-forge-moba/source-manifest.json"
+      - "projects/swrlz-forge-moba/patches/v11_439_sheep_capture_pursuit.py"
+      - ".github/workflows/verify-forge-v11-439-pursuit-seal.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  pursuit-seal:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Check native pursuit code and focused regressions
+        run: |
+          node --check projects/swrlz-forge-moba/runtime/sheep_capture_pursuit_v11_439.js
+          node projects/swrlz-forge-moba/tests/test_sheep_capture_pursuit_v11_439.cjs
+          node projects/swrlz-forge-moba/tests/test_sheep_congestion_budget_v11_419.cjs
+          node projects/swrlz-forge-moba/tests/test_sheep_territory_capture_v11_437.cjs
+          node projects/swrlz-forge-moba/tests/test_engine_render_bridge_v11_438.cjs
+      - name: Assemble source and validate v11.439 native integration
+        run: |
+          python projects/swrlz-forge-moba/build_space.py --output /tmp/se439
+          python projects/swrlz-forge-moba/scripts/check_inline_js_syntax_v11_266.py /tmp/se439/index.html
+          python - <<'PY'
+          import pathlib,hashlib,json
+          root=pathlib.Path('/tmp/se439')
+          html=(root/'index.html').read_bytes()
+          assert html==(root/'modeler.html').read_bytes()
+          s=html.decode()
+          for token in [
+            'SE439_SHEEP_CAPTURE_PURSUIT_START',
+            'SWYRL_ENGINE_DEPLOY_MARKER: V11_439_SHEEP_CAPTURE_PURSUIT',
+            "window.SWRLZ_FORGE_BUILD={version:'v11.439'",
+            'se439DirectChase(unit,aim,context)?',
+            'se439CaptureProbe(unit,s);',
+            'SE438_ENGINE_SIMULATION_RENDER_BRIDGE_START',
+            'SE437_SHEEP_TERRITORY_CAPTURE_START',
+            'SE434_SHEEP_VISUAL_BATCH_START',
+            'SE419_SHEEP_CONGESTION_BUDGET_START']:
+           assert token in s,token
+          m=json.loads(pathlib.Path('projects/swrlz-forge-moba/source-manifest.json').read_text())
+          assert m['name']=='§wyrl§ Engine v11.439'
+          assert len(m['patches'])==416
+          assert m['patches'][-1]=='patches/v11_439_sheep_capture_pursuit.py'
+          print('SE439_SEAL_BYTES',len(html),flush=True)
+          print('SE439_SEAL_SHA256',hashlib.sha256(html).hexdigest(),flush=True)
+          print('SE439_SOURCE_VERIFIED',flush=True)
+          PY
