@@ -59,3 +59,39 @@ jobs:
                 print('SOURCE',path,i+1,json.dumps(excerpt))
           print('PREFLIGHT_COMPLETE_READ_ONLY')
           PY
+
+      - name: Build exact-source 9B candidate without publishing
+        shell: bash
+        run: |
+          python -m py_compile scripts/hf_chat_qwen35_9b_integration.py scripts/hf_chat_qwen35_9b_runtime.py
+          python scripts/hf_chat_qwen35_9b_integration.py prepare
+          python - <<'PY'
+          from pathlib import Path
+          import ast, json
+          root=Path('qwen35-candidate')
+          manifest=json.loads((root/'CANDIDATE.json').read_text())
+          assert manifest['published'] is False
+          assert manifest['productionMutation'] is False
+          assert manifest['hardwareChange'] is False
+          assert len(manifest['files']) == 7
+          for record in manifest['files']:
+              path=root/record['path']
+              assert path.exists(), record
+              if path.suffix == '.py':
+                  ast.parse(path.read_text('utf-8'), filename=record['path'])
+          app=(root/'app.py').read_text()
+          assert 'from qwen35_single_runtime import warmup' in app
+          assert 'threading.Thread(target=_warm_backends' not in app
+          assert 'from lfm2_700m_engine import generate_events as original_generate' in app
+          for name in ('qwen_coder_engine.py','lfm2_700m_engine.py'):
+              s=(root/name).read_text()
+              assert 'return qwen35_load()' in s
+              assert 'CONTEXT_TOKENS=8192' in s
+              assert 'LARGE_OUTPUT_TOKENS=6144' in s
+          vision=(root/'chat_vision.py').read_text()
+          assert 'from qwen35_single_runtime import load' in vision
+          assert 'VISION_MODEL_VARIANT = "qwen3.5-9b"' in vision
+          routes=(root/'model_router.py').read_text()
+          assert routes.count('twoody/Qwen3.5-9B-GGUF@') >= 3
+          print('QWEN35_STATIC_CANDIDATE_ACCEPTED',manifest['previousRevision'])
+          PY
