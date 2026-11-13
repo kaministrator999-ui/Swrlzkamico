@@ -1,0 +1,67 @@
+name: Guarded §C existing-project code continuation release
+on:
+  push:
+    branches: [main]
+    paths: [".deploy/HF_CHAT_CODE_CONTINUATION_REQUEST.txt"]
+permissions:
+  contents: read
+concurrency:
+  group: swrlz-hf-space-deployment
+  cancel-in-progress: false
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 44
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate exact existing Space and source-scoped user authorization
+        id: approved
+        shell: bash
+        run: |
+          set -euo pipefail
+          file=.deploy/HF_CHAT_CODE_CONTINUATION_REQUEST.txt
+          test -f "$file"
+          get() { sed -n "s/^$1=//p" "$file" | tail -n 1; }
+          test "$(get TARGET)" = "kamiloki/Swyrlz"
+          test "$(get APPROVED)" = "1"
+          test "$(get CHANGE_SCOPE)" = "existing-project-output-token-auto-continuation-only"
+          test "$(get CONTEXT_TOKENS)" = "16384"
+          test "$(get THREADS)" = "18"
+          ref="$(get SOURCE_REF)"
+          nonce="$(get REQUEST_NONCE)"
+          [[ "$ref" =~ ^[0-9a-f]{40}$ ]]
+          [[ "$nonce" =~ ^[a-z0-9-]{12,96}$ ]]
+          echo "ref=$ref" >> "$GITHUB_OUTPUT"
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.approved.outputs.ref }}
+          path: release-source
+          fetch-depth: 1
+      - name: Install Hugging Face source tooling
+        run: python -m pip install 'huggingface_hub>=0.34,<2'
+      - name: Validate exact current live source, bounded simulation, and preserve previous bytes
+        working-directory: release-source
+        shell: bash
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          set -euo pipefail
+          python -m py_compile scripts/hf_chat_code_output_continuation_v2.py
+          python -u scripts/hf_chat_code_output_continuation_v2.py preflight
+      - uses: actions/upload-artifact@v4
+        with:
+          name: swrlz-previous-qwen-coder-exact-source
+          path: release-source/swrlz-code-continuation-backup/
+          if-no-files-found: error
+          retention-days: 14
+      - name: Publish one-file patch, warm resident model, verify HTML, restore source on failure
+        working-directory: release-source
+        shell: bash
+        timeout-minutes: 36
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          SWRLZ_CODE_CONTINUATION_APPROVED: "1"
+        run: |
+          set -euo pipefail
+          python -u scripts/hf_chat_code_output_continuation_v2.py publish
+          echo "SWRLZ_CODE_CONTINUATION_RELEASE_VERIFIED"
