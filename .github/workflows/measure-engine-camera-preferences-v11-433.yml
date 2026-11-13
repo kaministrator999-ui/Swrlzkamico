@@ -1,0 +1,42 @@
+name: Measure §E v11.433 camera settings and gizmo source
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "projects/swrlz-forge-moba/patches/v11_433_model_camera_preferences.py"
+      - "projects/swrlz-forge-moba/runtime/model_camera_preferences_v11_433.js"
+      - ".github/workflows/measure-engine-camera-preferences-v11-433.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  measure:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build full ordered source and measure unsealed new artifact
+        run: |
+          python - <<'PY'
+          import base64,gzip,hashlib,importlib.util,json
+          from pathlib import Path
+          root=Path('projects/swrlz-forge-moba')
+          m=json.loads((root/'source-manifest.json').read_text())
+          assert m['name']=='§wyrl§ Engine v11.433'
+          assert len(m['patches'])==410
+          assert m['patches'][-1]=='patches/v11_433_model_camera_preferences.py'
+          data=gzip.decompress(base64.b64decode(''.join((root/p).read_text().strip() for p in m['chunks'])))
+          assert len(data)==m['baseBytes'] and hashlib.sha256(data).hexdigest()==m['baseSha256']
+          html=data.decode()
+          for i,rel in enumerate(m['patches']):
+              spec=importlib.util.spec_from_file_location('swrlz_'+str(i),root/rel)
+              module=importlib.util.module_from_spec(spec)
+              spec.loader.exec_module(module)
+              html=module.apply(html)
+          result=html.encode()
+          Path('/tmp/se433.html').write_bytes(result)
+          print('SE433_SOURCE_RECEIPT='+json.dumps({'bytes':len(result),'sha256':hashlib.sha256(result).hexdigest(),'patches':len(m['patches'])},sort_keys=True),flush=True)
+          PY
+          python projects/swrlz-forge-moba/scripts/check_inline_js_syntax_v11_266.py /tmp/se433.html
+          node projects/swrlz-forge-moba/tests/model_camera_preferences_v11_433.mjs /tmp/se433.html
