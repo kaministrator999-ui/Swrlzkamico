@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
-"""Guarded CPU coder prefill v6: reduce native llama.cpp prefill for simple tasks.
+"""Guarded v6: reduce coding prefill on the shared resident Qwen3.5-9B.
 
-Applies ONLY to the current §C Hugging Face Space's dedicated Qwen2.5-Coder
-source. Qwen3.5-9B conversation model, quantized coder weights, 32K coder context,
-memory, §E integration, auth, code contracts and candidate validation unchanged.
+Applies only to the §C coding workflow, not model weights or CPU batch settings.
+Coder and conversation use the same 9B GGUF weights and 8K model context.
+§E integration, auth, code contracts, and candidate validation remain unchanged.
 """
 from __future__ import annotations
 import ast
@@ -140,8 +140,18 @@ def patch_coder(s):
           FAST_CODE_ROUTER+"def generate_events(payload):","new safe prefill router")
     s=one(s,FAST_POLICY_OLD,FAST_POLICY_NEW,"small standalone policy")
     s=one(s,RESOURCE_OLD,RESOURCE_NEW,"small isolated response budget")
-    s=one(s,"n_batch=512,n_ubatch=512",
-          "n_batch=2048,n_ubatch=1024","native coder CPU prefill batch")
+    s=one(s,
+      '"cpuCapacity":_cpu_capacity(),"decodeThreads":_thread_plan()[0],"batchThreads":_thread_plan()[1],',
+      '"cpuCapacity":SHARED_CPU_CAPACITY,"decodeThreads":SHARED_DECODE_THREADS,"batchThreads":SHARED_BATCH_THREADS,',
+      "correct stale coder resource telemetry")
+    s=one(s,
+      '"""Dedicated Qwen2.5-Coder GGUF route for programming tasks."""',
+      '"""Dedicated coding workflow over the shared resident Qwen3.5-9B runtime."""',
+      "stale coder route documentation")
+    s=one(s,
+      'from qwen35_single_runtime import MODEL_REPO, MODEL_FILE',
+      'from qwen35_single_runtime import MODEL_REPO, MODEL_FILE, CPU_CAPACITY as SHARED_CPU_CAPACITY, DECODE_THREADS as SHARED_DECODE_THREADS, BATCH_THREADS as SHARED_BATCH_THREADS',
+      "use actual shared 9B CPU profile")
     s=one(s,
       '    yield {"type":"STATUS","phase":"PROFILE_CONTEXT_READY","reason":"swrlz-qwen35-profile-v5"}',
       '    yield {"type":"STATUS","phase":"PROFILE_CONTEXT_READY","reason":"swrlz-qwen35-profile-v5"}\n'
@@ -160,9 +170,13 @@ def test_patched(before,after):
     original_profile=old.split('BUILTIN_ASSISTANT_PROFILE="""',1)[1].split('"""',1)[0]
     revised_profile=updated.split('BUILTIN_ASSISTANT_PROFILE="""',1)[1].split('"""',1)[0]
     assert original_profile==revised_profile
-    assert "n_batch=2048,n_ubatch=1024" in updated
-    assert "n_ctx=context" in updated and "n_gpu_layers=0" in updated
-    assert "CONTEXT_TOKENS=32768" in updated
+    assert 'from qwen35_single_runtime import load as qwen35_load' in updated
+    assert 'return qwen35_load()' in updated
+    assert "CONTEXT_TOKENS=8192" in updated
+    assert "SHARED_CPU_CAPACITY" in updated and "SHARED_DECODE_THREADS" in updated
+    assert "BATCH_SIZE = 2048 if CPU_CAPACITY >= 8 else 512" in before[RUNTIME].decode("utf-8")
+    assert "UBATCH_SIZE = 1024 if CPU_CAPACITY >= 8 else 256" in before[RUNTIME].decode("utf-8")
+    assert "DECODE_THREADS = min(16, CPU_CAPACITY)" in before[RUNTIME].decode("utf-8")
     assert "buffered_chat_completion(model,messages,response_tokens,temperature)" in updated
     assert "_candidate_structure_check(text_value,programming,history)" in updated
     assert "enforce_strategy_change(" in updated
@@ -176,16 +190,15 @@ def test_patched(before,after):
     assert before[STATION] == after[STATION]
     assert before[CONFIG] == after[CONFIG]
     assert b'Qwen3.5-9B-Q4_K_M.gguf' in before[RUNTIME]
-    config=before[CONFIG].decode("utf-8")
-    assert "Qwen2.5-Coder" in config
-    for k in ("Qwen2.5-Coder","Qwen/Qwen2.5-Coder-7B-Instruct-GGUF"):
-        assert k in config
+    # The historic coder catalog remains on disk, but this live route must
+    # import and use the same Qwen3.5-9B GGUF weights as text/chat.
+    assert "from qwen35_single_runtime import MODEL_REPO, MODEL_FILE" in updated
+    assert '"""Dedicated coding workflow over the shared resident Qwen3.5-9B runtime."""' in updated
     ast.parse(updated,filename=CODER)
     print(json.dumps({"status":"CODER_V6_SOURCE_CHECK_PASS",
-           "originalCoderProfilePreserved":True,"sameNativeCoderModel":True,
-           "sameResident9B":True,"sameHardwareTier":True,
+           "originalCoderProfilePreserved":True,"sharedResident9B":True,"sameHardwareTier":True,
            "candidateValidationPreserved":True,
-           "newBatch":2048,"newMicroBatch":1024,
+           "residentBatch":2048,"residentMicroBatch":1024,
            "filesChanged":[CODER]}),flush=True)
 
 def candidate(api):
@@ -217,7 +230,7 @@ def publish(api):
         res=api.create_commit(repo_id=SPACE,repo_type="space",
             parent_commit=revision,
             operations=[CommitOperationAdd(path_in_repo=CODER,path_or_fileobj=str(path))],
-            commit_message="§C 7B coder: speed safe standalone code prefill and 16-core CPU batching")
+            commit_message="§C 9B: compact safe standalone coding instructions, correct shared CPU telemetry")
         published=str(res.oid)
         uploaded=Path(hf_hub_download(SPACE,CODER,revision=published,
                               repo_type="space",token=api.token)).read_bytes()
