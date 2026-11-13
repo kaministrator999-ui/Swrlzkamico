@@ -4,7 +4,7 @@
   "target": "kamiloki/swrlz-forge-moba",
   "releaseVersion": "v11.432",
   "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_432_MOBILE_CAMERA_ORBIT",
-  "reason": "Publish final assembled native Model Studio mobile orbit correction. Touch swipes orbit camera in drag direction; preserve desktop mouse orbit, tap selection, two-finger pinch/pan, Quest VR controls, geometry and Undo. Historical source anchors preserved. 409 ordered source patches; 9,913,162 final HTML bytes, SHA256 ae386647683a6f84cefb837bc9e1fabe9f745386172d352e73fad67e51a1cfbc. Dedicated built-HTML orbit regression and release integrity gate required before upload.",
-  "sourceCommit": "622f7cb45a0346d07e4c15c1576cf7ad0826fb1f",
+  "reason": "Publish final assembled native Model Studio mobile orbit correction. Touch swipes orbit camera in drag direction; preserve desktop mouse orbit, tap selection, two-finger pinch/pan, Quest VR controls, geometry and Undo. Historical source anchors preserved. 409 ordered source patches; 9,913,162 final HTML bytes, SHA256 ae386647683a6f84cefb837bc9e1fabe9f745386172d352e73fad67e51a1cfbc. Dedicated built-HTML orbit regression and release integrity gate required before upload. Release verifier corrected to use v11.432 artifact name and source provenance.",
+  "sourceCommit": "19ef64dc761e7e53c44bf5300e55c59b21e60339",
   "sourceIntegritySha256": "ae386647683a6f84cefb837bc9e1fabe9f745386172d352e73fad67e51a1cfbc"
 }
