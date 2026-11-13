@@ -1,8 +1,17 @@
+## §E v11.441 · A followable one-body satchel lesson in VR (2026-11-13)
+
+The Apprentice Satchel lesson now starts with one ordinary bag-proportioned cube. The learner makes it editable, Insets the top, and Extrudes inward; separate flap, open-center strap and clasp come from existing Draw, Thicken, Create and Grab tools. Short controller-specific instructions, state-aware Show Me and geometry checks teach these actual operations without generating a finished bag. The tutorial opens beside the model and remains independently movable with either Grip. Hidden quest cards cannot intercept visible materials; Trigger and Grip respect the visible quest menu. Existing projects, Undo, native local save and older supported lesson geometry remain compatible.
+
+See [the satchel workflow and verification report](projects/swrlz-forge-moba/docs/MODEL_SATCHEL_VR_V11_441.md) for references, checks and limitations. Physical Quest comfort and seam quality require owner review; automated geometry checks do not certify visual finish.
+
 ## §E v11.440 · Model Studio VR and mobile tool audit (2026-11-13)
 
 The existing modeling workshop gains eight focused corrections: drawn VR outlines keep their native grip-thickness tool alongside the cube face-Extrude shortcut; VR Subdivide respects its valid 0.025 minimum; touch Vertex/Edge picks tolerate small silhouette misses; changing tools through the mobile lesson cancels the previous geometry preview; accessory shape/detail/fit cards explain their preview prerequisite; loaded assembly-motion choices refresh correctly; and VR picking uses current controller/menu transforms while excluding hidden cards. The v11.435 Grab handles, v11.436 connected satchel lesson, v11.437 Sheep Tag changes and existing projects remain in the ordered source.
 
 See [the tool audit and official modeling-reference comparison](projects/swrlz-forge-moba/docs/MODEL_TOOLS_AUDIT_V11_440.md) for the actual VR/mobile capability matrix, native transactions, browser interactions, incomplete tools and physical-device limits. Verification and hosted publication results are recorded there as they complete; source discovery and menu navigation are distinguished from successful modeling operations.
+
+
+Published v11.440: [source dd5a81f](https://github.com/kaministrator999-ui/Swrlzkamico/commit/dd5a81fe9ebac40066a3f777c1c903a321833eda), [separate request 2aeaec9](https://github.com/kaministrator999-ui/Swrlzkamico/commit/2aeaec9a17def0c90f07d6308cf2e4cfdca3aa77), [successful deployment 43461907063](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/43461907063). The Space was RUNNING at HF revision `3fc2ef1ae358ccfa2ec6766cb864d100c5845b4b`; hosted index/modeler both matched 9,971,714 bytes and SHA-256 `e02a42f710d46eeeb16caeefac412472f3d057d4b73ac3dc806ce0e8ab5f1ffa`, with 417 patches and 77 asset receipts. Physical-device acceptance remains open.
 
 ## §E v11.437 · Sheep Tag territory separation and prepared capture effects
 

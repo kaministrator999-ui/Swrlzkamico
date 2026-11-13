@@ -92,7 +92,13 @@ Broader candidate creation, sculpt and selection browser cases also passed befor
 
 The final integrated **v11.440 Android smoke passed 3/3** using the exact current `e02a42…f1ffa` HTML: actual guide operation switch cancels the prior Extrude preview without source/history writes; planar Solidify Preview/Apply/Undo produces closed volume and restores the original surface; Vertex/Edge/Face touch selection and native component nudge Undo all pass. Receipt: `/workspace/outputs/model-tools440-mobile/smoke/android-tools/verification.json`; log: `/workspace/scratch/model440-mobile-smoke.log`. It reports no page errors and a 390px document/panel/scroll width matching the 390px Android-sized viewport. This filtered smoke does not reclassify earlier candidate suites as final-version runs.
 
-The read-only source comparison receipt is `/workspace/outputs/model-tools440-preservation.json`. Source commit and hosted publication are pending; this document establishes local verification only.
+The read-only source comparison receipt is `/workspace/outputs/model-tools440-preservation.json`.
+
+### Confirmed v11.440 publication
+
+The [live Hugging Face Space](https://huggingface.co/spaces/kamiloki/swrlz-forge-moba) was verified after the [deployment run 43461907063](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/43461907063) succeeded. Source commit: `dd5a81fe9ebac40066a3f777c1c903a321833eda`; separate request-only commit: `2aeaec9a17def0c90f07d6308cf2e4cfdca3aa77`. Hugging Face revision `3fc2ef1ae358ccfa2ec6766cb864d100c5845b4b` reports **RUNNING**.
+
+The hosted `index.html` and `modeler.html` each match the sealed **9,971,714-byte** SHA-256 `e02a42f710d46eeeb16caeefac412472f3d057d4b73ac3dc806ce0e8ab5f1ffa`. The hosted receipt confirms 417 patches and 77 assets. Evidence: `/workspace/scratch/model440-hosted-receipt.json`, status `HOSTED_ARTIFACT_VERIFIED`. Publication confirms the served artifact; physical headset/phone acceptance remains unperformed and the emulated interaction below remains unresolved.
 
 ## Final source receipt
 
