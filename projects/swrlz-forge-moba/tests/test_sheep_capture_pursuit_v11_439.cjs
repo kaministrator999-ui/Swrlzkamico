@@ -23,7 +23,10 @@ const sandbox={window:{},console,THREE:{Vector3:V},performance:{now:()=>++now},
  stUpdateWolf:(u)=>{
   // Native movement tries a physical 0.09-unit step, but collision rejects it.
   sandbox.stLanesSegmentOccupant(u,u.pos,new V(u.pos.x+.09,0,0));
-  sandbox.se439CaptureProbe(u,s);
+  // Reproduce existing native capture scan without mutating production source.
+  for(const target of s.units)if(target.kind==='sheep'&&!target.captured&&
+    s.elapsed>=target.invulnerableUntil&&
+    Math.hypot(u.pos.x-target.pos.x,u.pos.z-target.pos.z)<1.05)sandbox.stCapture(target,u);
  },
  stUpdate:()=>sandbox.stUpdateWolf(wolf,.016)};
 vm.createContext(sandbox);vm.runInContext(src,sandbox);
