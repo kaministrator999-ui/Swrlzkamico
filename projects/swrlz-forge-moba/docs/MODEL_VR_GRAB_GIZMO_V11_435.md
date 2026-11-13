@@ -14,3 +14,8 @@ When Grip starts on the displayed X/Y/Z arrow, the v11.390 gesture path begins a
 - Regression covers Grab and explicit mode visibility; X/Y/Z controller ray contact; native constrained Move update without unintended rotation or scale; no-handle free-form Grab; menu priority; hidden selection state.
 - Preservation: native mobile gesture and camera settings, saved character geometry/UV, mesh list, controller profiles and independent VR world-space menus remain unchanged.
 - Physical Quest 2 comfort, actual controller feel, headset rendering and long-session performance need owner acceptance; automated Three.js checks do not prove those.
+
+## Publication receipt
+
+**Published / validated:** [sealed source commit 619dde2](https://github.com/kaministrator999-ui/Swrlzkamico/commit/619dde28a0b7b915f02832a0e8146a29358e7d0c); [full successful release verification 43361003457](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/43361003457); [separate deployment request e5c9506](https://github.com/kaministrator999-ui/Swrlzkamico/commit/e5c9506666f5277a481db08f56619a876da13bd7); [successful Hugging Face upload 43361224731](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/43361224731). The CI upload step confirmed publication to `kamiloki/swrlz-forge-moba`. Physical Quest 2 verification remains the owner's acceptance test; standalone public SOURCE.json was not separately fetched.
+
