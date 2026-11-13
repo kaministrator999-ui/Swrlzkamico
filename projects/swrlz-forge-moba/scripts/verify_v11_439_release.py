@@ -25,8 +25,7 @@ for token in [marker,"window.SWRLZ_FORGE_BUILD={version:'v11.439'",'<title>§wyr
  'se438Route(unit,unit.pos,aim,radius)',
  'window.SWYRL_ENGINE_RENDER_BRIDGE_438',
  'window.SWYRL_ENGINE_SHEEP_TERRITORY_CAPTURE_437=',
- 'SE439_SHEEP_CAPTURE_PURSUIT_START','se439CaptureProbe(unit,s);',
- 'se439DirectChase(unit,aim,context)?','window.SWYRL_ENGINE_SHEEP_CAPTURE_PURSUIT_439']:
+ 'SE439_SHEEP_CAPTURE_PURSUIT_START','se439DirectChase(unit,aim,context)?','window.SWYRL_ENGINE_SHEEP_CAPTURE_PURSUIT_439']:
  assert token in html,token
 assert html.count(" source.engine='§wyrl§ Engine · Maker v11.439';source.version=11.439;")==5
 for name in ['model_vr_grab_gizmo_v11_435.js','se436_satchel_cavity.js','se436_vr_cube_extrude.js','sheep_territory_capture_v11_437.js','engine_simulation_render_bridge_v11_438.js','sheep_capture_pursuit_v11_439.js']:
