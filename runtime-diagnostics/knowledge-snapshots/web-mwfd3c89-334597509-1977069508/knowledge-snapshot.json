@@ -1,0 +1,420 @@
+{
+  "schema": "swrlz-knowledge-acquisition-snapshot-v1",
+  "requestId": "web-mwfd3c89-334597509-1977069508",
+  "modelId": "700m",
+  "eventType": "KNOWLEDGE_ACQUISITION_SNAPSHOT",
+  "sourceRef": "f149dd857e3d9219f5cae7da0286b5dbfec85c42",
+  "persistedAtUnixMs": 1794597686355,
+  "diagnostic": {
+    "schema": "swrlz-knowledge-acquisition-snapshot-v1",
+    "requestId": "web-mwfd3c89-334597509-1977069508",
+    "trigger": {
+      "userText": "Lol I'm at work right now till 8 pm or so",
+      "sha256": "f240ee0f29a8171053726f02e697ce563ae6f77bccb654a90247aa09358b7f15"
+    },
+    "research": {
+      "kind": "search",
+      "status": "OK",
+      "provider": "bounded-web-search-chain-v1",
+      "reason": "freshness-intent",
+      "query": "",
+      "resultCount": 8,
+      "sources": [
+        {
+          "title": "LoL Esports | SCHEDULE",
+          "source": "lolesports.com",
+          "url": "https://lolesports.com/en-US",
+          "snippet": "",
+          "rank": null
+        },
+        {
+          "title": "League of Legends Homepage",
+          "source": "www.leagueoflegends.com",
+          "url": "https://www.leagueoflegends.com/en-us/",
+          "snippet": "",
+          "rank": null
+        },
+        {
+          "title": "LOL - Wikipedia",
+          "source": "en.wikipedia.org",
+          "url": "https://en.wikipedia.org/wiki/LOL",
+          "snippet": "",
+          "rank": null
+        },
+        {
+          "title": "League of Legends Download | North America",
+          "source": "www.leagueoflegends.com",
+          "url": "https://www.leagueoflegends.com/en-us/download/",
+          "snippet": "",
+          "rank": null
+        },
+        {
+          "title": "LoL Tier List Patch 16.22: Best Champions by Role (Top, Jungle, Mid ...",
+          "source": "www.op.gg",
+          "url": "https://www.op.gg/lol/champions",
+          "snippet": "",
+          "rank": null
+        },
+        {
+          "title": "LoL Esports - YouTube",
+          "source": "www.youtube.com",
+          "url": "https://www.youtube.com/@lolesports",
+          "snippet": "",
+          "rank": null
+        },
+        {
+          "title": "League of Legends - Sign in",
+          "source": "login.leagueoflegends.com",
+          "url": "https://authenticate.riotgames.com/?client_id=prod-xsso-leagueoflegends&code_challenge=-GRbvTCMKcsOinS3Kp8hW5Jxvji3lKAfD3F7nw1oAEo&method=riot_identity&platform=web&redirect_uri=https%3A%2F%2Fauth.riotgames.com%2Fauthorize%3Fclient_id%3Dprod-xsso-leagueoflegends%26code_challenge%3D-GRbvTCMKcsOinS3Kp8hW5Jxvji3lKAfD3F7nw1oAEo%26code_challenge_method%3DS256%26redirect_uri%3Dhttps%253A%252F%252Fxsso.leagueoflegends.com%252Fredirect%26response_type%3Dcode%26scope%3Dopenid%2520account%2520email%2520offline_access%26state%3Dbb9eeb7d9935cc404b037fe720%26uri%3Dhttps%253A%252F%252Fleagueoflegends.com&security_profile=low",
+          "snippet": "",
+          "rank": null
+        },
+        {
+          "title": "英雄联盟官方网站 - 英雄联盟全新官方网站-腾讯游戏",
+          "source": "lol.qq.com",
+          "url": "https://lol.qq.com/main.shtml",
+          "snippet": "",
+          "rank": null
+        }
+      ],
+      "sourceSites": [
+        "authenticate.riotgames.com",
+        "en.wikipedia.org",
+        "lol.qq.com",
+        "lolesports.com",
+        "www.leagueoflegends.com",
+        "www.op.gg",
+        "www.youtube.com"
+      ],
+      "widgetKinds": [
+        "search-results"
+      ],
+      "trace": [
+        {
+          "phase": "RESEARCH_STARTED",
+          "provider": "bounded-web-search-chain-v1",
+          "activity": "Online research started",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "SEARCH_PROVIDER_VISIT",
+          "provider": "duckduckgo-html",
+          "activity": "Searching provider",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "SEARCH_PROVIDER_EMPTY",
+          "provider": "duckduckgo-html",
+          "activity": "No usable results from provider",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "SEARCH_PROVIDER_VISIT",
+          "provider": "duckduckgo-lite",
+          "activity": "Searching provider",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "SEARCH_PROVIDER_EMPTY",
+          "provider": "duckduckgo-lite",
+          "activity": "No usable results from provider",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "SEARCH_PROVIDER_VISIT",
+          "provider": "bing-html",
+          "activity": "Searching provider",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "SEARCH_PROVIDER_RESULTS",
+          "provider": "bing-html",
+          "activity": "Search results found",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "SEARCH_PROVIDER_SELECTED",
+          "provider": "bing-html",
+          "activity": "Using bing-html",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "PAGE_FETCH_STARTED",
+          "provider": "web-page",
+          "activity": "Visiting result page",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "PAGE_FETCH_ERROR",
+          "provider": "web-page",
+          "activity": "Page fetch failed",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "PAGE_FETCH_STARTED",
+          "provider": "web-page",
+          "activity": "Visiting result page",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "PAGE_FETCH_COMPLETE",
+          "provider": "web-page",
+          "activity": "Page fetched",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "PAGE_FETCH_STARTED",
+          "provider": "web-page",
+          "activity": "Visiting result page",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "PAGE_FETCH_COMPLETE",
+          "provider": "web-page",
+          "activity": "Page fetched",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "PAGE_FETCH_STARTED",
+          "provider": "web-page",
+          "activity": "Visiting result page",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "PAGE_FETCH_COMPLETE",
+          "provider": "web-page",
+          "activity": "Page fetched",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "PAGE_FETCH_STARTED",
+          "provider": "web-page",
+          "activity": "Visiting result page",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "PAGE_FETCH_ERROR",
+          "provider": "web-page",
+          "activity": "Page fetch failed",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "PAGE_FETCH_STARTED",
+          "provider": "web-page",
+          "activity": "Visiting result page",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "PAGE_FETCH_ERROR",
+          "provider": "web-page",
+          "activity": "Page fetch failed",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "PAGE_FETCH_STARTED",
+          "provider": "web-page",
+          "activity": "Visiting result page",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "PAGE_FETCH_COMPLETE",
+          "provider": "web-page",
+          "activity": "Page fetched",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "PAGE_FETCH_STARTED",
+          "provider": "web-page",
+          "activity": "Visiting result page",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "PAGE_FETCH_COMPLETE",
+          "provider": "web-page",
+          "activity": "Page fetched",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "RESEARCH_COMPLETE",
+          "provider": "bounded-web-search-chain-v1",
+          "activity": "Online research complete",
+          "status": null,
+          "elapsedMs": null
+        }
+      ]
+    },
+    "answer": {
+      "text": "Gotcha. Work till 8 PM, huh? That’s a solid few hours ahead.\n\nIs this a full shift or just a late one? And what’s the vibe like right now—deep focus mode or just hanging out with the team?",
+      "sha256": "66a669a6e452d6cf4bb67406c05d97f15276d891ccb47f4eaad20b74cb9278fa"
+    },
+    "followUpWindow": {
+      "maxUserTurns": 3,
+      "captured": [],
+      "state": "OPEN"
+    },
+    "review": {
+      "state": "PENDING",
+      "promoteToLocalKnowledge": false,
+      "notes": []
+    },
+    "privacy": {
+      "preciseLocationStored": false,
+      "privateReasoningStored": false,
+      "fullHistoryStored": false
+    },
+    "statusTrail": [
+      {
+        "phase": "PAGE_FETCH_STARTED",
+        "reason": "Visiting result page"
+      },
+      {
+        "phase": "PAGE_FETCH_ERROR",
+        "reason": "Page fetch failed"
+      },
+      {
+        "phase": "PAGE_FETCH_STARTED",
+        "reason": "Visiting result page"
+      },
+      {
+        "phase": "PAGE_FETCH_COMPLETE",
+        "reason": "Page fetched"
+      },
+      {
+        "phase": "PAGE_FETCH_STARTED",
+        "reason": "Visiting result page"
+      },
+      {
+        "phase": "PAGE_FETCH_COMPLETE",
+        "reason": "Page fetched"
+      },
+      {
+        "phase": "PAGE_FETCH_STARTED",
+        "reason": "Visiting result page"
+      },
+      {
+        "phase": "PAGE_FETCH_COMPLETE",
+        "reason": "Page fetched"
+      },
+      {
+        "phase": "PAGE_FETCH_STARTED",
+        "reason": "Visiting result page"
+      },
+      {
+        "phase": "PAGE_FETCH_ERROR",
+        "reason": "Page fetch failed"
+      },
+      {
+        "phase": "PAGE_FETCH_STARTED",
+        "reason": "Visiting result page"
+      },
+      {
+        "phase": "PAGE_FETCH_ERROR",
+        "reason": "Page fetch failed"
+      },
+      {
+        "phase": "PAGE_FETCH_STARTED",
+        "reason": "Visiting result page"
+      },
+      {
+        "phase": "PAGE_FETCH_COMPLETE",
+        "reason": "Page fetched"
+      },
+      {
+        "phase": "PAGE_FETCH_STARTED",
+        "reason": "Visiting result page"
+      },
+      {
+        "phase": "PAGE_FETCH_COMPLETE",
+        "reason": "Page fetched"
+      },
+      {
+        "phase": "RESEARCH_COMPLETE",
+        "reason": "Online research complete"
+      },
+      {
+        "phase": "ONLINE_RESEARCH",
+        "reason": "OK"
+      },
+      {
+        "phase": "WIDGET_READY",
+        "reason": "search-results"
+      },
+      {
+        "phase": "SEARCH_COMPLETE",
+        "reason": "Online retrieval ok."
+      },
+      {
+        "phase": "DIAGNOSTIC_READY",
+        "reason": ""
+      },
+      {
+        "phase": "RESPONSE_COGNITION",
+        "reason": ""
+      },
+      {
+        "phase": "LOADING",
+        "reason": ""
+      },
+      {
+        "phase": "PROFILE_CONTEXT_READY",
+        "reason": "swrlz-qwen35-profile-v5"
+      },
+      {
+        "phase": "CONTEXT_BUDGETED",
+        "reason": ""
+      },
+      {
+        "phase": "GENERATING",
+        "reason": ""
+      },
+      {
+        "phase": "RESOURCE_ALLOCATED",
+        "reason": "Workstation inference budget active"
+      },
+      {
+        "phase": "CANDIDATE_ATTEMPT",
+        "reason": "attempt=1"
+      },
+      {
+        "phase": "CANDIDATE_NOT_APPLICABLE",
+        "reason": ""
+      },
+      {
+        "phase": "GENERATION_TELEMETRY",
+        "reason": ""
+      },
+      {
+        "phase": "COMPLETE",
+        "reason": ""
+      },
+      {
+        "phase": "PERSISTING",
+        "reason": "Saving the response to the chat"
+      }
+    ]
+  }
+}
