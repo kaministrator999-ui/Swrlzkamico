@@ -1,0 +1,27 @@
+name: Audit live §C source preservation and continuation gate
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/hf-code-preserve-continuation-audit.yml"]
+permissions: {contents: read}
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - run: python -m pip install 'huggingface_hub>=0.34,<2'
+      - run: |
+          python - <<'PY'
+          import ast,json
+          from pathlib import Path
+          from huggingface_hub import HfApi,hf_hub_download
+          s="kamiloki/Swyrlz";rev=HfApi().repo_info(s,repo_type="space").sha
+          for name in ("programming_repair_context.py","qwen_coder_engine.py"):
+              code=Path(hf_hub_download(s,name,repo_type="space",revision=rev)).read_text()
+              tree=ast.parse(code)
+              for item in tree.body:
+                  if isinstance(item,ast.FunctionDef) and item.name in ("preserve_existing_source","source_under_edit","_swrlz_code_candidate_preview"):
+                      print("CONT_AUDIT_FUNCTION",json.dumps({"file":name,"name":item.name,
+                         "source":ast.get_source_segment(code,item)},ensure_ascii=False),flush=True)
+          print("CONT_AUDIT_REV",rev,flush=True)
+          PY
