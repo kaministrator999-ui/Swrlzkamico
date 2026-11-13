@@ -20,6 +20,8 @@ for filename in ("qwen_coder_engine.py","lfm2_700m_engine.py","qwen35_single_run
         continue
     print("SOURCE_FILE",filename,"lines",len(lines),flush=True)
     if filename=="qwen_coder_engine.py":
+        for a,b in ((1,23),(96,143),(628,650),(698,711)):
+            print("LIVE_CODER_SOURCE_RANGE",json.dumps({"start":a,"end":b,"code":lines[a-1:b]},ensure_ascii=False),flush=True)
         for i,line in enumerate(lines):
             if ("n_batch" in line or "n_ubatch" in line or "n_threads_batch" in line or "_thread_plan" in line):
                 print("LIVE_CODER_BATCH_SOURCE",json.dumps({"line":i+1,"code":line[:450]}),flush=True)
