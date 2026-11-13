@@ -30,8 +30,8 @@ CANDIDATE = WORK / "after.py"
 STATE = WORK / "release.json"
 ORIGINAL_SHORT = 'return {"tier":"normal","tokens":4096,"stagedDelivery":False}'
 ORIGINAL_DEFAULT = ORIGINAL_SHORT
-PATCH_SHORT = 'return {"tier":"normal","tokens":512,"stagedDelivery":False}'
-PATCH_DEFAULT = 'return {"tier":"normal","tokens":1024,"stagedDelivery":False}'
+PATCH_SHORT = 'return {"tier":"normal","tokens":(4096 if programming.get("codingTask") else 512),"stagedDelivery":False}'
+PATCH_DEFAULT = 'return {"tier":"normal","tokens":(4096 if coding else 1024),"stagedDelivery":False}'
 
 
 def digest(data: bytes) -> str:
