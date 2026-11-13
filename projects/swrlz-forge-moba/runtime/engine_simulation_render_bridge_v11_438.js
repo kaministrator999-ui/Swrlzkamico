@@ -10,7 +10,7 @@ const se438Stats={workerRoutes:0,workerCompleted:0,workerErrors:0,workerFallback
 let se438Worker=null,se438WorkerReady=false,se438WorkerFailed=false;
 let se438WorkerUrl=null,se438RequestSerial=0,se438LastSimAt=0;
 const se438Pending=new Map(),se438Requests=new Map();
-const se438WorkerSource=String.raw\`
+const se438WorkerSource=String.raw`
 'use strict';
 const nearest=(nav,x,z)=>{
  const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
@@ -88,7 +88,7 @@ onmessage=e=>{
  try{postMessage({kind:'result',id:q.id,path:route(q)});}
  catch(error){postMessage({kind:'failure',id:q.id});}
 };
-\`;
+`;
 function se438CancelRequests(){
  for(const q of se438Requests.values())
   if(q.session===stSession&&q.unit)q.unit.repathAt=0;
