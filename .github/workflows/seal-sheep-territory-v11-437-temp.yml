@@ -1,4 +1,4 @@
-name: Temporary §E v11.436 source-seal validation
+name: Temporary §E v11.437 source-seal validation
 on:
   push:
     branches: [main]
@@ -24,22 +24,22 @@ jobs:
           import json,pathlib
           p=pathlib.Path('projects/swrlz-forge-moba/source-manifest.json')
           m=json.loads(p.read_text())
-          assert m['name']=='§wyrl§ Engine v11.435'
+          assert m['name']=='§wyrl§ Engine v11.436'
           m['patches'].append('patches/v11_436_sheep_territory_capture.py')
-          m['name']='§wyrl§ Engine v11.436'
+          m['name']='§wyrl§ Engine v11.437'
           m['finalArtifact']='swyrl_engine_v11_436.html'
           m['finalSha256']=None
           m['finalBytes']=None
           p.write_text(json.dumps(m,indent=2))
           PY
-          python projects/swrlz-forge-moba/build_space.py --output /tmp/swrlz-se436 > /tmp/se436-build.txt
-          python projects/swrlz-forge-moba/scripts/check_inline_js_syntax_v11_266.py /tmp/swrlz-se436/index.html
+          python projects/swrlz-forge-moba/build_space.py --output /tmp/swrlz-se437 > /tmp/se437-build.txt
+          python projects/swrlz-forge-moba/scripts/check_inline_js_syntax_v11_266.py /tmp/swrlz-se437/index.html
           python - <<'PY'
           from pathlib import Path
           import hashlib
-          b=Path('/tmp/swrlz-se436/index.html').read_bytes()
-          assert b==Path('/tmp/swrlz-se436/modeler.html').read_bytes()
+          b=Path('/tmp/swrlz-se437/index.html').read_bytes()
+          assert b==Path('/tmp/swrlz-se437/modeler.html').read_bytes()
           text=b.decode()
-          assert 'SE436_SHEEP_TERRITORY_CAPTURE_START' in text
-          print('SE436_SEAL_RECEIPT',len(b),hashlib.sha256(b).hexdigest(),flush=True)
+          assert 'SE437_SHEEP_TERRITORY_CAPTURE_START' in text
+          print('SE437_SEAL_RECEIPT',len(b),hashlib.sha256(b).hexdigest(),flush=True)
           PY
