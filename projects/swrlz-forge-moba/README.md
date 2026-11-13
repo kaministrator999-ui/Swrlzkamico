@@ -1,3 +1,7 @@
+## §E v11.438 · Render continuity and nonblocking solo-VR NPC routes (2026-11-13)
+
+A bounded Web Worker now handles **pure NPC primary A* path searches** in solo immersive Sheep Tag, accepting only session/target/navigation-version-matched numeric results. The native WebXR render loop, player input, main-thread physics, LAN authority and older collision/path budgets remain authoritative. If workers cannot run, the original path routine remains active. `SWYRL_ENGINE_RENDER_BRIDGE_438.diagnose()` exposes CPU simulation time, CPU render-submission time, XR callback gaps and worker queue/completion counters; these are **not** GPU or headset compositor measurements. The v11.437 capture diagnostic is exposed under its correctly versioned name. This is the first isolation boundary; the entire simulation has not been moved off-thread. Source integrity and actual Quest acceptance are separate checks.
+
 ## §E v11.437 · Sheep Tag independent AI bases and smoother captures (2026-11-12)
 
 Solo sheep teammates no longer select home-building plots by following the human player's houses. Their Quest and desktop AI planners now choose staggered candidates based on each sheep's authored home, with spacing around player construction and other assigned sheep territories. The existing v11.411 path-planning quota and v11.419 congestion safeguards are unchanged.
