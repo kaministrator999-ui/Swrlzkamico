@@ -55,9 +55,9 @@ def probe(label,prompt):
                 terminal=kind
                 break
     reply="".join(parts)
-    if terminal not in ("COMPLETE","COMPLETED") or "def " not in reply:
-        raise RuntimeError("Coding test produced no accepted function")
-    if "CODER_AUTO_ROUTE" not in phases:raise RuntimeError("Coding route not selected")
+    # During HF rebuild, a request can be accepted by an old worker and then
+    # terminate without a complete response. Report this transition state,
+    # rather than failing the release before observing the new version marker.
     req=urllib.request.Request(BASE+"/api/lalm_station/sync",headers=head)
     with opener.open(req,timeout=18) as response:session=json.load(response)
     active=session.get("activeGeneration") or {}
@@ -68,6 +68,9 @@ def probe(label,prompt):
     rec={
         "case":label,"totalSec":round(time.monotonic()-started,2),
         "firstVisibleSec":first,"outputChars":len(reply),"flags":flags,
+        "terminal":terminal,"isCode":"def " in reply,
+        "coderRouteSeen":"CODER_AUTO_ROUTE" in phases,
+        "lastWorkflowStages":phases[-8:],
         "status":validation.get("status"),"attemptCount":len(attempts),
         "systemTokens":(ctx.get("tokenBreakdown") or {}).get("system"),
         "totalInputTokens":ctx.get("estimatedInputTokens"),
@@ -76,7 +79,6 @@ def probe(label,prompt):
         "maxOutputTokens":(active.get("resourcePlan") or {}).get("maxResponseTokens"),
     }
     print("CODER_V6_BENCHMARK",json.dumps(rec),flush=True)
-    if validation.get("status")!="PASS":raise RuntimeError("Coder validation was not PASS")
     return rec,reply
 
 def acceptance(api,revision):
@@ -91,9 +93,17 @@ def acceptance(api,revision):
             model_ready()
             candidate,_=probe("short-function",SIMPLE)
             if PROFILE in candidate["flags"]:
+                if (candidate["terminal"] not in ("COMPLETE","COMPLETED")
+                    or not candidate["isCode"] or not candidate["coderRouteSeen"]
+                    or candidate["status"]!="PASS"):
+                    raise RuntimeError("Live new-version coding request failed acceptance")
                 result=candidate
                 print("CODER_V6_WARMUP_CONFIRMED",json.dumps({"attempts":attempt}),flush=True)
                 break
+            print("CODER_V6_OLD_OR_RESTART_WORKER",json.dumps({
+                "attempt":attempt,"terminal":candidate["terminal"],
+                "profileFlags":candidate["flags"],
+                "stages":candidate["lastWorkflowStages"][-4:]}),flush=True)
         except (OSError,ValueError,TimeoutError) as err:
             if attempt%3==0:
                 print("CODER_V6_WARMUP",json.dumps({"attempt":attempt,"error":type(err).__name__}),flush=True)
@@ -109,6 +119,10 @@ def acceptance(api,revision):
         and result["firstNativeTokenMs"]>=42544.505):
         raise RuntimeError("Measured first token latency did not improve")
     repaired,code=probe("existing-source-repair",REPAIR)
+    if (repaired["terminal"] not in ("COMPLETE","COMPLETED")
+        or not repaired["isCode"] or not repaired["coderRouteSeen"]
+        or repaired["status"]!="PASS"):
+        raise RuntimeError("Source-repair candidate validation regressed")
     if PROFILE in repaired["flags"] or "swrlz-coder-prefill-v6-standard" not in repaired["flags"]:
         raise RuntimeError("Complex repair incorrectly used compact prompt")
     if repaired["totalSec"]>125:raise RuntimeError("Repair coding latency regressed badly")
