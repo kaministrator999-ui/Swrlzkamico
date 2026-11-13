@@ -22,8 +22,9 @@ jobs:
           from pathlib import Path
           root=Path('projects/swrlz-forge-moba')
           m=json.loads((root/'source-manifest.json').read_text())
-          assert m['name']=='§wyrl§ Engine v11.431',m['name']
-          patches=m['patches']+['patches/v11_432_mobile_camera_orbit.py']
+          assert m['name']=='§wyrl§ Engine v11.432',m['name']
+          assert m['patches'][-1]=='patches/v11_432_mobile_camera_orbit.py'
+          patches=m['patches']
           encoded=''.join((root/p).read_text().strip() for p in m['chunks'])
           data=gzip.decompress(base64.b64decode(encoded))
           assert hashlib.sha256(data).hexdigest()==m['baseSha256']
@@ -40,6 +41,8 @@ jobs:
           assert "window.SWRLZ_FORGE_BUILD={version:'v11.432'" in html
           final=html.encode()
           Path('/tmp/swyrlz-v11-432.html').write_bytes(final)
+          assert len(final)==m['finalBytes']
+          assert hashlib.sha256(final).hexdigest()==m['finalSha256']
           print('SE432_ARTIFACT_RESULT='+json.dumps({'bytes':len(final),'sha256':hashlib.sha256(final).hexdigest(),'patches':len(patches)},sort_keys=True),flush=True)
           PY
           python projects/swrlz-forge-moba/scripts/check_inline_js_syntax_v11_266.py /tmp/swyrlz-v11-432.html

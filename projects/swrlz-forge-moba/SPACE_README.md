@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.430
+title: §wyrl§ Engine v11.432
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,10 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.432 · Mobile Model Studio orbit direction (2026-11-12)
+
+One-finger touch dragging in the native 3D modeling viewport now orbits with the finger: horizontal and vertical drags move the camera correspondingly. The change is applied in the final ordered build patch so earlier Model Studio source anchors, exact orthographic/perspective camera behavior, desktop mouse navigation, two-finger pinch/pan, VR controllers, selection, saved geometry and Undo stay intact. A focused assembled-HTML regression check covers touch orbit, desktop behavior, tap/drag separation and pitch bounds.
 
 ## §E v11.431 · Easier touch and VR transform handles (2026-11-12)
 

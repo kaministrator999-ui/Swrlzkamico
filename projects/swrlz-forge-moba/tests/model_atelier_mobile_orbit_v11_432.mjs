@@ -34,7 +34,14 @@ const context={
   cameraUpdate:()=>{calls.camera++;},
 };
 vm.createContext(context);
-vm.runInContext(['point','pointerDown','pointerMove','pointerUp'].map(nativeFunction).join('\n'),context);
+const handlers=['point','pointerDown','pointerMove','pointerUp'].map(nativeFunction);
+// The shipped native handlers call the editor's existing gesture dispatchers.
+// Stub those unrelated owner paths to exercise camera navigation alone.
+for(const match of handlers.join('\n').matchAll(/\b(atelier[A-Z][A-Za-z0-9_]*)\(/g)){
+  const name=match[1];
+  if(!(name in context))context[name]=()=>false;
+}
+vm.runInContext(handlers.join('\n'),context);
 function e(pointerType,x,y,id=7){return {pointerType,pointerId:id,button:0,clientX:x,clientY:y};}
 function reset(){context.orbit.yaw=.3;context.orbit.pitch=.19;context.pressed=null;}
 const near=(actual,expected)=>assert.ok(Math.abs(actual-expected)<1e-9,String(actual)+' != '+expected);

@@ -1,3 +1,7 @@
+## §E v11.432 · Mobile Model Studio orbit direction (2026-11-12)
+
+One-finger touch dragging in the native 3D modeling viewport now orbits with the finger: horizontal and vertical drags move the camera correspondingly. The change is applied in the final ordered build patch so earlier Model Studio source anchors, exact orthographic/perspective camera behavior, desktop mouse navigation, two-finger pinch/pan, VR controllers, selection, saved geometry and Undo stay intact. A focused assembled-HTML regression check covers touch orbit, desktop behavior, tap/drag separation and pitch bounds.
+
 ## §E v11.431 · Easier touch and VR transform handles (2026-11-12)
 
 Move, Rotate and Scale gain easier targets using the existing native transformation transactions. Mobile handles retain useful screen size across zoom and projection changes, with padded touch picking and nearest-handle selection. VR uses larger visible handles and bounded invisible pick shells, consistent hover/grip contact and clearer axis feedback. Menus retain pointer priority; hidden handles remain unavailable.
