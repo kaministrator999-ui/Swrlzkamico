@@ -1,0 +1,32 @@
+name: §C Qwen3.5-9B coder prefill audit and candidate validation
+on:
+  push:
+    branches: [tune/chat-qwen35-coder-prefill-v6-20261113]
+    paths:
+      - "scripts/audit_hf_qwen35_coder_prefill_v6.py"
+      - "scripts/hf_chat_qwen35_coder_prefill_v6.py"
+      - "scripts/test_hf_qwen35_coder_prefill_v6.py"
+      - ".github/workflows/hf-qwen35-coder-prefill-v6-validate.yml"
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 9
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install read-only Hugging Face client
+        run: python -m pip install 'huggingface_hub>=0.34,<2'
+      - name: Inspect exact live 9B coding inference pipeline
+        run: |
+          set -e
+          python -m py_compile scripts/audit_hf_qwen35_coder_prefill_v6.py
+          python -u scripts/audit_hf_qwen35_coder_prefill_v6.py
+      - name: Unit tests, source drift protection and candidate verification
+        run: |
+          set -e
+          if test -f scripts/hf_chat_qwen35_coder_prefill_v6.py; then
+            python -m py_compile scripts/hf_chat_qwen35_coder_prefill_v6.py scripts/test_hf_qwen35_coder_prefill_v6.py
+            python -u scripts/test_hf_qwen35_coder_prefill_v6.py
+            python -u scripts/hf_chat_qwen35_coder_prefill_v6.py inspect
+          fi
