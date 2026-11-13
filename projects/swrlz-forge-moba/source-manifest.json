@@ -426,6 +426,6 @@
     "patches/v11_432_mobile_camera_orbit.py",
     "patches/v11_433_model_camera_preferences.py"
   ],
-  "finalBytes": 9913162,
-  "finalSha256": "ae386647683a6f84cefb837bc9e1fabe9f745386172d352e73fad67e51a1cfbc"
+  "finalBytes": 9917228,
+  "finalSha256": "025700cca295b514f510ace13bcf091593724a5a46c8180ed442dea1a0a4894d"
 }

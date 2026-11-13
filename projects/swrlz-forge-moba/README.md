@@ -1,3 +1,7 @@
+## §E v11.433 · Camera settings and easier mobile gizmos (2026-11-12)
+
+Model Studio now offers **Camera settings ▾ → Invert touch orbit**, switching immediately between follow-finger camera drags and the original reversed direction. The choice is saved in this browser's local settings without touching project data. Mobile Move/Rotate/Scale gizmos also have slightly larger visible grips and 56px touch picking zones, including an easier shaft corridor. Desktop mouse, VR controller picking, model transforms, Undo, gesture priority, pinch/pan, and the shared workspace remain unchanged. The packaged mobile direction and persistence logic is regression-tested before release.
+
 ## §E v11.432 · Mobile Model Studio orbit direction (2026-11-12)
 
 One-finger touch dragging in the native 3D modeling viewport now orbits with the finger: horizontal and vertical drags move the camera correspondingly. The change is applied in the final ordered build patch so earlier Model Studio source anchors, exact orthographic/perspective camera behavior, desktop mouse navigation, two-finger pinch/pan, VR controllers, selection, saved geometry and Undo stay intact. A focused assembled-HTML regression check covers touch orbit, desktop behavior, tap/drag separation and pitch bounds.

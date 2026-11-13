@@ -37,7 +37,7 @@ context.preferences.setInverted(false);
 assert.equal(state.get('swrlz:e:modelStudio:invertTouchOrbit:v1'),'0');
 p=gesture('touch',0,-1000);near(p.pitch,Math.PI/2-.001);
 context.preferences.setInverted(true);
-p=gesture('touch',0,1000);near(p.pitch,-Math.PI/2+.001);
+p=gesture('touch',0,-1000);near(p.pitch,-Math.PI/2+.001);
 assert.ok(html.includes('Camera settings ▾')&&html.includes('modelAtelierInvertTouchOrbit'));
 assert.ok(html.includes('const targetRadius=type=>type===\'touch\'?28:type===\'pen\'?18:12;'));
 assert.ok(html.includes('touchRadius:28,mouseRadius:12'));
