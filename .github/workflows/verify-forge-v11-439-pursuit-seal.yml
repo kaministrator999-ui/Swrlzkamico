@@ -52,3 +52,6 @@ jobs:
           print('SE439_SEAL_SHA256',hashlib.sha256(html).hexdigest(),flush=True)
           print('SE439_SOURCE_VERIFIED',flush=True)
           PY
+      - name: Verify full sealed source and inherited regression gates
+        run: |
+          python projects/swrlz-forge-moba/scripts/verify_v11_439_release.py --output /tmp/se439-full
