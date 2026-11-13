@@ -1,0 +1,48 @@
+name: Measure §E v11.436 cube Extrude and Satchel source
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/measure-model-satchel-v11-436.yml"
+      - "projects/swrlz-forge-moba/runtime/se436_satchel_cavity.js"
+      - "projects/swrlz-forge-moba/runtime/se436_vr_cube_extrude.js"
+      - "projects/swrlz-forge-moba/patches/v11_436_cube_extrude_satchel.py"
+      - "projects/swrlz-forge-moba/tests/model_satchel_cavity_v11_436.mjs"
+      - "projects/swrlz-forge-moba/source-manifest.json"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  measure:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - name: Reconstruct all 413 ordered source patches
+        run: |
+          python - <<'PY'
+          import pathlib,json,subprocess,sys,hashlib
+          root=pathlib.Path('projects/swrlz-forge-moba')
+          p=root/'source-manifest.json';original=p.read_text();m=json.loads(original)
+          assert m['name']=='§wyrl§ Engine v11.436' and m['finalArtifact']=='swyrl_engine_v11_436.html'
+          assert len(m['patches'])==413 and m['patches'][-1]=='patches/v11_436_cube_extrude_satchel.py'
+          m['finalBytes']=0;m['finalSha256']=''
+          p.write_text(json.dumps(m,ensure_ascii=False))
+          try:
+           subprocess.run([sys.executable,str(root/'build_space.py'),'--output','/tmp/se436-build'],check=True)
+           data=pathlib.Path('/tmp/se436-build/index.html').read_bytes()
+           print('SE436_COMPUTED_BYTES='+str(len(data)),flush=True)
+           print('SE436_COMPUTED_SHA256='+hashlib.sha256(data).hexdigest(),flush=True)
+          finally:p.write_text(original)
+          PY
+      - name: Validate assembled JavaScript and face modeling behaviors
+        run: |
+          node --check projects/swrlz-forge-moba/runtime/se436_satchel_cavity.js
+          node --check projects/swrlz-forge-moba/runtime/se436_vr_cube_extrude.js
+          python projects/swrlz-forge-moba/scripts/check_inline_js_syntax_v11_266.py /tmp/se436-build/index.html
+          npm install --no-save --ignore-scripts --no-audit --no-fund three@0.169.0
+          node projects/swrlz-forge-moba/tests/model_satchel_cavity_v11_436.mjs node_modules/three/build/three.module.js /tmp/se436-build/index.html
