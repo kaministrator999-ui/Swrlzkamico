@@ -44,6 +44,17 @@ def chat(opener,thread,prompt):
                 result["terminal"]=kind
                 break
     result["totalSec"]=round(time.monotonic()-started,2)
+    # Station's NDJSON stream forwards text and status only. Budget telemetry
+    # is available in the same cookie-scoped session snapshot, not as CONTEXT.
+    with opener.open(urllib.request.Request(BASE+"/api/lalm_station/sync",
+                                            headers=HEAD),timeout=25) as response:
+        snapshot=json.load(response)
+    active=snapshot.get("activeGeneration") or {}
+    if str(active.get("requestId") or "") != rid:
+        raise RuntimeError("Session context request ID mismatch")
+    budget=active.get("contextBudget") or {}
+    result["historyKept"]=budget.get("historyMessagesKept")
+    result["inputTokens"]=budget.get("estimatedInputTokens")
     if result["terminal"] not in ("COMPLETE","COMPLETED") or result["outputChars"]<4:
         raise RuntimeError("Synthetic completion not accepted")
     return result
@@ -89,5 +100,6 @@ def verify_live():
         "ackHistoryCompacted":True,"ackHistoryKept":last["historyKept"],
         "ackFirstTextSec":last["firstTextSec"],
         "ackTotalSec":last["totalSec"],"modelNotReplaced":True}),flush=True)
+    return last
 
 if __name__=="__main__":verify_live()
