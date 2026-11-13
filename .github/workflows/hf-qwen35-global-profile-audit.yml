@@ -4,6 +4,7 @@ on:
     branches: [tune/chat-qwen35-global-profile-20261113]
     paths:
       - "scripts/audit_hf_qwen35_profile_and_speed.py"
+      - "scripts/probe_hf_qwen35_global_routes.py"
       - ".github/workflows/hf-qwen35-global-profile-audit.yml"
 permissions:
   contents: read
@@ -19,3 +20,13 @@ jobs:
         run: |
           python -m py_compile scripts/audit_hf_qwen35_profile_and_speed.py
           python -u scripts/audit_hf_qwen35_profile_and_speed.py
+
+  global-route-baseline:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Measure exact 9B factual/coding baseline
+        run: |
+          python -m py_compile scripts/probe_hf_qwen35_global_routes.py
+          python -u scripts/probe_hf_qwen35_global_routes.py
