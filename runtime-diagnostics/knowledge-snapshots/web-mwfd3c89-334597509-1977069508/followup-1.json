@@ -1,0 +1,15 @@
+{
+  "schema": "swrlz-knowledge-followup-v1",
+  "requestId": "web-mwfd3c89-334597509-1977069508",
+  "modelId": "700m",
+  "eventType": "KNOWLEDGE_ACQUISITION_FOLLOWUP_1",
+  "sourceRef": "f149dd857e3d9219f5cae7da0286b5dbfec85c42",
+  "persistedAtUnixMs": 1794598342770,
+  "diagnostic": {
+    "schema": "swrlz-knowledge-followup-v1",
+    "parentRequestId": "web-mwfd3c89-334597509-1977069508",
+    "turnIndex": 1,
+    "userText": "Do you know what I meant when I said lol",
+    "capturedAtUnixMs": 1794598342769
+  }
+}
