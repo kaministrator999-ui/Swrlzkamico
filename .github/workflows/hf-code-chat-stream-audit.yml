@@ -1,0 +1,33 @@
+name: Inspect §C browser stream handler and DOM insertion points
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/hf-code-chat-stream-audit.yml"]
+permissions: {contents: read}
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - run: python -m pip install 'huggingface_hub>=0.34,<2'
+      - run: |
+          python - <<'PY'
+          from pathlib import Path
+          import json,re
+          from huggingface_hub import HfApi,hf_hub_download
+          S="kamiloki/Swyrlz";r=HfApi().repo_info(S,repo_type="space").sha
+          for name in ("chat/§wyrlz/index.html","chat/§wyrlz/assets/chat-updates-v1.js",
+                       "chat/§wyrlz/assets/assistant-fullwidth-v261.css"):
+              try: txt=Path(hf_hub_download(S,name,repo_type="space",revision=r)).read_text()
+              except Exception as e:print("CHAT_SRC_MISSING",name,type(e).__name__,flush=True);continue
+              lines=txt.splitlines()
+              print("CHAT_SRC_FILE",name,"chars",len(txt),"lines",len(lines),flush=True)
+              match=re.compile(r"/api/lalm_station/stream|activeGeneration|event\\.type|evt\\.type|message\\.type|DELTA|\\bfetch\\b|ReadableStream|getReader\\(|ndjson|textContent|message-list|messageList|message-container|messageContainer|\\.appendChild\\(|assistant-message|assistantMessage|renderChat",re.I)
+              hits=[i for i,l in enumerate(lines) if match.search(l)]
+              print("CHAT_SRC_MATCHES",json.dumps({"file":name,"hits":[i+1 for i in hits][:250]},ensure_ascii=False),flush=True)
+              for i in hits[:85]:
+                  if "index.html" in name and ("textContent" in lines[i] or "appendChild" in lines[i]) and not any(k in lines[i].lower() for k in ("message","stream","delta","generation")):continue
+                  a=max(0,i-4);b=min(len(lines),i+13)
+                  print("CHAT_SRC_EXCERPT",json.dumps({"file":name,"line":i+1,"code":[str(j+1)+" "+lines[j][:600] for j in range(a,b)]},ensure_ascii=False),flush=True)
+          print("CHAT_UI_AUDIT_COMPLETE",flush=True)
+          PY
