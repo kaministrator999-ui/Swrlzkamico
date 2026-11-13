@@ -1,0 +1,38 @@
+name: Verify §E v11.436 cube Extrude and Satchel release
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/verify-model-satchel-v11-436.yml"
+      - "projects/swrlz-forge-moba/scripts/verify_v11_436_release.py"
+      - "projects/swrlz-forge-moba/runtime/se436_satchel_cavity.js"
+      - "projects/swrlz-forge-moba/runtime/se436_vr_cube_extrude.js"
+      - "projects/swrlz-forge-moba/source-manifest.json"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - name: Install Three.js
+        run: npm install --no-save --ignore-scripts --no-audit --no-fund three@0.169.0
+      - name: Verify sealed source, 77 assets and native regressions
+        run: python projects/swrlz-forge-moba/scripts/verify_v11_436_release.py --output /tmp/se436-release --three-module node_modules/three/build/three.module.js
+      - name: Assert both editor routes match source seal
+        run: |
+          python - <<'PY'
+          import hashlib,json,pathlib
+          root=pathlib.Path('projects/swrlz-forge-moba');m=json.loads((root/'source-manifest.json').read_text())
+          out=pathlib.Path('/tmp/se436-release');a=(out/'index.html').read_bytes()
+          assert a==(out/'modeler.html').read_bytes() and len(a)==m['finalBytes'] and hashlib.sha256(a).hexdigest()==m['finalSha256']
+          source=json.loads((out/'SOURCE.json').read_text())
+          assert len(source['patches'])==413 and len(source['assets'])==77
+          print('V11_436_SEALED_SOURCE_PASS',len(a),m['finalSha256'])
+          PY

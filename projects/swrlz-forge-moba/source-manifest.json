@@ -429,6 +429,6 @@
     "patches/v11_435_model_vr_grab_gizmo.py",
     "patches/v11_436_cube_extrude_satchel.py"
   ],
-  "finalBytes": 9933817,
-  "finalSha256": "19d7464f80b572d6ace882ccac4a93cd8f9d96a370b13661d1b3c4ae9c7cdc84"
+  "finalBytes": 9942103,
+  "finalSha256": "21ed3557c3bf5edabdeff55fee7fbb35b346c07d02ccd0c13b11af6e5291fee5"
 }

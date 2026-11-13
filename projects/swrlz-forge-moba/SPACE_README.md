@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.435
+title: §wyrl§ Engine v11.436
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,12 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.436 · Cube face Extrude and one-mesh Satchel (2026-11-12)
+
+The VR Extrude tool now recognizes selected cubes and editable topology and routes them through the existing native Manual mesh workshop. A plain cube converts to welded editable geometry; Trigger selects a face, then Preview and Apply commit a real extrusion. The previous drawn-outline extrusion remains available. For hollow shapes, Inset the top face first, then Extrude inward using a negative amount.
+
+The Apprentice Satchel lesson now teaches a single connected bag body (Cube → editable topology → Inset rim → inward Extrude cavity), with the same tool references in phone and VR. Its ghost uses one noneditable 28-triangle cavity instead of five wall cubes, and its checker verifies a recessed interior floor and connected walls. Existing tutorial saves, quest progress, native Undo and account sync are preserved. All 413 source patches built to 9,942,103 bytes, SHA-256 `21ed3557c3bf5edabdeff55fee7fbb35b346c07d02ccd0c13b11af6e5291fee5`. Six focused native Three.js r169 groups passed. Physical Quest acceptance remains open. See [the release report](docs/MODEL_CUBE_EXTRUDE_SATCHEL_V11_436.md).
 
 ## §E v11.435 · VR Grab transformation handles (2026-11-12)
 
