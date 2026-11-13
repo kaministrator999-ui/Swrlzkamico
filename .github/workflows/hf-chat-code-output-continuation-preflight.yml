@@ -1,0 +1,27 @@
+name: Read-only §C existing-source output continuation preflight
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/hf-chat-code-output-continuation-preflight.yml"]
+permissions: {contents: read}
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install source snapshot client
+        run: python -m pip install 'huggingface_hub>=0.34,<2'
+      - name: Validate current source and deterministic length-resume behavior
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m py_compile scripts/hf_chat_code_output_continuation_v2.py
+          python -u scripts/hf_chat_code_output_continuation_v2.py preflight
+          echo "SOURCE_SAFE_CODE_CONTINUATION_PREFLIGHT_PASS"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: swrlz-code-output-continuation-exact-source-audit
+          path: swrlz-code-continuation-backup/
+          retention-days: 14
+          if-no-files-found: error
