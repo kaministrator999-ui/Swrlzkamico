@@ -61,7 +61,7 @@ def patch_model_engine(path: str, old: str) -> str:
 """, path)
     # Stay within the 8K context allocated on the free 16GB Space.
     body = replace_once(body, "CONTEXT_TOKENS=32768", "CONTEXT_TOKENS=8192", path)
-    body = replace_once(body, "OUTPUT_TOKENS=4096", "OUTPUT_TOKENS=2048", path)
+    body = replace_once(body, "\nOUTPUT_TOKENS=4096\n", "\nOUTPUT_TOKENS=2048\n", path)
     body = replace_once(body, "PROJECT_OUTPUT_TOKENS=8192", "PROJECT_OUTPUT_TOKENS=4096", path)
     body = replace_once(body, "LARGE_OUTPUT_TOKENS=16384", "LARGE_OUTPUT_TOKENS=6144", path)
     if path == "lfm2_700m_engine.py":
