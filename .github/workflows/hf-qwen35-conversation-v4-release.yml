@@ -1,0 +1,86 @@
+name: Guarded §C Qwen3.5-9B natural conversation v4 and max CPU tune
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".deploy/HF_CHAT_QWEN35_CONVERSATION_V4_REQUEST.txt"
+permissions:
+  contents: read
+concurrency:
+  group: swrlz-hf-space-deployment
+  cancel-in-progress: false
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 42
+    steps:
+      - uses: actions/checkout@v4
+      - name: Require explicit existing Space target and exact tested source
+        id: approval
+        shell: bash
+        run: |
+          set -euo pipefail
+          request=.deploy/HF_CHAT_QWEN35_CONVERSATION_V4_REQUEST.txt
+          test -f "$request"
+          get() { sed -n "s/^$1=//p" "$request" | tail -n 1; }
+          test "$(get TARGET)" = "kamiloki/Swyrlz"
+          test "$(get APPROVED)" = "1"
+          ref="$(get SOURCE_REF)"
+          nonce="$(get REQUEST_NONCE)"
+          [[ "$ref" =~ ^[a-f0-9]{40}$ ]]
+          [[ "$nonce" =~ ^[a-z0-9-]{10,96}$ ]]
+          echo "ref=$ref" >> "$GITHUB_OUTPUT"
+          echo "Only source modifications on current §C Space; no billing or hardware upgrade"
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.approval.outputs.ref }}
+          path: v4-source
+          fetch-depth: 1
+      - name: Install public HF release client
+        run: python -m pip install 'huggingface_hub>=0.34,<2'
+      - name: Validate source, 9B routes, CPU quota and conversation checks
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd v4-source
+          python -m py_compile scripts/hf_chat_qwen35_conversation_v4.py scripts/hf_chat_qwen35_conversation_v4_release.py scripts/test_hf_qwen35_conversation_v4.py scripts/probe_chat_qwen35_two_turns.py
+          python scripts/test_hf_qwen35_conversation_v4.py
+          python scripts/hf_chat_qwen35_conversation_v4.py inspect
+      - name: Capture exact current Space bytes for independent rollback
+        shell: bash
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          python - <<'PY'
+          import json,os
+          from pathlib import Path
+          from huggingface_hub import HfApi,hf_hub_download
+          api=HfApi(token=os.environ["HF_TOKEN"])
+          revision=api.repo_info("kamiloki/Swyrlz",repo_type="space").sha
+          root=Path("qwen35-conversation-v4-original")
+          root.mkdir()
+          for name in ("qwen35_single_runtime.py","station.py","lfm2_700m_engine.py"):
+              file=hf_hub_download("kamiloki/Swyrlz",name,repo_type="space",
+                                  revision=revision,token=api.token)
+              (root/name).write_bytes(Path(file).read_bytes())
+          (root/"sourceRevision.json").write_text(json.dumps({
+              "space":"kamiloki/Swyrlz","revision":revision
+          }),encoding="utf-8")
+          print("CONVERSATION_V4_ROLLBACK_SNAPSHOT",revision,flush=True)
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: qwen35-conversation-v4-exact-rollback
+          path: qwen35-conversation-v4-original/
+          retention-days: 14
+          if-no-files-found: error
+      - name: Publish exact overlay, verify 9B and real two-turn benchmark, rollback on failure
+        shell: bash
+        timeout-minutes: 35
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          SWRLZ_QWEN35_CONVERSATION_V4_APPROVED: "1"
+        run: |
+          set -euo pipefail
+          cd v4-source
+          python -u scripts/hf_chat_qwen35_conversation_v4_release.py
