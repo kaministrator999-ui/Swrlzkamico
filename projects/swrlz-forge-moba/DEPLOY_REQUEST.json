@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.434",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_434_SHEEP_CROWDED_VR",
-  "reason": "Publish crowded Sheep Tag visible-XR recovery, correct native XR-camera occlusion, controlled/selected teammate overlay priorities, geometry-preserving scenery/editor-building submissions and static editor shadow reuse. Preserve actual menu visibility/input-release safeguards, native head tracking, AI/house/collision rules, v11.433 camera preferences and larger touch gizmos. Sealed 411 ordered patches, 9930780 HTML bytes, SHA256 7aa4640a5b02b6c43eb54fe28d28dbf503cd52f1c571c98c0ee455d659395fd8. Local verification passed 34 new native groups plus camera/AI/frame-budget preservation and an emulated stereo stress match with seven AI teammates, eight live sheep, 76 houses, head movement and real emulated visibility/menu return. Matching editor scene: 4414 to 2416 draw calls with the same 515659 triangles. Physical Quest compositor and sustained FPS acceptance remain pending.",
-  "sourceCommit": "638bffbd009119f4838cc3d41043ddcf96c4d1d0",
-  "sourceIntegritySha256": "7aa4640a5b02b6c43eb54fe28d28dbf503cd52f1c571c98c0ee455d659395fd8"
+  "releaseVersion": "v11.435",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_435_MODEL_VR_GRAB_GIZMO",
+  "reason": "Publish default-Grab transformation handles in immersive §E Model Studio. Native XYZ Move gizmos are now visible on the selected pivot during Grab; grip on an arrow begins constrained native Move while grip off-handle retains free-form Grab. Dedicated Move/Rotate/Scale, mobile gizmos, account models, independent VR menus and existing Sheep Tag performance behavior remain intact. All 412 patches and 77 assets independently sealed: 9933817 HTML bytes, SHA256 19d7464f80b572d6ace882ccac4a93cd8f9d96a370b13661d1b3c4ae9c7cdc84. Full v11.435 release and real Three.js v169 targeted regressions passed at GitHub Actions run 43361003457. Physical Quest controller and prolonged frame performance remain owner acceptance cases.",
+  "sourceCommit": "619dde28a0b7b915f02832a0e8146a29358e7d0c",
+  "sourceIntegritySha256": "19d7464f80b572d6ace882ccac4a93cd8f9d96a370b13661d1b3c4ae9c7cdc84"
 }
