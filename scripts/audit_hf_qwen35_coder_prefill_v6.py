@@ -59,7 +59,7 @@ for filename in ("qwen_coder_engine.py","lfm2_700m_engine.py","qwen35_single_run
         for i,line in enumerate(lines):
             if any(k in line for k in ('elif kind=="GENERATION_TELEMETRY"',
                  'elif kind=="CONTEXT"', "def _snapshot(", "def stream_generation(",
-                 'engineCompletionTelemetry',"generationTelemetry","contextBudget"])):
+                 'engineCompletionTelemetry',"generationTelemetry","contextBudget")):
                 print("STATION_MARKER",json.dumps({"line":i+1,"code":lines[max(0,i-2):i+12]}),flush=True)
     elif filename=="programming_telemetry.py":
         for i,line in enumerate(lines):
