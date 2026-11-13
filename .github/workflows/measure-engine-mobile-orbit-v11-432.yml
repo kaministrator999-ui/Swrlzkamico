@@ -41,9 +41,9 @@ jobs:
           assert "window.SWRLZ_FORGE_BUILD={version:'v11.432'" in html
           final=html.encode()
           Path('/tmp/swyrlz-v11-432.html').write_bytes(final)
-          assert len(final)==m['finalBytes']
-          assert hashlib.sha256(final).hexdigest()==m['finalSha256']
-          print('SE432_ARTIFACT_RESULT='+json.dumps({'bytes':len(final),'sha256':hashlib.sha256(final).hexdigest(),'patches':len(patches)},sort_keys=True),flush=True)
+          print('SE432_ARTIFACT_RESULT='+json.dumps({'bytes':len(final),'sha256':hashlib.sha256(final).hexdigest(),'patches':len(patches),'expectedBytes':m['finalBytes'],'expectedSha256':m['finalSha256']},sort_keys=True),flush=True)
+          assert len(final)==m['finalBytes'],('final byte length differs',len(final),m['finalBytes'])
+          assert hashlib.sha256(final).hexdigest()==m['finalSha256'],('final sha differs',hashlib.sha256(final).hexdigest(),m['finalSha256'])
           PY
           python projects/swrlz-forge-moba/scripts/check_inline_js_syntax_v11_266.py /tmp/swyrlz-v11-432.html
           node projects/swrlz-forge-moba/tests/model_atelier_mobile_orbit_v11_432.mjs /tmp/swyrlz-v11-432.html
