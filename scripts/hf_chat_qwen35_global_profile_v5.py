@@ -84,13 +84,13 @@ def _wyrlz_active_profile(prompt="", programming=None, brief=False):
     return lead+"\n\n"+"\n\n".join(_wyrlz_authored_section(h) for h in headings)
 
 '''
-FULL_PROFILE_OLD='''    if not programming.get("codingTask"):
+FULL_PROFILE_OLD=r'''    if not programming.get("codingTask"):
         system+="\nBUILT-IN §WYRLZ PROFILE (default assistant identity/behavior):\n"+_identity_context_profile(identity_response_mode)
         if custom_assistant_profile:
             system+="\nUSER CUSTOMIZATION FOR §WYRLZ (additional preferences layered on top of the built-in profile; do not erase the built-in identity):\n"+custom_assistant_profile
         if user_profile:
             system+="\nUSER PROFILE (describes the current user, not §wyrlz; context only):\n"+user_profile'''
-FULL_PROFILE_NEW='''    if programming.get("codingTask"):
+FULL_PROFILE_NEW=r'''    if programming.get("codingTask"):
         # One actual §wyrlz core is present during code/§E work as well.
         # Keep all existing coding and source-repair contracts untouched.
         system+="\nAUTHORED §WYRLZ PROFILE (universal identity and engineering principles):\n"+_wyrlz_active_profile(prompt,programming)
@@ -102,8 +102,18 @@ FULL_PROFILE_NEW='''    if programming.get("codingTask"):
         system+="\nSAVED ASSISTANT PROFILE CUSTOMIZATION (no tool authority):\n"+custom_assistant_profile
     if user_profile:
         system+="\nUSER PROFILE (describes the human, not §wyrlz):\n"+user_profile'''
-REPAIR_ANCHOR='''        system+=programming_library_context(programming)'''
-REPAIR_INJECTION='''        # Preserve grounded repair contracts; attach only the authored
+REPAIR_ANCHOR=r'''        system,fitted_prompt,repair_context_telemetry=build_compact_repair_context(
+            programming,
+            prompt,
+            _response_mode(prompt,programming,history),
+        )
+        system+=programming_library_context(programming)'''
+REPAIR_INJECTION=r'''        system,fitted_prompt,repair_context_telemetry=build_compact_repair_context(
+            programming,
+            prompt,
+            _response_mode(prompt,programming,history),
+        )
+        # Preserve grounded repair contracts; attach the authored
         # universal engineering core after compacting the repair payload.
         system+="\nAUTHORED §WYRLZ ENGINEERING PROFILE:\n"+_wyrlz_active_profile(prompt,programming,brief=True)
         if custom_assistant_profile:
@@ -124,7 +134,7 @@ def patch_engine(source):
     fast=CONVERSATION_OVERLAY
     assert fast.count("+_role_frame(user_profile))")==1
     fast_updated=fast.replace("+_role_frame(user_profile))",
-        '+_wyrlz_active_profile(prompt,programming,brief=True)+"\n"+_role_frame(user_profile))')
+        '+_wyrlz_active_profile(prompt,programming,brief=True)+"\\n"+_role_frame(user_profile))')
     source=replace_unique(source,fast,fast_updated,"social-profile-origin")
     source=replace_unique(source,REPAIR_ANCHOR,REPAIR_INJECTION,"repair-profile")
     ast.parse(source,filename=ENGINE)
