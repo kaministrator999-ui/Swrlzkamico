@@ -6,6 +6,8 @@ on:
       - "scripts/hf_chat_qwen35_global_profile_v5.py"
       - "scripts/test_hf_qwen35_global_profile_v5.py"
       - "scripts/hf_chat_qwen35_global_profile_v5_release.py"
+      - "scripts/hf_chat_qwen35_global_profile_v5_dual.py"
+      - "scripts/test_hf_chat_qwen35_global_profile_v5_dual.py"
       - ".github/workflows/hf-qwen35-global-profile-validate.yml"
       - ".github/workflows/hf-qwen35-global-profile-release.yml"
 permissions:
@@ -24,7 +26,9 @@ jobs:
           set -euo pipefail
           python -m py_compile scripts/hf_chat_qwen35_global_profile_v5.py scripts/test_hf_qwen35_global_profile_v5.py
           if test -f scripts/hf_chat_qwen35_global_profile_v5_release.py; then
-            python -m py_compile scripts/hf_chat_qwen35_global_profile_v5_release.py
+            python -m py_compile scripts/hf_chat_qwen35_global_profile_v5_dual.py scripts/test_hf_chat_qwen35_global_profile_v5_dual.py scripts/hf_chat_qwen35_global_profile_v5_release.py
           fi
           python -u scripts/test_hf_qwen35_global_profile_v5.py
           python -u scripts/hf_chat_qwen35_global_profile_v5.py inspect
+          python -u scripts/test_hf_chat_qwen35_global_profile_v5_dual.py
+          python -u scripts/hf_chat_qwen35_global_profile_v5_dual.py inspect
