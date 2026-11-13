@@ -1,0 +1,23 @@
+name: Inspect §C chat provisional message renderer
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/hf-chat-preview-render-audit.yml"]
+permissions: {contents: read}
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - run: python -m pip install 'huggingface_hub>=0.34,<2'
+      - run: |
+          python - <<'PY'
+          from pathlib import Path
+          import json
+          from huggingface_hub import HfApi,hf_hub_download
+          S="kamiloki/Swyrlz";rev=HfApi().repo_info(S,repo_type="space").sha
+          lines=Path(hf_hub_download(S,"chat/§wyrlz/index.html",repo_type="space",revision=rev)).read_text().splitlines()
+          for a,b in ((3740,3805),(3805,3910),(3910,4050),(4250,4284),(4355,4395)):
+              print("PREVIEW_RENDER_RANGE",json.dumps({"from":a,"to":b,"lines":[str(i+1)+" "+lines[i] for i in range(a-1,b)]},ensure_ascii=False),flush=True)
+          print("PREVIEW_RENDER_AUDIT_COMPLETE",flush=True)
+          PY
