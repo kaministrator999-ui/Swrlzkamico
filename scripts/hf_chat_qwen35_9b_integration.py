@@ -28,7 +28,7 @@ OUT = ROOT / "qwen35-candidate"
 BEFORE = ROOT / "qwen35-rollback"
 FILES = (
     "app.py", "model_router.py", "lfm2_700m_engine.py",
-    "qwen_coder_engine.py", "chat_vision.py", "README.md",
+    "qwen_coder_engine.py", "chat_vision.py", "README.md", "station.py",
 )
 ASSET_FILES = {WEIGHTS: (5780090688, "8c4cc24f54473f3d4e080d4ec7fd2a40d0bbec0f94f3c807cd62694905357d54"),
                PROJECTOR: (918165888, "2f7ce3652232b91c2220fad23f5b62d110f67e84bd5ed33a7d2bea82f8ee1d26")}
@@ -118,6 +118,7 @@ def patch_app(old: str) -> str:
     except Exception as exc:
         print(json.dumps({"event": "HF_WARMUP_FAILED", "modelId": "qwen35-9b",
                           "errorType": type(exc).__name__, "detail": str(exc)[:300]}), flush=True)
+        raise
 
 """, path)
     # The Space responds after model warmup; this removes request-triggered cold load.
@@ -138,6 +139,18 @@ def patch_router(old: str) -> str:
     old = replace_once(old, 'ModelRoute("coder",CODER_LABEL,True,CODER_CHECKPOINT)',
                        f'ModelRoute("coder","Qwen3.5-9B · Coding",True,"{CHECKPOINT}")', path)
     return old
+
+
+def patch_station(old: str) -> str:
+    path = "station.py"
+    anchor = '@app.get("/api/hf/runtime-capacity")'
+    ready_route = ('@app.get("/api/hf/qwen35-ready")\n'
+                   'def qwen35_readiness():\n'
+                   '    from qwen35_single_runtime import ready\n'
+                   '    from fastapi.responses import JSONResponse\n'
+                   '    return JSONResponse({"model": "qwen3.5-9b", "ready": bool(ready())},\n'
+                   '                        headers={"Cache-Control": "no-store"})\n\n')
+    return replace_once(old, anchor, ready_route + anchor, path)
 
 
 def patch_card(old: str) -> str:
@@ -179,6 +192,7 @@ def prepare() -> None:
         "qwen_coder_engine.py": lambda text: patch_model_engine("qwen_coder_engine.py", text),
         "chat_vision.py": patch_vision,
         "README.md": patch_card,
+        "station.py": patch_station,
     }
     receipts = []
     for path in FILES:
