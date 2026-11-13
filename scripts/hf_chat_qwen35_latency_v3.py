@@ -175,22 +175,22 @@ def exactly(s,old,new,where):
     return s.replace(old,new,1)
 
 def patch_runtime(s):
-    s=exactly(s,'BATCH_THREADS = min(16, CPU_CAPACITY)\\n',
-       'BATCH_THREADS = min(16, CPU_CAPACITY)\\n'
-       'BATCH_SIZE = 1024 if CPU_CAPACITY >= 8 else 512\\n'
-       'UBATCH_SIZE = 512 if CPU_CAPACITY >= 8 else 256\\n', RUNTIME)
-    s=exactly(s,'"--batch-size", "512",\\n        "--ubatch-size", "256"',
-                    '"--batch-size", str(BATCH_SIZE),\\n        "--ubatch-size", str(UBATCH_SIZE)',RUNTIME)
+    s=exactly(s,'BATCH_THREADS = min(16, CPU_CAPACITY)\n',
+       'BATCH_THREADS = min(16, CPU_CAPACITY)\n'
+       'BATCH_SIZE = 1024 if CPU_CAPACITY >= 8 else 512\n'
+       'UBATCH_SIZE = 512 if CPU_CAPACITY >= 8 else 256\n', RUNTIME)
+    s=exactly(s,'"--batch-size", "512",\n        "--ubatch-size", "256"',
+                    '"--batch-size", str(BATCH_SIZE),\n        "--ubatch-size", str(UBATCH_SIZE)',RUNTIME)
     s=exactly(s,TOKENIZE_OLD,TOKENIZE_NEW,RUNTIME)
     s=exactly(s,'"chat_template_kwargs": {"enable_thinking": False},',
-         '"chat_template_kwargs": {"enable_thinking": False},\\n'
+         '"chat_template_kwargs": {"enable_thinking": False},\n'
          '            "cache_prompt": True,',RUNTIME)
     s=exactly(s,EVENTS_OLD,EVENTS_NEW,RUNTIME)
-    s=exactly(s,'        return _instance\\n',
-        '        _instance.reset_token_cache()\\n'
-        '        return _instance\\n',RUNTIME)
+    s=exactly(s,'        return _instance\n',
+        '        _instance.reset_token_cache()\n'
+        '        return _instance\n',RUNTIME)
     s=exactly(s,'"profile": "swrlz-qwen35-cpu-v2"}',
-                   '"profile": "swrlz-qwen35-latency-v3",\\n'
+                   '"profile": "swrlz-qwen35-latency-v3",\n'
                    '            "batchSize": BATCH_SIZE, "microBatchSize": UBATCH_SIZE}',RUNTIME)
     ast.parse(s,filename=RUNTIME)
     return s
