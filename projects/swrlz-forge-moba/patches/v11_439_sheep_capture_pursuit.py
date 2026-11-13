@@ -19,12 +19,6 @@ def apply(html):
    "unit.path=(traffic.mode==='alternate lane'?stLanesDynamicPath(unit,aim):se438Route(unit,unit.pos,aim,radius))||[];",
    "unit.path=(se439DirectChase(unit,aim,context)?[aim.clone()]:(traffic.mode==='alternate lane'?stLanesDynamicPath(unit,aim):se438Route(unit,unit.pos,aim,radius)))||[];",
    'unobstructed solo XR wolf chase')
- # The wolf's native per-frame capture scan remains one-shot. Replace only
- # the scan to count eligibility and preserve its original contact radius.
- html=one(html,
-   "for(const sheep of s.units)if(sheep.kind==='sheep'&&!sheep.captured&&s.elapsed>=sheep.invulnerableUntil&&Math.hypot(unit.pos.x-sheep.pos.x,unit.pos.z-sheep.pos.z)<1.05)stCapture(sheep,unit);",
-   "se439CaptureProbe(unit,s);",
-   'capture eligibility tracing')
  html=one(html,'installPerformanceSettings();se189InstallPerfUI();',
    runtime+'\ninstallPerformanceSettings();se189InstallPerfUI();',
    'append wolf pursuit runtime')
