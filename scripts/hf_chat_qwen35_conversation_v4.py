@@ -53,7 +53,9 @@ CONVERSATION_FUNCTION=r'''def _qwen35_plain_social_turn(prompt, programming, pay
         r"convert|finance|investment|bank|bill|medication|symptom|"
         r"emergency|doctor|hospital|suicide|hurt myself|"
         r"write|generate|build|create|design|edit|implement|"
-        r"change the|update the|modify|delete|send|book|schedule"
+        r"change the|update the|modify|delete|send|book|schedule|"
+        r"find|show me|recommend|buy|purchase|price|cost|email|draft|"
+        r"resume|calendar|appointment|dizzy|chest pain|sick|self.harm"
         r")\b)",clean,re.I):
         return False
     # Factual lookup or consequential questions retain research/specialist routing.
