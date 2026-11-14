@@ -5,6 +5,7 @@ on:
     paths:
       - "api/live_code_controls.py"
       - "api/lalm_station.py"
+      - "queues/swrlz_generation_v3.py"
       - "chat/§wyrlz/index.html"
       - "tests/test_live_code_controls.py"
       - ".github/workflows/verify-live-code-controls.yml"
@@ -20,7 +21,7 @@ jobs:
         run: python -m pip install 'fastapi>=0.115,<1' 'requests>=2.31,<3'
       - name: Verify Python and unit tests
         run: |
-          python -m py_compile api/live_code_controls.py api/lalm_station.py
+          python -m py_compile api/live_code_controls.py api/lalm_station.py queues/swrlz_generation_v3.py
           python -m unittest discover -s tests -p test_live_code_controls.py -v
       - name: Verify embedded Chat scripts parse under Node
         run: |
