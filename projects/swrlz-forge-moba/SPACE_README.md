@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.446
+title: §wyrl§ Engine v11.447
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,10 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.447 · Smooth viewport orbit while editing faces (2026-11-14)
+
+Face-mode tap drags and Inset/Extrude topology previews now permit smooth, live camera orbit. Previously the component-tap path applied camera yaw/pitch only on pointer release, making a dragged view appear stuck then jump; the native topology-preview path blocked pointerdown altogether. A frame-coalesced camera update now follows one-finger drag without changing mesh data, while two-finger pinch/pan, configurable touch inversion, native Preview/Apply/Cancel, Undo, selection and VR tools retain their existing behavior. Physical Android acceptance is pending.
 
 ## §E v11.446 · Whole square faces for Inset and Extrude (2026-11-14)
 
