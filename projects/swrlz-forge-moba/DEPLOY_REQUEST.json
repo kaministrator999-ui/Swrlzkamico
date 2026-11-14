@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT (owner-approved)",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.443",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_443_VR_VERTICAL_TOOL_DOCK",
-  "reason": "Publish verified v11.443 vertical VR tool dock, right-side contextual slide-out, shared Grip/Trigger/hover input, and foreground transform-gizmo pick priority. 420-patch/77-asset source passed release verification. Preserve unrelated §C changes. Physical headset acceptance pending.",
-  "sourceCommit": "9418aa9d5af92cab3f0134c91fb044d587dece69",
-  "sourceIntegritySha256": "6de36b10e53627d7571b4193245b30a81a18e940149f704b6b7f9f91a654df2e"
+  "releaseVersion": "v11.444",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_444_DELETE_SELECTED",
+  "reason": "Publish permanent Delete Selected on phone and VR, atomic native multi-delete with Undo, selection safeguards and VR double-trigger confirmation. Source verified; physical Quest acceptance pending.",
+  "sourceCommit": "5d204f8b0399c1aaf22098b3a721c1bba2ea08c8",
+  "sourceIntegritySha256": "b3febb77e3644ae88575f11849474bf2e2b46eb076006d4a668648257895a670"
 }
