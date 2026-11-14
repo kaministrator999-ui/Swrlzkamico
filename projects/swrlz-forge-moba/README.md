@@ -1,3 +1,7 @@
+## §E v11.444 · Delete selected meshes from every modeling view (2026-11-14)
+
+The Model Studio selection context on phone/desktop now includes a reachable **Delete selected** button; VR's vertical tool dock has a permanent Delete action. One or multiple complete mesh objects are deleted in a single Undo checkpoint, without touching unselected geometry or unrelated projects. Deletion requires Object mode, no active transform/preview, and leaves at least one native mesh. In VR, Trigger Delete twice within 5.5 seconds on an unchanged selection; Undo restores the previous snapshot. Physical Quest acceptance is still pending.
+
 ## §E v11.443 · Vertical VR tools and attached slide-out settings (2026-11-14)
 
 Model Studio VR now uses a persistent vertical tool dock with contextual native controls that slide out to the right. The toolbar and expanded settings remain one movable world-space menu using the existing ray hover, Trigger and Grip interactions; closed drawer surfaces block no model input. Active transform gizmos take priority over meshes while visible UI retains first priority. Drawing assistance and physical headset acceptance remain separate.
