@@ -287,6 +287,9 @@ def conversation(opener,thread,prompt,max_secs=240):
             elif kind=="STATUS":states.append(str(event.get("phase") or ""))
             elif kind in ("COMPLETE","COMPLETED","FAILED","CANCELLED"):
                 terminal=kind;break
+    emit("LIVE_STREAM_COMPLETED_BEFORE_SNAPSHOT",terminal=terminal,
+         prompt=prompt,finalChars=len("".join(text_parts)),
+         statusPhases=states[-10:])
     # A newly rebuilt Space can temporarily rotate an anonymous session.
     # Verify the stream and the cookie-scoped session have the same request,
     # never substitute stale telemetry or silently accept a different user.
@@ -300,7 +303,10 @@ def conversation(opener,thread,prompt,max_secs=240):
             break
         time.sleep(2)
     if active.get("requestId")!=request_id:
-        raise RuntimeError("Synthetic session invalidated during rollout; retry full two-turn test")
+        raise RuntimeError("Synthetic session invalidated during rollout; retry full two-turn test"
+                           +" activePresent="+str(bool(active))
+                           +" activeMatchesThread="+str(active.get("threadId")==thread)
+                           +" phase="+str(active.get("phase") or "unknown"))
     validation=active.get("candidateValidation") or {}
     budget=active.get("contextBudget") or {}
     intent=active.get("programmingIntent") or {}
