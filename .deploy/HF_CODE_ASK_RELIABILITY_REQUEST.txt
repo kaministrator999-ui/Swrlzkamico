@@ -1,0 +1,6 @@
+TARGET=kamiloki/Swyrlz
+APPROVED=1
+SCOPE=live-code-ask-storage-recovery-only
+MODEL=qwen3.5-9b
+SOURCE_REF=fa01487b0badcde3db5752df6799a0ca6d3efbd2
+REQUEST_NONCE=nov14-ask-storage-v1
