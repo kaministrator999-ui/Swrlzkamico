@@ -7,6 +7,8 @@ import vm from 'node:vm';
 const html=fs.readFileSync(process.argv[2],'utf8');
 for(const needle of [
  'SE445_SCULPT_FACE_SHORTCUTS_START',
+ 'SE445_VR_PROGRESSIVE_TOOLS_START',
+ 'SWYRL_ENGINE_MODEL_VR_PROGRESSIVE_445',
  'SE445_SHAPE_DISCOVERY_START',
  "['manual-inset','Inset face'],['manual-extrude','Extrude face']",
  "['manual-mesh','Face tools','manual-mesh']",
