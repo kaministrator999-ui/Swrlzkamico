@@ -140,11 +140,11 @@ def patch_coder(raw):
         next_checkpoint=_swrlz_checkpoint_record(''',
 "resume completed source after length")
     s=once(s,
-'''             repair_needed=(timing.get("finishReason")!="length"),
-             reasons=completion.get("reasons"))''',
-'''             repair_needed=(timing.get("finishReason")!="length"
-                 or bool(timing.get("sourceCompleteByParser"))),
-             reasons=completion.get("reasons"))''',
+'''            repair_needed=(timing.get("finishReason")!="length"),
+            reasons=completion.get("reasons"))''',
+'''            repair_needed=(timing.get("finishReason")!="length"
+                or bool(timing.get("sourceCompleteByParser"))),
+            reasons=completion.get("reasons"))''',
 "resume checkpoint repair flag")
     s=once(s,
 '''    yield {"type":"CODE_OUTPUT_FINISHED","sourceSha256":checkpoint["sourceSha256"]}''',
