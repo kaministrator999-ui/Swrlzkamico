@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.445
+title: §wyrl§ Engine v11.446
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,10 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.446 · Whole square faces for Inset and Extrude (2026-11-14)
+
+Model Studio's ordinary **Face** tap on phone/desktop now selects the entire connected planar face rather than a single underlying mesh triangle. On a welded cube, either half of a square side picks both triangles as one square face; native Inset/Extrude receives that complete region, and Undo/Preview/Apply remain unchanged. **Multi** still permits explicit individual triangle selection for precision edits, while Edge, Vertex, Box and Lasso behavior remains intact. VR already uses native coplanar region picking; its status now describes one flat face instead of multiple unrelated faces. Plain primitives still require **Make mesh editable** before native topology edits, with clearer guidance when this step is missing. Physical device acceptance pending.
 
 ## §E v11.445 · Three-stage VR tools and visible Shape / Face operations (2026-11-14)
 
