@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT (owner-approved)",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.445",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_445_SHAPE_FACE_DISCOVERY",
-  "reason": "Publish far-right VR tool rail, contextual operation submenu and native modifier drawer on demand, plus compact phone/desktop face-tool shortcuts; preserve model transactions, controller input, Undo and prior Delete Selected. Source verified; Quest acceptance pending.",
-  "sourceCommit": "ece2db85e0b04e5b2dea3c6f916e2d89135abc57",
-  "sourceIntegritySha256": "a69ef6c707a9afc36481d93fe766cb244aad5672a9df85ea42fea22b194f297b"
+  "releaseVersion": "v11.446",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_446_PLANAR_FACE_PICK",
+  "reason": "Publish face-mode tap selection of complete connected coplanar surfaces, so either cube triangle selects the square face for Inset/Extrude; preserve advanced Multi triangle selection, VR regions and Undo. Source verified; owner acceptance pending.",
+  "sourceCommit": "900ba4018e54671c802d6253158d896aacc4fcab",
+  "sourceIntegritySha256": "b956f5f7c56f2782514456d2b435fb3c7732e9b5c4b18e50328f38da73892655"
 }
