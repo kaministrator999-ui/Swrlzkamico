@@ -10,12 +10,18 @@ def once(s,old,new):
     return s.replace(old,new,1)
 
 def apply(html):
-    # Clear, direct VR access; leave brush controls, their order, and all
-    # underlying manual face transactions under native ownership.
-    html=once(html,"['manual-mesh','Mesh edit','manual-mesh']",
-                   "['manual-mesh','Face tools','manual-mesh']")
-    html=once(html,"['brush-strength-plus','Strength +'],['studio','Studio'],['exit','Exit VR']",
-                   "['brush-strength-plus','Strength +'],['manual-inset','Inset face'],['manual-extrude','Extrude face']")
+    # Replace only the generated v11.443 presentation wrapper. Keep the
+    # historical patch/runtime unchanged and preserve native XR controllers,
+    # world-space menu gripping, gizmo priority and native UI details.
+    a=html.index('/* SE443_MODEL_VR_VERTICAL_DOCK_START */')
+    b=html.index('/* SE443_MODEL_VR_VERTICAL_DOCK_END */',a)+len('/* SE443_MODEL_VR_VERTICAL_DOCK_END */')
+    current=html[a:b]
+    assert 'SWYRL_ENGINE_MODEL_VR_DOCK_443' in current
+    assert 'se374GizmoContact(record)' in current
+    progressive=(ROOT/'runtime/model_vr_three_stage_v11_445.js').read_text(encoding='utf8')
+    assert progressive.startswith('/* SE443_MODEL_VR_VERTICAL_DOCK_START */')
+    assert progressive.rstrip().endswith('/* SE443_MODEL_VR_VERTICAL_DOCK_END */')
+    html=html[:a]+progressive+html[b:]
     html=once(html,"'manual-mesh':['Manual mesh tools','SELECT A REAL FACE REGION']",
                    "'manual-mesh':['Shape / Face tools','INSET · EXTRUDE · SOLIDIFY · SUBDIVIDE']")
     # Keep the existing phone/desktop selection context the sole home for
@@ -79,11 +85,11 @@ def apply(html):
     notes,width=json.JSONDecoder().raw_decode(html[at:])
     notes['history']=[v for v in notes.get('history',[]) if v.get('version')!='v11.444']
     notes['history'].insert(0,{'version':'v11.444','changes':notes.get('changes',[])})
-    notes.update(version='v11.445',date='2026-11-14',title='Discoverable Sculpt and Shape / Face tools',
+    notes.update(version='v11.445',date='2026-11-14',title='Three-stage right-side VR modeling tools',
       changes=[
-      'Sculpt in VR now shows direct Inset face and Extrude face cards alongside the six existing brushes and radius/strength controls. Each card enters the native manual face-edit workflow, not an imitation brush.',
-      'The permanent VR vertical dock says Face tools rather than the ambiguous Mesh edit, and its right-side page explicitly labels the original Inset, Extrude, Solidify and Subdivide controls.',
-      'Phone and desktop place a compact Shape / Face tools group in the existing model selection inspector: Inset, Extrude, Solidify and All face tools. Selecting a shortcut opens the existing native manual workshop and Face mode.',
-      'Every face operation still needs a valid selected flat region and, when necessary, explicit primitive conversion; Preview, Apply, Cancel, checkpoints and Undo remain unchanged. No new geometry or project state is created by navigation.'
+      'The main VR tools become a permanent vertical rail on the far right. Selecting Sculpt, Face tools, Create or another category slides a smaller operation list out to its left; the former large console stays hidden until a specific operation is selected.',
+      'Choosing Inset, Extrude, Solidify, Subdivide or another operation opens the existing native modifier/preview controls in a third panel to the left. Each tier can be closed without hiding the primary tools, and each remains part of one grabbable world-space menu.',
+      'Sculpt operations include the six original brushes and direct face-modeling shortcuts. Face tools expose conversion, flat region picking and the supported topology actions. Existing gestures, selection, native Apply/Cancel, Undo/Redo, account Save and gizmo-first selection remain unchanged.',
+      'Phone and desktop place a compact Shape / Face tools group in the existing selection inspector: Inset, Extrude, Solidify and All face tools. Shortcut selection opens the native manual workshop rather than an independent geometry editor.'
       ])
     return html[:at]+json.dumps(notes,ensure_ascii=False,separators=(',',':')).replace('</',r'<\/')+html[at+width:]
