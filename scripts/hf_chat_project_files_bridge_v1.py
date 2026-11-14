@@ -125,7 +125,7 @@ UI_INPUT_NEW=UI_INPUT+'''
           <span id="projectFileNames" aria-live="polite"></span>
           <button id="projectFileRemoveButton" type="button" aria-label="Remove attached project files">✕</button>
         </div>'''
-UI_DOM='''        const imagePickButton=document.getElementById("imagePickButton");'''
+UI_DOM='''      const imagePickButton=document.getElementById("imagePickButton");'''
 UI_DOM_NEW=UI_DOM+'''
         const projectFilePicker=document.getElementById("projectFilePicker");
         const projectFilePickButton=document.getElementById("projectFilePickButton");
