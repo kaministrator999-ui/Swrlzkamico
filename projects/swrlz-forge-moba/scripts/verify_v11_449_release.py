@@ -37,7 +37,7 @@ subprocess.run(['node',str(ROOT/'tests/model_face_shortcuts_v11_448.mjs'),str(ou
 subprocess.run(['node',str(ROOT/'tests/model_vr_three_stage_v11_445.mjs'),str(out/'index.html')],check=True)
 subprocess.run(['node',str(ROOT/'tests/model_planar_face_pick_v11_446.mjs'),str(out/'index.html')],check=True)
 subprocess.run(['node',str(ROOT/'tests/model_face_orbit_v11_447.mjs'),str(out/'index.html')],check=True)
-subprocess.run(['node',str(ROOT/'tests/model_inset_dock_v11_448.mjs'),str(out/'index.html')],check=True)
+subprocess.run(['node',str(ROOT/'tests/model_inset_dock_v11_449.mjs'),str(out/'index.html')],check=True)
 subprocess.run(['node',str(ROOT/'tests/model_touch_layout_v11_449.mjs'),str(out/'index.html')],check=True)
 subprocess.run(['node',str(ROOT/'tests/model_motion_menu_v11_440.mjs'),str(out/'index.html')],check=True)
 subprocess.run(['node',str(ROOT/'tests/model_satchel_browser_preservation_v11_442.mjs'),str(out/'index.html')],check=True)
