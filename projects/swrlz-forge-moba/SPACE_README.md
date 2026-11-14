@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.441
+title: §wyrl§ Engine v11.442
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,12 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.442 · A movable satchel tutorial for mobile browsers (2026-11-14)
+
+The regular browser lesson now reuses its existing tutor in a separate nonmodal window, with touch/mouse dragging, collapse, minimize/reopen, reset and viewport clamping. Phone instructions provide a manual connected body, thin flap, segmented strap and sphere clasp using the native editor. Transform is discoverable by name, and three-decimal numeric precision accepts the demonstrated dimensions and valid mesh-tool defaults. Existing VR windows, native geometry/history and project saving remain authoritative.
+
+See [the mobile tutorial and verification report](docs/MODEL_SATCHEL_MOBILE_V11_442.md) for the regular-browser workflow, checks and publication status.
 
 ## §E v11.441 · A followable one-body satchel lesson in VR (2026-11-13)
 

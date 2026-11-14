@@ -1,3 +1,9 @@
+## §E v11.442 · A movable satchel tutorial for mobile browsers (2026-11-14)
+
+The regular browser lesson now reuses its existing tutor in a separate nonmodal window, with touch/mouse dragging, collapse, minimize/reopen, reset and viewport clamping. Phone instructions provide a manual connected body, thin flap, segmented strap and sphere clasp using the native editor. Transform is discoverable by name, and three-decimal numeric precision accepts the demonstrated dimensions and valid mesh-tool defaults. Existing VR windows, native geometry/history and project saving remain authoritative.
+
+See [the mobile tutorial and verification report](docs/MODEL_SATCHEL_MOBILE_V11_442.md) for the regular-browser workflow, checks and publication status.
+
 ## §E v11.441 · A followable one-body satchel lesson in VR (2026-11-13)
 
 The Apprentice Satchel lesson now starts with one ordinary bag-proportioned cube. The learner makes it editable, Insets the top, and Extrudes inward; separate flap, open-center strap and clasp come from existing Draw, Thicken, Create and Grab tools. Short controller-specific instructions, state-aware Show Me and geometry checks teach these actual operations without generating a finished bag. The tutorial opens beside the model and remains independently movable with either Grip. Hidden quest cards cannot intercept visible materials; Trigger and Grip respect the visible quest menu. Existing projects, Undo, native local save and older supported lesson geometry remain compatible.

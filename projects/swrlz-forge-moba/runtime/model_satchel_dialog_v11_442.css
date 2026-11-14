@@ -1,0 +1,65 @@
+/* SE442_SATCHEL_DIALOG_CSS_START */
+html body #se412Panel.se442-satchel-dialog{
+ box-sizing:border-box;position:fixed!important;inset:auto;z-index:2025;
+ width:var(--se442-window-width,366px)!important;min-width:0;
+ max-width:calc(100vw - 16px);height:auto;min-height:54px;
+ max-height:var(--se442-window-height,580px)!important;
+ display:flex;flex-flow:column nowrap;overflow:hidden;margin:0;
+ border:1px solid #b18bd2;border-radius:12px;background:#1d1729f5;
+ box-shadow:0 12px 36px #0008;color:#f6edff;font:13px/1.45 system-ui,sans-serif;
+ pointer-events:auto;touch-action:auto;isolation:isolate;
+}
+html body #se412Panel.se442-satchel-dialog *,html body #se442SatchelLauncher{box-sizing:border-box}
+html body #se412Panel.se442-satchel-dialog[hidden],html body #se442SatchelLauncher[hidden]{display:none!important}
+html body #se412Panel.se442-satchel-dialog #se412Drag{
+ display:flex;flex:0 0 auto;align-items:center;gap:3px;min-height:54px;
+ padding:4px 5px 4px 10px;margin:0;border-bottom:1px solid #75588e;
+ border-radius:11px 11px 0 0;background:#38284a;color:#f8eeff;
+ cursor:grab;touch-action:none;user-select:none;
+}
+html body #se412Panel.se442-satchel-dialog.se442-dragging #se412Drag{cursor:grabbing}
+html body #se412Panel.se442-satchel-dialog .se442-satchel-heading{flex:1;min-width:0;display:flex;flex-direction:column;gap:1px}
+html body #se412Panel.se442-satchel-dialog #se442SatchelTitle{font-size:12px;line-height:1.25;white-space:normal;overflow-wrap:anywhere}
+html body #se412Panel.se442-satchel-dialog #se412Count{font-size:10px;line-height:1.2;color:#dbc5eb;white-space:normal}
+html body #se412Panel.se442-satchel-dialog #se412Drag button{
+ display:inline-flex;flex:0 0 44px;align-items:center;justify-content:center;
+ min-width:44px;min-height:44px;width:44px;height:44px;margin:0;padding:0;
+ border:1px solid #9775b0;border-radius:8px;background:#4d3663;color:#fff;
+ font:500 22px/1 system-ui,sans-serif;cursor:pointer;touch-action:manipulation;
+}
+html body #se412Panel.se442-satchel-dialog #se412Drag button:hover{background:#654782;border-color:#cda8e9}
+html body #se412Panel.se442-satchel-dialog .se412-content{
+ flex:1 1 auto;min-height:0;overflow-x:hidden;overflow-y:auto;
+ overscroll-behavior:contain;touch-action:pan-y;scrollbar-width:thin;
+ padding:10px 12px 14px;scroll-padding-block:10px;
+}
+html body #se412Panel.se442-satchel-dialog.collapsed{min-height:54px;max-height:56px!important}
+html body #se412Panel.se442-satchel-dialog.collapsed #se412Drag{border-bottom:0;border-radius:11px}
+html body #se412Panel.se442-satchel-dialog.collapsed .se412-content{display:none!important}
+html body #se412Panel.se442-satchel-dialog :is(button,summary){touch-action:manipulation}
+html body #se412Panel.se442-satchel-dialog .se412-content button{
+ min-height:44px;min-width:44px;white-space:normal;cursor:pointer;
+ border:1px solid #9776b2;border-radius:7px;background:#49325e;color:#f8f2ff;
+ font:650 12px/1.3 system-ui,sans-serif;padding:7px 8px;
+}
+html body #se412Panel.se442-satchel-dialog #se412Checks .se412-check{min-height:44px;width:100%;text-align:left}
+html body #se412Panel.se442-satchel-dialog #se412Checks .se412-check.active{background:#62427f;border-color:#d3a7f2;color:#fff}
+html body #se412Panel.se442-satchel-dialog #se412Mark{background:#2e604e;border-color:#70bba0}
+html body #se412Panel.se442-satchel-dialog .se412-actions{grid-template-columns:44px minmax(0,1fr) minmax(0,1fr) 44px}
+html body #se412Panel.se442-satchel-dialog .se412-actions button{padding:6px 4px;font-size:11px}
+html body #se412Panel.se442-satchel-dialog summary{min-height:44px;display:flex;align-items:center}
+html body #se412Panel.se442-satchel-dialog .se412-content button:disabled{opacity:.42;cursor:not-allowed}
+html body #se412Panel.se442-satchel-dialog :is(h3,p,small){overflow-wrap:anywhere}
+html body #se412Panel.se442-satchel-dialog :is(button,summary,#se412Drag):focus-visible,
+html body #se442SatchelLauncher:focus-visible{outline:2px solid #ffdf96;outline-offset:-3px}
+html body #se442SatchelLauncher{
+ position:fixed;inset:auto;z-index:2025;display:inline-flex;align-items:center;justify-content:center;
+ min-width:44px;min-height:44px;max-width:calc(100vw - 16px);padding:10px 14px;margin:0;
+ border:1px solid #be97df;border-radius:11px;background:#39264def;color:#fff2ff;
+ box-shadow:0 6px 20px #0007;font:700 12px/1.3 system-ui,sans-serif;
+ cursor:pointer;pointer-events:auto;touch-action:manipulation;
+}
+html body #se442SatchelLauncher:hover{background:#55356d}
+html body #se412Panel.se442-satchel-dialog[data-se442-layout="mobile"] .se412-content{padding:8px 10px 12px}
+@media(prefers-reduced-motion:no-preference){html body #se442SatchelLauncher{transition:background .12s ease}}
+/* SE442_SATCHEL_DIALOG_CSS_END */
