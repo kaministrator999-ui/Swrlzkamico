@@ -1,0 +1,34 @@
+name: Audit §C saved-draft continuation preview and resumed decode speed
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/hf-resume-preview-performance-audit.yml"]
+permissions: {contents: read}
+jobs:
+  read:
+    runs-on: ubuntu-latest
+    timeout-minutes: 7
+    steps:
+      - run: python -m pip install 'huggingface_hub>=0.34,<2'
+      - shell: bash
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          from huggingface_hub import HfApi,hf_hub_download
+          R="kamiloki/Swyrlz";rev=HfApi().repo_info(R,repo_type="space").sha
+          print("RESUME_PREVIEW_REV",rev,flush=True)
+          ranges={
+           "qwen_coder_engine.py":[(535,650),(775,885),(895,1028),(1250,1358)],
+           "station.py":[(1560,1640),(1350,1435),(1170,1238),(1895,1945)],
+           "chat/§wyrlz/index.html":[(4200,4270),(4270,4335),(4500,4560),(4635,4730),(3915,4002)],
+          }
+          for file,sections in ranges.items():
+              lines=Path(hf_hub_download(R,file,repo_type="space",revision=rev)).read_text().splitlines()
+              for start,end in sections:
+                  for first in range(start,min(end,len(lines)),24):
+                      batch=lines[first-1:min(first+23,end,len(lines))]
+                      print("RESUME_PREVIEW_LINES",json.dumps({"file":file,"start":first,
+                         "code":"\n".join(str(first+i)+" "+line for i,line in enumerate(batch))},
+                         ensure_ascii=False),flush=True)
+          PY
