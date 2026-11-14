@@ -1,3 +1,9 @@
+## §E v11.448 · Inset preview and aligned dock handles (2026-11-14)
+
+In the Model Studio phone/desktop Shape tools, choosing **Inset** or **Extrude** with an already selected flat face now runs the native geometry Preview immediately; the user still presses Apply to commit. A plain primitive containing saved component vertex edits can be converted by explicit confirmation: it bakes the visible vertex displacements into welded editable topology, regenerates plain UVs and creates one Undo checkpoint preserving the original edits; protected rigging, texture, paint and procedural data remain blocked. If no face is selected, the shortcut instructs the user to select one instead of silently doing nothing.
+
+Desktop-mode purple resize grips now follow the actual four-column editor grid: one stays on the hierarchy boundary, the other on the tool-rail/inspector boundary. The existing resize interactions are reused; the inspector grip disappears when the inspector is collapsed and both grips are hidden in Compact mode. Physical Android/browser acceptance remains pending.
+
 ## §E v11.447 · Smooth viewport orbit while editing faces (2026-11-14)
 
 Face-mode tap drags and Inset/Extrude topology previews now permit smooth, live camera orbit. Previously the component-tap path applied camera yaw/pitch only on pointer release, making a dragged view appear stuck then jump; the native topology-preview path blocked pointerdown altogether. A frame-coalesced camera update now follows one-finger drag without changing mesh data, while two-finger pinch/pan, configurable touch inversion, native Preview/Apply/Cancel, Undo, selection and VR tools retain their existing behavior. Physical Android acceptance is pending.
