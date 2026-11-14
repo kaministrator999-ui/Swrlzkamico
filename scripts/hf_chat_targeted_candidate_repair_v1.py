@@ -83,13 +83,14 @@ MAIN_REPAIR='''            if candidate_check.get("status")=="REJECT" and code_d
                             yield {"type":"STATUS","phase":"CODE_REPAIR_NOT_APPLIED",
                                 "reason":"No validator improvement or new regression"}
                             break
+                        previous_fp=candidate_fp
                         candidate_text,candidate_check,candidate_fp=proposed,next_check,next_fp
                         regeneration_attempted=True
                         regeneration_reason="source-preserving-targeted-patch"
                         attempt=candidate_attempt_receipt(
                             repair_number+1,"targeted-source-patch",
                             repair_timing,candidate_check,candidate_fp,
-                            previous_attempt_fingerprint=repair_receipt["before"],
+                            previous_attempt_fingerprint=previous_fp,
                             repair_target_fingerprint=repair_target_fp,
                         )
                         candidate_attempts.append(attempt)
