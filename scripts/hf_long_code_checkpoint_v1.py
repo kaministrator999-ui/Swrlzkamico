@@ -453,8 +453,21 @@ def live_smoke():
             elif kind in ("COMPLETE","COMPLETED","FAILED","CANCELLED"):
                 terminal=kind;break
     text="".join(code)
+    # Station's browser-facing stream intentionally does not expose the
+    # complete validator receipt. Retrieve it from the request-scoped sync
+    # state, rather than treating absent SSE metadata as a model failure.
+    for attempt in range(9):
+        with opener.open(urllib.request.Request(BASE+"/api/lalm_station/sync",
+                           headers=HEAD),timeout=25) as response:
+            station_state=json.load(response)
+        active=station_state.get("activeGeneration") or {}
+        if active.get("requestId")==request_id:
+            validation=active.get("candidateValidation") or {}
+            if validation.get("status"):break
+        time.sleep(2)
     emit("LIVE_CODING_SMOKE",terminal=terminal,sourceChars=len(text),
          previewChars=draft,validationStatus=(validation or {}).get("status"),
+         observedRequestId=(station_state.get("activeGeneration") or {}).get("requestId")==request_id,
          html=("<html" in text.lower() or "<!doctype html" in text.lower()))
     if terminal not in ("COMPLETE","COMPLETED") or "<html" not in text.lower():
         raise RuntimeError("Live ordinary code generation failed after patch")
