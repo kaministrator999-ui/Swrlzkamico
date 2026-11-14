@@ -3,6 +3,7 @@ name: Deploy §wyrl§ Engine to Hugging Face
 # Deliberately minimal: build the release package and upload it.
 # No browser tests, asset-fetch audit, live polling, or separate verification.
 on:
+  workflow_dispatch:
   push:
     branches: [main]
     paths:
@@ -28,7 +29,7 @@ jobs:
         with:
           python-version: "3.11"
       - name: Package the engine for HF
-        run: python projects/swrlz-forge-moba/scripts/verify_v11_442_release.py --output dist/swrlz-forge-moba --request
+        run: python projects/swrlz-forge-moba/scripts/verify_v11_443_release.py --output dist/swrlz-forge-moba --request
       - name: Upload to the existing static HF Space
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
