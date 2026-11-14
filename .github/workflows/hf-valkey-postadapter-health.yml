@@ -1,0 +1,19 @@
+name: Verify safe live §C Valkey adapter release
+on:
+  push:
+    branches: [feature/aiven-valkey-storage-adapter]
+    paths: ["scripts/hf_valkey_postadapter_health.py",".github/workflows/hf-valkey-postadapter-health.yml"]
+permissions: {contents: read}
+jobs:
+  health:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.11"}
+      - run: python -m pip install "huggingface_hub>=0.34,<2"
+      - name: Verify dormant backend, auth endpoint, and live TLS probe
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: python -u scripts/hf_valkey_postadapter_health.py
