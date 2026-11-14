@@ -5,5 +5,6 @@
   "reason": "Progressive VR main tool rail far right, contextual submenu with Sculpt/Inset/Extrude and native modifiers third panel; phone and desktop compact face shortcuts",
   "sourcePatch": "patches/v11_445_shape_face_discovery.py",
   "expectedPrevious": "v11.444",
-  "verificationAttempt": 1
+  "verificationAttempt": 2,
+  "note": "Target the first actual document head; keep source unchanged otherwise."
 }
