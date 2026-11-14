@@ -1,0 +1,50 @@
+name: Audit §C multifile upload, GitHub and project-aware context (read-only)
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/hf-project-multifile-audit.yml"]
+permissions: {contents: read}
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - run: python -m pip install 'huggingface_hub>=0.34,<2'
+      - run: |
+          python - <<'PY'
+          import ast,json,re
+          from pathlib import Path
+          from huggingface_hub import HfApi,hf_hub_download
+          S="kamiloki/Swyrlz"; api=HfApi();rev=api.repo_info(S,repo_type="space").sha
+          paths=api.list_repo_files(S,repo_type="space",revision=rev)
+          print("PROJECT_AUDIT_REV",rev,flush=True)
+          print("PROJECT_FILES",json.dumps([x for x in paths if
+              any(q in x.lower() for q in ("github","upload","file","project","artifact","source","repo","forge","style","theme","zip","station","chat/")) and
+              x.endswith((".py",".js",".html",".css"))][:200]),flush=True)
+          selected=("station.py","github_connection.py","github_read_inference_v235.py",
+                    "qwen_coder_engine.py","brain_programming.py",
+                    "chat/§wyrlz/index.html","project_context.py",
+                    "chat_project_workflow.py")
+          keywords=re.compile(r"upload|multipart|file|attachment|zip|project|repository|github|github_read|source|code_delivery|function.*profile|artifact|style|theme|inject|history|context",re.I)
+          for name in selected:
+              if name not in paths:continue
+              text=Path(hf_hub_download(S,name,repo_type="space",revision=rev)).read_text()
+              lines=text.splitlines()
+              hits=[i for i,line in enumerate(lines) if keywords.search(line)]
+              print("PROJECT_FILE_SUMMARY",json.dumps({"file":name,"chars":len(text),"lines":len(lines),
+                     "hits":len(hits),"matchedLines":[i+1 for i in hits[:120]]}),flush=True)
+              if name.endswith(".py"):
+                  tree=ast.parse(text)
+                  for item in tree.body:
+                      if isinstance(item,(ast.FunctionDef,ast.AsyncFunctionDef)) and
+                          (keywords.search(item.name) or item.name in ("generate_events",)):
+                          print("PROJECT_FUNCTION",json.dumps({"file":name,"name":item.name,
+                               "start":item.lineno,"end":item.end_lineno}),flush=True)
+              for i in hits[:25 if "index.html" in name else 40]:
+                  if "index.html" in name and len(lines[i])>1300:continue
+                  a=max(0,i-1);b=min(len(lines),i+3)
+                  print("PROJECT_EXCERPT",json.dumps({"file":name,"line":i+1,
+                       "source":[str(j+1)+" "+lines[j][:700] for j in range(a,b)]},
+                       ensure_ascii=False),flush=True)
+          print("PROJECT_AUDIT_COMPLETE",flush=True)
+          PY
