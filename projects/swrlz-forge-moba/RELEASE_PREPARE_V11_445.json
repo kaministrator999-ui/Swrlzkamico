@@ -1,0 +1,9 @@
+{
+  "schema": "swrlz-forge-release-prepare-v1",
+  "version": "v11.445",
+  "ownerApproved": true,
+  "reason": "Progressive VR main tool rail far right, contextual submenu with Sculpt/Inset/Extrude and native modifiers third panel; phone and desktop compact face shortcuts",
+  "sourcePatch": "patches/v11_445_shape_face_discovery.py",
+  "expectedPrevious": "v11.444",
+  "verificationAttempt": 1
+}
