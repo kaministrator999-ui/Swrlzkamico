@@ -333,7 +333,13 @@ def read_current(api):
     rev=api.repo_info(SPACE,repo_type="space").sha
     existing=api.list_repo_files(SPACE,repo_type="space",revision=rev)
     if MODULE in existing:
-        raise RuntimeError("Analyzer file already present; explicit migration required")
+        # A failed guarded rollout may leave this additive helper dormant
+        # after restoring the exact prior Station/Chat/engine sources.
+        # Reuse it only when bytes are identical to this pinned release.
+        current=Path(hf_hub_download(SPACE,MODULE,repo_type="space",
+                   revision=rev,token=api.token)).read_bytes()
+        if h(current)!=h(MODULE_LOCAL.read_bytes()):
+            raise RuntimeError("Existing analyzer differs from release source; manual migration required")
     before={name:Path(hf_hub_download(SPACE,name,repo_type="space",
                 revision=rev,token=api.token)).read_bytes() for name in FILES}
     return rev,before
@@ -395,6 +401,23 @@ def warm(api,rev,timeout=1100):
     raise TimeoutError("9B model failed to become ready after bounded upload integration")
 
 def live_accept():
+    # Confirm the newly published UI is actually served, not merely the new
+    # source revision/9B readiness from a potentially old worker. A rebuild
+    # can pass the readiness endpoint while the old Station still answers.
+    deadline=time.monotonic()+540
+    while time.monotonic()<deadline:
+        try:
+            url=BASE+"/chat/§wyrlz?__source_import_probe="+uuid.uuid4().hex
+            with urllib.request.urlopen(urllib.request.Request(url,headers=HEAD),timeout=20) as response:
+                body=response.read(720000).decode("utf-8",errors="replace")
+            if 'id="projectFilePicker"' in body and 'id="projectFilePickButton"' in body:
+                emit("LIVE_NEW_COMPOSER_OBSERVED",sourceFilesControl=True)
+                break
+        except Exception as exc:
+            emit("LIVE_COMPOSER_PENDING",error=type(exc).__name__)
+        time.sleep(12)
+    else:
+        raise RuntimeError("Updated multi-file composer was never served")
     # Do not read or modify any real user's thread. A new isolated anonymous
     # session with a synthetic 2-file project proves storage/index projection.
     files=[{"path":"index.html","content":
@@ -415,7 +438,7 @@ def live_accept():
     with opener.open(req,timeout=35) as r:
         if r.status!=202:raise RuntimeError("Synthetic source import was rejected")
         r.read()
-    for n in range(9):
+    for n in range(18):
         with opener.open(urllib.request.Request(BASE+"/api/lalm_station/sync",headers=HEAD),timeout=25) as r:
             state=json.load(r)
         threads=state.get("threads") or []
@@ -423,7 +446,12 @@ def live_accept():
         if t is not None:
             artifacts=t.get("codeArtifacts") or []
             imported=[a for a in artifacts if a.get("importedUserSource")]
-            if len(imported)!=1:raise RuntimeError("Owned project import artifact missing")
+            if len(imported)!=1:
+                emit("LIVE_OLD_WORKER_OR_UNCOMMITTED_IMPORT",attempt=n+1,
+                     hasThread=True,artifactCount=len(artifacts),
+                     importedCount=len(imported))
+                time.sleep(5)
+                continue
             a=imported[0]
             paths={x.get("path") for x in a.get("files") or []}
             if paths!={"index.html","src/main.js"}:
@@ -437,7 +465,7 @@ def live_accept():
                  sourceBytes=sum(len(x["content"].encode()) for x in files))
             break
         time.sleep(3)
-    else:raise RuntimeError("Synthetic Station thread and imported files not visible")
+    else:raise RuntimeError("Updated Station did not persist synthetic imported files; refusing acceptance")
     # No need to wait for code output to test read-only import; cancellation
     # prevents background resource use.
     try:
