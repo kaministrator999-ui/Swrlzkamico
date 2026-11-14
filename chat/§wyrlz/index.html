@@ -1010,6 +1010,83 @@
           threadList.appendChild(row);
         }
       };
+      // §C live coding controls v1. This is an independent, non-cancelling
+      // control plane. Submitting a note never calls the ordinary chat send.
+      const liveControlPanel=document.createElement("details");
+      liveControlPanel.className="swrlz-live-coding-controls";
+      liveControlPanel.style.cssText="display:none;margin:7px auto 12px;max-width:740px;padding:9px 12px;border:1px solid rgba(143,234,255,.26);border-radius:12px;background:rgba(5,22,38,.89);color:var(--text)";
+      const liveControlSummary=document.createElement("summary");
+      liveControlSummary.textContent="Coding task · Progress / Guide";
+      liveControlSummary.style.cssText="cursor:pointer;font-size:12px;font-weight:650;color:var(--ice)";
+      const liveControlBody=document.createElement("div");
+      liveControlBody.style.cssText="display:flex;flex-direction:column;gap:8px;padding-top:8px";
+      const liveControlMessage=document.createElement("textarea");
+      liveControlMessage.rows=2;
+      liveControlMessage.placeholder="Ask about progress, or leave a coding instruction…";
+      liveControlMessage.setAttribute("aria-label","Coding question or steering instruction");
+      liveControlMessage.style.cssText="width:100%;resize:vertical;min-height:52px;border-radius:8px;border:1px solid rgba(143,234,255,.24);background:#07192a;color:#eef8ff;padding:9px;font:inherit;font-size:13px";
+      const liveControlActions=document.createElement("div");
+      liveControlActions.style.cssText="display:flex;flex-wrap:wrap;gap:6px";
+      const liveControlReceipt=document.createElement("div");
+      liveControlReceipt.setAttribute("role","status");
+      liveControlReceipt.setAttribute("aria-live","polite");
+      liveControlReceipt.style.cssText="font-size:12px;line-height:1.45;color:var(--secondary);white-space:pre-wrap";
+      const liveControlButton=(label,kind)=>{
+        const button=document.createElement("button");button.type="button";button.textContent=label;
+        button.style.cssText="padding:7px 9px;border:1px solid rgba(143,234,255,.35);border-radius:8px;background:#0b3046;color:#eef8ff;cursor:pointer;font-size:12px";
+        button.addEventListener("click",async()=>{
+          const job=stationGeneration;
+          if(!job?.requestId || job.threadId!==activeThreadId){
+            liveControlReceipt.textContent="No active coding task in this thread.";return;
+          }
+          if(kind!=="ASK_STATUS" && job.terminal){
+            liveControlReceipt.textContent="That generation already ended; start a new revision to modify it.";return;
+          }
+          const instruction=liveControlMessage.value.trim();
+          if(kind==="STEER"&&!instruction){
+            liveControlReceipt.textContent="Enter a change to the project first.";return;
+          }
+          button.disabled=true;
+          try{
+            const response=await fetch("/api/lalm_station/live-code",{
+              method:"POST",credentials:"same-origin",cache:"no-store",
+              headers:{"Content-Type":"application/json"},
+              body:JSON.stringify({requestId:job.requestId,threadId:job.threadId,
+                                   kind,text:kind==="STEER"?instruction:""})
+            });
+            const result=await response.json();
+            if(!response.ok||!result.ok)throw Error(result.code||"CONTROL_REJECTED");
+            if(kind==="ASK_STATUS"){
+              liveControlReceipt.textContent=String(result.answer||"No progress reported yet.");
+            }else{
+              liveControlReceipt.textContent=kind==="STEER"
+                ?"Instruction recorded; existing coding continues. Not yet applied—waiting for an executor checkpoint."
+                :"Checkpoint request recorded; existing coding continues. A verified snapshot is not available until the executor confirms it.";
+              if(kind==="STEER")liveControlMessage.value="";
+            }
+          }catch(error){
+            liveControlReceipt.textContent="Unable to record coding control: "+String(error.message||error);
+          }finally{button.disabled=false;}
+        });
+        return button;
+      };
+      liveControlActions.append(
+        liveControlButton("Progress","ASK_STATUS"),
+        liveControlButton("Steer coding","STEER"),
+        liveControlButton("Request checkpoint","CHECKPOINT")
+      );
+      liveControlBody.append(liveControlMessage,liveControlActions,liveControlReceipt);
+      liveControlPanel.append(liveControlSummary,liveControlBody);
+      document.getElementById("composerShell")?.before(liveControlPanel);
+      function renderLiveControlPanel(){
+        const g=stationGeneration;
+        const visible=!!g?.requestId&&g.threadId===activeThreadId;
+        liveControlPanel.style.display=visible?"block":"none";
+        if(visible){
+          liveControlSummary.textContent=(g.terminal?"Last coding task":"Coding task running")+" · Progress / Guide";
+        }
+      }
+
       let stationGeneration=null, stationPoll=0, stationSyncInFlight=false, stationSyncAgain=false, sending=false, stationAwaitingCommit="";
       const applyChatState = data => {
         chatRevision=Number(data?.revision||0);
@@ -1050,6 +1127,7 @@
         }
       };
       const renderStationGeneration=()=>{
+        renderLiveControlPanel();
         const g=stationGeneration;
         const existing=messageList.querySelector(".station-live-message");
         const thread=currentThread();
