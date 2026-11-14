@@ -104,8 +104,10 @@ def _swrlz_resume_code_events(payload):
     yield {"type":"RESOURCE","cpuCapacity":SHARED_CPU_CAPACITY,
            "decodeThreads":SHARED_DECODE_THREADS,"batchThreads":SHARED_BATCH_THREADS,
            "maxResponseTokens":4096}
-    draft,timing=yield from _swrlz_code_candidate_preview(
-        model,[],4096,0.25,1,allow_continue=True,seed_text=source)
+    # Match the normal coding engine's model execution serialization.
+    with _lock:
+        draft,timing=yield from _swrlz_code_candidate_preview(
+            model,[],4096,0.25,1,allow_continue=True,seed_text=source)
     completion=completion_validation(_candidate_structure_check(draft,programming,history),timing)
     accumulated=int(checkpoint.get("segmentsCompleted") or 0)+int(timing.get("continuationSegments") or 0)
     if timing.get("finishReason")=="length" or completion.get("status")!="PASS":
@@ -174,21 +176,9 @@ def patch_engine(before):
             )
         )
     )'''
-    more='''    # Every substantive code delivery can exceed one inference segment.
-    # A fresh full HTML page and an uploaded multi-file project are no
-    # exception; natural-language replies still use their fast path.
-    auto_resume_existing_source=bool(
-        code_delivery and (web_page_delivery or expanded_delivery
-        or bool(payload.get("projectImportManifest"))
-        or preserve_existing_source(programming)
-        or bool(programming.get("artifactContinuation"))
-        or bool(programming.get("artifactEditSource"))
-        or bool(programming.get("artifactMutationRequested"))
-        or any(item.get("role")=="assistant" and
-               source_fence_present(str(item.get("content") or item.get("text") or ""))
-               for item in list(history or [])[-8:])
-        )
-    )'''
+    more='''    # Any actual code deliverable, new or existing, may exceed one
+    # model decode. Review/explanation and ordinary chat retain fast paths.
+    auto_resume_existing_source=bool(code_delivery)'''
     source=once(source,eligibility,more,"code-stage eligibility")
     line='''            if candidate_check.get("status")=="REJECT":
                 yield {"type":"CANDIDATE_PREVIEW_RESET","attempt":2}'''
