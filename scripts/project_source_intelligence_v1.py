@@ -106,7 +106,7 @@ def _unique_evidence(files: list[dict], regex: re.Pattern, *,
     seen=set()
     for item in files:
         for m in regex.finditer(item["content"]):
-            value=m.group(value_group) if value_group else m.group()
+            value=(m.group(value_group) if value_group else m.group()).strip()
             if not value: continue
             key=value.lower()
             if key in seen:continue
