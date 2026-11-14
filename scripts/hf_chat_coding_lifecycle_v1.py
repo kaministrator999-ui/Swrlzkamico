@@ -73,6 +73,30 @@ def patch_engine(raw):
         "        if pause_at_budget:break\n"
         "        if part_observation.get(\"finishReason\")!=\"length\":break",
         "stop after partial segment")
+    # Streaming small code tokens individually makes Station update the
+    # same long snapshot thousands of times. Coalesce frequent chunks while
+    # preserving the exact byte-for-byte generated candidate.
+    new=exactly(new,'    first_token_at=None\n    parts=[seed_text] if seed_text else []',
+        '    first_token_at=None\n    preview_buffer=""\n    preview_last_flush=started\n    parts=[seed_text] if seed_text else []',
+        "preview event coalescing")
+    new=exactly(new,
+        '            if addition:\n                parts.append(addition)\n                yield {"type":"CANDIDATE_PREVIEW_DELTA","text":addition,"attempt":attempt}\n        if pending:',
+        '            if addition:\n                parts.append(addition)\n                preview_buffer+=addition\n                if len(preview_buffer)>=128 or time.perf_counter()-preview_last_flush>=0.35:\n                    yield {"type":"CANDIDATE_PREVIEW_DELTA","text":preview_buffer,"attempt":attempt}\n                    preview_buffer=""\n                    preview_last_flush=time.perf_counter()\n        if pending:',
+        "coalesce native token previews")
+    new=exactly(new,
+        '        if pending:\n            addition=_swrlz_trim_code_resume("".join(parts),pending)\n            if addition:\n                parts.append(addition)\n                yield {"type":"CANDIDATE_PREVIEW_DELTA","text":addition,"attempt":attempt}',
+        '        if pending:\n            addition=_swrlz_trim_code_resume("".join(parts),pending)\n            if addition:\n                parts.append(addition)\n                preview_buffer+=addition',
+        "buffer continuation tail")
+    new=exactly(new,
+        '        observed.append(part_observation)\n        if part_observation.get("finishReason")!="length":break',
+        '        if preview_buffer:\n            yield {"type":"CANDIDATE_PREVIEW_DELTA","text":preview_buffer,"attempt":attempt}\n            preview_buffer=""\n            preview_last_flush=time.perf_counter()\n        observed.append(part_observation)\n        if part_observation.get("finishReason")!="length":break',
+        "flush preview at segment boundary")
+    # Shorten repeated CPU prefill on resumed work; the full saved source
+    # remains held by the server for final delivery and SHA validation.
+    new=exactly(new,
+        '    next_messages=_swrlz_resume_tail_messages(seed_text) if seed_text else messages',
+        '    next_messages=_swrlz_resume_tail_messages(seed_text) if seed_text else messages',
+        "noop bounded resume sanity")
     source=exactly(source,old,new,"exact code preview helper")
     # This callback is an in-memory capability supplied solely by Station.
     key='''    with _lock:
@@ -235,6 +259,39 @@ def patch_station(raw):
                 yield json.dumps({"type":"DELTA","text":delta,"offsetUtf16":offset_utf16,
                                   "seq":int(g.get("lastSeq") or 0),"requestId":rid},ensure_ascii=False)+"\\n"'''
     text=exactly(text,anchor,replacement,"accepted response offset on reconnect")
+    # A verified Continue code command starts with the exact previous source
+    # visible in the new generation, not an empty provisional code box.
+    # This remains unverified and account/thread scoped.
+    seed_anchor='''    payload={"requestId":rid,"threadId":tid,"prompt":_inference_prompt_after_vision(prompt),'''
+    seed_replacement='''        if resume_code is not None:
+            saved_source=str(resume_code.get("source") or "")
+            if saved_source and len(saved_source.encode("utf-8"))<=240*1024:
+                active=s["activeGeneration"]
+                active["previewText"]=saved_source
+                active["codeDraftCheckpoint"]={
+                    "sourceSha256":resume_code["sourceSha256"],
+                    "bytes":len(saved_source.encode("utf-8")),
+                    "segments":int(resume_code.get("segmentsCompleted") or 0),
+                    "resuming":True,
+                    "verificationState":"UNVERIFIED_INCOMPLETE"}
+                active["lastCodeProgressAtUnixMs"]=now_ms
+                active["status"].append({"phase":"RESUMING_SAVED_CODE",
+                    "reason":"Restored full saved draft; model is extending its source",
+                    "atUnixMs":now_ms})
+    payload={"requestId":rid,"threadId":tid,"prompt":_inference_prompt_after_vision(prompt),'''
+    text=exactly(text,seed_anchor,seed_replacement,"seed saved draft in active Station snapshot")
+    text=exactly(text,
+        'if len(str(g.get("previewText") or ""))+len(part)<=131072:',
+        'if len(str(g.get("previewText") or ""))+len(part)<=262144:',
+        "allow full 240KiB saved source in provisional preview")
+    text=exactly(text,
+        '                        target.pop("pendingCodeGeneration",None)\n                        g["status"].append',
+        '                        target.pop("pendingCodeGeneration",None)\n                        g.pop("codeDraftCheckpoint",None)\n                        g["status"].append',
+        "clear checkpoint preview metadata only when verified output completes")
+    text=exactly(text,
+        '                    delta=str(event.get("text") or "");text+=delta;g["text"]=text\n                    g["previewText"]=""',
+        '                    delta=str(event.get("text") or "");text+=delta;g["text"]=text\n                    if not (g.get("codeDraftCheckpoint") and g["codeDraftCheckpoint"].get("verificationState")=="UNVERIFIED_INCOMPLETE"):\n                        g["previewText"]=""',
+        "keep saved draft visible during paused explanatory response")
     ast.parse(text,filename=STATION)
     return text.encode("utf-8")
 
@@ -287,6 +344,14 @@ def patch_ui(raw):
           // receipt and do not mistake temporary browser suspension for a Stop.
           if(projectionEpoch===accountProjectionEpoch)await syncStation(true);'''
     source=exactly(source,anchor,replacement,"Stop authoritative receipt before leaving stream")
+    source=exactly(source,
+        '        const draftText=(!g.terminal&&!String(g.text||"").trim())\n          ?String(g.previewText||""):"";',
+        '        const savedDraft=!!(g.codeDraftCheckpoint?.verificationState==="UNVERIFIED_INCOMPLETE");\n        const draftText=(savedDraft||(!g.terminal&&!String(g.text||"").trim()))\n          ?String(g.previewText||""):"";',
+        "show saved code during continuation and after pause")
+    source=exactly(source,
+        '          const code=draftPanel.querySelector("pre");\n          if(code&&code.textContent!==draftText){\n            const follow=codeViewNearBottom(code);\n            code.textContent=draftText;\n            if(follow)code.scrollTop=code.scrollHeight;\n          }',
+        '          const draftLabel=draftPanel.querySelector(".swrlz-code-draft-label");\n          if(draftLabel)draftLabel.textContent=savedDraft\n            ?(g.terminal?"Saved unverified code · Continue code to resume":"Saved draft · continuing · not yet verified")\n            :"Code draft · generating and validating · not saved";\n          const code=draftPanel.querySelector("pre");\n          if(code){\n            const shown=draftPanel._swrlzShownSource||"";\n            if(shown!==draftText){\n              const follow=codeViewNearBottom(code);\n              if(shown&&draftText.startsWith(shown)&&code.firstChild?.nodeType===Node.TEXT_NODE)\n                code.firstChild.appendData(draftText.slice(shown.length));\n              else code.textContent=draftText;\n              draftPanel._swrlzShownSource=draftText;\n              if(follow)code.scrollTop=code.scrollHeight;\n            }\n          }',
+        "append only newly decoded code in draft box")
     return source.encode("utf-8")
 
 def check_js(html):
@@ -343,6 +408,10 @@ def check_candidate(before,after):
                 'id="projectFilePicker"','id="micButton"','CANDIDATE_PREVIEW_DELTA'):
         assert key in html,key
     assert "streamAbortController?.abort();" not in html[html.index('stopButton.addEventListener("click"'):html.index("// §E Analyze is a user-clicked",html.index('stopButton.addEventListener("click"'))]
+    assert "preview_buffer" in code and "len(preview_buffer)>=128" in code
+    assert '"resuming":True' in st and '262144' in st
+    assert "g.pop(\"codeDraftCheckpoint\",None)" in st
+    assert "savedDraft" in html and "appendData(draftText.slice(shown.length))" in html
     assert all(before[name]!=after[name] for name in FILES)
     record("SOURCE_CONTRACTS_PASS",files=list(FILES),existingModel=True,
            unchangedThreadBudget=True,sourceRevisionPreserved=True)
