@@ -2,7 +2,10 @@ name: Preflight §C bounded multi-file source imports and UI (read-only)
 on:
   push:
     branches: [main]
-    paths: [".github/workflows/hf-project-files-bridge-preflight.yml"]
+    paths:
+      - ".github/workflows/hf-project-files-bridge-preflight.yml"
+      - "scripts/hf_chat_project_files_bridge_v1.py"
+      - "scripts/project_source_intelligence_v1.py"
 permissions: {contents: read}
 jobs:
   check:
