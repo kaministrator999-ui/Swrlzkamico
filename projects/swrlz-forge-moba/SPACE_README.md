@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.442
+title: §wyrl§ Engine v11.443
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,13 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.443 · Vertical VR tools and attached slide-out settings (2026-11-14)
+
+Model Studio VR now uses a persistent vertical tool dock with contextual native controls that slide out to the right. The toolbar and expanded settings remain one movable world-space menu using the existing ray hover, Trigger and Grip interactions; closed drawer surfaces block no model input. Active transform gizmos take priority over meshes while visible UI retains first priority. Drawing assistance and physical headset acceptance remain separate.
+
+See [the v11.443 VR dock contract](docs/MODEL_VR_VERTICAL_DOCK_V11_443.md) for scope, controls and verification.
+
 
 ## §E v11.442 · A movable satchel tutorial for mobile browsers (2026-11-14)
 
