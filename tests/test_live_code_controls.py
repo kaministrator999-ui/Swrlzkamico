@@ -46,7 +46,7 @@ class FakeStore:
             self.controls=self.controls[-40:];return "OK"
         if op=="EXPIRE":return 1
         if op=="EVAL":
-            index=int(args[5]);old=args[6];new=args[7]
+            index=int(args[4]);old=args[5];new=args[6]
             if self.controls[index]!=old:return 0
             self.controls[index]=new;return 1
         raise AssertionError(op)
