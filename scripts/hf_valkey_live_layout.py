@@ -54,6 +54,37 @@ def main():
             continue
         raw=Path(hf_hub_download(repo_id=TARGET,filename=filename,repo_type="space",revision=info.sha,token=token)).read_text("utf-8")
         result.append(inspect_source(filename,raw))
+    # Report only variable/secret *names*; provider never allows reading secret values.
+    secret_keys=set(api.get_space_secrets(TARGET))
+    variable_keys=set(api.get_space_variables(TARGET))
+    providers=sorted(x for x in secret_keys|variable_keys if re.search(r"REDIS|UPSTASH|VALKEY|^KV_|BLOB",x,re.I))
+    print("SWRLZ_LIVE_STORAGE_CONFIG "+json.dumps({
+        "secret_names":sorted(secret_keys.intersection(providers)),
+        "variable_names":sorted(variable_keys.intersection(providers)),
+    }))
+    if "station.py" in names:
+        code=Path(hf_hub_download(repo_id=TARGET,filename="station.py",repo_type="space",revision=info.sha,token=token)).read_text("utf-8")
+        tree=ast.parse(code)
+        functions=[x for x in tree.body if isinstance(x,(ast.FunctionDef,ast.AsyncFunctionDef))]
+        provider_funcs=[{"function":x.name,"start":x.lineno,"end":x.end_lineno}
+                        for x in functions if re.search(r"redis|upstash|persist|restore|store|chat_state",x.name,re.I)]
+        declared_envs=sorted(set(re.findall(
+            r"os\\.(?:getenv|environ\\.get)\\(\\s*['\\\"]([A-Za-z][A-Za-z_0-9]*)",code
+        )))
+        declared_envs=[x for x in declared_envs if re.search(r"REDIS|UPSTASH|VALKEY|^KV_|BLOB",x,re.I)]
+        src_lines=code.splitlines()
+        # Do not print raw literal values; snippets serve only as routing diagnostics.
+        excerpts=[]
+        for i,line in enumerate(src_lines):
+            if re.search(r"redis|upstash|valkey",line,re.I):
+                safe=re.sub(r"(['\\\"])(?:[^'\\\"]{16,})\\1",r"\\1[omitted]\\1",line.strip())
+                excerpts.append({"line":i+1,"source_shape":safe[:160]})
+        print("SWRLZ_LIVE_REDIS_CONTRACT "+json.dumps({
+            "functions":provider_funcs[:50],
+            "env_names":declared_envs,
+            "source_shapes":excerpts[:100],
+        },ensure_ascii=True))
+
     print("SWRLZ_LIVE_STORAGE_LAYOUT "+json.dumps({"revision":info.sha,"files":result,"operation":"READ_ONLY_NO_SECRET_VALUES"},ensure_ascii=True))
 
 if __name__=="__main__":
