@@ -371,7 +371,7 @@ def accept(api,rev):
             return
         except Exception as exc:
             emit("LIVE_TWO_TURN_ATTEMPT_FAILED",attempt=attempt,
-                 kind=type(exc).__name__,detail=str(exc)[:200])
+                 errorType=type(exc).__name__,detail=str(exc)[:200])
             if attempt==3:raise
             time.sleep(8)
 
