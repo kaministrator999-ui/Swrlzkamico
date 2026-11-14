@@ -1,0 +1,42 @@
+name: Inspect exact live §C station/control insertion seams
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/hf-live-guidance-source-audit.yml"]
+  workflow_dispatch:
+permissions: {contents: read}
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: Install HF read-only source tooling
+        run: python -m pip install 'huggingface_hub>=0.34,<2'
+      - name: Inspect bounded public function signatures and control seams
+        run: |
+          python - <<'PY'
+          import re,json
+          from pathlib import Path
+          from huggingface_hub import HfApi,hf_hub_download
+          repo="kamiloki/Swyrlz"
+          rev=HfApi().repo_info(repo,repo_type="space").sha
+          print("SWYRL_LIVE_SOURCE_REVISION",rev,flush=True)
+          specs=[
+            ("station.py",r"^(@app\.(?:get|post)|async def |def |class |app\s*=|_lock\s*=|_state\s*=|_stream_worker|_history_projection|def _load_state|def _save_state|def _commit_revision|def _auth|def _get_session|def _read|def _public|def _state)"),
+            ("chat/§wyrlz/index.html",r"stationGeneration|renderStationGeneration|commitDraftFromPrompt|/api/lalm_station/|sendButton\.addEventListener|composerShell|<body|</body"),
+            ("qwen_coder_engine.py",r"^(?:def |async def )|_swrlz_code_candidate_preview|CODE_OUTPUT_CHECKPOINT|CANDIDATE_PREVIEW_DELTA|CODE_CONTINUING|for segment in range"),
+          ]
+          for name,pattern in specs:
+            try:
+              text=Path(hf_hub_download(repo,name,repo_type="space",revision=rev)).read_text()
+            except Exception as exc:
+              print("SOURCE_UNAVAILABLE",name,type(exc).__name__,flush=True);continue
+            lines=text.splitlines()
+            matches=[i for i,line in enumerate(lines) if re.search(pattern,line)]
+            print("SOURCE_SUMMARY",json.dumps({"file":name,"lines":len(lines),"matches":len(matches),"sample":[i+1 for i in matches[:150]]},ensure_ascii=False),flush=True)
+            for i in matches[:65]:
+              a=max(0,i-2);b=min(len(lines),i+5)
+              snippet=[f"{j+1}: {lines[j][:290]}" for j in range(a,b)
+                       if "HF_TOKEN" not in lines[j] and "SECRET" not in lines[j]]
+              print("SOURCE_SEAM",json.dumps({"file":name,"at":i+1,"lines":snippet},ensure_ascii=False),flush=True)
+          PY
