@@ -1,0 +1,63 @@
+name: Seal §E v11.443 vertical VR dock
+on:
+  push:
+    branches: [main]
+    paths:
+      - "projects/swrlz-forge-moba/RELEASE_PREPARE_V11_443.json"
+
+permissions:
+  contents: write
+  actions: write
+
+concurrency:
+  group: engine-v11-443-seal
+  cancel-in-progress: false
+
+jobs:
+  seal:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout full source history
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: true
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Rebuild exact artifact and run focused/native verification
+        run: python projects/swrlz-forge-moba/scripts/prepare_v11_443_release.py
+      - name: Commit source receipt, then separate deployment request
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add projects/swrlz-forge-moba/source-manifest.json
+          git commit -m "build(§E): seal verified v11.443 HTML artifact receipt"
+          SOURCE_COMMIT="$(git rev-parse HEAD)"
+          export SOURCE_COMMIT
+          python - <<'PY'
+          import json,os
+          from pathlib import Path
+          base=Path('projects/swrlz-forge-moba')
+          manifest=json.loads((base/'source-manifest.json').read_text())
+          req={
+           'schema':'swrlz-forge-deploy-request-v1',
+           'requestedBy':'ChatGPT (owner-approved)',
+           'target':'kamiloki/swrlz-forge-moba',
+           'releaseVersion':'v11.443',
+           'deployMarker':'SWYRL_ENGINE_DEPLOY_MARKER: V11_443_VR_VERTICAL_TOOL_DOCK',
+           'reason':'Owner-approved vertical VR tool dock, attached right slide-out inspector and foreground transform gizmo targeting. Rebuilt source has passed native release verifier; keep Quest controller interactions, history, tutorial, mobile editor and other projects intact. Physical headset acceptance pending.',
+           'sourceCommit':os.environ['SOURCE_COMMIT'],
+           'sourceIntegritySha256':manifest['finalSha256']
+          }
+          (base/'DEPLOY_REQUEST.json').write_text(json.dumps(req,indent=2,ensure_ascii=False)+'\n')
+          PY
+          git add projects/swrlz-forge-moba/DEPLOY_REQUEST.json
+          git commit -m "deploy(§E): request verified v11.443 HF publication"
+          git push origin HEAD:main
+          gh workflow run deploy-swrlz-forge-moba.yml --ref main
