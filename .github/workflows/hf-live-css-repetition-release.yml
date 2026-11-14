@@ -1,0 +1,57 @@
+name: Guarded live §C repeated code recovery
+on:
+  push:
+    branches: [main]
+    paths: [".deploy/HF_CSS_RUNAWAY_RELEASE.txt"]
+permissions: {contents: read}
+concurrency:
+  group: swrlz-hf-space-deployment
+  cancel-in-progress: false
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 22
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify explicit source and scope
+        id: gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          file=".deploy/HF_CSS_RUNAWAY_RELEASE.txt"
+          get(){ sed -n "s/^$1=//p" "$file" | tail -1; }
+          test "$(get TARGET)" = "kamiloki/Swyrlz"
+          test "$(get APPROVED)" = "1"
+          test "$(get SCOPE)" = "prevent-repeated-css-in-code-generation"
+          test "$(get MODEL)" = "qwen3.5-9b"
+          ref="$(get SOURCE_REF)"
+          [[ "$ref" =~ ^[0-9a-f]{40}$ ]]
+          echo "ref=$ref" >> "$GITHUB_OUTPUT"
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.gate.outputs.ref }}
+          path: release-source
+      - run: python -m pip install 'huggingface_hub>=0.34,<2'
+      - name: Test source preservation and interrupted repetition
+        working-directory: release-source
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          set -euo pipefail
+          python -m py_compile scripts/code_runaway_guard_v1.py scripts/hf_live_code_repetition_guard_v1.py
+          python -u scripts/hf_live_code_repetition_guard_v1.py preflight
+      - uses: actions/upload-artifact@v4
+        with:
+          name: exact-pre-change-live-coder
+          path: release-source/hf-css-runaway-backup/
+          if-no-files-found: error
+          retention-days: 14
+      - name: Publish guarded source to Hugging Face
+        working-directory: release-source
+        timeout-minutes: 15
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          SWRLZ_CSS_RUNAWAY_APPROVED: "1"
+        run: |
+          set -euo pipefail
+          python -u scripts/hf_live_code_repetition_guard_v1.py publish
