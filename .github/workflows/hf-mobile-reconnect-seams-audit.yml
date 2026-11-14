@@ -1,0 +1,35 @@
+name: Inspect §C reconnect exact lifecycle and server active request (narrow)
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/hf-mobile-reconnect-seams-audit.yml"]
+permissions: {contents: read}
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - run: python -m pip install 'huggingface_hub>=0.34,<2'
+      - shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import json
+          from huggingface_hub import HfApi,hf_hub_download
+          S="kamiloki/Swyrlz";rev=HfApi().repo_info(S,repo_type="space").sha
+          rs={
+           "chat/§wyrlz/index.html":[(4280,4340),(4340,4385),(4590,4650),(4650,4735),(4015,4065)],
+           "station.py":[(1260,1350),(1420,1495),(1495,1570),(1570,1650),
+                         (1650,1735),(1735,1815),(1815,1900),(1900,1955),(2250,2330),(2330,2435)],
+          }
+          for file,ranges in rs.items():
+              src=Path(hf_hub_download(S,file,repo_type="space",revision=rev)).read_text().splitlines()
+              for a,b in ranges:
+                  if a>len(src):continue
+                  group=src[a-1:min(b,len(src))]
+                  for i in range(0,len(group),18):
+                      part=group[i:i+18]
+                      print("RECONNECT_LINES",json.dumps({"file":file,"start":a+i,
+                          "code":"\n".join(str(a+i+j)+" "+l for j,l in enumerate(part))},ensure_ascii=False),flush=True)
+          print("RECONNECT_AUDIT_REV",rev,flush=True)
+          PY
