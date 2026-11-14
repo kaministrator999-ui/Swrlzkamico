@@ -94,7 +94,12 @@ _UI_OLD='''      const syncStation = async (fresh=false) => {
 
 _UI_NEW='''      // SWRLZ_CONDITIONAL_SYNC_V1: first full hydration is always required.
       let stationProjectionHydrated=false;
+      let stationProjectionOwnerEpoch=accountProjectionEpoch;
       const syncStation = async (fresh=false) => {
+        if(stationProjectionOwnerEpoch!==accountProjectionEpoch){
+          stationProjectionHydrated=false;
+          stationProjectionOwnerEpoch=accountProjectionEpoch;
+        }
         if(stationSyncOwner?.projectionEpoch===accountProjectionEpoch){stationSyncAgain=true;return false;}'''
 
 _UI_FETCH_OLD='''          const r=await fetch("/api/lalm_station/sync"+(fresh?"?fresh=1":""),{credentials:"same-origin",cache:"no-store"});
