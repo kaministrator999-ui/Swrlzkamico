@@ -1,0 +1,36 @@
+name: Inspect §C actual improve-page routing and output attempt receipts
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/hf-existing-html-route-audit.yml"]
+permissions: {contents: read}
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 7
+    steps:
+      - run: python -m pip install 'huggingface_hub>=0.34,<2'
+      - run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          from huggingface_hub import HfApi,hf_hub_download
+          space="kamiloki/Swyrlz";revision=HfApi().repo_info(space,repo_type="space").sha
+          print("ROUTE_REV",revision,flush=True)
+          ranges={
+            "qwen_coder_engine.py":[(245,280),(665,850),(875,948),(1022,1087)],
+            "lfm2_700m_engine.py":[(650,760)],
+            "brain_programming.py":[(1,110)],
+            "programming_repair_context.py":[(205,260)],
+            "test_generation_completion_budget.py":[(180,260)],
+            "test_github_change_model_context.py":[(1,140)],
+          }
+          for file,rs in ranges.items():
+              try:lines=Path(hf_hub_download(space,file,repo_type="space",revision=revision)).read_text().splitlines()
+              except Exception as exc:print("ROUTE_FILE_MISSING",file,type(exc).__name__,flush=True);continue
+              for a,b in rs:
+                  print("ROUTE_LINES",json.dumps({"file":file,"start":a,"end":min(b,len(lines)),
+                    "lines":[str(i+1)+" "+lines[i] for i in range(a-1,min(b,len(lines)))]},
+                    ensure_ascii=False),flush=True)
+          print("ROUTE_AUDIT_DONE",flush=True)
+          PY
