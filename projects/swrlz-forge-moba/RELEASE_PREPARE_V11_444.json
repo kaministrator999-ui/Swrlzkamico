@@ -1,0 +1,8 @@
+{
+  "schema": "swrlz-forge-release-prepare-v1",
+  "version": "v11.444",
+  "ownerApproved": true,
+  "reason": "Native Delete Selected for one/multiple meshes; persistent phone and VR controls; Undo and VR confirmation",
+  "sourcePatch": "patches/v11_444_selected_mesh_delete.py",
+  "expectedPrevious": "v11.443"
+}
