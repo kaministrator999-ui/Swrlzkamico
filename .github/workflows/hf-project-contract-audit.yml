@@ -1,0 +1,46 @@
+name: Inspect existing §C project and file-source contracts
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/hf-project-contract-audit.yml"]
+permissions: {contents: read}
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 7
+    steps:
+      - run: python -m pip install 'huggingface_hub>=0.34,<2'
+      - run: |
+          python - <<'PY'
+          import ast,json,re
+          from pathlib import Path
+          from huggingface_hub import HfApi,hf_hub_download
+          s="kamiloki/Swyrlz";rev=HfApi().repo_info(s,repo_type="space").sha
+          names=("project_archive.py","project_revision_workspace.py","project_thread_memory.py",
+                 "verified_file_dialogue_v277.py","github_file_intelligence_v288.py",
+                 "github_connection.py","project_work_registry_v241.py",
+                 "station.py","chat/§wyrlz/index.html")
+          print("CONTRACT_REV",rev,flush=True)
+          for name in names:
+              try:code=Path(hf_hub_download(s,name,repo_type="space",revision=rev)).read_text()
+              except Exception as ex:
+                  print("CONTRACT_ABSENT",name,type(ex).__name__,flush=True);continue
+              lines=code.splitlines()
+              print("CONTRACT_FILE",json.dumps({"file":name,"chars":len(code),"lines":len(lines)}),flush=True)
+              if name.endswith(".py"):
+                  tree=ast.parse(code)
+                  funcs=[t for t in tree.body if isinstance(t,(ast.FunctionDef,ast.AsyncFunctionDef))]
+                  print("CONTRACT_FUNCTIONS",json.dumps({"file":name,"functions":[[t.name,t.lineno,t.end_lineno] for t in funcs][:110]}),flush=True)
+                  for t in funcs:
+                      relevant=bool(re.search("ingest|upload|artifact|source|index|manifest|project|file|style|theme|repository|context|prepare|read",t.name,re.I))
+                      if name=="station.py":relevant=t.name in ("_artifact_context_item","_history_projection","_owned_project_edit_intent","_create_code_artifact","_commit_code_artifact_revision","set_thread_github_context")
+                      if name=="github_connection.py":relevant=t.name in ("_read_context_from_result","normalize_thread_context","_github_command")
+                      if relevant and t.end_lineno-t.lineno<=95:
+                          print("CONTRACT_SOURCE",json.dumps({"file":name,"name":t.name,
+                               "source":ast.get_source_segment(code,t)[:17000]},ensure_ascii=False),flush=True)
+              else:
+                  for i,line in enumerate(lines):
+                      if re.search(r'type=["\x27]file|\.files\b|accept=|multiple\b|FormData\(|github|/api/.*(project|upload|attach|file)',line,re.I):
+                          print("CONTRACT_UI",json.dumps({"line":i+1,"text":line[:750]},ensure_ascii=False),flush=True)
+          print("CONTRACT_DONE",flush=True)
+          PY
