@@ -1,0 +1,6 @@
+TARGET=kamiloki/Swyrlz
+APPROVED=1
+SCOPE=prevent-repeated-css-in-code-generation
+MODEL=qwen3.5-9b
+SOURCE_REF=bfc3203088bb47e1675c16be4b4721045fc4e292
+REQUEST_NONCE=css-runaway-nov14-v1
