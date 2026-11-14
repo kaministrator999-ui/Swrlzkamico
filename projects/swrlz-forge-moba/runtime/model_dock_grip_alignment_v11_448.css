@@ -1,0 +1,38 @@
+/* SE448_DOCK_GRIP_ALIGNMENT_START */
+/* v11.320 introduced a four-column model editor: hierarchy | viewport |
+   tools | inspector. Old v11.251 splitters are absolutely positioned using
+   two-column widths and float inside the canvas. Put the very same resizable,
+   keyboard-operable grip elements on the actual grid column boundaries. */
+html #modelAtelierPanel.se187-modeler-page[data-se320-ui][data-se251-layout=desktop] .atelier-body #se251-split-model-left,
+html #modelAtelierPanel.se187-modeler-page[data-se320-ui][data-se251-layout=desktop] .atelier-body #se251-split-model-right{
+ display:block!important;
+ position:relative!important;
+ inset:auto!important;
+ top:auto!important;bottom:auto!important;
+ left:auto!important;right:auto!important;
+ grid-row:1!important;
+ align-self:stretch!important;
+ justify-self:end!important;
+ min-height:0!important;
+ height:100%!important;
+ width:12px!important;
+ transform:translateX(50%)!important;
+ z-index:18!important;
+ touch-action:none;
+ pointer-events:auto;
+}
+html #modelAtelierPanel.se187-modeler-page[data-se320-ui][data-se251-layout=desktop] .atelier-body #se251-split-model-left{
+ grid-column:1!important;
+}
+html #modelAtelierPanel.se187-modeler-page[data-se320-ui][data-se251-layout=desktop] .atelier-body #se251-split-model-right{
+ grid-column:3!important;
+}
+html #modelAtelierPanel.se187-modeler-page[data-se320-ui][data-se251-layout=desktop] .atelier-body .se251-resize-grip::after{
+ left:4px;top:calc(50% - 30px);height:60px;
+}
+html #modelAtelierPanel.se187-modeler-page[data-se320-ui][data-se251-layout=desktop][data-se251-right-collapsed=true] #se251-split-model-right,
+html #modelAtelierPanel.se187-modeler-page[data-se320-ui][data-se251-layout=desktop][data-se320-inspector-collapsed=true] #se251-split-model-right,
+html #modelAtelierPanel.se187-modeler-page[data-se320-ui][data-se251-layout=compact] .se251-resize-grip{
+ display:none!important;
+}
+/* SE448_DOCK_GRIP_ALIGNMENT_END */
