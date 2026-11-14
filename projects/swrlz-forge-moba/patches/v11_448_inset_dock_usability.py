@@ -72,7 +72,7 @@ def apply(html):
     # model grid tracks, including the independently-collapsed right dock.
     styles=(ROOT/'runtime/model_dock_grip_alignment_v11_448.css').read_text(encoding='utf-8')
     assert '<body' in html and '</head>' in html
-    html=html.replace('</head>','<style id="se448DockGripAlignment">\\n'+styles+'\\n</style>\\n</head>',1)
+    html=html.replace('</head>','<style id="se448DockGripAlignment">\n'+styles+'\n</style>\n</head>',1)
     for before,after in [
       ('SWYRL_ENGINE_DEPLOY_MARKER: V11_447_SMOOTH_FACE_ORBIT',MARKER),
       ('ENGINE · MAKER v11.447','ENGINE · MAKER v11.448'),
