@@ -270,7 +270,7 @@ def test_auto_chain(src):
     def checkpoint(source):
         return {"schema":"swrlz-long-code-checkpoint-v1","source":source,
                 "sourceSha256":sha(source.encode()),"segmentsCompleted":1}
-    sessions={"k":{"activeGeneration":{"requestId":"r","liveCodeInstructions":[
+    sessions={"k":{"activeGeneration":{"requestId":"r","status":[],"liveCodeInstructions":[
         {"id":"i","text":"Use controller support","state":"QUEUED"}]}}}
     def original():
         yield {"type":"CANDIDATE_PREVIEW_DELTA","text":"abc"}
