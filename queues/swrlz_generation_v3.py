@@ -426,3 +426,26 @@ async def generate_swrlz_response(payload) -> None:
             committedChars=len(committed),
             invocationElapsedMs=int((time.time() - invocation_started) * 1000),
         )
+        # Live project guidance is handled only AFTER the original response
+        # has been durably committed. Never inject into or cancel active decode.
+        # Each revision gets its own requestId, leaving the original snapshot
+        # inspectable even when a later edit fails.
+        try:
+            from api import live_code_controls
+            parent = str((data.get("payload") or {}).get("liveSteeringParent") or "")
+            if parent:
+                controls = live_code_controls._read_controls(store, user_id, parent)
+                for c in controls:
+                    if c.get("revisionRequestId") == request_id and c.get("state") == "REVISION_QUEUED":
+                        live_code_controls.transition_control(
+                            user_id=user_id, request_id=parent,
+                            control_id=c["controlId"],
+                            state="REVISION_PRODUCED_UNVERIFIED" if state == "COMPLETE" else "REVISION_FAILED",
+                            revision_request_id=request_id, store=store)
+            await live_code_controls.queue_post_generation_revision(
+                user_id=user_id, request_id=request_id, thread_id=thread_id,
+                source=committed, completed=state == "COMPLETE", store=store)
+        except Exception as live_exc:
+            _camera("live-steering-recovery-needed", request_id=request_id,
+                    errorType=type(live_exc).__name__)
+
