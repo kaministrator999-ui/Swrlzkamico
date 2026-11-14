@@ -1,0 +1,47 @@
+name: Audit live §C coding Ask storage failure
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/audit-live-code-ask-storage.yml"]
+permissions: {contents: read}
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 7
+    steps:
+      - run: python -m pip install 'huggingface_hub>=0.34,<2'
+      - run: |
+          python - <<'PY'
+          from pathlib import Path
+          from huggingface_hub import HfApi,hf_hub_download
+          repo="kamiloki/Swyrlz"
+          revision=HfApi().repo_info(repo,repo_type="space").sha
+          print("HF_SOURCE_REV",revision,flush=True)
+          selections={
+            "station.py":[(262,292),(337,370),(2015,2140)],
+            "chat/§wyrlz/index.html":[(3890,3980),(4798,4840)],
+            "account_chat_store.py":[(1,125)],
+          }
+          for name,ranges in selections.items():
+            try:
+              src=Path(hf_hub_download(repo,name,repo_type="space",revision=revision)).read_text().splitlines()
+            except Exception as exc:
+              print("UNAVAILABLE",name,type(exc).__name__,flush=True);continue
+            markers=("Durable account storage temporarily unavailable",
+                     "async def live_code_control","def _session","def _commit_revision",
+                     "def _account_session","def resolve_account")
+            hits=[i+1 for i,l in enumerate(src) if any(m in l for m in markers)]
+            if name=="station.py":
+              for at in hits:
+                ranges.append((max(1,at-5),min(len(src),at+70)))
+            print("SOURCE_FILE",name,"LINE_COUNT",len(src),"MARKER_LINES",hits,flush=True)
+            already=set()
+            for a,b in ranges:
+              for n in range(a,min(b,len(src))+1):
+                if n in already:continue
+                already.add(n)
+                line=src[n-1]
+                if any(key in line for key in ["HF_TOKEN","ENCRYPTION_KEY","REDIS_REST_TOKEN","SWRLZ_ACCOUNT_KEY"]):
+                  continue
+                print(f"SOURCE_LINE {name}:{n}: {line[:460]}",flush=True)
+          PY
