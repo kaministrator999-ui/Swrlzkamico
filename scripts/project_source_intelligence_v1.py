@@ -157,8 +157,8 @@ def analyze(files: Any, prompt: str = "", *, max_context_chars: int = 10000) -> 
                     if words and any(w in line.lower() for w in words)]
         score=8*len(parts & words)+min(len(matchlines),8)
         if item["language"] in ("css","scss"):score+=3
-        if item["path"].lower().endswith(("/index.html","/app.js","/app.ts","/main.tsx")) or
-            item["path"].lower() in ("index.html","src/app.tsx","src/main.tsx"):score+=3
+        if (item["path"].lower().endswith(("/index.html","/app.js","/app.ts","/main.tsx")) or
+            item["path"].lower() in ("index.html","src/app.tsx","src/main.tsx")):score+=3
         if PurePosixPath(item["path"]).name.lower() in ("agents.md","readme.md"):score+=2
         ranked.append((score,item,matchlines))
     ranked.sort(key=lambda x:(-x[0],x[1]["path"].casefold()))
