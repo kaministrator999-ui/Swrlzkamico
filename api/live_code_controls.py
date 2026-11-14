@@ -44,14 +44,30 @@ def _read_controls(store: RedisRestChatStore, user_id: str, request_id: str) -> 
 def snapshot(*, user_id: str, request_id: str, thread_id: str = "", store=None) -> dict[str, Any]:
     store = store or RedisRestChatStore.from_env()
     job = _owned(store, user_id, request_id, thread_id)
-    events = store.list_events(user_id, request_id, after_seq=-1)
-    last = events[-1] if events else None
+    # One bounded Redis MGET: do not perform thousands of HTTP reads just
+    # because a large code response streamed thousands of tokens.
+    end = int(job.last_seq)
+    first = max(1, end - 15)
+    keys = [store._key("event", user_id, request_id, str(seq))
+            for seq in range(first, end + 1)]
+    raw_events = store._command("MGET", *keys, sensitive=True) if keys else []
+    events = []
+    for raw in raw_events or []:
+        try:
+            event = json.loads(raw) if raw else None
+        except (TypeError, ValueError):
+            continue
+        if isinstance(event, dict) and str(event.get("user_id") or "") == user_id:
+            events.append(event)
     phases = []
-    for event in events[-60:]:
-        payload = event.payload if isinstance(event.payload, dict) else {}
-        phase = str(payload.get("phase") or event.event_type or "")
+    excerpt = ""
+    for event in events:
+        payload = event.get("payload") if isinstance(event.get("payload"), dict) else {}
+        phase = str(payload.get("phase") or event.get("event_type") or "")
         if phase and (not phases or phases[-1] != phase):
             phases.append(phase)
+        if payload.get("type") == "DELTA" and payload.get("text"):
+            excerpt = (excerpt + str(payload["text"]))[-1800:]
     controls = _read_controls(store, user_id, request_id)
     terminal = str(job.state).upper() in TERMINAL
     return {
@@ -61,6 +77,8 @@ def snapshot(*, user_id: str, request_id: str, thread_id: str = "", store=None) 
         "lastSeq": int(job.last_seq),
         "phase": phases[-1] if phases else str(job.state),
         "recentPhases": phases[-12:],
+        "recentOutputExcerpt": excerpt,
+        "recentOutputIsComplete": False,
         "startedAt": float(job.created_at),
         "updatedAt": float(job.updated_at),
         "terminal": terminal,
@@ -211,6 +229,11 @@ async def queue_post_generation_revision(*, user_id: str, request_id: str,
             transition_control(user_id=user_id, request_id=request_id,
                                control_id=c["controlId"], state="DEFERRED_SOURCE_TOO_LARGE", store=store)
         return {"queued": False, "reason": "SOURCE_EXCEEDS_SAFE_REVISION_CONTEXT"}
+    if sum(len(str(c.get("text") or "")) for c in steering) > 6000:
+        for c in steering:
+            transition_control(user_id=user_id, request_id=request_id,
+                               control_id=c["controlId"], state="DEFERRED_SOURCE_TOO_LARGE", store=store)
+        return {"queued": False, "reason": "STEERING_EXCEEDS_SAFE_REVISION_CONTEXT"}
     requests = "\n".join(f"{i+1}. {str(c.get('text') or '')}" for i,c in enumerate(steering))
     prompt = (
         "Continue the existing project, do not start over from an unrelated design. "
