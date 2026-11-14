@@ -61,7 +61,7 @@ def apply(html):
 function se449ModelDockMetrics(){
  const panel=q('#modelAtelierPanel'),body=panel?.querySelector('.atelier-body');
  const width=body?.getBoundingClientRect?.().width||innerWidth;
- const rail=Number.parseFloat(getComputedStyle(panel).getPropertyValue('--se320-rail'))||78;
+ const rail=panel?(Number.parseFloat(getComputedStyle(panel).getPropertyValue('--se320-rail'))||78):78;
  return {width,rail,budget:Math.max(290,Math.floor(width-rail-190))};
 }
 function se449ModelDockFit(){
