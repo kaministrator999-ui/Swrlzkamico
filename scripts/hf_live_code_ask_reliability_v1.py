@@ -72,7 +72,7 @@ def patch_chat(source):
     new = '''        const rid=generation.requestId,tid=generation.threadId;
         // swrlz-code-ask-storage-recovery-v1: "Continue" is not a separate
         // send while a coding task is active; source continuation is automatic.
-        if(/^(?:continue(?:\\\\s+(?:code|coding|generation))?|keep\\\\s+going|resume(?:\\\\s+code)?)\\\\s*[.!]?$/i.test(text)&&!generation.terminal){
+        if(/^(?:continue(?:\\s+(?:code|coding|generation))?|keep\\s+going|resume(?:\\s+code)?)\\s*[.!]?$/i.test(text)&&!generation.terminal){
           swrlzGuideAnswer.textContent="Coding is already underway. An extra Continue message is not needed while this task is active. Check the streaming code and activity log for fresh progress; no new task was submitted.";
           swrlzGuideReceipt.hidden=false;
           return;
