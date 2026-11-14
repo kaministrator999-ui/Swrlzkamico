@@ -1,0 +1,31 @@
+name: Inspect §C stream sequence, cancellation receipts, code throughput hot spots
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/hf-coding-lifecycle-hotspots-audit.yml"]
+permissions: {contents: read}
+jobs:
+  read:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - run: python -m pip install 'huggingface_hub>=0.34,<2'
+      - run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          from huggingface_hub import HfApi,hf_hub_download
+          R="kamiloki/Swyrlz";rev=HfApi().repo_info(R,repo_type="space").sha
+          ranges={
+            "station.py":[(698,815),(1360,1410),(1565,1617),(1940,1958),(2420,2434)],
+            "chat/§wyrlz/index.html":[(4260,4322),(4555,4690),(4690,4715)],
+            "qwen_coder_engine.py":[(667,692),(698,765),(865,882),(1035,1070),(1335,1362)],
+          }
+          for n,rs in ranges.items():
+              lines=Path(hf_hub_download(R,n,repo_type="space",revision=rev)).read_text().splitlines()
+              for a,b in rs:
+                  for i in range(a,min(b,len(lines)),16):
+                      print("LIFECYCLE_CODE",json.dumps({"file":n,"start":i,
+                        "lines":"\n".join(f"{i+j} {line}" for j,line in enumerate(lines[i-1:min(i+15,b,len(lines))]))},ensure_ascii=False),flush=True)
+          print("LIFECYCLE_REV",rev,flush=True)
+          PY
