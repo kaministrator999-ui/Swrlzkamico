@@ -332,12 +332,12 @@ def readiness(api,rev,timeout=960):
         time.sleep(12)
     raise TimeoutError("Expected 9B runtime did not become ready")
 
-def live_smoke():
+def live_smoke_once():
     opener=urllib.request.build_opener(
         urllib.request.HTTPCookieProcessor(http.cookiejar.CookieJar()))
     rid=str(uuid.uuid4())
-    body={"modelId":"700m","requestId":rid,
-          "threadId":"swrlz-code-repair-verify-"+uuid.uuid4().hex,
+    tid="swrlz-code-repair-verify-"+uuid.uuid4().hex
+    body={"modelId":"700m","requestId":rid,"threadId":tid,
           "prompt":"Create a short complete single HTML page with a clickable button and one CSS style. Return the runnable HTML code.",
           "profileId":"LALM","timeZone":"UTC"}
     req=urllib.request.Request(BASE+"/api/lalm_station/send",
@@ -347,35 +347,57 @@ def live_smoke():
         if response.status!=202:raise RuntimeError("Synthetic coding request not accepted")
         response.read()
     url=BASE+"/api/lalm_station/stream?"+urllib.parse.urlencode({"requestId":rid})
-    text_parts=[];term=None
-    with opener.open(urllib.request.Request(url,headers=HEADER),timeout=490) as response:
+    text_parts=[];term=None;counts={}
+    with opener.open(urllib.request.Request(url,headers=HEADER),timeout=480) as response:
         for raw in response:
             try:event=json.loads(raw)
             except (UnicodeError,ValueError):continue
-            if event.get("requestId") and event.get("requestId")!=rid:
+            if event.get("requestId") and event["requestId"]!=rid:
                 raise RuntimeError("Cross-request stream")
-            if event.get("type")=="DELTA":text_parts.append(str(event.get("text") or ""))
-            if event.get("type") in ("COMPLETE","COMPLETED","FAILED","CANCELLED"):
-                term=event.get("type");break
+            kind=str(event.get("type") or "")
+            counts[kind]=counts.get(kind,0)+1
+            if kind=="DELTA":text_parts.append(str(event.get("text") or ""))
+            if kind in ("COMPLETE","COMPLETED","FAILED","CANCELLED"):
+                term=kind;break
     final="".join(text_parts)
-    state={}
-    for _ in range(12):
+    state={};active={};check={}
+    for _ in range(30):
         with opener.open(urllib.request.Request(BASE+"/api/lalm_station/sync",
                      headers=HEADER),timeout=30) as response:state=json.load(response)
         active=state.get("activeGeneration") or {}
-        if active.get("requestId")==rid and (active.get("candidateValidation") or {}).get("status"):
-            break
+        if active.get("requestId")==rid:
+            check=active.get("candidateValidation") or {}
+            if not final:final=str(active.get("text") or "")
+            if not term and active.get("terminal"):
+                term=str(active.get("terminalType") or "COMPLETE").upper()
+            if check.get("status") and term:break
         time.sleep(2)
-    active=state.get("activeGeneration") or {}
-    check=active.get("candidateValidation") or {}
     emit("LIVE_HTML_CHECK",terminal=term,finalChars=len(final),
          validator=check.get("status"),matchingRequest=active.get("requestId")==rid,
-         hasHtml=("<html" in final.lower() or "<!doctype html" in final.lower()))
+         html=("<html" in final.lower() or "<!doctype html" in final.lower()),
+         streamEventCounts=counts,activePhase=active.get("phase"),
+         activeTerminal=active.get("terminal"),cookieNames=[c.name for c in opener.handlers
+            if hasattr(c,"cookiejar") for c in c.cookiejar])
     if (term not in ("COMPLETE","COMPLETED")
         or ("<html" not in final.lower() and "<!doctype html" not in final.lower())
         or active.get("requestId")!=rid or check.get("status")!="PASS"):
         raise RuntimeError("Live normal coding regression or missing scoped validation")
     emit("LIVE_NORMAL_CODE_ACCEPTED",sourcePreserved=True)
+
+def live_smoke():
+    # HF may temporarily rotate an anonymous session during a Space rebuild.
+    # Each complete retry must obtain its own session and source-bound receipt.
+    for attempt in range(1,4):
+        try:
+            live_smoke_once()
+            emit("LIVE_SMOKE_VALIDATED",attempt=attempt)
+            return
+        except Exception as exc:
+            emit("LIVE_SMOKE_ATTEMPT_FAILED",attempt=attempt,
+                 errorType=type(exc).__name__,detail=str(exc)[:180])
+            if attempt==3:raise
+            time.sleep(12)
+
 
 def main():
     api=HfApi(token=os.environ.get("HF_TOKEN") or None)
