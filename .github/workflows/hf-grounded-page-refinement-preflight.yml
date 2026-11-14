@@ -29,3 +29,5 @@ jobs:
 # rerun after exact-source raw-string correction
 
 # revalidate after guarded two-turn session identity repair
+
+# verify strict two-turn retry diagnostics after release-gate fix
