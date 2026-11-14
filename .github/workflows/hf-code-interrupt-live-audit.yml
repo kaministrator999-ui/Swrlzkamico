@@ -1,0 +1,32 @@
+name: Audit live HF code continuation and chat composer (read only)
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/hf-code-interrupt-live-audit.yml"]
+permissions: {contents: read}
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - run: python -m pip install 'huggingface_hub>=0.34,<2'
+      - run: |
+          python - <<'PY'
+          from pathlib import Path
+          from huggingface_hub import HfApi,hf_hub_download
+          id='kamiloki/Swyrlz';rev=HfApi().repo_info(id,repo_type='space').sha
+          print('HF_REV',rev,flush=True)
+          spans={
+            'qwen_coder_engine.py':[(50,105),(645,730),(775,795),(911,936)],
+            'station.py':[(1200,1240),(1270,1380),(1420,1490),(1660,1730),(1810,1979),(2115,2240),(2240,2370),(2370,2493)],
+            'chat/§wyrlz/index.html':[(3880,3960),(4290,4435),(4680,4725),(4795,4819)]
+          }
+          for file,ranges in spans.items():
+            lines=Path(hf_hub_download(id,file,repo_type='space',revision=rev)).read_text().splitlines()
+            for a,b in ranges:
+              print('===',file,a,b,flush=True)
+              for n in range(a-1,min(b,len(lines))):
+                line=lines[n]
+                if 'HF_TOKEN' in line or 'SWRLZ_DIAGNOSTIC_GITHUB_TOKEN' in line:continue
+                print(f'{file}:{n+1}: {line[:440]}',flush=True)
+          PY
