@@ -213,7 +213,7 @@ JS_GUIDE=r'''      // swrlz-live-guided-code-v1: an independent composer action,
         const generation=stationGeneration;
         if(!text||!generation?.requestId||generation.threadId!==activeThreadId)return;
         const rid=generation.requestId,tid=generation.threadId;
-        const action=/\\b(add|change|modify|fix|remove|rewrite|refactor|implement|ensure|include|make sure|update|switch|move)\\b/i.test(text)?"STEER":"ASK";
+        const action=/\b(add|change|modify|fix|remove|rewrite|refactor|implement|ensure|include|make sure|update|switch|move)\b/i.test(text)?"STEER":"ASK";
         swrlzGuideSubmitting=true;swrlzGuideButton.disabled=true;
         try{
           const response=await fetch("/api/lalm_station/live-code-control",{
