@@ -1,3 +1,9 @@
+## §E v11.449 · Meshes dock and two-finger camera repair (2026-11-14)
+
+Restores the Model Studio desktop-width four-column layout: Meshes hierarchy, viewport, main tools, and modifier inspector all occupy the same row. The old absolute splitter offsets and v11.448 in-grid splitter cells no longer push the Meshes library below the viewport. Existing accessible resizer handles float over the true dock edges and use the original pointer/keyboard resizing code with a minimum viewport width.
+
+Restores the native two-finger pinch zoom and pan while Face, Edge or Vertex component tools are selected; first finger still selects or orbits, while a second finger cancels the pending selection and routes both pointers to the native camera touch handler. Canvas touch-action is restricted to the viewport rather than disabling sidebar scrolling. Existing topology cubes containing validated source-indexed vertex edits can be explicitly baked into indexed geometry without reindexing triangles, losing UV coordinates, or discarding Undo; protected assets remain blocked. On-device acceptance is pending.
+
 ## §E v11.448 · Inset preview and aligned dock handles (2026-11-14)
 
 In the Model Studio phone/desktop Shape tools, choosing **Inset** or **Extrude** with an already selected flat face now runs the native geometry Preview immediately; the user still presses Apply to commit. A plain primitive containing saved component vertex edits can be converted by explicit confirmation: it bakes the visible vertex displacements into welded editable topology, regenerates plain UVs and creates one Undo checkpoint preserving the original edits; protected rigging, texture, paint and procedural data remain blocked. If no face is selected, the shortcut instructs the user to select one instead of silently doing nothing.
