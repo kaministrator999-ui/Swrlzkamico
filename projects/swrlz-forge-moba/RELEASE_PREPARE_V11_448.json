@@ -5,5 +5,6 @@
   "reason": "Make Inset and Extrude shortcut run native Preview on selected face; safely bake plain cube vertex edits with consent and Undo; keep purple splitters on real four-column dock borders",
   "sourcePatch": "patches/v11_448_inset_dock_usability.py",
   "expectedPrevious": "v11.447",
-  "verificationAttempt": 1
+  "verificationAttempt": 2,
+  "note": "Current-version shortcut test checks direct Preview; old v11.445 behavior regression retained unchanged."
 }
