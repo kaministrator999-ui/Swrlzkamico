@@ -1,0 +1,8 @@
+TARGET=kamiloki/Swyrlz
+APPROVED=1
+CHANGE_SCOPE=code-box-scroll-follow-ui-only
+MODEL=qwen3.5-9b
+THREADS=18
+CONTEXT_TOKENS=16384
+SOURCE_REF=f96bef2bf2ba925d63c68458f2c695d05b59a28d
+REQUEST_NONCE=code-scroll-follow-user-gesture-20261113-v1-0001
