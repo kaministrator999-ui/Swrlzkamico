@@ -1,0 +1,8 @@
+TARGET=kamiloki/Swyrlz
+APPROVED=1
+CHANGE_SCOPE=coding-stop-resume-preview-speed-only
+MODEL=qwen3.5-9b
+THREADS=18
+CONTEXT_TOKENS=16384
+SOURCE_REF=dcd1fa3cae48db280d8bbbaf7fd8c77d5cdd9103
+REQUEST_NONCE=code-lifecycle-resume-preview-stop-20261113-v1-001
