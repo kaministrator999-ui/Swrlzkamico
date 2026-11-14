@@ -1,10 +1,10 @@
 {
   "schema": "swrlz-forge-deploy-request-v1",
-  "requestedBy": "ChatGPT",
+  "requestedBy": "ChatGPT (owner-approved)",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.442",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_442_SATCHEL_MOBILE_DIALOG",
-  "reason": "Publish the regular-browser/mobile satchel lesson in its original panel as a separate draggable, collapsible nonmodal dialog. Include minimize/reopen launcher clear of Chat/transforms, reset, viewport/rotation clamps and separate local window layout. Restore named Transform access, clear XYZ labels and valid three-decimal TRS/manual-amount input precision. Teach one connected cube cavity, manual flap/three-section strap/sphere clasp, actual materials and native Save/reopen, with state-aware native tool help. Exact419patch/77asset build passed266native groups plus camera preferences, all7full Android-sized touch workflow checks and1desktop mouse dialog smoke, no page errors; actual saved project retains6parts/all7flags and stock starter remains untouched. Native VR/geometry sections match hosted441 and VR help delegates its existing path. Preserve newest owner Chat Files/CPU work and all unrelated systems. Physical Android/Quest, soft-keyboard comfort and account sync remain untested. Build exact source before upload.",
-  "sourceCommit": "b97e557fc239e2452fd612215b46c4a493e146ae",
-  "sourceIntegritySha256": "4a00a190da3c55133de7564061d11d604e1a6e15a40f3519653a8af7b6f69a04"
+  "releaseVersion": "v11.443",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_443_VR_VERTICAL_TOOL_DOCK",
+  "reason": "Publish verified v11.443 vertical VR tool dock, right-side contextual slide-out, shared Grip/Trigger/hover input, and foreground transform-gizmo pick priority. 420-patch/77-asset source passed release verification. Preserve unrelated §C changes. Physical headset acceptance pending.",
+  "sourceCommit": "9418aa9d5af92cab3f0134c91fb044d587dece69",
+  "sourceIntegritySha256": "6de36b10e53627d7571b4193245b30a81a18e940149f704b6b7f9f91a654df2e"
 }
