@@ -75,6 +75,8 @@
    // The original seven horizontal tabs are replaced by permanent tool rows.
    for(const target of ui.targets)if(target.userData?.se360Role==='nav')target.visible=false;
    close.mesh.visible=expanded&&progress>.94;
+   // Keep the public target list accurate for controller inspection/tutorials.
+   for(const surface of [...targets,close.mesh])if(!ui.targets.includes(surface))ui.targets.push(surface);
    root.updateWorldMatrix(true,true);
   }
   function choose(item){
@@ -132,7 +134,7 @@
  const oldHit=se340Hit;
  se340Hit=function(record,precise=true){
   const hit=oldHit(record,precise);
-  if(hit?.ui||hit?.quest)return hit;
+  if(hit?.ui||hit?.quest||hit?.gizmo)return hit;
   // Pick visible native transform handles before *any* model surface; this
   // applies to Grab as well as Move/Rotate/Scale and never overrides menus.
   const handle=se374GizmoContact(record);
