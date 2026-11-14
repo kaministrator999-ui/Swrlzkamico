@@ -4,6 +4,9 @@ on:
     branches: [feature/swrlz-valkey-traffic-and-code-finish]
     paths:
       - "scripts/hf_valkey_code_finish_release.py"
+      - "scripts/hf_valkey_revision_sync_optimization.py"
+      - "scripts/hf_code_finish_and_preview_v1.py"
+      - "scripts/test_hf_valkey_code_finish_v1.py"
       - ".github/workflows/hf-valkey-code-finish-release.yml"
 permissions: {contents: read}
 concurrency:
