@@ -6,5 +6,7 @@
   "prepareScript": "scripts/prepare_v11_443_release.py",
   "requiresExactArtifactReceipt": true,
   "requiresVerifier": true,
-  "physicalHeadsetAcceptance": "pending"
+  "physicalHeadsetAcceptance": "pending",
+  "verificationRetry": 2,
+  "reason": "Re-run exact seal with marker-aware v11.443 camera and satchel tests; no verification bypass"
 }
