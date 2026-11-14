@@ -40,6 +40,11 @@ class FakeStore:
         self.calls.append((args,kwargs))
         op=args[0]
         if op=="LRANGE":return list(self.controls)
+        if op=="MGET":
+            phases=["PREPARING","CODING","CODING"]
+            return [json.dumps({"user_id":"owner","event_type":"STATUS",
+                   "payload":{"phase":phases[int(k.rsplit(":",1)[-1])-1]}})
+                   for k in args[1:]]
         if op=="RPUSH":
             self.controls.append(args[2]);return len(self.controls)
         if op=="LTRIM":
