@@ -203,7 +203,20 @@ def patch_station(text):
     return text
 
 def patch_engine(text,file):
-    text=once(text,ENGINE_ANCHOR,ENGINE_INSERT,file+" bounded source evidence")
+    if file==GENERAL:
+        # The general engine has a second, unrelated archiveEvidence branch
+        # in its identity-only fast path. Do not inject project source there.
+        before='''    if payload.get("projectThreadEvidence"):
+        system+="\\n"+str(payload["projectThreadEvidence"])[:1650]
+    if payload.get("archiveEvidence"):'''
+        after='''    if payload.get("projectThreadEvidence"):
+        system+="\\n"+str(payload["projectThreadEvidence"])[:1650]
+    if payload.get("projectFileEvidence"):
+        system+="\\n"+str(payload["projectFileEvidence"])[:10500]
+    if payload.get("archiveEvidence"):'''
+        text=once(text,before,after,"general coding/conversation system context")
+    else:
+        text=once(text,ENGINE_ANCHOR,ENGINE_INSERT,file+" bounded source evidence")
     ast.parse(text,filename=file)
     return text
 
