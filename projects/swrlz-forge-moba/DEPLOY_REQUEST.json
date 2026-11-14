@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT (owner-approved)",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.446",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_446_PLANAR_FACE_PICK",
-  "reason": "Publish face-mode tap selection of complete connected coplanar surfaces, so either cube triangle selects the square face for Inset/Extrude; preserve advanced Multi triangle selection, VR regions and Undo. Source verified; owner acceptance pending.",
-  "sourceCommit": "900ba4018e54671c802d6253158d896aacc4fcab",
-  "sourceIntegritySha256": "b956f5f7c56f2782514456d2b435fb3c7732e9b5c4b18e50328f38da73892655"
+  "releaseVersion": "v11.447",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_447_SMOOTH_FACE_ORBIT",
+  "reason": "Publish smooth per-frame camera orbit in Face mode and during Inset/Extrude topology preview, preserving touch inversion, two-finger navigation, geometry and Undo. Source verified; physical phone acceptance pending.",
+  "sourceCommit": "64c63e71b40a3291d20b52d1736583c0730ebe25",
+  "sourceIntegritySha256": "eb4dd50dc029fe5cc562874c7f93732f0aa0aad922b081877ac10763e2548429"
 }
