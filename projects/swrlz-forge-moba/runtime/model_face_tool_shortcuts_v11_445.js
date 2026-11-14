@@ -1,10 +1,10 @@
 /* SE445_SCULPT_FACE_SHORTCUTS_START */
-// VR Sculpt's Inset/Extrude cards enter the existing native face workshop.
+// VR three-stage operation entries enter the existing native face workshop.
 // This is navigation only: no geometry is changed by picking a tool.
 (function(){
  'use strict';
  const previousAction=se340ModelXRAction;
- const faceOperations=new Set(['manual-inset','manual-extrude']);
+ const faceOperations=new Set(['manual-inset','manual-extrude','manual-solidify','manual-subdivide','manual-deleteFaces','manual-repairNormals','manual-convert','manual-pick','manual-learn']);
  se340ModelXRAction=function(action,record=null){
   if(faceOperations.has(action)&&!se340XR.se430Manual){
    if(!previousAction('manual-mesh',record))return false;
@@ -18,7 +18,7 @@
  };
  window.SWYRL_ENGINE_FACE_TOOLS_445=Object.freeze({
   version:'v11.445',
-  sculptShortcuts:['manual-inset','manual-extrude'],
+  sculptShortcuts:['manual-inset','manual-extrude','manual-solidify','manual-subdivide'],
   operationFlow:'native face select > preview > apply/cancel > undo',
   modelEditsOnShortcut:false
  });
