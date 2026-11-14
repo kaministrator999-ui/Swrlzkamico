@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.441",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_441_SATCHEL_VR_WORKFLOW",
-  "reason": "Publish the verified manual VR satchel lesson: one ordinary cube to connected Inset/inward Extrude body, native drawn/thickened pointed flap and open-center U strap, fitted clasp and actual leather/metal. Tutorial starts clear of the model at its right, both controllers Grip-move the independent window, and real emulated head movement preserves its pose. Visible quest Trigger/Grip own input across nearer geometry; hidden rows cannot intercept materials; ghost uses the native scene-root API; sphere verification matches native geometry. Final exact418patch/77asset package passed261native modeling groups plus camera preferences and all5complete IWER controller groups, including Preview/Cancel/Apply/Undo/Redo, checkpoints, both Save/reopens, all7progress flags,100triangles4editableparts, no page errors. Preserve newest owner Sheep/Chat source and existing project/storage authorities. Physical Quest/Android and account sync untested; known Bottom-to-Isometric IWER transition remains documented. Build exact source before publication.",
-  "sourceCommit": "2998acc5c2ee0a751a3ff4c5a6c399bc124e728b",
-  "sourceIntegritySha256": "62d71652fdf0bf91054e8899cf8f9a775ab12105ab451f15f3b9891b914ad82e"
+  "releaseVersion": "v11.442",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_442_SATCHEL_MOBILE_DIALOG",
+  "reason": "Publish the regular-browser/mobile satchel lesson in its original panel as a separate draggable, collapsible nonmodal dialog. Include minimize/reopen launcher clear of Chat/transforms, reset, viewport/rotation clamps and separate local window layout. Restore named Transform access, clear XYZ labels and valid three-decimal TRS/manual-amount input precision. Teach one connected cube cavity, manual flap/three-section strap/sphere clasp, actual materials and native Save/reopen, with state-aware native tool help. Exact419patch/77asset build passed266native groups plus camera preferences, all7full Android-sized touch workflow checks and1desktop mouse dialog smoke, no page errors; actual saved project retains6parts/all7flags and stock starter remains untouched. Native VR/geometry sections match hosted441 and VR help delegates its existing path. Preserve newest owner Chat Files/CPU work and all unrelated systems. Physical Android/Quest, soft-keyboard comfort and account sync remain untested. Build exact source before upload.",
+  "sourceCommit": "b97e557fc239e2452fd612215b46c4a493e146ae",
+  "sourceIntegritySha256": "4a00a190da3c55133de7564061d11d604e1a6e15a40f3519653a8af7b6f69a04"
 }
