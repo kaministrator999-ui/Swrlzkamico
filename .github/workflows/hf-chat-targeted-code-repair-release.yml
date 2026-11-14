@@ -1,0 +1,67 @@
+name: Guarded §C validator-directed code repair release
+on:
+  push:
+    branches: [main]
+    paths: [".deploy/HF_CHAT_TARGETED_CODE_REPAIR_REQUEST.txt"]
+permissions: {contents: read}
+concurrency:
+  group: swrlz-hf-space-deployment
+  cancel-in-progress: false
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 47
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify user-authorized source scope and pinned candidate
+        id: scoped
+        shell: bash
+        run: |
+          set -euo pipefail
+          p=.deploy/HF_CHAT_TARGETED_CODE_REPAIR_REQUEST.txt
+          test -f "$p"
+          get() { sed -n "s/^$1=//p" "$p" | tail -n 1; }
+          test "$(get TARGET)" = "kamiloki/Swyrlz"
+          test "$(get APPROVED)" = "1"
+          test "$(get CHANGE_SCOPE)" = "source-preserving-validator-patches-only"
+          test "$(get MODEL)" = "qwen3.5-9b"
+          test "$(get THREADS)" = "18"
+          test "$(get CONTEXT_TOKENS)" = "16384"
+          ref="$(get SOURCE_REF)"
+          nonce="$(get REQUEST_NONCE)"
+          [[ "$ref" =~ ^[0-9a-f]{40}$ ]]
+          [[ "$nonce" =~ ^[a-z0-9-]{12,96}$ ]]
+          echo "ref=$ref" >> "$GITHUB_OUTPUT"
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.scoped.outputs.ref }}
+          path: targeted-release
+          fetch-depth: 1
+      - run: python -m pip install 'huggingface_hub>=0.34,<2'
+      - name: Source SHA snapshot and read-only validator-repair checks
+        working-directory: targeted-release
+        shell: bash
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          set -euo pipefail
+          python -m py_compile scripts/project_code_targeted_repair_v1.py scripts/hf_chat_targeted_candidate_repair_v1.py
+          python -m unittest discover -s scripts -p test_project_code_targeted_repair_v1.py
+          python -u scripts/hf_chat_targeted_candidate_repair_v1.py preflight
+      - uses: actions/upload-artifact@v4
+        with:
+          name: swrlz-targeted-code-repair-exact-prior-engine
+          path: targeted-release/swrlz-targeted-candidate-repair-backup/
+          retention-days: 14
+          if-no-files-found: error
+      - name: Publish exact source, verify resident model and normal coding; rollback on failed acceptance
+        working-directory: targeted-release
+        shell: bash
+        timeout-minutes: 38
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          SWRLZ_TARGETED_REPAIR_APPROVED: "1"
+        run: |
+          set -euo pipefail
+          python -u scripts/hf_chat_targeted_candidate_repair_v1.py publish
+          echo "SWRLZ_TARGETED_CODE_REPAIR_LIVE_VERIFIED"
