@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT (owner-approved)",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.444",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_444_DELETE_SELECTED",
-  "reason": "Publish permanent Delete Selected on phone and VR, atomic native multi-delete with Undo, selection safeguards and VR double-trigger confirmation. Source verified; physical Quest acceptance pending.",
-  "sourceCommit": "5d204f8b0399c1aaf22098b3a721c1bba2ea08c8",
-  "sourceIntegritySha256": "b3febb77e3644ae88575f11849474bf2e2b46eb076006d4a668648257895a670"
+  "releaseVersion": "v11.445",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_445_SHAPE_FACE_DISCOVERY",
+  "reason": "Publish far-right VR tool rail, contextual operation submenu and native modifier drawer on demand, plus compact phone/desktop face-tool shortcuts; preserve model transactions, controller input, Undo and prior Delete Selected. Source verified; Quest acceptance pending.",
+  "sourceCommit": "ece2db85e0b04e5b2dea3c6f916e2d89135abc57",
+  "sourceIntegritySha256": "a69ef6c707a9afc36481d93fe766cb244aad5672a9df85ea42fea22b194f297b"
 }
