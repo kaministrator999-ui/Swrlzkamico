@@ -91,7 +91,7 @@ function se449ModelDockMax(side){
  # in-grid splitter styles and old 19vw/30vw caps.
  style=(ROOT/'runtime/model_dock_touch_layout_v11_449.css').read_text(encoding='utf8')
  assert '</head>' in html
- html=html.replace('</head>','<style id="se449ModelTouchLayout">\\n'+style+'\\n</style>\\n</head>',1)
+ html=html.replace('</head>','<style id="se449ModelTouchLayout">\n'+style+'\n</style>\n</head>',1)
 
  # A native topology mesh can retain source-indexed vertex deltas from the
  # earlier component transform tool. Offer an explicit one-step bake, with the
@@ -116,6 +116,9 @@ function se449ModelDockMax(side){
  # Explicit bake: existing topology meshes retain authored UV/indices. Only
  # verified matching geometry counts can replace the base vertex positions.
  html=one(html,
+   "const bakedVertexEdits=!!p.sculptVertexEdits?.length;\n  let source,result;try{",
+   "const bakedVertexEdits=!!p.sculptVertexEdits?.length;const sourceWasTopology=p.kind==='topologyMesh';\n  let source,result;try{")
+ html=one(html,
    "if(bakedVertexEdits)atelierSculptApply(source,p);\n   result=se430MeshOps.convert(source);",
    """if(bakedVertexEdits)atelierSculptApply(source,p);
    if(p.kind==='topologyMesh'&&bakedVertexEdits){
@@ -133,7 +136,7 @@ function se449ModelDockMax(side){
    "const candidate={...p,kind:'topologyMesh',topologyMesh:clone(result.data)};if(p.kind!=='topologyMesh')delete candidate.meshDensity;delete candidate.runtimeLOD;delete candidate.sculptVertexEdits;")
  html=one(html,
    "checkpoint();p.kind='topologyMesh';p.topologyMesh=candidate.topologyMesh;delete p.meshDensity;delete p.runtimeLOD;delete p.sculptVertexEdits;",
-   "checkpoint();p.kind='topologyMesh';p.topologyMesh=candidate.topologyMesh;if(!bakedVertexEdits)delete p.meshDensity;delete p.runtimeLOD;delete p.sculptVertexEdits;")
+   "checkpoint();p.kind='topologyMesh';p.topologyMesh=candidate.topologyMesh;if(!sourceWasTopology)delete p.meshDensity;delete p.runtimeLOD;delete p.sculptVertexEdits;")
  # Preserve meshDensity for source-mapped topology vertex edits; primitive
  # conversion may still clear the procedural density parameter as before.
 
