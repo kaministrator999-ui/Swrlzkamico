@@ -1,0 +1,35 @@
+name: Cut over §C to fresh Aiven Valkey with guarded rollback
+on:
+  push:
+    branches: [feature/aiven-valkey-storage-adapter]
+    paths:
+      - "scripts/hf_valkey_fresh_cutover.py"
+      - ".github/workflows/hf-valkey-fresh-cutover.yml"
+permissions: {contents: read}
+concurrency:
+  group: swrlz-hf-space-deployment
+  cancel-in-progress: false
+jobs:
+  fresh-aiven:
+    runs-on: ubuntu-latest
+    timeout-minutes: 19
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.11"}
+      - name: Install Hugging Face admin client
+        run: python -m pip install "huggingface_hub>=0.34,<2"
+      - name: Verify exact §C version and compile rollback-guarded switch script
+        run: python -m py_compile scripts/hf_valkey_fresh_cutover.py
+      - name: Activate Aiven only if native gateway passes, otherwise roll back
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: python -u scripts/hf_valkey_fresh_cutover.py
+      - name: Archive previous optional diagnostic source
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: swrlz-valkey-fresh-cutover-prechange-probe
+          path: valkey-cutover-rollback/
+          if-no-files-found: ignore
+          retention-days: 90
