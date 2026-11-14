@@ -1,0 +1,8 @@
+TARGET=kamiloki/Swyrlz
+APPROVED=1
+CHANGE_SCOPE=source-preserving-validator-patches-only
+MODEL=qwen3.5-9b
+THREADS=18
+CONTEXT_TOKENS=16384
+SOURCE_REF=b29a837dc216476a20f842c2b369a9cee0f1ffbb
+REQUEST_NONCE=swrlz-targeted-validator-repair-20261113-v1-0001
