@@ -120,7 +120,8 @@ def verify_revision_first(edited):
                     "currentId":"","threads":[],"activeGeneration":None}
     store=Store()
     from types import SimpleNamespace
-    env={"account_chat_store":store,"time":SimpleNamespace(monotonic=lambda:100),
+    clock=SimpleNamespace(value=100)
+    env={"account_chat_store":store,"time":SimpleNamespace(monotonic=lambda:clock.value),
          "HTTPException":HTTPException}
     exec(compile(ast.Module(body=[refresh_node],type_ignores=[]),
                  "<refresh-account-state>","exec"),env)
@@ -129,9 +130,11 @@ def verify_revision_first(edited):
              "threads":[],"activeGeneration":None}
     assert fn(session) is False and store.peek_calls==1 and store.load_calls==0
     store.remote=5
+    clock.value+=11
     assert fn(session) is True and session["revision"]==5 and store.load_calls==1
     assert fn(session,force=True) is False and store.load_calls==2
     store.remote=4
+    clock.value+=11
     try:fn(session,force=False)
     except HTTPException as e:assert e.status_code==503
     else:raise AssertionError("Stale remote revision accepted")
