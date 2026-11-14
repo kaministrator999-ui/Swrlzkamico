@@ -65,3 +65,15 @@ Given a request such as "add a button here":
 - A proposed button works but breaks Undo, saves, menu pointer priority, modal/z-index, resize, keyboard focus, or existing click actions. Regression gate must reject it.
 
 **Engineering rule:** source of truth first; evidence -> owner -> smallest correct edit -> actual test -> guarded commit/release, with append-only failure evidence.
+
+
+## Production upload milestone · verified 2026-11-14 UTC
+
+- Source review/CLI tests: https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/43547159872
+- Guarded live deployment: https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/43547230495
+- Active Hugging Face Space source revision: `633d1f26fec962410c6cd4aa60add0e78134b0a8`.
+- Read-only static tests passed against the exact source. The live UI endpoint `/chat/%C2%A7wyrlz` served the new `Files` picker, and the live backend accepted `index.html` plus `src/main.js` as one versioned imported artifact, revision 1, with path and hash receipts. A `../escape.js` upload returned HTTP 400.
+- The first deployment attempts were rejected and rolled back. One verification problem was using a raw Unicode character in Python's HTTP URL; encoding it as `%C2%A7` fixed the actual page probe. This failure path remains part of the engineering record.
+- The initial release preserves the 16K context window, 18 threads on 16 CPU quota, same Qwen3.5-9B model, GitHub write capabilities, §E editor lease/receipt checks, and existing voice/image UI.
+- **Present scope:** source-file upload and grounded style/dependency evidence for the current account thread. This is not ZIP/folder import, repository-wide indexing, visual-selected component edit, fully automatic GitHub commit, or §E source push. These later parts still require their own authorization, source-owner/visual matching, actual testing, and independently verified release.
+- New files are uploaded by tapping **Files** in the §C composer, selecting up to 32 text-source files with combined size no greater than 512 KiB, entering an analysis or edit question, then sending. Users should refresh an existing tab after deployment.
