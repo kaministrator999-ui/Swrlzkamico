@@ -70,7 +70,8 @@ def apply(html):
     html=once(html,'/* SE444_DELETE_SELECTED_VR_ACTION_END */',
               '/* SE444_DELETE_SELECTED_VR_ACTION_END */\n'+js)
     css=(ROOT/'runtime/model_shape_discovery_v11_445.css').read_text(encoding='utf8')
-    html=once(html,'</head>','<style id="se445ShapeDiscoveryStyles">\n'+css+'\n</style>\n</head>')
+    assert '</head>' in html
+    html=html.replace('</head>','<style id="se445ShapeDiscoveryStyles">\n'+css+'\n</style>\n</head>',1)
     for a,b in [
       ('SWYRL_ENGINE_DEPLOY_MARKER: V11_444_DELETE_SELECTED',MARKER),
       ('ENGINE · MAKER v11.444','ENGINE · MAKER v11.445'),
