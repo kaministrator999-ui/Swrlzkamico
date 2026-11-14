@@ -1,0 +1,66 @@
+name: Guarded §C resumable long-code checkpoint live release
+on:
+  push:
+    branches: [main]
+    paths: [".deploy/HF_CHAT_LONG_CODE_CHECKPOINT_REQUEST.txt"]
+permissions: {contents: read}
+concurrency:
+  group: swrlz-hf-space-deployment
+  cancel-in-progress: false
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 46
+    steps:
+      - uses: actions/checkout@v4
+      - name: Require exact source and user-authorized existing §C scope
+        id: approved
+        shell: bash
+        run: |
+          set -euo pipefail
+          p=.deploy/HF_CHAT_LONG_CODE_CHECKPOINT_REQUEST.txt
+          test -f "$p"
+          get() { sed -n "s/^$1=//p" "$p" | tail -n 1; }
+          test "$(get TARGET)" = "kamiloki/Swyrlz"
+          test "$(get APPROVED)" = "1"
+          test "$(get CHANGE_SCOPE)" = "resumable-long-code-draft-checkpoint-only"
+          test "$(get MODEL)" = "qwen3.5-9b"
+          test "$(get THREADS)" = "18"
+          test "$(get CONTEXT_TOKENS)" = "16384"
+          ref="$(get SOURCE_REF)"
+          nonce="$(get REQUEST_NONCE)"
+          [[ "$ref" =~ ^[0-9a-f]{40}$ ]]
+          [[ "$nonce" =~ ^[a-z0-9-]{12,96}$ ]]
+          echo "ref=$ref" >> "$GITHUB_OUTPUT"
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.approved.outputs.ref }}
+          path: release-source
+          fetch-depth: 1
+      - run: python -m pip install 'huggingface_hub>=0.34,<2'
+      - name: Snapshot original live engine and Station; validate native length and resume with fake model
+        working-directory: release-source
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m py_compile scripts/hf_long_code_checkpoint_v1.py
+          python -u scripts/hf_long_code_checkpoint_v1.py preflight
+      - uses: actions/upload-artifact@v4
+        with:
+          name: swrlz-long-code-exact-prior-live-sources
+          path: release-source/swrlz-long-code-checkpoint-backup/
+          retention-days: 14
+          if-no-files-found: error
+      - name: Publish guarded two-file change, ensure model readiness, test actual HTML generation and roll back on failure
+        working-directory: release-source
+        timeout-minutes: 37
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          SWRLZ_LONG_CODE_APPROVED: "1"
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -u scripts/hf_long_code_checkpoint_v1.py publish
+          echo "SWRLZ_LONG_CODE_CHECKPOINT_LIVE_VERIFIED"
