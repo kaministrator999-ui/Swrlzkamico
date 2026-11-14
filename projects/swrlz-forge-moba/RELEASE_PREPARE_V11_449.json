@@ -1,0 +1,9 @@
+{
+  "schema": "swrlz-forge-release-prepare-v1",
+  "version": "v11.449",
+  "ownerApproved": true,
+  "reason": "Repair model Meshes hierarchy dropping beneath viewport, restore draggable resize boundaries and native pinch/pan while Face selected; guarded topology vertex edit bake",
+  "sourcePatch": "patches/v11_449_model_touch_layout.py",
+  "expectedPrevious": "v11.448",
+  "verificationAttempt": 1
+}
