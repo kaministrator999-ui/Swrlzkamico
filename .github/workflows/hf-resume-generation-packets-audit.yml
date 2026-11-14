@@ -1,0 +1,29 @@
+name: Audit §C reconnect packet boundaries and progress freshness
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/hf-resume-generation-packets-audit.yml"]
+permissions: {contents: read}
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - run: python -m pip install 'huggingface_hub>=0.34,<2'
+      - run: |
+          python - <<'PY'
+          import json,re
+          from pathlib import Path
+          from huggingface_hub import HfApi,hf_hub_download
+          S="kamiloki/Swyrlz";rev=HfApi().repo_info(S,repo_type="space").sha
+          for name,parts in {
+           "chat/§wyrlz/index.html":[(3960,4035),(4358,4470),(3972,4015),(4140,4175)],
+           "station.py":[(110,230),(870,915),(1090,1165),(1348,1428),(1370,1418)],
+          }.items():
+              L=Path(hf_hub_download(S,name,repo_type="space",revision=rev)).read_text().splitlines()
+              for a,b in parts:
+                  for lo in range(a,min(b,len(L)),16):
+                      slice=L[lo-1:min(lo+15,b,len(L))]
+                      print("RESUME_PACKET",json.dumps({"file":name,"start":lo,"lines":"\n".join(f"{lo+i} {x}" for i,x in enumerate(slice))},ensure_ascii=False),flush=True)
+          print("RESUME_PACKET_REV",rev,flush=True)
+          PY
