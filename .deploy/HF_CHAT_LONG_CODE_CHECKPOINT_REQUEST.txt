@@ -4,5 +4,5 @@ CHANGE_SCOPE=resumable-long-code-draft-checkpoint-only
 MODEL=qwen3.5-9b
 THREADS=18
 CONTEXT_TOKENS=16384
-SOURCE_REF=8e522d42320517454557aa589d82306d402229dc
-REQUEST_NONCE=long-code-durable-resume-20261113-v1-001
+SOURCE_REF=f8a329edc0dce72042fce400672bb3cff3adddf9
+REQUEST_NONCE=long-code-resume-sync-receipt-retry-20261113-v2
