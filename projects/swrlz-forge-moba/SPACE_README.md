@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.444
+title: §wyrl§ Engine v11.445
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,10 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.445 · Three-stage VR tools and visible Shape / Face operations (2026-11-14)
+
+Model Studio VR now uses progressive disclosure in one draggable world-space menu: a persistent **far-right primary tool rail**, a smaller **operation submenu sliding left** when Sculpt / Face tools / another category is chosen, and the **existing native modifier/details panel sliding farther left only after selecting an operation**. The large information panel is hidden by default and can close independently of the submenu; the operation submenu can close without losing the primary rail. Sculpt includes its six original brushes plus Inset, Extrude, Solidify and Subdivide; Face tools expose the complete native workflow including conversion and flat-region selection. Original ray/Trigger/Grip, transform gizmos, preview/Apply/Cancel, Undo and Save remain authoritative. Phone/desktop gain a compact Shape / Face tool shortcut row in the existing selection inspector. Quest 2 physical acceptance pending.
 
 ## §E v11.444 · Delete selected meshes from every modeling view (2026-11-14)
 
