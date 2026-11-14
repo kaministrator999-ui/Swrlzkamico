@@ -5,6 +5,6 @@
   "reason": "Fix full-square planar Face mode tapping for Inset and Extrude; preserve Multi triangles, VR, native Undo",
   "sourcePatch": "patches/v11_446_planar_face_pick.py",
   "expectedPrevious": "v11.445",
-  "verificationAttempt": 2,
-  "note": "Correct v11.446 provenance numeric expectation in verifier; generated patch unchanged."
+  "verificationAttempt": 3,
+  "note": "Run v11.446 camera preservation snapshot; leave original historical test untouched."
 }
