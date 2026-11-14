@@ -68,16 +68,15 @@ def main():
         functions=[x for x in tree.body if isinstance(x,(ast.FunctionDef,ast.AsyncFunctionDef))]
         provider_funcs=[{"function":x.name,"start":x.lineno,"end":x.end_lineno}
                         for x in functions if re.search(r"redis|upstash|persist|restore|store|chat_state",x.name,re.I)]
-        declared_envs=sorted(set(re.findall(
-            r"os\\.(?:getenv|environ\\.get)\\(\\s*['\\\"]([A-Za-z][A-Za-z_0-9]*)",code
-        )))
+        declared_envs=sorted(set(re.findall(r"['\\\"]((?:SWRLZ|UPSTASH|KV)_[A-Za-z_0-9]+)['\\\"]",code)))
         declared_envs=[x for x in declared_envs if re.search(r"REDIS|UPSTASH|VALKEY|^KV_|BLOB",x,re.I)]
         src_lines=code.splitlines()
         # Do not print raw literal values; snippets serve only as routing diagnostics.
         excerpts=[]
         for i,line in enumerate(src_lines):
             if re.search(r"redis|upstash|valkey",line,re.I):
-                safe=re.sub(r"(['\\\"])(?:[^'\\\"]{16,})\\1",r"\\1[omitted]\\1",line.strip())
+                safe=line.strip()[:160]
+                safe=re.sub(r"rediss?://[^ ]+", "[redacted-uri]", safe)
                 excerpts.append({"line":i+1,"source_shape":safe[:160]})
         print("SWRLZ_LIVE_REDIS_CONTRACT "+json.dumps({
             "functions":provider_funcs[:50],
