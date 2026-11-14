@@ -1,0 +1,31 @@
+name: Inspect exact §C checkpoint-seeding seam and resume hot path
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/hf-checkpoint-preview-seam-audit.yml"]
+permissions: {contents: read}
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - run: python -m pip install 'huggingface_hub>=0.34,<2'
+      - run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          from huggingface_hub import HfApi,hf_hub_download
+          space="kamiloki/Swyrlz";rev=HfApi().repo_info(space,repo_type="space").sha
+          print("SEED_AUDIT_REV",rev,flush=True)
+          for file,ranges in {
+            "station.py":[(1060,1190),(1190,1260),(1565,1635)],
+            "qwen_coder_engine.py":[(646,755)],
+            "chat/§wyrlz/index.html":[(4140,4220)]
+          }.items():
+              lines=Path(hf_hub_download(space,file,repo_type="space",revision=rev)).read_text().splitlines()
+              for a,b in ranges:
+                  for first in range(a,min(b,len(lines)),12):
+                      print("SEED_AUDIT",json.dumps({"file":file,"start":first,
+                          "code":"\n".join(f"{first+i} {x}" for i,x in enumerate(lines[first-1:min(first+11,b,len(lines))]))},
+                          ensure_ascii=False),flush=True)
+          PY
