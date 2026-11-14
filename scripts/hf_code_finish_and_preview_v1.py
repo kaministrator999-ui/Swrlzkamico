@@ -96,9 +96,9 @@ def patch_coder(raw):
                     for repair_number in range(1,_SWRLZ_PATCH_ATTEMPTS+1):''',
 "repair complete-but-invalid HTML")
     s=once(s,
-'''                         repair_needed=(timing.get("finishReason")!="length"),''',
-'''                         repair_needed=(timing.get("finishReason")!="length"
-                             or bool(timing.get("sourceCompleteByParser"))),''',
+'''                        repair_needed=(timing.get("finishReason")!="length"),''',
+'''                        repair_needed=(timing.get("finishReason")!="length"
+                            or bool(timing.get("sourceCompleteByParser"))),''',
 "checkpoint repair routing")
     s=once(s,
 '''    if isinstance(programming,dict):
