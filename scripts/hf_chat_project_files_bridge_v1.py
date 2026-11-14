@@ -244,6 +244,13 @@ def patch_ui(text):
         text=once(text,"imagePickButton.disabled=true;",
              "imagePickButton.disabled=true; projectFilePickButton.disabled=true;",
              "composer upload control hold")
+    # The active send owns its own finally cleanup. The original composer
+    # doesn't necessarily reset the image picker here, so independently reset
+    # the source picker after either accepted or rejected transport.
+    text=once(text,
+        "syncStationControls();if(sendProjectionEpoch===accountProjectionEpoch)scheduleStationSync();",
+        "syncStationControls();projectFilePickButton.disabled=false;if(sendProjectionEpoch===accountProjectionEpoch)scheduleStationSync();",
+        "composer source picker finally cleanup")
     return text
 
 def check_html_js(text):
@@ -278,7 +285,7 @@ def validate(before,after,analyzer_bytes):
     assert 'id="projectFilePicker"' in ui
     assert 'id="projectFilePickButton"' in ui
     assert "selectedProjectFiles" in ui and "projectFiles.length?{projectFiles}" in ui
-    assert "projectFilePickButton.disabled=false" in ui or "projectFilePickButton.disabled=true" not in ui
+    assert "projectFilePickButton.disabled=false" in ui and "projectFilePickButton.disabled=true" in ui
     assert 'id="imagePicker"' in ui and 'id="micButton"' in ui
     assert 'CANDIDATE_PREVIEW_DELTA' in coder and "completion_validation(" in coder
     # Build and verify a compact real-world source example, with code design tokens.
