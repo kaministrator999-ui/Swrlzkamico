@@ -58,7 +58,9 @@ def main():
      for j in range(max(0,n.lineno-1),min(len(lines),n.end_lineno)):chosen.add(j)
   # Include entire related functions/regions for source-accurate guarded edits.
   extra={
-   "qwen_coder_engine.py":[(388,435),(585,666),(703,952),(1210,1410)],
+   "qwen_coder_engine.py":[(285,435),(585,666),(703,952),(955,1220),(1210,1410)],
+   "brain_programming.py":[(1,240),(240,500)],
+   "programming_repair_context.py":[(1,230),(230,420)],
    "station.py":[(307,365),(680,710),(1450,1560),(1810,1890),(2040,2170)],
    "account_chat_store.py":[(20,55),(105,222)],
    "chat/§wyrlz/index.html":[(4255,4325),(4350,4410),(1650,1750)],
