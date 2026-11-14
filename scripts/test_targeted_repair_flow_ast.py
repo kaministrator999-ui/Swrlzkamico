@@ -21,8 +21,8 @@ fn=next(n for n in tree.body if isinstance(n,ast.FunctionDef) and n.name=="gener
 target=[]
 for node in ast.walk(fn):
     if not isinstance(node,ast.If):continue
-    if 'candidate_check.get("status")=="REJECT" and code_delivery' in
-        ast.get_source_segment(modified,node).splitlines()[0]:
+    if ('candidate_check.get("status")=="REJECT" and code_delivery' in
+        ast.get_source_segment(modified,node).splitlines()[0]):
         target.append(node)
 assert len(target)==1,len(target)
 snippet=textwrap.dedent(ast.get_source_segment(modified,target[0]))
@@ -48,6 +48,7 @@ scope={"code_delivery":True,"_SWRLZ_PATCH_ATTEMPTS":2,
  "candidate_attempt_receipt":lambda *args,**kwargs:{"status":"PASS"},
  "candidate_attempts":attempts,"repair_target_fp":None,
  "regeneration_attempted":False,"regeneration_reason":"",
+ "payload":{"projectImportManifest":None},"programming":{"codingTask":True},
  "_SwrlzPatchError":TargetedRepairError}
 exec(code,scope)
 iterator=scope["branch"](old,{"status":"REJECT","reasons":["missing-css"]},"old-fp")
