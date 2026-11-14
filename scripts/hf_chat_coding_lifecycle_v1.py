@@ -88,15 +88,9 @@ def patch_engine(raw):
         '        if pending:\n            addition=_swrlz_trim_code_resume("".join(parts),pending)\n            if addition:\n                parts.append(addition)\n                preview_buffer+=addition',
         "buffer continuation tail")
     new=exactly(new,
-        '        observed.append(part_observation)\n        if part_observation.get("finishReason")!="length":break',
-        '        if preview_buffer:\n            yield {"type":"CANDIDATE_PREVIEW_DELTA","text":preview_buffer,"attempt":attempt}\n            preview_buffer=""\n            preview_last_flush=time.perf_counter()\n        observed.append(part_observation)\n        if part_observation.get("finishReason")!="length":break',
+        '        observed.append(part_observation)\n        if pause_at_budget:break',
+        '        if preview_buffer:\n            yield {"type":"CANDIDATE_PREVIEW_DELTA","text":preview_buffer,"attempt":attempt}\n            preview_buffer=""\n            preview_last_flush=time.perf_counter()\n        observed.append(part_observation)\n        if pause_at_budget:break',
         "flush preview at segment boundary")
-    # Shorten repeated CPU prefill on resumed work; the full saved source
-    # remains held by the server for final delivery and SHA validation.
-    new=exactly(new,
-        '    next_messages=_swrlz_resume_tail_messages(seed_text) if seed_text else messages',
-        '    next_messages=_swrlz_resume_tail_messages(seed_text) if seed_text else messages',
-        "noop bounded resume sanity")
     source=exactly(source,old,new,"exact code preview helper")
     # This callback is an in-memory capability supplied solely by Station.
     key='''    with _lock:
