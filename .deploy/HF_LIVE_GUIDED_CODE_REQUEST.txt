@@ -4,5 +4,5 @@ CHANGE_SCOPE=auto-resume-code-and-live-coding-questions-only
 MODEL=qwen3.5-9b
 CONTEXT_TOKENS=16384
 THREADS=18
-SOURCE_REF=34a9352bcacc24b096f83dc8fd60bcd76e117913
-REQUEST_NONCE=guided-code-live-nov14-v1
+SOURCE_REF=027e578b570a537baa7228373b258daba8f979c3
+REQUEST_NONCE=guided-code-live-nov14-v2
