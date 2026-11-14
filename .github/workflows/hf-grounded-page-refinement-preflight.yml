@@ -1,0 +1,27 @@
+name: Read-only §C grounded page-refinement multi-turn regression
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/hf-grounded-page-refinement-preflight.yml"]
+permissions: {contents: read}
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - run: python -m pip install 'huggingface_hub>=0.34,<2'
+      - name: Verify current Space source, route classification, 36 positive and false-positive tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m py_compile scripts/hf_chat_grounded_page_refinement_v1.py
+          python -u scripts/hf_chat_grounded_page_refinement_v1.py preflight
+          echo "GROUNDED_PAGE_REFINEMENT_PREFLIGHT_PASS"
+      - uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: swrlz-original-grounded-page-refinement-source
+          path: swrlz-grounded-page-intent-backup/
+          retention-days: 14
+          if-no-files-found: error
