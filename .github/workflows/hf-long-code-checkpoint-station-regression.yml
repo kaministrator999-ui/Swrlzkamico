@@ -1,0 +1,19 @@
+name: Verify §C live long-code checkpoint ownership and continuation safety
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/hf-long-code-checkpoint-station-regression.yml"]
+permissions: {contents: read}
+jobs:
+  regression:
+    runs-on: ubuntu-latest
+    timeout-minutes: 7
+    steps:
+      - uses: actions/checkout@v4
+      - run: python -m pip install 'huggingface_hub>=0.34,<2'
+      - name: Execute actual production Station save/resume AST with synthetic source
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m py_compile scripts/test_hf_long_code_checkpoint_station.py
+          python -u scripts/test_hf_long_code_checkpoint_station.py
