@@ -31,7 +31,7 @@ for name in ['sheep_visual_batch_v11_434.js','sheep_visible_frame_recovery_v11_4
 subprocess.run([sys.executable,str(ROOT/'scripts/check_inline_js_syntax_v11_266.py'),str(out/'index.html')],check=True)
 for name in ['test_sheep_quest_ai_frame_budget_v11_411.cjs','test_sheep_congestion_budget_v11_419.cjs','test_sheep_vr_frame_cadence_v11_379.cjs','sheep_visible_recovery_v11_434.cjs','test_sheep_territory_capture_v11_437.cjs','test_engine_render_bridge_v11_438.cjs','test_sheep_capture_pursuit_v11_439.cjs']:
  subprocess.run(['node',str(ROOT/'tests'/name)],check=True)
-subprocess.run(['node',str(ROOT/'tests/model_camera_preferences_preserved_v11_442.mjs'),str(out/'index.html')],check=True)
+subprocess.run(['node',str(ROOT/'tests/model_camera_preferences_preserved_v11_443.mjs'),str(out/'index.html')],check=True)
 subprocess.run(['node',str(ROOT/'tests/model_motion_menu_v11_440.mjs'),str(out/'index.html')],check=True)
 subprocess.run(['node',str(ROOT/'tests/model_satchel_browser_preservation_v11_442.mjs'),str(out/'index.html')],check=True)
 if A.three_module:
@@ -39,7 +39,7 @@ if A.three_module:
  subprocess.run(['node',str(ROOT/'tests/sheep_visual_batch_v11_434.mjs'),str(three),str(out/'index.html')],check=True)
  subprocess.run(['node',str(ROOT/'tests/engine_editor_shadow_cache_v11_434.mjs'),str(three)],check=True)
  subprocess.run(['node',str(ROOT/'tests/model_vr_grab_gizmo_v11_435.mjs'),str(three)],check=True)
- subprocess.run(['node',str(ROOT/'tests/model_satchel_cavity_preserved_v11_442.mjs'),str(three),str(out/'index.html')],check=True)
+ subprocess.run(['node',str(ROOT/'tests/model_satchel_cavity_preserved_v11_443.mjs'),str(three),str(out/'index.html')],check=True)
  subprocess.run(['node',str(ROOT/'tests/model_satchel_workflow_v11_441.mjs'),str(three)],check=True)
  for name in ['model_vr_native_tools_v11_350.mjs','model_vr_sculpt_draw_v11_350.mjs',
   'model_vr_fluent_tools_v11_390.mjs','model_vr_grab_v11_390.mjs','model_vr_quick_create_v11_390.mjs',
