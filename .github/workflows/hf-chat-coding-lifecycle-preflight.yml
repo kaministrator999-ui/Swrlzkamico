@@ -1,0 +1,29 @@
+name: Preflight §C coding speed, Stop and mobile reconnect lifecycle
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/hf-chat-coding-lifecycle-preflight.yml"
+      - "scripts/hf_chat_coding_lifecycle_v1.py"
+permissions: {contents: read}
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - run: python -m pip install 'huggingface_hub>=0.34,<2'
+      - name: Compile exact live engine/Station; parse Chat JS and test replay/cancel/budget seams
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m py_compile scripts/hf_chat_coding_lifecycle_v1.py
+          python -u scripts/hf_chat_coding_lifecycle_v1.py preflight
+          echo "SWRLZ_CODING_LIFECYCLE_PREFLIGHT_PASS"
+      - uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: swrlz-coding-lifecycle-exact-prior-production
+          path: swrlz-coding-lifecycle-original/
+          retention-days: 14
+          if-no-files-found: error
