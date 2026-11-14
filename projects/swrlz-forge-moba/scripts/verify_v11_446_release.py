@@ -23,7 +23,7 @@ for token in [marker,"window.SWRLZ_FORGE_BUILD={version:'v11.446'",'<title>§wyr
  'SE437_SHEEP_TERRITORY_CAPTURE_START','se437BaseCandidates(unit)',
  'se437BaseAllowed(unit,p)','se437BuildAllowed(unit,x,z)']:
  assert token in html,token
-assert html.count(" source.engine='§wyrl§ Engine · Maker v11.446';source.version=11.445;")==5
+assert html.count(" source.engine='§wyrl§ Engine · Maker v11.446';source.version=11.446;")==5
 for name in ['model_vr_three_stage_v11_445.js','model_face_tool_shortcuts_v11_445.js','model_delete_selected_v11_444.js','model_vr_dock_v11_443.js','model_vr_grab_gizmo_v11_435.js','se436_satchel_cavity.js','se436_vr_cube_extrude.js','sheep_territory_capture_v11_437.js']:
  subprocess.run(['node','--check',str(ROOT/'runtime'/name)],check=True)
 for name in ['sheep_visual_batch_v11_434.js','sheep_visible_frame_recovery_v11_434.js','sheep_xray_policy_v11_434.js','engine_editor_shadow_cache_v11_434.js']:
