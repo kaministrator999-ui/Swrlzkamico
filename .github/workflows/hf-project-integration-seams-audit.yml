@@ -1,0 +1,36 @@
+name: Inspect §C upload/send ownership and project source injection points
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/hf-project-integration-seams-audit.yml"]
+permissions: {contents: read}
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - run: python -m pip install 'huggingface_hub>=0.34,<2'
+      - run: |
+          python - <<'PY'
+          from pathlib import Path
+          import json
+          from huggingface_hub import HfApi,hf_hub_download
+          s="kamiloki/Swyrlz";rev=HfApi().repo_info(s,repo_type="space").sha
+          ranges={
+            "station.py":[(1,90),(260,361),(805,880),(1029,1107),
+               (1205,1295),(1350,1450),(1490,1545),(1660,1815),
+               (2035,2155),(2155,2318)],
+            "qwen_coder_engine.py":[(720,825),(825,915)],
+            "chat/§wyrlz/index.html":[(1340,1460),(4260,4400),(4400,4540)],
+            "github_connection.py":[(420,440),(745,800),(1520,1625)],
+            "project_archive.py":[(220,310)],
+          }
+          for name,spans in ranges.items():
+              lines=Path(hf_hub_download(s,name,repo_type="space",revision=rev)).read_text().splitlines()
+              for a,b in spans:
+                  if a>len(lines):continue
+                  print("INTEGRATION_RANGE",json.dumps({"file":name,"start":a,"end":min(b,len(lines)),
+                         "lines":[str(j+1)+" "+lines[j] for j in range(a-1,min(b,len(lines))]},
+                         ensure_ascii=False),flush=True)
+          print("INTEGRATION_AUDIT_DONE",rev,flush=True)
+          PY
