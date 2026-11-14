@@ -1,0 +1,57 @@
+name: Guarded HF §C Ask storage reliability release
+on:
+  push:
+    branches: [main]
+    paths: [".deploy/HF_CODE_ASK_RELIABILITY_REQUEST.txt"]
+permissions: {contents: read}
+concurrency:
+  group: swrlz-hf-space-deployment
+  cancel-in-progress: false
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 23
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify scope and source reference
+        id: gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          p=".deploy/HF_CODE_ASK_RELIABILITY_REQUEST.txt"
+          get(){ sed -n "s/^$1=//p" "$p" | tail -1; }
+          test "$(get TARGET)" = "kamiloki/Swyrlz"
+          test "$(get APPROVED)" = "1"
+          test "$(get SCOPE)" = "live-code-ask-storage-recovery-only"
+          test "$(get MODEL)" = "qwen3.5-9b"
+          ref="$(get SOURCE_REF)"
+          [[ "$ref" =~ ^[0-9a-f]{40}$ ]]
+          echo "ref=$ref" >> "$GITHUB_OUTPUT"
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.gate.outputs.ref }}
+          path: release-source
+      - run: python -m pip install 'huggingface_hub>=0.34,<2'
+      - name: Verify live anchors and browser script integrity
+        working-directory: release-source
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          set -euo pipefail
+          python -m py_compile scripts/hf_live_code_ask_reliability_v1.py
+          python -u scripts/hf_live_code_ask_reliability_v1.py preflight
+      - uses: actions/upload-artifact@v4
+        with:
+          name: hf-code-ask-prior-live-sources
+          path: release-source/hf-code-ask-reliability-backup/
+          if-no-files-found: error
+          retention-days: 14
+      - name: Publish guarded live source change
+        working-directory: release-source
+        timeout-minutes: 15
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          SWRLZ_ASK_RELIABILITY_APPROVED: "1"
+        run: |
+          set -euo pipefail
+          python -u scripts/hf_live_code_ask_reliability_v1.py publish
