@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.443
+title: §wyrl§ Engine v11.444
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,10 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.444 · Delete selected meshes from every modeling view (2026-11-14)
+
+The Model Studio selection context on phone/desktop now includes a reachable **Delete selected** button; VR's vertical tool dock has a permanent Delete action. One or multiple complete mesh objects are deleted in a single Undo checkpoint, without touching unselected geometry or unrelated projects. Deletion requires Object mode, no active transform/preview, and leaves at least one native mesh. In VR, Trigger Delete twice within 5.5 seconds on an unchanged selection; Undo restores the previous snapshot. Physical Quest acceptance is still pending.
 
 ## §E v11.443 · Vertical VR tools and attached slide-out settings (2026-11-14)
 
