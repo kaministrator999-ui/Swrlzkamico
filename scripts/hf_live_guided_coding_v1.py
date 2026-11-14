@@ -48,7 +48,7 @@ def patch_coder(src):
     ast.parse(src,filename="qwen_coder_engine.py")
     return src
 
-AUTO_CHAIN=String.raw if False else '''# swrlz-live-guided-code-v1: one continuous generation across native
+AUTO_CHAIN='''# swrlz-live-guided-code-v1: one continuous generation across native
 # 240-second checkpoints. Stop, checkpoint integrity and validator remain authoritative.
 def _swrlz_auto_code_chain(events,payload,key,request_id):
     started=time.monotonic()
@@ -106,7 +106,7 @@ def _swrlz_auto_code_chain(events,payload,key,request_id):
 
 '''
 
-LIVE_CONTROL=String.raw if False else '''# swrlz-live-guided-code-v1: independent live control lane. This is
+LIVE_CONTROL='''# swrlz-live-guided-code-v1: independent live control lane. This is
 # account/session-scoped state, not a parallel second model decode.
 @app.post("/api/lalm_station/live-code-control")
 async def live_code_control(request:Request):
@@ -185,7 +185,7 @@ def patch_station(src):
     ast.parse(src,filename="station.py")
     return src
 
-JS_GUIDE=String.raw if False else '''      // swrlz-live-guided-code-v1: an independent composer action, never Stop.
+JS_GUIDE=r'''      // swrlz-live-guided-code-v1: an independent composer action, never Stop.
       const swrlzGuideButton=document.createElement("button");
       swrlzGuideButton.type="button";swrlzGuideButton.hidden=true;
       swrlzGuideButton.textContent="Ask";
@@ -226,7 +226,7 @@ JS_GUIDE=String.raw if False else '''      // swrlz-live-guided-code-v1: an inde
           if(prompt.value.trim()===text){prompt.value="";resizeComposer();}
           swrlzGuideAnswer.textContent=(action==="STEER"?"Guidance recorded\\n":"Progress answer\\n")+String(result.answer||"");
           swrlzGuideReceipt.hidden=false;
-          if(!action==="STEER")void syncStation();
+          void syncStation();
         }catch(error){
           swrlzGuideAnswer.textContent="Couldn't send coding question: "+String(error.message||error);
           swrlzGuideReceipt.hidden=false;
