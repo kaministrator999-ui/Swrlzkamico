@@ -24,7 +24,7 @@ class QualityTests(unittest.TestCase):
         instruction=self.guidance("Create a website for an actual bakery",{})
         self.assertIn("USER-SPECIFIC PAGE",instruction)
         self.assertNotIn("OPEN-ENDED CREATIVE PAGE",instruction)
-        self.assertIn("Do not replace",instruction)
+        self.assertIn("do not replace",instruction)
 
     def test_responsive_and_no_inert_buttons_on_all_websites(self):
         instruction=self.guidance("Make a shop HTML page",{})
