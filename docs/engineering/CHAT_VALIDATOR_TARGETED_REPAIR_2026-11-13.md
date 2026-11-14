@@ -42,3 +42,16 @@ The original candidate is the immutable baseline. Once an actual code deliverabl
 - Source files larger than the current single-draft cap: route to independently verified per-file edits, not a speculative larger model window.
 
 **Operational rule:** retain working code, use validation evidence to repair the smallest source region, test after each change, and never demolish an entire project to fix one line.
+
+
+## Live release and branch-level verification (2026-11-14 UTC)
+
+- First guarded release [run 43557350468](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/43557350468) **failed acceptance** after an isolated synthetic conversation returned no terminal receipt. The exact previous coding engine was restored at HF revision `11b41391daae2675cd13aede1c7fbc3227827707`. This failure is retained as part of the lineage, not rewritten as a pass.
+- The check was updated to retry a fresh isolated synthetic request if a worker rollout breaks the stream and to read the request-scoped validator and completion receipt from Station sync. This does not mark unknown requests as successful.
+- Corrected guarded release [run 43558503907](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/43558503907) **passed**, publishing HF coding engine revision `c56c9222cda2955db380da68847c00d11c7c9334`. Live Qwen3.5-9B hardware remained 18 decode/batch threads with 16 CPU quota cores and unchanged 16K context. Live synthetic single-file HTML request delivered **1,094 characters**, terminal **COMPLETE**, request-bound candidate validator **PASS**, and 308 provisional code-delta events.
+- Independent read-only branch regression [run 43558666968](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/43558666968) executed the **actual source-patched** `generate_events` repair condition using test doubles: a validator-directed CSS insertion preserved the prior HTML and passed; an invalid JSON repair preserved the prior draft as `UNVERIFIED_INCOMPLETE`, without resetting or silently accepting the bad code.
+- These results verify the engine behavior and normal small-HTML regression, **not** real-browser functionality or a full reproduction of the user's large HTML/JS failure. Future acceptance should retest that exact project or a representative long code candidate containing simultaneous missing CSS and JS.
+
+## Concurrent UI enhancement
+
+The code preview/final code box scroll-follow is a **separate UI-only release**, [run 43558187512](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/43558187512), HF revision `6ac16e5a6869a0b746e9c80b59d1a52e8f7ce263` immediately before the repair deployment. Its source test verified bottom-follow, manual-scroll pause, preserved code viewport state, and unchanged media/file/voice controls. The live served Chat page was checked; phone and Quest touch-scroll acceptance remain user-device tests.
