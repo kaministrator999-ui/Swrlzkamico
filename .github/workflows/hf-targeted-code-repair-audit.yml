@@ -1,0 +1,33 @@
+name: Inspect §C exact coding validator and retry seams for source-preserving repair
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/hf-targeted-code-repair-audit.yml"]
+permissions: {contents: read}
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - run: python -m pip install 'huggingface_hub>=0.34,<2'
+      - run: |
+          python - <<'PY'
+          import ast,json
+          from pathlib import Path
+          from huggingface_hub import HfApi,hf_hub_download
+          s="kamiloki/Swyrlz";rev=HfApi().repo_info(s,repo_type="space").sha
+          print("TARGETED_REPAIR_REV",rev,flush=True)
+          for name in ("qwen_coder_engine.py","programming_repair_context.py","source_completion_validation.py"):
+              try:src=Path(hf_hub_download(s,name,repo_type="space",revision=rev)).read_text()
+              except Exception as ex:print("TARGETED_REPAIR_MISSING",name,type(ex).__name__,flush=True);continue
+              tree=ast.parse(src)
+              for fn in tree.body:
+                  if isinstance(fn,(ast.FunctionDef,ast.AsyncFunctionDef)) and
+                      (fn.name in ("_candidate_structure_check","completion_validation",
+                       "candidate_retry_messages","candidate_final_messages",
+                       "generate_events","_source_sized_budget","source_sized_budget",
+                       "_swrlz_resume_code_events","_swrlz_code_candidate_preview")):
+                      print("TARGETED_REPAIR_FUNCTION",json.dumps({"file":name,"name":fn.name,
+                        "source":ast.get_source_segment(src,fn)},ensure_ascii=False),flush=True)
+          print("TARGETED_REPAIR_AUDIT_DONE",flush=True)
+          PY
