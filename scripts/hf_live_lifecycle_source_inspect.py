@@ -46,6 +46,15 @@ def main():
      for j in range(max(0,i-3),min(len(lines),i+7)):chosen.add(j)
    else:
     for j in range(max(0,i-2),min(len(lines),i+4)):chosen.add(j)
+  # Include entire related functions/regions for source-accurate guarded edits.
+  extra={
+   "qwen_coder_engine.py":[(388,435),(585,666),(703,952),(1210,1370)],
+   "station.py":[(307,365),(680,710),(1450,1560),(1810,1890),(2040,2170)],
+   "account_chat_store.py":[(20,55),(105,222)],
+   "chat/§wyrlz/index.html":[(4350,4410),(1650,1750)],
+  }
+  for start,end in extra.get(file,[]):
+   for j in range(max(0,start-1),min(len(lines),end)):chosen.add(j)
   # Print separate short blocks as base64-encoded static source text to avoid
   # GitHub masking a quoted literal and corrupting JSON. No user data read.
   grouped=[]; st=prev=None
