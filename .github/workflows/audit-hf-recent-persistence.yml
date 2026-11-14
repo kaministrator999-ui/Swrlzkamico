@@ -1,0 +1,19 @@
+name: Inspect recent HF chat persistence changes
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/audit-hf-recent-persistence.yml"]
+permissions: {contents: read}
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 7
+    steps:
+      - run: python -m pip install 'huggingface_hub>=0.34,<2'
+      - run: |
+          python - <<'PY'
+          from huggingface_hub import HfApi
+          api=HfApi()
+          for c in list(api.list_repo_commits("kamiloki/Swyrlz",repo_type="space"))[:45]:
+              print("HF_COMMIT",c.commit_id[:12],c.created_at.isoformat() if c.created_at else "unknown",repr(c.title[:140]),flush=True)
+          PY
