@@ -274,6 +274,8 @@ def conversation(opener,thread,prompt,max_secs=240):
                 raise TimeoutError("Synthetic project-turn latency exceeded safety limit")
             try:event=json.loads(raw)
             except (ValueError,UnicodeError):continue
+            if event.get("requestId") and event.get("requestId")!=request_id:
+                raise RuntimeError("Stream event belongs to another synthetic request")
             kind=event.get("type")
             if kind=="CANDIDATE_PREVIEW_DELTA":
                 if first_draft is None:first_draft=round(time.monotonic()-start,2)
@@ -285,12 +287,20 @@ def conversation(opener,thread,prompt,max_secs=240):
             elif kind=="STATUS":states.append(str(event.get("phase") or ""))
             elif kind in ("COMPLETE","COMPLETED","FAILED","CANCELLED"):
                 terminal=kind;break
-    with opener.open(urllib.request.Request(BASE+"/api/lalm_station/sync",
-            headers=HEAD),timeout=25) as response:
-        snapshot=json.load(response)
-    active=snapshot.get("activeGeneration") or {}
+    # A newly rebuilt Space can temporarily rotate an anonymous session.
+    # Verify the stream and the cookie-scoped session have the same request,
+    # never substitute stale telemetry or silently accept a different user.
+    active={}
+    for snapshot_try in range(7):
+        with opener.open(urllib.request.Request(BASE+"/api/lalm_station/sync",
+                headers=HEAD),timeout=25) as response:
+            snapshot=json.load(response)
+        active=snapshot.get("activeGeneration") or {}
+        if active.get("requestId")==request_id:
+            break
+        time.sleep(2)
     if active.get("requestId")!=request_id:
-        raise RuntimeError("Session telemetry not scoped to synthetic request")
+        raise RuntimeError("Synthetic session invalidated during rollout; retry full two-turn test")
     validation=active.get("candidateValidation") or {}
     budget=active.get("contextBudget") or {}
     intent=active.get("programmingIntent") or {}
@@ -313,30 +323,57 @@ def conversation(opener,thread,prompt,max_secs=240):
 
 def accept(api,rev):
     # A real two-turn project, using the user's exact follow-up phrasing.
-    # No personal chat, file or account is read.
-    opener=urllib.request.build_opener(
-        urllib.request.HTTPCookieProcessor(http.cookiejar.CookieJar()))
-    thread="swrlz-grounded-page-test-"+str(uuid.uuid4())
-    first=conversation(opener,thread,
-        "Generate a short complete HTML demonstration page with a heading and a toggle button. Keep the single-file source under 100 lines.",max_secs=240)
-    if first["terminal"] not in ("COMPLETE","COMPLETED") or not first["codeOutputHasHtml"]:
-        raise RuntimeError("Live synthetic starter HTML did not complete")
-    second=conversation(opener,thread,
-        "Now improve the page",max_secs=420)
-    if second["terminal"] not in ("COMPLETE","COMPLETED"):
-        raise RuntimeError("Natural HTML follow-up did not complete")
-    if not second["codeOutputHasHtml"] or second["codeChars"]<100:
-        raise RuntimeError("Natural HTML follow-up did not deliver complete HTML")
-    if second["candidateValidation"]!="PASS":
-        raise RuntimeError("Natural HTML follow-up was not accepted by existing validation")
-    if second["firstDraftSec"] is None:
-        raise RuntimeError("Natural HTML follow-up did not show provisional coding deltas")
-    if not (second["intentCoding"] is True and second["intentChange"]=="feature"
-            and second["intentProject"]=="existing"):
-        raise RuntimeError("Original natural wording did not resolve to existing coding project")
-    emit("LIVE_EXISTING_HTML_FOLLOWUP_ACCEPTED",revision=rev,
-         firstTurnSec=first["totalSec"],improvementTurnSec=second["totalSec"],
-         sourcePreserved=True,verifiedSourceMutated=False)
+    # No personal chat, file or account is read. Restart with a fresh
+    # disposable session if the Space rotates the anonymous session during
+    # deployment; never treat unscoped telemetry as a pass.
+    for attempt in range(1,4):
+        if api.repo_info(SPACE,repo_type="space").sha!=rev:
+            raise RuntimeError("Concurrent HF Space source update during live acceptance")
+        opener=urllib.request.build_opener(
+            urllib.request.HTTPCookieProcessor(http.cookiejar.CookieJar()))
+        thread="swrlz-grounded-page-test-"+str(uuid.uuid4())
+        try:
+            first=conversation(opener,thread,
+                "Generate a short complete HTML demonstration page with a heading and a toggle button. Keep the single-file source under 100 lines.",max_secs=240)
+            if first["terminal"] not in ("COMPLETE","COMPLETED") or not first["codeOutputHasHtml"]:
+                raise RuntimeError("Live synthetic starter HTML did not complete")
+            # The Station stream can end before its persistence phase settles.
+            # Explicitly check that the saved source exists in this same thread.
+            time.sleep(2)
+            with opener.open(urllib.request.Request(BASE+"/api/lalm_station/sync",
+                    headers=HEAD),timeout=25) as response:
+                state=json.load(response)
+            stored=next((t for t in state.get("threads",[])
+                         if t.get("id")==thread),{})
+            assistant_sources=[m for m in stored.get("messages",[])
+                  if m.get("role")=="assistant" and
+                  ("<html" in str(m.get("text") or "").lower() or
+                   "<!doctype html" in str(m.get("text") or "").lower())]
+            if not assistant_sources:
+                raise RuntimeError("Synthetic session did not retain first HTML artifact")
+            second=conversation(opener,thread,
+                "Now improve the page",max_secs=420)
+            if second["terminal"] not in ("COMPLETE","COMPLETED"):
+                raise RuntimeError("Natural HTML follow-up did not complete")
+            if not second["codeOutputHasHtml"] or second["codeChars"]<100:
+                raise RuntimeError("Natural HTML follow-up did not deliver complete HTML")
+            if second["candidateValidation"]!="PASS":
+                raise RuntimeError("Natural HTML follow-up was not accepted by existing validation")
+            if second["firstDraftSec"] is None:
+                raise RuntimeError("Natural HTML follow-up did not show provisional coding deltas")
+            if not (second["intentCoding"] is True and second["intentChange"]=="feature"
+                    and second["intentProject"]=="existing"):
+                raise RuntimeError("Original wording did not resolve to existing coding project")
+            emit("LIVE_EXISTING_HTML_FOLLOWUP_ACCEPTED",revision=rev,
+                 attempt=attempt,firstTurnSec=first["totalSec"],
+                 improvementTurnSec=second["totalSec"],
+                 sourcePreserved=True,verifiedSourceMutated=False)
+            return
+        except Exception as exc:
+            emit("LIVE_TWO_TURN_ATTEMPT_FAILED",attempt=attempt,
+                 kind=type(exc).__name__,detail=str(exc)[:200])
+            if attempt==3:raise
+            time.sleep(8)
 
 def main():
     args=sys.argv[1:]
