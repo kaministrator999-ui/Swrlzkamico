@@ -224,8 +224,8 @@
    const dt=Math.max(0,Math.min(.06,Number(args[0])||0));
    oldTick(...args);
    const step=dt*7;
-   subProgress=subProgress<Number(submenuOpen)?Math.min(1,subProgress+step):Math.max(0,subProgress-step);
-   detailProgress=detailProgress<Number(detailsOpen)?Math.min(1,detailProgress+step):Math.max(0,detailProgress-step);
+   subProgress=submenuOpen?Math.min(1,subProgress+step):Math.max(0,subProgress-step);
+   detailProgress=detailsOpen?Math.min(1,detailProgress+step):Math.max(0,detailProgress-step);
    sync();
   }
   function openWheel(...args){
