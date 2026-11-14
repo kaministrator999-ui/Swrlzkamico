@@ -1,0 +1,10 @@
+/* SE445_SHAPE_DISCOVERY_START */
+/* One small connected action group, using the native face workshop. */
+#modelAtelierPanel[data-se430-beginner] #se445ShapeQuick{display:block;position:static;min-width:0;max-width:100%;margin:6px 0;padding:7px;border:1px solid #527b83;border-radius:8px;background:#122b37;color:#d8f4f6}
+#modelAtelierPanel[data-se430-beginner] #se445ShapeQuick .se445-shape-caption{display:block;font:700 11px/1.35 system-ui;color:#c6eadf;margin-bottom:5px}
+#modelAtelierPanel[data-se430-beginner] #se445ShapeQuick .se445-shape-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:5px}
+#modelAtelierPanel[data-se430-beginner] #se445ShapeQuick button{display:inline-flex;align-items:center;justify-content:center;min-width:0;min-height:39px!important;padding:6px 7px!important;margin:0!important;font-size:12px!important;font-weight:650;white-space:normal}
+#modelAtelierPanel[data-se430-beginner] #se445ShapeQuick button[aria-pressed="true"]{border-color:#94e1c9;background:#275a5b;color:#eafff5}
+#modelAtelierPanel[data-se430-beginner] #se445ShapeQuick .se445-shape-hint{display:block;margin-top:5px;font:11px/1.4 system-ui;color:#bcd2df;overflow-wrap:anywhere}
+#modelAtelierPanel[data-se430-beginner] #se445ShapeQuick button:focus-visible{outline:2px solid #a1e8d3;outline-offset:1px}
+/* SE445_SHAPE_DISCOVERY_END */
