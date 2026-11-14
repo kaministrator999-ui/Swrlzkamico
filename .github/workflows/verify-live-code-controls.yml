@@ -1,0 +1,44 @@
+name: Verify noninterrupting §C coding control plane
+on:
+  push:
+    branches: [main]
+    paths:
+      - "api/live_code_controls.py"
+      - "api/lalm_station.py"
+      - "chat/§wyrlz/index.html"
+      - "tests/test_live_code_controls.py"
+      - ".github/workflows/verify-live-code-controls.yml"
+  workflow_dispatch:
+permissions: {contents: read}
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install backend validation dependencies
+        run: python -m pip install 'fastapi>=0.115,<1' 'requests>=2.31,<3'
+      - name: Verify Python and unit tests
+        run: |
+          python -m py_compile api/live_code_controls.py api/lalm_station.py
+          python -m unittest discover -s tests -p test_live_code_controls.py -v
+      - name: Verify embedded Chat scripts parse under Node
+        run: |
+          python - <<'PY'
+          import re, subprocess, tempfile
+          from pathlib import Path
+          source=Path("chat/§wyrlz/index.html").read_text()
+          scripts=re.findall(r"<script\b([^>]*)>(.*?)</script\s*>",source,flags=re.I|re.S)
+          checked=0
+          with tempfile.TemporaryDirectory() as td:
+              for i,(attrs,body) in enumerate(scripts):
+                  if not body.strip() or "application/json" in attrs: continue
+                  path=Path(td)/(str(i)+".js")
+                  path.write_text(body)
+                  proc=subprocess.run(["node","--check",str(path)],capture_output=True,text=True)
+                  if proc.returncode: raise RuntimeError(proc.stderr)
+                  checked+=1
+          assert checked>0
+          assert "/api/lalm_station/live-code" in source
+          print("SWRLZ_LIVE_CODE_CONTROLS_VERIFIED",checked)
+          PY
