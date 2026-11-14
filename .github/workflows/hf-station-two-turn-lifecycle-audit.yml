@@ -1,0 +1,24 @@
+name: Inspect §C Station two-turn streaming and persistence lifecycle
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/hf-station-two-turn-lifecycle-audit.yml"]
+permissions: {contents: read}
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - run: python -m pip install 'huggingface_hub>=0.34,<2'
+      - run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          from huggingface_hub import HfApi,hf_hub_download
+          S="kamiloki/Swyrlz";rev=HfApi().repo_info(S,repo_type="space").sha
+          lines=Path(hf_hub_download(S,"station.py",revision=rev,repo_type="space")).read_text().splitlines()
+          for a,b in ((1570,1655),(1715,1780),(2050,2200),(2200,2295)):
+              print("STATION_TWO_TURN_RANGE",json.dumps({"start":a,"end":b,
+                  "code":[str(i+1)+" "+lines[i] for i in range(a-1,min(b,len(lines)))]},ensure_ascii=False),flush=True)
+          print("STATION_TWO_TURN_DONE",rev,flush=True)
+          PY
