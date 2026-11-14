@@ -7,7 +7,7 @@ from __future__ import annotations
 
 import re
 
-_CSS_RULE = re.compile(r"^[ \\t]*(\\.[A-Za-z_][A-Za-z0-9_-]*)[ \\t]*\\{[^{}\\r\\n]{1,300}\\}[ \\t]*(?:\\r?\\n)?$")
+_CSS_RULE = re.compile(r"^[ \t]*(\.[A-Za-z_][A-Za-z0-9_-]*)[ \t]*\{[^{}\r\n]{1,300}\}[ \t]*(?:\r?\n)?$")
 
 
 def collapse_repeated_css_rules(source: str, *, min_run: int = 10):
@@ -43,7 +43,7 @@ def collapse_repeated_css_rules(source: str, *, min_run: int = 10):
             seen = set()
             unique = []
             for line in run:
-                key = line.rstrip("\\r\\n").strip()
+                key = line.rstrip("\r\n").strip()
                 if key not in seen:
                     seen.add(key)
                     unique.append(line)
