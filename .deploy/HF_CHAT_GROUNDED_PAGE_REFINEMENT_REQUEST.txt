@@ -1,0 +1,8 @@
+TARGET=kamiloki/Swyrlz
+APPROVED=1
+CHANGE_SCOPE=grounded-existing-code-page-refinement-routing-only
+MODEL=qwen3.5-9b
+CONTEXT_TOKENS=16384
+THREADS=18
+SOURCE_REF=7fd51c8e0fec7889b88bb134d593cc2f57f0c703
+REQUEST_NONCE=grounded-page-refinement-source-followup-20261113-v1
