@@ -277,10 +277,21 @@ async def queue_post_generation_revision(*, user_id: str, request_id: str,
 def status_answer(view: dict[str, Any], question: str = "") -> str:
     phase = str(view.get("phase") or "unknown").replace("_", " ").lower()
     state = str(view.get("state") or "unknown").lower()
-    pending = sum(c.get("state") == "RECORDED_PENDING_EXECUTOR"
-                  for c in view.get("controlInbox") or [])
+    controls = view.get("controlInbox") or []
+    pending = sum(c.get("state") == "RECORDED_PENDING_EXECUTOR" for c in controls)
+    revisions = sum(c.get("state") == "REVISION_QUEUED" for c in controls)
+    produced = sum(c.get("state") == "REVISION_PRODUCED_UNVERIFIED" for c in controls)
     sentence = f"Generation is {state}; latest reported phase: {phase}."
     if pending:
         sentence += f" {pending} control request(s) recorded, not yet confirmed applied."
+    if revisions:
+        sentence += f" {revisions} revision request(s) scheduled in a separate job."
+    if produced:
+        sentence += f" {produced} revision(s) produced, awaiting external compile/runtime verification."
     sentence += " No verified percent-complete or finish-time estimate is available."
+    question = str(question or "").lower()
+    if any(term in question for term in ("so far", "written", "current code", "show code", "what have")):
+        excerpt = str(view.get("recentOutputExcerpt") or "")
+        sentence += (" Recent emitted output excerpt (not the whole file):\\n" + excerpt
+                     if excerpt else " No accepted code excerpt is available in the latest progress events.")
     return sentence
