@@ -121,13 +121,13 @@ def patch_coder(raw):
     if WEB_DELIVERY not in src:raise RuntimeError("HTML_CODING_ROUTE_CHANGED")
     src=one(src,REPAIR_FIT,
        '''        if web_page_delivery and not source_change_mode:
-            system+="\n"+_swrlz_webpage_quality_policy(prompt,programming)
+            system+="\\n"+_swrlz_webpage_quality_policy(prompt,programming)
 '''+REPAIR_FIT,
        "REPAIR_QUALITY_CONTEXT")
     src=one(src,NORMAL_FIT,
        '''    else:
         if web_page_delivery and not source_change_mode:
-            system+="\n"+_swrlz_webpage_quality_policy(prompt,programming)
+            system+="\\n"+_swrlz_webpage_quality_policy(prompt,programming)
         fitted=_fit_messages(model,system,history,prompt,delivery_output_limit,preserve_latest_code=preserve_existing_source(programming))''',
        "NORMAL_QUALITY_CONTEXT")
     src=one(src,SHARED,NEW_SHARED,"NONBLOCKING_QUALITY_RISKS")
