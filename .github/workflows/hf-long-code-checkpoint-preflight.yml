@@ -2,7 +2,9 @@ name: Preflight §C resumable long-code continuation and account-owned checkpoin
 on:
   push:
     branches: [main]
-    paths: [".github/workflows/hf-long-code-checkpoint-preflight.yml"]
+    paths:
+      - ".github/workflows/hf-long-code-checkpoint-preflight.yml"
+      - "scripts/hf_long_code_checkpoint_v1.py"
 permissions: {contents: read}
 jobs:
   check:
