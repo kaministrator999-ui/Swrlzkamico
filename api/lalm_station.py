@@ -19,7 +19,7 @@ from api.chat_state import _read_state, _state_value, _headers
 from api.chat_transcript_store import STORE
 from api.canonical_redis_state import store as canonical_redis_store, _canonical_messages_compatible
 import api.chat as chat
-from api import chat_turn_state
+from api import chat_turn_state, live_code_controls
 
 CONTRACT = "swrlz-lalm-station-sync-v1"
 MAX_ACTIVE = 8
@@ -178,6 +178,72 @@ def install(server, chat_extensions) -> None:
         except Exception as exc:
             print("SWRLZ_STATION_TRANSPORT "+__import__("json").dumps({"stage":"send-failed","requestId":request_id,"errorType":type(exc).__name__,"error":str(exc),"atUnixMs":int(time.time()*1000)},separators=(",",":")),flush=True)
             return JSONResponse({"ok": False, "contract": CONTRACT, "code": "LALM_STATION_SEND_FAILED", "detail": f"{type(exc).__name__}: {exc}"}, status_code=503, headers=_headers())
+
+    @app.get("/api/lalm_station/live-code", include_in_schema=False)
+    async def live_code_status(request: Request):
+        """Read exact in-progress generation milestones without adding a model turn."""
+        try:
+            user_id = user_id_from_request(request)
+            request_id = str(request.query_params.get("requestId") or "")
+            thread_id = str(request.query_params.get("threadId") or "")
+            view = live_code_controls.snapshot(
+                user_id=user_id, request_id=request_id, thread_id=thread_id)
+            return JSONResponse({"ok": True, "contract": "swrlz-live-code-control-v1",
+                                 "progress": view,
+                                 "answer": live_code_controls.status_answer(view)}, headers=_headers())
+        except AuthenticationError as exc:
+            return JSONResponse({"ok": False, "code": "ACCOUNT_SESSION_INVALID",
+                                 "detail": str(exc)}, status_code=401, headers=_headers())
+        except LookupError:
+            return JSONResponse({"ok": False, "code": "GENERATION_NOT_FOUND"},
+                                status_code=404, headers=_headers())
+        except ValueError as exc:
+            return JSONResponse({"ok": False, "code": str(exc)},
+                                status_code=400, headers=_headers())
+        except Exception:
+            return JSONResponse({"ok": False, "code": "LIVE_CODE_STATUS_UNAVAILABLE"},
+                                status_code=503, headers=_headers())
+
+    @app.post("/api/lalm_station/live-code", include_in_schema=False)
+    async def live_code_control(request: Request):
+        """Record steering/checkpoint intent without stopping the existing worker.
+
+        Merely recording a control is not execution. The consumer must explicitly
+        mark a request applied once it integrates and verifies the change.
+        """
+        try:
+            user_id = user_id_from_request(request)
+            payload = await request.json()
+            if not isinstance(payload, dict):
+                raise ValueError("INVALID_REQUEST")
+            request_id = str(payload.get("requestId") or "")
+            thread_id = str(payload.get("threadId") or "")
+            kind = str(payload.get("kind") or "").upper()
+            if kind in {"STATUS", "ASK_STATUS"}:
+                view = live_code_controls.snapshot(
+                    user_id=user_id, request_id=request_id, thread_id=thread_id)
+                return JSONResponse({
+                    "ok": True, "contract": "swrlz-live-code-control-v1",
+                    "answer": live_code_controls.status_answer(view, str(payload.get("text") or "")),
+                    "progress": view}, headers=_headers())
+            result = live_code_controls.record_control(
+                user_id=user_id, request_id=request_id, thread_id=thread_id,
+                kind=kind, text=str(payload.get("text") or ""))
+            return JSONResponse({"ok": True, "contract": "swrlz-live-code-control-v1",
+                                 **result}, status_code=202, headers=_headers())
+        except AuthenticationError as exc:
+            return JSONResponse({"ok": False, "code": "ACCOUNT_SESSION_INVALID",
+                                 "detail": str(exc)}, status_code=401, headers=_headers())
+        except LookupError:
+            return JSONResponse({"ok": False, "code": "GENERATION_NOT_FOUND"},
+                                status_code=404, headers=_headers())
+        except ValueError as exc:
+            return JSONResponse({"ok": False, "code": str(exc)},
+                                status_code=400, headers=_headers())
+        except Exception:
+            return JSONResponse({"ok": False, "code": "LIVE_CODE_CONTROL_UNAVAILABLE"},
+                                status_code=503, headers=_headers())
+
 
     @app.get("/api/lalm_station/sync", include_in_schema=False)
     async def station_sync(request: Request):
