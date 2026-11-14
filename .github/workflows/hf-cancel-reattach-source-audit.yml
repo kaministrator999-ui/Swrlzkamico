@@ -1,0 +1,33 @@
+name: Exact §C cancel and mobile reattach source seams
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/hf-cancel-reattach-source-audit.yml"]
+permissions: {contents: read}
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 7
+    steps:
+      - run: python -m pip install 'huggingface_hub>=0.34,<2'
+      - shell: bash
+        run: |
+          python - <<'PY'
+          import json,ast
+          from pathlib import Path
+          from huggingface_hub import HfApi,hf_hub_download
+          R="kamiloki/Swyrlz";rev=HfApi().repo_info(R,repo_type="space").sha
+          specs={
+           "qwen_coder_engine.py":[(770,867),(1118,1315)],
+           "station.py":[(1223,1262),(1355,1425),(1500,1580),(1598,1625),(2002,2022),(275,306)],
+           "chat/§wyrlz/index.html":[(3970,4065),(4290,4320),(4358,4400),(4683,4715),(3935,3975)],
+          }
+          print("CANCEL_SOURCE_REV",rev,flush=True)
+          for name,ranges in specs.items():
+              lines=Path(hf_hub_download(R,name,repo_type="space",revision=rev)).read_text().splitlines()
+              for a,b in ranges:
+                  for lo in range(a,min(b,len(lines)),20):
+                      batch=lines[lo-1:min(lo+19,b,len(lines))]
+                      print("CANCEL_SEAM",json.dumps({"file":name,"start":lo,
+                        "code":"\n".join(f"{lo+i} {v}" for i,v in enumerate(batch))},ensure_ascii=False),flush=True)
+          PY
