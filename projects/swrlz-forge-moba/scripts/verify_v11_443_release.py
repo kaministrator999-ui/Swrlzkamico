@@ -4,7 +4,7 @@ import argparse,hashlib,json,re,subprocess,sys
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
 P=argparse.ArgumentParser(description=__doc__);P.add_argument('--output',required=True);P.add_argument('--request',action='store_true');P.add_argument('--three-module');A=P.parse_args()
-m=json.loads((ROOT/'source-manifest.json').read_text());assert m['name']=='§wyrl§ Engine v11.443';assert m['finalArtifact']=='swyrl_engine_v11_442.html';assert len(m['patches'])==420
+m=json.loads((ROOT/'source-manifest.json').read_text());assert m['name']=='§wyrl§ Engine v11.443';assert m['finalArtifact']=='swyrl_engine_v11_443.html';assert len(m['patches'])==420
 assert m['patches'][-13:]==['patches/v11_431_model_gizmo_access.py','patches/v11_432_mobile_camera_orbit.py','patches/v11_433_model_camera_preferences.py','patches/v11_434_sheep_crowded_vr.py','patches/v11_435_model_vr_grab_gizmo.py','patches/v11_436_cube_extrude_satchel.py','patches/v11_437_sheep_territory_capture.py','patches/v11_438_engine_simulation_render_bridge.py','patches/v11_439_sheep_capture_pursuit.py','patches/v11_440_model_tools_validation.py','patches/v11_441_satchel_vr_workflow.py','patches/v11_442_satchel_mobile_dialog.py','patches/v11_443_model_vr_vertical_dock.py']
 out=Path(A.output).resolve();subprocess.run([sys.executable,str(ROOT/'build_space.py'),'--output',str(out)],check=True)
 data=(out/'index.html').read_bytes();assert data==(out/'modeler.html').read_bytes();assert len(data)==m['finalBytes'];assert hashlib.sha256(data).hexdigest()==m['finalSha256'];html=data.decode()
@@ -23,7 +23,7 @@ for token in [marker,"window.SWRLZ_FORGE_BUILD={version:'v11.443'",'<title>§wyr
  'SE437_SHEEP_TERRITORY_CAPTURE_START','se437BaseCandidates(unit)',
  'se437BaseAllowed(unit,p)','se437BuildAllowed(unit,x,z)']:
  assert token in html,token
-assert html.count(" source.engine='§wyrl§ Engine · Maker v11.443';source.version=11.442;")==5
+assert html.count(" source.engine='§wyrl§ Engine · Maker v11.443';source.version=11.443;")==5
 for name in ['model_vr_dock_v11_443.js','model_vr_grab_gizmo_v11_435.js','se436_satchel_cavity.js','se436_vr_cube_extrude.js','sheep_territory_capture_v11_437.js']:
  subprocess.run(['node','--check',str(ROOT/'runtime'/name)],check=True)
 for name in ['sheep_visual_batch_v11_434.js','sheep_visible_frame_recovery_v11_434.js','sheep_xray_policy_v11_434.js','engine_editor_shadow_cache_v11_434.js']:
