@@ -1,0 +1,27 @@
+name: Preflight §C resumable long-code continuation and account-owned checkpoints
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/hf-long-code-checkpoint-preflight.yml"]
+permissions: {contents: read}
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - run: python -m pip install 'huggingface_hub>=0.34,<2'
+      - name: Compare exact production sources; AST, deterministic length and resume tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m py_compile scripts/hf_long_code_checkpoint_v1.py
+          python -u scripts/hf_long_code_checkpoint_v1.py preflight
+          echo "SWRLZ_LONG_CODE_CHECKPOINT_PREFLIGHT_PASS"
+      - uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: swrlz-long-code-checkpoint-prior-source
+          path: swrlz-long-code-checkpoint-backup/
+          retention-days: 14
+          if-no-files-found: error
