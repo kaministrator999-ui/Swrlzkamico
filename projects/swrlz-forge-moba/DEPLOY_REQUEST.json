@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT (owner-approved)",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.447",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_447_SMOOTH_FACE_ORBIT",
-  "reason": "Publish smooth per-frame camera orbit in Face mode and during Inset/Extrude topology preview, preserving touch inversion, two-finger navigation, geometry and Undo. Source verified; physical phone acceptance pending.",
-  "sourceCommit": "64c63e71b40a3291d20b52d1736583c0730ebe25",
-  "sourceIntegritySha256": "eb4dd50dc029fe5cc562874c7f93732f0aa0aad922b081877ac10763e2548429"
+  "releaseVersion": "v11.448",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_448_INSET_DOCK_USABILITY",
+  "reason": "Publish one-tap Inset preview on a selected face; opt-in baked vertex edits for plain cubes with Undo; align existing draggable resize grips to four-column editor, preserve protected assets and native modeling workflows. Source verified; physical device acceptance pending.",
+  "sourceCommit": "e317e361d09b43c0a5dff4b67a99b812cd6ff9f0",
+  "sourceIntegritySha256": "bb01213f693cd982c0cd1521c1286e2d1bd41eeed7585520c644c191c600f0c9"
 }
