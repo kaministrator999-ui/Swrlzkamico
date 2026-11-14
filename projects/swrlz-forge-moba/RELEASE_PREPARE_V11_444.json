@@ -4,5 +4,7 @@
   "ownerApproved": true,
   "reason": "Native Delete Selected for one/multiple meshes; persistent phone and VR controls; Undo and VR confirmation",
   "sourcePatch": "patches/v11_444_selected_mesh_delete.py",
-  "expectedPrevious": "v11.443"
+  "expectedPrevious": "v11.443",
+  "verificationAttempt": 2,
+  "note": "Retain old v11.443 test; use cloned current-version camera regression"
 }
