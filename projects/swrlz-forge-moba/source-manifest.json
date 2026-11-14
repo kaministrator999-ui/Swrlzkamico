@@ -1,10 +1,10 @@
 {
   "schema": "swrlz-forge-source-v2",
-  "name": "§wyrl§ Engine v11.447",
+  "name": "§wyrl§ Engine v11.448",
   "baseArtifact": "swrlz_forge_v4.html",
   "baseBytes": 99591,
   "baseSha256": "a8299fe89fbb98d15c6091751b7a66931a66efec8eec5cb464e1286f21895856",
-  "finalArtifact": "swyrl_engine_v11_447.html",
+  "finalArtifact": "swyrl_engine_v11_448.html",
   "encoding": "gzip+base64-chunks",
   "chunks": [
     "payload/part-01.txt",
@@ -438,8 +438,9 @@
     "patches/v11_444_selected_mesh_delete.py",
     "patches/v11_445_shape_face_discovery.py",
     "patches/v11_446_planar_face_pick.py",
-    "patches/v11_447_smooth_face_orbit.py"
+    "patches/v11_447_smooth_face_orbit.py",
+    "patches/v11_448_inset_dock_usability.py"
   ],
-  "finalBytes": 10055774,
-  "finalSha256": "eb4dd50dc029fe5cc562874c7f93732f0aa0aad922b081877ac10763e2548429"
+  "finalBytes": 10063213,
+  "finalSha256": "bb01213f693cd982c0cd1521c1286e2d1bd41eeed7585520c644c191c600f0c9"
 }
