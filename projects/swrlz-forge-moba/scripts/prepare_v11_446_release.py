@@ -6,7 +6,7 @@ ROOT=Path(__file__).resolve().parents[1]
 manifest_path=ROOT/'source-manifest.json'
 manifest=json.loads(manifest_path.read_text(encoding='utf-8'))
 patch='patches/v11_446_planar_face_pick.py'
-if manifest['name']!='§wyrl§ Engine v11.444' or manifest['patches'][-1]!='patches/v11_444_selected_mesh_delete.py':
+if manifest['name']!='§wyrl§ Engine v11.445' or manifest['patches'][-1]!='patches/v11_445_shape_face_discovery.py':
     raise SystemExit('Refusing to seal unexpected engine manifest')
 if not (ROOT/patch).is_file():raise SystemExit('Missing planar face-selection patch')
 manifest['name']='§wyrl§ Engine v11.446'
