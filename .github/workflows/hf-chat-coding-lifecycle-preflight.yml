@@ -5,6 +5,7 @@ on:
     paths:
       - ".github/workflows/hf-chat-coding-lifecycle-preflight.yml"
       - "scripts/hf_chat_coding_lifecycle_v1.py"
+      - "scripts/test_hf_coding_lifecycle_stream.py"
 permissions: {contents: read}
 jobs:
   test:
@@ -19,6 +20,7 @@ jobs:
           set -euo pipefail
           python -m py_compile scripts/hf_chat_coding_lifecycle_v1.py
           python -u scripts/hf_chat_coding_lifecycle_v1.py preflight
+          python -u scripts/test_hf_coding_lifecycle_stream.py
           echo "SWRLZ_CODING_LIFECYCLE_PREFLIGHT_PASS"
       - uses: actions/upload-artifact@v4
         if: success()
