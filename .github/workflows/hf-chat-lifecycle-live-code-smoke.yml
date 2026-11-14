@@ -1,0 +1,25 @@
+name: Post-release §C ordinary HTML validation and latency smoke
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/hf-chat-lifecycle-live-code-smoke.yml"]
+permissions: {contents: read}
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - run: python -m pip install 'huggingface_hub>=0.34,<2'
+      - name: Isolated normal coding response, original full HTML and Station validation
+        shell: bash
+        run: |
+          set -euo pipefail
+          PYTHONPATH=scripts python - <<'PY'
+          import time
+          from hf_chat_targeted_candidate_repair_v1 import live_smoke_once
+          started=time.perf_counter()
+          live_smoke_once()
+          print("SWRLZ_LIFECYCLE_POST_RELEASE_CODING_PASS",
+                "elapsedSeconds",round(time.perf_counter()-started,2),flush=True)
+          PY
