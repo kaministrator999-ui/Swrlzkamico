@@ -54,7 +54,7 @@ def patch_engine(raw):
         "if segment>1 and time.perf_counter()-started>=native_budget_seconds:break",
         "short per-turn segment gate")
     new=exactly(new,'        pending=""\n        for chunk in model.create_chat_completion(',
-        '        pending=""\n        pause_at_budget=False\n        for chunk in model.create_chat_completion(',
+        '        pending=""\n        prefix_trim_pending=bool(segment>1 or seed_text)\n        pause_at_budget=False\n        for chunk in model.create_chat_completion(',
         "native budget pending")
     new=exactly(new,"        ):\n            observe_completion_chunk(part_observation,chunk)",
         "        ):\n"
@@ -73,6 +73,13 @@ def patch_engine(raw):
         "        if pause_at_budget:break\n"
         "        if part_observation.get(\"finishReason\")!=\"length\":break",
         "stop after partial segment")
+    # Overlap is a SEGMENT JOIN problem, not a recurring operation
+    # for each 256-character native chunk. Re-running it inside a segment
+    # silently deletes legitimate repeated JS/CSS patterns.
+    new=exactly(new,
+        '            if segment>1 or seed_text:\n                # Briefly buffer the next segment\'s prefix to recognize\n                # a repeated tail or an accidental second opening fence.\n                pending+=str(delta)\n                if len(pending)<256:continue\n                addition=_swrlz_trim_code_resume("".join(parts),pending)\n                pending=""\n            else:\n                addition=str(delta)',
+        '            if prefix_trim_pending:\n                # Only compare the very first portion of this segment.\n                pending+=str(delta)\n                if len(pending)<256:continue\n                addition=_swrlz_trim_code_resume("".join(parts),pending)\n                prefix_trim_pending=False\n                pending=""\n            else:\n                addition=str(delta)',
+        "trim overlap once per resumed segment")
     # Streaming small code tokens individually makes Station update the
     # same long snapshot thousands of times. Coalesce frequent chunks while
     # preserving the exact byte-for-byte generated candidate.
