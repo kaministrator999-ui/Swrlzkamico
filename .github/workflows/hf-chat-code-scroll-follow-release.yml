@@ -1,0 +1,66 @@
+name: Guarded live §C code-box scroll-follow UI release
+on:
+  push:
+    branches: [main]
+    paths: [".deploy/HF_CHAT_CODE_SCROLL_FOLLOW_REQUEST.txt"]
+permissions: {contents: read}
+concurrency:
+  group: swrlz-hf-space-deployment
+  cancel-in-progress: false
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 33
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate UI-only release approval and pinned source commit
+        id: approval
+        shell: bash
+        run: |
+          set -euo pipefail
+          request=.deploy/HF_CHAT_CODE_SCROLL_FOLLOW_REQUEST.txt
+          test -f "$request"
+          get() { sed -n "s/^$1=//p" "$request" | tail -n 1; }
+          test "$(get TARGET)" = "kamiloki/Swyrlz"
+          test "$(get APPROVED)" = "1"
+          test "$(get CHANGE_SCOPE)" = "code-box-scroll-follow-ui-only"
+          test "$(get MODEL)" = "qwen3.5-9b"
+          test "$(get THREADS)" = "18"
+          test "$(get CONTEXT_TOKENS)" = "16384"
+          ref="$(get SOURCE_REF)"
+          nonce="$(get REQUEST_NONCE)"
+          [[ "$ref" =~ ^[0-9a-f]{40}$ ]]
+          [[ "$nonce" =~ ^[a-z0-9-]{12,96}$ ]]
+          echo "ref=$ref" >> "$GITHUB_OUTPUT"
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.approval.outputs.ref }}
+          path: release-source
+          fetch-depth: 1
+      - run: python -m pip install 'huggingface_hub>=0.34,<2'
+      - name: Validate exact live source, JS, scroll-state and controls
+        working-directory: release-source
+        shell: bash
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          set -euo pipefail
+          python -m py_compile scripts/hf_chat_code_scroll_follow_v1.py
+          python -u scripts/hf_chat_code_scroll_follow_v1.py preflight
+      - uses: actions/upload-artifact@v4
+        with:
+          name: swrlz-code-scroll-follow-original-live-ui
+          path: release-source/swrlz-code-scroll-follow-backup/
+          retention-days: 14
+          if-no-files-found: error
+      - name: Publish exact UI and verify served page; rollback on mismatch
+        working-directory: release-source
+        timeout-minutes: 25
+        shell: bash
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          SWRLZ_CODE_SCROLL_APPROVED: "1"
+        run: |
+          set -euo pipefail
+          python -u scripts/hf_chat_code_scroll_follow_v1.py publish
+          echo "SWRLZ_CODE_SCROLL_FOLLOW_LIVE_VERIFIED"
