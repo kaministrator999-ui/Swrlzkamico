@@ -544,7 +544,8 @@ def main():
         if deployed and api.repo_info(SPACE,repo_type="space").sha==deployed:
             previous=publish(api,deployed,original,
                          "Rollback §C coding lifecycle to exact previous engine/Station/UI")
-            live_ui(previous)
+            # The old UI intentionally lacks the new marker; the parent-pinned
+            # source hash check in publish() is the correct rollback receipt.
             record("EXACT_OLD_SOURCES_RESTORED",revision=previous)
         elif deployed:record("ROLLBACK_BLOCKED_BY_CONCURRENT_CHANGE")
         raise
