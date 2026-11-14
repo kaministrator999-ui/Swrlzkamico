@@ -33,7 +33,7 @@ for name in ['test_sheep_quest_ai_frame_budget_v11_411.cjs','test_sheep_congesti
  subprocess.run(['node',str(ROOT/'tests'/name)],check=True)
 subprocess.run(['node',str(ROOT/'tests/model_camera_preferences_preserved_v11_448.mjs'),str(out/'index.html')],check=True)
 subprocess.run(['node',str(ROOT/'tests/model_delete_selected_v11_444.mjs'),str(out/'index.html')],check=True)
-subprocess.run(['node',str(ROOT/'tests/model_face_shortcuts_v11_445.mjs'),str(out/'index.html')],check=True)
+subprocess.run(['node',str(ROOT/'tests/model_face_shortcuts_v11_448.mjs'),str(out/'index.html')],check=True)
 subprocess.run(['node',str(ROOT/'tests/model_vr_three_stage_v11_445.mjs'),str(out/'index.html')],check=True)
 subprocess.run(['node',str(ROOT/'tests/model_planar_face_pick_v11_446.mjs'),str(out/'index.html')],check=True)
 subprocess.run(['node',str(ROOT/'tests/model_face_orbit_v11_447.mjs'),str(out/'index.html')],check=True)
