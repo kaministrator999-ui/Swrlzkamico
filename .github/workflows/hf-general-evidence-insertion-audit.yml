@@ -1,0 +1,23 @@
+name: Locate §C general-engine project-evidence insertion points
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/hf-general-evidence-insertion-audit.yml"]
+permissions: {contents: read}
+jobs:
+  read:
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    steps:
+      - run: python -m pip install 'huggingface_hub>=0.34,<2'
+      - run: |
+          python - <<'PY'
+          from pathlib import Path
+          from huggingface_hub import HfApi,hf_hub_download
+          s="kamiloki/Swyrlz";rev=HfApi().repo_info(s,repo_type="space").sha
+          for name in ("lfm2_700m_engine.py","qwen_coder_engine.py"):
+              lines=Path(hf_hub_download(s,name,repo_type="space",revision=rev)).read_text().splitlines()
+              for i,line in enumerate(lines):
+                  if 'if payload.get("archiveEvidence"):' in line:
+                      print("EVIDENCE_INSERTION",name,i+1,"\n".join(str(j+1)+" "+lines[j] for j in range(max(0,i-7),min(len(lines),i+9))),flush=True)
+          PY
