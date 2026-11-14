@@ -4,5 +4,5 @@ CHANGE_SCOPE=source-preserving-validator-patches-only
 MODEL=qwen3.5-9b
 THREADS=18
 CONTEXT_TOKENS=16384
-SOURCE_REF=b29a837dc216476a20f842c2b369a9cee0f1ffbb
-REQUEST_NONCE=swrlz-targeted-validator-repair-20261113-v1-0001
+SOURCE_REF=e14220643d70e203812ead2de5a5256b1538b95f
+REQUEST_NONCE=swrlz-validator-targeted-patch-hf-worker-rollout-20261113-v2
