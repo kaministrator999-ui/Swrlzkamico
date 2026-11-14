@@ -2,7 +2,10 @@ name: Validate §C project-source style and dependency evidence
 on:
   push:
     branches: [main]
-    paths: [".github/workflows/hf-project-source-intelligence-tests.yml"]
+    paths:
+      - ".github/workflows/hf-project-source-intelligence-tests.yml"
+      - "scripts/project_source_intelligence_v1.py"
+      - "scripts/test_project_source_intelligence_v1.py"
 permissions: {contents: read}
 jobs:
   test:
