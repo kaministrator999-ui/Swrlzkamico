@@ -407,7 +407,7 @@ def live_accept():
     deadline=time.monotonic()+540
     while time.monotonic()<deadline:
         try:
-            url=BASE+"/chat/§wyrlz?__source_import_probe="+uuid.uuid4().hex
+            url=BASE+"/chat/%C2%A7wyrlz?__source_import_probe="+uuid.uuid4().hex
             with urllib.request.urlopen(urllib.request.Request(url,headers=HEAD),timeout=20) as response:
                 body=response.read(720000).decode("utf-8",errors="replace")
             if 'id="projectFilePicker"' in body and 'id="projectFilePickButton"' in body:
