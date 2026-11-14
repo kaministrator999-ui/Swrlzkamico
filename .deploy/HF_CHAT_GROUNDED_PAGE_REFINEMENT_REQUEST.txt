@@ -4,5 +4,5 @@ CHANGE_SCOPE=grounded-existing-code-page-refinement-routing-only
 MODEL=qwen3.5-9b
 CONTEXT_TOKENS=16384
 THREADS=18
-SOURCE_REF=52e45202332d7abaa6218dc80b133593964301cc
-REQUEST_NONCE=grounded-page-refinement-two-turn-session-retry-20261113-v2
+SOURCE_REF=6eace134ec3649da542d0de53a011ac2107c5e9e
+REQUEST_NONCE=grounded-page-refinement-strict-session-retry-20261113-v3
