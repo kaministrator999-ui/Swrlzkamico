@@ -10,7 +10,7 @@ permissions:
   actions: write
 
 concurrency:
-  group: engine-v11-444-seal
+  group: engine-v11-445-seal
   cancel-in-progress: false
 
 jobs:
@@ -52,7 +52,7 @@ jobs:
            'target':'kamiloki/swrlz-forge-moba',
            'releaseVersion':'v11.445',
            'deployMarker':'SWYRL_ENGINE_DEPLOY_MARKER: V11_445_SHAPE_FACE_DISCOVERY',
-           'reason':'Publish permanent Shape and Face tool discoverability on phone and VR, atomic native multi-delete with Undo, selection safeguards and VR double-trigger confirmation. Source verified; physical Quest acceptance pending.',
+           'reason':'Publish far-right VR tool rail, contextual operation submenu and native modifier drawer on demand, plus compact phone/desktop face-tool shortcuts; preserve model transactions, controller input, Undo and prior Delete Selected. Source verified; Quest acceptance pending.',
            'sourceCommit':os.environ['SOURCE_COMMIT'],
            'sourceIntegritySha256':manifest['finalSha256']
           }
