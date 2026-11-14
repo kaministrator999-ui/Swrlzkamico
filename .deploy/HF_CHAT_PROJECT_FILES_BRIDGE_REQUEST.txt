@@ -4,5 +4,5 @@ CHANGE_SCOPE=source-uploads-bounded-style-map-only
 MODEL=qwen3.5-9b
 THREADS=18
 CONTEXT_TOKENS=16384
-SOURCE_REF=05b5af9637b45acdc87f0dcf9977a4b10a6fe28d
-REQUEST_NONCE=source-import-bounded-style-v1-20261113-0001
+SOURCE_REF=cc74100c28cbb2580e0ca3699016d5e9bfb1d552
+REQUEST_NONCE=source-import-bounded-style-v1-20261113-0002-worker-aware
