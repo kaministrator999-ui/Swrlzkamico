@@ -29,3 +29,5 @@ jobs:
           path: swrlz-project-source-import-v1-backup/
           retention-days: 14
           if-no-files-found: error
+
+# verify worker-URL encoding and source-owner isolation before retry
