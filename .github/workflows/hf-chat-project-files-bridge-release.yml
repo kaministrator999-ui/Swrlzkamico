@@ -1,0 +1,68 @@
+name: Guarded live §C multi-file source-import and theme-evidence release
+on:
+  push:
+    branches: [main]
+    paths: [".deploy/HF_CHAT_PROJECT_FILES_BRIDGE_REQUEST.txt"]
+permissions:
+  contents: read
+concurrency:
+  group: swrlz-hf-space-deployment
+  cancel-in-progress: false
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 44
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate user scope, unchanged 9B inference, and exact pinned implementation
+        id: approved
+        shell: bash
+        run: |
+          set -euo pipefail
+          request=.deploy/HF_CHAT_PROJECT_FILES_BRIDGE_REQUEST.txt
+          test -f "$request"
+          get() { sed -n "s/^$1=//p" "$request" | tail -n 1; }
+          test "$(get TARGET)" = "kamiloki/Swyrlz"
+          test "$(get APPROVED)" = "1"
+          test "$(get CHANGE_SCOPE)" = "source-uploads-bounded-style-map-only"
+          test "$(get MODEL)" = "qwen3.5-9b"
+          test "$(get THREADS)" = "18"
+          test "$(get CONTEXT_TOKENS)" = "16384"
+          ref="$(get SOURCE_REF)"
+          nonce="$(get REQUEST_NONCE)"
+          [[ "$ref" =~ ^[0-9a-f]{40}$ ]]
+          [[ "$nonce" =~ ^[a-z0-9-]{12,96}$ ]]
+          echo "ref=$ref" >> "$GITHUB_OUTPUT"
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.approved.outputs.ref }}
+          path: import-release-source
+          fetch-depth: 1
+      - run: python -m pip install 'huggingface_hub>=0.34,<2'
+      - name: Validate source AST and UI syntax against original current Space bytes
+        shell: bash
+        working-directory: import-release-source
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          set -euo pipefail
+          python -m py_compile scripts/hf_chat_project_files_bridge_v1.py scripts/project_source_intelligence_v1.py
+          python -m unittest discover -s scripts -p test_project_source_intelligence_v1.py
+          python -u scripts/hf_chat_project_files_bridge_v1.py preflight
+      - uses: actions/upload-artifact@v4
+        with:
+          name: swrlz-project-files-import-exact-prior-live-sources
+          path: import-release-source/swrlz-project-source-import-v1-backup/
+          retention-days: 14
+          if-no-files-found: error
+      - name: Deploy and verify real isolated multi-file upload; restore exact prior bytes on failure
+        shell: bash
+        working-directory: import-release-source
+        timeout-minutes: 34
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          SWRLZ_PROJECT_IMPORT_APPROVED: "1"
+        run: |
+          set -euo pipefail
+          python -u scripts/hf_chat_project_files_bridge_v1.py publish
+          echo "SWRLZ_PROJECT_SOURCE_IMPORT_LIVE_VALIDATED"
