@@ -36,8 +36,8 @@ jobs:
               if name.endswith(".py"):
                   tree=ast.parse(text)
                   for item in tree.body:
-                      if isinstance(item,(ast.FunctionDef,ast.AsyncFunctionDef)) and
-                          (keywords.search(item.name) or item.name in ("generate_events",)):
+                      if (isinstance(item,(ast.FunctionDef,ast.AsyncFunctionDef)) and
+                          (keywords.search(item.name) or item.name in ("generate_events",))):
                           print("PROJECT_FUNCTION",json.dumps({"file":name,"name":item.name,
                                "start":item.lineno,"end":item.end_lineno}),flush=True)
               for i in hits[:25 if "index.html" in name else 40]:
