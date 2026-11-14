@@ -1,0 +1,15 @@
+name: Verify §C live uploaded-file ownership and isolation
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/hf-source-upload-ownership-test.yml"]
+permissions: {contents: read}
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - run: python -m py_compile scripts/verify_hf_project_file_import_live.py
+      - name: Real two-file anonymous import and cross-session source isolation
+        run: python -u scripts/verify_hf_project_file_import_live.py
