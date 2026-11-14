@@ -1,0 +1,61 @@
+name: Guarded §C live auto-continuation and interactive coding release
+on:
+  push:
+    branches: [main]
+    paths: [".deploy/HF_LIVE_GUIDED_CODE_REQUEST.txt"]
+permissions: {contents: read}
+concurrency:
+  group: swrlz-hf-space-deployment
+  cancel-in-progress: false
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 24
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify explicit scope and immutable source request
+        id: gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          p=".deploy/HF_LIVE_GUIDED_CODE_REQUEST.txt"
+          test -f "$p"
+          get() { sed -n "s/^$1=//p" "$p" | tail -1; }
+          test "$(get TARGET)" = "kamiloki/Swyrlz"
+          test "$(get APPROVED)" = "1"
+          test "$(get CHANGE_SCOPE)" = "auto-resume-code-and-live-coding-questions-only"
+          test "$(get MODEL)" = "qwen3.5-9b"
+          test "$(get CONTEXT_TOKENS)" = "16384"
+          test "$(get THREADS)" = "18"
+          ref="$(get SOURCE_REF)"
+          [[ "$ref" =~ ^[0-9a-f]{40}$ ]]
+          echo "ref=$ref" >> "$GITHUB_OUTPUT"
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.gate.outputs.ref }}
+          path: release-source
+      - run: python -m pip install 'huggingface_hub>=0.34,<2'
+      - name: Source-of-truth preflight, AST, JS and fake multi-checkpoint tests
+        working-directory: release-source
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          set -euo pipefail
+          python -m py_compile scripts/hf_live_guided_coding_v1.py
+          python -u scripts/hf_live_guided_coding_v1.py preflight
+      - uses: actions/upload-artifact@v4
+        with:
+          name: swrlz-live-guided-code-exact-prior-sources
+          path: release-source/hf-guided-continuation-backup/
+          if-no-files-found: error
+          retention-days: 14
+      - name: Publish guarded live Space update with exact parent revision
+        working-directory: release-source
+        timeout-minutes: 15
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          SWRLZ_GUIDED_CODE_APPROVED: "1"
+        run: |
+          set -euo pipefail
+          python -u scripts/hf_live_guided_coding_v1.py publish
+          echo "SWRLZ_GUIDED_AUTO_CONTINUATION_LIVE_VERIFIED"
