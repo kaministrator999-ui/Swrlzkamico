@@ -1,0 +1,49 @@
+name: Audit live §C background-tab reconnect, request identity and server generation
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/hf-background-generation-resync-audit.yml"]
+permissions: {contents: read}
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - run: python -m pip install 'huggingface_hub>=0.34,<2'
+      - shell: bash
+        run: |
+          python - <<'PY'
+          import ast,json,re
+          from pathlib import Path
+          from huggingface_hub import HfApi,hf_hub_download
+          space="kamiloki/Swyrlz";rev=HfApi().repo_info(space,repo_type="space").sha
+          files={
+              "station.py":[(1,145),(600,795),(915,1025),(1540,1730),(1730,1940),(1935,2080),(2080,2380)],
+              "chat/§wyrlz/index.html":[(3300,3460),(4210,4370),(4530,4770),(4770,4940),(4940,5150)],
+              "qwen_coder_engine.py":[(680,875),(1080,1200)],
+          }
+          print("BG_RESYNC_REV",rev,flush=True)
+          for name,ranges in files.items():
+              src=Path(hf_hub_download(space,name,repo_type="space",revision=rev)).read_text()
+              lines=src.splitlines()
+              if name.endswith(".py"):
+                  tree=ast.parse(src)
+                  defs=[{"name":n.name,"start":n.lineno,"end":n.end_lineno}
+                      for n in ast.walk(tree) if isinstance(n,(ast.FunctionDef,ast.AsyncFunctionDef))
+                      and re.search("stream|sync|send|cancel|generation|worker|commit|resume|reconnect",n.name,re.I)]
+                  print("BG_RESYNC_DEFS",json.dumps({"file":name,"defs":defs[:90]}),flush=True)
+              else:
+                  matches=[]
+                  for patt in (r"visibilitychange",r"pageshow",r"pagehide",r"beforeunload",r"unload",r"focus",r"online",
+                               r"scheduleStationSync",r"consumeGeneration",r"EventSource",r"fetch\(",r"AbortController",
+                               r"activeGeneration",r"renderStationGeneration",r"pending",r"stream"):
+                      hits=[i+1 for i,s in enumerate(lines) if re.search(patt,s,re.I)]
+                      matches.append({"pattern":patt,"lines":hits[:45]})
+                  print("BG_RESYNC_UI_MATCHES",json.dumps(matches),flush=True)
+              for lo,hi in ranges:
+                  if lo>len(lines):continue
+                  print("BG_RESYNC_RANGE",json.dumps({"file":name,"start":lo,
+                      "lines":[str(i+1)+" "+lines[i] for i in range(lo-1,min(hi,len(lines)))]},
+                      ensure_ascii=False),flush=True)
+          print("BG_RESYNC_DONE",rev,flush=True)
+          PY
