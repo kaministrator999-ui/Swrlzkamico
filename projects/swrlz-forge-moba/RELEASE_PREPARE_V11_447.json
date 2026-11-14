@@ -1,0 +1,9 @@
+{
+  "schema": "swrlz-forge-release-prepare-v1",
+  "version": "v11.447",
+  "ownerApproved": true,
+  "reason": "Fix Face-mode and Inset preview camera rotation stalling until pointer release, preserve live touchscreen orbit, inversion, pinch/pan, source/Undo",
+  "sourcePatch": "patches/v11_447_smooth_face_orbit.py",
+  "expectedPrevious": "v11.446",
+  "verificationAttempt": 1
+}
