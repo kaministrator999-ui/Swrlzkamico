@@ -1,0 +1,35 @@
+name: Compare HF Redis hot paths across recent releases
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/audit-hf-redis-history.yml"]
+permissions: {contents: read}
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - run: python -m pip install 'huggingface_hub>=0.34,<2'
+      - run: |
+          python - <<'PY'
+          import re
+          from pathlib import Path
+          from huggingface_hub import HfApi,hf_hub_download
+          api=HfApi()
+          repo="kamiloki/Swyrlz"
+          commits=list(api.list_repo_commits(repo,repo_type="space"))
+          candidates=[commits[0]]+[next(c for c in commits if c.commit_id.startswith(x)) for x in ("3badea18e4e0","266404be9098","15adc2c14b74","48b8d5cd8bd5")]
+          for c in candidates:
+            print("REV",c.commit_id[:12],c.created_at.isoformat() if c.created_at else None,repr(c.title),flush=True)
+            for name in ("station.py","account_chat_store.py","chat/§wyrlz/index.html"):
+              try:
+                ls=Path(hf_hub_download(repo,name,repo_type="space",revision=c.commit_id)).read_text().splitlines()
+              except Exception as exc:
+                print("NO_FILE",name,type(exc).__name__,flush=True)
+                continue
+              interesting=[]
+              for i,l in enumerate(ls):
+                if re.search(r"_refresh_account_chat\(|_lastAccountStoreCheck|_commit_revision\(s\)|pendingCodeGeneration|setInterval\(\(\)=>\{if\(document.visibilityState|CODE_OUTPUT_CHECKPOINT|def _native_chat_parts|def _redis\(",l):
+                  interesting.append((i+1,l.strip()[:140]))
+              print("CHECK",name,"LINES",len(ls),"MATCHES",len(interesting),"FIRST",interesting[:26],flush=True)
+          PY
