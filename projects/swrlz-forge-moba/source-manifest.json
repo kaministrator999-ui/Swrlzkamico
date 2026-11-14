@@ -1,10 +1,10 @@
 {
   "schema": "swrlz-forge-source-v2",
-  "name": "§wyrl§ Engine v11.445",
+  "name": "§wyrl§ Engine v11.446",
   "baseArtifact": "swrlz_forge_v4.html",
   "baseBytes": 99591,
   "baseSha256": "a8299fe89fbb98d15c6091751b7a66931a66efec8eec5cb464e1286f21895856",
-  "finalArtifact": "swyrl_engine_v11_445.html",
+  "finalArtifact": "swyrl_engine_v11_446.html",
   "encoding": "gzip+base64-chunks",
   "chunks": [
     "payload/part-01.txt",
@@ -436,8 +436,9 @@
     "patches/v11_442_satchel_mobile_dialog.py",
     "patches/v11_443_model_vr_vertical_dock.py",
     "patches/v11_444_selected_mesh_delete.py",
-    "patches/v11_445_shape_face_discovery.py"
+    "patches/v11_445_shape_face_discovery.py",
+    "patches/v11_446_planar_face_pick.py"
   ],
-  "finalBytes": 10050812,
-  "finalSha256": "a69ef6c707a9afc36481d93fe766cb244aad5672a9df85ea42fea22b194f297b"
+  "finalBytes": 10052659,
+  "finalSha256": "b956f5f7c56f2782514456d2b435fb3c7732e9b5c4b18e50328f38da73892655"
 }
