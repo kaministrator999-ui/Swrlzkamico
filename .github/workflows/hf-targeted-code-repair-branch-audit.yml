@@ -1,0 +1,26 @@
+name: Read live §C code retry/validation branch exact line ranges
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/hf-targeted-code-repair-branch-audit.yml"]
+permissions: {contents: read}
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - run: python -m pip install 'huggingface_hub>=0.34,<2'
+      - run: |
+          python - <<'PY'
+          from pathlib import Path
+          import json
+          from huggingface_hub import HfApi,hf_hub_download
+          S="kamiloki/Swyrlz";rev=HfApi().repo_info(S,repo_type="space").sha
+          for name,ranges in {"qwen_coder_engine.py":[(690,790),(790,905),(905,1025),(1025,1150),(1150,1225)],
+           "programming_repair_context.py":[(1,95),(120,190)]}.items():
+              src=Path(hf_hub_download(S,name,repo_type="space",revision=rev)).read_text().splitlines()
+              for a,b in ranges:
+                  if a>len(src):continue
+                  print("REPAIR_BRANCH",json.dumps({"file":name,"start":a,"code":[f"{i+1} {src[i]}" for i in range(a-1,min(b,len(src)))]},ensure_ascii=False),flush=True)
+          print("REPAIR_BRANCH_DONE",rev,flush=True)
+          PY
