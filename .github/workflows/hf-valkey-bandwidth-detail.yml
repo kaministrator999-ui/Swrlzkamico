@@ -1,0 +1,19 @@
+name: Inspect §C bandwidth hot paths and polling (read-only)
+on:
+  push:
+    branches: [feature/aiven-valkey-storage-adapter]
+    paths: ["scripts/hf_valkey_bandwidth_detail.py",".github/workflows/hf-valkey-bandwidth-detail.yml"]
+permissions: {contents: read}
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.11"}
+      - run: python -m pip install "huggingface_hub>=0.34,<2"
+      - name: Read live revision source to report traffic paths
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: python -u scripts/hf_valkey_bandwidth_detail.py
