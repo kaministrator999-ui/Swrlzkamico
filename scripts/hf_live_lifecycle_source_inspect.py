@@ -65,7 +65,7 @@ def main():
   if st is not None:grouped.append((st,prev))
   print("SWRLZ_INSPECT_META "+json.dumps({"file":file,"lines":len(lines),"matches":len(hits),"blocks":len(grouped)}),flush=True)
   for st,en in grouped[:75]:
-   frag="\n".join(f"{k+1}: {lines[k]}" for k in range(st,min(en+1,st+180)))
+   frag="\n".join(f"{k+1}: {lines[k]}" for k in range(st,en+1))
    for part in range(0,len(frag),8000):
     data=base64.b64encode(frag[part:part+8000].encode("utf-8")).decode("ascii")
     print("SWRLZ_INSPECT_CODE "+json.dumps({"file":file,"range":[st+1,en+1],"part":part//8000,"sourceB64":data}),flush=True)
