@@ -3,14 +3,20 @@ import ast,base64,json,os,re
 from pathlib import Path
 from huggingface_hub import HfApi,hf_hub_download
 SPACE="kamiloki/Swyrlz"
-FILES=("qwen_coder_engine.py","station.py","account_chat_store.py","chat/§wyrlz/index.html")
+FILES=("qwen_coder_engine.py","station.py","account_chat_store.py","chat/§wyrlz/index.html","programming_telemetry.py","programming_repair_context.py","brain_programming.py")
 TERMS={
+ "programming_telemetry.py":r"completion_validation|finishReason|length|stop|PASS",
+ "programming_repair_context.py":r"source_fence_present|fence|completion|html",
+ "brain_programming.py":r"candidate_contract_gate|fence|html",
  "qwen_coder_engine.py":r"fence|candidate_structure|_swrlz_code_candidate_preview|code_checkpoint|repair|complete|finished|parse|manifest|validator|source_fence|continue_code|pause_code|preview",
  "station.py":r"CODE_OUTPUT|CANDIDATE_PREVIEW|CODE_|COMPLETED|PREVIEW|_refresh_account_chat|_commit_revision|_snapshot|GENERATION|ACTIVITY",
  "account_chat_store.py":r"_CAS_LUA|_decode_native_chat|_chat_key|load_chat|save_chat|_config|revision|EVAL",
  "chat/§wyrlz/index.html":r"CODE_|codeDraft|codePreview|continu|repair|Saved draft|Preparing response|activity log|stream|COMPLETED|pending|reconnect|code-fence|fence",
 }
 WANTED={
+ "programming_telemetry.py":("completion_validation",),
+ "programming_repair_context.py":("source_fence_present",),
+ "brain_programming.py":("candidate_contract_gate",),
  "qwen_coder_engine.py":("_candidate_structure_check","source_fence_present","_swrlz_code_candidate_preview","_swrlz_pause_code_events","_swrlz_resume_code_events","_swrlz_checkpoint_record","_swrlz_patch_candidate_once","generate_events","_swrlz_trim_code_resume"),
  "station.py":("_refresh_account_chat","_snapshot","_commit_revision","sync","_stream_response"),
  "account_chat_store.py":("_config","_chat_key","load_chat","save_chat"),
@@ -46,6 +52,10 @@ def main():
      for j in range(max(0,i-3),min(len(lines),i+7)):chosen.add(j)
    else:
     for j in range(max(0,i-2),min(len(lines),i+4)):chosen.add(j)
+  if file in ("programming_telemetry.py","programming_repair_context.py","brain_programming.py"):
+   for n in ast.walk(tree):
+    if isinstance(n,(ast.FunctionDef,ast.AsyncFunctionDef)) and n.name in WANTED.get(file,()):
+     for j in range(max(0,n.lineno-1),min(len(lines),n.end_lineno)):chosen.add(j)
   # Include entire related functions/regions for source-accurate guarded edits.
   extra={
    "qwen_coder_engine.py":[(388,435),(585,666),(703,952),(1210,1370)],
