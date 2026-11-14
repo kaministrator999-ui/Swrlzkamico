@@ -1,0 +1,23 @@
+name: Inspect §C live composer completion and control cleanup
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/hf-chat-send-finally-audit.yml"]
+permissions: {contents: read}
+jobs:
+  source:
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    steps:
+      - run: python -m pip install 'huggingface_hub>=0.34,<2'
+      - run: |
+          python - <<'PY'
+          from huggingface_hub import HfApi,hf_hub_download
+          from pathlib import Path
+          name="chat/§wyrlz/index.html"
+          rev=HfApi().repo_info("kamiloki/Swyrlz",repo_type="space").sha
+          lines=Path(hf_hub_download("kamiloki/Swyrlz",name,repo_type="space",revision=rev)).read_text().splitlines()
+          print("COMPOSER_SOURCE_SHA",rev,flush=True)
+          for i in range(4515,min(4725,len(lines))):
+              print("COMPOSER_CODE",i+1,lines[i][:700],flush=True)
+          PY
