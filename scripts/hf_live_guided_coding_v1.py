@@ -300,7 +300,7 @@ def test_auto_chain(src):
     print("AUTO_CHAIN_SOURCE_INTEGRITY_FAKE_TEST_PASS",flush=True)
 
 def test_ui(src):
-    scripts=re.findall(r"<script\\b([^>]*)>(.*?)</script\\s*>",src,flags=re.I|re.S)
+    scripts=re.findall(r"<script\b([^>]*)>(.*?)</script\s*>",src,flags=re.I|re.S)
     count=0
     with tempfile.TemporaryDirectory() as folder:
         for i,(attrs,body) in enumerate(scripts):
