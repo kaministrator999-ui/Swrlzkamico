@@ -1,0 +1,29 @@
+name: Inspect §C Station completion checkpoint and stored project revision seams
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/hf-large-project-station-audit.yml"]
+permissions: {contents: read}
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 7
+    steps:
+      - run: python -m pip install 'huggingface_hub>=0.34,<2'
+      - run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          from huggingface_hub import HfApi,hf_hub_download
+          s="kamiloki/Swyrlz";rev=HfApi().repo_info(s,repo_type="space").sha
+          for name,rs in {
+             "station.py":[(1000,1115),(1170,1250),(1250,1390),(1390,1560),(1560,1760),(1760,1920),(2055,2195),(2195,2350)],
+             "qwen_coder_engine.py":[(603,711)],
+             "project_archive.py":[(1,220)]
+          }.items():
+              lines=Path(hf_hub_download(s,name,repo_type="space",revision=rev)).read_text().splitlines()
+              for a,b in rs:
+                  print("BIG_PROJECT_RANGE",json.dumps({"file":name,"start":a,
+                    "lines":[str(i+1)+" "+lines[i] for i in range(a-1,min(b,len(lines)))]},ensure_ascii=False),flush=True)
+          print("BIG_PROJECT_REV",rev,flush=True)
+          PY
