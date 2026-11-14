@@ -1,0 +1,9 @@
+{
+  "schema": "swrlz-forge-release-prepare-v1",
+  "version": "v11.448",
+  "ownerApproved": true,
+  "reason": "Make Inset and Extrude shortcut run native Preview on selected face; safely bake plain cube vertex edits with consent and Undo; keep purple splitters on real four-column dock borders",
+  "sourcePatch": "patches/v11_448_inset_dock_usability.py",
+  "expectedPrevious": "v11.447",
+  "verificationAttempt": 1
+}
