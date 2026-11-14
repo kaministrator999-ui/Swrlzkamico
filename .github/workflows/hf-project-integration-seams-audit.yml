@@ -30,7 +30,7 @@ jobs:
               for a,b in spans:
                   if a>len(lines):continue
                   print("INTEGRATION_RANGE",json.dumps({"file":name,"start":a,"end":min(b,len(lines)),
-                         "lines":[str(j+1)+" "+lines[j] for j in range(a-1,min(b,len(lines))]},
+                         "lines":[str(j+1)+" "+lines[j] for j in range(a-1,min(b,len(lines)))]},
                          ensure_ascii=False),flush=True)
           print("INTEGRATION_AUDIT_DONE",rev,flush=True)
           PY
