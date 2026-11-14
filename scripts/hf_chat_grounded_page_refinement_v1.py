@@ -198,6 +198,14 @@ def snapshot(api):
     before=fetch_source(api,rev)
     after=patch(before.decode()).encode()
     test(after.decode())
+    # Real source imports and the actual coding classifier, not a regex-only
+    # mock. Use an independent disposable checkout of the exact HF revision.
+    from huggingface_hub import snapshot_download
+    with tempfile.TemporaryDirectory(prefix="swrlz-page-intent-preflight-") as folder:
+        source_root=Path(snapshot_download(SPACE,repo_type="space",
+            revision=rev,local_dir=folder,
+            allow_patterns=["*.py","programming_references/**"]))
+        test_full_classifier(after.decode(),source_root)
     BACKUP.mkdir(exist_ok=True)
     (BACKUP/FILE).write_bytes(before)
     (BACKUP/"revision.txt").write_text(rev)
