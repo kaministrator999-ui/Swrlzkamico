@@ -2,6 +2,7 @@
 from __future__ import annotations
 import json
 import unittest
+from unittest.mock import AsyncMock, patch
 from dataclasses import dataclass
 
 from api import live_code_controls as ctl
@@ -101,6 +102,41 @@ class Controls(unittest.TestCase):
               control_id=ctrl["controlId"],executor_receipt="verified-revision-test",store=self.store))
         new=ctl.snapshot(**self.args)
         self.assertEqual(new["controlInbox"][0]["state"],"APPLIED")
+
+class RevisionHandoff(unittest.IsolatedAsyncioTestCase):
+    def setUp(self):
+        self.store=FakeStore()
+        self.arguments=dict(user_id="owner", request_id="job-1", thread_id="thread-1", store=self.store)
+    async def test_steer_queues_isolated_revision_after_commit(self):
+        ctrl=ctl.record_control(kind="STEER",text="Improve camera orbit.",**self.arguments)["control"]
+        with patch("api.canonical_redis_state.begin_canonical_turn") as begin, \
+             patch("api.hf_generation_dispatch.send",new_callable=AsyncMock) as enqueue:
+            result=await ctl.queue_post_generation_revision(
+                source="def camera():\n    return 1",
+                completed=True,**self.arguments)
+        self.assertTrue(result["queued"])
+        begin.assert_called_once()
+        enqueue.assert_awaited_once()
+        self.assertEqual(result["revisionRequestId"],
+                         json.loads(self.store.controls[0])["revisionRequestId"])
+        self.assertEqual(json.loads(self.store.controls[0])["state"],"REVISION_QUEUED")
+        self.assertEqual(self.store.job.state,"RUNNING")
+    async def test_large_source_stays_safe_and_original_remains(self):
+        ctl.record_control(kind="STEER",text="Improve camera orbit.",**self.arguments)
+        with patch("api.canonical_redis_state.begin_canonical_turn") as begin:
+            result=await ctl.queue_post_generation_revision(
+                source="x"*12001,completed=True,**self.arguments)
+        self.assertFalse(result["queued"])
+        begin.assert_not_called()
+        self.assertEqual(json.loads(self.store.controls[0])["state"],
+                         "DEFERRED_SOURCE_TOO_LARGE")
+    async def test_checkpoint_is_not_misrepresented_as_compiled(self):
+        ctl.record_control(kind="CHECKPOINT",**self.arguments)
+        result=await ctl.queue_post_generation_revision(
+            source="print('hello')",completed=True,**self.arguments)
+        self.assertFalse(result["queued"])
+        self.assertEqual(json.loads(self.store.controls[0])["state"],
+                         "SOURCE_AVAILABLE_UNVERIFIED")
 
 if __name__=="__main__":
     unittest.main()
