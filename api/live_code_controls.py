@@ -135,6 +135,122 @@ def mark_applied(*, user_id: str, request_id: str, control_id: str,
             return False
     return False
 
+def transition_control(*, user_id: str, request_id: str, control_id: str,
+                       state: str, revision_request_id: str = "", store=None) -> bool:
+    """Optimistically record an executor transition, never a browser assertion."""
+    allowed = {
+        "REVISION_QUEUED", "REVISION_PRODUCED_UNVERIFIED", "REVISION_FAILED",
+        "DEFERRED_SOURCE_TOO_LARGE", "DEFERRED_NO_SOURCE",
+        "SOURCE_AVAILABLE_UNVERIFIED",
+    }
+    if state not in allowed:
+        raise ValueError("INVALID_EXECUTOR_TRANSITION")
+    store = store or RedisRestChatStore.from_env()
+    _owned(store, user_id, request_id)
+    key = _key(store, user_id, request_id)
+    script = ("if redis.call('LINDEX',KEYS[1],ARGV[1])==ARGV[2] then "
+              "redis.call('LSET',KEYS[1],ARGV[1],ARGV[3]);return 1 end;return 0")
+    for _ in range(4):
+        raw = store._command("LRANGE", key, 0, -1, sensitive=True) or []
+        for index, item in enumerate(raw):
+            try:
+                entry = json.loads(item)
+            except (ValueError, TypeError):
+                continue
+            if entry.get("controlId") != control_id:
+                continue
+            if entry.get("state") == state and entry.get("revisionRequestId", "") == revision_request_id:
+                return True
+            next_entry = {**entry, "state": state, "updatedAt": time.time()}
+            if revision_request_id:
+                next_entry["revisionRequestId"] = revision_request_id
+            updated = json.dumps(next_entry, ensure_ascii=False)
+            applied = store._command(
+                "EVAL", script, 1, key, index, item, updated, sensitive=True)
+            if int(applied or 0) == 1:
+                return True
+            break
+        else:
+            return False
+    return False
+
+async def queue_post_generation_revision(*, user_id: str, request_id: str,
+                                         thread_id: str, source: str,
+                                         completed: bool, store=None) -> dict[str, Any]:
+    """At the *end* of generation, schedule user-requested edits as a new turn.
+
+    This preserves the original complete response and never alters in-flight
+    decode buffers. Large sources are deferred rather than silently truncated.
+    """
+    from hashlib import sha256
+    from api.canonical_redis_state import begin_canonical_turn
+    from api.hf_generation_dispatch import send as queue_send
+
+    store = store or RedisRestChatStore.from_env()
+    _owned(store, user_id, request_id, thread_id)
+    controls = _read_controls(store, user_id, request_id)
+    pending = [c for c in controls if c.get("state") == "RECORDED_PENDING_EXECUTOR"]
+    for control in pending:
+        if control.get("kind") != "CHECKPOINT":
+            continue
+        transition_control(
+            user_id=user_id, request_id=request_id,
+            control_id=control["controlId"],
+            state="SOURCE_AVAILABLE_UNVERIFIED" if completed and source
+            else "DEFERRED_NO_SOURCE", store=store)
+    steering = [c for c in pending if c.get("kind") == "STEER"]
+    if not steering:
+        return {"queued": False, "reason": "NO_STEERING"}
+    if not completed or not source:
+        for c in steering:
+            transition_control(user_id=user_id, request_id=request_id,
+                               control_id=c["controlId"], state="DEFERRED_NO_SOURCE", store=store)
+        return {"queued": False, "reason": "SOURCE_NOT_COMPLETED"}
+    if len(source) > 12000:
+        for c in steering:
+            transition_control(user_id=user_id, request_id=request_id,
+                               control_id=c["controlId"], state="DEFERRED_SOURCE_TOO_LARGE", store=store)
+        return {"queued": False, "reason": "SOURCE_EXCEEDS_SAFE_REVISION_CONTEXT"}
+    requests = "\n".join(f"{i+1}. {str(c.get('text') or '')}" for i,c in enumerate(steering))
+    prompt = (
+        "Continue the existing project, do not start over from an unrelated design. "
+        "Revise the prior complete source to incorporate the following user-provided "
+        "steering changes. Preserve working features and interfaces. Return the full "
+        "updated code and identify any unverified behavior; do not invent test results."
+        "\nUSER_REQUESTED_REVISIONS:\n" + requests +
+        "\nEXISTING_SOURCE_BEGIN\n" + source + "\nEXISTING_SOURCE_END"
+    )
+    # The canonical turn is durable before any worker is submitted.
+    seed = (request_id + ":" + steering[0]["controlId"]).encode()
+    revision_id = "rev-" + sha256(seed).hexdigest()[:32]
+    user_message_id = "message-" + revision_id
+    assistant_message_id = "assistant-" + revision_id
+    now_ms = int(time.time() * 1000)
+    begin_canonical_turn(
+        user_id=user_id, thread_id=thread_id, request_id=revision_id,
+        user_message_id=user_message_id, assistant_message_id=assistant_message_id,
+        prompt=prompt, title="Code revision", user_created_at_ms=now_ms,
+        assistant_created_at_ms=now_ms + 1,
+        turn_contract="swrlz-live-code-steering-v1")
+    work = {
+        "contract": "swrlz-lalm-workstation-job-v1",
+        "requestId": revision_id, "userId": user_id,
+        "threadId": thread_id,
+        "userMessageId": user_message_id, "assistantMessageId": assistant_message_id,
+        "prompt": prompt, "history": [], "pinnedContext": [],
+        "payload": {"requestId": revision_id, "prompt": prompt,
+                    "profileId": "AUTO", "presentationIntent": "CODE",
+                    "liveSteeringParent": request_id},
+        "acceptedAt": time.time(),
+    }
+    await queue_send("swrlz-generation", work, idempotency_key=revision_id)
+    for c in steering:
+        transition_control(user_id=user_id, request_id=request_id,
+                           control_id=c["controlId"], state="REVISION_QUEUED",
+                           revision_request_id=revision_id, store=store)
+    return {"queued": True, "revisionRequestId": revision_id,
+            "changes": len(steering)}
+
 def status_answer(view: dict[str, Any], question: str = "") -> str:
     phase = str(view.get("phase") or "unknown").replace("_", " ").lower()
     state = str(view.get("state") or "unknown").lower()
