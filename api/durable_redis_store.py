@@ -4,6 +4,7 @@ import json
 import os
 import time
 import requests
+from functools import lru_cache
 from dataclasses import asdict, replace
 from typing import Any
 
@@ -129,6 +130,22 @@ def _env_first(*names: str) -> str:
     return ""
 
 
+@lru_cache(maxsize=4)
+def _secure_valkey_client(url: str):
+    """Reuse a small verified-TLS connection pool without recording credentials."""
+    from redis import Redis
+
+    return Redis.from_url(
+        url,
+        decode_responses=True,
+        socket_connect_timeout=3,
+        socket_timeout=15,
+        health_check_interval=30,
+        ssl_cert_reqs="required",
+        max_connections=20,
+    )
+
+
 class RedisRestChatStore(DurableChatStore):
     """Durable Redis-compatible REST implementation.
 
@@ -140,8 +157,10 @@ class RedisRestChatStore(DurableChatStore):
       KV_REST_API_URL
       KV_REST_API_TOKEN
 
-    SWRLZ-specific variables win when both are configured. The implementation
-    uses ordinary Redis commands over the provider REST boundary and never
+    SWRLZ-specific variables win when both are configured. The default
+    implementation sends Redis commands over REST. Setting
+    SWRLZ_REDIS_BACKEND=valkey and SWRLZ_VALKEY_URL=rediss://... explicitly
+    selects a TLS-encrypted Valkey protocol connection instead. Neither mode
     treats temporary process storage or memory as authoritative user state.
     """
 
@@ -149,19 +168,39 @@ class RedisRestChatStore(DurableChatStore):
         self.url = url.rstrip("/")
         self.token = token.strip()
         self.prefix = prefix.strip(":")
-        if not self.url.startswith("https://") or not self.token:
+        self.transport = "valkey-tls" if self.url.startswith("rediss://") else "redis-rest"
+        if self.transport == "valkey-tls":
+            if self.token:
+                raise DurableStoreUnavailable("Valkey credentials must be contained in the private TLS URI")
+        elif not self.url.startswith("https://") or not self.token:
             raise DurableStoreUnavailable("durable Redis REST configuration is incomplete")
 
     @classmethod
     def from_env(cls) -> "RedisRestChatStore":
+        prefix = os.environ.get("SWRLZ_REDIS_PREFIX", "swrlz:v1").strip() or "swrlz:v1"
+        backend = os.environ.get("SWRLZ_REDIS_BACKEND", "rest").strip().lower()
+        if backend == "valkey":
+            # Fail closed if URI is absent; never silently fall back to a different database.
+            return cls(_env_first("SWRLZ_VALKEY_URL"), "", prefix=prefix)
+        if backend not in ("", "rest", "upstash"):
+            raise DurableStoreUnavailable("unsupported durable Redis backend")
         return cls(
             _env_first("SWRLZ_REDIS_REST_URL", "KV_REST_API_URL"),
             _env_first("SWRLZ_REDIS_REST_TOKEN", "KV_REST_API_TOKEN"),
-            prefix=os.environ.get("SWRLZ_REDIS_PREFIX", "swrlz:v1").strip() or "swrlz:v1",
+            prefix=prefix,
         )
 
     @classmethod
+    def backend_kind(cls) -> str:
+        return "valkey-tls" if os.environ.get("SWRLZ_REDIS_BACKEND", "rest").strip().lower() == "valkey" else "redis-rest"
+
+    @classmethod
     def configured(cls) -> bool:
+        backend = os.environ.get("SWRLZ_REDIS_BACKEND", "rest").strip().lower()
+        if backend == "valkey":
+            return _env_first("SWRLZ_VALKEY_URL").startswith("rediss://")
+        if backend not in ("", "rest", "upstash"):
+            return False
         return bool(
             _env_first("SWRLZ_REDIS_REST_URL", "KV_REST_API_URL")
             and _env_first("SWRLZ_REDIS_REST_TOKEN", "KV_REST_API_TOKEN")
@@ -181,6 +220,16 @@ class RedisRestChatStore(DurableChatStore):
                 *([f"[redacted:{len(str(value))} chars]" for value in command[2:]] if len(command) > 2 else []),
             ]
         _chat_lockdown("redis-command-enter", operation=op, argumentCount=len(command), command=safe_command, sensitive=sensitive)
+        if self.transport == "valkey-tls":
+            try:
+                result = _secure_valkey_client(self.url).execute_command(*command)
+            except Exception as exc:
+                # Never include a TLS URI or credential-bearing exception string in diagnostics.
+                _chat_lockdown("redis-command-error", operation=op, durationNs=time.perf_counter_ns()-started_ns, errorType=type(exc).__name__)
+                raise DurableStoreUnavailable(f"durable Valkey TLS request failed: {type(exc).__name__}") from exc
+            _chat_lockdown("redis-command-exit", operation=op, durationNs=time.perf_counter_ns()-started_ns,
+                           result=({"redacted": True, "kind": type(result).__name__} if sensitive else str(result)[:16000]), sensitive=sensitive)
+            return result
         try:
             response=requests.post(
                 self.url,
