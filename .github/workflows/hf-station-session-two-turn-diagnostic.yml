@@ -1,0 +1,14 @@
+name: Audit §C anonymous two-turn Station session binding
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/hf-station-session-two-turn-diagnostic.yml"]
+permissions: {contents: read}
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - run: python -m py_compile scripts/audit_hf_station_two_turn_session.py
+      - run: python -u scripts/audit_hf_station_two_turn_session.py
