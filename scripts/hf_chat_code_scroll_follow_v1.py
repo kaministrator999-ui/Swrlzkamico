@@ -110,7 +110,7 @@ def patch(before):
 def test_ui(old,new):
     source=new.decode("utf-8")
     before=old.decode("utf-8")
-    for term in ("id=\\"projectFilePicker\\"","id=\\"imagePicker\\"",
+    for term in ('id="projectFilePicker"','id="imagePicker"',
                  "const renderStationGeneration=()=>","const renderAssistantContent=(container",
                  "const captureCodeViewState=()=>","const bindCodeViewState=container=>",
                  "const restoreCodeViewState=()=>","CANDIDATE_PREVIEW_DELTA",
@@ -128,7 +128,7 @@ def test_ui(old,new):
     parsed=0
     with tempfile.TemporaryDirectory(prefix="swrlz-code-scroll-js-") as folder:
         for i,(attrs,body) in enumerate(snippets):
-            if not body.strip() or re.search(r'type\s*=\s*["\\']application/(?:json|ld\\+json)["\\']',attrs,re.I):continue
+            if not body.strip() or "application/json" in attrs or "application/ld+json" in attrs:continue
             path=Path(folder)/("script-"+str(i)+".js")
             path.write_text(body)
             result=subprocess.run(["node","--check",str(path)],capture_output=True,text=True,timeout=35)
