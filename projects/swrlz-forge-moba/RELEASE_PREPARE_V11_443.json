@@ -1,0 +1,10 @@
+{
+  "releaseVersion": "v11.443",
+  "intent": "owner-approved-commit-and-deploy",
+  "target": "kamiloki/swrlz-forge-moba",
+  "scope": "vertical VR tool dock, attached right drawer, native menu interactions and foreground gizmo picking",
+  "prepareScript": "scripts/prepare_v11_443_release.py",
+  "requiresExactArtifactReceipt": true,
+  "requiresVerifier": true,
+  "physicalHeadsetAcceptance": "pending"
+}
