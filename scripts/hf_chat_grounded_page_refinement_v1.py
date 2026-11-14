@@ -87,9 +87,9 @@ REPLACE_REFERENCE='''    # swrlz-grounded-page-refinement-v1: a natural "improve
     artifact_refinement=_grounded_artifact_refinement(text,last_artifact,pins)
     continuation_reference=_programming_continuation_signal(text) or artifact_refinement
     inherited=continuation_reference and (bool(pins) or bool(prior_contract) or bool(last_artifact))'''
-CHANGE='''    elif last_artifact and re.search(r"\b(?:make|turn|convert|transform|upgrade)\s+(?:this|that|it|the\s+existing)\b",p):
+CHANGE=r'''    elif last_artifact and re.search(r"\b(?:make|turn|convert|transform|upgrade)\s+(?:this|that|it|the\s+existing)\b",p):
         change="feature"'''
-REPLACE_CHANGE='''    elif artifact_refinement:
+REPLACE_CHANGE=r'''    elif artifact_refinement:
         # Small edits to an existing code artifact are not new creations.
         change="feature"
     elif last_artifact and re.search(r"\b(?:make|turn|convert|transform|upgrade)\s+(?:this|that|it|the\s+existing)\b",p):
