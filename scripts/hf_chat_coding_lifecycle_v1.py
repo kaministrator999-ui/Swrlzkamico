@@ -332,7 +332,7 @@ def check_candidate(before,after):
     for key in ("native_budget_seconds=240","cancel_check=cancel_check",
          'max_segments=8 if allow_continue else 1',
          'if timing.get("finishReason")=="cancelled":return',
-         '"CODE_OUTPUT_CHECKPOINT"','"_swrlz_code_candidate_preview"',
+         '"CODE_OUTPUT_CHECKPOINT"',"_swrlz_code_candidate_preview",
          "_swrlz_patch_candidate_once","completion_validation("):
         assert key in code,key
     for key in ('payload["_cancelCheck"]','lastCodeProgressAtUnixMs',
