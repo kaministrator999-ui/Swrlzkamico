@@ -1,0 +1,26 @@
+name: Verify Station exposes coding-intent receipt for live follow-up acceptance
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/hf-station-intent-receipt-audit.yml"]
+permissions: {contents: read}
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    steps:
+      - run: python -m pip install 'huggingface_hub>=0.34,<2'
+      - run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          from huggingface_hub import HfApi,hf_hub_download
+          r=HfApi().repo_info("kamiloki/Swyrlz",repo_type="space").sha
+          text=Path(hf_hub_download("kamiloki/Swyrlz","station.py",repo_type="space",revision=r)).read_text()
+          lines=text.splitlines()
+          for i,line in enumerate(lines):
+              if "programmingIntent" in line or "PROGRAMMING_INTENT" in line:
+                  print("STATION_INTENT_RECEIPT",json.dumps({"line":i+1,
+                    "context":[str(j+1)+" "+lines[j] for j in range(max(0,i-4),min(len(lines),i+5))]},
+                    ensure_ascii=False),flush=True)
+          PY
