@@ -27,3 +27,5 @@ jobs:
           if-no-files-found: error
 
 # rerun after exact-source raw-string correction
+
+# revalidate after guarded two-turn session identity repair
