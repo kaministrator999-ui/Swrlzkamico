@@ -1052,7 +1052,7 @@
               method:"POST",credentials:"same-origin",cache:"no-store",
               headers:{"Content-Type":"application/json"},
               body:JSON.stringify({requestId:job.requestId,threadId:job.threadId,
-                                   kind,text:kind==="STEER"?instruction:""})
+                                   kind,text:kind==="STEER"||kind==="ASK_STATUS"?instruction:""})
             });
             const result=await response.json();
             if(!response.ok||!result.ok)throw Error(result.code||"CONTROL_REJECTED");
@@ -1071,7 +1071,7 @@
         return button;
       };
       liveControlActions.append(
-        liveControlButton("Progress","ASK_STATUS"),
+        liveControlButton("Ask progress","ASK_STATUS"),
         liveControlButton("Steer coding","STEER"),
         liveControlButton("Request checkpoint","CHECKPOINT")
       );
