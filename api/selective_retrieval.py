@@ -342,7 +342,7 @@ def historical_class_reference_pages(prompt: str, fetch_page: Any) -> list[dict[
          ("there are a total of five character types in diablo ii",)),
         ("https://news.blizzard.com/en-us/article/23460551/"
          "diablo-ii-continues-to-inspire-blizzard-20-years-later",
-         "Blizzard retrospective: Lord of Destruction class additions",
+         "Blizzard Diablo II: Lord of Destruction class additions",
          "historical_expansion_class_additions",
          ("two more added in the lord of destruction",)),
     )
