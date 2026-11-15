@@ -83,6 +83,29 @@ jobs:
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: python -u scripts/hf_chat_selective_retrieval_trial.py --out /tmp/swrlz-selective-preflight
+      - name: Inspect current running Space revision (read-only)
+        working-directory: trial-source
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          python - <<'PY'
+          import json,os,urllib.request
+          from huggingface_hub import HfApi
+          api=HfApi(token=os.environ["HF_TOKEN"])
+          info=api.repo_info("kamiloki/Swyrlz",repo_type="space")
+          req=urllib.request.Request("https://huggingface.co/api/spaces/kamiloki/Swyrlz",
+                headers={"User-Agent":"SWRLZ-Source-Revision-Audit/1"})
+          with urllib.request.urlopen(req,timeout=12) as response:
+              public=json.load(response)
+          runtime=public.get("runtime") or {}
+          print("HF_SELECTIVE_RUNTIME_REVISION "+json.dumps({
+              "repoRevision":info.sha,
+              "publicRevision":public.get("sha"),
+              "runtimeRevision":runtime.get("sha"),
+              "runtimeStage":runtime.get("stage"),
+              "runtimeKeys":list(runtime.keys())[:24],
+          }))
+          PY
       - name: Check bounded public reference source access (no user data)
         working-directory: trial-source
         run: |
