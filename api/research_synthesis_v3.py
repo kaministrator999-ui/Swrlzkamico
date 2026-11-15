@@ -119,7 +119,7 @@ def validate_roster_answer(answer: str, facts: Any, ledger: dict[str,Any]) -> di
             desc=match.group("desc") or ""
             if desc and not member_description_supported(name,desc,ledger):
                 reasons.append("unsupported_member_detail:"+name)
-    if enumerated and set(enumerated)!=expected_names:
+    if len(enumerated)!=len(expected) or set(enumerated)!=expected_names:
         reasons.append("incomplete_or_extra_member_list")
     return {"status":"REJECT" if reasons else "PASS",
             "reasons":list(dict.fromkeys(reasons))[:16],
