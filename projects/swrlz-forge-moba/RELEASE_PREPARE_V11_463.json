@@ -1,0 +1,18 @@
+{
+  "schema": "swrlz-forge-release-prepare-v1",
+  "version": "v11.463",
+  "expectedPrevious": "v11.462",
+  "ownerApproved": true,
+  "scope": "Keep top native transform/history bar available after Undo clears selection; defer transforms until reselect; preserve existing camera and sidebars",
+  "sourcePatch": "patches/v11_463_transform_history_bar.py",
+  "verifiedRequirements": [
+    "Select then Undo deselect retains native Undo/Redo",
+    "Transform disabled until selected",
+    "History/strip remount",
+    "Entire assembled JS syntax",
+    "440 ordered source patches",
+    "77 assets"
+  ],
+  "physicalPhoneVerified": false,
+  "deployment": "Separate exact source seal then the existing Hugging Face deployment request"
+}
