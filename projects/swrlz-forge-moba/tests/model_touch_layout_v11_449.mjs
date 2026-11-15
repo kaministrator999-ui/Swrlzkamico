@@ -10,7 +10,7 @@ for(const m of [
  'SWYRL_ENGINE_DEPLOY_MARKER: V11_449_MODEL_TOUCH_LAYOUT',
  "if(e.pointerType==='touch'&&atelierCameraPointerDown(e))",
  "atelierComponentMode!=='mesh'&&e.pointerType==='touch'&&atelierCameraPointerMove(e)",
- "atelierComponentMode!=='mesh'&&e.pointerType==='touch'&&atelierCameraPointerUp(e)"
+ "se449ComponentPinchIds.delete(e.pointerId)"
 ])assert(html.includes(m),'Missing v11.449 model input or layout source '+m);
 const slice=(start,end)=>{
  const a=html.indexOf(start),b=html.indexOf(end,a);
