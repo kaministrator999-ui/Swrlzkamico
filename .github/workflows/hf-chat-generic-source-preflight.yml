@@ -38,8 +38,29 @@ jobs:
           spec=importlib.util.spec_from_file_location("swrlz_generic_safe_fetch_check",path)
           mod=importlib.util.module_from_spec(spec);sys.modules[spec.name]=mod
           spec.loader.exec_module(mod)
-          found=wikipedia_public_fallback(
-              "Research: what are the moons of Mars? List their names.",mod._page_fetch)
+          from api.generic_public_source_fallback_v1 import search_terms
+          from urllib.parse import quote
+          prompt="Research: what are the moons of Mars? List their names."
+          topic=search_terms(prompt)
+          search="https://en.wikipedia.org/w/rest.php/v1/search/page?q="+quote(topic,safe="")+"&limit=4"
+          sample=mod._page_fetch(search)
+          try:
+              search_json=json.loads(sample.get("extract") or "{}")
+              titles=[(x.get("title"),x.get("key")) for x in search_json.get("pages",[])[:4]]
+          except (ValueError,TypeError):titles=[]
+          first=mod._page_fetch("https://en.wikipedia.org/api/rest_v1/page/summary/Moons_of_Mars")
+          try:
+              summary_json=json.loads(first.get("extract") or "{}")
+              summary_title=summary_json.get("title")
+              summary_excerpt=str(summary_json.get("extract") or "")[:130]
+          except (ValueError,TypeError):
+              summary_title=summary_excerpt="invalid"
+          print("SWRLZ_GENERIC_FALLBACK_DEBUG "+json.dumps({
+              "topic":topic,"searchStatus":sample.get("status"),"searchFinal":sample.get("finalUrl"),
+              "titles":titles,"summaryStatus":first.get("status"),
+              "summaryFinal":first.get("finalUrl"),"summaryTitle":summary_title,
+              "summaryExcerpt":summary_excerpt}),flush=True)
+          found=wikipedia_public_fallback(prompt,mod._page_fetch)
           summary={"count":len(found),
                    "sourceTitles":[x.get("title") for x in found],
                    "urls":[x.get("url") for x in found],
