@@ -1,0 +1,42 @@
+name: Read §C live research event and context seams
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/hf-chat-research-context-seam-audit.yml"]
+permissions: {contents: read}
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - run: python -m pip install --quiet "huggingface_hub>=0.34,<2"
+      - name: Read only production research event, prompt, and activity UI code
+        run: |
+          python - <<'PY'
+          from huggingface_hub import HfApi,hf_hub_download
+          from pathlib import Path
+          import json,re
+          repo="kamiloki/Swyrlz"
+          rev=HfApi().repo_info(repo,repo_type="space").sha
+          print("SWRLZ_EVIDENCE_AUDIT_REV",rev,flush=True)
+          focus={
+            "lfm2_700m_engine.py":[(742,766),(944,967),(1108,1150)],
+            "station.py":[(1378,1425),(1495,1555),(1570,1650),(1715,1800)],
+            "chat/§wyrlz/index.html":[(225,254),(3240,3355)],
+            "api/selective_retrieval.py":[(1,90),(230,360)],
+          }
+          for path,ranges in focus.items():
+            try:
+              lines=Path(hf_hub_download(repo,path,repo_type="space",revision=rev)).read_text().splitlines()
+            except Exception as error:
+              print("SWRLZ_EVIDENCE_AUDIT_MISSING",path,str(error)[:180],flush=True);continue
+            for lo,hi in ranges:
+              if lo>len(lines):continue
+              print("SWRLZ_EVIDENCE_AUDIT_SECTION",json.dumps({"path":path,"lo":lo,"lines":[str(i+1)+":"+lines[i][:260] for i in range(lo-1,min(hi,len(lines)))]},ensure_ascii=False),flush=True)
+            if path.endswith("index.html"):
+              matches=[(i,line) for i,line in enumerate(lines)
+                       if re.search(r"renderActivityTimeline|activityNarrationV1|activityEvents|RESEARCH_READY|station-activity-details|activityLog",line,re.I)]
+              print("SWRLZ_EVIDENCE_AUDIT_UI_MATCHES",json.dumps({
+                  "matches":[str(i+1)+":"+line[:200] for i,line in matches[:95]]
+                },ensure_ascii=False),flush=True)
+          PY
