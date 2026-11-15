@@ -1,0 +1,61 @@
+name: Measure §E v11.458 dock, edge contrast and orbit
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/measure-engine-v11-458.yml"
+      - "projects/swrlz-forge-moba/patches/v11_458_dock_orbit_contrast.py"
+      - "projects/swrlz-forge-moba/runtime/model_viewport_stability_v11_458.js"
+      - "projects/swrlz-forge-moba/runtime/model_viewport_stability_v11_458.css"
+      - "projects/swrlz-forge-moba/tests/model_dock_orbit_contrast_v11_458.mjs"
+  workflow_dispatch:
+permissions: {contents: read}
+jobs:
+  measure:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.11"}
+      - name: Syntax and source-level guard
+        run: |
+          set -euo pipefail
+          python -m py_compile projects/swrlz-forge-moba/patches/v11_458_dock_orbit_contrast.py
+          node --check projects/swrlz-forge-moba/runtime/model_viewport_stability_v11_458.js
+      - name: Build full current engine and verify focused source behavior
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          import json
+          p=Path("projects/swrlz-forge-moba/source-manifest.json")
+          m=json.loads(p.read_text())
+          assert m["name"]=="§wyrl§ Engine v11.458"
+          assert m["patches"][-1]=="patches/v11_458_dock_orbit_contrast.py"
+          assert len(m["patches"])==435
+          m["finalSha256"]=None;m["finalBytes"]=None
+          p.write_text(json.dumps(m,ensure_ascii=False,indent=2)+"\n")
+          PY
+          python projects/swrlz-forge-moba/build_space.py --output dist/se458 > dist-result.log
+          node projects/swrlz-forge-moba/tests/model_dock_orbit_contrast_v11_458.mjs dist/se458/index.html
+          node projects/swrlz-forge-moba/tests/model_inset_top_steps_v11_454.mjs dist/se458/index.html
+          node projects/swrlz-forge-moba/tests/model_face_flyouts_v11_458.mjs dist/se458/index.html
+          node projects/swrlz-forge-moba/tests/model_view_readability_v11_458.mjs dist/se458/index.html
+          node projects/swrlz-forge-moba/tests/model_conversion_no_face_gate_v11_458.mjs dist/se458/index.html
+          python projects/swrlz-forge-moba/scripts/check_inline_js_syntax_v11_266.py dist/se458/index.html
+          python - <<'PY'
+          from pathlib import Path
+          import hashlib,json
+          b=Path("dist/se458/index.html").read_bytes()
+          receipt={"version":"v11.458","finalBytes":len(b),"finalSha256":hashlib.sha256(b).hexdigest()}
+          Path("se458-integrity.json").write_text(json.dumps(receipt,indent=2)+"\n")
+          print("SE458_SOURCE_INTEGRITY",json.dumps(receipt,sort_keys=True),flush=True)
+          PY
+      - uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: se458-source-integrity-receipt
+          path: se458-integrity.json
+          retention-days: 14
+          if-no-files-found: error
