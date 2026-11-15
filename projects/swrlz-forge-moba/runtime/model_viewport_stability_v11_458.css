@@ -1,0 +1,31 @@
+/* SE458_DOCK_AND_MODEL_CONTRAST_START */
+/* Respect the actual collapsed state: v11.449's !important desktop track
+   must not continue reserving the hidden inspector or hierarchy width. */
+html #modelAtelierPanel.se187-modeler-page[data-se320-ui][data-se251-layout=desktop]:is([data-se251-right-collapsed=true],[data-se320-inspector-collapsed=true]) .atelier-body{
+ --se320-right:0px!important;
+}
+html #modelAtelierPanel.se187-modeler-page[data-se320-ui][data-se251-layout=desktop][data-se251-collapsed=true] .atelier-body{
+ --se320-left:34px!important;
+}
+/* Match the user's finger target to the visible dock boundary while leaving
+   the existing native pointer capture, keyboard handler and persistence in charge. */
+html #modelAtelierPanel.se187-modeler-page[data-se320-ui][data-se251-layout=desktop] .atelier-body>#se251-split-model-left,
+html #modelAtelierPanel.se187-modeler-page[data-se320-ui][data-se251-layout=desktop] .atelier-body>#se251-split-model-right{
+ width:28px!important;z-index:105!important;
+ touch-action:none!important;pointer-events:auto!important;
+}
+html #modelAtelierPanel.se187-modeler-page[data-se320-ui][data-se251-layout=desktop] .atelier-body>#se251-split-model-left{
+ left:calc(var(--se320-left) - 14px)!important;
+}
+html #modelAtelierPanel.se187-modeler-page[data-se320-ui][data-se251-layout=desktop] .atelier-body>#se251-split-model-right{
+ right:calc(var(--se320-right) - 14px)!important;
+}
+html #modelAtelierPanel.se187-modeler-page[data-se320-ui][data-se251-layout=desktop] .atelier-body>.se251-resize-grip::after{
+ left:12px!important;width:4px!important;height:70px!important;
+ top:calc(50% - 35px)!important;
+ background:#bd84f4!important;box-shadow:0 0 12px #bf79ff77!important;
+}
+html #modelAtelierPanel.se187-modeler-page[data-se320-ui][data-se251-layout=desktop]:is([data-se251-right-collapsed=true],[data-se320-inspector-collapsed=true]) .atelier-body>#se251-split-model-right{
+ display:none!important;
+}
+/* SE458_DOCK_AND_MODEL_CONTRAST_END */
