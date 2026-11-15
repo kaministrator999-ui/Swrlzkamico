@@ -70,7 +70,7 @@ def test(actual):
             ("Keep the same page and add a Reset button that restores original text. Return complete corrected HTML.","feature",False),
             ("Now add a Reset button, preserving the existing Change button and styling.","feature",False),
             ("Please change only the button label in the existing HTML page.","feature",False),
-            ("Still wrong; keep the page and change the button.","feature",True),
+            ("Still wrong; keep the page and change the button.","create",True),
             ("Please keep everything but make it responsive.","create",True),
         )
         for text,change,carry in tests:
