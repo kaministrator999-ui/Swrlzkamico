@@ -9,7 +9,9 @@ assert(css.includes('[data-se464-inspector-focus=true] .atelier-body'));
 assert(css.includes('--se320-right:0px!important'));
 assert(css.includes('.atelier-body>.se251-resize-grip'));
 assert(css.includes('#se464InspectorFocus'));
-let released=0,nativeApply=0,nativeTicks=0,nativeToolbar=0,nativeInstall=0,recolors=0;
+let released=0,nativeApply=0,nativeTicks=0,nativeToolbar=0,nativeInstall=0,recolors=0,gizmoBuilds=0;
+const nativeBox={type:'BoxHelper',material:{depthTest:true,color:{value:0,setHex(v){this.value=v;}}}};
+const gizmoRoot={traverse(fn){fn(nativeBox);}};
 class Mat{
  constructor(options={}){Object.assign(this,options);this.userData={};}
  dispose(){released++;}
@@ -72,6 +74,7 @@ const ctx=vm.createContext({
   return mesh;
  },
  atelierMeshToolbarRefresh:()=>{nativeToolbar++;},
+ atelierMeshGizmoBuild:()=>{gizmoBuilds++;},atelierMeshGizmo:gizmoRoot,
  se462Recolor:()=>{recolors++;},
  se430BeginnerTick:()=>{nativeTicks++;},
  se430BeginnerInstall:()=>{nativeInstall++;},
@@ -120,6 +123,10 @@ assert.equal(world.children.filter(x=>x.userData.se464ViewOnly).every(x=>!x.visi
  'VR bridge borrowing hides studio-only lights');
 borrowed=false;ctx.se430BeginnerTick(2);
 assert.equal(world.children.filter(x=>x.userData.se464ViewOnly).every(x=>x.visible),true);
+ctx.atelierMeshGizmoBuild();
+assert.equal(gizmoBuilds,1);
+assert.equal(nativeBox.material.color.value,0x8fffe3);
+assert.equal(nativeBox.material.depthTest,false);
 ctx.atelierMeshToolbarRefresh();
 assert.equal(nativeToolbar,1);assert.equal(recolors,1);
 assert.equal(currentPanel.dataset.se464Selection,'selected');
@@ -161,7 +168,7 @@ if(process.argv[2]){
  ])if(token==='SE463_TRANSFORM_HISTORY_PASS')continue;
  else assert(html.includes(token),'Missing compiled '+token);
  assert(html.includes('const colors={vertex:0x74ffdb,edge:0x86d7ff,face:0xffd17e};'));
- assert(html.includes('const outline=new THREE.BoxHelper(mesh,0x8fffe3);'));
+ assert(html.includes('atelierMeshGizmoBuild=function(){'));
  assert(html.includes('emissive:color.clone().multiplyScalar(.05)'));
  assert(html.includes('se320RefreshTransformAccess(panel)'));
  assert(html.includes('se461AlignOrbitPivot()'));
