@@ -1,0 +1,120 @@
+name: Guarded §C compact HTML profile — guest source and browser acceptance
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/hf-compact-web-release.yml'
+permissions: {contents: read}
+concurrency:
+  group: swrlz-chat-guest-eval
+  cancel-in-progress: false
+jobs:
+  release_and_verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 65
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - name: Install pinned model client and isolated Chromium
+        run: |
+          python -m pip install 'huggingface_hub>=0.34,<2' playwright==1.56.0
+          python -m playwright install --with-deps chromium
+      - name: Syntax-check code and verification scripts
+        run: |
+          python -m py_compile scripts/hf_compact_web_profile_v1.py
+          python -m py_compile scripts/eval_chat_guest_suite.py
+          python -m py_compile scripts/test_guest_html_functionality.py
+      - name: Pin current HF source, run scoped static tests and save exact rollback
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: python -u scripts/hf_compact_web_profile_v1.py preflight
+      - name: Preserve exact source before release
+        uses: actions/upload-artifact@v4
+        with:
+          name: compact-web-profile-source-backup-${{ github.run_id }}
+          path: reports/swrlz-compact-web-profile/
+          retention-days: 90
+          if-no-files-found: error
+      - name: Publish only the compact source-preserving HTML profile
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          SWRLZ_COMPACT_WEB_APPROVED: '1'
+        run: python -u scripts/hf_compact_web_profile_v1.py publish
+      - name: Verify resident model readiness after Space update
+        run: |
+          python - <<'PY'
+          import json,time,urllib.request
+          url="https://kamiloki-swyrlz.hf.space/api/hf/qwen35-ready"
+          # A successful HF source commit does not prove the serving worker
+          # has reloaded. Bound the warmup and keep a separate readiness log.
+          for n in range(30):
+              try:
+                  with urllib.request.urlopen(url,timeout=15) as response:
+                      data=json.load(response)
+                  if data.get("ready") is True and n>=3:
+                      print("COMPACT_WEB_RESIDENT_READY",data.get("model"),"poll",n,flush=True)
+                      break
+              except Exception as exc:
+                  print("MODEL_WARMUP",n,type(exc).__name__,flush=True)
+              time.sleep(8)
+          else:
+              raise RuntimeError("Resident model unavailable for acceptance")
+          PY
+      - name: Test complete HTML creation and source-preserving Reset revision
+        id: model
+        shell: bash
+        env:
+          SWRLZ_EVAL_BASE: https://kamiloki-swyrlz.hf.space
+          SWRLZ_EVAL_MODEL: 700m
+        run: |
+          set -uo pipefail
+          if python -u - <<'PY'
+          import asyncio,sys
+          import scripts.eval_chat_guest_suite as e
+          e.CASES["2"]=[x for x in e.CASES["2"] if x["id"]=="html-button-ui"]
+          if len(e.CASES["2"])!=1:raise RuntimeError("HTML two-turn test fixture missing")
+          sys.exit(asyncio.run(e.main("live","2")))
+          PY
+          then result=0;else result=$?;fi
+          echo "exit=$result" >> "$GITHUB_OUTPUT"
+          echo "COMPACT_WEB_MODEL_ACCEPTANCE_EXIT=$result"
+      - name: Actually click Change and Reset in network-isolated Chromium
+        if: steps.model.outputs.exit == '0'
+        id: function
+        shell: bash
+        run: |
+          set -uo pipefail
+          if python -u scripts/test_guest_html_functionality.py; then result=0; else result=$?; fi
+          echo "exit=$result" >> "$GITHUB_OUTPUT"
+          echo "COMPACT_WEB_FUNCTIONAL_ACCEPTANCE_EXIT=$result"
+      - name: Archive full synthetic transcripts and functional evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: compact-web-live-html-acceptance-${{ github.run_id }}
+          path: reports/chat-guest-eval/
+          retention-days: 21
+          if-no-files-found: ignore
+      - name: Roll back profile on failed or incomplete live acceptance
+        if: steps.model.outputs.exit != '0' || steps.function.outputs.exit != '0'
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          SWRLZ_COMPACT_WEB_APPROVED: '1'
+        run: python -u scripts/hf_compact_web_profile_v1.py rollback
+      - name: Enforce actual HTML behavior and follow-up success
+        if: steps.model.outputs.exit != '0' || steps.function.outputs.exit != '0'
+        run: |
+          echo "::warning::HTML model or functional verification failed. Confirm rollback source and inspect reports."
+          exit 1
+      - name: Publish accepted evidence to job summary
+        if: always()
+        shell: bash
+        run: |
+          if [[ -f reports/chat-guest-eval/summary.md ]]; then
+            cat reports/chat-guest-eval/summary.md >> "$GITHUB_STEP_SUMMARY"
+          fi
+          if [[ -f reports/chat-guest-eval/functional-report.json ]]; then
+            cat reports/chat-guest-eval/functional-report.json >> "$GITHUB_STEP_SUMMARY"
+          fi
