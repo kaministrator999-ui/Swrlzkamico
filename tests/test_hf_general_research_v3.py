@@ -124,6 +124,25 @@ class GeneralResearchSynthesisTests(unittest.TestCase):
         self.assertEqual(cards[0]["referenceMember"],"Amazon")
         self.assertNotIn("Starting Attributes",cards[0]["snippet"])
 
+    def test_generic_public_research_sends_unrelated_subject_through_same_source_ledger(self):
+        def research(payload):
+            return {"evidence":[
+                {"title":"NASA: Mars moons",
+                 "url":"https://science.nasa.gov/mars/moons/",
+                 "snippet":"Mars has two moons named Phobos and Deimos."},
+            ]}
+        out,route=enrich_payload({"prompt":"List all the moons of Mars"},
+                                 research,fetch_page=None,enabled=True)
+        self.assertEqual(route["phase"],"RESEARCH_READY")
+        packet=source_ledger("List all the moons of Mars",out["onlineContext"])
+        self.assertEqual(packet["sourceCount"],1)
+        self.assertEqual(packet["sources"][0]["title"],"NASA: Mars moons")
+        self.assertIn("Phobos",packet["sources"][0]["excerpt"])
+        self.assertEqual(packet["sources"][0]["role"],"supporting_source")
+        self.assertNotIn("verifiedContext",out["onlineContext"])
+        # The same infrastructure must not misrepresent a relevant excerpt
+        # as a verified exhaustive collection.
+
     def test_generic_queries_continue_to_route_and_private_requests_not_skimmed(self):
         self.assertEqual(choose_retrieval("List all the moons of Mars").action,"retrieve")
         self.assertEqual(choose_retrieval("Compare the specifications of Mars rovers").action,"retrieve")
