@@ -70,6 +70,30 @@ jobs:
           print("SWRLZ_GENERIC_SOURCE_REAL_PROBE "+json.dumps(summary),flush=True)
           assert summary["namesSupported"],summary
           assert all(x.get("url","").startswith("https://en.wikipedia.org/wiki/") for x in found)
+          # Exercise the actual staged selective-retrieval module with public
+          # search unavailable, not merely the generic source helper.
+          from pathlib import Path
+          context_path=hf_hub_download(space,"api/research_context_v2.py",repo_type="space",revision=rev)
+          Path("api/research_context_v2.py").write_bytes(Path(context_path).read_bytes())
+          path2=Path("swrlz-generic-research-source-backup/candidate/api/selective_retrieval.py")
+          spec2=importlib.util.spec_from_file_location("api.selective_retrieval",path2)
+          selective=importlib.util.module_from_spec(spec2)
+          sys.modules[spec2.name]=selective
+          spec2.loader.exec_module(selective)
+          research=lambda _:{"evidence":[]}
+          enriched,route=selective.enrich_payload({
+              "prompt":"Research: what are the moons of Mars? List their names."
+          },research,fetch_page=mod._page_fetch,enabled=True)
+          record=enriched.get("onlineContext") or {}
+          print("SWRLZ_GENERIC_SOURCE_ENRICHED "+json.dumps({
+              "phase":route.get("phase"),"count":record.get("resultCount"),
+              "evidence":[{"title":x.get("title"),"url":x.get("url"),
+                           "excerpt":x.get("excerpt","")[:160]}
+                          for x in record.get("evidence",[])]
+          }),flush=True)
+          assert route.get("phase")=="RESEARCH_READY",route
+          assert any("Phobos" in x.get("excerpt","") and "Deimos" in x.get("excerpt","")
+                     for x in record.get("evidence",[])),record
           PY
       - uses: actions/upload-artifact@v4
         if: always()
