@@ -1,0 +1,6 @@
+TARGET=kamiloki/Swyrlz
+APPROVED=1
+FEATURE=fact-checked-public-research-v1
+MODEL=qwen3.5-9b
+SOURCE_REF=4fcb5b20059a894e1035cf95a9305637a69289ec
+REQUEST_NONCE=grounded-20261115-live-validation-01
