@@ -166,7 +166,12 @@ def fallback_from_verified_facts(facts:Any, ledger:dict[str,Any])->str:
                      if item.get("role")=="historical_roster_member_detail"
                      and item.get("member","").lower()==name.lower()]
             if matches:
-                words=matches[0]["excerpt"].split()
+                original=matches[0]["excerpt"]
+                # Publisher pages often repeat the character title. Avoid
+                # rendering the same name twice before its description.
+                original=re.sub(r"^(?:The\s+)?"+re.escape(name)+r"\s+",
+                                "",original,flags=re.I)
+                words=original.split()
                 excerpt=" ".join(words[:14]).rstrip(".,;:")
                 lines.append("- **"+name+"** — "+excerpt+".")
             else:lines.append("- **"+name+"**")
