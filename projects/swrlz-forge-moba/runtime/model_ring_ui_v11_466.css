@@ -1,0 +1,14 @@
+/* SE466_RING_STYLES_START */
+#se466RingControls,#se466FaceExtrude{box-sizing:border-box;max-width:100%;min-width:0;margin:.45rem 0;padding:.5rem;border:1px solid color-mix(in srgb,currentColor 18%,transparent);border-radius:.6rem;font-size:12px}
+#se466RingControls[hidden],#se466FaceExtrude[hidden]{display:none!important}
+#se466RingControls summary,#se466FaceExtrude summary{cursor:pointer;font-weight:650;white-space:normal;overflow-wrap:normal}
+#se466RingControls details{padding:.4rem 0;border-top:1px solid color-mix(in srgb,currentColor 15%,transparent);margin-top:.4rem}
+#se466RingControls p,#se466FaceExtrude p{font-size:12px;line-height:1.4;margin:.4rem 0}
+.se466-row{display:flex;flex-wrap:wrap;gap:6px;align-items:end;margin:6px 0}
+.se466-row label{display:flex;flex:1 1 85px;min-width:72px;flex-direction:column;gap:3px;font-size:12px;white-space:normal}
+.se466-row input,.se466-row select{box-sizing:border-box;width:100%;min-width:0;min-height:35px;padding:4px 6px;font:inherit;border-radius:5px}
+.se466-row button{min-height:38px;max-width:100%;white-space:normal;font-size:12px;padding:6px 9px}
+.se466-commit button{flex:1 1 110px}
+#se466RingStatus{display:block;min-height:1.2em;overflow-wrap:normal;line-height:1.4}
+@media(max-width:600px){#se466RingControls,#se466FaceExtrude{padding:6px}.se466-row label{flex-basis:82px}.se466-row button{flex:1 1 90px}}
+/* SE466_RING_STYLES_END */
