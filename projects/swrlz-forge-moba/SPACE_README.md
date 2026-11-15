@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.450
+title: §wyrl§ Engine v11.457
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,11 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+## §E v11.457 · Make cube editable before Face selection (2026-11-14)
+
+Fixed the mobile Inset conversion deadlock shown in the owner's screenshot: Face mode can retain a selected cube while exposing zero object-level selections, and an unconverted primitive cannot select a face. The viewport **Make Editable & Continue** control now accepts a single selected native cube even when its object selection count is zero. The existing right-side **Make mesh editable** control is enabled independently of face triangles; clicking it first converts the validated primitive, then requests a square-face tap. Native confirmation for saved sculpt vertex edits, protected authored/rigged geometry restrictions, and undo remain unchanged. Rim and depth still require explicit native Preview and Set, with no speculative geometry changes.
+
+
 
 ## §E v11.450 · Stable camera on dock resize and visible Inset previews (2026-11-14)
 
