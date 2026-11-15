@@ -1,0 +1,51 @@
+name: Smoke test §C HTML functional verifier (offline)
+on:
+  push:
+    branches: [main]
+    paths:
+      - scripts/test_guest_html_functionality.py
+      - .github/workflows/chat-html-functional-verifier-smoke.yml
+permissions: {contents: read}
+jobs:
+  smoke:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - run: |
+          python -m pip install playwright==1.56.0
+          python -m playwright install --with-deps chromium
+      - run: python -m py_compile scripts/test_guest_html_functionality.py
+      - name: Produce deterministic synthetic two-turn HTML responses
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          first="""<!doctype html><html><body>
+          <p id='output'>Ready</p><button id='go'>Change</button>
+          <script>document.getElementById('go').onclick=()=>document.getElementById('output').textContent='Changed';</script>
+          </body></html>"""
+          second="""<!doctype html><html><body>
+          <p id='output'>Ready</p><button id='go'>Change</button><button id='reset'>Reset</button>
+          <script>
+          document.getElementById('go').onclick=()=>document.getElementById('output').textContent='Changed';
+          document.getElementById('reset').onclick=()=>document.getElementById('output').textContent='Ready';
+          </script></body></html>"""
+          Path('reports/html-verifier-smoke').mkdir(parents=True,exist_ok=True)
+          data={'results':[{'id':'html-button-ui','turns':[
+              {'response':'```html\n'+first+'\n```'},
+              {'response':'```html\n'+second+'\n```'}]}]}
+          Path('reports/html-verifier-smoke/report.json').write_text(json.dumps(data))
+          PY
+      - name: Verify clicks, reset and repeat click without network
+        run: python -u scripts/test_guest_html_functionality.py --report reports/html-verifier-smoke/report.json --output reports/html-verifier-smoke/functional-report.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: html-verifier-selftest-${{ github.run_id }}
+          path: reports/html-verifier-smoke/
+          retention-days: 7
+          if-no-files-found: ignore
