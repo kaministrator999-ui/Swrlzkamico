@@ -19,7 +19,7 @@ assert(html.indexOf('SE451_FACE_PROGRESSIVE_DOCK_START')>html.indexOf('SE430_MOD
 assert(html.includes('window.SWYRL_ENGINE_FACE_PROGRESSIVE_451'), 'Missing behavior inspection API');
 assert(script.includes('const oldInstall=se430BeginnerInstall;'));
 assert(script.includes('se430BeginnerInstall=function(panel)'), 'Must reuse native installer');
-assert(script.includes('const workshop=panel.querySelector(\'#modelAtelierTopologyWorkshop\')'));
+assert(script.includes('workshop=panel.querySelector(\'#modelAtelierTopologyWorkshop\')'));
 assert(script.includes('holder.append(workshop)'), 'Must move the original live workshop into stage three');
 assert(script.includes('restoreNative()'), 'Native inspector must be recoverable');
 assert(script.includes('se448ShapeQuickActivate(quick,operation)'), 'Inset/Extrude need actual native preview');
