@@ -1,0 +1,61 @@
+name: Prepare and seal §E v11.451 native Face tool drawers
+on:
+  push:
+    branches: [main]
+    paths:
+      - "projects/swrlz-forge-moba/RELEASE_PREPARE_V11_451.json"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: engine-v11-451-seal
+  cancel-in-progress: false
+
+jobs:
+  seal:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout governed engine source
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.11"}
+      - uses: actions/setup-node@v4
+        with: {node-version: "22"}
+      - name: Build, seal and run source regression tests
+        run: python projects/swrlz-forge-moba/scripts/prepare_v11_451_release.py
+      - name: Seal source receipt and request exact HF release
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add projects/swrlz-forge-moba/source-manifest.json
+          git commit -m "build(§E): seal verified v11.451 native Face dock source"
+          SOURCE_COMMIT="$(git rev-parse HEAD)"
+          export SOURCE_COMMIT
+          python - <<'PY'
+          import json,os
+          from pathlib import Path
+          root=Path('projects/swrlz-forge-moba')
+          manifest=json.loads((root/'source-manifest.json').read_text())
+          assert manifest['name']=='§wyrl§ Engine v11.451'
+          request={
+            'schema':'swrlz-forge-deploy-request-v1',
+            'requestedBy':'ChatGPT (owner-approved)',
+            'target':'kamiloki/swrlz-forge-moba',
+            'releaseVersion':'v11.451',
+            'deployMarker':'SWYRL_ENGINE_DEPLOY_MARKER: V11_451_PROGRESSIVE_FACE_DOCK',
+            'reason':'Contextual Face tools and Inset/Extrude settings beside the native tool rail; preserve square-face selection, preview/apply/cancel, Undo, camera resize, pinch, projects and VR. Full source regression passed; physical phone acceptance pending.',
+            'sourceCommit':os.environ['SOURCE_COMMIT'],
+            'sourceIntegritySha256':manifest['finalSha256']
+          }
+          (root/'DEPLOY_REQUEST.json').write_text(json.dumps(request,indent=2,ensure_ascii=False)+'\n')
+          PY
+          git add projects/swrlz-forge-moba/DEPLOY_REQUEST.json
+          git commit -m "deploy(§E): request verified v11.451 Hugging Face publication"
+          git push origin HEAD:main
