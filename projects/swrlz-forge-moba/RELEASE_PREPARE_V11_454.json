@@ -1,0 +1,9 @@
+{
+  "schema": "swrlz-forge-release-prepare-v1",
+  "version": "v11.454",
+  "ownerApproved": true,
+  "reason": "Two-stage top-of-viewport slider: Inset rim preview → Set rim → inward depth preview → Set depth",
+  "sourcePatch": "patches/v11_454_inset_top_steps.py",
+  "expectedPrevious": "v11.453",
+  "verificationAttempt": 1
+}
