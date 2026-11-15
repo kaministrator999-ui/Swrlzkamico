@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT (owner-approved)",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.456",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_456_GUIDED_PRIMITIVE_CONVERSION",
-  "reason": "Repair circular primitive-to-face selection dependency: Inset exposes Make Editable & Continue before face picking. Preserve native edit validation, vertex-bake consent, two-stage rim/depth previews, camera, VR and Undo.",
-  "sourceCommit": "9c33dd7203007cca5465df8d75d3cd75bdb67ef5",
-  "sourceIntegritySha256": "e78c071295ac01b80c27c3987a95576750537b5f44e312d75dba876eceeb1601"
+  "releaseVersion": "v11.457",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_457_CONVERSION_NO_FACE_GATE",
+  "reason": "Screenshot-backed repair: make both top Inset and right Face conversion actions usable on an unconverted selected cube with no face selected and zero object-level selections; retain native sculpt-bake confirmation, Undo, source validation, and two-stage Inset depth.",
+  "sourceCommit": "ab05ef7f2fee8ae47b21e2d003014fbe7ed379b6",
+  "sourceIntegritySha256": "558556a4bf340bd639663fc4081f86a0233f281981974a577790681b0a39ad78"
 }
