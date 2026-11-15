@@ -132,7 +132,7 @@ def generate_events(payload):
 
 
 
-TRUSTED_RESEARCH_POLICY=r'''    # swrlz-general-evidence-synthesis-v3: source-bound model instruction
+TRUSTED_RESEARCH_POLICY=r'''    # public-source narrative policy injected by guarded release
     if (isinstance(payload.get("onlineContext"),dict)
             and payload["onlineContext"].get("resultCount")
             and not programming.get("codingTask") and not source_change_mode):
