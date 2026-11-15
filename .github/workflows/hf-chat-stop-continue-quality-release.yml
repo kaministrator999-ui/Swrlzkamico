@@ -1,0 +1,52 @@
+name: Deploy §C deliberate Stop, meaningful Continue and interactive webpage defaults
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".deploy/HF_CHAT_STOP_CONTINUE_QUALITY_REQUEST.txt"
+permissions: {contents: read}
+concurrency:
+  group: swrlz-hf-space-deployment
+  cancel-in-progress: false
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 32
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate exact owner-approved scope and model invariants
+        shell: bash
+        run: |
+          set -euo pipefail
+          f=.deploy/HF_CHAT_STOP_CONTINUE_QUALITY_REQUEST.txt
+          test "$(sed -n 's/^TARGET=//p' "$f")" = "kamiloki/Swyrlz"
+          test "$(sed -n 's/^APPROVED=//p' "$f")" = "1"
+          test "$(sed -n 's/^CHANGE_SCOPE=//p' "$f")" = "continue-code-stop-native-interactive-html-only"
+          test "$(sed -n 's/^MODEL=//p' "$f")" = "qwen3.5-9b"
+          test "$(sed -n 's/^CONTEXT_TOKENS=//p' "$f")" = "16384"
+          test "$(sed -n 's/^THREADS=//p' "$f")" = "18"
+          test "$(sed -n 's/^DEPLOY_NONCE=//p' "$f")" = "chat-stop-continue-webpage-20261114-v1"
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.11"}
+      - uses: actions/setup-node@v4
+        with: {node-version: "22"}
+      - run: python -m pip install --quiet "huggingface_hub>=0.34,<2"
+      - name: Compile and validate source against current HF revision (read-only)
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          python -m py_compile scripts/hf_chat_stop_continue_web_quality_v1.py
+          python -u scripts/hf_chat_stop_continue_web_quality_v1.py preflight
+      - uses: actions/upload-artifact@v4
+        with:
+          name: swrlz-coding-stop-continue-previous-verified-source
+          path: swrlz-code-intent-stop-original/
+          retention-days: 14
+          if-no-files-found: error
+      - name: Publish guarded live §C fix and verify served HTML, rollback on failure
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          SWRLZ_CHAT_STOP_QUALITY_APPROVED: "1"
+        run: |
+          python -u scripts/hf_chat_stop_continue_web_quality_v1.py publish
+          echo "SWRLZ_CHAT_STOP_CONTINUE_HTML_RELEASE_VERIFIED"
