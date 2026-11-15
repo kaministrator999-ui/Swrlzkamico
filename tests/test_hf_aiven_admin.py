@@ -123,5 +123,36 @@ def logout(request):
             release.patch_station(release.patch_station(self.SAMPLE))
 
 
+class AdminRouteTests(unittest.TestCase):
+    def test_unverified_visitors_cannot_see_page_or_metrics(self):
+        from fastapi import FastAPI
+        from fastapi.testclient import TestClient
+        app = FastAPI()
+        admin.install(app, lambda request: (None, None))
+        with mock.patch.object(admin, "read_metrics") as provider, TestClient(app) as client:
+            self.assertEqual(client.get("/admin/aiven").status_code, 404)
+            self.assertEqual(client.get("/api/admin/aiven/metrics").status_code, 403)
+            provider.assert_not_called()
+
+    def test_owner_page_is_inert_until_metrics_explicitly_requested(self):
+        from fastapi import FastAPI
+        from fastapi.testclient import TestClient
+        app = FastAPI()
+        admin.install(app, lambda request: ("opaque-google-session", {"id": "google:owner"}))
+        env = {"SWRLZ_ADMIN_GOOGLE_SUB": "owner"}
+        with mock.patch.dict(os.environ, env, clear=True), mock.patch.object(
+            admin, "read_metrics", return_value={"ok": True, "metrics": {}}
+        ) as provider, TestClient(app) as client:
+            page = client.get("/admin/aiven")
+            self.assertEqual(page.status_code, 200)
+            self.assertIn("Check Aiven", page.text)
+            provider.assert_not_called()
+            meter = client.get("/api/admin/aiven/metrics")
+            self.assertEqual(meter.status_code, 200)
+            self.assertEqual(meter.json()["metrics"], {})
+            self.assertIn("no-store", meter.headers["cache-control"])
+            provider.assert_called_once()
+
+
 if __name__ == "__main__":
     unittest.main()
