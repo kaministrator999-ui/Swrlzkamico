@@ -45,7 +45,12 @@ AFTER_DRAFT='''      const startDraft = () => { stationFirstHydration=false; dra
 
 def swap(text,a,b,name):
     n=text.count(a)
-    if n!=1:raise RuntimeError("Unsafe live source for "+name+"; matches="+str(n))
+    if n!=1:
+        for term in ("const stationCurrent", "if(!draftThread", "const startDraft", "let draftThread"):
+            pos=text.find(term)
+            print("LIVE_HYDRATION_SOURCE_DIAGNOSTIC",name,term,
+                  repr(text[max(0,pos-140):pos+900]) if pos>=0 else "ABSENT",flush=True)
+        raise RuntimeError("Unsafe live source for "+name+"; matches="+str(n))
     return text.replace(a,b,1)
 
 def candidate(before):
