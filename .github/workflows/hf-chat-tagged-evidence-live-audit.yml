@@ -1,0 +1,40 @@
+name: Read-only §C tagged evidence live acceptance after concurrent update
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/hf-chat-tagged-evidence-live-audit.yml"]
+permissions: {contents: read}
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 24
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: a6e1eddc11493ac01ef2302d71e2f16560258858
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.11"}
+      - run: python -m pip install --quiet "huggingface_hub>=0.34,<2"
+      - name: Verify current running revision, exact source and real guest research receipts
+        run: |
+          python -u - <<'PY'
+          from huggingface_hub import HfApi
+          from scripts.hf_chat_tagged_research_evidence_v1 import (
+              SPACE,ENGINE,UI,HELPER,head,live_bytes,sha256,verify_runtime,guest_turn
+          )
+          expected={
+              ENGINE:"b36a9fed0a98fbe151124dc580565e73598f6e1e9f61502e5807e0ef1535e6d1",
+              UI:"5649386db84d0b4d3d1c707c0181f549e6088066422aae46fe0a06f926b3b37c",
+              HELPER:"cec49354afae2f30aedfddba32e67e9f8761b63912d7968741f7bcad00cc9fb6",
+          }
+          api=HfApi();revision=head(api)
+          for path,checksum in expected.items():
+              actual=sha256(live_bytes(api,path,revision))
+              if actual!=checksum:
+                  raise RuntimeError("Other HF revision replaced §C tagged evidence file: "+path)
+          verify_runtime(api,revision,seconds=850)
+          guest_turn("What were all the classes in Diablo 2 LoD?",require_sources=True)
+          guest_turn("Research: what are the moons of Mars? List their names.",require_sources=True)
+          guest_turn("Hello there!",require_sources=False)
+          print("SWRLZ_TAGGED_RESEARCH_READONLY_ACCEPTED "+revision,flush=True)
+          PY
