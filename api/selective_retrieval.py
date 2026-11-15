@@ -291,15 +291,18 @@ def enrich_payload(payload: Any, researcher: Any, *, fetch_page: Any = None,
     )
     if decision.action != "retrieve":
         return out, {"phase": "DIRECT", "reason": decision.reason}
-    references = reference_pages(decision.query, fetch_page)
-    # Historical comparison demands dated/content-bearing source passages.
-    # Two general encyclopedia article titles alone are not sufficient.
-    references += extended_reference_pages(decision.query, fetch_page)
-    searched = []
+    # Prefer source pages that actually mention dates and version features.
+    # Avoid redundant encyclopedia requests when the primary sources suffice.
+    references = extended_reference_pages(decision.query, fetch_page)
     evidence_text = " ".join(str(item.get("snippet") or "") for item in references)
     years = set(re.findall(r"(?<!\d)(?:18|19|20)\d{2}(?!\d)", evidence_text))
     comparative = bool(re.search(r"\b(?:before|after|versus|compared|difference|release|date)\b",
                                  decision.query, re.I))
+    if not references or (comparative and len(years) < 2):
+        references += reference_pages(decision.query, fetch_page)
+        evidence_text = " ".join(str(item.get("snippet") or "") for item in references)
+        years = set(re.findall(r"(?<!\d)(?:18|19|20)\d{2}(?!\d)", evidence_text))
+    searched = []
     if (not references or (comparative and len(years) < 2)) and callable(researcher):
         try:
             bundle = researcher({"prompt": decision.query,
