@@ -91,7 +91,9 @@ def _interactive_canvas_inherits_no_pointer_events(source: str) -> bool:
     """
     if not re.search(r"\bcanvas\s*\.\s*addEventListener\s*\(\s*['\"](?:mouse|touch|pointer)", source):
         return False
-    rules = re.findall(r"([^{}]+)\{([^{}]*)\}", source, re.S)
+    styles = re.findall(r"<style\b[^>]*>(.*?)</style\s*>", source, re.I | re.S)
+    css = re.sub(r"/\*.*?\*/", "", "\n".join(styles) if styles else source, flags=re.S)
+    rules = re.findall(r"([^{}]+)\{([^{}]*)\}", css, re.S)
     disabled = set()
     for selector, body in rules:
         if re.search(r"\bpointer-events\s*:\s*none\b", body, re.I):
