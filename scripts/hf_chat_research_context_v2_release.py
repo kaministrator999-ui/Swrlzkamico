@@ -195,7 +195,7 @@ def verify_running(api,rev,seconds=950):
     raise RuntimeError("Live exact revision never reached ready stage")
 
 
-def ask(prompt,expected_count,expected_names,forbidden):
+def ask(prompt,expected_count,expected_names,forbidden,expected_years=()):
     jar=http.cookiejar.CookieJar()
     opener=urllib.request.build_opener(urllib.request.HTTPCookieProcessor(jar))
     rid=str(uuid.uuid4())
@@ -238,9 +238,17 @@ def ask(prompt,expected_count,expected_names,forbidden):
                 raise RuntimeError("Historic roster contains invented "+name)
         if len(answer)<120:raise RuntimeError("Answer too short to be useful")
     else:
-        # An ordinary chat must not suddenly spawn historical roster research.
+        # Non-roster requests must never capture the historical roster path.
         if "RESEARCH_CONTEXT_CHECK" in phases:
-            raise RuntimeError("Casual chat inappropriately entered historical research route")
+            raise RuntimeError("Unrelated chat inappropriately entered historical class research")
+        if expected_years:
+            years=set(re.findall(r"(?<!\d)(?:19|20)\d{2}(?!\d)",answer))
+            if not set(expected_years).issubset(years):
+                raise RuntimeError("Existing release-date research lost its chronology")
+            if years.intersection({"2023","2024"}):
+                raise RuntimeError("Existing release-date research again invented remaster dates")
+            if "FACTUAL_VERIFICATION_PASS" not in phases:
+                raise RuntimeError("The existing source-grounding claim guard was not exercised")
     return meta
 
 
@@ -267,10 +275,12 @@ def release(api,out,receipt):
         ask("What were all five classes in Diablo 2 Classic?",5,
             ["Amazon","Barbarian","Paladin","Necromancer","Sorceress"],
             ["Assassin","Druid","Rogue","Warlock"])
+        ask("Was Diablo II Classic released before Lord of Destruction? Research both versions and explain the differences.",
+            None,[],[],expected_years=("2000","2001"))
         ask("Hello there!",None,[],[])
         receipt["status"]="LIVE_VERIFIED"
         print("SWRLZ_RESEARCH_V2_LIVE_VERIFIED "+json.dumps(
-            {"sha":published,"cases":3}),flush=True)
+            {"sha":published,"cases":4}),flush=True)
     except BaseException:
         print("SWRLZ_RESEARCH_V2_ROLLBACK_ATTEMPT",flush=True)
         if head(api)!=published:
