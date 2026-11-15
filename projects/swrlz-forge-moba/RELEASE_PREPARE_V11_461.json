@@ -1,0 +1,17 @@
+{
+  "schema": "swrlz-forge-release-prepare-v1",
+  "version": "v11.461",
+  "expectedPrevious": "v11.460",
+  "ownerApproved": true,
+  "incident": "Working Inset geometry appears warped on rims in Solid and Shaded Wire, desktop-style mobile right splitter visible but not draggable, camera orbit rotates about stale center rather than edited cube.",
+  "evidence": [
+    "User screenshots show correct Shaded Wire structure but incorrect soft surface rim shading, Flat significantly clearer.",
+    "Compiled atelierTopologyGeometry builds indexed topology and computeVertexNormals averages normals across hard inset faces.",
+    "Headless touch desktop-viewport inspection showed left splitter responds, right splitter centered over inspector with elementFromPoint returning inspector.",
+    "Native model camera uses a fallback y=2.35 or 2.8 until explicit model framing, and a pan offset can further detach orbit pivot."
+  ],
+  "repair": "Display-only flat lighting and bounded inset crease guide on low-poly topology, align orbit pivot to selected part or whole model at start of actual drag without changing distance/yaw/pitch, move right splitter entire hit area to rail side and enlarge touch width.",
+  "sourcePatch": "patches/v11_461_model_edges_orbit_dock.py",
+  "releaseSafety": "Do not publish until mobile Chromium passes real pan/orbit, left/right touch drags, all view modes and startup; verify 438 ordered patches and exact source SHA-256.",
+  "physicalPhoneVerified": false
+}
