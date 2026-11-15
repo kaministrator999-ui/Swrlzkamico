@@ -48,10 +48,10 @@ assert.equal(orbit.yaw,.31);assert.equal(orbit.pitch,-.22);
 assert(pan.equals(new V(.4,.5,.6)),'Pan must survive');
 assert(ctx.atelierDetailTarget.equals(new V(1,2,3)),'Framing target must survive');
 assert.equal(camUpdates,1);assert.equal(refreshes,1);
-ctx.resize=()=>{resizes++;camera.aspect=.9;};
 ctx.safeResize();
+assert.equal(resizes,2,'Native sizing happens on each requested refresh');
 assert.equal(orbit.distance,2.4,'Repeated resize still preserves zoom');
-assert.equal(camera.aspect,.9,'Repeated resize updates aspect');
+assert.equal(camera.aspect,1.3,'Repeated resize continues applying aspect updates');
 
 const visible=segment('/* SE450_FACE_PREVIEW_VISIBILITY_START */','/* SE450_FACE_PREVIEW_VISIBILITY_END */');
 let edgesDisposed=0,materialsDisposed=0,linesAdded=0;
