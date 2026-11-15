@@ -173,33 +173,48 @@ def ready(api, revision, timeout_seconds=960):
     raise TimeoutError("Resident Qwen3.5-9B did not become ready")
 
 
-def live_smoke():
-    opener=urllib.request.build_opener(urllib.request.HTTPCookieProcessor(http.cookiejar.CookieJar()))
+def live_smoke_once():
+    """Require one request-ID-matched end-to-end acceptance, never a UI guess."""
+    opener=urllib.request.build_opener(
+        urllib.request.HTTPCookieProcessor(http.cookiejar.CookieJar()))
+    # Anonymous sessions can rotate during a Space rollout. Prime each new
+    # attempt with its own cookie jar; never reuse a failed session.
+    with opener.open(urllib.request.Request(BASE+"/api/lalm_station/sync",
+                     headers=HEADER),timeout=35) as response:
+        response.read()
     rid=str(uuid.uuid4())
     tid="swrlz-html-quality-smoke-"+uuid.uuid4().hex
     body={"modelId":"700m","requestId":rid,"threadId":tid,
           "prompt":"Write a short complete HTML page with a working toggle button and responsive CSS.",
-          "profileId":"LALM", "timeZone":"UTC"}
-    req=urllib.request.Request(BASE+"/api/lalm_station/send", method="POST",
-          data=json.dumps(body).encode(), headers={**HEADER,"Content-Type":"application/json"})
+          "profileId":"LALM","timeZone":"UTC"}
+    req=urllib.request.Request(BASE+"/api/lalm_station/send",method="POST",
+          data=json.dumps(body).encode(),
+          headers={**HEADER,"Content-Type":"application/json"})
     with opener.open(req,timeout=45) as response:
-        if response.status!=202:raise RuntimeError("Live coding request not accepted")
+        if response.status!=202:
+            raise RuntimeError("Live coding request not accepted")
+        accepted=json.load(response)
+    if accepted.get("requestId")!=rid:
+        raise RuntimeError("Synthetic request ID mismatch at acknowledgement")
     url=BASE+"/api/lalm_station/stream?"+urllib.parse.urlencode({"requestId":rid})
-    terminal="";delta=[]
+    terminal="";delta=[];counts={};last_phase=""
     with opener.open(urllib.request.Request(url,headers=HEADER),timeout=480) as response:
         for raw in response:
             try:event=json.loads(raw)
             except (UnicodeError,ValueError):continue
             if event.get("requestId") and event["requestId"]!=rid:
                 raise RuntimeError("Cross-request stream detected")
-            kind=event.get("type")
+            kind=str(event.get("type") or "")
+            counts[kind]=counts.get(kind,0)+1
+            last_phase=str(event.get("phase") or last_phase)
             if kind=="DELTA":delta.append(str(event.get("text") or ""))
             if kind in ("COMPLETE","COMPLETED","FAILED","CANCELLED"):
                 terminal=kind;break
     final="".join(delta)
-    matching=False;validation=""
-    for _ in range(25):
-        with opener.open(urllib.request.Request(BASE+"/api/lalm_station/sync",headers=HEADER),timeout=30) as response:
+    matching=False;validation="";synced_terminal=""
+    for _ in range(35):
+        with opener.open(urllib.request.Request(BASE+"/api/lalm_station/sync",
+                         headers=HEADER),timeout=30) as response:
             state=json.load(response)
         active=state.get("activeGeneration") or {}
         if active.get("requestId")==rid:
@@ -209,12 +224,16 @@ def live_smoke():
             if active.get("terminal") and not terminal:
                 terminal=str(active.get("terminalType") or "COMPLETE").upper()
             if terminal and validation:break
+        # A stale anonymous projection does NOT count as acceptance.
         time.sleep(2)
     findings=diagnose_html_candidate(final)
     emit("SMOKE_RESULT",terminal=terminal,validation=validation,
-         finalLength=len(final),matchingRequest=matching,findings=findings)
+         finalLength=len(final),matchingRequest=matching,findings=findings,
+         streamEvents=counts,lastPhase=last_phase,
+         cookieNames=[c.name for handler in opener.handlers
+            if hasattr(handler,"cookiejar") for c in handler.cookiejar])
     if terminal not in ("COMPLETE","COMPLETED") or validation!="PASS" or not matching:
-        raise RuntimeError("Live coding generation was not accepted")
+        raise RuntimeError("Live coding request not matched to an accepted complete candidate")
     if "<html" not in final.lower() and "<!doctype html" not in final.lower():
         raise RuntimeError("Live output omitted complete HTML")
     if findings["blocking"]:
@@ -222,16 +241,34 @@ def live_smoke():
     emit("LIVE_SMOKE_PASS",codeAccepted=True)
 
 
+def live_smoke():
+    # Known rollout issue: disposable anonymous sessions may disappear when
+    # the HF Space restarts. Retry the WHOLE request, not a mismatched stream.
+    for attempt in range(1,4):
+        try:
+            live_smoke_once()
+            emit("LIVE_ACCEPTANCE_PASS",attempt=attempt)
+            return
+        except Exception as exc:
+            emit("LIVE_ATTEMPT_FAILED",attempt=attempt,
+                 errorType=type(exc).__name__,detail=str(exc)[:240])
+            if attempt==3:raise
+            time.sleep(12)
+
+
 def main():
     from huggingface_hub import HfApi
     mode=sys.argv[1:]
-    if mode not in (["preflight"],["publish"]):
-        raise SystemExit("Usage: preflight|publish")
+    if mode not in (["preflight"],["publish"],["baseline"]):
+        raise SystemExit("Usage: preflight|publish|baseline")
     token=os.environ.get("HF_TOKEN")
     if not token:raise RuntimeError("HF_TOKEN required for authoritative source read")
     api=HfApi(token=token)
     if mode==["preflight"]:
         preflight(api)
+        return
+    if mode==["baseline"]:
+        live_smoke()
         return
     if os.environ.get("SWRLZ_HTML_QUALITY_APPROVED")!="1":
         raise RuntimeError("Explicit scoped release approval missing")
