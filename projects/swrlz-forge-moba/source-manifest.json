@@ -1,10 +1,10 @@
 {
   "schema": "swrlz-forge-source-v2",
-  "name": "§wyrl§ Engine v11.465",
+  "name": "§wyrl§ Engine v11.466",
   "baseArtifact": "swrlz_forge_v4.html",
   "baseBytes": 99591,
   "baseSha256": "a8299fe89fbb98d15c6091751b7a66931a66efec8eec5cb464e1286f21895856",
-  "finalArtifact": "swyrl_engine_v11_465.html",
+  "finalArtifact": "swyrl_engine_v11_466.html",
   "encoding": "gzip+base64-chunks",
   "chunks": [
     "payload/part-01.txt",
@@ -456,8 +456,9 @@
     "patches/v11_462_model_wire_clarity.py",
     "patches/v11_463_transform_history_bar.py",
     "patches/v11_464_model_visual_inspector.py",
-    "patches/v11_465_inspector_readability.py"
+    "patches/v11_465_inspector_readability.py",
+    "patches/v11_466_ring_arc_modeling.py"
   ],
-  "finalBytes": 10207614,
-  "finalSha256": "3e9667732fba30853a1295364cfa3b836ddecf4303186ce48c2e4ecb416eb7f9"
+  "finalBytes": 10237853,
+  "finalSha256": "8b75d1be23f5bfd37cc57b8572c11e493ce4867b9f10e7d68f129a99f05d058b"
 }
