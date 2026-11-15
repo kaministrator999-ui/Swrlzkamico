@@ -1,0 +1,64 @@
+name: Guarded §C generic public source fallback release
+on:
+  push:
+    branches: [main]
+    paths: [".deploy/HF_CHAT_GENERIC_SOURCE_REQUEST.txt"]
+permissions: {contents: read}
+concurrency:
+  group: swrlz-hf-space-deployment
+  cancel-in-progress: false
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 42
+    steps:
+      - uses: actions/checkout@v4
+      - name: Require reviewed source and owner-approved existing §C target
+        id: gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          p=.deploy/HF_CHAT_GENERIC_SOURCE_REQUEST.txt
+          test -f "$p"
+          val() { sed -n "s/^$1=//p" "$p" | tail -n 1; }
+          test "$(val APPROVED)" = "1"
+          test "$(val TARGET)" = "kamiloki/Swyrlz"
+          test "$(val MODEL)" = "qwen3.5-9b"
+          test "$(val FEATURE)" = "generic-public-source-fallback-v1"
+          ref="$(val SOURCE_REF)"
+          nonce="$(val REQUEST_NONCE)"
+          [[ "$ref" =~ ^[0-9a-f]{40}$ ]]
+          [[ "$nonce" =~ ^[a-z0-9-]{12,96}$ ]]
+          echo "ref=$ref" >> "$GITHUB_OUTPUT"
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.gate.outputs.ref }}
+          path: reviewed-source
+          fetch-depth: 1
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.11"}
+      - name: Install existing HF client
+        run: python -m pip install --quiet "huggingface_hub>=0.34,<2"
+      - name: Recheck public source discovery, trusted context and safety tests
+        working-directory: reviewed-source
+        run: |
+          set -euo pipefail
+          python -m unittest discover -s tests -p 'test_hf_generic_public_source_fallback_v1.py' -v
+          python -m unittest discover -s tests -p 'test_hf_tagged_research_evidence_v1.py' -v
+          python -m py_compile api/generic_public_source_fallback_v1.py scripts/hf_chat_generic_public_fallback_v1.py
+      - name: Publish only generic lookup source with runtime, actual citation and guest accuracy acceptance
+        working-directory: reviewed-source
+        timeout-minutes: 37
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          SWRLZ_GENERIC_PUBLIC_FALLBACK_DEPLOY_APPROVED: "1"
+        run: |
+          set -euo pipefail
+          python -u scripts/hf_chat_generic_public_fallback_v1.py --deploy
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: swrlz-generic-fallback-exact-source-rollback
+          path: reviewed-source/swrlz-generic-research-source-backup/
+          retention-days: 14
+          if-no-files-found: warn
