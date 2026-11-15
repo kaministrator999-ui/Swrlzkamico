@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.464
+title: §wyrl§ Engine v11.465
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,11 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+## §E v11.465 · Readable mobile Model Studio inspector (2026-11-15)
+
+User screenshots of v11.464 show the narrow inspector breaking tool labels into single letters. v11.465 restores whole-word wrapping; below 236 CSS px, the original inspector presents a compact **Expand** prompt instead of vertically shattered labels. Expanded native controls temporarily overlay the viewport while releasing the right grid track. Dock returns to the exact saved widths and original pointer grips. Existing camera, Undo, mesh, UV, VR and Model Studio view modes are unchanged. Source, test and Hugging Face release are separate verification steps. See [inspector readability release notes](docs/MODEL_INSPECTOR_READABILITY_V11_465.md).
+
+
 ## §E v11.464 · Model depth, X-Ray and mobile inspector polish (2026-11-15)
 
 Owner-approved native Model Studio presentation pass after v11.463: Solid/Flat/Clay reduce display-only glow and add subtle scene fill lighting; authored Material maps remain untouched but benefit from improved illumination. X-Ray now has a neutral translucent face overlay, depth-only front-surface occlusion and distinct visible/hidden dihedral edges. Native selected mesh/component outlines use stronger mode-specific colors. The existing inspector has a reversible Expand/Dock overlay for phone without copying controls or rewriting splitter widths. Prior camera, working splitter drag, Inset/Extrude, UVs, VR and Undo/Redo toolbar are preserved. A new 441-patch integrity gate with complete asset checks and focused regressions precedes separate Hugging Face publication. Physical Moto/Quest acceptance is not asserted. See [v11.464 model visual and mobile inspector report](docs/MODEL_VISUAL_INSPECTOR_V11_464.md).
