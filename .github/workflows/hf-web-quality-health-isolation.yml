@@ -1,0 +1,19 @@
+name: Isolate §C live health after webpage quality rollback
+on:
+  push:
+    branches: [feature/swrlz-web-artifact-quality-v1]
+    paths: ["scripts/hf_web_quality_health_isolation.py",".github/workflows/hf-web-quality-health-isolation.yml"]
+permissions: {contents: read}
+jobs:
+  health:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.11"}
+      - run: python -m pip install 'huggingface_hub>=0.34,<2'
+      - name: Read runtime stage and public health response shapes only
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: python -u scripts/hf_web_quality_health_isolation.py
