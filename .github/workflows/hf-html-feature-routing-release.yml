@@ -1,0 +1,111 @@
+name: Guarded §C additive HTML edit routing and guest acceptance
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/hf-html-feature-routing-release.yml'
+permissions: {contents: read}
+concurrency:
+  group: swrlz-chat-guest-eval
+  cancel-in-progress: false
+jobs:
+  release_and_accept:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 42
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - name: Install dependencies for anonymous Chromium acceptance
+        run: |
+          python -m pip install 'huggingface_hub>=0.34,<2' playwright==1.56.0
+          python -m playwright install --with-deps chromium
+      - name: Validate classifier and guest test scripts
+        run: python -m py_compile scripts/hf_html_feature_routing_fix_v1.py scripts/eval_chat_guest_suite.py scripts/test_guest_html_functionality.py
+      - name: Test exact live Brain source and positive-feature/real-repair fixtures
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: python -u scripts/hf_html_feature_routing_fix_v1.py preflight
+      - name: Keep exact pre-release Brain bytes and hash for rollback
+        uses: actions/upload-artifact@v4
+        with:
+          name: additive-html-routing-rollback-${{ github.run_id }}
+          path: reports/swrlz-feature-vs-repair/
+          retention-days: 90
+          if-no-files-found: error
+      - name: Publish one-file Brain feature-versus-repair correction
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          SWRLZ_POSITIVE_EDIT_APPROVED: '1'
+        run: python -u scripts/hf_html_feature_routing_fix_v1.py publish
+      - name: Ensure model serving resumes after Hugging Face restart
+        run: |
+          python - <<'PY'
+          import json,time,urllib.request
+          url='https://kamiloki-swyrlz.hf.space/api/hf/qwen35-ready'
+          for n in range(30):
+              try:
+                  with urllib.request.urlopen(url,timeout=15) as response:data=json.load(response)
+                  if data.get('ready') is True and n>=3:
+                      print('HTML_ROUTING_RESIDENT_READY',data.get('model'),'poll',n,flush=True)
+                      break
+              except Exception as e:
+                  print('WARMUP',n,type(e).__name__,flush=True)
+              time.sleep(8)
+          else:raise RuntimeError('Coder readiness could not be verified')
+          PY
+      - name: Run real guest HTML creation and source-preserving Reset follow-up
+        id: model
+        shell: bash
+        env:
+          SWRLZ_EVAL_BASE: https://kamiloki-swyrlz.hf.space
+          SWRLZ_EVAL_MODEL: 700m
+        run: |
+          set -uo pipefail
+          if python -u - <<'PY'
+          import asyncio,sys
+          import scripts.eval_chat_guest_suite as ev
+          ev.CASES['2']=[x for x in ev.CASES['2'] if x['id']=='html-button-ui']
+          if len(ev.CASES['2'])!=1:raise RuntimeError('Guest HTML fixture missing')
+          sys.exit(asyncio.run(ev.main('live','2')))
+          PY
+          then status=0;else status=$?;fi
+          echo "exit=$status" >> "$GITHUB_OUTPUT"
+          echo "FEATURE_ROUTING_GUEST_EXIT=$status"
+      - name: Execute generated Change/Reset interactions in isolated Chromium
+        id: browser
+        if: steps.model.outputs.exit == '0'
+        shell: bash
+        run: |
+          set -uo pipefail
+          if python -u scripts/test_guest_html_functionality.py;then status=0;else status=$?;fi
+          echo "exit=$status" >> "$GITHUB_OUTPUT"
+      - name: Publish anonymous model transcripts and browser receipts
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: additive-html-routing-guest-evidence-${{ github.run_id }}
+          path: reports/chat-guest-eval/
+          retention-days: 21
+          if-no-files-found: ignore
+      - name: Roll back live Brain change on model or browser acceptance failure
+        if: steps.model.outputs.exit != '0' || steps.browser.outputs.exit != '0'
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          SWRLZ_POSITIVE_EDIT_APPROVED: '1'
+        run: python -u scripts/hf_html_feature_routing_fix_v1.py rollback
+      - name: Require tested complete HTML and follow-up interaction
+        if: steps.model.outputs.exit != '0' || steps.browser.outputs.exit != '0'
+        run: |
+          echo "::warning::HTML revision acceptance failed. Source rollback must be verified before further changes."
+          exit 1
+      - name: Attach inspection reports to job summary
+        if: always()
+        run: |
+          if [[ -f reports/chat-guest-eval/summary.md ]]; then
+            cat reports/chat-guest-eval/summary.md >> "$GITHUB_STEP_SUMMARY"
+          fi
+          if [[ -f reports/chat-guest-eval/functional-report.json ]]; then
+            cat reports/chat-guest-eval/functional-report.json >> "$GITHUB_STEP_SUMMARY"
+          fi
