@@ -5,6 +5,6 @@
   "reason": "Condense Face tools to a progressive sidebar with live Inset/Extrude previews, exact amount input and native Apply/Cancel",
   "sourcePatch": "patches/v11_451_guided_face_workflow.py",
   "expectedPrevious": "v11.450",
-  "verificationAttempt": 3,
-  "note": "Correct sealed v11.451 final artifact assertion; preserve guided face UI and native geometry tests."
+  "verificationAttempt": 4,
+  "note": "Correct verifier source.version and reference v11.451-preserved tests; no model behavior change."
 }
