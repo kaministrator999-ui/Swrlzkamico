@@ -39,7 +39,7 @@ def github_stats():
   items=list(artifacts.get("artifacts") or [])
   # At most eight pages, 8 calls. Enough to see a meaningful large
   # artifact tail; do not use huge pagination to audit usage.
-  for page in range(2,min(8,(total+99)//100)+1):
+  for page in range(2,min(20,(total+99)//100)+1):
    items+=get("/actions/artifacts?per_page=100&page="+str(page)).get("artifacts") or []
   alive=[x for x in items if not x.get("expired")]
   mbytes=sum(int(x.get("size_in_bytes") or 0) for x in alive)
@@ -84,6 +84,26 @@ def scan_code(path,content):
    out["safeNumericConstants"]=constants
   except SyntaxError:out["pythonSyntaxValid"]=False
  return out
+def workflow_stats():
+ root=Path(".github/workflows")
+ workflows=list(root.glob("*.yml"))+list(root.glob("*.yaml"))
+ broad_push=[]
+ push_total=0
+ for file in workflows:
+  body=file.read_text(encoding="utf8",errors="replace")
+  if not re.search(r"(?m)^\s+push\s*:",body):continue
+  push_total+=1
+  lines=body.splitlines()
+  hits=[i for i,line in enumerate(lines) if re.search(r"^\s+push\s*:",line)]
+  for i in hits:
+   segment="\n".join(lines[i+1:i+12])
+   if not re.search(r"(?m)^\s+paths(?:-ignore)?\s*:",segment):
+    broad_push.append(file.name)
+    break
+ say("github_workflow_triggers",total=len(workflows),
+     pushTriggered=push_total,estimatedUnscopedPush=len(broad_push),
+     selectedUnscopedExamples=broad_push[:12],heuristic=True)
+
 def hub_stats():
  token=os.environ.get("HF_TOKEN")
  if not token:
@@ -101,6 +121,16 @@ def hub_stats():
   say("hf_space_repo",errorType=type(e).__name__)
   info=api.repo_info(SPACE,repo_type="space")
  try:
+  quota=api.get_zero_gpu_quota()
+  say("hf_owner_zero_gpu_quota",baseSeconds=getattr(quota,"base",None),
+      remainingSeconds=getattr(quota,"remaining",None),
+      resetAt=str(getattr(quota,"resets_at",None)),
+      overquotaUsedSeconds=getattr(quota,"overquota_used",None),
+      quotaIsPerAccount=True)
+ except Exception as ex:
+  say("hf_owner_zero_gpu_quota",errorType=type(ex).__name__,
+      accessUnavailable=True)
+ try:
   runtime=api.get_space_runtime(SPACE)
   say("hf_runtime",stage=str(runtime.stage),
       hardware=str(getattr(runtime,"hardware",None)),
@@ -115,10 +145,27 @@ def hub_stats():
    source=Path(hf_hub_download(SPACE,path,repo_type="space",revision=info.sha,token=token)).read_text(encoding="utf8")
    say("source",**scan_code(path,source))
   except Exception as e:say("source",file=path,errorType=type(e).__name__)
+ # Check actual GPU-worker entry points in public Python source.
+ scripts=[m.rfilename for m in (info.siblings or [])
+          if m.rfilename.endswith(".py") and
+          (int(getattr(m,"size",0) or 0)<250000)]
+ checked=0
+ workerFiles=[]
+ for path in scripts[:95]:
+  try:
+   source=Path(hf_hub_download(SPACE,path,repo_type="space",revision=info.sha,token=token)).read_text(encoding="utf8")
+   checked+=1
+   if re.search(r"@spaces\.GPU\b|spaces\.GPU\s*\(",source):
+    workerFiles.append(path)
+  except Exception:continue
+ say("zero_gpu_source",pythonFilesAvailable=len(scripts),filesChecked=checked,
+     gpuDecoratedFiles=workerFiles,scanComplete=(checked==len(scripts)),
+     htmlOrJavascriptGPUCallsNotDetermined=True)
  say("exclusions",aivenCurrentBytes="not accessible from HF metadata",
      hfRuntimeDiskUsage="not accessible from Hub metadata",
      customProviderBilling="not accessible from Hub metadata",
      noAccountDataRead=True,noRedisKeysRead=True,credentialsWithheld=True)
 if __name__=="__main__":
  github_stats()
+ workflow_stats()
  hub_stats()
