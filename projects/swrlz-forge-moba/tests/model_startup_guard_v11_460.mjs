@@ -14,10 +14,12 @@ assert(!display.includes('const mode=()=>atelierViewGlobal;'),
  'Viewport display boot must not access the private atelierViewGlobal');
 assert(!display.includes('mode:atelierViewGlobal'),
  'Viewport inspection must not access the private atelierViewGlobal');
-assert(display.includes("panel?.querySelector('#ViewportMode')?.value"),
- 'Viewport quick switch should read the existing native input');
-assert(display.includes("native.dispatchEvent(new Event('change',{bubbles:true}))"),
- 'Quick view selection must delegate to original native renderer event');
+assert(display.includes("window.SWYRL_ENGINE_MODEL_VIEW?.inspect?.()?.mode"),
+ 'Viewport quick switch must read the native ModelAtelier view bridge');
+assert(display.includes("bridge.setMode(next)"),
+ 'Quick shading buttons must delegate to native model view commands');
+assert(display.includes("window.SWYRL_ENGINE_MODEL_VIEW?.setCamera?.(view)"),
+ 'Camera buttons must delegate to the native camera command bridge');
 const begin='/* SE458_MODEL_VIEWPORT_STABILITY_START */';
 const end='/* SE459_STARTUP_SAFETY_COMPLETE */';
 const start=html.indexOf(begin),stop=html.indexOf(end,start);
