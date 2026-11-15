@@ -26,7 +26,7 @@ TIMEOUT = 170
 # Four two-turn scenarios per batch, deliberately run one at a time.
 CASES = {
   "1": [
-    {"id":"context-name","lane":"ui","reload_after":1,"turns":[
+    {"id":"context-name","lane":"ui","turns":[
       {"prompt":"For this fictional test, our spaceship is named Copper Finch. Acknowledge briefly.","require":["Copper Finch"]},
       {"prompt":"What is the name of our fictional spaceship? Answer with just its name.","require":["Copper Finch"]}]},
     {"id":"python-repair","lane":"api","turns":[
