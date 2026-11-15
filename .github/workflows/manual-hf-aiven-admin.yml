@@ -1,0 +1,67 @@
+name: Manual HF Aiven Admin Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "Validate existing live Space source, or deploy only the two verified admin files"
+        type: choice
+        options: [validate, deploy]
+        default: validate
+        required: true
+      approved:
+        description: "Owner approval to update the EXISTING kamiloki/Swyrlz Space"
+        type: choice
+        options: ["no", "yes"]
+        default: "no"
+        required: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: swrlz-hf-space-deployment
+  cancel-in-progress: false
+
+jobs:
+  owner-admin-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check explicit approval boundary
+        env:
+          MODE: \${{ inputs.mode }}
+          APPROVED: \${{ inputs.approved }}
+        run: |
+          if [ "$MODE" = "deploy" ] && [ "$APPROVED" != "yes" ]; then
+            echo "::error::Deployment requires explicit owner approval."
+            exit 1
+          fi
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install exact-source inspection dependencies
+        run: python -m pip install 'huggingface_hub>=0.24,<2' 'fastapi>=0.110,<1'
+      - name: Compile admin module and run regression tests
+        run: |
+          python -m py_compile hf_space/aiven_admin.py scripts/hf_aiven_admin_release.py
+          python -m unittest discover -s tests -p 'test_hf_aiven_admin.py' -v
+      - name: Validate or deploy to existing HF Space
+        env:
+          HF_TOKEN: \${{ secrets.HF_TOKEN }}
+          SWRLZ_ADMIN_GOOGLE_SUB: \${{ secrets.SWRLZ_ADMIN_GOOGLE_SUB }}
+          SWRLZ_ADMIN_GOOGLE_EMAIL: \${{ secrets.SWRLZ_ADMIN_GOOGLE_EMAIL }}
+          SWRLZ_AIVEN_API_TOKEN: \${{ secrets.SWRLZ_AIVEN_API_TOKEN }}
+          SWRLZ_AIVEN_PROJECT: \${{ secrets.SWRLZ_AIVEN_PROJECT }}
+          SWRLZ_AIVEN_SERVICE: \${{ secrets.SWRLZ_AIVEN_SERVICE }}
+          SWRLZ_AIVEN_ADMIN_RELEASE_APPROVED: \${{ inputs.mode == 'deploy' && inputs.approved == 'yes' && '1' || '0' }}
+          MODE: \${{ inputs.mode }}
+        run: python scripts/hf_aiven_admin_release.py --mode "$MODE"
+      - name: Preserve rollback source receipt
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: hf-aiven-admin-predeploy-source
+          path: hf-aiven-predeploy-station.py
+          if-no-files-found: ignore
+          retention-days: 14
