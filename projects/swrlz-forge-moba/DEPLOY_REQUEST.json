@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT (owner-approved)",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.465",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_465_INSPECTOR_READABILITY",
-  "reason": "Prevent one-letter inspector wrapping in native mobile dock. Narrow widths show a compact Expand prompt; Expanded overlay releases native right dock column and restores full tool controls on touch and mouse without changing saved panel widths, camera, mesh, VR or Undo. Verified source and assets; physical Android acceptance pending.",
-  "sourceCommit": "58919e41922015adc58853c4e1836fd52cd79565",
-  "sourceIntegritySha256": "3e9667732fba30853a1295364cfa3b836ddecf4303186ce48c2e4ecb416eb7f9"
+  "releaseVersion": "v11.466",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_466_RING_ARC_MODELING",
+  "reason": "Owner-requested native ring/arc modeling: radius and half-ring selection, transforms, edge refinement, open-boundary extrusion, graded face extrusion. Source and 77 assets sealed and verified; physical Moto/Quest acceptance pending; general quad loop-cut/dissolve and VR parity remain outstanding.",
+  "sourceCommit": "dc451e12c4dabd1b760a630e60176040548d2956",
+  "sourceIntegritySha256": "8b75d1be23f5bfd37cc57b8572c11e493ce4867b9f10e7d68f129a99f05d058b"
 }
