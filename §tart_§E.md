@@ -1,3 +1,7 @@
+## §E v11.465 · Mobile Model Studio inspector readability (2026-11-15)
+
+The right inspector now uses whole-word labels and a compact prompt when resized too narrow. Existing Expand/Dock restores readable native tool settings and viewport width without changing saved sidebar drags, camera, model or Undo/Redo. Verification and hosted activation are separate. See `projects/swrlz-forge-moba/docs/MODEL_INSPECTOR_READABILITY_V11_465.md`.
+
 ## §E v11.464 · Native model display and mobile inspector polish (2026-11-15)
 
 Solid/Material depth, clean X-Ray occlusion/wires, distinctive selection colors and reversible Expand/Dock inspector are integrated into the existing Model Studio. The release retains camera orbit, draggable splitters, visible Undo/Redo toolbar, UVs, edited geometry and VR controls. The verified source/deploy gates and physical phone acceptance are separate; see `projects/swrlz-forge-moba/docs/MODEL_VISUAL_INSPECTOR_V11_464.md`.
