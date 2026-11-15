@@ -29,6 +29,8 @@
   const mesh=meshFor(),top=mesh&&atelierComponentTopology(mesh);
   if(!top?.vertices)return fail('Component vertex mapping is unavailable; source selection was not changed.');
   const selectedKeys=new Set(result.vertexIds.map(i=>top.keys[i]));
+  // Native Vertex mode stores component slots (0..top.vertices.length-1).
+  // The bridge must resolve those through top.vertices to real mesh indices.
   const components=top.vertices.map((vertex,i)=>selectedKeys.has(top.keys[vertex])?i:-1).filter(i=>i>=0);
   if(!components.length)return fail('No matching UI vertices were found for the selected ring.');
   atelierComponentMode='vertex';atelierComponentPartId=p.id;atelierComponentIds=components;
