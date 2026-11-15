@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT (owner-approved)",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.455",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_455_VIEW_READABILITY",
-  "reason": "Expose modeling view modes, clean solid/flat/clay materials, angle-filtered shaded wire and readable transient Inset cap; preserve native source, preview, camera, touch and VR.",
-  "sourceCommit": "52bd0561f0222e98e4a61fdae6c7a93a43233a80",
-  "sourceIntegritySha256": "a9b4ff6ede86388a8fd357f0aa9bdc8e6ca2a69362ce8d0bae5addc847106a5b"
+  "releaseVersion": "v11.456",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_456_GUIDED_PRIMITIVE_CONVERSION",
+  "reason": "Repair circular primitive-to-face selection dependency: Inset exposes Make Editable & Continue before face picking. Preserve native edit validation, vertex-bake consent, two-stage rim/depth previews, camera, VR and Undo.",
+  "sourceCommit": "9c33dd7203007cca5465df8d75d3cd75bdb67ef5",
+  "sourceIntegritySha256": "e78c071295ac01b80c27c3987a95576750537b5f44e312d75dba876eceeb1601"
 }
