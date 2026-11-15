@@ -99,7 +99,7 @@ def active_runtime_revision(metadata: Any, expected: str) -> bool:
             and runtime.get("sha") == expected
             and runtime.get("stage") == "RUNNING")
 
-def bounded_evidence(bundle: Any, *, query: str = "", max_items: int = 4,
+def bounded_evidence(bundle: Any, *, query: str = "", max_items: int = 6,
                      max_chars: int = 3600) -> dict[str, Any]:
     """Bound evidence before inserting it into the model context."""
     if not isinstance(bundle, dict):
@@ -216,22 +216,21 @@ def extended_reference_pages(prompt: str, fetch_page: Any) -> list[dict[str, str
         article = _normalized(page.get("extract"))[:24000]
         if subject.lower() not in article.lower():
             raise ValueError("reference subject mismatch")
-        passages = []
         release = re.search(r"\brelease dates\b.{0,460}", article, re.I)
         if release:
-            passages.append(release.group(0)[:300])
+            references.append({"title":subject+" original game release dates",
+                               "url":url,"snippet":release.group(0)[:290]})
         expansion = re.search(
             r"(?:the game received|expansion pack|released as an expansion).{0,190}?"
             r"\b(?:18|19|20)\d{2}\b", article, re.I)
         if expansion:
-            passages.append(expansion.group(0)[:260])
+            references.append({"title":subject+" "+second_title+" expansion date",
+                               "url":url,"snippet":expansion.group(0)[:260]})
         successor = re.search(r"\bwas succeeded by\b.{0,190}?\b(?:18|19|20)\d{2}\b",
                               article, re.I)
         if successor:
-            passages.append(successor.group(0)[:250])
-        if passages:
-            references.append({"title":subject+" / "+second_title+" release history",
-                               "url":url,"snippet":" | ".join(passages)[:800]})
+            references.append({"title":subject+" remaster succession history",
+                               "url":url,"snippet":successor.group(0)[:250]})
     except Exception:
         pass
     # A publisher article is useful for expansion-feature comparison. The
