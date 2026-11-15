@@ -4,7 +4,7 @@
   "target": "kamiloki/swrlz-forge-moba",
   "releaseVersion": "v11.457",
   "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_457_CONVERSION_NO_FACE_GATE",
-  "reason": "Screenshot-backed repair: make both top Inset and right Face conversion actions usable on an unconverted selected cube with no face selected and zero object-level selections; retain native sculpt-bake confirmation, Undo, source validation, and two-stage Inset depth.",
-  "sourceCommit": "ab05ef7f2fee8ae47b21e2d003014fbe7ed379b6",
+  "reason": "Screenshot-backed repair: make both top Inset and right Face conversion actions usable on an unconverted selected cube with no face selected and zero object-level selections; retain native sculpt-bake confirmation, Undo, source validation, and two-stage Inset depth. Release retry: v11.457 rim-width regression replaces historical v11.453 label expectation; original regression remains untouched.",
+  "sourceCommit": "f773dd2647c8bcb80f95334e899e744b5c6afa09",
   "sourceIntegritySha256": "558556a4bf340bd639663fc4081f86a0233f281981974a577790681b0a39ad78"
 }
