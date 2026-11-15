@@ -25,7 +25,8 @@ def _safe_public_url(value: Any) -> str:
     try:
         url = urlsplit(candidate)
         if (url.scheme != "https" or not url.hostname or url.username
-                or url.password or any(ord(c) < 32 for c in candidate)):
+                or url.password or re.search(r"\\s", candidate)
+                or any(ord(c) < 32 for c in candidate)):
             return ""
         if url.port not in (None, 443):
             return ""
@@ -183,7 +184,8 @@ def source_trace_events(bundle: Any) -> Iterator[dict[str, Any]]:
     prompts/history. The UI can distinguish checked member facts from merely
     retrieved references without claiming universal factual verification.
     """
-    if not isinstance(bundle, dict):
+    if (not isinstance(bundle, dict)
+            or bundle.get("contractId") != "swrlz-selective-evidence-v1"):
         return
     verified_urls = _checked_source_urls(bundle)
     sources = _sources(bundle)
