@@ -62,15 +62,30 @@ def inspect_answer(answer: str, bundle: Any) -> dict[str, Any]:
         reasons.append("unsupported_calendar_years:" + ",".join(unsupported[:8]))
     # Numbered game acts are factual, not a generic word: require direct
     # matching reference text, not arbitrary roman numerals in game titles.
-    corpus_acts = {re.sub(r"\s+", " ", match.group(0)).lower()
-                   for match in ACT.finditer(corpus)}
-    answer_acts = {re.sub(r"\s+", " ", match.group(0)).lower()
-                   for match in ACT.finditer(body)}
+    def named_acts(value: str) -> set[str]:
+        output=set()
+        for match in ACT.finditer(value.replace("–","-").replace("—","-")):
+            for numeral in re.findall(r"\b(?:X|IX|VIII|VII|VI|V|IV|III|II|I)\b",
+                                      match.group(0), re.I):
+                output.add(numeral.upper())
+        return output
+    corpus_acts=named_acts(corpus)
+    # Explicit publisher wording like "a new fifth act" supports Act V.
+    if re.search(r"\b(?:new )?fifth act\b", corpus, re.I):
+        corpus_acts.add("V")
+    answer_acts=named_acts(body)
     missing_acts = sorted(answer_acts - corpus_acts)
     if missing_acts:
         reasons.append("unsupported_numbered_acts:" + ",".join(missing_acts[:6]))
-    # The resurfaced regression: "Resurrected" is not a synonym for Classic.
-    if any(pattern.search(body) for pattern in EQUIVALENCE):
+    # Do not mistake an explicit denial of identity for equivalence.
+    equivalences=[]
+    for pattern in EQUIVALENCE:
+        for match in pattern.finditer(body):
+            segment=match.group(0)
+            if not re.search(r"\b(?:not|different|distinct|unlike|separate|rather than)\b",
+                             segment, re.I):
+                equivalences.append(segment)
+    if equivalences:
         reasons.append("unsupported_edition_equivalence")
     # A source may mention several editions; do not give the date of the
     # original game to a named expansion or remaster without nearby support.
