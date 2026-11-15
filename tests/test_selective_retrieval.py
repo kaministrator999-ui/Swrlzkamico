@@ -20,6 +20,8 @@ class RouterTests(unittest.TestCase):
     def test_safety_and_task_integrity(self):
         self.assertRoute("Fix our code and deploy to GitHub", "direct")
         self.assertRoute("Can you research my medical record?", "direct")
+        self.assertRoute("Look up my home address and birthday", "direct")
+        self.assertRoute("Search our earlier conversation", "direct")
         self.assertRoute("Search this https://127.0.0.1/admin", "direct")
         self.assertRoute("Look up the latest price", "direct", has_attachment=True)
         self.assertRoute("Check the latest release", "direct", has_evidence=True)
