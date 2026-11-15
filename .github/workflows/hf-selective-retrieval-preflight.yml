@@ -80,3 +80,30 @@ jobs:
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: python -u scripts/hf_chat_selective_retrieval_trial.py --out /tmp/swrlz-selective-preflight
+      - name: Probe public Diablo II retrieval using the exact HF adapter
+        working-directory: trial-source
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          python - <<'PY'
+          import importlib.util,sys,json,os
+          from huggingface_hub import HfApi,hf_hub_download
+          api=HfApi(token=os.environ["HF_TOKEN"])
+          rev=api.repo_info("kamiloki/Swyrlz",repo_type="space").sha
+          path=hf_hub_download("kamiloki/Swyrlz","api/online_research.py",
+               revision=rev,repo_type="space",token=api.token)
+          spec=importlib.util.spec_from_file_location("swrlz_live_public_search",path)
+          module=importlib.util.module_from_spec(spec)
+          sys.modules[spec.name]=module
+          spec.loader.exec_module(module)
+          prompt="Diablo II Classic versus Lord of Destruction expansion release date"
+          result=module.research({"prompt":prompt,"researchQueries":[prompt],
+                                  "requestId":"selective-retrieval-synthetic-probe"})
+          evidence=result.get("evidence") or []
+          print("HF_SELECTIVE_LIVE_PROVIDER "+json.dumps({
+             "provider":result.get("provider"),"resultCount":len(evidence),
+             "errors":[x.get("error","")[:100] for x in (result.get("errors") or [])],
+             "sampleTitles":[str(x.get("title") or "")[:120] for x in evidence[:3]]
+          }))
+          if not evidence:raise RuntimeError("LIVE_PUBLIC_RESEARCH_RETURNED_NO_EVIDENCE")
+          PY
