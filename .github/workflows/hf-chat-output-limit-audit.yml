@@ -39,3 +39,20 @@ jobs:
               print("SWRLZ_LIMIT_CONTEXT",json.dumps({"file":name,"start":a+1,
                 "lines":[str(j+1)+" "+lines[j][:280] for j in range(a,min(b,a+110))]}),flush=True)
           PY
+      - name: Inspect exact 9B generation tail and in-answer narration renderer
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          from huggingface_hub import HfApi,hf_hub_download
+          S="kamiloki/Swyrlz";r=HfApi().repo_info(S,repo_type="space").sha
+          for name,ranges in [
+            ("lfm2_700m_engine.py",[(1715,1800),(960,992),(1085,1125)]),
+            ("chat/§wyrlz/index.html",[(3510,3663)]),
+          ]:
+            lines=Path(hf_hub_download(S,name,revision=r,repo_type="space")).read_text().splitlines()
+            for a,b in ranges:
+              print("SWRLZ_LIMIT_TARGET",json.dumps({"file":name,"start":a,"end":b,
+                "lines":[str(i+1)+" "+lines[i] for i in range(a-1,min(b,len(lines)))]},
+                ensure_ascii=False),flush=True)
+          PY
