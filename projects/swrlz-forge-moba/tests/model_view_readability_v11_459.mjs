@@ -38,14 +38,17 @@ const context=vm.createContext({
 });
 vm.runInContext(script,context);
 assert.equal(context.window.SWYRL_ENGINE_VIEW_READABILITY_455.version,'v11.455');
-assert(context.window.SWYRL_ENGINE_VIEW_READABILITY_455.choose('overlay'));
-assert.equal(runs.rebuild,0,'Active topology preview must not rebuild the scene');
-assert.equal(runs.material,1,'Existing live model gets new shading');
-assert.equal(runs.refresh,1,'Only visual refresh during preview');
+// This is the early/pre-install context. UI display changes must delegate
+// through a native mounted selector; never touch the private renderer here.
+assert.equal(context.window.SWYRL_ENGINE_VIEW_READABILITY_455.choose('overlay'),false);
+assert.equal(runs.rebuild,0,'Unavailable native UI must never rebuild a live preview');
+assert.equal(runs.material,0,'Private renderer access is forbidden during initialization');
+assert.equal(runs.refresh,0,'No redundant preview-render work before mount');
 sources.preview=false;
-assert(context.window.SWYRL_ENGINE_VIEW_READABILITY_455.choose('wireframe'));
-assert.equal(runs.rebuild,1,'Normal mode change may use native rebuild');
+assert.equal(context.window.SWYRL_ENGINE_VIEW_READABILITY_455.choose('wireframe'),false);
 assert.equal(context.window.SWYRL_ENGINE_VIEW_READABILITY_455.choose('wrong'),false);
+assert(script.includes("native.dispatchEvent(new Event('change',{bubbles:true}))"),
+ 'Mounted viewport menu must delegate to the existing native display change event');
 const a2=html.indexOf('/* SE455_TRANSIENT_FACE_HIGHLIGHT_START */'),b2=html.indexOf('/* SE455_TRANSIENT_FACE_HIGHLIGHT_END */',a2);
 assert(a2>=0&&b2>a2);
 const script2=html.slice(a2,b2+'/* SE455_TRANSIENT_FACE_HIGHLIGHT_END */'.length);
