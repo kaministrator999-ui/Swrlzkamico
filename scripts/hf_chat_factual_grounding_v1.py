@@ -47,7 +47,8 @@ def generate_events(payload):
         evidence_only_reply as _evidence_only_v1,
     )
     if not isinstance(payload, dict) or os.environ.get(
-            "SWRLZ_FACTUAL_CLAIM_GUARD_ENABLED", "1").strip().lower() in ("0","false","off"):
+            "SWRLZ_FACTUAL_CLAIM_GUARD_ENABLED", "1").strip().lower() in ("0","false","off") or os.environ.get(
+            "SWRLZ_SELECTIVE_RETRIEVAL_ENABLED", "1").strip().lower() in ("0","false","off"):
         yield from _swrlz_original_generate_events_factual_v1(payload)
         return
     from api.selective_retrieval import enrich_payload as _enrich_v1
