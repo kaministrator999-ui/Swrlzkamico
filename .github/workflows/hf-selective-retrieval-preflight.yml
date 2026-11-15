@@ -16,7 +16,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: b34e39af2d0a2bb817991f9fd009df0cdfc35d2d
+          ref: ab4e18ca1ad6bd1b276f551a2181bace1889f70a
           path: trial-source
           fetch-depth: 1
       - uses: actions/setup-python@v5
@@ -60,6 +60,20 @@ jobs:
                     if any(re.search(pattern,line) for pattern in patterns)]
               print("HF_SELECTIVE_HOOKS "+json.dumps({"file":name,"length":len(lines),
                     "hits":hits[:35]},ensure_ascii=True))
+          # Inspect the exact live model evidence handoff, without user data.
+          for name,ranges in [
+              ("lfm2_700m_engine.py", [(739,762),(920,1002)]),
+              ("station.py", [(195,265)]),
+          ]:
+              if name not in files:continue
+              body=Path(hf_hub_download("kamiloki/Swyrlz",name,repo_type="space",
+                           revision=revision,token=token)).read_text("utf-8")
+              lines=body.splitlines()
+              for a,b in ranges:
+                  print("HF_SELECTIVE_CONTEXT "+json.dumps({
+                     "file":name,"range":[a,b],
+                     "lines":[str(i+1)+": "+lines[i][:190] for i in range(a-1,min(b,len(lines)))]},
+                     ensure_ascii=True))
           PY
       - name: Prepare exact-source candidate without publishing
         working-directory: trial-source
