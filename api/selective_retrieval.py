@@ -220,10 +220,14 @@ def extended_reference_pages(prompt: str, fetch_page: Any) -> list[dict[str, str
         if release:
             references.append({"title":subject+" original game release dates",
                                "url":url,"snippet":release.group(0)[:290]})
+        # Ignore the generic sidebar word "Expansion pack" and the game's
+        # franchise navigation years; require the actual subject + expansion
+        # release sentence rather than the first nearby four-digit number.
         expansion = re.search(
-            r"(?:the game received|expansion pack|released as an expansion).{0,190}?"
+            r"\bthe game received\b.{0,125}?\bexpansion pack\b.{0,65}?"
             r"\b(?:18|19|20)\d{2}\b", article, re.I)
-        if expansion:
+        if expansion and (second_title=="expansion" or
+                          second_title.lower() in expansion.group(0).lower()):
             references.append({"title":subject+" "+second_title+" expansion date",
                                "url":url,"snippet":expansion.group(0)[:260]})
         successor = re.search(r"\bwas succeeded by\b.{0,190}?\b(?:18|19|20)\d{2}\b",
