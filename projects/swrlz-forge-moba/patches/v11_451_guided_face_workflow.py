@@ -19,8 +19,8 @@ def apply(html):
  style=(ROOT/'runtime/model_guided_face_workflow_v11_451.css').read_text('utf8')
  html=one(html,'/* SE430_MODEL_BEGINNER_UI_END */',
   '/* SE430_MODEL_BEGINNER_UI_END */\n'+guide)
- html=one(html,'</head>',
-  '<style id="se451GuidedFaceStyles">\n'+style+'\n</style>\n</head>')
+ assert '</head>' in html
+ html=html.replace('</head>','<style id="se451GuidedFaceStyles">\n'+style+'\n</style>\n</head>',1)
  # Changing a numeric modifier must refresh the transient preview, not cancel
  # it; the native Apply step remains the only document mutation.
  html=one(html,
