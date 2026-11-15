@@ -50,9 +50,7 @@ const deadline=setTimeout(()=>{console.error('SE460_BROWSER_HARD_TIMEOUT');proce
  console.log('SE460_BROWSER_RESULT '+JSON.stringify(result));
  console.log('SE460_BROWSER_REQUESTS_FAILED '+JSON.stringify(failed.slice(0,16)));
  console.log('SE460_BROWSER_ERRORS '+JSON.stringify(errors.slice(0,12)));
- await browser.close();clearTimeout(deadline);
- const fatal=errors.filter(e=>/ReferenceError|SyntaxError|TypeError|atelierViewModeApply|se458|se459/i.test(e));
- if(fatal.length)throw Error('Native script/runtime exception in actual browser: '+fatal.slice(0,3).join('; '));
+
  if(result.version!=='v11.460')throw Error('Engine build version never initialized in browser');
 
  const native=await page.evaluate(()=>({
@@ -93,6 +91,9 @@ const deadline=setTimeout(()=>{console.error('SE460_BROWSER_HARD_TIMEOUT');proce
  if(!result.hasViewport)throw Error('Model Studio canvas did not initialize');
  if(/Synchronizing scene and tools|Startup is taking longer than expected/i.test(result.visibleStatuses.join(' ')))
   throw Error('Scene/tools startup warning still visible after initialization');
+ const fatal=errors.filter(e=>/ReferenceError|SyntaxError|TypeError|atelierViewModeApply|se458|se459|se460/i.test(e));
+ if(fatal.length)throw Error('Native JS exception after view clicks: '+fatal.slice(0,3).join('; '));
  console.log('SE460_REAL_BROWSER_BOOT_PASS: v11.460 page and Model Studio canvas/tool rail initialized without fatal script errors');
+ await browser.close();clearTimeout(deadline);
  process.exit(0);
 })().catch(e=>{clearTimeout(deadline);console.error('SE460_REAL_BROWSER_BOOT_FAIL '+(e.stack||e));process.exit(1)});
