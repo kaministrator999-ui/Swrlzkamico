@@ -99,8 +99,8 @@ def active_runtime_revision(metadata: Any, expected: str) -> bool:
             and runtime.get("sha") == expected
             and runtime.get("stage") == "RUNNING")
 
-def bounded_evidence(bundle: Any, *, query: str = "", max_items: int = 6,
-                     max_chars: int = 3600) -> dict[str, Any]:
+def bounded_evidence(bundle: Any, *, query: str = "", max_items: int = 8,
+                     max_chars: int = 5200) -> dict[str, Any]:
     """Bound evidence before inserting it into the model context."""
     if not isinstance(bundle, dict):
         return {"contractId": "swrlz-selective-evidence-v1", "evidence": [], "resultCount": 0}
@@ -253,6 +253,21 @@ def extended_reference_pages(prompt: str, fetch_page: Any) -> list[dict[str, str
             if excerpts:
                 references.append({"title":"Blizzard: Diablo II / Lord of Destruction history",
                                    "url":publisher,"snippet":" | ".join(excerpts)[:760]})
+        except Exception:
+            pass
+        reporting = ("https://www.gamespot.com/articles/"
+                     "diablo-ii-lord-of-destruction-goes-gold/1100-2779046/")
+        try:
+            page = fetch_page(reporting)
+            final = urllib.parse.urlsplit(str(page.get("finalUrl") or ""))
+            if int(page.get("status") or 0) != 200 or final.hostname not in ("www.gamespot.com","gamespot.com"):
+                raise ValueError("reference article unavailable")
+            article = _normalized(page.get("extract"))[:24000]
+            start = article.lower().find("the expansion adds")
+            if start >= 0:
+                fragment = article[start:start+560]
+                references.append({"title":"Diablo II: Lord of Destruction expansion features (GameSpot)",
+                                   "url":reporting,"snippet":fragment[:540]})
         except Exception:
             pass
     return references
