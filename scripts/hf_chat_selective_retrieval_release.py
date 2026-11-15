@@ -23,7 +23,7 @@ import uuid
 from huggingface_hub import HfApi, hf_hub_download, CommitOperationAdd, CommitOperationDelete
 from hf_chat_selective_retrieval_trial import prepare, SPACE, ENGINE, MODULE
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from api.selective_retrieval import bounded_evidence, search_queries, enrich_payload
+from api.selective_retrieval import bounded_evidence, search_queries, enrich_payload, active_runtime_revision
 
 BASE = "https://kamiloki-swyrlz.hf.space"
 OUT = Path("swrlz-selective-retrieval-rollback")
@@ -108,26 +108,41 @@ def stage(api):
 def ready(api, revision: str):
     start = time.monotonic()
     attempts = 0
+    observed_sha = None
+    observed_stage = None
     while time.monotonic() - start < 1000:
         assert_revision(api, revision)
         attempts += 1
         try:
-            with urllib.request.urlopen(
-                urllib.request.Request(BASE + "/api/hf/qwen35-ready", headers=HEADERS),
-                timeout=14,
-            ) as response:
-                observation = json.load(response)
-            if observation.get("ready") is True and observation.get("model") == "qwen3.5-9b":
-                print("SWRLZ_SELECTIVE_9B_READY " + json.dumps(
-                    {"attempts": attempts, "model": observation.get("model"),
-                     "profile": observation.get("profile")}), flush=True)
-                return
+            request = urllib.request.Request(
+                "https://huggingface.co/api/spaces/" + SPACE, headers=HEADERS)
+            with urllib.request.urlopen(request, timeout=14) as response:
+                metadata = json.load(response)
+            runtime = metadata.get("runtime") or {}
+            observed_sha = runtime.get("sha")
+            observed_stage = runtime.get("stage")
+            # Ready endpoint alone may belong to the old replica while a
+            # new Space revision builds. Do not accept that false success.
+            if active_runtime_revision(metadata, revision):
+                with urllib.request.urlopen(
+                    urllib.request.Request(BASE + "/api/hf/qwen35-ready", headers=HEADERS),
+                    timeout=14,
+                ) as response:
+                    observation = json.load(response)
+                if observation.get("ready") is True and observation.get("model") == "qwen3.5-9b":
+                    print("SWRLZ_SELECTIVE_9B_READY " + json.dumps(
+                        {"attempts": attempts, "model": observation.get("model"),
+                         "runningRevision": observed_sha,
+                         "runtimeStage": observed_stage}), flush=True)
+                    return
         except (OSError, ValueError, urllib.error.URLError):
             pass
-        if attempts % 8 == 0:
-            print("SWRLZ_SELECTIVE_WARMING " + json.dumps({"attempts": attempts}), flush=True)
+        if attempts % 6 == 0:
+            print("SWRLZ_SELECTIVE_WARMING " + json.dumps(
+                {"attempts": attempts, "runtimeRevision": observed_sha,
+                 "stage": observed_stage, "target": revision}), flush=True)
         time.sleep(12)
-    raise RuntimeError("Qwen3.5-9B not ready on updated Space")
+    raise RuntimeError("Published Space revision never became the running Qwen3.5-9B runtime")
 
 
 def ask(label: str, prompt: str, *, expected_research: bool):
