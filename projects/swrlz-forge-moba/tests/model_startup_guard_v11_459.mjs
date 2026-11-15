@@ -6,6 +6,18 @@ import vm from 'node:vm';
 
 assert(process.argv[2], 'built engine HTML path required');
 const html=fs.readFileSync(process.argv[2],'utf8');
+const viewStart=html.indexOf('/* SE455_VIEW_READABILITY_START */');
+const viewEnd=html.indexOf('/* SE455_VIEW_READABILITY_END */',viewStart);
+assert(viewStart>=0&&viewEnd>viewStart);
+const display=html.slice(viewStart,viewEnd);
+assert(!display.includes('const mode=()=>atelierViewGlobal;'),
+ 'Viewport display boot must not access the private atelierViewGlobal');
+assert(!display.includes('mode:atelierViewGlobal'),
+ 'Viewport inspection must not access the private atelierViewGlobal');
+assert(display.includes("panel?.querySelector('#ViewportMode')?.value"),
+ 'Viewport quick switch should read the existing native input');
+assert(display.includes("native.dispatchEvent(new Event('change',{bubbles:true}))"),
+ 'Quick view selection must delegate to original native renderer event');
 const begin='/* SE458_MODEL_VIEWPORT_STABILITY_START */';
 const end='/* SE459_STARTUP_SAFETY_COMPLETE */';
 const start=html.indexOf(begin),stop=html.indexOf(end,start);
