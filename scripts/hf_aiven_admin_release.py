@@ -16,35 +16,49 @@ from pathlib import Path
 SPACE = "kamiloki/Swyrlz"
 MODULE = Path(__file__).resolve().parents[1] / "hf_space" / "aiven_admin.py"
 MARKER = "# SWRLZ_ADMIN_AIVEN_V1"
-LOGIN_ANCHOR = '    sid=uuid.uuid4().hex\n    with _lock:_hf_accounts[sid]=user'
+LOGIN_ANCHOR = '    sid=uuid.uuid4().hex'
 HOOK = (
     "\n" + MARKER + "\n"
     "from aiven_admin import install as _install_aiven_admin\n"
-    "_install_aiven_admin(app, _account_session)\n"
+    "_install_aiven_admin(app, _legacy_account_session)\n"
 )
 
 
 def patch_station(source: str) -> str:
-    """Modify verified Google login claim projection and install isolated routes."""
+    """Add verified email claim to the existing durable Google login only.
+
+    Use Redis-backed _legacy_account_session for admin, not the broader Forge
+    account resolver. A live-source drift is an error, never a loose match.
+    """
     if MARKER in source:
         raise ValueError("AIVEN_ADMIN_ALREADY_INSTALLED")
-    if source.count("def _account_session(") != 1:
-        raise ValueError("HF_GOOGLE_SESSION_ANCHOR_MISSING")
-    if source.count('@app.post("/api/account/google")') != 1:
+    if source.count("def _legacy_account_session(") != 1:
+        raise ValueError("HF_DURABLE_GOOGLE_SESSION_ANCHOR_MISSING")
+    if "return sid,account_chat_store.load_login(sid)" not in source:
+        raise ValueError("HF_DURABLE_SESSION_VERIFICATION_DRIFT")
+    start_marker = '@app.post("/api/account/google")'
+    end_marker = '@app.post("/api/account/logout")'
+    if source.count(start_marker) != 1 or source.count(end_marker) != 1:
         raise ValueError("HF_GOOGLE_LOGIN_ROUTE_MISSING")
-    if source.count(LOGIN_ANCHOR) != 1:
+    start = source.index(start_marker)
+    end = source.index(end_marker, start)
+    login = source[start:end]
+    if (
+        login.count(LOGIN_ANCHOR) != 1
+        or "google_id_token.verify_oauth2_token(" not in login
+        or "account_chat_store.save_login(sid,user)" not in login
+    ):
         raise ValueError("HF_GOOGLE_CLAIM_PROJECTION_DRIFT")
-    if "google_id_token.verify_oauth2_token(" not in source:
-        raise ValueError("HF_GOOGLE_ID_TOKEN_VERIFICATION_MISSING")
-    replacement = (
-        "    # Required for private email-based owner authorization.\n"
+    updated_login = login.replace(
+        LOGIN_ANCHOR,
+        "    # Persist the Google-issued email verification result with this login.\n"
         "    user['emailVerified']=claims.get('email_verified') is True\n"
-        + LOGIN_ANCHOR
+        + LOGIN_ANCHOR,
+        1,
     )
-    updated = source.replace(LOGIN_ANCHOR, replacement, 1) + HOOK
+    updated = source[:start] + updated_login + source[end:] + HOOK
     ast.parse(updated, filename="station.py")
     return updated
-
 
 def digest(data: bytes) -> str:
     return hashlib.sha256(data).hexdigest()
@@ -76,7 +90,7 @@ def preflight(api, token: str):
     ):
         if needle not in module:
             raise RuntimeError("ADMIN_GUARD_INCOMPLETE")
-    if b"from aiven_admin import install" not in updated:
+    if b"_install_aiven_admin(app, _legacy_account_session)" not in updated:\n        raise RuntimeError("UNVERIFIED_ADMIN_ACCOUNT_SESSION_GUARD")\n    if b"from aiven_admin import install" not in updated:
         raise RuntimeError("HF_ADMIN_INSTALL_HOOK_MISSING")
     if b"google_id_token.verify_oauth2_token(" not in updated:
         raise RuntimeError("GOOGLE_TOKEN_VERIFICATION_LOST")
