@@ -1,0 +1,44 @@
+name: §C guest reload server/client boundary diagnostics
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/chat-guest-reload-diagnostics.yml'
+permissions: {contents: read}
+concurrency:
+  group: swrlz-chat-guest-eval
+  cancel-in-progress: false
+jobs:
+  diagnose:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - run: |
+          python -m pip install playwright==1.56.0
+          python -m playwright install --with-deps chromium
+      - run: python -m py_compile scripts/eval_chat_guest_suite.py
+      - name: Reproduce guest reload with server/client diagnostic evidence
+        env:
+          SWRLZ_EVAL_BASE: https://kamiloki-swyrlz.hf.space
+          SWRLZ_EVAL_MODEL: 700m
+        shell: bash
+        run: |
+          python -u - <<'PY'
+          import asyncio,sys
+          import scripts.eval_chat_guest_suite as e
+          e.CASES["3"]=[x for x in e.CASES["3"] if x["id"]=="guest-reload-restore"]
+          if len(e.CASES["3"])!=1:raise RuntimeError("Missing guest reload fixture")
+          sys.exit(asyncio.run(e.main("live","3")))
+          PY
+      - name: Preserve read-only synthetic guest diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: guest-reload-server-client-diagnostic-${{ github.run_id }}
+          path: reports/chat-guest-eval/
+          retention-days: 14
+          if-no-files-found: ignore
