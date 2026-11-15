@@ -165,6 +165,8 @@ if(process.argv[2]){
  assert(html.includes('emissive:color.clone().multiplyScalar(.05)'));
  assert(html.includes('se320RefreshTransformAccess(panel)'));
  assert(html.includes('se461AlignOrbitPivot()'));
- assert(html.includes('se251PointerGrip'));
+ assert(html.includes('SE461_TOUCH_DOCK_BOUNDS_START'));
+ assert(html.includes('SE462_VIEW_AND_DOCK_STYLES_START'));
+ assert(html.includes('SE463_MODEL')||html.includes('Select mesh · Undo / Redo'));
 }
 console.log('SE464_VISUAL_POLISH_PASS: non-destructive X-Ray depth, topology color, fill-light VR gating, native selection and reversible inspector focus');
