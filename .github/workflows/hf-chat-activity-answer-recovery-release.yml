@@ -1,0 +1,65 @@
+name: Guarded §C activity narration + output limit repair release
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".deploy/HF_CHAT_ACTIVITY_ANSWER_RECOVERY_REQUEST.txt"
+permissions: {contents: read}
+concurrency:
+  group: swrlz-hf-space-deployment
+  cancel-in-progress: false
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 42
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify exact owner-authorized existing §C target and immutable source
+        id: owner
+        shell: bash
+        run: |
+          set -euo pipefail
+          p=.deploy/HF_CHAT_ACTIVITY_ANSWER_RECOVERY_REQUEST.txt
+          test -f "$p"
+          get() { sed -n "s/^$1=//p" "$p" | tail -n 1; }
+          test "$(get TARGET)" = "kamiloki/Swyrlz"
+          test "$(get APPROVED)" = "1"
+          test "$(get FEATURE)" = "event-backed-narration-and-factual-answer-limit-v1"
+          test "$(get MODEL)" = "qwen3.5-9b"
+          ref="$(get SOURCE_REF)"
+          nonce="$(get REQUEST_NONCE)"
+          [[ "$ref" =~ ^[a-f0-9]{40}$ ]]
+          [[ "$nonce" =~ ^[a-z0-9-]{12,96}$ ]]
+          echo "ref=$ref" >> "$GITHUB_OUTPUT"
+          echo "Pinned owner-reviewed §C source; no model/hardware/account changes"
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.owner.outputs.ref }}
+          path: staged-source
+          fetch-depth: 1
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.11"}
+      - name: Install existing Hugging Face client
+        run: python -m pip install --quiet "huggingface_hub>=0.34,<2"
+      - name: Run focused tests and syntax gates
+        working-directory: staged-source
+        run: |
+          set -euo pipefail
+          python -m unittest discover -s tests -p 'test_hf_chat_activity_output_recovery.py' -v
+          python -m py_compile scripts/hf_chat_activity_answer_recovery_v1.py api/response_limit_recovery.py
+      - name: Publish exact guarded §C patch, verify running revision and live answer
+        working-directory: staged-source
+        timeout-minutes: 38
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          SWRLZ_ACTIVITY_ANSWER_RECOVERY_DEPLOY_APPROVED: "1"
+        run: |
+          set -euo pipefail
+          python -u scripts/hf_chat_activity_answer_recovery_v1.py --deploy
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: swrlz-chat-activity-answer-recovery-exact-source-rollback
+          path: staged-source/swrlz-activity-answer-recovery-snapshot/
+          retention-days: 14
+          if-no-files-found: warn
