@@ -22,6 +22,7 @@ import uuid
 
 from huggingface_hub import HfApi, hf_hub_download, CommitOperationAdd, CommitOperationDelete
 from hf_chat_selective_retrieval_trial import prepare, SPACE, ENGINE, MODULE
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from api.selective_retrieval import bounded_evidence, search_queries
 
 BASE = "https://kamiloki-swyrlz.hf.space"
