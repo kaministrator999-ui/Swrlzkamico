@@ -10,7 +10,7 @@ import re
 from html.parser import HTMLParser
 from typing import Any
 
-VERSION = "swrlz-html-code-quality-v1"
+VERSION = "swrlz-html-code-quality-v2"
 
 
 def _is_web_task(prompt: str, programming: dict[str, Any]) -> bool:
