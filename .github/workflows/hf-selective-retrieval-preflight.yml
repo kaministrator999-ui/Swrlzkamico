@@ -127,8 +127,30 @@ jobs:
           module=importlib.util.module_from_spec(spec)
           sys.modules[spec.name]=module
           spec.loader.exec_module(module)
-          from api.selective_retrieval import enrich_payload
+          from api.selective_retrieval import enrich_payload,reference_pages
+          urls=[
+              "https://en.wikipedia.org/api/rest_v1/page/summary/Diablo_II",
+              "https://en.wikipedia.org/api/rest_v1/page/summary/Diablo_II:_Lord_of_Destruction",
+          ]
+          for url in urls:
+              try:
+                  record=module._page_fetch(url)
+                  raw=str(record.get("extract") or "")
+                  try:
+                      parsed=json.loads(raw)
+                      shape={"validJson":True,"keys":list(parsed.keys())[:14],
+                             "title":str(parsed.get("title") or "")[:100]}
+                  except ValueError as exc:
+                      shape={"validJson":False,"prefix":raw[:140],
+                             "jsonError":str(exc)[:120]}
+                  print("HF_SELECTIVE_REFERENCE_ADAPTER "+json.dumps({
+                     "url":url,"status":record.get("status"),
+                     "extractLength":len(raw),**shape}))
+              except Exception as exc:
+                  print("HF_SELECTIVE_REFERENCE_ADAPTER "+json.dumps({
+                      "url":url,"error":type(exc).__name__+":"+str(exc)[:120]}))
           prompt="Was Diablo II Classic released before Lord of Destruction expansion?"
+          print("HF_SELECTIVE_REFERENCE_COUNT "+str(len(reference_pages(prompt,module._page_fetch))))
           enriched,route=enrich_payload({"prompt":prompt},module.research,
                     fetch_page=module._page_fetch,enabled=True)
           selected=enriched.get("onlineContext") or {}
