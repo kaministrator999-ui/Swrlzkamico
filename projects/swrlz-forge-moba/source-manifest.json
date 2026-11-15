@@ -451,6 +451,6 @@
     "patches/v11_457_conversion_no_face_gate.py",
     "patches/v11_458_dock_orbit_contrast.py"
   ],
-  "finalBytes": 10156828,
-  "finalSha256": "558556a4bf340bd639663fc4081f86a0233f281981974a577790681b0a39ad78"
+  "finalBytes": 10164938,
+  "finalSha256": "1cd6a48627945278c9b4756a63908cde3ede8c0c2fdc53960b06334260caa864"
 }
