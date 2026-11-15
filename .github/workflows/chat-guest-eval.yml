@@ -1,0 +1,98 @@
+name: §C guest-only conversation evaluation (Chromium + API)
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/eval_chat_guest_suite.py'
+      - 'docs/engineering/SWRLZ_CHAT_GUEST_EVAL.md'
+      - '.github/workflows/chat-guest-eval.yml'
+  pull_request:
+    paths:
+      - 'scripts/eval_chat_guest_suite.py'
+      - 'docs/engineering/SWRLZ_CHAT_GUEST_EVAL.md'
+      - '.github/workflows/chat-guest-eval.yml'
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'Smoke (no inference) or live (anonymous conversations)'
+        required: true
+        type: choice
+        default: smoke
+        options: [smoke, live]
+      batch:
+        description: '1: context; 2: HTML/code; 3: continuity'
+        required: true
+        type: choice
+        default: '1'
+        options: ['1', '2', '3']
+
+permissions:
+  contents: read
+
+concurrency:
+  group: swrlz-chat-guest-eval
+  cancel-in-progress: false
+
+jobs:
+  evaluate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Select mode and bounded batch
+        id: select
+        shell: bash
+        env:
+          EVENT_KIND: ${{ github.event_name }}
+          SELECTED_MODE: ${{ inputs.mode }}
+          SELECTED_BATCH: ${{ inputs.batch }}
+          LIVE_PUSH: ${{ github.event_name == 'push' && contains(github.event.head_commit.message, '[chat-guest-live]') }}
+        run: |
+          set -euo pipefail
+          mode=smoke
+          batch=1
+          if [[ "$EVENT_KIND" == "workflow_dispatch" ]]; then
+            mode="${SELECTED_MODE:-smoke}"
+            batch="${SELECTED_BATCH:-1}"
+          elif [[ "$LIVE_PUSH" == "true" ]]; then
+            mode=live
+          fi
+          [[ "$mode" == "smoke" || "$mode" == "live" ]]
+          [[ "$batch" =~ ^[123]$ ]]
+          echo "mode=$mode" >> "$GITHUB_OUTPUT"
+          echo "batch=$batch" >> "$GITHUB_OUTPUT"
+          echo "Guest evaluation: $mode batch $batch"
+      - name: Check evaluator syntax
+        run: python -m py_compile scripts/eval_chat_guest_suite.py
+      - name: Install Chromium and Playwright
+        run: |
+          python -m pip install playwright==1.56.0
+          python -m playwright install --with-deps chromium
+      - name: Run account-free evaluator
+        env:
+          SWRLZ_EVAL_BASE: https://kamiloki-swyrlz.hf.space
+          SWRLZ_EVAL_MODEL: 700m
+        shell: bash
+        run: |
+          python -u scripts/eval_chat_guest_suite.py --mode "${{ steps.select.outputs.mode }}" --batch "${{ steps.select.outputs.batch }}"
+      - name: Publish run summary
+        if: always()
+        shell: bash
+        run: |
+          if [[ -f reports/chat-guest-eval/summary.md ]]; then
+            cat reports/chat-guest-eval/summary.md >> "$GITHUB_STEP_SUMMARY"
+          fi
+      - name: Upload synthetic evaluation reports
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: chat-guest-eval-${{ github.run_id }}
+          path: reports/chat-guest-eval/
+          retention-days: 14
+          if-no-files-found: ignore
