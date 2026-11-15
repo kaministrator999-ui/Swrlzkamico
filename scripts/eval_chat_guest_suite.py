@@ -329,7 +329,7 @@ async def main(mode,batch):
                 for case in CASES[batch]:
                     outcome=await run_case(browser,case)
                     results.append(outcome)
-                    print("GUEST_CASE",json.dumps({"id":outcome["id"],"status":outcome["status"],"turns":len(outcome["turns"])}),flush=True)
+                    print("GUEST_CASE",json.dumps({"id":outcome["id"],"status":outcome["status"],"turns":len(outcome["turns"]),"error":outcome.get("error"),"turn_grades":[t.get("evaluation",{}).get("status") for t in outcome["turns"]],"reply_ms":[t.get("total_ms") for t in outcome["turns"]]}),flush=True)
                 result={"mode":mode,"batch":batch,"results":results,"model_evaluated":any(c["turns"] for c in results)}
                 passed=all(c["status"]=="PASS_EVIDENCE" for c in results)
         finally:
