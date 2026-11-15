@@ -35,6 +35,7 @@ function scenario({selected=true,hasPreview=false,hasFace=true,needsBake=true,co
   document:{getElementById:id=>id==='modelAtelierWorkshopAmount'?{value:'0.2'}:null},
   se430BeginnerAPI:()=>api,
   se430BeginnerNavigate:op=>events.push(['navigate',op]),
+  se450ArmFacePreview:(op,part)=>events.push(['arm',op,part]),
   se430BeginnerWrite:(target,text)=>{target.textContent=text;message.push(text);},
   se430BeginnerQueue:()=>events.push(['refresh'])
  });
