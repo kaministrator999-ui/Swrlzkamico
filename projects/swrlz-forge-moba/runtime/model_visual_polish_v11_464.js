@@ -101,6 +101,17 @@ atelierMeshToolbarRefresh=function(){
  }
  return result;
 };
+// Modify only the native view helper's line color, not its transform handles.
+const se464PreviousGizmoBuild=atelierMeshGizmoBuild;
+atelierMeshGizmoBuild=function(){
+ const result=se464PreviousGizmoBuild.apply(this,arguments);
+ atelierMeshGizmo?.traverse?.(child=>{
+  if(child?.type!=='BoxHelper'&&!child?.isBoxHelper)return;
+  child.material?.color?.setHex?.(0x8fffe3);
+  if(child.material){child.material.depthTest=false;child.material.needsUpdate=true;}
+ });
+ return result;
+};
 const se464PreviousTick=se430BeginnerTick;
 se430BeginnerTick=function(now){
  const result=se464PreviousTick.apply(this,arguments);
