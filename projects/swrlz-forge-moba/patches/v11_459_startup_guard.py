@@ -24,16 +24,20 @@ def apply(html):
   update(mesh,part);
   return result;
  };""",
-        """ // Optional extension: never assume the atelier's internal renderer is
- // global or initialized when this script is evaluated.
- const se459NativeViewApply=typeof atelierViewModeApply==='function'
-   ?atelierViewModeApply:null;
- if(se459NativeViewApply){
-  atelierViewModeApply=function(mesh,part){
-   const result=se459NativeViewApply.apply(this,arguments);
-   update(mesh,part);
-   return result;
-  };
+        """ // Optional extension: render initialization must never depend on this.
+ // Even typeof on a lexical binding in its temporal dead zone can throw.
+ try {
+  const se459NativeViewApply=typeof atelierViewModeApply==='function'
+    ?atelierViewModeApply:null;
+  if(se459NativeViewApply){
+   atelierViewModeApply=function(mesh,part){
+    const result=se459NativeViewApply.apply(this,arguments);
+    update(mesh,part);
+    return result;
+   };
+  }
+ }catch(_){
+  // A private/uninitialized renderer cannot prevent scene boot.
  }""")
     html=once(html,
         " function selected(part){return part?.id===selection;}",
