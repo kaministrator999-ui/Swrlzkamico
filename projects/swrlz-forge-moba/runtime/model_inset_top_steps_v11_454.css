@@ -1,0 +1,74 @@
+/* SE454_INSET_TOP_STEPS_STYLES_START */
+/* Compact editor-owned control at the top of the actual model viewport. */
+html #modelAtelierPanel[data-se454-top-steps="1"] .atelier-scene{position:relative!important}
+html #modelAtelierPanel #se454InsetTopBar[hidden]{display:none!important}
+html #modelAtelierPanel #se454InsetTopBar{
+ position:absolute!important;z-index:112!important;
+ top:53px!important;left:50%!important;transform:translateX(-50%)!important;
+ box-sizing:border-box!important;width:min(464px,calc(100% - 14px))!important;max-width:calc(100% - 14px)!important;
+ padding:7px 9px 6px!important;min-height:0!important;
+ border:1px solid #78a99e!important;border-radius:10px!important;
+ color:#eaf8fa!important;background:#152737f2!important;
+ box-shadow:0 7px 22px #000b!important;touch-action:pan-y;
+}
+html #modelAtelierPanel #se454InsetTopBar .se454-top-row{
+ display:flex!important;align-items:center!important;gap:7px!important;
+ justify-content:space-between!important;min-height:24px!important;
+}
+html #modelAtelierPanel #se454Title{
+ font:700 12px/1.3 system-ui!important;color:#d5f4e9!important;
+ white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+html #modelAtelierPanel #se454Cancel{
+ min-width:27px!important;min-height:27px!important;width:27px!important;height:27px!important;
+ font:700 19px/1 system-ui!important;padding:1px!important;flex:none!important;
+ background:#243648!important;border:1px solid #577282!important;border-radius:6px!important;
+ color:#f3f8fd!important;
+}
+html #modelAtelierPanel #se454InsetTopBar .se454-slider-row{
+ display:flex!important;align-items:center!important;gap:6px!important;min-width:0!important;
+ margin-top:5px!important;
+}
+html #modelAtelierPanel #se454Range{
+ display:block!important;flex:1 1 auto!important;width:100%!important;min-width:38px!important;
+ height:38px!important;min-height:38px!important;accent-color:#92e6c5!important;
+ margin:0!important;padding:0!important;touch-action:pan-y!important;
+}
+html #modelAtelierPanel #se454Exact{
+ flex:0 0 56px!important;width:56px!important;min-width:0!important;
+ height:37px!important;min-height:37px!important;padding:3px!important;
+ font:600 12px/1 system-ui!important;text-align:center!important;
+}
+html #modelAtelierPanel #se454Set{
+ flex:0 0 auto!important;min-width:65px!important;min-height:40px!important;
+ width:auto!important;margin:0!important;padding:5px 9px!important;
+ font:700 12px/1.2 system-ui!important;
+ border-radius:7px!important;border:1px solid #8bd8b5!important;
+ background:#296052!important;color:#f3fff9!important;
+}
+html #modelAtelierPanel #se454Set:disabled{opacity:.5!important}
+html #modelAtelierPanel #se454Hint{
+ margin:4px 0 0!important;padding:0!important;
+ font:11px/1.35 system-ui!important;color:#c6d9e2!important;overflow-wrap:anywhere;
+}
+html #modelAtelierPanel #se454InsetTopBar :is(button,input):focus-visible{
+ outline:2px solid #c0f8e8!important;outline-offset:2px!important;
+}
+/* Remove duplicate Face modifier controls while the guided viewport slider
+   owns the operation; the native controls stay mounted as state owners. */
+html #modelAtelierPanel[data-se454-inset-stage="rim"] #se452FaceModifiers,
+html #modelAtelierPanel[data-se454-inset-stage="depth"] #se452FaceModifiers,
+html #modelAtelierPanel[data-se454-inset-stage="rim"] #se453RimHandle,
+html #modelAtelierPanel[data-se454-inset-stage="depth"] #se453RimHandle{
+ display:none!important;
+}
+@media(max-width:699px){
+ html #modelAtelierPanel #se454InsetTopBar{top:48px!important;padding:6px 7px!important}
+ html #modelAtelierPanel #se454Exact{flex-basis:49px!important;width:49px!important;font-size:11px!important}
+ html #modelAtelierPanel #se454Set{min-width:60px!important;padding:4px 6px!important}
+ html #modelAtelierPanel #se454Hint{font-size:10px!important}
+}
+@media(prefers-reduced-motion:reduce){
+ html #modelAtelierPanel #se454InsetTopBar{transition:none!important}
+}
+/* SE454_INSET_TOP_STEPS_STYLES_END */
