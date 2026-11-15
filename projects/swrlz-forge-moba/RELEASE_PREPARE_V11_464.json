@@ -1,0 +1,24 @@
+{
+  "schema": "swrlz-forge-release-prepare-v1",
+  "version": "v11.464",
+  "expectedPrevious": "v11.463",
+  "ownerApproved": true,
+  "surface": "§E Model Studio, existing Hugging Face Space",
+  "scope": "Improve view-only lighting for Solid/Flat/Clay and authored Material, replace cloudy X-Ray with depth-pass visible/hidden edge diagnostics, strengthen native selected geometry and tool states, add reversible mobile inspector focus overlay without touching working splitters and camera",
+  "sourcePatch": "patches/v11_464_model_visual_inspector.py",
+  "requiredVerification": [
+    "441 ordered source patches",
+    "compiled HTML bytes/SHA256",
+    "native X-Ray depth helper and lifecycle",
+    "VR-only studio light hiding",
+    "reversible mobile inspector focus and keyboard Escape",
+    "native Undo toolbar regression",
+    "v11.462 wire readability",
+    "v11.461 orbit and v11.460 View commands",
+    "inline JavaScript syntax",
+    "77 asset checksums"
+  ],
+  "physicalPhoneVerified": false,
+  "deploymentGate": "Seal actual source integrity first, then generate separate DEPLOY_REQUEST and run existing HF deployment",
+  "sourceTestAnchor": "tests/model_visual_polish_v11_464.mjs"
+}
