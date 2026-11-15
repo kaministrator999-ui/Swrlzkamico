@@ -67,6 +67,16 @@ const root='/tmp/se461-diagnostic',host='https://kamiloki-swrlz-forge-moba.hf.sp
     after:window.SWYRL_ENGINE_MODEL_CAMERA?.inspect?.()}));
   console.log('SE461_MOBILE_CAMERA_ADD_CUBE '+JSON.stringify(a));
  }
+ await page.evaluate(()=>{document.querySelector('#modelAtelierAdd')?.click()});
+ await page.waitForTimeout(350);
+ const diagnostic=await page.evaluate(()=>{
+  const camera=window.SWYRL_ENGINE_MODEL_CAMERA;
+  const before=camera?.inspect?.();
+  const framed=camera?.frame?.('all',true);
+  const after=camera?.inspect?.();
+  return {before,framed,after,modelView:window.SWYRL_ENGINE_MODEL_VIEW?.inspect?.()};
+ });
+ console.log('SE461_MOBILE_INVOKE_ADD_CUBE '+JSON.stringify(diagnostic));
  console.log('SE461_MOBILE_ERRORS '+JSON.stringify(errors.slice(0,12)));
  await browser.close();
 })().catch(e=>{console.error('SE461_MOBILE_DIAG_ERROR',e.stack||e);process.exit(1)});
