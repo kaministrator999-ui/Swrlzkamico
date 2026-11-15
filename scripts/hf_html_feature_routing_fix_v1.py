@@ -71,7 +71,7 @@ def test(actual):
             ("Now add a Reset button, preserving the existing Change button and styling.","feature",False),
             ("Please change only the button label in the existing HTML page.","feature",False),
             ("Still wrong; keep the page and change the button.","create",True),
-            ("Please keep everything but make it responsive.","create",True),
+            ("Please keep everything but make it responsive.","feature",True),
         )
         for text,change,carry in tests:
             outcome=classify(text,hist,[],prior)
