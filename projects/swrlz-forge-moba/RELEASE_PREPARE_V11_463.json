@@ -14,5 +14,8 @@
     "77 assets"
   ],
   "physicalPhoneVerified": false,
-  "deployment": "Separate exact source seal then the existing Hugging Face deployment request"
+  "deployment": "Separate exact source seal then the existing Hugging Face deployment request",
+  "correctiveRetry": 1,
+  "previousFailedRun": 43742677830,
+  "repair": "Compiled source inline JavaScript passed. Isolated regression fixture failed because it omitted native se320TransformSelectors binding; fixture now evaluates the actual compiled selector registry together with the refresh function."
 }
