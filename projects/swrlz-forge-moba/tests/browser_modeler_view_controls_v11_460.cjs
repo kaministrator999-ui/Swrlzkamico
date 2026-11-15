@@ -67,6 +67,23 @@ const deadline=setTimeout(()=>{console.error('SE460_BROWSER_HARD_TIMEOUT');proce
  const clicks=[];
  for(const mode of ['shaded','overlay','wireframe','xray','flat','clay','solid']){
   await page.locator('#se455ViewButton').click({timeout:7000});
+  if(mode==='xray'){
+   const layout=await page.evaluate(()=>{
+    const x=document.querySelector('[data-se455-mode="xray"]');
+    const root=document.querySelector('#se455ViewSwitch');
+    const menu=document.querySelector('#se455ViewMenu');
+    const controls=document.querySelector('.atelier-viewport-controls');
+    const zoom=document.querySelector('#modelAtelierZoomOut');
+    const b=x?.getBoundingClientRect(),point=b&&{x:b.x+b.width/2,y:b.y+b.height/2};
+    const hit=point?document.elementFromPoint(point.x,point.y):null;
+    const info=e=>e?{z:getComputedStyle(e).zIndex,position:getComputedStyle(e).position,
+      transform:getComputedStyle(e).transform,rect:(()=>{let r=e.getBoundingClientRect();return [r.x,r.y,r.width,r.height]})()}:null;
+    return {point,hit:hit?.outerHTML?.slice(0,230),xray:info(x),menu:info(menu),
+      switch:info(root),viewportControls:info(controls),zoom:info(zoom),
+      scene:info(document.querySelector('.atelier-scene'))};
+   });
+   console.log('SE460_VIEW_LAYOUT_DIAGNOSTIC '+JSON.stringify(layout));
+  }
   await page.locator('[data-se455-mode="'+mode+'"]').click({timeout:7000});
   const current=await page.evaluate(()=>({
    mode:window.SWYRL_ENGINE_MODEL_VIEW?.inspect?.()?.mode,
