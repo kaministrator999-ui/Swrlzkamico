@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT (owner-approved)",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.451",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_451_GUIDED_FACE_WORKFLOW",
-  "reason": "Simplify Model Studio native Face tools into contextual controls, live amount slider, and Apply/Cancel while retaining original native workshop in Advanced and preserving source-safe previews, Undo, VR and touch.",
-  "sourceCommit": "cf3a01e9c0a8004fe426691df77b10fb16de5b9d",
-  "sourceIntegritySha256": "66ca9e79bcb33c22a3aeb7ba7c9a614f2d9ee6d167bca0653ab7f4b232d49276"
+  "releaseVersion": "v11.452",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_452_NATIVE_FACE_FLYOUTS",
+  "reason": "Expose the main Face tool rail, existing Inset/Extrude operations and original native guided modifiers in contextual flyouts; preserve geometry previews, history, project saves, camera, touch and VR.",
+  "sourceCommit": "5465102d226eac201b3dcafc796c700efcb740c2",
+  "sourceIntegritySha256": "61a2da6b60e3886d43e7eed9c4bf15d38c7f7ac089b7f897dd8bda19892343e1"
 }
