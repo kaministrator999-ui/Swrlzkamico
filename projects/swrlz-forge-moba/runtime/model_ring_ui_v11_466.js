@@ -74,8 +74,8 @@ function se466RingUIInstall(panel){
   const button=event.target.closest('button[data-ring]');if(!button)return;
   const op=button.dataset.ring,api=se430ModelWorkshop,opts=action();
   if(op==='anchor')return show(api.setRingAnchor());
-  if(op==='half'||op==='full'){panel.querySelector('#se466ArcSweep').value=op==='half'?'180':'360';return;}
-  if(op==='shrink'||op==='grow'){const node=panel.querySelector('#se466RingSteps');node.value=Math.max(0,Math.min(40,Number(node.value)+(op==='grow'?1:-1)));return show(api.selectRing({steps:value('se466RingSteps'),mode:panel.querySelector('#se466RingMode').value,
+  if(op==='half'||op==='full'){panel.querySelector('#se466ArcSweep').value=op==='half'?'180':'360';panel.querySelector('#se466ArcSlider').value=panel.querySelector('#se466ArcSweep').value;return show(api.selectRing({steps:value('se466RingSteps'),mode:panel.querySelector('#se466RingMode').value,arcStart:value('se466ArcStart'),arcSweep:value('se466ArcSweep'),plane:panel.querySelector('#se466RingPlane').value}));}
+  if(op==='shrink'||op==='grow'){const node=panel.querySelector('#se466RingSteps');node.value=Math.max(0,Math.min(40,Number(node.value)+(op==='grow'?1:-1)));panel.querySelector('#se466StepsSlider').value=node.value;return show(api.selectRing({steps:value('se466RingSteps'),mode:panel.querySelector('#se466RingMode').value,
     arcStart:value('se466ArcStart'),arcSweep:value('se466ArcSweep'),plane:panel.querySelector('#se466RingPlane').value}));}
   if(op==='select')return show(api.selectRing({steps:value('se466RingSteps'),mode:panel.querySelector('#se466RingMode').value,
    arcStart:value('se466ArcStart'),arcSweep:value('se466ArcSweep'),plane:panel.querySelector('#se466RingPlane').value}));
@@ -141,7 +141,7 @@ function se466RingUIRefresh(panel){
   const type=b.dataset.ring;
   b.disabled=type==='apply'?!state.preview.active:type==='cancel'?!state.preview.active:
    type==='anchor'?!selection.ids.length||selection.mode!=='vertex':
-   ['select','shrink','grow'].includes(type)?!state.ring?.centered||state.preview.active:
+   ['select','shrink','grow','half','full'].includes(type)?!state.ring?.centered||state.preview.active:
    ['transform','refine','extrude'].includes(type)?!selection.ids.length||state.preview.active:false;
  }
  const status=ring.querySelector('#se466RingStatus');
