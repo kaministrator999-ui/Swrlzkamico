@@ -1,0 +1,6 @@
+TARGET=kamiloki/Swyrlz
+APPROVED=1
+FEATURE=event-backed-narration-and-factual-answer-limit-v1
+MODEL=qwen3.5-9b
+SOURCE_REF=beab38b2552c664b2e1892c14a7fb2b011e86f7b
+REQUEST_NONCE=activity-20261115-factual-limit-narration-01
