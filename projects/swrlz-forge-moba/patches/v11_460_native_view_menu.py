@@ -24,8 +24,8 @@ def apply(html):
     # separate quick-menu script, and are passed out only after init returns.
     html=one(html,"/* ATELIER_BRIDGE_END */",script+"\n/* ATELIER_BRIDGE_END */")
     html=one(html,
-        "vrAccessory:se410ModelAccessory,workshop:se430ModelWorkshop,camera:se430ModelCamera,chatAction:",
-        "vrAccessory:se410ModelAccessory,workshop:se430ModelWorkshop,camera:se430ModelCamera,view:se460ModelView,chatAction:")
+        "camera:se430ModelCamera,",
+        "camera:se430ModelCamera,view:se460ModelView,")
     html=one(html,
         "window.SWYRL_ENGINE_MODEL_CAMERA=ModelAtelier.camera;",
         "window.SWYRL_ENGINE_MODEL_CAMERA=ModelAtelier.camera;\n"
