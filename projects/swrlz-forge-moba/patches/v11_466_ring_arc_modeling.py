@@ -81,9 +81,6 @@ def apply(html):
         "return Object.freeze({inspect,create,convert,selectRegion,setComponentMode,setRingAnchor,selectRing,preview,apply,cancel});")
     # Extend the SAME manual workshop UI; its existing Preview/Apply/Cancel remains authoritative.
     html=one(html,
-        "extrude:{min:-4,max:4,step:.05,value:.15,label:'Depth · negative goes inward'}",
-        "extrude:{min:-30,max:30,step:.05,value:.15,label:'Depth · negative goes inward'}")
-    html=one(html,
         """native.querySelector('#modelAtelierWorkshopPreview').addEventListener('click',()=>{const amount=Number(native.querySelector('#modelAtelierWorkshopAmount').value);se430BeginnerResult(se430BeginnerAPI()?.preview(operation.value,se430BeginnerAmount(operation.value)?{amount}:{}));});""",
         """native.querySelector('#modelAtelierWorkshopPreview').addEventListener('click',()=>{
    const amount=Number(native.querySelector('#modelAtelierWorkshopAmount').value);
