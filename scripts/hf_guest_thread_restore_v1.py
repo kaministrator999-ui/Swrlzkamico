@@ -46,6 +46,16 @@ AFTER_DRAFT='''      const startDraft = () => { stationFirstHydration=false; dra
 def swap(text,a,b,name):
     n=text.count(a)
     if n!=1:
+        for term in ("stationFirstHydration", "if(stationFirstHydration)", "stationFirstHydration=false;"):
+            cursor=0;observations=[]
+            while len(observations)<8:
+                pos=text.find(term,cursor)
+                if pos<0:break
+                observations.append(text[max(0,pos-120):pos+550])
+                cursor=pos+len(term)
+            print("HYDRATION_CURRENT_STATE",term,len(observations),
+                  repr(observations),flush=True)
+
         for term in ("const stationCurrent", "if(!draftThread", "const startDraft", "let draftThread"):
             pos=text.find(term)
             print("LIVE_HYDRATION_SOURCE_DIAGNOSTIC",name,term,
