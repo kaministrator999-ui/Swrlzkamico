@@ -1,0 +1,61 @@
+name: Prepare and seal §E v11.462 wire clarity and mobile viewport
+on:
+  push:
+    branches: [main]
+    paths:
+      - "projects/swrlz-forge-moba/RELEASE_PREPARE_V11_462.json"
+permissions:
+  contents: write
+  actions: write
+concurrency:
+  group: engine-v11-462-seal
+  cancel-in-progress: false
+jobs:
+  seal:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 16
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.11"}
+      - name: Build candidate and verify source/asset integrity
+        run: python projects/swrlz-forge-moba/scripts/prepare_v11_462_release.py
+      - name: Commit sealed source, then separately request approved HF publication
+        shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add projects/swrlz-forge-moba/source-manifest.json
+          git commit -m "build(§E v11.462): seal computed HTML SHA and byte size"
+          git fetch origin main
+          git rebase origin/main
+          SOURCE_COMMIT="$(git rev-parse HEAD)"
+          export SOURCE_COMMIT
+          python - <<'PY'
+          import json,os
+          from pathlib import Path
+          root=Path('projects/swrlz-forge-moba')
+          m=json.loads((root/'source-manifest.json').read_text())
+          assert m['name']=='§wyrl§ Engine v11.462' and len(m['patches'])==439
+          request={
+           'schema':'swrlz-forge-deploy-request-v1',
+           'requestedBy':'ChatGPT (owner-approved)',
+           'target':'kamiloki/swrlz-forge-moba',
+           'releaseVersion':'v11.462',
+           'deployMarker':'SWYRL_ENGINE_DEPLOY_MARKER: V11_462_WIRE_CLARITY_MOBILE',
+           'reason':'Clean bright angle-filtered wireframe, optional triangle and hidden-edge diagnostics, stronger selection/readable editable Material and bounded mobile viewport. Sealed source tests passed. Physical device acceptance remains open.',
+           'sourceCommit':os.environ['SOURCE_COMMIT'],
+           'sourceIntegritySha256':m['finalSha256']
+          }
+          (root/'DEPLOY_REQUEST.json').write_text(json.dumps(request,indent=2,ensure_ascii=False)+'\n')
+          PY
+          git add projects/swrlz-forge-moba/DEPLOY_REQUEST.json
+          git commit -m "deploy(§E v11.462): request source-sealed HF modeler release"
+          git push origin HEAD:main
+          gh workflow run deploy-swrlz-forge-moba.yml --ref main
