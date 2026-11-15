@@ -57,6 +57,42 @@ def apply(html):
         "  if(!state?.selection?.partId||state?.preview?.active||atelierCameraInterior)return;",
         "  if(!state?.selection?.partId||state?.preview?.active||\n   typeof atelierCameraInterior==='undefined'||atelierCameraInterior||\n   typeof se430ModelCamera==='undefined'||typeof atelierCameraPan==='undefined'||\n   typeof cameraUpdate!=='function')return;")
     html=html[:start]+seg+html[stop:]
+    # Browser-confirmed boot failure: the older se455 display helper eagerly
+    # evaluated a private atelier variable during its mount()->update().
+    # Read the existing viewport selector instead of guessing private scope.
+    a455=html.index("/* SE455_VIEW_READABILITY_START */")
+    b455=html.index("/* SE455_VIEW_READABILITY_END */",a455)
+    display=html[a455:b455]
+    display=once(display,
+      " const mode=()=>atelierViewGlobal;",
+      " const mode=()=>panel?.querySelector('#ViewportMode')?.value||'solid';")
+    display=once(display,
+      " const active=()=>se430BeginnerAPI()?.inspect?.()?.preview?.active===true;",
+      " const active=()=>typeof se430BeginnerAPI==='function'&&se430BeginnerAPI()?.inspect?.()?.preview?.active===true;")
+    start_choose=display.index(" function choose(next){")
+    end_choose=display.index(" function selectCamera(view){",start_choose)
+    safe_choose=""" function choose(next){
+  if(!valid(next)||active())return false;
+  const native=panel?.querySelector('#ViewportMode');
+  if(!native)return false;
+  const scope=panel.querySelector('#ViewportScope');
+  if(scope)scope.value='all';
+  native.value=next;
+  native.dispatchEvent(new Event('change',{bubbles:true}));
+  update();
+  if(typeof status==='function')status('Viewport '+labels[next]+' · native display updated.');
+  return true;
+ }
+ """
+    display=display[:start_choose]+safe_choose+display[end_choose:]
+    display=once(display,
+      "  se430ModelCamera.setView(view);",
+      "  if(typeof se430ModelCamera==='undefined')return;\n  se430ModelCamera.setView(view);")
+    display=once(display,
+      "  version:'v11.455',choose,inspect:()=>({mode:atelierViewGlobal,installed:!!panel,",
+      "  version:'v11.455',choose,inspect:()=>({mode:mode(),installed:!!panel,")
+    html=html[:a455]+display+html[b455:]
+
     html=once(html,
         "/* SE458_MODEL_VIEWPORT_STABILITY_END */",
         "/* SE458_MODEL_VIEWPORT_STABILITY_END */\n"
@@ -84,7 +120,8 @@ def apply(html):
     notes.update(version="v11.459",date="2026-11-15",
         title="Prevent optional viewport helper from blocking editor startup",
         changes=[
-            "The v11.458 selected-outline helper no longer references an internal renderer before the Model Studio initialization has exposed it. An unavailable optional renderer simply disables that hook instead of throwing on startup.",
+            "The older viewport display helper no longer evaluates the private atelierViewGlobal variable during mount. It reads the installed native ViewportMode control and dispatches its existing change event instead of duplicating renderer state.",
+            "The v11.458 selected-outline helper no longer references an internal renderer before Model Studio initialization. A missing optional renderer cannot throw on startup.",
             "Optional model selection, view shading and camera references are checked before use. Scene creation, project restoration, modeling controls, model conversion and Inset are independent of these visual additions.",
             "v11.458 dock sizing, edge rendering when supported, post-commit camera focus, native Undo, VR/desktop editor architecture and existing sculpt workflow remain preserved. No new graphics pipeline or loop is introduced."
         ])
