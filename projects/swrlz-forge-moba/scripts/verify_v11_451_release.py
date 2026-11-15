@@ -23,7 +23,7 @@ for token in [marker,"window.SWRLZ_FORGE_BUILD={version:'v11.451'",'<title>§wyr
  'SE437_SHEEP_TERRITORY_CAPTURE_START','se437BaseCandidates(unit)',
  'se437BaseAllowed(unit,p)','se437BuildAllowed(unit,x,z)']:
  assert token in html,token
-assert html.count(" source.engine='§wyrl§ Engine · Maker v11.451';source.version=11.450;")==5
+assert html.count(" source.engine='§wyrl§ Engine · Maker v11.451';source.version=11.451;")==5
 for name in ['model_vr_three_stage_v11_445.js','model_face_tool_shortcuts_v11_445.js','model_delete_selected_v11_444.js','model_vr_dock_v11_443.js','model_vr_grab_gizmo_v11_435.js','se436_satchel_cavity.js','se436_vr_cube_extrude.js','sheep_territory_capture_v11_437.js']:
  subprocess.run(['node','--check',str(ROOT/'runtime'/name)],check=True)
 for name in ['sheep_visual_batch_v11_434.js','sheep_visible_frame_recovery_v11_434.js','sheep_xray_policy_v11_434.js','engine_editor_shadow_cache_v11_434.js']:
@@ -32,15 +32,15 @@ subprocess.run(['node','--check',str(ROOT/'runtime/model_guided_face_workflow_v1
 subprocess.run([sys.executable,str(ROOT/'scripts/check_inline_js_syntax_v11_266.py'),str(out/'index.html')],check=True)
 for name in ['test_sheep_quest_ai_frame_budget_v11_411.cjs','test_sheep_congestion_budget_v11_419.cjs','test_sheep_vr_frame_cadence_v11_379.cjs','sheep_visible_recovery_v11_434.cjs','test_sheep_territory_capture_v11_437.cjs','test_engine_render_bridge_v11_438.cjs','test_sheep_capture_pursuit_v11_439.cjs']:
  subprocess.run(['node',str(ROOT/'tests'/name)],check=True)
-subprocess.run(['node',str(ROOT/'tests/model_camera_preferences_preserved_v11_450.mjs'),str(out/'index.html')],check=True)
+subprocess.run(['node',str(ROOT/'tests/model_camera_preferences_preserved_v11_451.mjs'),str(out/'index.html')],check=True)
 subprocess.run(['node',str(ROOT/'tests/model_delete_selected_v11_444.mjs'),str(out/'index.html')],check=True)
 subprocess.run(['node',str(ROOT/'tests/model_face_shortcuts_v11_448.mjs'),str(out/'index.html')],check=True)
 subprocess.run(['node',str(ROOT/'tests/model_vr_three_stage_v11_445.mjs'),str(out/'index.html')],check=True)
 subprocess.run(['node',str(ROOT/'tests/model_planar_face_pick_v11_450.mjs'),str(out/'index.html')],check=True)
 subprocess.run(['node',str(ROOT/'tests/model_face_orbit_v11_447.mjs'),str(out/'index.html')],check=True)
-subprocess.run(['node',str(ROOT/'tests/model_inset_dock_v11_450.mjs'),str(out/'index.html')],check=True)
-subprocess.run(['node',str(ROOT/'tests/model_touch_layout_v11_450.mjs'),str(out/'index.html')],check=True)
-subprocess.run(['node',str(ROOT/'tests/model_camera_inset_v11_450.mjs'),str(out/'index.html')],check=True)
+subprocess.run(['node',str(ROOT/'tests/model_inset_dock_v11_451.mjs'),str(out/'index.html')],check=True)
+subprocess.run(['node',str(ROOT/'tests/model_touch_layout_v11_451.mjs'),str(out/'index.html')],check=True)
+subprocess.run(['node',str(ROOT/'tests/model_camera_inset_v11_451.mjs'),str(out/'index.html')],check=True)
 subprocess.run(['node',str(ROOT/'tests/model_guided_face_workflow_v11_451.mjs'),str(out/'index.html')],check=True)
 subprocess.run(['node',str(ROOT/'tests/model_motion_menu_v11_440.mjs'),str(out/'index.html')],check=True)
 subprocess.run(['node',str(ROOT/'tests/model_satchel_browser_preservation_v11_442.mjs'),str(out/'index.html')],check=True)
