@@ -243,7 +243,9 @@ def live_inference():
             "years":sorted(set(re.findall(r"(?<!\d)(?:19|20)\d{2}(?!\d)",answer)))[:15],
             "versionLabels":{"lord":"lord of destruction" in low,
                              "classic":"classic" in low,
-                             "remaster":"resurrected" in low}}
+                             "remaster":"resurrected" in low},
+            "phaseTail":phases[-14:],
+            "answerPrefix":answer[:220]}
     print("SWRLZ_FACTUAL_LIVE_ACCEPTANCE "+json.dumps(result),flush=True)
     # Stronger than previous test: specific supported chronological facts
     # must appear in the completed answer. Source-only fallback isn't a pass.
@@ -258,6 +260,8 @@ def live_inference():
         raise RuntimeError("Live answer confused original and remastered release dates")
     if not result["versionLabels"]["lord"]:
         raise RuntimeError("Expansion version missing from answer")
+    if re.search(r"^\s*no\b",answer,re.I):
+        raise RuntimeError("Live answer contradicted chronological release order")
 
 
 def release(api,folder,receipt):
