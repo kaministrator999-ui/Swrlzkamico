@@ -30,13 +30,13 @@ CASES = {
       {"prompt":"For this fictional test, our spaceship is named Copper Finch. Acknowledge briefly.","require":["Copper Finch"]},
       {"prompt":"What is the name of our fictional spaceship? Answer with just its name.","require":["Copper Finch"]}]},
     {"id":"python-repair","lane":"api","turns":[
-      {"prompt":"An existing Python function add(a, b) incorrectly subtracts. Explain the small repair, no code yet.","require":[r"(?i)add",r"(?i)(add|sum|addition)"],"forbid":[r"`{3}|(?m)^\s*def\s+add\s*\("]},
+      {"prompt":"An existing Python function add(a, b) incorrectly subtracts. Explain the small repair, no code yet.","require":[r"(?i)add",r"(?i)(add|sum|addition)"],"forbid":[r"(?m)`{3}|^\s*def\s+add\s*\("]},
       {"prompt":"Now write only the corrected runnable Python function add(a, b).","check":"python_add"}]},
     {"id":"instruction-correction","lane":"api","turns":[
       {"prompt":"For our imaginary poster, use a BLUE triangle. Acknowledge briefly.","require":[r"(?i)blue"]},
       {"prompt":"Correction: make the triangle GREEN, not blue. Which is the final color?","require":[r"(?i)green"]}]},
     {"id":"explain-then-code","lane":"api","turns":[
-      {"prompt":"I eventually want a JavaScript square(n) function. For now explain the goal WITHOUT writing code.","require":[r"(?i)square"],"forbid":[r"`{3}|(?i)function\s+square\s*\("]},
+      {"prompt":"I eventually want a JavaScript square(n) function. For now explain the goal WITHOUT writing code.","require":[r"(?i)square"],"forbid":[r"(?i)`{3}|function\s+square\s*\("]},
       {"prompt":"Now implement square(n) in JavaScript using multiplication, in a code block.","require":[r"(?i)square",r"(?i)return|=>"]}]}
   ],
   "2": [
