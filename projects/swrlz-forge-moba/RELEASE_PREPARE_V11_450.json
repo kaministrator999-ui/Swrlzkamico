@@ -1,0 +1,9 @@
+{
+  "schema": "swrlz-forge-release-prepare-v1",
+  "version": "v11.450",
+  "ownerApproved": true,
+  "reason": "Fix zoom/pan camera jumping far after sidebar drag and missing Inset/Extrude geometry preview; arm tool for face tap and render transient highlighted preview edges, preserve native Undo",
+  "sourcePatch": "patches/v11_450_camera_inset_preview.py",
+  "expectedPrevious": "v11.449",
+  "verificationAttempt": 1
+}
