@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.449
+title: §wyrl§ Engine v11.450
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,12 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.450 · Stable camera on dock resize and visible Inset previews (2026-11-14)
+
+Changing Model Studio hierarchy/inspector widths no longer sends fake global browser-resize events on every splitter move; the existing stage ResizeObserver owns viewport sizing. The camera's resize callback preserves orbit distance, yaw, pitch, pan and focus target even if another resize handler tries to reframe. Perspective/projection aspect continues to resize with the viewport.
+
+Inset and Extrude on phone/desktop now support an armed tool workflow: select the tool then tap a flat face, or select the face before choosing the tool. The native face-region selection produces Preview (never Apply implicitly); compatible primitive conversion still uses native guards and confirmation for saved vertex edits. Successful preview meshes receive a transient colored edge outline so inset borders remain visible, automatically disposed on Apply or Cancel. Existing mesh/UV/history/VR ownership is unchanged. Physical Android acceptance pending.
 
 ## §E v11.449 · Meshes dock and two-finger camera repair (2026-11-14)
 
