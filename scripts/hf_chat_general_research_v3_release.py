@@ -261,14 +261,18 @@ def ask(prompt,expected_count,expected_names,forbidden,expected_years=()):
     answer="".join(parts)
     low=answer.lower()
     meta={"terminal":terminal,"chars":len(answer),"elapsed":round(time.monotonic()-started,2),
-          "status":phases[-12:],"prefix":answer[:240]}
+          "status":phases[-12:],"prefix":answer[:240],
+          "modelNarrativeAccepted":"RESEARCH_NARRATIVE_ACCEPTED" in phases,
+          "sourceFallback":"RESEARCH_EVIDENCE_FALLBACK" in phases}
     print("SWRLZ_RESEARCH_V3_LIVE_CASE "+json.dumps(meta),flush=True)
     if terminal not in ("COMPLETE","COMPLETED"):
         raise RuntimeError("Live request did not complete")
     if expected_count is not None:
-        if "FACTUAL_VERIFICATION_PASS" not in phases:
-            raise RuntimeError("Live request missing verified roster evidence")
-        if str(expected_count)+" playable classes" not in answer:
+        if not ("RESEARCH_NARRATIVE_ACCEPTED" in phases or
+                "RESEARCH_EVIDENCE_FALLBACK" in phases):
+            raise RuntimeError("Source-grounded roster response route missing")
+        if not re.search(r"\b"+str(expected_count)+r"\s+(?:verified\s+)?playable\s+classes\b",
+                         answer,re.I):
             raise RuntimeError("The expected class count was not returned")
         for name in expected_names:
             if not re.search(r"\b"+re.escape(name)+r"\b",answer,re.I):
@@ -309,18 +313,24 @@ def release(api,out,receipt):
             if sha256(live_bytes(api,path,published))!=digest:
                 raise RuntimeError("Published bytes did not match for "+path)
         verify_running(api,published)
-        ask("What were all the classes in Diablo 2 LoD?",7,
+        answers=[]
+        answers.append(ask("What were all the classes in Diablo 2 LoD? Give a short, source-supported description for each.",7,
             ["Amazon","Barbarian","Paladin","Necromancer","Sorceress","Assassin","Druid"],
-            ["Rogue","Warlock"])
-        ask("What were all five classes in Diablo 2 Classic?",5,
+            ["Rogue","Warlock"]))
+        answers.append(ask("So what were all the classes in Diablo 2 LoD?",7,
+            ["Amazon","Barbarian","Paladin","Necromancer","Sorceress","Assassin","Druid"],
+            ["Rogue","Warlock"]))
+        answers.append(ask("What were all five classes in Diablo 2 Classic?",5,
             ["Amazon","Barbarian","Paladin","Necromancer","Sorceress"],
-            ["Assassin","Druid","Rogue","Warlock"])
+            ["Assassin","Druid","Rogue","Warlock"]))
+        if not any(item["modelNarrativeAccepted"] for item in answers):
+            raise RuntimeError("No model-composed factual answer passed verification; the old canned-response problem remains")
         ask("Was Diablo II Classic released before Lord of Destruction? Research both versions and explain the differences.",
             None,[],[],expected_years=("2000","2001"))
         ask("Hello there!",None,[],[])
         receipt["status"]="LIVE_VERIFIED"
         print("SWRLZ_RESEARCH_V3_LIVE_VERIFIED "+json.dumps(
-            {"sha":published,"cases":4}),flush=True)
+            {"sha":published,"cases":5,"naturalAnswers":sum(item["modelNarrativeAccepted"] for item in answers)}),flush=True)
     except BaseException:
         print("SWRLZ_RESEARCH_V3_ROLLBACK_ATTEMPT",flush=True)
         if head(api)!=published:
