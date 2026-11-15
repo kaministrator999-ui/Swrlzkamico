@@ -11,7 +11,7 @@ const edge={name:'Viewport wireframe overlay',userData:{se455OwnedGeometry:true}
 mesh.children.push(edge);
 let preview=false;
 const ctx=vm.createContext({
- Map,Set,Object,
+ Map,Set,Object,window:{},
  modelRoot:{children:[mesh]},atelierViewGlobal:'solid',atelierViewOverrides:new Map(),
  atelierCameraInterior:false,
  se430ModelCamera:{inspect:()=>({view:'orbit'}),setView:v=>{calls.push('camera:'+v);return true;}},
@@ -22,7 +22,8 @@ const ctx=vm.createContext({
  renderPreview:()=>calls.push('renderPreview')
 });
 vm.runInContext(source,ctx);
-const bridge=vm.runInContext('se460ModelView',ctx);
+const bridge=ctx.window.SWYRL_ENGINE_MODEL_VIEW;
+assert(bridge,'View bridge must be published from the native ModelAtelier closure');
 assert.equal(bridge.inspect().mode,'solid');
 assert.equal(bridge.setMode('overlay'),true);
 assert.equal(bridge.inspect().mode,'overlay');
@@ -49,8 +50,7 @@ if(process.argv[2]){
  for(const marker of ['SWYRL_ENGINE_DEPLOY_MARKER: V11_460_NATIVE_VIEW_MENU',
  "window.SWRLZ_FORGE_BUILD={version:'v11.460'",
  'SE460_NATIVE_VIEW_COMMANDS_START',
- 'window.SWYRL_ENGINE_MODEL_VIEW=ModelAtelier.view;',
- 'view:se460ModelView',
+ 'window.SWYRL_ENGINE_MODEL_VIEW=se460ModelView;',
  'window.SWYRL_ENGINE_MODEL_VIEW?.setCamera?.(view)',
  'window.SWYRL_ENGINE_MODEL_VIEW?.inspect?.()?.mode']){
  assert(html.includes(marker),'Missing integrated native View bridge: '+marker);
