@@ -252,7 +252,7 @@ def test_logic(files):
  sample=chr(96)*3+"html\n<!doctype html><html><body><button id='a'>A</button></body></html>\n"+chr(96)*3
  t={"messages":[{"role":"assistant","text":sample}]}
  assert follow("Continue code",{"schema":"swrlz-long-code-checkpoint-v1"},t)==""
- assert "meaningful enhancement" in follow("Continue code",None,t)
+ assert "substantial useful enhancement" in follow("Continue code",None,t)
  assert "no code ready" not in follow("Continue code",None,t)
  assert "no saved unfinished" in follow("Continue code",None,{"messages":[]})
  assert follow("Show me a cube",None,t)==""
