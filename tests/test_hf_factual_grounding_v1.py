@@ -7,6 +7,7 @@ import unittest
 
 from api.factual_claim_guard_v1 import (
     inspect_answer, evidence_only_reply, sourced_answer,
+    grounded_chronology_reply,
 )
 from api.selective_retrieval import (
     enrich_payload, extended_reference_pages,
@@ -137,6 +138,23 @@ class GroundingGuardTests(unittest.TestCase):
         refs=extended_reference_pages("Was Diablo II released in 2000?",malicious)
         self.assertEqual(refs,[])
 
+    def test_source_composed_fallback_requires_edition_specific_dates(self):
+        query="Was Diablo II released before Lord of Destruction? Research both versions."
+        grounded=grounded_chronology_reply(query,BUNDLE)
+        self.assertIsNotNone(grounded)
+        self.assertIn("June 29, 2000",grounded)
+        self.assertIn("June 2001",grounded)
+        self.assertIn("Druid",grounded)
+        self.assertEqual(inspect_answer(grounded,BUNDLE)["status"],"PASS")
+        # One source with both calendar years, but no separate expansion-
+        # release statement: never manufacture a chronological conclusion.
+        deficient={"contractId":"swrlz-selective-evidence-v1","resultCount":1,
+                   "evidence":[BUNDLE["evidence"][0]]}
+        self.assertIsNone(grounded_chronology_reply(query,deficient))
+        # Ordinary current affairs does not fit a numbered game release
+        # template; it should retain a transparent source-only fallback.
+        self.assertIsNone(grounded_chronology_reply("Who is the president?",BUNDLE))
+
     def test_engine_wrapper_never_streams_unverified_draft(self):
         from unittest.mock import patch
         original = (
@@ -178,9 +196,14 @@ class GroundingGuardTests(unittest.TestCase):
             bad=list(sandbox["generate_events"]({"prompt":prompt,"fakeDraft":WRONG}))
             bad_out="".join(e.get("text","") for e in bad if e.get("type")=="DELTA")
             self.assertNotIn("September 2023",bad_out)
-            self.assertIn("couldn't verify",bad_out)
+            self.assertNotIn("January 2024",bad_out)
+            self.assertIn("June 29, 2000",bad_out)
+            self.assertIn("June 2001",bad_out)
             self.assertTrue(any(e.get("phase")=="FACTUAL_VERIFICATION_REJECT" for e in bad))
-            self.assertEqual(bad[-1]["type"],"COMPLETED")
+            self.assertTrue(any(e.get("phase")=="GROUNDED_SOURCE_REPAIR" for e in bad))
+            self.assertTrue(any(e.get("phase")=="FACTUAL_VERIFICATION_PASS" for e in bad))
+            self.assertEqual(bad[-1]["verification"],"SOURCE_COMPOSED_CHRONOLOGY")
+            self.assertFalse(bad[-1]["modelDraftAccepted"])
 
             good=list(sandbox["generate_events"]({"prompt":prompt,"fakeDraft":CORRECT}))
             good_out="".join(e.get("text","") for e in good if e.get("type")=="DELTA")
@@ -190,7 +213,8 @@ class GroundingGuardTests(unittest.TestCase):
             stopped=list(sandbox["generate_events"]({
                 "prompt":prompt,"fakeDraft":"unfinished",
                 "fakeFailure":True}))
-            self.assertIn("couldn't verify","".join(e.get("text","") for e in stopped if e.get("type")=="DELTA"))
+            self.assertIn("June 2001","".join(e.get("text","") for e in stopped if e.get("type")=="DELTA"))
+            self.assertTrue(any(e.get("phase")=="GROUNDED_SOURCE_REPAIR" for e in stopped))
             self.assertEqual(stopped[-1]["type"],"COMPLETED")
             ordinary=list(sandbox["generate_events"]({"prompt":"Hello","fakeDraft":"Hi."}))
             self.assertEqual("".join(e.get("text","") for e in ordinary if e.get("type")=="DELTA"),"Hi.")
