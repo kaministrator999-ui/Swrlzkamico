@@ -8,7 +8,7 @@ from hf_webpage_quality_policy_v1 import patch_coder,MARK
 SPACE="kamiloki/Swyrlz"
 BASE="https://kamiloki-swyrlz.hf.space"
 TARGET="qwen_coder_engine.py"
-EXPECTED_REV="c217bb20e42b8a86eeb5a1a604ac6a56cf0526c5"
+EXPECTED_REV="27f6bebfa753fc2602b34b494f7dde988be7b4da"
 BACKUP=Path("swrlz-webpage-quality-source-backup")
 APPROVAL="webpage-html-generation-quality-only"
 
@@ -32,7 +32,13 @@ def healthy(api,deadline=380):
     authenticated routes. Do not reject that actual serving state merely
     because the provider's stage string is not exactly RUNNING.
     """
-    until=time.monotonic()+deadline
+    started=time.monotonic()
+    until=started+deadline
+    # Hugging Face cold starts sometimes take almost the entire normal
+    # readiness window. Once the first actual successful account+Redis
+    # health response arrives, allow a bounded 32-second grace to verify
+    # it independently a second time. Still fail closed on real errors.
+    hard_deadline=started+660
     stable=0
     last="Initializing"
     while time.monotonic()<until:
@@ -55,6 +61,7 @@ def healthy(api,deadline=380):
                              accountHttp=200,aivenSelected=True,nativeRedisOK=True,
                              independentPasses=stable)
                         return True
+                    until=min(hard_deadline,max(until,time.monotonic()+32))
                     last="confirming-endpoint-readiness"
                 else:
                     stable=0
