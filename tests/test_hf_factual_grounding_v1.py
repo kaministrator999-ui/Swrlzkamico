@@ -97,6 +97,7 @@ class GroundingGuardTests(unittest.TestCase):
             if "pcgamingwiki.com" in url:
                 return {"status":200,"finalUrl":url,
                     "extract":("Diablo II Release dates Windows June 29, 2000. "
+                               "Sidebar: Expansion pack Modes Diablo Diablo 1997. "
                                "The game received the Lord of Destruction expansion pack in June 2001. "
                                "The game was succeeded by Diablo II: Resurrected September 2021.")}
             if "news.blizzard.com" in url:
@@ -116,6 +117,11 @@ class GroundingGuardTests(unittest.TestCase):
         self.assertGreaterEqual(len(refs),3)
         self.assertTrue(any("2000" in r["snippet"] for r in refs))
         self.assertTrue(any("2001" in r["snippet"] for r in refs))
+        actual_expansion=[r for r in refs if "expansion date" in r["title"]]
+        self.assertEqual(len(actual_expansion),1)
+        self.assertIn("The game received",actual_expansion[0]["snippet"])
+        self.assertIn("2001",actual_expansion[0]["snippet"])
+        self.assertNotIn("1997",actual_expansion[0]["snippet"])
         self.assertTrue(any("new fifth act" in r["snippet"] for r in refs))
         out,route=enrich_payload({"prompt":prompt},None,fetch_page=fetch,enabled=True)
         self.assertEqual(route["phase"],"RESEARCH_READY")
