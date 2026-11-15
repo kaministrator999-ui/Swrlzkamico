@@ -25,6 +25,17 @@ class QualityTests(unittest.TestCase):
         merged = extend_candidate_check({"status":"PASS","reasons":[]},source)
         self.assertEqual(merged["status"],"REJECT")
         self.assertEqual(len(merged["reasons"]),2)
+    def test_aether_interpolated_hex_rgba(self):
+        # Preserve Aether's actual interpolated-color failure, not merely
+        # the easier literal rgba(#hex, opacity) variant.
+        source = """<html><script>
+        const config = {solid:{color:'#00f0ff'},chaos:{color:'#ffffff'}};
+        const style = `rgba(__COLOR_TOKEN__, 0.15)`;
+        </script></html>""".replace("__COLOR_TOKEN__", "$" + "{config.color}")
+        findings = diagnose_html_candidate(source)
+        self.assertTrue(any("interpolated-hex-rgba" in issue
+                            for issue in findings["blocking"]))
+
     def test_no_false_positive_on_valid_css_and_scoped_pause(self):
         source = """<html><style>.a{background:rgba(0,240,255,.3)}</style><script>
         class A { pause(){this.isPaused=!this.isPaused;this.logSystem(this.isPaused?'Paused':'Resumed')} }
