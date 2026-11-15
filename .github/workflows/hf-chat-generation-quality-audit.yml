@@ -1,7 +1,7 @@
 name: Read-only §C code dialog, Stop, Continue and HTML prompt source audit
 on:
   push:
-    branches: [feature/chat-generation-lifecycle-quality-20261114]
+    branches: [feature/chat-stop-button-reset-20261114]
     paths:
       - "scripts/audit_chat_lifecycle_quality_20261114.py"
       - ".github/workflows/hf-chat-generation-quality-audit.yml"

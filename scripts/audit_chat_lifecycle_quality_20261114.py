@@ -42,9 +42,9 @@ def main():
   print("BEGIN_AUDIT",path,"chars",len(source),"sha256",hashlib.sha256(source.encode()).hexdigest(),flush=True)
   for line in dump(source,PATTERNS[path]):print(line,flush=True)
   ranges={
-    FILES[0]:[(4553,4575),(4820,4850)],
-    FILES[1]:[(2185,2228),(2360,2480)],
-    FILES[2]:[(388,425),(492,516),(695,713),(1040,1065),(1395,1450)]
+    FILES[0]:[(3900,4025),(4080,4155),(4345,4430),(4710,4745),(4800,4865)],
+    FILES[1]:[(1708,1765),(2189,2209)],
+    FILES[2]:[(695,713)]
   }[path]
   lines=source.splitlines()
   for a,b in ranges:
