@@ -39,4 +39,20 @@ jobs:
           out,receipt=m.enrich_payload({"prompt":prompt},p.research,fetch_page=p._page_fetch,enabled=True)
           data=out.get("onlineContext") or {}
           print("FACT_AUDIT_EVIDENCE",json.dumps({"route":receipt,"bundle":data},ensure_ascii=False),flush=True)
+          for query in ["Diablo II Lord of Destruction release date Blizzard","Diablo II original 2000 release date"]:
+              try:
+                  found=p._ddg_search(query)
+                  print("FACT_AUDIT_FOCUSED",json.dumps({"query":query,
+                    "results":[{"title":x.get("title"),"snippet":x.get("snippet","")[:180],
+                      "url":x.get("url","")[:160]} for x in found[:6]]}),flush=True)
+              except Exception as e:print("FACT_AUDIT_FOCUSED_ERROR",query,type(e).__name__,str(e)[:100],flush=True)
+          for url in ["https://news.blizzard.com/en-us/article/23460551/diablo-ii-continues-to-inspire-blizzard-20-years-later",
+                      "https://www.pcgamingwiki.com/wiki/Diablo_II"]:
+              try:
+                  page=p._page_fetch(url)
+                  extract=page.get("extract") or ""
+                  hits=[extract[max(0,m.start()-130):m.end()+120] for m in list(re.finditer(r"2000|2001|Lord of Destruction|June",extract,re.I))[:8]]
+                  print("FACT_AUDIT_PAGE",json.dumps({"url":url,"length":len(extract),
+                    "hits":hits}),flush=True)
+              except Exception as e:print("FACT_AUDIT_PAGE_ERROR",url,type(e).__name__,str(e)[:100],flush=True)
           PY
