@@ -1,0 +1,76 @@
+name: Guarded §C prose-only intent fix and guest batch 1
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/hf-guest-prose-routing-release.yml'
+permissions:
+  contents: read
+concurrency:
+  group: swrlz-chat-guest-eval
+  cancel-in-progress: false
+jobs:
+  release:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 50
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install version-bounded HF and Chromium tooling
+        run: |
+          python -m pip install 'huggingface_hub>=0.34,<2' playwright==1.56.0
+          python -m playwright install --with-deps chromium
+      - name: Validate source repair and evaluator syntax
+        run: |
+          python -m py_compile scripts/hf_guest_prose_routing_fix.py
+          python -m py_compile scripts/eval_chat_guest_suite.py
+      - name: Preflight exact live Hugging Face source, regression checks and rollback snapshot
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: python -u scripts/hf_guest_prose_routing_fix.py preflight
+      - name: Preserve pre-release source before any publish
+        uses: actions/upload-artifact@v4
+        with:
+          name: hf-prose-routing-rollback-${{ github.run_id }}
+          path: reports/chat-prose-routing-release/
+          retention-days: 90
+          if-no-files-found: error
+      - name: Publish one-file revision-guarded §C prose-routing fix
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          SWRLZ_PROSE_ROUTING_APPROVED: '1'
+        run: python -u scripts/hf_guest_prose_routing_fix.py publish
+      - name: Guest batch 1 live post-release acceptance
+        id: acceptance
+        continue-on-error: true
+        env:
+          SWRLZ_EVAL_BASE: https://kamiloki-swyrlz.hf.space
+          SWRLZ_EVAL_MODEL: 700m
+        run: |
+          python -u scripts/eval_chat_guest_suite.py --mode live --batch 1
+      - name: Publish evaluation summary
+        if: always()
+        run: |
+          if [[ -f reports/chat-guest-eval/summary.md ]]; then
+            cat reports/chat-guest-eval/summary.md >> "$GITHUB_STEP_SUMMARY"
+          fi
+          if [[ -f reports/chat-prose-routing-release/manifest.json ]]; then
+            cat reports/chat-prose-routing-release/manifest.json >> "$GITHUB_STEP_SUMMARY"
+          fi
+      - name: Preserve post-release guest test artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: hf-prose-guest-postrelease-${{ github.run_id }}
+          path: reports/chat-guest-eval/
+          retention-days: 14
+          if-no-files-found: ignore
+      - name: Mark unsuccessful acceptance distinctly from published source
+        if: steps.acceptance.outcome == 'failure'
+        run: |
+          echo "::warning::Guest acceptance did not pass; review report artifacts. The source publish step is a separate result."
+          exit 1
