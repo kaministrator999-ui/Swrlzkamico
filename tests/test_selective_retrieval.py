@@ -33,13 +33,16 @@ class RouterTests(unittest.TestCase):
         payload={"prompt":"Was Diablo II patch 1.14 the original?", "history":["private"], "token":"secret"}
         def provider(arg):
             calls.append(arg)
-            return {"evidence":[{"title":"History", "url":"https://example.org/history", "snippet":"Released later"}]}
+            return {"evidence":[{"title":"Diablo II patch history", "url":"https://example.org/history", "snippet":"Diablo II patch 1.14 was released later"}]}
         unchanged,receipt=enrich_payload(payload,provider)
         self.assertEqual(receipt["reason"],"feature_disabled")
         self.assertFalse(calls)
         updated,receipt=enrich_payload(payload,provider,enabled=True)
         self.assertEqual(receipt["phase"],"RESEARCH_READY")
-        self.assertEqual(calls,[{"prompt":payload["prompt"],"researchQueries":[payload["prompt"]]}])
+        self.assertEqual(calls[0]["prompt"],payload["prompt"])
+        self.assertEqual(len(calls),1)
+        self.assertIn(payload["prompt"],calls[0]["researchQueries"])
+        self.assertTrue(calls[0]["researchQueries"][0].startswith('"Diablo II"'))
         self.assertNotIn("onlineContext",payload)
         self.assertEqual(updated["onlineContext"]["resultCount"],1)
         unchanged,receipt=enrich_payload({"prompt":"latest release","attachments":["private"]},provider,enabled=True)
@@ -48,6 +51,17 @@ class RouterTests(unittest.TestCase):
         unchanged,receipt=enrich_payload(payload,lambda x: (_ for _ in ()).throw(OSError()),enabled=True)
         self.assertEqual(receipt["phase"],"RESEARCH_UNAVAILABLE")
         self.assertNotIn("onlineContext",unchanged)
+
+    def test_relevance_rejects_wrong_game_version(self):
+        irrelevant={"evidence":[{"title":"Diablo IV", "url":"https://example.org/diablo4",
+                                  "snippet":"Diablo IV is an action role-playing video game"},
+                                 {"title":"Diablo II: Lord of Destruction",
+                                  "url":"https://example.org/diablo2",
+                                  "snippet":"Diablo II expansion released in 2001"}]}
+        evidence=bounded_evidence(irrelevant,
+                 query="Was Diablo II Classic released before Lord of Destruction?")
+        self.assertEqual(evidence["resultCount"],1)
+        self.assertEqual(evidence["evidence"][0]["title"],"Diablo II: Lord of Destruction")
 
     def test_bounded_evidence(self):
         bundle={"evidence":[
