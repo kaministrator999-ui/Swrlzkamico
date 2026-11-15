@@ -27,9 +27,9 @@ def apply(html):
  html=one(html,
   'const colors={vertex:0x56e9e7,edge:0x69bbff,face:0xe3b6ff};',
   'const colors={vertex:0x74ffdb,edge:0x86d7ff,face:0xffd17e};')
- html=one(html,
-  'const outline=new THREE.BoxHelper(mesh,0xf3cf86);',
-  'const outline=new THREE.BoxHelper(mesh,0x8fffe3);')
+ # Selection outline color follows native gizmo build, not an assumed
+ # BoxHelper source literal changed by earlier tool patches.
+ assert 'function atelierMeshGizmoBuild()' in html
  # Historical labels are preserved and the source schema remains unchanged.
  html=one(html,'SWYRL_ENGINE_DEPLOY_MARKER: V11_463_TRANSFORM_BAR_HISTORY',MARKER)
  html=one(html,'/* SE464_MODEL_VISUAL_POLISH_END */',
