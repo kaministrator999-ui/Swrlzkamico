@@ -78,9 +78,23 @@ def preflight(api):
     return rev,before,after
 def main():
     cmd=sys.argv[1:] or ["preflight"]
-    if cmd not in (["preflight"],["publish"]):raise RuntimeError("Expected preflight/publish")
-    if cmd==["publish"] and os.environ.get("SWRLZ_SMALL_HTML_APPROVED")!="1":raise RuntimeError("Owner release approval missing")
+    if cmd not in (["preflight"],["publish"],["rollback"]):raise RuntimeError("Expected preflight/publish/rollback")
+    if cmd in (["publish"],["rollback"]) and os.environ.get("SWRLZ_SMALL_HTML_APPROVED")!="1":raise RuntimeError("Owner release approval missing")
     api=HfApi(token=os.environ.get("HF_TOKEN") or None)
+    if cmd==["rollback"]:
+        manifest=json.loads((OUT/"manifest.json").read_text())
+        published=str(manifest.get("publishedRevision") or "")
+        if not published or api.repo_info(SPACE,repo_type="space").sha!=published:
+            raise RuntimeError("Refusing rollback: HF head no longer matches this release")
+        original=(OUT/"before"/FILE).read_bytes()
+        if sha(original)!=manifest.get("before"):raise RuntimeError("Rollback snapshot checksum mismatch")
+        done=api.create_commit(repo_id=SPACE,repo_type="space",parent_commit=published,
+            operations=[CommitOperationAdd(path_in_repo=FILE,path_or_fileobj=str(OUT/"before"/FILE))],
+            commit_message="Rollback §C short-HTML budget after failed live acceptance")
+        written=Path(hf_hub_download(SPACE,FILE,repo_type="space",revision=str(done.oid),token=api.token)).read_bytes()
+        if written!=original:raise RuntimeError("Post-rollback source mismatch")
+        print("SMALL_HTML_BUDGET_ACCEPTANCE_ROLLBACK",published,str(done.oid),flush=True)
+        return
     rev,before,after=preflight(api)
     if cmd==["preflight"]:return
     if api.repo_info(SPACE,repo_type="space").sha!=rev:raise RuntimeError("Concurrent Space source change")
@@ -92,6 +106,9 @@ def main():
         oid=str(commit.oid)
         live=Path(hf_hub_download(SPACE,FILE,repo_type="space",revision=oid,token=api.token)).read_bytes()
         if live!=after:raise RuntimeError("Published HTML budget source mismatch")
+        manifest=json.loads((OUT/"manifest.json").read_text())
+        manifest["publishedRevision"]=oid
+        (OUT/"manifest.json").write_text(json.dumps(manifest,indent=2)+"\n")
         print("SMALL_HTML_BUDGET_PUBLISHED",rev,oid,flush=True)
     except Exception:
         if oid and api.repo_info(SPACE,repo_type="space").sha==oid:
