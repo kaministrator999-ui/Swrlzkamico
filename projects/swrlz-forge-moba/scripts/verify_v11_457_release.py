@@ -50,7 +50,7 @@ subprocess.run(['node',str(ROOT/'tests/model_touch_layout_v11_451.mjs'),str(out/
 subprocess.run(['node',str(ROOT/'tests/model_camera_inset_v11_451.mjs'),str(out/'index.html')],check=True)
 subprocess.run(['node',str(ROOT/'tests/model_guided_face_workflow_v11_451.mjs'),str(out/'index.html')],check=True)
 subprocess.run(['node',str(ROOT/'tests/model_face_flyouts_v11_457.mjs'),str(out/'index.html')],check=True)
-subprocess.run(['node',str(ROOT/'tests/model_rim_width_v11_453.mjs'),str(out/'index.html')],check=True)
+subprocess.run(['node',str(ROOT/'tests/model_rim_width_v11_457.mjs'),str(out/'index.html')],check=True)
 subprocess.run(['node',str(ROOT/'tests/model_inset_top_steps_v11_454.mjs'),str(out/'index.html')],check=True)
 subprocess.run(['node',str(ROOT/'tests/model_view_readability_v11_457.mjs'),str(out/'index.html')],check=True)
 subprocess.run(['node',str(ROOT/'tests/model_conversion_no_face_gate_v11_457.mjs'),str(out/'index.html')],check=True)
