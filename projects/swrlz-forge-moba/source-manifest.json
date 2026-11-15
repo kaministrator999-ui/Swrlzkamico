@@ -453,6 +453,6 @@
     "patches/v11_459_startup_guard.py",
     "patches/v11_460_native_view_menu.py"
   ],
-  "finalBytes": 10166275,
-  "finalSha256": "fe8b0cd167da3d080c11bb4dc2406e87793815c80f649f0b3a9b45eee08f15c0"
+  "finalBytes": 10169795,
+  "finalSha256": "52a1ae0512dffc94a415a2e9391cda5b11385e8a8d3f91168685bbf4592cd1e5"
 }
