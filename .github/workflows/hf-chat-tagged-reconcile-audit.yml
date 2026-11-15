@@ -1,0 +1,52 @@
+name: Read-only §C concurrent HF revision reconciliation
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/hf-chat-tagged-reconcile-audit.yml"]
+permissions: {contents: read}
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - run: python -m pip install --quiet "huggingface_hub>=0.34,<2"
+      - name: Report current live source hashes and existing feature lineage only
+        run: |
+          python - <<'PY'
+          from huggingface_hub import HfApi,hf_hub_download
+          from pathlib import Path
+          import hashlib,json,urllib.request
+          repo="kamiloki/Swyrlz";api=HfApi()
+          rev=api.repo_info(repo,repo_type="space").sha
+          names=set(api.list_repo_files(repo,repo_type="space",revision=rev))
+          out={"revision":rev,"files":{}}
+          targets={
+              "lfm2_700m_engine.py":{
+                  "original":"07fc53bfed0b5b4f8e9b18285cfd26f46180803d50d60ecc5073073940d4d0ab",
+                  "candidate":"b36a9fed0a98fbe151124dc580565e73598f6e1e9f61502e5807e0ef1535e6d1"},
+              "chat/§wyrlz/index.html":{
+                  "original":"02744a6076e1cd0cd0256fdd26e6c49b1002f2c4bd3374ec1a5d0224117c5416",
+                  "candidate":"5649386db84d0b4d3d1c707c0181f549e6088066422aae46fe0a06f926b3b37c"},
+              "api/research_evidence_envelope_v1.py":{
+                  "candidate":"cec49354afae2f30aedfddba32e67e9f8761b63912d7968741f7bcad00cc9fb6"}
+          }
+          for path,refs in targets.items():
+              if path not in names:
+                  out["files"][path]={"exists":False};continue
+              body=Path(hf_hub_download(repo,path,repo_type="space",revision=rev)).read_bytes()
+              digest=hashlib.sha256(body).hexdigest()
+              out["files"][path]={
+                  "exists":True,"sha256":digest,
+                  "matchesOriginal":digest==refs.get("original"),
+                  "matchesOurCandidate":digest==refs.get("candidate"),
+                  "hasTaggedModelPacket":b"RESEARCH EVIDENCE PACKET" in body,
+                  "hasSourceEvents":b"swrlz-tagged-evidence-source-receipts-v1" in body,
+                  "hasSourcePanel":b"swrlz-tagged-research-evidence-ui-v1" in body,
+                  "hasOtherNewHTMLFeature":b"swrlz-lfm" in body,
+              }
+          with urllib.request.urlopen("https://huggingface.co/api/spaces/"+repo,timeout=18) as resp:
+              remote=json.load(resp)
+          out["runtime"]={"sha":(remote.get("runtime") or {}).get("sha"),
+                          "stage":(remote.get("runtime") or {}).get("stage")}
+          print("SWRLZ_TAGGED_RECONCILIATION "+json.dumps(out),flush=True)
+          PY
