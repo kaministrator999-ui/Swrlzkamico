@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.458
+title: §wyrl§ Engine v11.459
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,11 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+## §E v11.459 · Startup safety (2026-11-15)
+
+Fixes the Model Studio loading screen stuck on “Synchronizing scene and tools” after v11.458. A real mobile Chromium run surfaced a runtime `ReferenceError: atelierViewGlobal is not defined` in the legacy v11.455 viewport display helper when the page mounted. The helper now reads the native ViewportMode control and dispatches its original change event instead of accessing private scene state. The v11.458 optional contour helper no longer eagerly binds to internal functions before initialization, and uses guarded references. Existing native geometry, cube conversion, Inset rim/depth, Undo, VR input, camera controls and dock CSS remain under their original owners. The actual v11.459 release requires a Chromium scene/tool/canvas initialization test with the splash hidden, plus a sealed artifact integrity hash; regression tests alone do not establish a working browser startup.
+
+
 ## §E v11.458 · Dock resize, selected edges and orbit focus (2026-11-15)
 
 Corrects the regression reproduced in the user's mobile Model Studio screenshot after an Inset/Extrude. Closing Inspector no longer leaves its desktop grid column allocated and dock sizing no longer counts a hidden opposite panel; draggable divider targets are wider for touch. The same native splitter handlers, state persistence and ResizeObserver remain responsible for resizing. A selected Solid/Flat/Clay model gains bounded, dark angle-filtered surface edges so a pale cube's silhouette and actual inset/extrude transitions are distinguishable without triangle diagonals, source-material changes or new topology. After native geometry Apply, a demonstrably detached orbit pivot is corrected to the selected model's bounding center while preserving yaw, pitch and zoom. Ordinary pans, active previews, model/texture saving and other mode tools are not changed.
