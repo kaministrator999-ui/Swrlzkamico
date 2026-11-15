@@ -226,6 +226,11 @@ async def admin_action(request:Request,action:str=Query(...),path:str|None=Query
         if action=="auth-check": return {"ok":True,"authenticated":True,"version":VERSION,"instanceId":INSTANCE,"message":"Admin token accepted."}
         if action=="runtime": return {"ok":True,"version":VERSION,"instanceId":INSTANCE,"root":str(ROOT),"live":str(LIVE),"web":str(WEB),"runtime":str(RUNTIME),"uploadAuthConfigured":bool(TOKEN),"downloadChunkBytes":DOWNLOAD_CHUNK,"capabilities":CAPABILITIES,**lalm_presence()}
         if action=="health-dashboard": return _health_dashboard()
+        if action=="aiven-metrics":
+            import asyncio
+            from api.aiven_metrics import read_aiven_metrics
+            result = await asyncio.to_thread(read_aiven_metrics)
+            return JSONResponse(content=result, headers={"Cache-Control": "no-store", "X-Content-Type-Options": "nosniff"})
         if action=="capabilities": return {"ok":True,"capabilities":CAPABILITIES}
         if action=="release-status": return _release_status()
         if action=="config-status": return _config_status()
