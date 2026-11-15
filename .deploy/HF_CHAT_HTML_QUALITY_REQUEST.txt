@@ -1,0 +1,8 @@
+TARGET=kamiloki/Swyrlz
+APPROVED=1
+CHANGE_SCOPE=source-preserving-coding-quality-and-html-validation
+MODEL=qwen3.5-9b
+THREADS=18
+CONTEXT_TOKENS=16384
+SOURCE_REF=c464d473ccebceb8abb9bba393c88670b2212e12
+REQUEST_NONCE=html-quality-20261114-guarded-source-v1
