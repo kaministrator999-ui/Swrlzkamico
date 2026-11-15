@@ -123,6 +123,71 @@ class GeneralResearchSynthesisTests(unittest.TestCase):
         self.assertEqual(choose_retrieval("Make me a cool webpage").action,"direct")
         self.assertEqual(choose_retrieval("Hey there").action,"direct")
 
+    def test_core_generator_gets_one_draft_then_both_source_guards_decide(self):
+        from unittest.mock import patch
+        from types import ModuleType
+        base=(
+            "from __future__ import annotations\nimport os\n"
+            "def inner(payload):\n"
+            "    # swrlz-verified-public-enumerations-v2\n"
+            "    # swrlz-evidence-checked-factual-response-v1\n"
+            "    # swrlz-research-answer-limit-recovery-v1\n"
+            "    # swrlz-selective-factual-retrieval-v1\n"
+            "    system='';programming={'codingTask':False};source_change_mode=''\n"
+            "    if source_change_mode:\n"
+            "        # Keep source/plan tokens available\n"
+            "        pass\n"
+            "def generate_events(payload):\n"
+            "    yield {'type':'DELTA','text':payload['fakeDraft']}\n"
+            "    yield {'type':'COMPLETED','phase':'COMPLETE'}\n"
+            "_swrlz_original_generate_events_factual_v1=generate_events\n"
+            "_swrlz_previous_generate_events_research_v2=generate_events\n"
+        ).encode()
+        namespace={"__name__":"research_v3_stream_test"}
+        exec(compile(guarded_engine_patch(base),"<v3_stream_test>","exec"),namespace)
+        public=ModuleType("api.online_research")
+        public.research=lambda payload:{"evidence":[]}
+        original=("Diablo II There are a total of five character types in Diablo II: "
+                  "Amazon, Barbarian, Paladin, Necromancer, and Sorceress.")
+        additions=("Five new character classes like the Barbarian and Paladin "
+                   "(with two more added in the Lord of Destruction expansion, "
+                   "the Assassin and the Druid) expand the game.")
+        def get(url):
+            if "faq/general" in url:return {"status":200,"finalUrl":url,"extract":original}
+            if "news.blizzard" in url:return {"status":200,"finalUrl":url,"extract":additions}
+            if "pcgamingwiki" in url:return {"status":200,"finalUrl":url,
+                "extract":"Diablo II Release dates Windows June 29, 2000. "
+                          "The game received the Lord of Destruction expansion pack in June 2001."}
+            if "/classes/" in url:
+                member=url.split("/")[-1].split(".")[0].capitalize()
+                return {"status":200,"finalUrl":url,
+                  "extract":"The "+member+" is a dedicated character trained in fantasy combat skills "
+                            "and draws strength from the game's underlying world."}
+            raise AssertionError(url)
+        public._page_fetch=get
+        good=("**Diablo II Lord of Destruction includes 7 playable classes.**\n"
+              "The original game had five, with two added in the expansion:\n"
+              "- Amazon\n- Barbarian\n- Paladin\n- Necromancer\n- Sorceress\n"
+              "- Assassin\n- Druid")
+        bad=good.replace("7 playable","8 playable").replace("- Druid","- Rogue")
+        with patch.dict(sys.modules,{"api.online_research":public}):
+            for draft,accept in ((good,True),(bad,False)):
+                events=list(namespace["generate_events"]({
+                    "prompt":"What were all the classes in Diablo 2 LoD?",
+                    "fakeDraft":draft,
+                    "history":[{"role":"user","text":"You previously included the Rogue."}],
+                }))
+                phases=[e.get("phase") for e in events if e.get("type")=="STATUS"]
+                answer="".join(e.get("text","") for e in events if e.get("type")=="DELTA")
+                self.assertIn("RESEARCH_SYNTHESIS",phases)
+                if accept:
+                    self.assertIn("RESEARCH_NARRATIVE_ACCEPTED",phases)
+                    self.assertIn("7 playable classes",answer)
+                else:
+                    self.assertIn("RESEARCH_NARRATIVE_REJECTED",phases)
+                    self.assertNotIn("8 playable classes",answer)
+                    self.assertNotIn("- Rogue",answer)
+
     def test_wrap_preserves_history_and_source_only_policy(self):
         base=(
             "from __future__ import annotations\nimport os\n"
