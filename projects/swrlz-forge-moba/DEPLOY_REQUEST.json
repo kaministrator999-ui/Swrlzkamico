@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT (owner-approved)",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.452",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_452_NATIVE_FACE_FLYOUTS",
-  "reason": "Expose the main Face tool rail, existing Inset/Extrude operations and original native guided modifiers in contextual flyouts; preserve geometry previews, history, project saves, camera, touch and VR.",
-  "sourceCommit": "5465102d226eac201b3dcafc796c700efcb740c2",
-  "sourceIntegritySha256": "61a2da6b60e3886d43e7eed9c4bf15d38c7f7ac089b7f897dd8bda19892343e1"
+  "releaseVersion": "v11.453",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_453_INSET_RIM_WIDTH",
+  "reason": "Show the coplanar inner rim border in Inset preview; add draggable viewport rim sizing and explicit safe vertex-edit bake. Preserve the existing Face tool flyouts, Apply/Cancel, Undo and camera.",
+  "sourceCommit": "d9b5c30bfac62be826d9c1181d12c67c438548d6",
+  "sourceIntegritySha256": "0765c780c57424e1cddc75e22051ba3dca7ba22f7dd20a987edf240a3c055a07"
 }
