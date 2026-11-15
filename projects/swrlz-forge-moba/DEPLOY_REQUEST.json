@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT (owner-approved)",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.462",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_462_WIRE_CLARITY_MOBILE",
-  "reason": "Clean bright angle-filtered wireframe, optional triangle and hidden-edge diagnostics, stronger selection/readable editable Material and bounded mobile viewport. Sealed source tests passed. Physical device acceptance remains open.",
-  "sourceCommit": "1ba10a959b6152629cdf1681ebb82d435c73c5d9",
-  "sourceIntegritySha256": "ad794212cdcfec540fb05b41f224ca69169aef950453f09b4c53edb6e05b69f1"
+  "releaseVersion": "v11.463",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_463_TRANSFORM_BAR_HISTORY",
+  "reason": "Restore top native Model Studio Undo/Redo transform toolbar after history clears mesh selection. Inactive actions disabled until selection returns; native strip remount and earlier camera/sidebar display preserved. Verified compiled source, physical Android acceptance pending.",
+  "sourceCommit": "7eb428c7d9d3001464444eb04abddc7e2d25eb8b",
+  "sourceIntegritySha256": "5be1c31bc76917ac1d0ec260455638d33082e3e4357fe99772cc253f953fdcb7"
 }
