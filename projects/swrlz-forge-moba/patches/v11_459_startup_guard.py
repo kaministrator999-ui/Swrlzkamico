@@ -15,9 +15,14 @@ def once(s,a,b):
     return s.replace(a,b,1)
 
 def apply(html):
+    # Limit the surgery to the optional v11.458 module, not the native
+    # rendering and modeling code that happens to use the same identifiers.
+    start=html.index("/* SE458_MODEL_VIEWPORT_STABILITY_START */")
+    stop=html.index("/* SE458_MODEL_VIEWPORT_STABILITY_END */",start)
+    seg=html[start:stop]
     # Eager capture accessed atelierViewModeApply before the initializer
     # necessarily exposes it. A ReferenceError can stop the editor boot.
-    html=once(html,
+    seg=once(seg,
         """ const beforeViewApply=atelierViewModeApply;
  atelierViewModeApply=function(mesh,part){
   const result=beforeViewApply.apply(this,arguments);
@@ -39,18 +44,19 @@ def apply(html):
  }catch(_){
   // A private/uninitialized renderer cannot prevent scene boot.
  }""")
-    html=once(html,
+    seg=once(seg,
         " function selected(part){return part?.id===selection;}",
         " function selected(part){return part?.id===(typeof selection==='undefined'?null:selection);}")
-    html=once(html,
+    seg=once(seg,
         "  const mode=atelierViewModeFor(part);",
         "  const mode=typeof atelierViewModeFor==='function'?atelierViewModeFor(part):null;")
-    html=once(html,
+    seg=once(seg,
         "   const part=partById(mesh.userData.atelierId);\n   update(mesh,part);",
         "   const part=typeof partById==='function'?partById(mesh.userData.atelierId):null;\n   update(mesh,part);")
-    html=once(html,
+    seg=once(seg,
         "  if(!state?.selection?.partId||state?.preview?.active||atelierCameraInterior)return;",
         "  if(!state?.selection?.partId||state?.preview?.active||\n   typeof atelierCameraInterior==='undefined'||atelierCameraInterior||\n   typeof se430ModelCamera==='undefined'||typeof atelierCameraPan==='undefined'||\n   typeof cameraUpdate!=='function')return;")
+    html=html[:start]+seg+html[stop:]
     html=once(html,
         "/* SE458_MODEL_VIEWPORT_STABILITY_END */",
         "/* SE458_MODEL_VIEWPORT_STABILITY_END */\n"
