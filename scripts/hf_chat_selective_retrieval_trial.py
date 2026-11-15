@@ -42,7 +42,7 @@ def patch_engine(text: str) -> str:
         raise RuntimeError("Current live generator anchor missing or ambiguous")
     if "onlineContext" not in text:
         raise RuntimeError("Live model has no proven onlineContext hook")
-    if not ("import os" in text or "from os import environ" in text):
+    if "import os" not in text:
         raise RuntimeError("Engine lacks imported os; refuse source assumptions")
     after = text.replace(ANCHOR, INJECTION, 1)
     assert after.replace(INJECTION, ANCHOR, 1) == text
