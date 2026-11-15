@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT (owner-approved)",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.450",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_450_CAMERA_INSET_PREVIEW",
-  "reason": "Prevent side dock dragging from resetting model camera distance/pose, arm Inset/Extrude until a selected planar face can preview native geometry, and show the preview with disposable edge highlights; preserve Undo, UVs, controller input and existing touch gestures. Source verified; physical Android acceptance pending.",
-  "sourceCommit": "ec07315dbb1778fe399d802b6a2e23573599488b",
-  "sourceIntegritySha256": "6786f58c850dff6efbf91caba600049bfd5fb658055c6b5290bfc35b58554149"
+  "releaseVersion": "v11.451",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_451_GUIDED_FACE_WORKFLOW",
+  "reason": "Simplify Model Studio native Face tools into contextual controls, live amount slider, and Apply/Cancel while retaining original native workshop in Advanced and preserving source-safe previews, Undo, VR and touch.",
+  "sourceCommit": "cf3a01e9c0a8004fe426691df77b10fb16de5b9d",
+  "sourceIntegritySha256": "66ca9e79bcb33c22a3aeb7ba7c9a614f2d9ee6d167bca0653ab7f4b232d49276"
 }
