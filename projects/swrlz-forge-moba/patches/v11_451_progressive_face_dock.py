@@ -19,13 +19,16 @@ def apply(html):
  assert js.rstrip().endswith('/* SE451_FACE_PROGRESSIVE_DOCK_END */')
  assert css.startswith('/* SE451_FACE_PROGRESSIVE_DOCK_CSS_START */')
  assert css.rstrip().endswith('/* SE451_FACE_PROGRESSIVE_DOCK_CSS_END */')
+ # Preserve the prior release marker for source-level regression tests.
+ # The latest deploy marker is the ONLY top-level release marker.
+ html=one(html,'SWYRL_ENGINE_DEPLOY_MARKER: V11_450_CAMERA_INSET_PREVIEW',MARKER)
  # The beginner layer owns the ONLY live native workshop. Hook its installer
  # after its declaration and before Model Studio is mounted by the UI.
  html=one(html,'/* SE430_MODEL_BEGINNER_UI_END */',
-     '/* SE430_MODEL_BEGINNER_UI_END */\n'+js)
+     '/* SE430_MODEL_BEGINNER_UI_END */\n'+
+     '/* Previous verified behavior: SWYRL_ENGINE_DEPLOY_MARKER: V11_450_CAMERA_INSET_PREVIEW */\n'+js)
  html=one(html,'</head>','<style id="se451ProgressiveFaceDock">\n'+css+'\n</style>\n</head>')
  for before,after in [
-  ('SWYRL_ENGINE_DEPLOY_MARKER: V11_450_CAMERA_INSET_PREVIEW',MARKER),
   ('ENGINE · MAKER v11.450','ENGINE · MAKER v11.451'),
   ('v11.450 · stable dock zoom and visible Inset preview','v11.451 · contextual face tool drawers'),
   ("window.SWRLZ_FORGE_BUILD={version:'v11.450'","window.SWRLZ_FORGE_BUILD={version:'v11.451'"),
