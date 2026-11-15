@@ -1,0 +1,64 @@
+name: Verify §E v11.459 real mobile browser startup safety
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/measure-engine-v11-459.yml"
+      - "projects/swrlz-forge-moba/patches/v11_459_startup_guard.py"
+      - "projects/swrlz-forge-moba/tests/model_startup_guard_v11_459.mjs"
+      - "projects/swrlz-forge-moba/tests/browser_modeler_startup_v11_459.cjs"
+  workflow_dispatch:
+permissions: {contents: read}
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.11"}
+      - name: Source syntax and unsealed candidate build
+        run: |
+          set -euo pipefail
+          python -m py_compile projects/swrlz-forge-moba/patches/v11_459_startup_guard.py
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path('projects/swrlz-forge-moba/source-manifest.json')
+          m=json.loads(p.read_text())
+          assert m['name']=='§wyrl§ Engine v11.459'
+          assert m['patches'][-1]=='patches/v11_459_startup_guard.py'
+          assert len(m['patches'])==436
+          m['finalSha256']=None;m['finalBytes']=None
+          p.write_text(json.dumps(m,ensure_ascii=False,indent=2)+'\n')
+          PY
+          python projects/swrlz-forge-moba/build_space.py --output /tmp/se459-browser
+          python projects/swrlz-forge-moba/scripts/check_inline_js_syntax_v11_266.py /tmp/se459-browser/index.html
+          node projects/swrlz-forge-moba/tests/model_startup_guard_v11_459.mjs /tmp/se459-browser/index.html
+          node projects/swrlz-forge-moba/tests/model_dock_orbit_contrast_v11_459.mjs /tmp/se459-browser/index.html
+          node projects/swrlz-forge-moba/tests/model_conversion_no_face_gate_v11_459.mjs /tmp/se459-browser/index.html
+          node projects/swrlz-forge-moba/tests/model_inset_top_steps_v11_454.mjs /tmp/se459-browser/index.html
+      - name: Install Chromium mobile browser
+        run: |
+          npm install --no-save playwright@1.56.1
+          npx playwright install --with-deps --only-shell chromium
+      - name: Start actual Model Studio page and verify scene, tools, canvas
+        run: node projects/swrlz-forge-moba/tests/browser_modeler_startup_v11_459.cjs
+      - name: Measure exact candidate source hash
+        run: |
+          python - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          blob=Path('/tmp/se459-browser/index.html').read_bytes()
+          receipt={"version":"v11.459","finalBytes":len(blob),"finalSha256":hashlib.sha256(blob).hexdigest(),
+                   "realBrowserBootPassed":True}
+          Path("se459-integrity.json").write_text(json.dumps(receipt,indent=2)+'\n')
+          print("SE459_SOURCE_INTEGRITY",json.dumps(receipt,sort_keys=True),flush=True)
+          PY
+      - uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: se459-browser-boot-integrity
+          path: se459-integrity.json
+          retention-days: 14
+          if-no-files-found: error
