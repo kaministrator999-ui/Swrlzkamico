@@ -452,6 +452,6 @@
     "patches/v11_458_dock_orbit_contrast.py",
     "patches/v11_459_startup_guard.py"
   ],
-  "finalBytes": 10164938,
-  "finalSha256": "1cd6a48627945278c9b4756a63908cde3ede8c0c2fdc53960b06334260caa864"
+  "finalBytes": 10166275,
+  "finalSha256": "fe8b0cd167da3d080c11bb4dc2406e87793815c80f649f0b3a9b45eee08f15c0"
 }
