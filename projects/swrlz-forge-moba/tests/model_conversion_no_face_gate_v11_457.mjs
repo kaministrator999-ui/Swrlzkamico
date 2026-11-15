@@ -127,7 +127,7 @@ assert.deepEqual(legacy,['confirm'],'Protected vertex edits must not be converte
 if(process.argv[2]){
  const html=fs.readFileSync(process.argv[2],'utf8');
  for(const token of ['SWYRL_ENGINE_DEPLOY_MARKER: V11_457_CONVERSION_NO_FACE_GATE',
-  "window.SWRLZ_FORGE_BUILD={version:'v11.456'",
+  "window.SWRLZ_FORGE_BUILD={version:'v11.457'",
   'SE456_GUIDED_PRIMITIVE_CONVERSION_START',
   'SE456_GUIDED_PRIMITIVE_CONVERSION_STYLES_START',
   'SE454_INSET_TOP_STEPS_START',
