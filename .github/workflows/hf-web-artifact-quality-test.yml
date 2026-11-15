@@ -1,0 +1,21 @@
+name: Test §C web artifact quality policy and no-regeneration regression
+on:
+  push:
+    branches: [feature/swrlz-web-artifact-quality-v1]
+    paths:
+      - "scripts/hf_webpage_quality_policy_v1.py"
+      - "scripts/test_hf_webpage_quality_policy_v1.py"
+      - ".github/workflows/hf-web-artifact-quality-test.yml"
+permissions: {contents: read}
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.11"}
+      - name: Compile patch and deterministic test harness
+        run: python -m py_compile scripts/hf_webpage_quality_policy_v1.py scripts/test_hf_webpage_quality_policy_v1.py
+      - name: Verify responsive, interactive, scoped policy and warning-only validation
+        run: python -m unittest discover -s scripts -p 'test_hf_webpage_quality_policy_v1.py' -v
