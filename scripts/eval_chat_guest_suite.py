@@ -249,9 +249,27 @@ async def run_case(browser,case):
                                  "sha256":hashlib.sha256(txt.encode()).hexdigest(),"evaluation":grade,
                                  **{k:v for k,v in answer.items() if k!="thread_id"}})
             if page and case.get("reload_after")==number:
+                # Inspect only our synthetic guest thread, never identity/cookies.
+                def safe_state(data):
+                    threads=data.get("threads") or (data.get("state") or {}).get("threads") or []
+                    target=next((t for t in threads if t.get("id")==thread_id),None)
+                    return {"revision":data.get("revision"),
+                            "thread_count":len(threads),
+                            "target_thread_present":bool(target),
+                            "target_message_count":len((target or {}).get("messages") or []),
+                            "target_prompt_present":any(m.get("role")=="user" and m.get("text")==turn["prompt"] for m in ((target or {}).get("messages") or [])),
+                            "current_is_target":((data.get("currentThread") or {}).get("id") or (data.get("state") or {}).get("currentId"))==thread_id,
+                            "unchanged":data.get("unchanged") is True}
+                out["reload_debug"]={}
+                out["reload_debug"]["before"]=safe_state(await sync(context))
                 await page.reload(wait_until="domcontentloaded",timeout=30000)
                 await page.locator("#prompt").wait_for(state="visible",timeout=25000)
                 await dismiss_update_overlay(page)
+                await asyncio.sleep(4)
+                out["reload_debug"]["after"]=safe_state(await sync(context))
+                out["reload_debug"]["dom"]={"user_bubbles":await page.locator(".user-message .user-bubble").count(),
+                    "thread_buttons":await page.locator(".thread-main").count(),
+                    "new_conversation":await page.get_by_text("New conversation",exact=True).count()}
                 await page.wait_for_function("(p)=>[...document.querySelectorAll('.user-message .user-bubble')].some(x=>x.textContent.trim()===p)",arg=turn["prompt"],timeout=16000)
                 await ensure_guest(context)
         out["status"]="PASS_EVIDENCE" if all(t["evaluation"]["status"]=="PASS_EVIDENCE" for t in out["turns"]) else "REVIEW"
