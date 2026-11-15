@@ -1,0 +1,9 @@
+{
+  "schema": "swrlz-forge-release-prepare-v1",
+  "version": "v11.453",
+  "ownerApproved": true,
+  "reason": "Make a visible resizable Inset rim: inner coplanar border, viewport drag handle, clear width labels, safe vertex-edit bake/recovery",
+  "sourcePatch": "patches/v11_453_inset_rim_width.py",
+  "expectedPrevious": "v11.452",
+  "verificationAttempt": 1
+}
