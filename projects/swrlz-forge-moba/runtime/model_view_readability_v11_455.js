@@ -134,3 +134,53 @@
  });
 })();
 /* SE455_VIEW_READABILITY_END */
+/* SE455_TRANSIENT_FACE_HIGHLIGHT_START */
+// The newly created inset cap needs a readable visual distinction from its rim.
+// This mesh belongs only to the disposable native preview record; no saved
+// topology or material is modified by these helper calls.
+(function(){
+ 'use strict';
+ function clear(record){
+  const tint=record?.se455FaceTint;if(!tint)return;
+  tint.parent?.remove(tint);
+  tint.geometry?.dispose?.();tint.material?.dispose?.();
+  record.se455FaceTint=null;
+ }
+ function add(record){
+  clear(record);
+  if(!['inset','extrude'].includes(record?.operation)||!record.data||!record.mesh)return;
+  const ids=record.selectedFaces;
+  const data=record.data;
+  if(!Array.isArray(ids)||ids.length<1||ids.length>256)return;
+  const buffer=[];
+  for(const f of ids){
+   if(!Number.isInteger(f)||f<0||f*3+2>=data.indices.length)return;
+   for(let i=0;i<3;i++){
+    const index=data.indices[f*3+i],k=index*3;
+    if(!Number.isInteger(index)||k+2>=data.positions.length)return;
+    buffer.push(data.positions[k],data.positions[k+1],data.positions[k+2]);
+   }
+  }
+  if(!buffer.length)return;
+  let geometry=null,material=null;
+  try{
+   geometry=new THREE.BufferGeometry();
+   geometry.setAttribute('position',new THREE.Float32BufferAttribute(buffer,3));
+   geometry.computeVertexNormals();
+   material=new THREE.MeshBasicMaterial({
+    color:record.operation==='extrude'?0x9dc8f8:0x87f0cf,
+    transparent:true,opacity:.14,side:THREE.DoubleSide,
+    depthTest:true,depthWrite:false,
+    polygonOffset:true,polygonOffsetFactor:-2,polygonOffsetUnits:-2
+   });
+   const tint=new THREE.Mesh(geometry,material);
+   tint.name='Transient selected face preview · v11.455';
+   tint.userData.atelierHelper=true;tint.userData.se455Transient=true;
+   tint.renderOrder=185;
+   record.mesh.add(tint);record.se455FaceTint=tint;
+  }catch(_){geometry?.dispose?.();material?.dispose?.();}
+ }
+ window.se455PreviewTintAdd=add;
+ window.se455PreviewTintClear=clear;
+})();
+/* SE455_TRANSIENT_FACE_HIGHLIGHT_END */
