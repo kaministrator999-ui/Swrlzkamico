@@ -51,15 +51,62 @@ def choose_retrieval(prompt: Any, *, has_evidence: bool = False,
         return Decision("retrieve", "specific_fact_to_verify", text)
     return Decision("direct", "concept_or_conversation")
 
-def bounded_evidence(bundle: Any, *, max_items: int = 4,
+_STOPWORDS = frozenset(
+    "a an and are as at be before can could did do does for from how i in is it "
+    "latest look me my of on or our please search tell than the this to us was were "
+    "what when where which who why with you your fact check original".split()
+)
+
+def search_queries(prompt: str) -> list[str]:
+    """Try a focused search first when the question specifies a titled version."""
+    text = _normalized(prompt)
+    match = re.search(r"\b([A-Za-z][A-Za-z0-9-]{2,})\s+(II|III|IV|VI|VII|VIII|IX|X|[1-9][0-9]?)\b",
+                      text, re.I)
+    if not match:
+        return [text]
+    rest = text[:match.start()] + " " + text[match.end():]
+    terms = [t for t in re.findall(r"[A-Za-z0-9]+", rest.lower())
+             if t not in _STOPWORDS and len(t) > 2]
+    focused = '"' + match.group(0) + '" ' + " ".join(terms[:9])
+    return [focused.strip(), text] if focused.strip() != text else [text]
+
+def _source_score(title: str, excerpt: str, query: str) -> int:
+    if not query:
+        return 1
+    combined = (title + " " + excerpt).lower()
+    subject = re.search(r"\b([A-Za-z][A-Za-z0-9-]{2,})\s+(II|III|IV|VI|VII|VIII|IX|X|[1-9][0-9]?)\b",
+                        query, re.I)
+    if subject and not re.search(r"\b" + re.escape(subject.group(1).lower()) +
+                                 r"\s+" + re.escape(subject.group(2).lower()) + r"\b", combined):
+        return 0
+    wanted = {t for t in re.findall(r"[a-z0-9]+", query.lower())
+              if t not in _STOPWORDS and (len(t) >= 4 or t.isdigit())}
+    found = {t for t in re.findall(r"[a-z0-9]+", combined)}
+    count = len(wanted & found)
+    if count < min(2, len(wanted)):
+        return 0
+    title_words = set(re.findall(r"[a-z0-9]+", title.lower()))
+    return count + 2 * len(wanted & title_words)
+
+def bounded_evidence(bundle: Any, *, query: str = "", max_items: int = 4,
                      max_chars: int = 3600) -> dict[str, Any]:
     """Bound evidence before inserting it into the model context."""
     if not isinstance(bundle, dict):
         return {"contractId": "swrlz-selective-evidence-v1", "evidence": [], "resultCount": 0}
+    candidates = []
+    for item in bundle.get("evidence", []):
+        if not isinstance(item, dict):
+            continue
+        title = _normalized(item.get("title"))[:200]
+        excerpt = _normalized(item.get("extract") or item.get("snippet"))[:700]
+        score = _source_score(title, excerpt, query)
+        if score > 0:
+            candidates.append((score, item))
+    candidates.sort(key=lambda x: x[0], reverse=True)
     result = []
     used = 0
-    for item in bundle.get("evidence", []):
-        if not isinstance(item, dict) or len(result) >= max_items:
+    for score, item in candidates:
+        if len(result) >= max_items:
             break
         url = str(item.get("url") or "")[:1000]
         if not re.match(r"^https?://[^/@\s]+(?:/|$)", url, re.I):
@@ -97,8 +144,8 @@ def enrich_payload(payload: Any, researcher: Any, *, enabled: bool = False):
     if not callable(researcher):
         return out, {"phase": "RESEARCH_UNAVAILABLE", "reason": "no_provider"}
     try:
-        bundle = researcher({"prompt": decision.query, "researchQueries": [decision.query]})
-        evidence = bounded_evidence(bundle)
+        bundle = researcher({"prompt": decision.query, "researchQueries": search_queries(decision.query)})
+        evidence = bounded_evidence(bundle, query=decision.query)
         if evidence["resultCount"] == 0:
             return out, {"phase": "RESEARCH_UNAVAILABLE", "reason": "no_evidence"}
         out["onlineContext"] = evidence
