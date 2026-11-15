@@ -15,6 +15,8 @@ assert(css.includes('[data-se464-inspector-focus=true] .atelier-body'));
 assert(css.includes('--se320-right:0px!important;'));
 assert(css.includes('grid-template-columns:var(--se320-left) minmax(0,1fr) var(--se320-rail) 0px!important;'));
 assert(css.includes('[data-se251-layout=desktop]'));
+assert(css.includes('@media(min-width:921px) and (pointer:fine)'));
+assert(css.includes('width:min(440px,calc(100% - 16px))!important;'));
 assert(!css.includes('overflow-wrap:anywhere;'));
 let width=120,installs=0,notes=[],resizes=[],removes=0,observations=[];
 class ResizeObserver {
