@@ -251,6 +251,13 @@ def verify_running(api,rev,seconds=950):
     raise RuntimeError("Live exact revision never reached ready stage")
 
 
+def accepts_natural_count_wording(answer: str, expected_count: int) -> bool:
+    words={5:"five",7:"seven"}
+    count_tokens=(str(expected_count),words.get(expected_count,""))
+    return any(re.search(r"\b"+re.escape(part)+r"\b",str(answer or ""),re.I)
+               for part in count_tokens if part)
+
+
 def ask(prompt,expected_count,expected_names,forbidden,expected_years=()):
     jar=http.cookiejar.CookieJar()
     opener=urllib.request.build_opener(urllib.request.HTTPCookieProcessor(jar))
@@ -295,10 +302,7 @@ def ask(prompt,expected_count,expected_names,forbidden,expected_years=()):
         # The server's verified roster gate already checks the actual list.
         # Natural prose may express 7 as "seven" or "total to seven";
         # do not require a literal canned phrase in the acceptance harness.
-        words={5:"five",7:"seven"}
-        count_tokens=(str(expected_count),words.get(expected_count,""))
-        if not any(re.search(r"\b"+re.escape(part)+r"\b",answer,re.I)
-                   for part in count_tokens if part):
+        if not accepts_natural_count_wording(answer,expected_count):
             raise RuntimeError("Expected class count was absent in number and words")
         for name in expected_names:
             if not re.search(r"\b"+re.escape(name)+r"\b",answer,re.I):
