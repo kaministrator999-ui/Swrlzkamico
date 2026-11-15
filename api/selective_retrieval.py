@@ -10,6 +10,11 @@ import re
 import urllib.parse
 from typing import Any
 
+from api.research_context_v2 import (
+    normalize_prompt, needs_factual_research,
+    request_scope, verified_roster_context,
+)
+
 MAX_QUERY_CHARS = 280
 
 @dataclass(frozen=True)
@@ -46,6 +51,8 @@ def choose_retrieval(prompt: Any, *, has_evidence: bool = False,
                  r"who (?:is|are) (?:the )?current)\b", text, re.I) and re.search(
                  r"[?]|\b(?:what|who|when|where|which|how|tell me|explain|compare|is|are|did)\b", text, re.I):
         return Decision("retrieve", "freshness_sensitive", text)
+    if needs_factual_research(text):
+        return Decision("retrieve", "public_enumeration_verification", normalize_prompt(text))
     if re.search(r"\b(?:which|what|when|how|is|was|were|did|does|difference|compare)\b", text, re.I) and re.search(
             r"\b(?:release(?:d)?|expansion|version|patch|update|remaster|"
             r"date|year|original|classic|edition|introduced|added|removed|"
@@ -119,7 +126,12 @@ def bounded_evidence(bundle: Any, *, query: str = "", max_items: int = 8,
         score = _source_score(title, excerpt, query)
         if score > 0:
             candidates.append((score, item))
-    candidates.sort(key=lambda x: x[0], reverse=True)
+    # Source roles are assigned only after direct bounded publisher-page checks.
+    # They outrank broad search snippets but cannot create facts by themselves.
+    candidates.sort(key=lambda x: (
+        x[0] + (15 if x[1].get("referenceRole") in (
+            "historical_original_class_roster",
+            "historical_expansion_class_additions") else 0)),reverse=True)
     result = []
     used = 0
     for score, item in candidates:
@@ -139,6 +151,10 @@ def bounded_evidence(bundle: Any, *, query: str = "", max_items: int = 8,
         card={"title": title, "url": url, "excerpt": excerpt}
         if item.get("referenceType") == "pinned_first_party_document":
             card["referenceType"]="pinned_first_party_document"
+        if item.get("referenceRole") in (
+                "historical_original_class_roster",
+                "historical_expansion_class_additions"):
+            card["referenceRole"]=item["referenceRole"]
         result.append(card)
     return {"contractId": "swrlz-selective-evidence-v1",
             "evidence": result, "resultCount": len(result),
@@ -305,6 +321,64 @@ def extended_reference_pages(prompt: str, fetch_page: Any) -> list[dict[str, str
     return references
 
 
+def historical_class_reference_pages(prompt: str, fetch_page: Any) -> list[dict[str,str]]:
+    """Retrieve publisher source paragraphs for historical class enumeration.
+
+    We resolve the requested edition before reading. Live D2: Resurrected
+    changes (including later DLC) must never be silently mixed into LoD.
+    First-party sources are fetched through the existing safe web adapter;
+    a failed or absent fetch does not fabricate source context.
+    """
+    scope=request_scope(prompt)
+    if (not callable(fetch_page) or scope["rosterQuestion"]!="yes"
+            or scope["subject"].lower()!="diablo ii"
+            or scope["scope"] not in ("original","expansion")):
+        return []
+    pages=[]
+    targets=(
+        ("https://classic.battle.net/diablo2exp/faq/general.shtml",
+         "Blizzard Arreat Summit: original Diablo II classes",
+         "historical_original_class_roster",
+         ("there are a total of five character types in diablo ii",)),
+        ("https://news.blizzard.com/en-us/article/23460551/"
+         "diablo-ii-continues-to-inspire-blizzard-20-years-later",
+         "Blizzard retrospective: Lord of Destruction class additions",
+         "historical_expansion_class_additions",
+         ("two more added in the lord of destruction",)),
+    )
+    for url,title,role,phrases in targets[:1 if scope["scope"]=="original" else 2]:
+        try:
+            page=fetch_page(url)
+            if not isinstance(page,dict) or int(page.get("status") or 0)!=200:
+                continue
+            final=urllib.parse.urlsplit(str(page.get("finalUrl") or ""))
+            expected=urllib.parse.urlsplit(url).hostname
+            if final.scheme!="https" or final.hostname!=expected:
+                continue
+            article=_normalized(page.get("extract"))[:6000]
+            index=next((article.lower().find(term) for term in phrases
+                        if term in article.lower()),-1)
+            if index<0:continue
+            snippet=article[max(0,index-70):index+340]
+            # Verify that this excerpt actually contains the class names/count
+            # before assigning its historical fact role.
+            if role=="historical_original_class_roster":
+                from api.research_context_v2 import extract_original_roster
+                if not extract_original_roster(snippet,scope["subject"]):
+                    continue
+            else:
+                from api.research_context_v2 import extract_expansion_additions
+                if not extract_expansion_additions(snippet,"Lord of Destruction"):
+                    continue
+            pages.append({"title":title,"url":url,
+                          "snippet":snippet[:550],"referenceRole":role})
+        except (OSError,ValueError,TypeError):
+            continue
+        except Exception:
+            continue
+    return pages
+
+
 def enrich_payload(payload: Any, researcher: Any, *, fetch_page: Any = None,
                    enabled: bool = False):
     """Server-side, opt-in payload enrichment. Search sees current query only."""
@@ -325,17 +399,29 @@ def enrich_payload(payload: Any, researcher: Any, *, fetch_page: Any = None,
         return out, {"phase": "DIRECT", "reason": decision.reason}
     # Prefer source pages that actually mention dates and version features.
     # Avoid redundant encyclopedia requests when the primary sources suffice.
-    references = extended_reference_pages(decision.query, fetch_page)
+    references = historical_class_reference_pages(decision.query,fetch_page)
+    # Existing release-year reference search remains separate, not a
+    # substitute for roster verification.
+    if request_scope(decision.query)["rosterQuestion"]!="yes":
+        references += extended_reference_pages(decision.query, fetch_page)
     evidence_text = " ".join(str(item.get("snippet") or "") for item in references)
     years = set(re.findall(r"(?<!\d)(?:18|19|20)\d{2}(?!\d)", evidence_text))
     comparative = bool(re.search(r"\b(?:before|after|versus|compared|difference|release|date)\b",
                                  decision.query, re.I))
+    roster_context = request_scope(decision.query)
     if not references or (comparative and len(years) < 2):
         references += reference_pages(decision.query, fetch_page)
         evidence_text = " ".join(str(item.get("snippet") or "") for item in references)
         years = set(re.findall(r"(?<!\d)(?:18|19|20)\d{2}(?!\d)", evidence_text))
     searched = []
-    if (not references or (comparative and len(years) < 2)) and callable(researcher):
+    requires_roster = (roster_context["rosterQuestion"]=="yes"
+                       and roster_context["scope"] in ("original","expansion"))
+    roles = {str(p.get("referenceRole") or "") for p in references}
+    has_roster = ("historical_original_class_roster" in roles and
+                  (roster_context["scope"]=="original" or
+                   "historical_expansion_class_additions" in roles))
+    if (not references or (comparative and len(years) < 2) or
+            (requires_roster and not has_roster)) and callable(researcher):
         try:
             bundle = researcher({"prompt": decision.query,
                                  "researchQueries": search_queries(decision.query)})
@@ -346,6 +432,16 @@ def enrich_payload(payload: Any, researcher: Any, *, fetch_page: Any = None,
                                 query=decision.query)
     if evidence["resultCount"] == 0:
         return out, {"phase": "RESEARCH_UNAVAILABLE", "reason": "no_relevant_evidence"}
+    facts = verified_roster_context(decision.query,evidence)
+    if facts:
+        evidence["verifiedContext"] = facts
+    if requires_roster and not facts:
+        evidence["coverage"]="missing_verified_roster"
+    else:
+        evidence["coverage"]="version_specific_roster" if facts else "references_unverified"
+    evidence["researchQuestion"]=decision.query
+    evidence["reason"]=decision.reason
     out["onlineContext"] = evidence
     return out, {"phase": "RESEARCH_READY", "reason": decision.reason,
-                 "sourceCount": evidence["resultCount"]}
+                 "sourceCount": evidence["resultCount"],
+                 "coverage":evidence["coverage"]}
