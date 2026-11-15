@@ -9,7 +9,7 @@ from api.generic_public_source_fallback_v1 import (
     wikipedia_public_fallback,search_terms,
 )
 from scripts.hf_chat_generic_public_fallback_v1 import (
-    patch_retrieval,MARKER,OLD,
+    patch_retrieval,MARKER,OLD,has_observed_source_receipt,
 )
 
 SUMMARY="The two moons of Mars are Phobos and Deimos. Both are irregularly shaped natural satellites of Mars."
@@ -76,6 +76,27 @@ class GenericPublicSourceFallbackTests(unittest.TestCase):
                 }]}})}
             return response
         self.assertEqual(wikipedia_public_fallback("List moons of Mars",fake),[])
+
+    def test_accepts_real_research_ready_source_events_without_started_marker(self):
+        # The outer factual guard may complete research before entering the
+        # engine core, which emits RESEARCH_READY without RESEARCH_STARTED.
+        self.assertTrue(has_observed_source_receipt([
+            "RESEARCH_READY","FACTUAL_VERIFICATION_STARTED",
+            "RESEARCH_SOURCE_RETRIEVED","FACTUAL_VERIFICATION_PASS",
+            "COMPLETE",
+        ]))
+        self.assertTrue(has_observed_source_receipt([
+            "RESEARCH_STARTED","RESEARCH_READY","RESEARCH_SOURCE_CHECKED",
+        ]))
+        self.assertFalse(has_observed_source_receipt([
+            "RESEARCH_STARTED","RESEARCH_UNAVAILABLE","COMPLETE",
+        ]))
+        self.assertFalse(has_observed_source_receipt([
+            "RESEARCH_READY","COMPLETE",
+        ]))
+        self.assertFalse(has_observed_source_receipt([
+            "RESEARCH_SOURCE_RETRIEVED","COMPLETE",
+        ]))
 
     def test_source_retrieval_patch_is_exact_and_bounded(self):
         original=("from __future__ import annotations\n"
