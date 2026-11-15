@@ -111,6 +111,10 @@ class ResearchEnvelopeTests(unittest.TestCase):
                 "contractId":"swrlz-selective-evidence-v1","evidence":[]}}):
             self.assertIsNone(build_envelope(payload))
         self.assertEqual(list(source_trace_events(None)),[])
+        self.assertEqual(list(source_trace_events({
+            "contractId":"different-research-contract",
+            "evidence":BUNDLE["evidence"],
+        })),[])
 
     def test_engine_patch_preserves_existing_model_entrypoints(self):
         base=(
@@ -141,6 +145,7 @@ class ResearchEnvelopeTests(unittest.TestCase):
         staged=patch_engine(base).decode()
         ast.parse(staged)
         self.assertIn("RESEARCH EVIDENCE PACKET",staged)
+        self.assertIn("other established research route",staged)
         self.assertIn("source_trace_events",staged)
         self.assertIn("RESEARCH_STARTED",staged)
         self.assertIn("source_extracted_count_and_named_members",CONTRACT+" source_extracted_count_and_named_members")
