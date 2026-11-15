@@ -57,5 +57,9 @@ if(process.argv[2]){
  }
  assert(!html.includes("const mode=()=>panel?.querySelector('#ViewportMode')?.value||'solid';"),
   'The guessed selector must not be used as source of truth');
+ assert(html.includes('position:absolute;top:92px;left:8px;z-index:560;'),
+  'Popup must stack above native Zoom overlays on short mobile viewports');
+ assert(html.includes('max-height:min(380px,calc(100dvh - 235px));overflow-y:auto;'),
+  'Popup must remain scrollable on short mobile viewports');
 }
 console.log('SE460_NATIVE_VIEW_PASS: real model-state shading, preview safe, camera presets, invalid mode protections');
