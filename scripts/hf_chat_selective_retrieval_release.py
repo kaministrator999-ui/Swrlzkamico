@@ -23,7 +23,7 @@ import uuid
 from huggingface_hub import HfApi, hf_hub_download, CommitOperationAdd, CommitOperationDelete
 from hf_chat_selective_retrieval_trial import prepare, SPACE, ENGINE, MODULE
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from api.selective_retrieval import bounded_evidence, search_queries
+from api.selective_retrieval import bounded_evidence, search_queries, enrich_payload
 
 BASE = "https://kamiloki-swyrlz.hf.space"
 OUT = Path("swrlz-selective-retrieval-rollback")
@@ -58,15 +58,13 @@ def public_search_acceptance(api, revision: str):
     sys.modules[spec.name] = module
     spec.loader.exec_module(module)
     prompt = "Was Diablo II Classic released before Lord of Destruction expansion?"
-    plan = search_queries(prompt)
-    bundle = module.research({"prompt": prompt, "researchQueries": plan,
-                               "requestId": "swrlz-selective-public-test"})
-    chosen = bounded_evidence(bundle, query=prompt)
+    enriched, route = enrich_payload({"prompt": prompt}, module.research,
+                                     fetch_page=module._page_fetch, enabled=True)
+    chosen = enriched.get("onlineContext") or {}
     print("SWRLZ_SELECTIVE_PUBLIC_SEARCH_PREFLIGHT " + json.dumps(
-        {"queries": len(plan), "raw": len(bundle.get("evidence") or []),
-         "relevant": chosen["resultCount"],
-         "titles": [r["title"][:100] for r in chosen["evidence"][:3]]}), flush=True)
-    if not chosen["resultCount"]:
+        {"phase": route["phase"], "relevant": chosen.get("resultCount", 0),
+         "titles": [r["title"][:100] for r in chosen.get("evidence", [])[:3]]}), flush=True)
+    if route["phase"] != "RESEARCH_READY" or not chosen.get("resultCount"):
         raise RuntimeError("Public search did not return relevant source evidence")
 
 
