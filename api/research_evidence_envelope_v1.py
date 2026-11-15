@@ -25,7 +25,7 @@ def _safe_public_url(value: Any) -> str:
     try:
         url = urlsplit(candidate)
         if (url.scheme != "https" or not url.hostname or url.username
-                or url.password or re.search(r"\\s", candidate)
+                or url.password or re.search(r"\s", candidate)
                 or any(ord(c) < 32 for c in candidate)):
             return ""
         if url.port not in (None, 443):
