@@ -39,7 +39,7 @@ jobs:
             print("SWRLZ_ACTIVITY_FILE",json.dumps({"path":name,"lineCount":len(lines),
               "matches":hits[:125]},ensure_ascii=False))
             if name.endswith("index.html"):
-              for a,b in [(3980,4050),(4110,4230),(4300,4470),(4480,4620)]:
+              for a,b in [(2075,2180),(3740,3800),(4050,4109),(4228,4310),(4364,4448)]:
                 if a>len(lines):continue
                 print("SWRLZ_ACTIVITY_WINDOW",json.dumps({"path":name,"start":a,
                   "lines":[str(i+1)+" "+lines[i][:310] for i in range(a-1,min(b,len(lines)))]},ensure_ascii=False))
