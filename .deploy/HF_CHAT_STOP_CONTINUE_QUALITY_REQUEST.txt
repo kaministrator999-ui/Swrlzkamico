@@ -1,0 +1,8 @@
+TARGET=kamiloki/Swyrlz
+APPROVED=1
+CHANGE_SCOPE=continue-code-stop-native-interactive-html-only
+MODEL=qwen3.5-9b
+CONTEXT_TOKENS=16384
+THREADS=18
+DEPLOY_NONCE=chat-stop-continue-webpage-20261114-v1
+REASON=Fix fast deliberate Stop, preserve unfinished source, route completed Continue code to a meaningful revision, and make broad cool HTML requests produce working interactive pages.
