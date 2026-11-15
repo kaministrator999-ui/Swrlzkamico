@@ -14,7 +14,7 @@ const moduleText=html.slice(start,stop+end.length);
 new vm.Script(moduleText);
 const events={};
 const window={addEventListener:(name,callback)=>{events[name]=callback;}};
-let environment=vm.createContext({window});
+let environment=vm.createContext({window,queueMicrotask:fn=>fn(),requestAnimationFrame:fn=>fn()});
 assert.doesNotThrow(()=>vm.runInContext(moduleText,environment),
  'Optional module must not crash if internal renderer is unavailable at startup');
 assert.equal(window.SWYRL_ENGINE_MODEL_VIEW_STABILITY_458.inspect().hasModel,false);
@@ -39,7 +39,7 @@ for(const token of [
  '/* SE458_DOCK_AND_MODEL_CONTRAST_START */',
  'SE457_CONVERSION_NO_FACE_GATE',
  'SE454_INSET_TOP_STEPS_START'
-].filter(x=>x!=='SE457_CONVERSION_NO_FACE_GATE')){
+]){
  assert(html.includes(token),'Built HTML missing '+token);
 }
 console.log('SE459_STARTUP_GUARD_PASS: no renderer at startup, native renderer available, scene events safe before initialization, history intact');
