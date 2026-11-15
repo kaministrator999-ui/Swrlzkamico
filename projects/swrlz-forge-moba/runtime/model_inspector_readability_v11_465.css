@@ -80,4 +80,30 @@ html #modelAtelierPanel[data-se320-ui][data-se465-inspector-narrow=true]:not(
   overflow-wrap:normal!important;word-break:normal!important;
  }
 }
+/* Desktop mouse users can also drag the native inspector extremely narrow.
+   Its compact Expand control must work there, not only on touch screens. */
+@media(min-width:921px) and (pointer:fine){
+ html #modelAtelierPanel.se187-modeler-page[data-se320-ui][data-se251-layout=desktop][data-se464-inspector-focus=true] .atelier-body{
+  --se320-right:0px!important;
+  grid-template-columns:var(--se320-left) minmax(0,1fr) var(--se320-rail) 0px!important;
+ }
+ html #modelAtelierPanel[data-se320-ui][data-se464-inspector-focus=true] .atelier-body>.se251-resize-grip{
+  display:none!important;
+ }
+ html #modelAtelierPanel[data-se320-ui][data-se464-inspector-focus=true] .atelier-body>.atelier-inspector{
+  position:absolute!important;inset:8px 8px 8px auto!important;
+  grid-column:auto!important;grid-row:auto!important;
+  display:flex!important;flex-direction:column!important;
+  width:min(440px,calc(100% - 16px))!important;
+  max-width:calc(100% - 16px)!important;min-width:0!important;
+  height:auto!important;min-height:0!important;max-height:none!important;
+  box-sizing:border-box!important;overflow-y:auto!important;z-index:3500!important;
+  padding:12px!important;border-radius:12px!important;
+  background:#181c2ff9!important;border:1px solid #ab87cf!important;
+  box-shadow:0 13px 42px #000b!important;
+ }
+ html #modelAtelierPanel[data-se320-ui][data-se464-inspector-focus=true] #se464InspectorFocus{
+  display:inline-flex!important;white-space:nowrap!important;
+ }
+}
 /* SE465_NARROW_INSPECTOR_STYLES_END */
