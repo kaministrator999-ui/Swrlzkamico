@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT (owner-approved)",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.464",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_464_MODEL_VISUAL_INSPECTOR",
-  "reason": "Improve Solid/Material cavity depth, replace cloudy X-Ray with depth-correct wire overlay, strengthen component selection and add touch inspector Expand/Dock preserving camera, drag splitters, transforms, VR and native history; exact source tests passed and physical Android acceptance pending.",
-  "sourceCommit": "219e6f40d52713ad93fee6620bfb0b7d6ff38312",
-  "sourceIntegritySha256": "d6c66ae4ce7ae42d679345827fae37841069ab2c2f17c534a183773d66758935"
+  "releaseVersion": "v11.465",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_465_INSPECTOR_READABILITY",
+  "reason": "Prevent one-letter inspector wrapping in native mobile dock. Narrow widths show a compact Expand prompt; Expanded overlay releases native right dock column and restores full tool controls on touch and mouse without changing saved panel widths, camera, mesh, VR or Undo. Verified source and assets; physical Android acceptance pending.",
+  "sourceCommit": "58919e41922015adc58853c4e1836fd52cd79565",
+  "sourceIntegritySha256": "3e9667732fba30853a1295364cfa3b836ddecf4303186ce48c2e4ecb416eb7f9"
 }
