@@ -108,7 +108,7 @@ class GeneralResearchSynthesisTests(unittest.TestCase):
         def fake_fetch(url):
             if url.endswith("/amazon.shtml"):
                 return {"status":200,"finalUrl":url,
-                        "extract":"The Amazon excels with bows and spears. Starting Attributes Strength 20"}
+                        "extract":"The Amazon excels with bows, spears and throwing weapons and can fight with multiple weapon types. Starting Attributes Strength 20"}
             return {"status":200,"finalUrl":"https://attacker.example/redirect",
                     "extract":"The Druid has hawk form."}
         cards=historical_roster_detail_pages(facts(),fake_fetch)
