@@ -34,7 +34,10 @@ def search_terms(question: Any) -> str:
         return ""
     text=_ENC.sub(" ",text)
     text=re.sub(r"[\?\!\.,:;]+"," ",text)
-    words=[x for x in text.split() if x.lower() not in _STOP]
+    # Keep relational prepositions in search queries: "moons of Mars"
+    # resolves more reliably than "moons Mars". Ignore them only during
+    # relevance scoring, where "of" is not a meaningful subject keyword.
+    words=[x for x in text.split() if x.lower() not in (_STOP-{"of"})]
     return " ".join(words[:13])[:130]
 
 
