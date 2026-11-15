@@ -1,0 +1,20 @@
+name: Read-only live Qwen coding source inspection
+on:
+  push:
+    branches: ["feature/chat-code-workspace-continuation-20261115"]
+    paths: 
+      - "scripts/hf_chat_autopilot_inspect.py"
+      - ".github/workflows/chat-code-autopilot-readonly.yml"
+permissions:
+  contents: read
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 9
+    steps:
+      - uses: actions/checkout@v4
+      - run: python -m pip install 'huggingface_hub>=0.34,<2'
+      - name: Inspect exact Qwen and Station source without changing it
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: python -u scripts/hf_chat_autopilot_inspect.py
