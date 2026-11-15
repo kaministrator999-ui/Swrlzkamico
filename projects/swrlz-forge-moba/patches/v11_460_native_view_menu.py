@@ -23,13 +23,6 @@ def apply(html):
     # These declarations are in the ORIGINAL ModelAtelier closure, not the
     # separate quick-menu script, and are passed out only after init returns.
     html=one(html,"/* ATELIER_BRIDGE_END */",script+"\n/* ATELIER_BRIDGE_END */")
-    html=one(html,
-        "camera:se430ModelCamera,",
-        "camera:se430ModelCamera,view:se460ModelView,")
-    html=one(html,
-        "window.SWYRL_ENGINE_MODEL_CAMERA=ModelAtelier.camera;",
-        "window.SWYRL_ENGINE_MODEL_CAMERA=ModelAtelier.camera;\n"
-        "window.SWYRL_ENGINE_MODEL_VIEW=ModelAtelier.view;")
     # Menu remains outside the closure. Never reach into private renderer
     # variables or guess at hidden #ViewportMode selectors.
     a=html.index("/* SE455_VIEW_READABILITY_START */")
