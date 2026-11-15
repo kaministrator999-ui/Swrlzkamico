@@ -98,7 +98,7 @@ def apply(html):
     html=one(html,"['Manual mesh modeling',['WorkshopOperation','WorkshopAmount','WorkshopConvert'",
         "['Manual mesh modeling',['WorkshopOperation','WorkshopAmount','WorkshopExtrudeScale','WorkshopExtrudeLeft','WorkshopExtrudeRight','WorkshopExtrudeX','WorkshopExtrudeY','WorkshopExtrudeZ','WorkshopExtrudeTiltX','WorkshopExtrudeTiltY','WorkshopExtrudeTiltZ','WorkshopConvert'")
     css=runtime('model_ring_ui_v11_466.css')
-    html=one(html,'</head>','<style id="se466RingModelStyles">\n'+css+'\n</style>\n</head>')
+    html=html.replace('</head>','<style id="se466RingModelStyles">\n'+css+'\n</style>\n</head>',1)
     html=one(html,'SWYRL_ENGINE_DEPLOY_MARKER: V11_465_INSPECTOR_READABILITY',MARKER)
     html=one(html,'ENGINE · MAKER v11.465','ENGINE · MAKER v11.466')
     html=one(html,'v11.465 · readable mobile inspector','v11.466 · ring and arc modeling')
