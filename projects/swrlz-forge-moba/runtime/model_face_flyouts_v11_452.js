@@ -92,6 +92,10 @@
    }
    restore();panel.dataset.se452FaceOpen='false';
    stage('closed');window.SWYRL_ENGINE_GUIDED_FACE_451?.refresh?.();
+   // Leaving a Face tool returns to the permanent rail, not to a redundant
+   // full-width inspector. Use its existing collapse handler/resize guard.
+   const collapse=panel.querySelector('.se251-external-collapse');
+   if(panel.dataset.se251RightCollapsed!=='true'&&collapse)collapse.click();
    se430BeginnerQueue();return true;
   }
   function showAdvanced(){
