@@ -4,7 +4,7 @@ import argparse,hashlib,json,re,subprocess,sys
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
 P=argparse.ArgumentParser(description=__doc__);P.add_argument('--output',required=True);P.add_argument('--request',action='store_true');P.add_argument('--three-module');A=P.parse_args()
-m=json.loads((ROOT/'source-manifest.json').read_text());assert m['name']=='§wyrl§ Engine v11.451';assert m['finalArtifact']=='swyrl_engine_v11_450.html';assert len(m['patches'])==428
+m=json.loads((ROOT/'source-manifest.json').read_text());assert m['name']=='§wyrl§ Engine v11.451';assert m['finalArtifact']=='swyrl_engine_v11_451.html';assert len(m['patches'])==428
 assert m['patches'][-14:]==['patches/v11_438_engine_simulation_render_bridge.py','patches/v11_439_sheep_capture_pursuit.py','patches/v11_440_model_tools_validation.py','patches/v11_441_satchel_vr_workflow.py','patches/v11_442_satchel_mobile_dialog.py','patches/v11_443_model_vr_vertical_dock.py','patches/v11_444_selected_mesh_delete.py','patches/v11_445_shape_face_discovery.py','patches/v11_446_planar_face_pick.py','patches/v11_447_smooth_face_orbit.py','patches/v11_448_inset_dock_usability.py','patches/v11_449_model_touch_layout.py','patches/v11_450_camera_inset_preview.py','patches/v11_451_guided_face_workflow.py']
 out=Path(A.output).resolve();subprocess.run([sys.executable,str(ROOT/'build_space.py'),'--output',str(out)],check=True)
 data=(out/'index.html').read_bytes();assert data==(out/'modeler.html').read_bytes();assert len(data)==m['finalBytes'];assert hashlib.sha256(data).hexdigest()==m['finalSha256'];html=data.decode()
