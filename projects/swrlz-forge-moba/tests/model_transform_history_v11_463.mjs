@@ -16,8 +16,12 @@ for(const phrase of [
 const begin=html.indexOf('function se320RefreshTransformAccess(panel){');
 const next=html.indexOf('function se320ModelTransformAccess(panel,inspector){',begin);
 assert(begin>=0&&next>begin);
+const selectorsBegin=html.indexOf('const se320TransformSelectors=Object.freeze({',Math.max(0,begin-3000));
+const selectorsEnd=html.indexOf('});',selectorsBegin)+3;
+assert(selectorsBegin>=0&&selectorsEnd>selectorsBegin,'Original native selector registry must exist');
+const selectors=html.slice(selectorsBegin,selectorsEnd);
 const fn=html.slice(begin,next);
-new vm.Script(fn,{filename:'se320RefreshTransformAccess.js'});
+new vm.Script(selectors+'\n'+fn,{filename:'se320RefreshTransformAccess.js'});
 const state={open:true,selected:'cube'};
 const toolbarBtns=[
  ...['move','rotate','scale','x','y','z','minus','plus'].map(x=>({
@@ -51,7 +55,7 @@ const panel={hidden:false,nodes:{
 const ctx=vm.createContext({ModelAtelier:{status:()=>state},window:{
  SWYRLZ_E_MODEL_UV_SLIDE:{state:()=>({enabled:false,available:true})}
 },q:(s,root)=>root.querySelector(s),document:{}});
-vm.runInContext(fn,ctx);
+vm.runInContext(selectors+'\n'+fn,ctx);
 const refresh=ctx.se320RefreshTransformAccess;
 refresh(panel);
 assert.equal(bar.hidden,false,'Selected mesh displays toolbar');
