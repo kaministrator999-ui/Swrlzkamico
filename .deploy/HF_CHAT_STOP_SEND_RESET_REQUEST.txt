@@ -1,0 +1,5 @@
+TARGET=kamiloki/Swyrlz
+APPROVED=1
+CHANGE_SCOPE=stop-button-send-terminal-reconcile-only
+NONCE=stop-to-send-on-cancel-20261114-v1
+REASON=After the server confirms CANCELLED, COMPLETE, or FAILED, ensure Stop is hidden, Send returns enabled, and mobile early-response render returns also revalidate controls.
