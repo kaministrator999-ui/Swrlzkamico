@@ -112,8 +112,8 @@ def active_runtime_revision(metadata: Any, expected: str) -> bool:
             and runtime.get("sha") == expected
             and runtime.get("stage") == "RUNNING")
 
-def bounded_evidence(bundle: Any, *, query: str = "", max_items: int = 8,
-                     max_chars: int = 5200) -> dict[str, Any]:
+def bounded_evidence(bundle: Any, *, query: str = "", max_items: int = 12,
+                     max_chars: int = 7100) -> dict[str, Any]:
     """Bound evidence before inserting it into the model context."""
     if not isinstance(bundle, dict):
         return {"contractId": "swrlz-selective-evidence-v1", "evidence": [], "resultCount": 0}
@@ -124,6 +124,8 @@ def bounded_evidence(bundle: Any, *, query: str = "", max_items: int = 8,
         title = _normalized(item.get("title"))[:200]
         excerpt = _normalized(item.get("extract") or item.get("snippet"))[:700]
         score = _source_score(title, excerpt, query)
+        if item.get("referenceRole") == "historical_roster_member_detail":
+            score = max(score, 12)
         if score > 0:
             candidates.append((score, item))
     # Source roles are assigned only after direct bounded publisher-page checks.
@@ -153,8 +155,11 @@ def bounded_evidence(bundle: Any, *, query: str = "", max_items: int = 8,
             card["referenceType"]="pinned_first_party_document"
         if item.get("referenceRole") in (
                 "historical_original_class_roster",
-                "historical_expansion_class_additions"):
+                "historical_expansion_class_additions",
+                "historical_roster_member_detail"):
             card["referenceRole"]=item["referenceRole"]
+        if item.get("referenceRole")=="historical_roster_member_detail":
+            card["referenceMember"]=str(item.get("referenceMember") or "")[:40]
         result.append(card)
     return {"contractId": "swrlz-selective-evidence-v1",
             "evidence": result, "resultCount": len(result),
@@ -379,6 +384,51 @@ def historical_class_reference_pages(prompt: str, fetch_page: Any) -> list[dict[
     return pages
 
 
+def historical_roster_detail_pages(facts: Any, fetch_page: Any) -> list[dict[str,str]]:
+    """Fetch publisher descriptions for already verified members, never infer from memory."""
+    if not isinstance(facts,dict) or not callable(fetch_page):
+        return []
+    if str(facts.get("subject") or "").lower()!="diablo ii":
+        return []
+    names=facts.get("classes",[])
+    if not isinstance(names,list) or len(names)>10:
+        return []
+    source="https://classic.battle.net/diablo2exp/classes/"
+    cards=[]
+    for member in names:
+        if not isinstance(member,str) or not re.fullmatch(r"[A-Za-z]{3,24}",member):
+            continue
+        url=source+member.lower()+".shtml"
+        try:
+            page=fetch_page(url)
+            if not isinstance(page,dict) or int(page.get("status") or 0)!=200:
+                continue
+            final=urllib.parse.urlsplit(str(page.get("finalUrl") or ""))
+            if final.scheme!="https" or final.hostname!="classic.battle.net":
+                continue
+            if final.path.lower()!=urllib.parse.urlsplit(url).path.lower():
+                continue
+            article=_normalized(page.get("extract"))[:7500]
+            found=re.search(r"\bThe\s+"+re.escape(member)+r"\b",article,re.I)
+            if not found:
+                continue
+            snippet=article[found.start():found.start()+425]
+            snippet=re.split(r"Starting Attributes|Starting Statistics|Hit Points:",snippet,
+                             maxsplit=1,flags=re.I)[0][:360]
+            if member.lower() not in snippet.lower() or len(snippet)<45:
+                continue
+            cards.append({
+                "title":"Blizzard Diablo II "+member+" class overview",
+                "url":url,
+                "snippet":snippet,
+                "referenceRole":"historical_roster_member_detail",
+                "referenceMember":member,
+            })
+        except Exception:
+            continue
+    return cards
+
+
 def enrich_payload(payload: Any, researcher: Any, *, fetch_page: Any = None,
                    enabled: bool = False):
     """Server-side, opt-in payload enrichment. Search sees current query only."""
@@ -434,7 +484,15 @@ def enrich_payload(payload: Any, researcher: Any, *, fetch_page: Any = None,
         return out, {"phase": "RESEARCH_UNAVAILABLE", "reason": "no_relevant_evidence"}
     facts = verified_roster_context(decision.query,evidence)
     if facts:
-        evidence["verifiedContext"] = facts
+        # Additional details are fetched from source pages using the already
+        # verified class names, not guessed from model memory.
+        details=historical_roster_detail_pages(facts,fetch_page)
+        if details:
+            evidence=bounded_evidence({"evidence":references+list(searched)+details},
+                                      query=decision.query)
+            facts=verified_roster_context(decision.query,evidence)
+        if facts:
+            evidence["verifiedContext"] = facts
     if requires_roster and not facts:
         evidence["coverage"]="missing_verified_roster"
     else:
