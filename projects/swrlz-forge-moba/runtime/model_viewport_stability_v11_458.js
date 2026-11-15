@@ -4,7 +4,7 @@
 // state. No independent render loop, geometry edit or camera distance reset.
 (function(){
  'use strict';
- let queued=false, lastFocusPart=null;
+ let queued=false, pendingFocus=null, lastFocusPart=null;
  const scene=()=>typeof modelRoot!=='undefined'?modelRoot:null;
  function selected(part){return part?.id===selection;}
  function eligible(mesh,part){
@@ -98,13 +98,15 @@
  }
  function onNativeChange(event){
   const state=event?.detail;
+  if(state&&/^Applied (?:inset|extrude) to native geometry\b/i.test(state.message||''))
+   pendingFocus=state;
   if(queued)return;
-  const needsFocus=!!state&&/^Applied (?:inset|extrude) to native geometry\b/i.test(state.message||'');
   queued=true;
   queueMicrotask(()=>requestAnimationFrame(()=>{
    queued=false;
    syncEdges();
-   if(needsFocus)focusIfDetached(state);
+   const focus=pendingFocus;pendingFocus=null;
+   if(focus)focusIfDetached(focus);
   }));
  }
  window.addEventListener('swrlz:model-workshop-change',onNativeChange);
