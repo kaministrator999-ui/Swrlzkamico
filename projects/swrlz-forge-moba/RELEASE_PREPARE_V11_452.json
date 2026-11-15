@@ -1,0 +1,10 @@
+{
+  "schema": "swrlz-forge-release-prepare-v1",
+  "version": "v11.452",
+  "ownerApproved": true,
+  "reason": "Integrate three-stage Face tool rail → Inset/Extrude operations → native amount/Preview/Apply/Cancel flyouts, with mobile sequential panels and unchanged mesh authority",
+  "sourcePatch": "patches/v11_452_native_face_flyouts.py",
+  "expectedPrevious": "v11.451",
+  "verificationAttempt": 1,
+  "note": "Source-pinned next patch preserves v11.451 guided preview and v11.450 camera. 6 focused and prior geometry tests passed in run 43661463578."
+}
