@@ -1,0 +1,23 @@
+name: Verify §E v11.461 complete sealed release
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/verify-engine-v11-461-sealed.yml"
+      - "projects/swrlz-forge-moba/scripts/verify_v11_461_release.py"
+      - "projects/swrlz-forge-moba/tests/model_face_orbit_v11_461.mjs"
+  workflow_dispatch:
+permissions: {contents: read}
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 16
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.11"}
+      - name: Test exact sealed source, full compatibility and release asset integrity
+        run: |
+          set -euo pipefail
+          python projects/swrlz-forge-moba/scripts/verify_v11_461_release.py --output dist/se461
+          echo "SE461_FULL_SEALED_RELEASE_PASS"
