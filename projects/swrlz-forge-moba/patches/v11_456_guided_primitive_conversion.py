@@ -23,7 +23,7 @@ def apply(html):
  html=once(html,"/* SE455_TRANSIENT_FACE_HIGHLIGHT_END */",
   "/* SE455_TRANSIENT_FACE_HIGHLIGHT_END */\n"+
   "/* Historical v11.455 marker: SWYRL_ENGINE_DEPLOY_MARKER: V11_455_VIEW_READABILITY */\n"+js)
- html=once(html,"</head>","<style id=\"se456GuidedPrimitiveConversionStyles\">\n"+css+"\n</style>\n</head>")
+ html=html.replace("</head>","<style id=\"se456GuidedPrimitiveConversionStyles\">\n"+css+"\n</style>\n</head>",1)
  # Correct the old guidance, which told the user to tap a face that the
  # unconverted primitive selector explicitly refuses to choose.
  html=once(html,
