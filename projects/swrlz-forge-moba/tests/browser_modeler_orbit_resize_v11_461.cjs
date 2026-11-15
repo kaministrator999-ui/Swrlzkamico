@@ -155,6 +155,19 @@ const deadline=setTimeout(()=>{console.error('SE461_BROWSER_HARD_TIMEOUT');proce
  });
  if(!cubeAdded)throw Error('Native Add cube command missing from model');
  await page.waitForTimeout(350);
+ const canvas=page.locator('#modelAtelierViewport canvas');
+ const b=await canvas.boundingBox();
+ if(!b)throw Error('Model viewport canvas is missing');
+ const x=b.x+b.width*.54,y=b.y+b.height*.59;
+ // Reproduce the user's nonzero Pan readout. Two touches must pan without
+ // changing the mesh; a subsequent one-finger drag should reacquire its center.
+ const panClient=await page.context().newCDPSession(page);
+ const panTouches=dy=>[{x:x-28,y:y+dy},{x:x+28,y:y+dy}];
+ await panClient.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:panTouches(0)});
+ for(let i=1;i<=8;i++)
+  await panClient.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:panTouches(8*i)});
+ await panClient.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});
+ await panClient.detach();
  const mesh=await page.evaluate(()=>({
   camera:window.SWYRL_ENGINE_MODEL_CAMERA?.inspect?.(),
   pivot:window.SWYRL_ENGINE_MODEL_HARD_SURFACE_461?.inspect?.()
@@ -163,10 +176,9 @@ const deadline=setTimeout(()=>{console.error('SE461_BROWSER_HARD_TIMEOUT');proce
  if(!mesh.pivot?.bounds)throw Error('Created native cube is absent from the orbit bounds');
  // A one-finger canvas drag should orbit the box and reacquire its actual
  // world-space center without changing yaw/pitch presets or zoom distance.
- const canvas=page.locator('#modelAtelierViewport canvas');
- const b=await canvas.boundingBox();
- if(!b)throw Error('Model viewport canvas is missing');
- const x=b.x+b.width*.54,y=b.y+b.height*.59;
+ const driftBefore=Math.hypot(...mesh.pivot.bounds.map((v,i)=>v-mesh.camera.target[i]));
+ console.log('SE461_OFF_CENTER_PAN_BEFORE_ORBIT '+driftBefore);
+ if(driftBefore<.1)throw Error('Two-finger pan did not create the displaced orbit pivot required by this regression');
  const client=await page.context().newCDPSession(page);
  await client.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x,y}]});
  for(let i=1;i<=8;i++)
