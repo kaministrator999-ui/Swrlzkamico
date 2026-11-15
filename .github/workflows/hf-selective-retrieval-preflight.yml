@@ -16,7 +16,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: 9155aecb16b687a04552e46ae9d4492dabe36708
+          ref: 96655bfe777181263cf3f2d52f8f25cd9743b837
           path: trial-source
           fetch-depth: 1
       - uses: actions/setup-python@v5
