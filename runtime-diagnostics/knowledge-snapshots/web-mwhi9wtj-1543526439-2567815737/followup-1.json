@@ -1,0 +1,15 @@
+{
+  "schema": "swrlz-knowledge-followup-v1",
+  "requestId": "web-mwhi9wtj-1543526439-2567815737",
+  "modelId": "700m",
+  "eventType": "KNOWLEDGE_ACQUISITION_FOLLOWUP_1",
+  "sourceRef": "f149dd857e3d9219f5cae7da0286b5dbfec85c42",
+  "persistedAtUnixMs": 1794747320737,
+  "diagnostic": {
+    "schema": "swrlz-knowledge-followup-v1",
+    "parentRequestId": "web-mwhi9wtj-1543526439-2567815737",
+    "turnIndex": 1,
+    "userText": "Was Diablo II Classic released before Lord of Destruction? Research both versions and explain the differences.",
+    "capturedAtUnixMs": 1794747320734
+  }
+}
