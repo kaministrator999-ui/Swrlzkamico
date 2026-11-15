@@ -165,8 +165,14 @@ async def receive(context, started, *, rid=None, prompt=None, thread_id=None):
         found=committed(data,rid=rid,prompt=prompt,thread_id=thread_id)
         if found:
             tid,txt,state=found
+            generation=data.get("activeGeneration") or {}
+            validation=generation.get("candidateValidation") or {}
+            attempts=generation.get("candidateAttempts") or []
             return {"thread_id":tid,"text":txt,"state":state,"first_text_ms":first_ms,
-                    "total_ms":round((time.perf_counter()-started)*1000),"phases":phases[-12:]}
+                    "total_ms":round((time.perf_counter()-started)*1000),"phases":phases[-12:],
+                    "candidate_validation_status":validation.get("status"),
+                    "candidate_validation_reasons":[str(x)[:90] for x in (validation.get("reasons") or [])[:8]],
+                    "candidate_attempts":len(attempts)}
         await asyncio.sleep(1.5)
     raise TimeoutError("No committed reply within the per-turn deadline; last_phases="+repr(phases[-8:]))
 
