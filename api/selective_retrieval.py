@@ -128,12 +128,14 @@ def bounded_evidence(bundle: Any, *, query: str = "", max_items: int = 12,
             score = max(score, 12)
         if score > 0:
             candidates.append((score, item))
-    # Source roles are assigned only after direct bounded publisher-page checks.
-    # They outrank broad search snippets but cannot create facts by themselves.
+    # Direct first-party membership passages must precede descriptions:
+    # the 9B and the older factual guard both read the first source cards.
     candidates.sort(key=lambda x: (
-        x[0] + (15 if x[1].get("referenceRole") in (
+        x[0] + (40 if x[1].get("referenceRole") in (
             "historical_original_class_roster",
-            "historical_expansion_class_additions") else 0)),reverse=True)
+            "historical_expansion_class_additions") else
+            12 if x[1].get("referenceRole")=="historical_roster_member_detail"
+            else 0)),reverse=True)
     result = []
     used = 0
     for score, item in candidates:
@@ -450,9 +452,15 @@ def enrich_payload(payload: Any, researcher: Any, *, fetch_page: Any = None,
     # Prefer source pages that actually mention dates and version features.
     # Avoid redundant encyclopedia requests when the primary sources suffice.
     references = historical_class_reference_pages(decision.query,fetch_page)
-    # Existing release-year reference search remains separate, not a
-    # substitute for roster verification.
-    if request_scope(decision.query)["rosterQuestion"]!="yes":
+    # Historical version context may contain dates, but those dates still
+    # need their own dated evidence. A class roster alone proves no chronology.
+    if request_scope(decision.query)["rosterQuestion"]=="yes" and references:
+        dated=[
+            p for p in extended_reference_pages(decision.query,fetch_page)
+            if p.get("title","").endswith(("release dates","expansion date"))
+        ]
+        references += dated[:2]
+    else:
         references += extended_reference_pages(decision.query, fetch_page)
     evidence_text = " ".join(str(item.get("snippet") or "") for item in references)
     years = set(re.findall(r"(?<!\d)(?:18|19|20)\d{2}(?!\d)", evidence_text))
