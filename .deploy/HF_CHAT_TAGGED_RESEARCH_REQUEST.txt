@@ -1,0 +1,6 @@
+TARGET=kamiloki/Swyrlz
+APPROVED=1
+MODEL=qwen3.5-9b
+FEATURE=tagged-public-evidence-visible-sources-v1
+SOURCE_REF=a6e1eddc11493ac01ef2302d71e2f16560258858
+REQUEST_NONCE=tagged-research-20261115-model-context-sources-01
