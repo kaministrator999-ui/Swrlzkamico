@@ -1,0 +1,37 @@
+/* SE453_INSET_RIM_WIDTH_STYLES_START */
+/* The existing modeling viewport remains sole pointer/camera owner.
+   This one helper only receives touches that start on its diamond. */
+html #modelAtelierPanel[data-se453-rim-width="1"] .atelier-scene{
+ position:relative!important;
+}
+html #modelAtelierPanel[data-se453-rim-width="1"] #se453RimHandle{
+ position:absolute!important;inset:auto!important;z-index:94!important;
+ display:flex!important;align-items:center;justify-content:center;
+ width:42px!important;height:42px!important;min-width:42px!important;min-height:42px!important;
+ border:2px solid #ffdf7a!important;border-radius:50%!important;
+ background:#593e1bde!important;color:#ffe9a0!important;
+ font:700 22px/1 system-ui!important;
+ transform:translate(-50%,-50%)!important;touch-action:none!important;
+ user-select:none!important;box-shadow:0 2px 8px #080b13d9!important;
+ padding:0!important;cursor:ew-resize!important;
+}
+html #modelAtelierPanel #se453RimHandle[hidden]{display:none!important}
+html #modelAtelierPanel #se453PrepareRim[hidden]{display:none!important}
+html #modelAtelierPanel #se453PrepareRim{
+ display:block!important;width:100%!important;min-height:42px!important;
+ margin:8px 0!important;background:#564329!important;
+ border:1px solid #cba75c!important;color:#fff0c1!important;
+ font-weight:700!important;
+}
+html #modelAtelierPanel .se453-rim-help,
+html #modelAtelierPanel #se453RimStatus{
+ display:block;font:11px/1.4 system-ui;color:#c9e0e6;
+ margin:6px 0 2px;overflow-wrap:anywhere;
+}
+html #modelAtelierPanel #se453RimHandle:focus-visible{
+ outline:3px solid #fff4b7!important;outline-offset:3px!important;
+}
+@media(prefers-reduced-motion:reduce){
+ html #modelAtelierPanel #se453RimHandle{transition:none!important}
+}
+/* SE453_INSET_RIM_WIDTH_STYLES_END */
