@@ -80,17 +80,17 @@ function se450NotifyDockResized(what){
   " const result=se430ModelWorkshop.selectRegion(hitId,selection);",
   " const result=se450AfterPlanarFaceTap(se430ModelWorkshop.selectRegion(hitId,selection),hitId,selection);")
  html=one(html,
- """  if(first.selection.mode!=='face'){
+ """ if(first.selection.mode!=='face'){
   api.setComponentMode('face');
   say('Face mode selected. Tap a face on the mesh, then choose '+operation+' again to preview.');""",
- """  if(first.selection.mode!=='face'){
+ """ if(first.selection.mode!=='face'){
   api.setComponentMode('face');
   se450ArmFacePreview(operation,partId);
   say(operation.charAt(0).toUpperCase()+operation.slice(1)+' ready. Tap a square face to display the preview.');""")
  html=one(html,
- """  if(seed===null){
+ """ if(seed===null){
   say('Tap a square face first, then choose '+operation+' again to preview.');""",
- """  if(seed===null){
+ """ if(seed===null){
   se450ArmFacePreview(operation,partId);
   say(operation.charAt(0).toUpperCase()+operation.slice(1)+' ready. Tap a square face to display the preview.');""")
  html=one(html,
