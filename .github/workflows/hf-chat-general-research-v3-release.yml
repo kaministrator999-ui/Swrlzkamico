@@ -1,0 +1,65 @@
+name: Guarded §C natural researched-answer v3 release
+on:
+  push:
+    branches: [main]
+    paths: [".deploy/HF_CHAT_GENERAL_RESEARCH_V3_REQUEST.txt"]
+permissions: {contents: read}
+concurrency:
+  group: swrlz-hf-space-deployment
+  cancel-in-progress: false
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - name: Authorize only pinned reviewed §C 9B source
+        id: gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          file=.deploy/HF_CHAT_GENERAL_RESEARCH_V3_REQUEST.txt
+          test -f "$file"
+          readfield() { sed -n "s/^$1=//p" "$file" | tail -n 1; }
+          test "$(readfield APPROVED)" = "1"
+          test "$(readfield TARGET)" = "kamiloki/Swyrlz"
+          test "$(readfield MODEL)" = "qwen3.5-9b"
+          test "$(readfield FEATURE)" = "natural-evidence-grounded-research-v3"
+          source_ref="$(readfield SOURCE_REF)"
+          nonce="$(readfield REQUEST_NONCE)"
+          [[ "$source_ref" =~ ^[0-9a-f]{40}$ ]]
+          [[ "$nonce" =~ ^[a-z0-9-]{12,96}$ ]]
+          echo "ref=$source_ref" >> "$GITHUB_OUTPUT"
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.gate.outputs.ref }}
+          path: reviewed-source
+          fetch-depth: 1
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.11"}
+      - name: Existing HF client
+        run: python -m pip install --quiet "huggingface_hub>=0.34,<2"
+      - name: Retest all public factual regressions
+        working-directory: reviewed-source
+        run: |
+          set -euo pipefail
+          python -m unittest discover -s tests -p 'test_hf_general_research_v3.py' -v
+          python -m unittest discover -s tests -p 'test_hf_research_context_v2.py' -v
+          python -m unittest discover -s tests -p 'test_hf_factual_grounding_v1.py' -v
+          python -m py_compile api/research_synthesis_v3.py api/selective_retrieval.py scripts/hf_chat_general_research_v3_release.py
+      - name: Guarded HF publication, exact runtime, natural-answer and accuracy acceptance
+        working-directory: reviewed-source
+        timeout-minutes: 40
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          SWRLZ_GENERAL_RESEARCH_SYNTHESIS_V3_DEPLOY_APPROVED: "1"
+        run: |
+          set -euo pipefail
+          python -u scripts/hf_chat_general_research_v3_release.py --deploy
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: swrlz-general-research-v3-exact-source-backup
+          path: reviewed-source/swrlz-research-v3-rollback/
+          retention-days: 14
+          if-no-files-found: warn
