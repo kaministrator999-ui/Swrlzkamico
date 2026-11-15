@@ -4,5 +4,5 @@ CHANGE_SCOPE=source-preserving-coding-quality-and-html-validation
 MODEL=qwen3.5-9b
 THREADS=18
 CONTEXT_TOKENS=16384
-SOURCE_REF=c464d473ccebceb8abb9bba393c88670b2212e12
-REQUEST_NONCE=html-quality-20261114-guarded-source-v1
+SOURCE_REF=48dccbb27ec802c9cb9d3029a0e6aa141726bf11
+REQUEST_NONCE=html-quality-acceptance-retry-20261114-v2
