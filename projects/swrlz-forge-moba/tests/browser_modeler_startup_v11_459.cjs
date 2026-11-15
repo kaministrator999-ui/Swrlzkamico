@@ -34,9 +34,13 @@ const deadline=setTimeout(()=>{console.error('SE459_BROWSER_HARD_TIMEOUT');proce
   const p=document.querySelector('#modelAtelierPanel');
   const bodyText=(document.body?.innerText||'').slice(0,1300);
   const status=[...document.querySelectorAll('[role="status"],.statusbar,.loading,.loading-status')]
-   .filter(x=>x.getBoundingClientRect().height>0).map(x=>x.textContent.trim().slice(0,180)).slice(0,15);
+   .filter(x=>{const css=getComputedStyle(x);return x.getBoundingClientRect().height>0&&
+     css.display!=='none'&&css.visibility!=='hidden'&&Number(css.opacity)>.1;})
+   .map(x=>x.textContent.trim().slice(0,180)).slice(0,15);
   return {documentReady:document.readyState,
    version:window.SWRLZ_FORGE_BUILD?.version||null,
+   editorReady:document.documentElement.classList.contains('se127-editor-ready'),
+   splashVisibility:getComputedStyle(document.getElementById('se185Init')).visibility,
    panelPresent:!!p,panelVisible:!!p&&!p.hidden,
    hasViewport:!!p?.querySelector('canvas'),
    toolRail:!!p?.querySelector('#modelAtelierToolRail'),
@@ -50,6 +54,8 @@ const deadline=setTimeout(()=>{console.error('SE459_BROWSER_HARD_TIMEOUT');proce
  const fatal=errors.filter(e=>/ReferenceError|SyntaxError|TypeError|atelierViewModeApply|se458|se459/i.test(e));
  if(fatal.length)throw Error('Native script/runtime exception in actual browser: '+fatal.slice(0,3).join('; '));
  if(result.version!=='v11.459')throw Error('Engine build version never initialized in browser');
+ if(!result.editorReady||result.splashVisibility!=='hidden')
+  throw Error('Initial loading screen is actually displayed over the editor');
  if(!result.panelPresent||!result.toolRail)throw Error('Model Studio tool rail did not initialize');
  if(!result.hasViewport)throw Error('Model Studio canvas did not initialize');
  if(/Synchronizing scene and tools|Startup is taking longer than expected/i.test(result.visibleStatuses.join(' ')))
