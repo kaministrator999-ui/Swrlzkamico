@@ -1,0 +1,93 @@
+name: Guarded §C prose-intent precedence fix and live guest acceptance
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/hf-guest-prose-intent-override-release.yml'
+permissions: {contents: read}
+concurrency:
+  group: swrlz-chat-guest-eval
+  cancel-in-progress: false
+jobs:
+  release:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - name: Install pinned HF and Chromium packages
+        run: |
+          python -m pip install 'huggingface_hub>=0.34,<2' playwright==1.56.0
+          python -m playwright install --with-deps chromium
+      - run: python -m py_compile scripts/hf_guest_prose_intent_override_v1.py scripts/eval_chat_guest_suite.py
+      - name: Preflight exact live source and no-code precedence fixtures
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: python -u scripts/hf_guest_prose_intent_override_v1.py preflight
+      - uses: actions/upload-artifact@v4
+        with:
+          name: prose-intent-override-source-rollback-${{ github.run_id }}
+          path: reports/prose-intent-override-v1/
+          retention-days: 90
+          if-no-files-found: error
+      - name: Publish exact revision-guarded coder intent correction
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          SWRLZ_PROSE_OVERRIDE_APPROVED: '1'
+        run: python -u scripts/hf_guest_prose_intent_override_v1.py publish
+      - name: Confirm live 9B ready before eval
+        run: |
+          python - <<'PY'
+          import json,time,urllib.request
+          url="https://kamiloki-swyrlz.hf.space/api/hf/qwen35-ready"
+          for _ in range(20):
+              try:
+                  with urllib.request.urlopen(url,timeout=12) as response:
+                      data=json.load(response)
+                  if data.get("ready") is True:
+                      print("GUEST_MODEL_READY",data.get("model"),flush=True);break
+              except Exception:pass
+              time.sleep(10)
+          else:
+              raise RuntimeError("Model readiness not confirmed")
+          PY
+      - name: Test Python prose-only and JavaScript code continuity
+        id: tests
+        shell: bash
+        env:
+          SWRLZ_EVAL_BASE: https://kamiloki-swyrlz.hf.space
+          SWRLZ_EVAL_MODEL: 700m
+        run: |
+          set -uo pipefail
+          failures=0
+          for case in python-repair explain-then-code; do
+            rm -rf reports/chat-guest-eval
+            if SWRLZ_TEST_CASE="$case" python -u - <<'PY'
+          import os,asyncio,sys
+          import scripts.eval_chat_guest_suite as ev
+          name=os.environ["SWRLZ_TEST_CASE"]
+          ev.CASES["1"]=[x for x in ev.CASES["1"] if x["id"]==name]
+          if len(ev.CASES["1"])!=1:raise RuntimeError("Requested fixture unavailable")
+          sys.exit(asyncio.run(ev.main("live","1")))
+          PY
+            then status=0; else status=$?;failures=$((failures+1));fi
+            mkdir -p "reports/no-code-precedence-acceptance/$case"
+            if [[ -d reports/chat-guest-eval ]]; then
+              cp -a reports/chat-guest-eval/. "reports/no-code-precedence-acceptance/$case/"
+              cat reports/chat-guest-eval/summary.md >> "$GITHUB_STEP_SUMMARY" || true
+            fi
+            echo "PROSE_OVERRIDE_GUEST_CASE case=$case exit=$status"
+          done
+          echo "failures=$failures" >> "$GITHUB_OUTPUT"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: prose-override-guest-results-${{ github.run_id }}
+          path: reports/no-code-precedence-acceptance/
+          retention-days: 21
+          if-no-files-found: ignore
+      - name: Require both live cases pass
+        if: steps.tests.outputs.failures != '0'
+        run: exit 1
