@@ -1,0 +1,68 @@
+name: §C research synthesis v3 source and quality preflight
+on:
+  push:
+    branches: [fix/chat-general-research-synthesis-v3]
+    paths:
+      - "api/research_synthesis_v3.py"
+      - "api/selective_retrieval.py"
+      - "scripts/hf_chat_general_research_v3_release.py"
+      - "tests/test_hf_general_research_v3.py"
+      - ".github/workflows/hf-chat-general-research-v3-preflight.yml"
+permissions: {contents: read}
+jobs:
+  preflight:
+    runs-on: ubuntu-latest
+    timeout-minutes: 14
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.11"}
+      - name: Install existing HF client
+        run: python -m pip install --quiet "huggingface_hub>=0.34,<2"
+      - name: Run new and previous factual regression suites
+        run: |
+          set -euo pipefail
+          python -m unittest discover -s tests -p 'test_hf_general_research_v3.py' -v
+          python -m unittest discover -s tests -p 'test_hf_research_context_v2.py' -v
+          python -m unittest discover -s tests -p 'test_hf_factual_grounding_v1.py' -v
+          python -m py_compile api/research_synthesis_v3.py api/selective_retrieval.py scripts/hf_chat_general_research_v3_release.py
+      - name: Build and validate candidate against exact running §C source
+        run: |
+          set -euo pipefail
+          python -u scripts/hf_chat_general_research_v3_release.py --out swrlz-research-v3-rollback
+      - name: Retrieve real Blizzard class details and verify provenance and count
+        run: |
+          python - <<'PY'
+          import importlib.util,json,sys
+          from huggingface_hub import HfApi,hf_hub_download
+          from api.selective_retrieval import enrich_payload
+          from api.research_synthesis_v3 import source_ledger
+          space="kamiloki/Swyrlz"
+          rev=HfApi().repo_info(space,repo_type="space").sha
+          path=hf_hub_download(space,"api/online_research.py",repo_type="space",revision=rev)
+          spec=importlib.util.spec_from_file_location("swrlz_v3_provenance_check",path)
+          module=importlib.util.module_from_spec(spec);sys.modules[spec.name]=module;spec.loader.exec_module(module)
+          prompt="What were all the classes in Diablo 2 LoD?"
+          output,receipt=enrich_payload({"prompt":prompt},module.research,
+               fetch_page=module._page_fetch,enabled=True)
+          bundle=output.get("onlineContext") or {}
+          ledger=source_ledger(prompt,bundle)
+          facts=bundle.get("verifiedContext") or {}
+          detail=[i for i in ledger["sources"] if i["role"]=="historical_roster_member_detail"]
+          summary={"phase":receipt.get("phase"),"count":facts.get("total"),
+             "sources":len(ledger["sources"]),"sourceDetailCount":len(detail),
+             "detailMembers":[x["member"] for x in detail],
+             "sourceRoles":[x["role"] for x in ledger["sources"]]}
+          print("SWRLZ_RESEARCH_V3_PUBLIC_EVIDENCE "+json.dumps(summary),flush=True)
+          assert facts.get("total")==7,summary
+          assert len(detail)>=5,summary
+          assert len(set(x["member"] for x in detail))==len(detail),summary
+          assert "Rogue" not in facts.get("classes",[])
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: swrlz-research-v3-staged-candidate-and-original-source
+          path: swrlz-research-v3-rollback/
+          retention-days: 7
+          if-no-files-found: warn
