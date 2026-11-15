@@ -1,0 +1,20 @@
+{
+  "schema": "swrlz-forge-release-prepare-v1",
+  "version": "v11.458",
+  "ownerApproved": true,
+  "reason": "Owner reported mobile Model Studio dock resizing unresponsive, hidden inspector leaving blank space, low-contrast cube faces/edges, and orbit pivot detached after Inset/Extrude.",
+  "sourcePatch": "patches/v11_458_dock_orbit_contrast.py",
+  "expectedPrevious": "v11.457",
+  "sourceIntegritySha256": "1cd6a48627945278c9b4756a63908cde3ede8c0c2fdc53960b06334260caa864",
+  "sourceBytes": 10164938,
+  "tests": [
+    "model_dock_orbit_contrast_v11_458.mjs",
+    "model_inset_top_steps_v11_454.mjs",
+    "model_face_flyouts_v11_458.mjs",
+    "model_view_readability_v11_458.mjs",
+    "model_conversion_no_face_gate_v11_458.mjs"
+  ],
+  "verificationRun": "https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/43682309681",
+  "scope": "§E only; preserve existing native topology, source material/UV, Undo, VR input, and existing camera zoom/yaw/pitch",
+  "physicalMobileVerified": false
+}
