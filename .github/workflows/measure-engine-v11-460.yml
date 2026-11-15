@@ -7,6 +7,8 @@ on:
       - "projects/swrlz-forge-moba/patches/v11_460_native_view_menu.py"
       - "projects/swrlz-forge-moba/runtime/model_native_view_commands_v11_460.js"
       - "projects/swrlz-forge-moba/tests/model_native_view_commands_v11_460.mjs"
+      - "projects/swrlz-forge-moba/tests/model_startup_guard_v11_460.mjs"
+      - "projects/swrlz-forge-moba/tests/model_view_readability_v11_460.mjs"
       - "projects/swrlz-forge-moba/tests/browser_modeler_view_controls_v11_460.cjs"
   workflow_dispatch:
 permissions: {contents: read}
