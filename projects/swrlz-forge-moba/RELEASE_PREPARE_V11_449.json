@@ -5,6 +5,6 @@
   "reason": "Repair model Meshes hierarchy dropping beneath viewport, restore draggable resize boundaries and native pinch/pan while Face selected; guarded topology vertex edit bake",
   "sourcePatch": "patches/v11_449_model_touch_layout.py",
   "expectedPrevious": "v11.448",
-  "verificationAttempt": 3,
-  "note": "Add existing precision-gizmo state to headless camera integration test."
+  "verificationAttempt": 4,
+  "note": "Guard Face-mode pinch ownership until both fingers release; avoid accidental triangle selection."
 }
