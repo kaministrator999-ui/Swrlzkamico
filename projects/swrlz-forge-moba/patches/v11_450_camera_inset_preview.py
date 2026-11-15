@@ -75,7 +75,7 @@ function se450NotifyDockResized(what){
  # Arm tool while waiting for an intentional tap; the tap first calls the
  # existing planar region selector and then Preview. Never Apply implicitly.
  armed=(ROOT/'runtime/model_armed_face_preview_v11_450.js').read_text(encoding='utf8')
- html=one(html,'/* SE448_INSET_ACTION_ROUTING_START */',armed+'\n/* SE448_INSET_ACTION_ROUTING_START */')
+ html=one(html,'/* SE446_PLANAR_FACE_TAP_START */',armed+'\n/* SE446_PLANAR_FACE_TAP_START */')
  html=one(html,
   " const result=se430ModelWorkshop.selectRegion(hitId,selection);",
   " const result=se450AfterPlanarFaceTap(se430ModelWorkshop.selectRegion(hitId,selection),hitId,selection);")
