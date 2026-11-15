@@ -151,15 +151,23 @@ def reference_pages(prompt: str, fetch_page: Any) -> list[dict[str, str]]:
         try:
             data = fetch_page(endpoint)
             raw = data.get("extract") if isinstance(data, dict) else None
-            article = json.loads(raw) if isinstance(raw, str) else {}
-            if article.get("type") not in ("standard", None):
+            if not isinstance(raw, str):
                 continue
-            article_title = _normalized(article.get("title"))
-            excerpt = _normalized(article.get("extract"))[:1200]
-            url = ((article.get("content_urls") or {}).get("desktop") or {}).get("page")
-            url = str(url or "").strip()
-            if not url.startswith("https://en.wikipedia.org/wiki/"):
-                url = "https://en.wikipedia.org/wiki/" + urllib.parse.quote(slug, safe=":_")
+            # Stable page fetch bounds/cleans HTML, potentially cutting the
+            # trailing extract_html field. Read complete scalar JSON values
+            # without trusting the entire repaired/truncated document.
+            def field(key: str) -> str:
+                found = re.search(r'"' + re.escape(key) +
+                                  r'"\s*:\s*("(?:\\.|[^"\\])*")', raw)
+                if found is None:
+                    return ""
+                value = json.loads(found.group(1))
+                return value if isinstance(value, str) else ""
+            if field("type") != "standard":
+                continue
+            article_title = _normalized(field("title"))
+            excerpt = _normalized(field("extract"))[:1200]
+            url = "https://en.wikipedia.org/wiki/" + urllib.parse.quote(slug, safe=":_")
             if article_title and excerpt:
                 pages.append({"title": article_title, "url": url, "snippet": excerpt})
         except (ValueError, KeyError, TypeError, OSError):
