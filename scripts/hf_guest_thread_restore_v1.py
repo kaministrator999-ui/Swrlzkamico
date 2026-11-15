@@ -65,10 +65,30 @@ def swap(text,a,b,name):
 
 def candidate(before):
     text=before.decode("utf-8")
-    if MARK in text:raise RuntimeError("Already patched")
-    text=swap(text,BASE,AFTER_BASE,"initial state")
-    text=swap(text,BEFORE,AFTER,"initial hydration")
-    text=swap(text,BEFORE_DRAFT,AFTER_DRAFT,"explicit new draft")
+    if "if(stationFirstHydration){" in text:
+        raise RuntimeError("First-hydration restore already exists; refuse duplicate")
+    # Live HF UI may already include the preparatory flag from a different
+    # source revision. Never duplicate the declaration.
+    if "let stationFirstHydration = true;" not in text:
+        text=swap(text,BASE,AFTER_BASE,"initial state")
+    else:
+        print("GUEST_RESTORE_PREEXISTING_FLAG_REUSED",flush=True)
+    live_before=BEFORE.replace(
+        "if(!draftThread && !chatThreads.some(",
+        "if(!draftThread && !stationAwaitingCommit && !chatThreads.some(")
+    live_after=AFTER.replace(
+        "if(!draftThread && !chatThreads.some(",
+        "if(!draftThread && !stationAwaitingCommit && !chatThreads.some(")
+    if live_before in text:
+        text=swap(text,live_before,live_after,"current Station hydration")
+    else:
+        text=swap(text,BEFORE,AFTER,"original Station hydration")
+    live_draft='const startDraft = () => { window.SwrlzForgeEmbedV1?.setThread(""); draftThread=true;'
+    live_replacement='const startDraft = () => { window.SwrlzForgeEmbedV1?.setThread(""); stationFirstHydration=false; draftThread=true;'
+    if live_draft in text:
+        text=swap(text,live_draft,live_replacement,"current New Chat")
+    else:
+        text=swap(text,BEFORE_DRAFT,AFTER_DRAFT,"original New Chat")
     return text.encode("utf-8")
 
 def static_checks(after):
