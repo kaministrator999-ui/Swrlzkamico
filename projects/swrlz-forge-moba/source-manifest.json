@@ -450,6 +450,6 @@
     "patches/v11_456_guided_primitive_conversion.py",
     "patches/v11_457_conversion_no_face_gate.py"
   ],
-  "finalBytes": 10155580,
-  "finalSha256": "e78c071295ac01b80c27c3987a95576750537b5f44e312d75dba876eceeb1601"
+  "finalBytes": 10156828,
+  "finalSha256": "558556a4bf340bd639663fc4081f86a0233f281981974a577790681b0a39ad78"
 }
