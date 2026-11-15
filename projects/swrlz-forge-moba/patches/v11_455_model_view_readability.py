@@ -17,8 +17,10 @@ def apply(html):
  css=(ROOT/'runtime/model_view_readability_v11_455.css').read_text('utf8')
  assert js.count('/* SE455_VIEW_READABILITY_START */')==1
  assert js.count('/* SE455_TRANSIENT_FACE_HIGHLIGHT_START */')==1
+ html=once(html,'SWYRL_ENGINE_DEPLOY_MARKER: V11_454_INSET_TOP_STEPS',MARKER)
  html=once(html,'/* SE454_INSET_TOP_STEPS_END */',
-  '/* SE454_INSET_TOP_STEPS_END */\n'+js)
+  '/* SE454_INSET_TOP_STEPS_END */\n'+
+  '/* Historical v11.454 marker: SWYRL_ENGINE_DEPLOY_MARKER: V11_454_INSET_TOP_STEPS */\n'+js)
  html=html.replace('</head>','<style id="se455ModelViewReadabilityStyles">\n'+css+'\n</style>\n</head>',1)
  html=once(html,
   "const atelierViewModes=['shaded','wireframe','overlay','xray'];",
@@ -96,7 +98,6 @@ function se455SolidSurface(mesh,part,mode){
   'window.se453RimBorderAdd?.(record);',
   'window.se453RimBorderAdd?.(record);\n  window.se455PreviewTintAdd?.(record);')
  for old,new in [
-   ('SWYRL_ENGINE_DEPLOY_MARKER: V11_454_INSET_TOP_STEPS',MARKER),
    ('ENGINE · MAKER v11.454','ENGINE · MAKER v11.455'),
    ('v11.454 · top-bar rim then inward depth','v11.455 · readable solid modeling and viewport modes'),
    ("window.SWRLZ_FORGE_BUILD={version:'v11.454'","window.SWRLZ_FORGE_BUILD={version:'v11.455'"),
