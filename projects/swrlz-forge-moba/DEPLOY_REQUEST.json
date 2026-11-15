@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT (owner-approved)",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.459",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_459_VIEWPORT_BOOT_GUARD",
-  "reason": "Restore Model Studio startup after v11.458 stalled at Synchronizing scene and tools. Real mobile Chromium found private atelierViewGlobal ReferenceError in legacy view helper; v11.459 delegates display mode to native selector and guards optional se458 renderer refs. Browser test confirms editor ready, splash hidden, canvas/tool rail available, and zero JS errors; preserve cube Inset and dock changes. Current-version test update: viewport mode changes are deferred during active topology preview and delegated to native controls; historical v11.455 test preserved. Browser-verified source SHA unchanged.",
-  "sourceCommit": "e77802cc6b05bd2ad4cd3679acff1f396a0f3b7a",
-  "sourceIntegritySha256": "fe8b0cd167da3d080c11bb4dc2406e87793815c80f649f0b3a9b45eee08f15c0"
+  "releaseVersion": "v11.460",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_460_NATIVE_VIEW_MENU",
+  "reason": "Owner-reported inert Model Studio Display and Camera menus. Real Chromium now verifies seven shading modes and four native camera presets via actual clicks; native owner bridge replaces invalid DOM selector; viewport popup raised above zoom toolbar z-index 2161 with mobile scrolling. Existing startup, Inset, Undo and VR architecture preserved.",
+  "sourceCommit": "d66c5f1f91c2dbe83c5b3f6175420c20cb7ba224",
+  "sourceIntegritySha256": "52a1ae0512dffc94a415a2e9391cda5b11385e8a8d3f91168685bbf4592cd1e5"
 }
