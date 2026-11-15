@@ -21,7 +21,7 @@ def trim_overlap(previous: str, continuation: str, *, max_scan: int = 1800) -> s
         # A restarted answer is not a continuation.
         return ""
     scan = min(len(previous), len(current), max_scan)
-    for size in range(scan, 15, -1):
+    for size in range(scan, 7, -1):
         if previous.endswith(current[:size]):
             return current[size:]
     return current
