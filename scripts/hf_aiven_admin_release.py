@@ -122,6 +122,8 @@ def release(mode: str) -> None:
              or os.environ.get("SWRLZ_ADMIN_GOOGLE_EMAIL", "").strip())
     if not owner:
         raise RuntimeError("PRIVATE_GOOGLE_OWNER_SECRET_REQUIRED")
+    if not all(os.environ.get(key, "").strip() for key in ("SWRLZ_AIVEN_API_TOKEN", "SWRLZ_AIVEN_PROJECT", "SWRLZ_AIVEN_SERVICE")):
+        raise RuntimeError("PRIVATE_AIVEN_MONITORING_SECRETS_REQUIRED")
     if api.repo_info(SPACE, repo_type="space").sha != revision:
         raise RuntimeError("LIVE_HF_SOURCE_CHANGED_BEFORE_DEPLOY")
     # Set these only from the CI secret store; values never enter repository files.
