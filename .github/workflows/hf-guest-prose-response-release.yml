@@ -1,0 +1,67 @@
+name: Guarded §C prose-only response mode and guest acceptance
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/hf-guest-prose-response-release.yml'
+permissions: {contents: read}
+concurrency:
+  group: swrlz-chat-guest-eval
+  cancel-in-progress: false
+jobs:
+  release:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 50
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - name: Install audited release and guest browser dependencies
+        run: |
+          python -m pip install 'huggingface_hub>=0.34,<2' playwright==1.56.0
+          python -m playwright install --with-deps chromium
+      - run: |
+          python -m py_compile scripts/hf_guest_prose_response_mode_fix.py
+          python -m py_compile scripts/eval_chat_guest_suite.py
+      - name: Snapshot current Space response mode and verify preservation cases
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: python -u scripts/hf_guest_prose_response_mode_fix.py preflight
+      - name: Preserve exact before and after source as rollback evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: hf-prose-response-rollback-${{ github.run_id }}
+          path: reports/chat-prose-response-mode/
+          retention-days: 90
+          if-no-files-found: error
+      - name: Publish guarded one-file mode correction
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          SWRLZ_PROSE_RESPONSE_APPROVED: '1'
+        run: python -u scripts/hf_guest_prose_response_mode_fix.py publish
+      - name: Run batch 1 in guest Chromium and API after publication
+        id: acceptance
+        continue-on-error: true
+        env:
+          SWRLZ_EVAL_BASE: https://kamiloki-swyrlz.hf.space
+          SWRLZ_EVAL_MODEL: 700m
+        run: python -u scripts/eval_chat_guest_suite.py --mode live --batch 1
+      - name: Report verified observations
+        if: always()
+        run: |
+          if [[ -f reports/chat-guest-eval/summary.md ]]; then
+            cat reports/chat-guest-eval/summary.md >> "$GITHUB_STEP_SUMMARY"
+          fi
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: hf-prose-response-guest-eval-${{ github.run_id }}
+          path: reports/chat-guest-eval/
+          retention-days: 14
+          if-no-files-found: ignore
+      - name: Distinguish incomplete acceptance from source publish
+        if: steps.acceptance.outcome == 'failure'
+        run: |
+          echo "::warning::Published source verified; live guest acceptance is not a full pass."
+          exit 1
