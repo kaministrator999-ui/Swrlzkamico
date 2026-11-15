@@ -27,6 +27,27 @@ jobs:
         run: python -m py_compile hf_space/aiven_admin.py scripts/hf_aiven_admin_release.py tests/test_hf_aiven_admin.py
       - name: Run owner-identity and safety regression suite
         run: python -m unittest discover -s tests -p 'test_hf_aiven_admin.py' -v
+      - name: Inspect live Google login structure (read-only, no credentials)
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          python - <<'PY'
+          import os, pathlib, re
+          from huggingface_hub import HfApi, hf_hub_download
+          api=HfApi(token=os.environ.get("HF_TOKEN") or None)
+          rev=api.repo_info("kamiloki/Swyrlz",repo_type="space").sha
+          path=hf_hub_download("kamiloki/Swyrlz","station.py",repo_type="space",revision=rev,token=os.environ.get("HF_TOKEN") or None)
+          lines=pathlib.Path(path).read_text().splitlines()
+          print("Station revision:",rev,"lines:",len(lines))
+          keys=("_hf_accounts","_account_session","verify_oauth2_token","email_verified","sid=uuid","sid = uuid","user={","user = {",'@app.post("/api/account/google")')
+          hits=[i for i,line in enumerate(lines) if any(key in line for key in keys)]
+          print("Auth structural hits:",hits[:35])
+          for i in hits[:25]:
+              value=lines[i].strip()[:190]
+              if re.search(r"token\s*=|secret\s*=|password\s*=|authorization",value,re.I):
+                  value="[redacted potentially sensitive initialization]"
+              print("source line",i+1,":",value)
+          PY
       - name: Verify against exact current HF Station (read-only)
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
