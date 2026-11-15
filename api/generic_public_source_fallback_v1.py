@@ -56,7 +56,7 @@ def wikipedia_public_fallback(question: Any, fetch_page: Any) -> list[dict[str,s
     if not topic or not callable(fetch_page):
         return []
     query_url=("https://en.wikipedia.org/w/rest.php/v1/search/page?"
-               "q="+quote(topic,safe="")+"&limit=4")
+               "q="+quote(topic,safe="")+"&limit=2")
     try:
         response=fetch_page(query_url)
         if not isinstance(response,dict) or int(response.get("status") or 0)!=200:
@@ -90,8 +90,10 @@ def wikipedia_public_fallback(question: Any, fetch_page: Any) -> list[dict[str,s
         if key.lower() in seen:
             continue
         seen.add(key.lower())
-        summary_url=("https://en.wikipedia.org/api/rest_v1/page/summary/"
-                     +quote(key,safe="_()-"))
+        summary_url=("https://en.wikipedia.org/w/api.php?"
+                     "action=query&prop=extracts&exintro=1&explaintext=1"
+                     "&exsentences=3&titles="+quote(key,safe="_()-")
+                     +"&format=json&formatversion=2")
         try:
             summary_page=fetch_page(summary_url)
             if not isinstance(summary_page,dict) or int(summary_page.get("status") or 0)!=200:
@@ -99,17 +101,24 @@ def wikipedia_public_fallback(question: Any, fetch_page: Any) -> list[dict[str,s
             dest=urlsplit(str(summary_page.get("finalUrl") or ""))
             if dest.scheme!="https" or dest.hostname!="en.wikipedia.org":
                 continue
-            if not dest.path.startswith("/api/rest_v1/page/summary/"):
+            if dest.path!="/w/api.php":
                 continue
-            summary=json.loads(str(summary_page.get("extract") or "")[:14000])
-            if not isinstance(summary,dict):
+            result_json=json.loads(str(summary_page.get("extract") or "")[:8000])
+            if not isinstance(result_json,dict):
                 continue
-            if str(summary.get("type") or "").lower()=="disambiguation":
+            query=result_json.get("query") or {}
+            pages_out=query.get("pages") or []
+            if not isinstance(pages_out,list) or len(pages_out)!=1:
+                continue
+            summary=pages_out[0]
+            if not isinstance(summary,dict) or "missing" in summary:
                 continue
             summary_title=_plain(summary.get("title"),160)
             if summary_title.lower()!=title.lower():
                 continue
             excerpt=_plain(summary.get("extract"),650)
+            if re.search(r"\bmay refer to\b",excerpt,re.I):
+                continue
             if len(excerpt)<45:
                 continue
             result.append({
