@@ -96,14 +96,19 @@ jobs:
           module=importlib.util.module_from_spec(spec)
           sys.modules[spec.name]=module
           spec.loader.exec_module(module)
-          prompt="Diablo II Classic versus Lord of Destruction expansion release date"
-          result=module.research({"prompt":prompt,"researchQueries":[prompt],
+          from api.selective_retrieval import search_queries,bounded_evidence
+          prompt="Was Diablo II Classic released before Lord of Destruction expansion?"
+          queries=search_queries(prompt)
+          result=module.research({"prompt":prompt,"researchQueries":queries,
                                   "requestId":"selective-retrieval-synthetic-probe"})
           evidence=result.get("evidence") or []
+          selected=bounded_evidence(result,query=prompt)
           print("HF_SELECTIVE_LIVE_PROVIDER "+json.dumps({
-             "provider":result.get("provider"),"resultCount":len(evidence),
-             "errors":[x.get("error","")[:100] for x in (result.get("errors") or [])],
-             "sampleTitles":[str(x.get("title") or "")[:120] for x in evidence[:3]]
+             "provider":result.get("provider"),"rawResults":len(evidence),
+             "relevantResults":selected["resultCount"],
+             "queryPlan":queries,
+             "sampleTitles":[str(x.get("title") or "")[:120] for x in selected["evidence"][:4]]
           }))
-          if not evidence:raise RuntimeError("LIVE_PUBLIC_RESEARCH_RETURNED_NO_EVIDENCE")
+          if not selected["resultCount"]:
+              raise RuntimeError("NO_RELEVANT_DIABLO_II_PUBLIC_EVIDENCE")
           PY
