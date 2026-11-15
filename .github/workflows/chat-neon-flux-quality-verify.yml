@@ -5,6 +5,8 @@ on:
     paths:
       - "scripts/html_code_quality_v1.py"
       - "scripts/test_html_code_quality_v1.py"
+      - "scripts/hf_chat_html_quality_v2_release.py"
+      - "scripts/test_hf_html_quality_v2.py"
       - ".github/workflows/chat-neon-flux-quality-verify.yml"
   pull_request:
     paths:
@@ -22,8 +24,9 @@ jobs:
         run: python -m pip install 'huggingface_hub>=0.34,<2'
       - name: Compile and test code quality improvements
         run: |
-          python -m py_compile scripts/html_code_quality_v1.py scripts/test_html_code_quality_v1.py scripts/hf_chat_html_quality_v2_release.py
+          python -m py_compile scripts/html_code_quality_v1.py scripts/test_html_code_quality_v1.py scripts/hf_chat_html_quality_v2_release.py scripts/test_hf_html_quality_v2.py
           python -m unittest discover -s scripts -p test_html_code_quality_v1.py -v
+          python -m unittest discover -s scripts -p test_hf_html_quality_v2.py -v
       - name: Guarded preflight only (no Space publication)
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
