@@ -90,7 +90,9 @@ def preflight(api, token: str):
     ):
         if needle not in module:
             raise RuntimeError("ADMIN_GUARD_INCOMPLETE")
-    if b"_install_aiven_admin(app, _legacy_account_session)" not in updated:\n        raise RuntimeError("UNVERIFIED_ADMIN_ACCOUNT_SESSION_GUARD")\n    if b"from aiven_admin import install" not in updated:
+    if b"_install_aiven_admin(app, _legacy_account_session)" not in updated:
+        raise RuntimeError("UNVERIFIED_ADMIN_ACCOUNT_SESSION_GUARD")
+    if b"from aiven_admin import install" not in updated:
         raise RuntimeError("HF_ADMIN_INSTALL_HOOK_MISSING")
     if b"google_id_token.verify_oauth2_token(" not in updated:
         raise RuntimeError("GOOGLE_TOKEN_VERIFICATION_LOST")
