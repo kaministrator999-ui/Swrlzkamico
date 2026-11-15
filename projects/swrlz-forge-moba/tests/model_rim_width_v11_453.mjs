@@ -24,6 +24,7 @@ for(const token of [
 assert(!js.includes('api().apply('),'Drag must never Apply geometry');
 assert(!js.includes('checkpoint('),'Rim handle may not add history');
 let created=0,disposed=0;
+class Vec{constructor(x,y,z){this.x=x;this.y=y;this.z=z;}}
 class Geo{setFromPoints(points){this.points=points;created++;return this;}dispose(){disposed++;}}
 class Material{constructor(options){this.options=options;}dispose(){disposed++;}}
 class Loop{constructor(geometry,material){this.geometry=geometry;this.material=material;this.userData={};}}
@@ -33,7 +34,7 @@ const part={partId:'cube'};
 const sandbox=vm.createContext({
  window:{},se430BeginnerState:{panel:null},
  se430BeginnerAPI:()=>({inspect:()=>null}),se430BeginnerInstall:()=>{},se430BeginnerTick:()=>{},se430BeginnerRefresh:()=>{},
- THREE:{LineLoop:Loop,BufferGeometry:Geo,LineBasicMaterial:Material},
+ THREE:{LineLoop:Loop,BufferGeometry:Geo,LineBasicMaterial:Material,Vector3:Vec},
  se430MeshOps:{region:()=>({ok:true,boundary:[0,1,2,3]})},
  requestAnimationFrame:()=>{},partById:()=>part,
  panel:null,camera:null,renderer:null,modelRoot:null
