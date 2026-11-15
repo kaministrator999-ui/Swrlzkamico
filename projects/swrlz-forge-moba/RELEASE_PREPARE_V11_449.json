@@ -5,6 +5,6 @@
   "reason": "Repair model Meshes hierarchy dropping beneath viewport, restore draggable resize boundaries and native pinch/pan while Face selected; guarded topology vertex edit bake",
   "sourcePatch": "patches/v11_449_model_touch_layout.py",
   "expectedPrevious": "v11.448",
-  "verificationAttempt": 5,
-  "note": "Include pinch ownership declaration in headless model touch test extraction, production source unchanged."
+  "verificationAttempt": 6,
+  "note": "Add native planar face selection to headless single-touch regression mock; production patch unchanged."
 }
