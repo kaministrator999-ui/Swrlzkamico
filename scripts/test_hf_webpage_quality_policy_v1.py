@@ -77,4 +77,41 @@ def generate_events(payload):
         self.assertIn('result["webPageQualityRisks"]=quality_flags',patched)
         self.assertEqual(patched.count('fitted=_fit_messages('),1)
 
+
+class ReleaseReadinessTests(unittest.TestCase):
+    def _gate(self, stage="RUNNING_APP_STARTING", native_ok=True):
+        import types
+        filename=Path(__file__).resolve().parent/"hf_webpage_quality_release.py"
+        node=next(n for n in ast.parse(filename.read_text("utf-8")).body
+                  if isinstance(n,ast.FunctionDef) and n.name=="healthy")
+        class Clock:
+            elapsed=0.
+            def monotonic(self):return self.elapsed
+            def sleep(self,seconds):self.elapsed+=seconds
+        clock=Clock()
+        events=[]
+        def fake_get(path):
+            if "native" in path:
+                return {"backendSelected":native_ok,"nativeSETGET":native_ok,
+                        "nativeLua":native_ok}
+            return {"ok":True}
+        ns={"time":clock,"SPACE":"kamiloki/Swyrlz",
+            "get_status":fake_get,"emit":lambda *a,**kw:events.append((a,kw))}
+        exec(compile(ast.Module(body=[node],type_ignores=[]),"<readiness>","exec"),ns)
+        api=types.SimpleNamespace(get_space_runtime=lambda space:types.SimpleNamespace(stage=stage))
+        return ns["healthy"](api,deadline=18),events
+
+    def test_starting_but_functional_app_is_accepted_after_repeated_checks(self):
+        accepted,events=self._gate(stage="RUNNING_APP_STARTING")
+        self.assertTrue(accepted)
+        self.assertEqual(events[-1][0][0],"SWRLZ_WEB_QUALITY_RUNTIME_PASS")
+
+    def test_build_error_stage_is_not_accepted(self):
+        accepted,events=self._gate(stage="BUILD_ERROR")
+        self.assertFalse(accepted)
+
+    def test_bad_valkey_response_is_not_accepted(self):
+        accepted,events=self._gate(stage="RUNNING",native_ok=False)
+        self.assertFalse(accepted)
+
 if __name__=="__main__":unittest.main()
