@@ -17,8 +17,11 @@ from scripts.hf_chat_factual_grounding_v1 import patch_engine, MARKER
 
 BUNDLE = {
     "contractId":"swrlz-selective-evidence-v1",
-    "resultCount":4,
+    "resultCount":5,
     "evidence":[
+        {"title":"Blizzard Diablo II: Lord of Destruction original manual",
+         "url":"https://ftp.blizzard.com/pub/misc/Diablo%20II%20-%20Lord%20of%20Destruction.pdf",
+         "excerpt":"Original Diablo II contains Acts I-IV. The Lord of Destruction expansion adds Act V, the Druid and Assassin character classes, and a larger stash."},
         {"title":"Diablo II original game release dates",
          "url":"https://www.pcgamingwiki.com/wiki/Diablo_II",
          "excerpt":"Release dates Windows June 29, 2000."},
