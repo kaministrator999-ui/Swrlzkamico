@@ -121,6 +121,17 @@ def validate_roster_answer(answer: str, facts: Any, ledger: dict[str,Any]) -> di
                 reasons.append("unsupported_member_detail:"+name)
     if len(enumerated)!=len(expected) or set(enumerated)!=expected_names:
         reasons.append("incomplete_or_extra_member_list")
+    # A correct bullet roster is not a license to invent unsupported facts
+    # about one of its members elsewhere in the explanation.
+    for line in text.splitlines():
+        if _ENTRY.match(line):continue
+        if not re.search(r"\b(?:can|uses|wields|transforms|shapeshifts|summons|"
+                         r"specializes|casts|attacks)\b",line,re.I):
+            continue
+        for name in expected:
+            if re.search(r"\b"+re.escape(name)+r"\b",line,re.I):
+                if not member_description_supported(name,line,ledger):
+                    reasons.append("unsupported_narrative_detail:"+name)
     return {"status":"REJECT" if reasons else "PASS",
             "reasons":list(dict.fromkeys(reasons))[:16],
             "verifiedScope":"membership_count_and_description_lexical_support_only"}
@@ -135,7 +146,7 @@ def source_links(ledger: dict[str,Any],max_sources:int=9)->str:
         title=card["title"].replace("[","").replace("]","")
         result.append("["+title+"]("+url+")")
         if len(result)>=max_sources:break
-    return ("\n\n**Sources:** "+" · ".join(result)) if result else ""
+    return ("\n\n**Sources checked**\n"+"\n".join("- "+item for item in result)) if result else ""
 
 
 def fallback_from_verified_facts(facts:Any, ledger:dict[str,Any])->str:
@@ -167,4 +178,9 @@ def fallback_from_verified_facts(facts:Any, ledger:dict[str,Any])->str:
 
 def strip_generated_links(text: str) -> str:
     """Replace generated Markdown links; server source URLs remain authoritative."""
-    return re.sub(r"\[([^\]\n]{1,120})\]\(https?://[^)\s]+\)",r"\1",str(text or "")).strip()
+    cleaned=re.sub(r"\[([^\]\n]{1,120})\]\(https?://[^)\s]+\)",r"\1",str(text or "")).strip()
+    # Generated URLs are not source authority; replace trailing model-made
+    # bibliography with one built from actual server source cards.
+    cleaned=re.sub(r"(?mis)^\s*(?:#{1,3}\s*)?\*{0,2}Sources\*{0,2}\s*:\s*.*$",
+                   "",cleaned).rstrip()
+    return cleaned
