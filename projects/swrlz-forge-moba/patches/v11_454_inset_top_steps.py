@@ -18,12 +18,12 @@ def apply(html):
  assert js.startswith('/* SE454_INSET_TOP_STEPS_START */')
  assert js.rstrip().endswith('/* SE454_INSET_TOP_STEPS_END */')
  assert css.startswith('/* SE454_INSET_TOP_STEPS_STYLES_START */')
+ html=once(html,'SWYRL_ENGINE_DEPLOY_MARKER: V11_453_INSET_RIM_WIDTH',MARKER)
  html=once(html,'/* SE453_INSET_RIM_WIDTH_END */',
  '/* SE453_INSET_RIM_WIDTH_END */\n'+
  '/* Historical v11.453 marker: SWYRL_ENGINE_DEPLOY_MARKER: V11_453_INSET_RIM_WIDTH */\n'+js)
  html=html.replace('</head>','<style id="se454InsetTopStepsStyles">\n'+css+'\n</style>\n</head>',1)
  for old,new in [
-   ('SWYRL_ENGINE_DEPLOY_MARKER: V11_453_INSET_RIM_WIDTH',MARKER),
    ('ENGINE · MAKER v11.453','ENGINE · MAKER v11.454'),
    ('v11.453 · visible adjustable inset rim','v11.454 · top-bar rim then inward depth'),
    ("window.SWRLZ_FORGE_BUILD={version:'v11.453'","window.SWRLZ_FORGE_BUILD={version:'v11.454'"),
