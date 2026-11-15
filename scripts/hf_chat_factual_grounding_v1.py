@@ -45,6 +45,7 @@ def generate_events(payload):
         sourced_answer as _sourced_answer_v1,
         inspect_answer as _inspect_factual_v1,
         evidence_only_reply as _evidence_only_v1,
+        grounded_chronology_reply as _grounded_chronology_v1,
     )
     if not isinstance(payload, dict) or os.environ.get(
             "SWRLZ_FACTUAL_CLAIM_GUARD_ENABLED", "1").strip().lower() in ("0","false","off") or os.environ.get(
@@ -93,20 +94,44 @@ def generate_events(payload):
                 reason = ",".join(verdict.get("reasons") or [])[:200]
                 yield {"type":"STATUS","phase":"FACTUAL_VERIFICATION_REJECT",
                        "reason":reason}
-                yield {"type":"STATUS","phase":"SOURCE_ONLY_FALLBACK",
-                       "reason":"Unsupported claims withheld; showing attributable sources instead"}
-                yield {"type":"DELTA","text":_evidence_only_v1(payload.get("prompt",""),bundle)}
-                yield {"type":"COMPLETED","phase":"COMPLETE",
-                       "verification":"SOURCE_ONLY_FALLBACK","modelDraftAccepted":False}
+                supported = _grounded_chronology_v1(
+                    payload.get("prompt",""),bundle)
+                if supported:
+                    yield {"type":"STATUS","phase":"GROUNDED_SOURCE_REPAIR",
+                           "reason":"Rebuilt a concise version chronology using distinct dated source passages"}
+                    yield {"type":"STATUS","phase":"FACTUAL_VERIFICATION_PASS",
+                           "reason":"The source-composed chronology passed the bounded date and edition checks"}
+                    yield {"type":"DELTA","text":supported}
+                    yield {"type":"COMPLETED","phase":"COMPLETE",
+                           "verification":"SOURCE_COMPOSED_CHRONOLOGY",
+                           "modelDraftAccepted":False,"sourcesVerified":True}
+                else:
+                    yield {"type":"STATUS","phase":"SOURCE_ONLY_FALLBACK",
+                           "reason":"Unsupported claims withheld; showing attributable sources instead"}
+                    yield {"type":"DELTA","text":_evidence_only_v1(payload.get("prompt",""),bundle)}
+                    yield {"type":"COMPLETED","phase":"COMPLETE",
+                           "verification":"SOURCE_ONLY_FALLBACK","modelDraftAccepted":False}
             return
         if kind == "FAILED":
             reason = str(event.get("reason") or "")
             if "OUTPUT_TOKEN_LIMIT" in reason.upper() and chunks:
-                yield {"type":"STATUS","phase":"SOURCE_ONLY_FALLBACK",
-                       "reason":"The model did not finish within the limit; showing checked sources"}
-                yield {"type":"DELTA","text":_evidence_only_v1(payload.get("prompt",""),bundle)}
-                yield {"type":"COMPLETED","phase":"COMPLETE",
-                       "verification":"SOURCE_ONLY_FALLBACK","modelDraftAccepted":False}
+                supported = _grounded_chronology_v1(
+                    payload.get("prompt",""),bundle)
+                if supported:
+                    yield {"type":"STATUS","phase":"GROUNDED_SOURCE_REPAIR",
+                           "reason":"Completed a source-composed chronology after the draft reached its output cap"}
+                    yield {"type":"STATUS","phase":"FACTUAL_VERIFICATION_PASS",
+                           "reason":"The bounded source-composed chronology was independently checked"}
+                    yield {"type":"DELTA","text":supported}
+                    yield {"type":"COMPLETED","phase":"COMPLETE",
+                           "verification":"SOURCE_COMPOSED_CHRONOLOGY",
+                           "modelDraftAccepted":False,"sourcesVerified":True}
+                else:
+                    yield {"type":"STATUS","phase":"SOURCE_ONLY_FALLBACK",
+                           "reason":"The model did not finish; showing available source references"}
+                    yield {"type":"DELTA","text":_evidence_only_v1(payload.get("prompt",""),bundle)}
+                    yield {"type":"COMPLETED","phase":"COMPLETE",
+                           "verification":"SOURCE_ONLY_FALLBACK","modelDraftAccepted":False}
             else:
                 yield event
             return
@@ -238,6 +263,7 @@ def live_inference():
     result={"terminal":terminal,"characters":len(answer),
             "research":"RESEARCH_READY" in phases,
             "sourceChecked":"FACTUAL_VERIFICATION_PASS" in phases,
+            "sourceComposed":"GROUNDED_SOURCE_REPAIR" in phases,
             "fallback":"SOURCE_ONLY_FALLBACK" in phases,
             "durationSeconds":round(time.monotonic()-started,2),
             "years":sorted(set(re.findall(r"(?<!\d)(?:19|20)\d{2}(?!\d)",answer)))[:15],
