@@ -1,3 +1,7 @@
+## §E v11.463 · Transform toolbar recovery after Undo (2026-11-15)
+
+The original top Model Studio transform/history toolbar now stays visible when Undo deselects the mesh. Undo/Redo remain native, transforms disable until reselect, and camera/sidebars are untouched. Release validation and hosted activation remain separate; see `projects/swrlz-forge-moba/docs/MODEL_TRANSFORM_HISTORY_V11_463.md`.
+
 ## §E v11.462 · Clear editor wireframe and mobile dock sizing (2026-11-15)
 
 The next §E Model Studio display repair adds clean high-contrast topology edges, optional triangulation/hidden-line views, sharper inset Material shading and an improved phone viewport budget. All changes are non-destructive and follow a separate exact source-seal and Hugging Face deployment gate. See `projects/swrlz-forge-moba/docs/MODEL_WIRE_CLARITY_V11_462.md` for acceptance scope; verify workflow and actual hosted build before declaring live.
