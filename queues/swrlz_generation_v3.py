@@ -239,7 +239,18 @@ async def generate_swrlz_response(payload) -> None:
     )
     last_resource_phase = ""
     try:
-        for raw in engine.generate_events(engine_payload, cancelled):
+        # Coding turns use a bounded multi-pass executor. Ordinary conversation
+        # continues to use the original one-pass generation path unchanged.
+        from api.code_workspace import is_code_job, code_generation_events
+        source_intent = str((data.get("payload") or {}).get("presentationIntent")
+                            or data.get("presentationIntent") or "")
+        if is_code_job(prompt_text, source_intent):
+            event_source = code_generation_events(
+                engine, engine_payload, cancelled, store=store,
+                user_id=user_id, request_id=request_id, thread_id=thread_id)
+        else:
+            event_source = engine.generate_events(engine_payload, cancelled)
+        for raw in event_source:
             if not isinstance(raw, dict):
                 continue
             if is_structured_proposal_event(raw):
