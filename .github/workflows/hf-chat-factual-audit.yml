@@ -1,0 +1,42 @@
+name: Inspect §C live research evidence and answer generation seams
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/hf-chat-factual-audit.yml"]
+permissions: {contents: read}
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - run: python -m pip install --quiet "huggingface_hub>=0.34,<2"
+      - name: Read live revision and synthetic public-evidence bundle (no user data)
+        run: |
+          python - <<'PY'
+          from huggingface_hub import HfApi,hf_hub_download
+          from pathlib import Path
+          import re,json,sys,importlib.util
+          repo="kamiloki/Swyrlz";api=HfApi();rev=api.repo_info(repo,repo_type="space").sha
+          print("FACT_AUDIT_REV",rev,flush=True)
+          for path in ["lfm2_700m_engine.py","api/selective_retrieval.py","api/online_research.py","station.py"]:
+              body=Path(hf_hub_download(repo,path,repo_type="space",revision=rev)).read_text()
+              lines=body.splitlines()
+              print("FACT_AUDIT_FILE",json.dumps({"path":path,"lines":len(lines)}),flush=True)
+              spans={
+                "lfm2_700m_engine.py":[(740,765),(945,966),(1130,1185),(1190,1235),(1715,1805)],
+                "api/selective_retrieval.py":[(1,min(235,len(lines)))],
+                "station.py":[(1810,1890),(1970,2045)],
+              }.get(path,[])
+              for a,b in spans:
+                  print("FACT_AUDIT_WINDOW",json.dumps({"path":path,"a":a,"b":b,"lines":[str(i+1)+":"+lines[i][:300] for i in range(a-1,min(b,len(lines)))]}),flush=True)
+          prompt="Was Diablo II Classic released before Lord of Destruction? Research both versions and explain the differences."
+          source=hf_hub_download(repo,"api/selective_retrieval.py",repo_type="space",revision=rev)
+          spec=importlib.util.spec_from_file_location("swrz_live_retrieval",source)
+          m=importlib.util.module_from_spec(spec);sys.modules[spec.name]=m;spec.loader.exec_module(m)
+          page_source=hf_hub_download(repo,"api/online_research.py",repo_type="space",revision=rev)
+          spec2=importlib.util.spec_from_file_location("swrz_live_online",page_source)
+          p=importlib.util.module_from_spec(spec2);sys.modules[spec2.name]=p;spec2.loader.exec_module(p)
+          out,receipt=m.enrich_payload({"prompt":prompt},p.research,fetch_page=p._page_fetch,enabled=True)
+          data=out.get("onlineContext") or {}
+          print("FACT_AUDIT_EVIDENCE",json.dumps({"route":receipt,"bundle":data},ensure_ascii=False),flush=True)
+          PY
