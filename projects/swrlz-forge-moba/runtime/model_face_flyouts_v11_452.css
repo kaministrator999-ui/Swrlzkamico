@@ -1,0 +1,117 @@
+/* SE452_NATIVE_FACE_FLYOUTS_CSS_START */
+html #modelAtelierPanel[data-se452-native-face="1"] .atelier-body{
+ position:relative!important;isolation:isolate;
+}
+/* Release existing right inspector column only while Face flyouts are active. */
+html #modelAtelierPanel[data-se320-ui][data-se251-layout="desktop"][data-se452-face-open="true"] .atelier-body{
+ --se320-right:0px!important;
+ grid-template-columns:var(--se320-left) minmax(0,1fr) var(--se320-rail) 0px!important;
+}
+html #modelAtelierPanel[data-se452-face-open="true"] .atelier-body>.atelier-inspector,
+html #modelAtelierPanel[data-se452-face-open="true"] #se251-split-model-right{
+ display:none!important;
+}
+html #modelAtelierPanel[data-se452-native-face="1"] :is(#se452FaceOperations,#se452FaceModifiers){
+ position:absolute;box-sizing:border-box;z-index:60;top:6px;max-height:calc(100% - 12px);
+ border:1px solid #6a909c;background:#131c2d;color:#eaf4fa;border-radius:10px;
+ overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;touch-action:pan-y;
+ box-shadow:0 9px 26px #020810c7;
+}
+html #modelAtelierPanel[data-se452-native-face="1"] :is(#se452FaceOperations,#se452FaceModifiers)[hidden]{
+ display:none!important;
+}
+html #modelAtelierPanel[data-se452-native-face="1"] #se452FaceOperations{
+ width:158px;right:calc(var(--se320-rail,78px) + 6px);
+}
+html #modelAtelierPanel[data-se452-native-face="1"] #se452FaceModifiers{
+ width:260px;right:calc(var(--se320-rail,78px) + 172px);
+}
+html #modelAtelierPanel[data-se452-native-face="1"] :is(#se452FaceOperations,#se452FaceModifiers)>.se452-face-header{
+ display:flex;align-items:center;gap:7px;position:sticky;top:0;z-index:2;
+ padding:6px 8px;min-height:41px;background:#253447;
+ border-bottom:1px solid #537081;
+}
+html #modelAtelierPanel[data-se452-native-face="1"] .se452-face-header strong{
+ font:700 12px/1.35 system-ui;min-width:0;flex:1 1 auto;
+}
+html #modelAtelierPanel[data-se452-native-face="1"] .se452-face-header button{
+ flex:0 0 39px;min-width:39px;min-height:39px;padding:5px;
+ border:1px solid #5c8392;border-radius:6px;background:#293d54;
+ color:#f7ffff;font:700 21px system-ui;
+}
+html #modelAtelierPanel[data-se452-native-face="1"] #se452FaceOperationsContent{
+ padding:8px;
+}
+html #modelAtelierPanel[data-se452-native-face="1"] #se452FaceOperations #se445ShapeQuick{
+ display:block!important;width:auto!important;position:static!important;
+ margin:0!important;padding:0!important;border:0!important;background:transparent!important;
+ box-shadow:none!important;
+}
+html #modelAtelierPanel[data-se452-native-face="1"] #se452FaceOperations .se445-shape-caption{
+ display:none!important;
+}
+html #modelAtelierPanel[data-se452-native-face="1"] #se452FaceOperations .se445-shape-actions{
+ display:flex!important;flex-direction:column!important;gap:6px!important;
+}
+html #modelAtelierPanel[data-se452-native-face="1"] #se452FaceOperations [data-se445-op]{
+ width:100%!important;min-width:0!important;min-height:43px!important;
+ padding:7px 8px!important;text-align:left!important;font-size:12px!important;
+ white-space:normal!important;
+}
+html #modelAtelierPanel[data-se452-native-face="1"] #se452FaceOperations .se445-shape-hint{
+ display:block;margin:10px 1px;font:11px/1.45 system-ui;color:#c6dfe4;
+}
+html #modelAtelierPanel[data-se452-native-face="1"] #se452FaceModifiersContent{
+ padding:6px 8px 10px;
+}
+html #modelAtelierPanel[data-se452-native-face="1"] #se452FaceModifiers #se451FaceWorkflow{
+ margin:0!important;padding:4px!important;border:0!important;background:transparent!important;
+ box-shadow:none!important;
+}
+html #modelAtelierPanel[data-se452-native-face="1"] #se452FaceModifiers :is(#se451FaceWorkflow button,#se451FaceWorkflow input){
+ min-width:0;
+}
+html #modelAtelierPanel[data-se452-native-face="1"] :is(#se452FaceOperations,#se452FaceModifiers) :is(button,input):focus-visible{
+ outline:2px solid #8ff6d9;outline-offset:2px;
+}
+html #modelAtelierPanel[data-se251-layout="compact"][data-se452-face-open="true"] .atelier-body{
+ grid-template-rows:minmax(0,1fr) 54px 0px!important;
+}
+html #modelAtelierPanel[data-se251-layout="compact"] #se452FaceOperations,
+html #modelAtelierPanel[data-se251-layout="compact"] #se452FaceModifiers{
+ top:auto;bottom:calc(54px + 6px);right:7px;width:min(320px,calc(100% - 14px));
+ max-height:min(60dvh,480px);
+}
+html #modelAtelierPanel[data-se251-layout="compact"][data-se452-stage="operations"] #se452FaceOperations{
+ width:min(174px,calc(100% - 14px));
+}
+html #modelAtelierPanel[data-se251-layout="compact"][data-se452-stage="modifiers"] #se452FaceOperations{
+ display:none!important;
+}
+/* Browser desktop-site mode can produce a desktop editor on a phone; use
+   sequential stages there as well, rather than overlapping both flyouts. */
+@media(max-width:900px){
+ html #modelAtelierPanel[data-se452-face-open="true"] #se452FaceOperations,
+ html #modelAtelierPanel[data-se452-face-open="true"] #se452FaceModifiers{
+  top:auto;bottom:6px;right:calc(var(--se320-rail,78px) + 5px);
+  max-height:min(65dvh,490px);
+ }
+ html #modelAtelierPanel[data-se452-face-open="true"] #se452FaceOperations{
+  width:min(174px,calc(100% - 92px));
+ }
+ html #modelAtelierPanel[data-se452-face-open="true"] #se452FaceModifiers{
+  width:min(300px,calc(100% - 92px));
+ }
+ html #modelAtelierPanel[data-se452-stage="modifiers"] #se452FaceOperations{
+  display:none!important;
+ }
+ html #modelAtelierPanel[data-se251-layout="compact"][data-se452-face-open="true"] :is(#se452FaceOperations,#se452FaceModifiers){
+  right:7px;bottom:calc(54px + 6px);
+ }
+}
+@media(prefers-reduced-motion:reduce){
+ html #modelAtelierPanel[data-se452-native-face="1"] :is(#se452FaceOperations,#se452FaceModifiers){
+  transition:none!important;
+ }
+}
+/* SE452_NATIVE_FACE_FLYOUTS_CSS_END */
