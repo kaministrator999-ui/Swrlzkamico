@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT (owner-approved)",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.453",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_453_INSET_RIM_WIDTH",
-  "reason": "Show the coplanar inner rim border in Inset preview; add draggable viewport rim sizing and explicit safe vertex-edit bake. Preserve the existing Face tool flyouts, Apply/Cancel, Undo and camera.",
-  "sourceCommit": "d9b5c30bfac62be826d9c1181d12c67c438548d6",
-  "sourceIntegritySha256": "0765c780c57424e1cddc75e22051ba3dca7ba22f7dd20a987edf240a3c055a07"
+  "releaseVersion": "v11.454",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_454_INSET_TOP_STEPS",
+  "reason": "Two native top-of-viewport Set stages: adjustable Inset rim width, then signed inward Extrude depth, with live previews, stage-specific Cancel and separate Undo checkpoints. Preserve current project, Face flyouts, mobile camera and VR tools.",
+  "sourceCommit": "da06795b33d3337e32dd9d5a9abf34e1e645b4e3",
+  "sourceIntegritySha256": "886c6475a32ae86ca049148eb17b9cc04f69804be1008aa1336525a1c49155ab"
 }
