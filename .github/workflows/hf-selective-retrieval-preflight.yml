@@ -80,6 +80,34 @@ jobs:
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: python -u scripts/hf_chat_selective_retrieval_trial.py --out /tmp/swrlz-selective-preflight
+      - name: Check bounded public reference source access (no user data)
+        working-directory: trial-source
+        run: |
+          python - <<'PY'
+          import json,urllib.request,urllib.error
+          urls=[
+              "https://en.wikipedia.org/wiki/Diablo_II",
+              "https://en.wikipedia.org/wiki/Diablo_II:_Lord_of_Destruction",
+              "https://en.wikipedia.org/api/rest_v1/page/summary/Diablo_II",
+              "https://en.wikipedia.org/w/api.php?action=query&prop=extracts&explaintext=1&titles=Diablo_II&format=json",
+          ]
+          for url in urls:
+              status=None; preview=""; failure=None; content_type=None
+              try:
+                  req=urllib.request.Request(url,headers={
+                      "User-Agent":"SWRLZ-Research/2.0 (source-verification)",
+                      "Accept":"text/html,application/json"})
+                  with urllib.request.urlopen(req,timeout=10) as response:
+                      status=response.status
+                      content_type=response.headers.get("Content-Type")
+                      data=response.read(600)
+                  preview=data.decode("utf-8","replace")[:120]
+              except Exception as exc:
+                  failure=type(exc).__name__+":"+str(exc)[:80]
+              print("HF_SELECTIVE_PUBLIC_REFERENCE "+json.dumps({
+                  "url":url,"status":status,"contentType":content_type,
+                  "preview":preview,"error":failure}))
+          PY
       - name: Probe public Diablo II retrieval using the exact HF adapter
         working-directory: trial-source
         env:
