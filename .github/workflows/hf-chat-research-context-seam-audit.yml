@@ -20,9 +20,9 @@ jobs:
           rev=HfApi().repo_info(repo,repo_type="space").sha
           print("SWRLZ_EVIDENCE_AUDIT_REV",rev,flush=True)
           focus={
-            "lfm2_700m_engine.py":[(742,766),(944,967),(1108,1150)],
+            "lfm2_700m_engine.py":[(1960,2115)],
             "station.py":[(1378,1425),(1495,1555),(1570,1650),(1715,1800)],
-            "chat/§wyrlz/index.html":[(3574,3710),(4278,4328)],
+            "chat/§wyrlz/index.html":[(3574,3595),(3610,3650)],
             "api/selective_retrieval.py":[(1,90),(230,360)],
           }
           for path,ranges in focus.items():
