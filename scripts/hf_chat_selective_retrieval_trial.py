@@ -24,10 +24,12 @@ INJECTION = r'''def generate_events(payload):
     if os.environ.get("SWRLZ_SELECTIVE_RETRIEVAL_ENABLED") == "1":
         from api.selective_retrieval import enrich_payload
         try:
-            from api.online_research import research as _public_research
+            from api.online_research import research as _public_research, _page_fetch as _public_fetch
         except ImportError:
             _public_research = None
-        payload, _research_route = enrich_payload(payload, _public_research, enabled=True)
+            _public_fetch = None
+        payload, _research_route = enrich_payload(
+            payload, _public_research, fetch_page=_public_fetch, enabled=True)
         if _research_route["phase"] in ("RESEARCH_READY", "RESEARCH_UNAVAILABLE"):
             yield {"type": "STATUS", "phase": _research_route["phase"],
                    "reason": _research_route["reason"]}
