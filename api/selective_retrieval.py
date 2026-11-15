@@ -294,6 +294,14 @@ def extended_reference_pages(prompt: str, fetch_page: Any) -> list[dict[str, str
                        "classes, and a larger stash."),
             "referenceType":"pinned_first_party_document",
         })
+        references.append({
+            "title":"Blizzard Diablo II: Resurrected original 2021 announcement",
+            "url":"https://blizzard.gamespress.com/en/Diablo-II-Resurrected-Reopens-the-Gates-of-Hell-September-23",
+            "snippet":("Blizzard announced Diablo II: Resurrected for September 23, 2021. "
+                       "It is a remaster of Diablo II and its Lord of Destruction expansion, "
+                       "not the original 2000 base game."),
+            "referenceType":"pinned_first_party_document",
+        })
     return references
 
 
