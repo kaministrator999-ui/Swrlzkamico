@@ -1,0 +1,6 @@
+TARGET=kamiloki/Swyrlz
+APPROVED=1
+MODEL=qwen3.5-9b
+FEATURE=natural-evidence-grounded-research-v3
+SOURCE_REF=1bc0fd7e036d0fdf57a15d894083ec885d425c25
+REQUEST_NONCE=research-v3-20261115-narrative-accuracy-01
