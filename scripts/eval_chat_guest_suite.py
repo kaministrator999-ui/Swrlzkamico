@@ -30,13 +30,13 @@ CASES = {
       {"prompt":"For this fictional test, our spaceship is named Copper Finch. Acknowledge briefly.","require":["Copper Finch"]},
       {"prompt":"What is the name of our fictional spaceship? Answer with just its name.","require":["Copper Finch"]}]},
     {"id":"python-repair","lane":"api","turns":[
-      {"prompt":"An existing Python function add(a, b) incorrectly subtracts. Explain the small repair, no code yet.","require":[r"(?i)add",r"(?i)(add|sum|addition)"]},
+      {"prompt":"An existing Python function add(a, b) incorrectly subtracts. Explain the small repair, no code yet.","require":[r"(?i)add",r"(?i)(add|sum|addition)"],"forbid":[r"`{3}|(?m)^\s*def\s+add\s*\("]},
       {"prompt":"Now write only the corrected runnable Python function add(a, b).","check":"python_add"}]},
     {"id":"instruction-correction","lane":"api","turns":[
       {"prompt":"For our imaginary poster, use a BLUE triangle. Acknowledge briefly.","require":[r"(?i)blue"]},
       {"prompt":"Correction: make the triangle GREEN, not blue. Which is the final color?","require":[r"(?i)green"]}]},
     {"id":"explain-then-code","lane":"api","turns":[
-      {"prompt":"I eventually want a JavaScript square(n) function. For now explain the goal WITHOUT writing code.","require":[r"(?i)square"],"forbid":[r"(?i)function\s+square\s*\("]},
+      {"prompt":"I eventually want a JavaScript square(n) function. For now explain the goal WITHOUT writing code.","require":[r"(?i)square"],"forbid":[r"`{3}|(?i)function\s+square\s*\("]},
       {"prompt":"Now implement square(n) in JavaScript using multiplication, in a code block.","require":[r"(?i)square",r"(?i)return|=>"]}]}
   ],
   "2": [
@@ -188,23 +188,22 @@ async def api_turn(context, thread_id, prompt):
     return {**output,"ack_ms":ack_ms}
 
 async def dismiss_update_overlay(page):
-    """Close the first-run release notes through the actual guest UI; never click through by force."""
-    modal = page.get_by_text("What's new in Chat", exact=False)
-    if not await modal.count():
-        try:
-            await modal.first.wait_for(state="visible", timeout=3500)
-        except Exception:
-            return False
-    elif not await modal.first.is_visible():
+    """Close the actual first-run release notes by their Continue button."""
+    button=page.get_by_role("button",name="Continue",exact=True).first
+    try:
+        await button.wait_for(state="visible",timeout=7000)
+    except Exception:
         return False
-    button = page.get_by_role("button", name="Continue", exact=True)
-    if not await button.count():
-        raise RuntimeError("CHAT_UPDATE_MODAL_WITHOUT_CONTINUE_BUTTON")
-    checkbox = page.get_by_label("Don't show again for this update", exact=False)
+    # The deployed headline uses the curly apostrophe “What’s”, not “What's”.
+    # Confirm the overlay itself, then interact normally (never force-click Send).
+    heading=page.get_by_text(re.compile(r"what.s new in chat",re.I))
+    if not await heading.count():
+        return False
+    checkbox=page.get_by_label(re.compile(r"Don.t show again for this update",re.I))
     if await checkbox.count():
         await checkbox.first.check(timeout=5000)
-    await button.first.click(timeout=8000)
-    await button.first.wait_for(state="hidden", timeout=8000)
+    await button.click(timeout=8000)
+    await button.wait_for(state="hidden",timeout=8000)
     return True
 
 async def ui_turn(context,page,prompt,thread_id,turn_number):
