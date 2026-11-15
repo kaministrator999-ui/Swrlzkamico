@@ -22,11 +22,15 @@ jobs:
         with:
           python-version: "3.11"
       - name: Install test-only framework
-        run: python -m pip install 'fastapi>=0.110,<1'
+        run: python -m pip install 'fastapi>=0.110,<1' 'huggingface_hub>=0.24,<2'
       - name: Validate Python source syntax
         run: python -m py_compile hf_space/aiven_admin.py scripts/hf_aiven_admin_release.py tests/test_hf_aiven_admin.py
       - name: Run owner-identity and safety regression suite
         run: python -m unittest discover -s tests -p 'test_hf_aiven_admin.py' -v
+      - name: Verify against exact current HF Station (read-only)
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: python scripts/hf_aiven_admin_release.py --mode validate
       - name: Assert public Chat source is not imported
         run: |
           python - <<'PY'
