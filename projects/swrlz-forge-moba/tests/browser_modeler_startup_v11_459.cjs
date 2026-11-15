@@ -52,8 +52,8 @@ const deadline=setTimeout(()=>{console.error('SE459_BROWSER_HARD_TIMEOUT');proce
  if(result.version!=='v11.459')throw Error('Engine build version never initialized in browser');
  if(!result.panelPresent||!result.toolRail)throw Error('Model Studio tool rail did not initialize');
  if(!result.hasViewport)throw Error('Model Studio canvas did not initialize');
- if(/Synchronizing scene and tools/i.test(result.visibleStatuses.join(' ')))
-  throw Error('Scene/tools startup screen remains visible after initialization');
+ if(/Synchronizing scene and tools|Startup is taking longer than expected/i.test(result.visibleStatuses.join(' ')))
+  throw Error('Scene/tools startup warning still visible after initialization');
  console.log('SE459_REAL_BROWSER_BOOT_PASS: v11.459 page and Model Studio canvas/tool rail initialized without fatal script errors');
  process.exit(0);
 })().catch(e=>{clearTimeout(deadline);console.error('SE459_REAL_BROWSER_BOOT_FAIL '+(e.stack||e));process.exit(1)});
