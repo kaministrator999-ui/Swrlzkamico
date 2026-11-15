@@ -1,0 +1,10 @@
+{
+  "schema": "swrlz-forge-release-prepare-v1",
+  "version": "v11.456",
+  "ownerApproved": true,
+  "reason": "Expose Make Editable & Continue for one selected plain cube while Inset rim is armed; remove the circular face-selection precondition; preserve native Undo, source guards, and two-stage rim/depth preview",
+  "sourcePatch": "patches/v11_456_guided_primitive_conversion.py",
+  "expectedPrevious": "v11.455",
+  "verificationAttempt": 2,
+  "note": "Plain primitive converts before selecting a face. Vertex-edit bake still requires confirmation; protected meshes remain blocked. No geometry is committed by simply choosing Inset."
+}
