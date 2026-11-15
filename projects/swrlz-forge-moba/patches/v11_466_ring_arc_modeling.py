@@ -84,7 +84,7 @@ def apply(html):
         """native.querySelector('#modelAtelierWorkshopPreview').addEventListener('click',()=>{const amount=Number(native.querySelector('#modelAtelierWorkshopAmount').value);se430BeginnerResult(se430BeginnerAPI()?.preview(operation.value,se430BeginnerAmount(operation.value)?{amount}:{}));});""",
         """native.querySelector('#modelAtelierWorkshopPreview').addEventListener('click',()=>{
    const amount=Number(native.querySelector('#modelAtelierWorkshopAmount').value);
-   const val=id=>Number(native.querySelector('#'+id)?.value);
+   const val=id=>Number(panel.querySelector('#'+id)?.value);
    const ext=operation.value==='extrude'?{
     scale:val('modelAtelierWorkshopExtrudeScale'),leftScale:val('modelAtelierWorkshopExtrudeLeft'),
     rightScale:val('modelAtelierWorkshopExtrudeRight'),
@@ -95,8 +95,6 @@ def apply(html):
     html=one(html,'/* SE465_NARROW_INSPECTOR_END */',
         '/* SE465_NARROW_INSPECTOR_END */\n'+runtime('model_ring_ui_v11_466.js'))
     html=one(html,'se430BeginnerInstall(panel);','se430BeginnerInstall(panel);se466RingUIInstall(panel);')
-    html=one(html,"['Manual mesh modeling',['WorkshopOperation','WorkshopAmount','WorkshopConvert'",
-        "['Manual mesh modeling',['WorkshopOperation','WorkshopAmount','WorkshopExtrudeScale','WorkshopExtrudeLeft','WorkshopExtrudeRight','WorkshopExtrudeX','WorkshopExtrudeY','WorkshopExtrudeZ','WorkshopExtrudeTiltX','WorkshopExtrudeTiltY','WorkshopExtrudeTiltZ','WorkshopConvert'")
     css=runtime('model_ring_ui_v11_466.css')
     html=html.replace('</head>','<style id="se466RingModelStyles">\n'+css+'\n</style>\n</head>',1)
     html=one(html,'SWYRL_ENGINE_DEPLOY_MARKER: V11_465_INSPECTOR_READABILITY',MARKER)
