@@ -1,0 +1,44 @@
+name: Diagnose §E viewport and dock source (read-only)
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/diagnose-engine-model-viewport.yml"]
+  workflow_dispatch:
+permissions: {contents: read}
+jobs:
+  diagnostics:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.11"}
+      - name: Assemble source and print exact native handlers
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path("projects/swrlz-forge-moba/source-manifest.json")
+          j=json.loads(p.read_text());j["finalSha256"]=None;j["finalBytes"]=None
+          p.write_text(json.dumps(j,ensure_ascii=False))
+          PY
+          python projects/swrlz-forge-moba/build_space.py --output dist/diagnostics >/dev/null
+          python - <<'PY'
+          from pathlib import Path
+          h=Path("dist/diagnostics/index.html").read_text()
+          anchors=[
+           ("dragResize","function dragResize(node,what,side,dir){","function addSeparator(parent,what,side,dir){",9000),
+           ("dockSync","function sync(){\n const mode=layout();","function dragResize(",5500),
+           ("splitterCSS",".se251-resize-grip{","</style>",2100),
+           ("cameraGesture","function atelierCameraPointerDown(","function atelierCameraPointerMove(",5200),
+           ("cameraMove","function atelierCameraPointerMove(","function atelierCameraPointerUp(",5200),
+           ("cameraTarget","function cameraUpdate(){","function atelierViewportCameraInfoUpdate(",2300),
+           ("selectedWire","function atelierViewModeApply(mesh,part){","function atelierViewMode",4000)]
+          for label,start,end,n in anchors:
+           a=h.find(start);b=h.find(end,a+len(start)) if a!=-1 else -1
+           print("SWRLZ_DIAG_START",label,"position",a,"next",b,flush=True)
+           if a<0:continue
+           print(h[a:(min(a+n,b) if b>a else a+n)],flush=True)
+           print("SWRLZ_DIAG_END",label,flush=True)
+          PY
