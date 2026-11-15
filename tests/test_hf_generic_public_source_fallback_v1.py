@@ -40,10 +40,10 @@ class GenericPublicSourceFallbackTests(unittest.TestCase):
     def test_topic_normalization_is_about_question_not_fixed_diablo(self):
         self.assertEqual(search_terms(
             "Research: what are the moons of Mars? List their names."),
-            "moons Mars")
+            "moons of Mars")
         self.assertEqual(search_terms(
             "List all the planets of the Solar System"),
-            "planets of Solar System".replace(" of "," "))
+            "planets of Solar System")
         self.assertEqual(search_terms(""),"")
 
     def test_retrieve_real_matched_summary_and_ignore_irrelevant_search_hits(self):
