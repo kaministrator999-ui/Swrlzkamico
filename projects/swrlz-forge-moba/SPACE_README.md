@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.461
+title: §wyrl§ Engine v11.462
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,13 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+## §E v11.462 · Clean wireframe and mobile viewport balance (2026-11-15)
+
+The owner's v11.461 screenshots show a valid recessed cube and working side-panel drags, but the wireframe displays faint internal triangles, Shaded Wire lacks contrast, Material smooths the inset appearance, and a wide inspector crowds the viewport. The next patch adds display-only angle-filtered Wireframe with optional hidden edges/triangle diagnostics, brighter selected/visible edges, hard-face Material shading on bounded editable topology, and a larger native viewport width budget on phone-style desktop layouts. It preserves existing indexed mesh/UV/Undo, Inset/Extrude previews, orbit, VR and dock pointer handlers. Source seal, guarded HF publication, and physical phone acceptance are separate evidence gates.
+
+See [v11.462 model view checkpoint](docs/MODEL_WIRE_CLARITY_V11_462.md) for scope, checks and limitations.
+
+
 ## §E v11.461 · Correct inset rim shading, orbit pivot and touch splitters (2026-11-15)
 
 User validation of v11.460 showed: Shaded Wire outlines a geometrically correct inset cube but Solid and Shaded Wire make the rim appear rounded/distorted; mobile dock resize grips do not respond reliably; and orbit spins around a point detached from the model after panning. Native `atelierTopologyGeometry` uses an indexed mesh with `computeVertexNormals()`, averaging normals across the hard rim. For bounded low-poly editable topology, v11.461 applies **display-only flat lighting** in Solid and Shaded Wire without changing source vertex/triangle/UV indices, authored materials, model geometry or Undo; Solid/Flat/Clay also show thin occluded angle-filtered crease guides even when no mesh is selected. Dense/curved model geometry retains its existing smooth shading.
