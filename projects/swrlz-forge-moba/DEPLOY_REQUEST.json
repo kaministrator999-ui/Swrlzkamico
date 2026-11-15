@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT (owner-approved)",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.457",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_457_CONVERSION_NO_FACE_GATE",
-  "reason": "Screenshot-backed repair: make both top Inset and right Face conversion actions usable on an unconverted selected cube with no face selected and zero object-level selections; retain native sculpt-bake confirmation, Undo, source validation, and two-stage Inset depth. Release retry: v11.457 rim-width regression replaces historical v11.453 label expectation; original regression remains untouched.",
-  "sourceCommit": "f773dd2647c8bcb80f95334e899e744b5c6afa09",
-  "sourceIntegritySha256": "558556a4bf340bd639663fc4081f86a0233f281981974a577790681b0a39ad78"
+  "releaseVersion": "v11.458",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_458_DOCK_ORBIT_CONTRAST",
+  "reason": "Screenshot-backed repairs: restore model dock drag sizing and collapsed inspector viewport space; sharpen selected mesh edges in Solid/Flat/Clay; correct detached orbit target after Inset/Extrude without changing zoom, yaw or pitch. Preserve native mesh editing, Undo, textures, VR and two-stage Inset.",
+  "sourceCommit": "a895328efe8112bf583d91f79ebc797b16c0e9c9",
+  "sourceIntegritySha256": "1cd6a48627945278c9b4756a63908cde3ede8c0c2fdc53960b06334260caa864"
 }
