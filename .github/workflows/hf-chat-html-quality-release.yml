@@ -1,0 +1,71 @@
+name: Guarded §C source-aware HTML quality release
+on:
+  push:
+    branches: [main]
+    paths: [".deploy/HF_CHAT_HTML_QUALITY_REQUEST.txt"]
+permissions: {contents: read}
+concurrency:
+  group: swrlz-hf-space-deployment
+  cancel-in-progress: false
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 48
+    steps:
+      - uses: actions/checkout@v4
+      - name: Require explicit user authorization and pinned implementation
+        id: approve
+        shell: bash
+        run: |
+          set -euo pipefail
+          p=.deploy/HF_CHAT_HTML_QUALITY_REQUEST.txt
+          test -f "$p"
+          get() { sed -n "s/^$1=//p" "$p" | tail -n 1; }
+          test "$(get TARGET)" = "kamiloki/Swyrlz"
+          test "$(get APPROVED)" = "1"
+          test "$(get CHANGE_SCOPE)" = "source-preserving-coding-quality-and-html-validation"
+          test "$(get MODEL)" = "qwen3.5-9b"
+          test "$(get THREADS)" = "18"
+          test "$(get CONTEXT_TOKENS)" = "16384"
+          ref="$(get SOURCE_REF)"
+          nonce="$(get REQUEST_NONCE)"
+          [[ "$ref" =~ ^[0-9a-f]{40}$ ]]
+          [[ "$nonce" =~ ^[a-z0-9-]{12,96}$ ]]
+          echo "ref=$ref" >> "$GITHUB_OUTPUT"
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.approve.outputs.ref }}
+          path: release-source
+          fetch-depth: 1
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: python -m pip install --quiet "huggingface_hub>=0.34,<2"
+      - name: Verify code quality and patch contract
+        working-directory: release-source
+        run: |
+          set -euo pipefail
+          python -m py_compile scripts/html_code_quality_v1.py scripts/hf_chat_html_quality_release_v1.py
+          python -m unittest discover -s scripts -p "test_html_code_quality_v1.py" -v
+          python -m unittest discover -s scripts -p "test_hf_chat_html_quality_release_v1.py" -v
+      - name: Read exact live source, snapshot prior bytes and preflight safe patch
+        working-directory: release-source
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: python -u scripts/hf_chat_html_quality_release_v1.py preflight
+      - uses: actions/upload-artifact@v4
+        with:
+          name: swrlz-html-quality-v1-exact-prior-source
+          path: release-source/swrlz-html-quality-v1-backup/
+          retention-days: 14
+          if-no-files-found: error
+      - name: Publish guarded quality update, then require live model and coding acceptance
+        working-directory: release-source
+        timeout-minutes: 37
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          SWRLZ_HTML_QUALITY_APPROVED: "1"
+        run: |
+          set -euo pipefail
+          python -u scripts/hf_chat_html_quality_release_v1.py publish
+          echo "SWRLZ_HTML_QUALITY_LIVE_VERIFIED"
