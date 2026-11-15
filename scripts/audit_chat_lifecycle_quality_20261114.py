@@ -41,5 +41,18 @@ def main():
   source=Path(hf_hub_download(SPACE,path,repo_type="space",revision=rev,token=token)).read_text(encoding="utf8")
   print("BEGIN_AUDIT",path,"chars",len(source),"sha256",hashlib.sha256(source.encode()).hexdigest(),flush=True)
   for line in dump(source,PATTERNS[path]):print(line,flush=True)
+  ranges={
+    FILES[0]:[(3985,4010),(4250,4330),(4680,4740),(4818,4850)],
+    FILES[1]:[(1252,1310),(1704,1732),(2015,2090),(2120,2175)],
+    FILES[2]:[(320,370),(555,585),(754,851),(1107,1140),(1255,1403)]
+  }[path]
+  lines=source.splitlines()
+  for a,b in ranges:
+   print("BEGIN_FOCUSED",path,a,b,flush=True)
+   for i in range(a-1,min(len(lines),b)):
+    line=lines[i][:290]
+    if re.search(r"(secret|password|api_key|hf_token|bearer|authorization)[^a-z]",line,re.I):line="<sensitive source line withheld>"
+    print(str(i+1)+": "+line,flush=True)
+   print("END_FOCUSED",path,a,b,flush=True)
   print("END_AUDIT",path,flush=True)
 if __name__=="__main__":main()
