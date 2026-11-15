@@ -60,6 +60,17 @@ def apply(html):
         "    previewActive:active(),camera:se430ModelCamera.inspect()?.view||'orbit'})",
         "    previewActive:active(),camera:window.SWYRL_ENGINE_MODEL_VIEW?.inspect?.()?.camera||'orbit'})")
     html=html[:a]+display+html[b:]
+    # On shorter phone viewports the View menu sat BELOW the zoom-control
+    # stacking context, making X-Ray and the lower camera choices untappable.
+    # Raise only this native view flyout and bound its height for short screens.
+    html=one(html,
+        "position:absolute;top:92px;left:8px;z-index:126;",
+        "position:absolute;top:92px;left:8px;z-index:560;")
+    html=one(html,
+        "box-shadow:0 8px 28px #03060ae6;",
+        "box-shadow:0 8px 28px #03060ae6;\n"
+        " max-height:min(380px,calc(100dvh - 235px));overflow-y:auto;\n"
+        " overscroll-behavior:contain;touch-action:pan-y;")
 
     html=one(html,"SWYRL_ENGINE_DEPLOY_MARKER: V11_459_VIEWPORT_BOOT_GUARD",MARKER)
     html=one(html,"/* SE460_NATIVE_VIEW_COMMANDS_END */",
