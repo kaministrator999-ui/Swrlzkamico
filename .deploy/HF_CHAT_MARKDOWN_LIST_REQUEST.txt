@@ -1,0 +1,5 @@
+TARGET=kamiloki/Swyrlz
+APPROVED=1
+FEATURE=markdown-list-numbering-ui-v1
+SOURCE_REF=2961bfb8b494778fee5bc861181f28b8ce306cab
+REQUEST_NONCE=markdown-list-20261115-ordered-continuity-ui-01
