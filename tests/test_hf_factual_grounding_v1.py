@@ -137,6 +137,65 @@ class GroundingGuardTests(unittest.TestCase):
         refs=extended_reference_pages("Was Diablo II released in 2000?",malicious)
         self.assertEqual(refs,[])
 
+    def test_engine_wrapper_never_streams_unverified_draft(self):
+        from unittest.mock import patch
+        original = (
+            "from __future__ import annotations\nimport os\n"
+            "def generate_events(payload):\n"
+            "    # swrlz-selective-factual-retrieval-v1\n"
+            "    # swrlz-research-answer-limit-recovery-v1\n"
+            "    yield {'type':'STATUS','phase':'GENERATING'}\n"
+            "    yield {'type':'DELTA','text':payload.get('fakeDraft','')}\n"
+            "    if payload.get('fakeFailure'):\n"
+            "        yield {'type':'FAILED','reason':'OUTPUT_TOKEN_LIMIT'}\n"
+            "    else:\n"
+            "        yield {'type':'COMPLETED','phase':'COMPLETE'}\n"
+            "    # Literal anchor checked by deploy patch:\n"
+            "    # yield {\"type\":\"COMPLETED\",\"phase\":\"COMPLETE\"}\n"
+        ).encode()
+        staged=patch_engine(original)
+        sandbox={"__name__":"swrz_synthetic_factual_engine"}
+        exec(compile(staged,"<synthetic_grounding_engine>","exec"),sandbox)
+        public=types.ModuleType("api.online_research")
+        public.research=lambda payload:{"evidence":[]}
+        def page(url):
+            if "pcgamingwiki.com" in url:
+                return {"status":200,"finalUrl":url,"extract":
+                        ("Diablo II Release dates Windows June 29, 2000. "
+                         "The game received the Lord of Destruction expansion pack in June 2001.")}
+            if "news.blizzard.com" in url:
+                return {"status":200,"finalUrl":url,"extract":
+                        ("Diablo II five new character classes, including two in the Lord of Destruction "
+                         "expansion: the Druid and Assassin. The Lord of Destruction expansion "
+                         "was released in June 2001.")}
+            if "gamespot.com" in url:
+                return {"status":200,"finalUrl":url,"extract":
+                        "The expansion adds a new fifth act with six quests."}
+            raise AssertionError("Unrequested page "+url)
+        public._page_fetch=page
+        prompt="Was Diablo II Classic released before Lord of Destruction? Research both versions."
+        with patch.dict(sys.modules,{"api.online_research":public}):
+            bad=list(sandbox["generate_events"]({"prompt":prompt,"fakeDraft":WRONG}))
+            bad_out="".join(e.get("text","") for e in bad if e.get("type")=="DELTA")
+            self.assertNotIn("September 2023",bad_out)
+            self.assertIn("couldn't verify",bad_out)
+            self.assertTrue(any(e.get("phase")=="FACTUAL_VERIFICATION_REJECT" for e in bad))
+            self.assertEqual(bad[-1]["type"],"COMPLETED")
+
+            good=list(sandbox["generate_events"]({"prompt":prompt,"fakeDraft":CORRECT}))
+            good_out="".join(e.get("text","") for e in good if e.get("type")=="DELTA")
+            self.assertEqual(good_out,CORRECT)
+            self.assertTrue(any(e.get("phase")=="FACTUAL_VERIFICATION_PASS" for e in good))
+
+            stopped=list(sandbox["generate_events"]({
+                "prompt":prompt,"fakeDraft":"unfinished",
+                "fakeFailure":True}))
+            self.assertIn("couldn't verify","".join(e.get("text","") for e in stopped if e.get("type")=="DELTA"))
+            self.assertEqual(stopped[-1]["type"],"COMPLETED")
+            ordinary=list(sandbox["generate_events"]({"prompt":"Hello","fakeDraft":"Hi."}))
+            self.assertEqual("".join(e.get("text","") for e in ordinary if e.get("type")=="DELTA"),"Hi.")
+            self.assertFalse(any(e.get("phase")=="FACTUAL_VERIFICATION_STARTED" for e in ordinary))
+
     def test_engine_wrapper_patches_valid_existing_source_only(self):
         synthetic=(
             'from __future__ import annotations\nimport os\n'
