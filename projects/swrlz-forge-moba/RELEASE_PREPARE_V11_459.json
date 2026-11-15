@@ -15,5 +15,16 @@
   "rollback": "Do not deploy unless real browser startup passes; preserve v11.457 known-loading source for fallback",
   "sourcePatch": "patches/v11_459_startup_guard.py",
   "expectedPrevious": "v11.458",
-  "userMobileAcceptancePending": true
+  "userMobileAcceptancePending": true,
+  "verificationRun": "https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/43686239516",
+  "browserObserved": {
+    "editorReady": true,
+    "splashVisibility": "hidden",
+    "canvas": true,
+    "toolRail": true,
+    "javascriptExceptions": 0
+  },
+  "sourceIntegritySha256": "fe8b0cd167da3d080c11bb4dc2406e87793815c80f649f0b3a9b45eee08f15c0",
+  "sourceBytes": 10166275,
+  "realBrowserBootPassed": true
 }
