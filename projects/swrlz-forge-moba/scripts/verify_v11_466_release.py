@@ -5,6 +5,7 @@ from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
 parser=argparse.ArgumentParser()
 parser.add_argument('--output',required=True)
+parser.add_argument('--request',action='store_true')
 a=parser.parse_args()
 m=json.loads((ROOT/'source-manifest.json').read_text('utf8'))
 assert m['name']=='§wyrl§ Engine v11.466'
@@ -39,6 +40,13 @@ assert len(receipt['assets'])==77
 for filename,r in receipt['assets'].items():
  b=(out/filename).read_bytes()
  assert len(b)==r['bytes'] and hashlib.sha256(b).hexdigest()==r['sha256'],filename
+if a.request:
+ req=json.loads((ROOT/'DEPLOY_REQUEST.json').read_text('utf8'))
+ assert req['releaseVersion']=='v11.466'
+ assert req['deployMarker']=='SWYRL_ENGINE_DEPLOY_MARKER: V11_466_RING_ARC_MODELING'
+ assert req['target']=='kamiloki/swrlz-forge-moba'
+ assert req['sourceIntegritySha256']==m['finalSha256']
+ assert req['sourceCommit']
 print(json.dumps({'status':'SOURCE_VERIFIED','version':'v11.466','sha256':m['finalSha256'],
  'bytes':m['finalBytes'],'patches':443,'assets':77,
  'phoneTested':False,'vrTested':False}),flush=True)
