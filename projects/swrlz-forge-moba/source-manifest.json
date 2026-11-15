@@ -449,6 +449,6 @@
     "patches/v11_455_model_view_readability.py",
     "patches/v11_456_guided_primitive_conversion.py"
   ],
-  "finalBytes": 10147243,
-  "finalSha256": "a9b4ff6ede86388a8fd357f0aa9bdc8e6ca2a69362ce8d0bae5addc847106a5b"
+  "finalBytes": 10155580,
+  "finalSha256": "e78c071295ac01b80c27c3987a95576750537b5f44e312d75dba876eceeb1601"
 }
