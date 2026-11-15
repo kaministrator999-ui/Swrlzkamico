@@ -1,0 +1,22 @@
+{
+  "schema": "swrlz-forge-release-prepare-v1",
+  "version": "v11.465",
+  "expectedPrevious": "v11.464",
+  "ownerApproved": true,
+  "scope": "Restore readable whole-word labels in the native Model Studio inspector; compact at widths under 236 CSS px with the existing Expand button; release the actual mobile right-grid track while expanded and restore saved widths on Dock. Preserve native drag handles, orbit, Undo, VR, model editor, geometry, UVs and render modes.",
+  "sourcePatch": "patches/v11_465_inspector_readability.py",
+  "requiredVerification": [
+    "442 ordered patches",
+    "source SHA-256/byte seal",
+    "inline JS syntax",
+    "mobile inspector ResizeObserver and compact/full controls",
+    "mouse and touch Expand/Dock",
+    "previous selected transform/history regression",
+    "v11.464 material/X-Ray",
+    "v11.462 wire view",
+    "v11.461 orbit/dock",
+    "77 immutable assets"
+  ],
+  "physicalPhoneVerified": false,
+  "guardedDeployment": "Seal exact source before separate HF DEPLOY_REQUEST and upload"
+}
