@@ -1,0 +1,26 @@
+name: Verify §E v11.452 three-stage Face flyouts
+on:
+  push:
+    branches: [feature/se-v11-452-native-face-flyouts]
+    paths:
+      - "projects/swrlz-forge-moba/runtime/model_face_flyouts_v11_452.js"
+      - "projects/swrlz-forge-moba/runtime/model_face_flyouts_v11_452.css"
+      - "projects/swrlz-forge-moba/patches/v11_452_native_face_flyouts.py"
+      - "projects/swrlz-forge-moba/tests/model_face_flyouts_v11_452.mjs"
+      - "projects/swrlz-forge-moba/scripts/preflight_v11_452_face_flyouts.py"
+      - ".github/workflows/verify-engine-v11-452-native-face-flyouts.yml"
+permissions: {contents: read}
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.11"}
+      - uses: actions/setup-node@v4
+        with: {node-version: "22"}
+      - name: Compile guarded patch/preflight
+        run: python -m py_compile projects/swrlz-forge-moba/patches/v11_452_native_face_flyouts.py projects/swrlz-forge-moba/scripts/preflight_v11_452_face_flyouts.py
+      - name: Build engine and run native three-stage UI and camera/mesh tests
+        run: python projects/swrlz-forge-moba/scripts/preflight_v11_452_face_flyouts.py
