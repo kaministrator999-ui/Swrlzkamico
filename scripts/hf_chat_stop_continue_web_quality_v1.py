@@ -9,7 +9,7 @@ from __future__ import annotations
 import ast,hashlib,json,os,re,sys,tempfile,time,urllib.request,uuid
 from pathlib import Path
 from huggingface_hub import HfApi,hf_hub_download,CommitOperationAdd
-from scripts.hf_chat_coding_lifecycle_v1 import check_js
+from hf_chat_coding_lifecycle_v1 import check_js
 SPACE="kamiloki/Swyrlz"
 BASE="https://kamiloki-swyrlz.hf.space"
 ENGINE="qwen_coder_engine.py"
