@@ -63,6 +63,14 @@ def diagnose_html_candidate(source: str) -> dict[str, Any]:
     # CSS does not accept hex notation inside rgba()/rgb() comma arguments.
     if re.search(r"\brgba?\s*\(\s*#[0-9a-fA-F]{3,8}\s*,", source):
         blocking.append("invalid-css-rgb-hex: rgb()/rgba() must not use comma-separated #hex")
+    # A template interpolation is invalid when every configured color is hex:
+    # hexadecimal CSS colors cannot be passed as comma-separated rgba args.
+    configured_colors = re.findall(r"\bcolor\s*:\s*['\"]([^'\"]+)['\"]", source)
+    if (configured_colors
+            and all(re.fullmatch(r"#[0-9a-fA-F]{3,8}", c) for c in configured_colors)
+            and re.search(r"\brgba?\s*\(\s*\$\{\s*(?:config|this\.config)\.color\s*\}\s*,", source)):
+        blocking.append("interpolated-hex-rgba: convert the hex color to RGB before rgba()")
+
     # Only flag this narrowly proven class of state typo (not arbitrary identifiers).
     if (re.search(r"this\.isPaused\s*=\s*!\s*this\.isPaused", source)
             and re.search(r"\blogSystem\s*\(\s*isPaused\s*\?", source)
