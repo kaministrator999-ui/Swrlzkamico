@@ -75,7 +75,7 @@ const ctx=vm.createContext({
  se462Recolor:()=>{recolors++;},
  se430BeginnerTick:()=>{nativeTicks++;},
  se430BeginnerInstall:()=>{nativeInstall++;},
- partById:id=>id===selection?part:null,
+ partById:id=>id!=null&&id===selection?part:null,
  selection,atelierComponentMode:'mesh',
  Object,Array,Math
 });
@@ -124,7 +124,7 @@ ctx.atelierMeshToolbarRefresh();
 assert.equal(nativeToolbar,1);assert.equal(recolors,1);
 assert.equal(currentPanel.dataset.se464Selection,'selected');
 assert.equal(currentPanel.dataset.se464Component,'mesh');
-ctx.selection=null;ctx.atelierMeshToolbarRefresh();
+selection=null;ctx.selection=null;ctx.atelierMeshToolbarRefresh();
 assert.equal(currentPanel.dataset.se464Selection,'none');
 ctx.se430BeginnerInstall(currentPanel);
 assert.equal(nativeInstall,1);
