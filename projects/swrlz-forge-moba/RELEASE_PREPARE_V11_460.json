@@ -1,0 +1,18 @@
+{
+  "schema": "swrlz-forge-release-prepare-v1",
+  "version": "v11.460",
+  "ownerApproved": true,
+  "reason": "User reports visible viewport Display/Camera panel does not function after v11.459 startup fix; screenshot shows Solid/Material/Shaded wire/Wireframe/X-Ray/Flat/Clay and Front/Right/Top/3/4 buttons.",
+  "rootCause": "v11.459 replacement delegated view buttons to #ViewportMode querySelector, which is not the native ModelAtelier rendering-state owner; camera action also depended on a private se430ModelCamera symbol outside its closure.",
+  "repair": "Expose a minimal view bridge from within the existing ModelAtelier closure, route quick-menu actions to native shading rebuild/live preview and existing camera.setView; preserve existing startup guard, Inset/Extrude transactions, UV, Undo and modeler layout.",
+  "sourcePatch": "patches/v11_460_native_view_menu.py",
+  "previousVersion": "v11.459",
+  "verificationRequired": [
+    "Native bridge simulated mode/camera and preview-safe behavior",
+    "Current-version viewport and Inset regressions",
+    "Real headless mobile Chromium startup",
+    "Actual click of every seven Display and four Camera options with native state readback",
+    "Exact SHA-256 source seal"
+  ],
+  "userMobileVerified": false
+}
