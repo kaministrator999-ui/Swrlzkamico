@@ -89,7 +89,7 @@ def static_check(after):
     generated=ast.get_source_segment(after.decode(),defs["generate_events"])
     for token in ("if prose_only_output:",'if not prose_only_output:','phase":"PROSE_FORMAT_RETRY'):
         if token not in generated:raise AssertionError("Missing guard "+token)
-    print("PROSE_FINALIZER_STATIC_PASS 9",flush=True)
+    print("PROSE_FINALIZER_STATIC_PASS 10",flush=True)
 
 def snapshot(api):
     rev=api.repo_info(SPACE,repo_type="space").sha
