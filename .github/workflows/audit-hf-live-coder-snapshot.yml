@@ -28,7 +28,7 @@ jobs:
           rev=api.repo_info(repo,repo_type='space').sha
           root=Path('reports/hf-live-coder-audit');root.mkdir(parents=True,exist_ok=True)
           manifest={'revision':rev,'files':{}}
-          for filename in ['qwen_coder_engine.py','brain_programming.py']:
+          for filename in ['qwen_coder_engine.py','brain_programming.py','station.py','lfm2_700m_engine.py']:
               file=Path(hf_hub_download(repo,filename,repo_type='space',revision=rev,token=api.token))
               raw=file.read_bytes()
               (root/filename).write_bytes(raw)
