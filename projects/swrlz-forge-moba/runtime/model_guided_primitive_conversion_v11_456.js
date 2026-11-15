@@ -3,7 +3,7 @@
 // One operation owner: se430BeginnerAPI().convert(). No second geometry editor.
 (function(){
  'use strict';
- let panel=null, button=null, detail=null, refreshing=false;
+ let panel=null, button=null, detail=null, refreshing=false, readyPartId=null;
  const api=()=>se430BeginnerAPI();
  const stage=()=>window.SWYRL_ENGINE_INSET_TOP_STEPS_454?.inspect?.()?.step||'idle';
  const state=()=>{try{return api()?.inspect?.()||null;}catch{return null;}};
@@ -15,6 +15,9 @@
    const active=!!s?.preview?.active,canConvert=!!s?.convert?.available;
    const single=!!selection.partId&&(selection.objectCount??1)===1;
    const visible=isRim&&single&&!active&&canConvert;
+   if(!isRim||!single||selection.partId!==readyPartId)readyPartId=null;
+   const awaitingFace=isRim&&single&&selection.partId===readyPartId&&
+    !selection.faceIds?.length&&!active;
    button.hidden=!visible;
    button.disabled=!visible;
    const baking=/bake.*vertex edit/i.test(s?.convert?.reason||'');
@@ -24,11 +27,12 @@
     // A selected protected mesh can explain why no conversion is offered.
     const protectedSource=isRim&&single&&!canConvert&&!active&&
       /authored|rig|skin|animated|invalid|independent|finish the current/i.test(s?.convert?.reason||'');
-    detail.hidden=!(visible||protectedSource);
+    detail.hidden=!(visible||protectedSource||awaitingFace);
     if(visible)detail.textContent=baking?
      'Your vertex edits will be baked with confirmation. Undo restores the original. No face selection is needed.':
      'Convert the selected primitive first, then tap any square face to preview the rim. Undo restores the original.';
     else if(protectedSource)detail.textContent=s.convert.reason;
+    else if(awaitingFace)detail.textContent='Editable cube ready. Tap its square face to preview a rim. No other conversion is needed.';
    }
   }finally{refreshing=false;}
  }
@@ -59,6 +63,7 @@
    if(detail){detail.hidden=false;detail.textContent=converted?.reason||'Conversion could not complete safely.';}
    refresh();return converted||{ok:false,reason:'Conversion failed'};
   }
+  readyPartId=before;
   if(after.selection.mode!=='face'){
    // Native convert normally enters Face mode. Do not bypass its result.
    const selected=api()?.setComponentMode('face');
