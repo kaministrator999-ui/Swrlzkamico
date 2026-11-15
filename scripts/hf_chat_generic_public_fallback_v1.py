@@ -124,6 +124,19 @@ def verify_runtime(api,rev,seconds=1000):
     raise RuntimeError("Current 9B runtime never reached exact revision")
 
 
+def has_observed_source_receipt(phases) -> bool:
+    """Source and readiness receipts are authoritative across old/new wrappers.
+
+    The existing factual guard may research before the inner generator starts,
+    so RESEARCH_STARTED alone is not a reliable evidence requirement.
+    """
+    events=set(str(phase or "") for phase in (phases or []))
+    return (
+        "RESEARCH_READY" in events
+        and bool({"RESEARCH_SOURCE_RETRIEVED","RESEARCH_SOURCE_CHECKED"} & events)
+    )
+
+
 def guest_turn(prompt,*,expected_research=False,expected_names=()):
     jar=http.cookiejar.CookieJar()
     opener=urllib.request.build_opener(urllib.request.HTTPCookieProcessor(jar))
@@ -162,7 +175,7 @@ def guest_turn(prompt,*,expected_research=False,expected_names=()):
     print("SWRLZ_GENERIC_RESEARCH_LIVE_CASE "+json.dumps(record),flush=True)
     if terminal not in ("COMPLETE","COMPLETED") or not answer.strip():
         raise RuntimeError("Model answer failed to complete")
-    if expected_research and (not record["researchStarted"] or record["sourceCount"]<1):
+    if expected_research and not has_observed_source_receipt(phases):
         raise RuntimeError("No actual public sources for the general research question")
     if any(not value for value in matched.values()):
         raise RuntimeError("Model failed to report source-supported expected names")
