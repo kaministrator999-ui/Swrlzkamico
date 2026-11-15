@@ -283,8 +283,8 @@ def enrich_payload(payload: Any, researcher: Any, *, fetch_page: Any = None,
     references += extended_reference_pages(decision.query, fetch_page)
     searched = []
     evidence_text = " ".join(str(item.get("snippet") or "") for item in references)
-    years = set(re.findall(r"(?<!\\d)(?:18|19|20)\\d{2}(?!\\d)", evidence_text))
-    comparative = bool(re.search(r"\\b(?:before|after|versus|compared|difference|release|date)\\b",
+    years = set(re.findall(r"(?<!\d)(?:18|19|20)\d{2}(?!\d)", evidence_text))
+    comparative = bool(re.search(r"\b(?:before|after|versus|compared|difference|release|date)\b",
                                  decision.query, re.I))
     if (not references or (comparative and len(years) < 2)) and callable(researcher):
         try:
