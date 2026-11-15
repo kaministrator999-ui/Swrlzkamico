@@ -1075,7 +1075,57 @@
         liveControlButton("Steer coding","STEER"),
         liveControlButton("Request checkpoint","CHECKPOINT")
       );
-      liveControlBody.append(liveControlMessage,liveControlActions,liveControlReceipt);
+      // A source snapshot is a server-owned file revision, not a rendered model claim.
+      const codeFilesView=document.createElement("div");
+      codeFilesView.style.cssText="display:none;max-width:100%;overflow:hidden";
+      const filesButton=document.createElement("button");
+      filesButton.type="button";filesButton.textContent="Project files";
+      filesButton.style.cssText="padding:7px 9px;border:1px solid rgba(143,234,255,.35);border-radius:8px;background:#0b3046;color:#eef8ff;cursor:pointer;font-size:12px";
+      filesButton.addEventListener("click",async()=>{
+        const job=stationGeneration;
+        if(!job?.requestId||job.threadId!==activeThreadId){
+          liveControlReceipt.textContent="No coding job selected.";return;
+        }
+        filesButton.disabled=true;
+        try{
+          const params=new URLSearchParams({requestId:job.requestId,threadId:job.threadId,includeContent:"1"});
+          const response=await fetch("/api/lalm_station/code-workspace?"+params.toString(),
+                                     {credentials:"same-origin",cache:"no-store"});
+          const data=await response.json();
+          if(!response.ok||!data.ok)throw Error(data.code||"WORKSPACE_UNAVAILABLE");
+          codeFilesView.replaceChildren();
+          const files=Object.entries(data.files||{});
+          if(!files.length){
+            codeFilesView.textContent="No complete source files checkpointed yet.";
+          }else{
+            const info=document.createElement("div");
+            info.textContent=files.length+" saved file(s) · structural checkpoints only; no execution verified";
+            info.style.cssText="font-size:12px;color:var(--secondary);margin-bottom:7px";
+            codeFilesView.append(info);
+            for(const [name,record] of files){
+              const section=document.createElement("details");
+              section.style.cssText="margin:5px 0;border:1px solid rgba(143,234,255,.2);border-radius:9px;padding:8px";
+              const heading=document.createElement("summary");
+              heading.textContent=name+" · "+String(record.chars||0)+" chars";
+              heading.style.cssText="cursor:pointer;font-size:12px;overflow-wrap:anywhere";
+              const download=document.createElement("button");
+              download.type="button";download.textContent="Download file";
+              download.style.cssText="margin-top:7px;padding:6px 8px;border-radius:8px";
+              download.onclick=()=>downloadTextFile(name,String(record.content||""));
+              const pre=document.createElement("pre");
+              pre.textContent=String(record.content||"");
+              pre.style.cssText="max-height:280px;max-width:100%;overflow:auto;white-space:pre;font:11px/1.5 monospace;margin-top:7px";
+              section.append(heading,download,pre);
+              codeFilesView.append(section);
+            }
+          }
+          codeFilesView.style.display="block";
+        }catch(error){
+          liveControlReceipt.textContent="Unable to inspect project files: "+String(error.message||error);
+        }finally{filesButton.disabled=false;}
+      });
+      liveControlActions.append(filesButton);
+      liveControlBody.append(liveControlMessage,liveControlActions,liveControlReceipt,codeFilesView);
       liveControlPanel.append(liveControlSummary,liveControlBody);
       document.getElementById("composerShell")?.before(liveControlPanel);
       function renderLiveControlPanel(){
