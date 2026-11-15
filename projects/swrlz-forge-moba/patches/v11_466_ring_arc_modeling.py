@@ -41,16 +41,16 @@ def apply(html):
     (op==='ringExtrude'?'Select one complete open boundary loop; interior ring caps use Face Extrude.':'Edit the selected real mesh vertices, keeping native Undo and UVs.'):
     'Switch to Vertex mode and select a ring or arc.'};""")
     html=one(html,
-        "    ...availability(),message};",
+        "   ...availability(),message};",
         "    ...availability(),ring:{centered:!!ringAnchor&&ringAnchor.partId===selection&&ringAnchor.documentToken===native().documentToken&&ringAnchor.revision===native().revision},message};")
     html=one(html,
-        "  function convert(){\n  if(active)return fail('Apply or cancel this preview before converting another mesh.');",
+        " function convert(){\n  if(active)return fail('Apply or cancel this preview before converting another mesh.');",
         runtime('model_ring_bridge_v11_466.js')+"\n function convert(){\n  if(active)return fail('Apply or cancel this preview before converting another mesh.');")
     html=one(html,
         "if(operation==='extrude')return se430MeshOps.extrude(p.topologyMesh,ids,{depth:amount??.15});",
         "if(operation==='extrude')return se430MeshOps.extrude(p.topologyMesh,ids,{depth:amount??.15,scale:params.scale,leftScale:params.leftScale,rightScale:params.rightScale,offset:params.offset,tilt:params.tilt});")
     html=one(html,
-        "   return fail('This topology operation is not implemented.');",
+        "  return fail('This topology operation is not implemented.');",
         """   const verts=selectedRingVertices(p);
    if(operation==='ringTransform')return se466RingKernel.transform(p.topologyMesh,verts,params);
    if(operation==='ringRefine')return se466RingKernel.refine(p.topologyMesh,verts);
