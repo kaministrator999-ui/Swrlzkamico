@@ -4,7 +4,7 @@
   "target": "kamiloki/swrlz-forge-moba",
   "releaseVersion": "v11.459",
   "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_459_VIEWPORT_BOOT_GUARD",
-  "reason": "Restore Model Studio startup after v11.458 stalled at Synchronizing scene and tools. Real mobile Chromium found private atelierViewGlobal ReferenceError in legacy view helper; v11.459 delegates display mode to native selector and guards optional se458 renderer refs. Browser test confirms editor ready, splash hidden, canvas/tool rail available, and zero JS errors; preserve cube Inset and dock changes.",
-  "sourceCommit": "2be1d4e4dc484d3ebb78d4594723b811500338c6",
+  "reason": "Restore Model Studio startup after v11.458 stalled at Synchronizing scene and tools. Real mobile Chromium found private atelierViewGlobal ReferenceError in legacy view helper; v11.459 delegates display mode to native selector and guards optional se458 renderer refs. Browser test confirms editor ready, splash hidden, canvas/tool rail available, and zero JS errors; preserve cube Inset and dock changes. Current-version test update: viewport mode changes are deferred during active topology preview and delegated to native controls; historical v11.455 test preserved. Browser-verified source SHA unchanged.",
+  "sourceCommit": "e77802cc6b05bd2ad4cd3679acff1f396a0f3b7a",
   "sourceIntegritySha256": "fe8b0cd167da3d080c11bb4dc2406e87793815c80f649f0b3a9b45eee08f15c0"
 }
