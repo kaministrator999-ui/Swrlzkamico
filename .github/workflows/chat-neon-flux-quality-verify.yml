@@ -18,7 +18,13 @@ jobs:
     timeout-minutes: 6
     steps:
       - uses: actions/checkout@v4
+      - name: Prepare Hugging Face read-only source verification
+        run: python -m pip install 'huggingface_hub>=0.34,<2'
       - name: Compile and test code quality improvements
         run: |
-          python -m py_compile scripts/html_code_quality_v1.py scripts/test_html_code_quality_v1.py
+          python -m py_compile scripts/html_code_quality_v1.py scripts/test_html_code_quality_v1.py scripts/hf_chat_html_quality_v2_release.py
           python -m unittest discover -s scripts -p test_html_code_quality_v1.py -v
+      - name: Guarded preflight only (no Space publication)
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: python -u scripts/hf_chat_html_quality_v2_release.py preflight
