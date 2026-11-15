@@ -8,7 +8,7 @@ from hf_webpage_quality_policy_v1 import patch_coder,MARK
 SPACE="kamiloki/Swyrlz"
 BASE="https://kamiloki-swyrlz.hf.space"
 TARGET="qwen_coder_engine.py"
-EXPECTED_REV="b5fee5d3d123d4af498326f18b2a71f993e6baf1"
+EXPECTED_REV="c217bb20e42b8a86eeb5a1a604ac6a56cf0526c5"
 BACKUP=Path("swrlz-webpage-quality-source-backup")
 APPROVAL="webpage-html-generation-quality-only"
 
@@ -26,28 +26,45 @@ def get_status(path):
         return body
 
 def healthy(api,deadline=380):
+    """Only accept live routes after two independent successful checks.
+
+    Hugging Face may report RUNNING_APP_STARTING while FastAPI serves
+    authenticated routes. Do not reject that actual serving state merely
+    because the provider's stage string is not exactly RUNNING.
+    """
     until=time.monotonic()+deadline
+    stable=0
     last="Initializing"
     while time.monotonic()<until:
         try:
-            stage=api.get_space_runtime(SPACE).stage
-            if stage!="RUNNING":
-                last="stage:"+str(stage)[:30]
+            stage=str(api.get_space_runtime(SPACE).stage)
+            if stage not in ("RUNNING","RUNNING_APP_STARTING"):
+                stable=0
+                last="stage:"+stage[:35]
             else:
                 status=get_status("/api/account/status")
                 redis=get_status("/api/storage/valkey-native-gateway-check")
-                ready=(isinstance(status,dict) and redis.get("backendSelected") is True
+                ready=(isinstance(status,dict)
+                       and redis.get("backendSelected") is True
                        and redis.get("nativeSETGET") is True
                        and redis.get("nativeLua") is True)
                 if ready:
-                    emit("SWRLZ_WEB_QUALITY_RUNTIME_PASS",stage=stage,accountHttp=200,
-                         aivenSelected=True,nativeRedisOK=True)
-                    return True
-                last="NATIVE_VALKEY_PROBE_FALSE"
+                    stable+=1
+                    if stable>=2:
+                        emit("SWRLZ_WEB_QUALITY_RUNTIME_PASS",stage=stage,
+                             accountHttp=200,aivenSelected=True,nativeRedisOK=True,
+                             independentPasses=stable)
+                        return True
+                    last="confirming-endpoint-readiness"
+                else:
+                    stable=0
+                    last="NATIVE_VALKEY_PROBE_FALSE"
         except Exception as exc:
+            stable=0
             last=type(exc).__name__
         time.sleep(8)
-    emit("SWRLZ_WEB_QUALITY_RUNTIME_NOT_READY",reasonType=last)
+    emit("SWRLZ_WEB_QUALITY_RUNTIME_NOT_READY",reasonType=last,
+         independentPasses=stable)
     return False
 
 def main():
