@@ -1,0 +1,41 @@
+name: §C research synthesis and history source audit (read-only)
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/hf-chat-research-synthesis-audit.yml"]
+permissions: {contents: read}
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - run: python -m pip install --quiet "huggingface_hub>=0.34,<2"
+      - name: Inspect exact live inference, research context and frontend list renderer seams
+        run: |
+          python - <<'PY'
+          import re,json
+          from pathlib import Path
+          from huggingface_hub import HfApi,hf_hub_download
+          S="kamiloki/Swyrlz";api=HfApi();rev=api.repo_info(S,repo_type="space").sha
+          print("SWRLZ_V3_AUDIT_REV",rev,flush=True)
+          for name in ("lfm2_700m_engine.py","station.py","chat/§wyrlz/index.html"):
+              lines=Path(hf_hub_download(S,name,repo_type="space",revision=rev)).read_text().splitlines()
+              patterns={
+                "lfm2_700m_engine.py":r"onlineContext|research|messages=|messages\s*=|payload.get\(\"prompt\"|system\s*\+|SYSTEM|generate_events|context.*message|history",
+                "station.py":r"prompt|history|messages|context|payload|threadId|generation_request|_send|gen_payload",
+                "chat/§wyrlz/index.html":r"markdown|marked|renderMarkdown|markdownit|list-style|<ol|<li|function.*format",
+              }[name]
+              hits=[i for i,l in enumerate(lines) if re.search(patterns,l,re.I)]
+              print("SWRLZ_V3_AUDIT_HITS",json.dumps({
+                "file":name,"lines":len(lines),
+                "matches":[{"n":i+1,"t":lines[i][:180]} for i in hits[:120]]
+              },ensure_ascii=False),flush=True)
+              if name=="lfm2_700m_engine.py":
+                focus=[i for i,l in enumerate(lines)
+                       if any(x in l for x in ('payload.get("onlineContext")','payload.get("prompt")','onlineContext','messages=','messages =','def generate_events(payload):'))]
+                for idx in focus[:12]:
+                  a=max(0,idx-8);b=min(len(lines),idx+18)
+                  print("SWRLZ_V3_AUDIT_RANGE",json.dumps({
+                    "file":name,"start":a+1,"text":[str(j+1)+":"+lines[j][:240] for j in range(a,b)]
+                  },ensure_ascii=False),flush=True)
+          PY
