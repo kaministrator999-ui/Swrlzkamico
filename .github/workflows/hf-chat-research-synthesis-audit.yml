@@ -39,3 +39,18 @@ jobs:
                     "file":name,"start":a+1,"text":[str(j+1)+":"+lines[j][:240] for j in range(a,b)]
                   },ensure_ascii=False),flush=True)
           PY
+      - name: Inspect Markdown list and rich-answer rendering behavior
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          from huggingface_hub import HfApi,hf_hub_download
+          space="kamiloki/Swyrlz";rev=HfApi().repo_info(space,repo_type="space").sha
+          path=hf_hub_download(space,"chat/§wyrlz/index.html",repo_type="space",revision=rev)
+          lines=Path(path).read_text().splitlines()
+          for a,b in ((520,575),(3230,3365)):
+              print("SWRLZ_MARKDOWN_SOURCE "+json.dumps({
+                  "revision":rev,"start":a,
+                  "lines":[str(i+1)+":"+lines[i][:230] for i in range(a-1,min(b,len(lines)))]
+              },ensure_ascii=False),flush=True)
+          PY
