@@ -22,3 +22,5 @@ for p in patterns:
   start=max(0,x.start()-380);end=min(len(s),x.start()+(4200 if 'atelierViewModeApply' in p or 'cameraUpdate' in p else 2200))
   print(s[start:end].replace('\\r','').replace('\\0','')[:4500])
 print('AUDIT_OK')
+
+# Execute once via source-path push trigger; does not change compiled output.
