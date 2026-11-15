@@ -30,8 +30,13 @@ const root='/tmp/se461-diagnostic',host='https://kamiloki-swrlz-forge-moba.hf.sp
     mode:window.SWYRL_ENGINE_MODEL_VIEW?.inspect?.()||null};
  });
  const first=await get();console.log('SE461_MOBILE_INITIAL '+JSON.stringify(first));
+ await page.setViewportSize({width:980,height:915});
+ await page.waitForTimeout(400);
+ console.log('SE461_DESKTOP_TOUCH_LAYOUT '+JSON.stringify(await get()));
+ const wide=await get();
+
  for(const side of ['left','right']){
-  const gr=first[side];if(!gr?.rect?.w||!gr?.rect?.h)continue;
+  const gr=wide[side];if(!gr?.rect?.w||!gr?.rect?.h)continue;
   const px=gr.rect.x+gr.rect.w/2,py=gr.rect.y+gr.rect.h/2;
   await page.mouse.move(px,py);await page.mouse.down();
   await page.mouse.move(px+(side==='left'?46:-46),py,{steps:7});await page.mouse.up();
@@ -52,6 +57,7 @@ const root='/tmp/se461-diagnostic',host='https://kamiloki-swrlz-forge-moba.hf.sp
   const after=api?.inspect?.();
   return {framed,before,after};
  });console.log('SE461_MOBILE_CAMERA_FRAME '+JSON.stringify(camera));
+ console.log('SE461_UI_ADD_CHOICES '+JSON.stringify(await page.locator('button').evaluateAll(bs=>bs.filter(b=>/add cube|create geometry|mesh/i.test(b.textContent||'')).slice(0,18).map(b=>({text:b.textContent.trim().slice(0,100),id:b.id,visible:b.getBoundingClientRect().height>0})))));
  const cube=page.getByRole('button',{name:/Run.*Add cube/i}).first();
  if(await cube.count()&&await cube.isVisible()){
   await cube.click({timeout:5000});
