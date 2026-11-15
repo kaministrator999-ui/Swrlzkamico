@@ -13,7 +13,7 @@ Each batch runs **four scenarios of two turns** (eight possible model responses)
 
 | Batch | Focus |
 |---|---|
-| 1 | Guest UI reload and context recall, surgical Python repair, corrections, intent before code |
+| 1 | Guest UI continuous two-turn context, surgical Python repair, corrections, intent before code |
 | 2 | Real HTML button UI, counter changes, responsive layout, one cohesive color picker |
 | 3 | Guest UI reload and phrase recovery, whole-document code output, minimal repairs, quoted-data boundaries |
 
