@@ -2,5 +2,5 @@ TARGET=kamiloki/Swyrlz
 APPROVED=1
 MODEL=qwen3.5-9b
 FEATURE=generic-public-source-fallback-v1
-SOURCE_REF=c1cc48f9e082da8f6c07b34a802c4c01559db5aa
-REQUEST_NONCE=generic-research-20261115-source-ledger-live-01
+SOURCE_REF=75072b6e6c91e7979a0f289463ccc3352c1d0414
+REQUEST_NONCE=generic-research-20261115-observed-receipts-02
