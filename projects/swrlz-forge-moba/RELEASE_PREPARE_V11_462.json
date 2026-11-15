@@ -1,0 +1,12 @@
+{
+  "schema": "swrlz-forge-release-prepare-v1",
+  "version": "v11.462",
+  "expectedPrevious": "v11.461",
+  "ownerApproved": true,
+  "surface": "Existing §E Model Studio / kamiloki/swrlz-forge-moba",
+  "scope": "Correct default wire topology clarity, brighten selected/visible edges, optional diagnostics, crisp hard inset material shading and native phone dock width budget",
+  "sourcePatch": "patches/v11_462_model_wire_clarity.py",
+  "requiredVerification": "Exact compiled HTML SHA/bytes, new native wire regression, existing v11.460/461 view bridge, JS syntax and 77 assets",
+  "physicalPhoneVerified": false,
+  "guardedDeployment": "Only seal workflow after checks, then separate DEPLOY_REQUEST and existing HF workflow"
+}
