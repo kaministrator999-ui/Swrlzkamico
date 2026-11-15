@@ -148,6 +148,8 @@ INSERT='''            # swrlz-web-feature-patch-first-v1: bounded source-preserv
                     yield {"type":"STATUS","phase":"SOURCE_FEATURE_PATCH_FALLBACK",
                            "reason":"No fully validated edit; using standard complete-code generation"}
 '''
+# Align this nested branch with the model-lock block, preserving all inner levels.
+INSERT="\n".join(line[4:] if line.startswith("    ") else line for line in INSERT.split("\n"))
 TARGET='''        if guarded_turn:
             repair_target_fp=repair_diagnostic.get("candidateFingerprint") if repair_diagnostic else None'''
 
