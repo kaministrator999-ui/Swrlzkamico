@@ -39,8 +39,9 @@ _swrlz_previous_generate_events_research_v3=generate_events
 
 
 def generate_events(payload):
-    if not isinstance(payload,dict) or os.environ.get(
-        "SWRLZ_GENERAL_RESEARCH_SYNTHESIS_V3_ENABLED","1").strip().lower() in ("0","false","off"):
+    if (not isinstance(payload,dict) or os.environ.get(
+        "SWRLZ_GENERAL_RESEARCH_SYNTHESIS_V3_ENABLED","1").strip().lower() in ("0","false","off")
+            or os.environ.get("SWRLZ_SELECTIVE_RETRIEVAL_ENABLED","1").strip().lower() in ("0","false","off")):
         yield from _swrlz_previous_generate_events_research_v3(payload)
         return
     from api.selective_retrieval import choose_retrieval as _choose_v3, enrich_payload as _enrich_v3
@@ -94,7 +95,10 @@ def generate_events(payload):
            "reason":"Using documented facts and recent conversation context to explain the findings"}
     parts=[]
     completed=False
-    for event in _swrlz_previous_generate_events_research_v2(enriched):
+    # The old v1 verifier understands dates but not roster membership.
+    # Collect the core model draft once; then apply BOTH validators to that
+    # same candidate, rather than letting the old guard discard it first.
+    for event in _swrlz_original_generate_events_factual_v1(enriched):
         if not isinstance(event,dict):
             yield event
             continue
@@ -113,6 +117,18 @@ def generate_events(payload):
     candidate=_repair_lists_v3(_strip_links_v3("".join(parts)))
     verdict=_validate_v3(candidate,facts,ledger) if completed else {
         "status":"REJECT","reasons":["model_generation_incomplete"]}
+    from api.factual_claim_guard_v1 import inspect_answer as _date_checks_v3
+    cards=evidence.get("evidence") or []
+    # Existing date and Act checks need to see the separate original and
+    # expansion release cards even when seven detail pages are also present.
+    chronological=sorted(cards,key=lambda card:
+        1 if str(card.get("title") or "").endswith(("release dates","expansion date")) else 0,
+        reverse=True)
+    date_verdict=_date_checks_v3(candidate,{
+        "evidence":chronological,"resultCount":len(chronological)})
+    if date_verdict["status"]!="PASS":
+        verdict={"status":"REJECT",
+                 "reasons":verdict.get("reasons",[])+date_verdict.get("reasons",[])}
     if verdict["status"]=="PASS":
         yield {"type":"STATUS","phase":"RESEARCH_NARRATIVE_ACCEPTED",
                "reason":"Narrative passed source roster membership and description-support checks"}
@@ -246,7 +262,7 @@ def ask(prompt,expected_count,expected_names,forbidden,expected_years=()):
         data=json.dumps(body).encode(),headers={**HEADERS,"Content-Type":"application/json"})
     with opener.open(req,timeout=45) as response:
         if response.status!=202:raise RuntimeError("Guest request did not enter Station")
-    parts=[];phases=[];terminal="";started=time.monotonic()
+    parts=[];phases=[];reasons=[];terminal="";started=time.monotonic()
     url=BASE+"/api/lalm_station/stream?"+urllib.parse.urlencode({"requestId":rid})
     with opener.open(urllib.request.Request(url,headers=HEADERS),timeout=320) as stream:
         for row in stream:
@@ -254,7 +270,11 @@ def ask(prompt,expected_count,expected_names,forbidden,expected_years=()):
             try:entry=json.loads(row)
             except ValueError:continue
             typ=entry.get("type")
-            if typ=="STATUS":phases.append(str(entry.get("phase") or ""))
+            if typ=="STATUS":
+                phase=str(entry.get("phase") or "")
+                phases.append(phase)
+                if phase in ("RESEARCH_NARRATIVE_REJECTED","FACTUAL_VERIFICATION_REJECT"):
+                    reasons.append(str(entry.get("reason") or "")[:240])
             elif typ=="DELTA":parts.append(str(entry.get("text") or ""))
             elif typ in ("COMPLETE","COMPLETED","FAILED","CANCELLED"):
                 terminal=typ;break
@@ -263,7 +283,8 @@ def ask(prompt,expected_count,expected_names,forbidden,expected_years=()):
     meta={"terminal":terminal,"chars":len(answer),"elapsed":round(time.monotonic()-started,2),
           "status":phases[-12:],"prefix":answer[:240],
           "modelNarrativeAccepted":"RESEARCH_NARRATIVE_ACCEPTED" in phases,
-          "sourceFallback":"RESEARCH_EVIDENCE_FALLBACK" in phases}
+          "sourceFallback":"RESEARCH_EVIDENCE_FALLBACK" in phases,
+          "rejectionReasons":reasons[-3:]}
     print("SWRLZ_RESEARCH_V3_LIVE_CASE "+json.dumps(meta),flush=True)
     if terminal not in ("COMPLETE","COMPLETED"):
         raise RuntimeError("Live request did not complete")
