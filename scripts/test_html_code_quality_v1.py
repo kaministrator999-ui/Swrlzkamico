@@ -43,6 +43,50 @@ class QualityTests(unittest.TestCase):
         self.assertEqual(diagnose_html_candidate(source)["blocking"],[])
         base={"status":"PASS","reasons":["original"]}
         self.assertIs(extend_candidate_check(base,source),base)
+    def test_neon_flux_actual_canvas_input_blocked(self):
+        html = """<!doctype html><html><head><style>
+        /* UI Overlay */
+        #ui-layer { position:absolute; pointer-events: none; }
+        header { pointer-events:auto; }
+        </style></head><body><div id="ui-layer">
+        <header>Header</header><canvas id="game-canvas"></canvas></div>
+        <script>const canvas=document.getElementById('game-canvas');
+        canvas.addEventListener('mousedown',()=>{});</script></body></html>"""
+        report = diagnose_html_candidate(html)
+        self.assertIn("canvas-pointer-inert", str(report["blocking"]))
+        self.assertEqual(extend_candidate_check(
+            {"status":"PASS","reasons":[]},html)["status"],"REJECT")
+        fixed = html.replace("header { pointer-events:auto; }",
+                             "header { pointer-events:auto; } #game-canvas {pointer-events:auto;touch-action:none;}")
+        self.assertFalse(any("canvas-pointer-inert" in i
+                             for i in diagnose_html_candidate(fixed)["blocking"]))
+
+    def test_neon_flux_gradient_and_fps_error(self):
+        html = """<html><style>canvas{background:radial-gradient(
+            circle at 50% 50%, from 50% 50% transparent 10%, transparent 90%)}
+            </style><canvas></canvas>
+            <script>state.fps = Math.round((1000 / state.fpsTimer) * 60);</script></html>"""
+        findings = diagnose_html_candidate(html)
+        self.assertIn("invalid-radial-gradient-from", str(findings["blocking"]))
+        self.assertIn("fps-fixed-60", str(findings["blocking"]))
+        fixed = html.replace("from 50% 50% ", "").replace(
+            "Math.round((1000 / state.fpsTimer) * 60)",
+            "Math.round((frames * 1000) / elapsedMs)")
+        self.assertFalse(diagnose_html_candidate(fixed)["blocking"])
+
+    def test_initial_empty_canvas_warning_is_not_rejection(self):
+        src = "<canvas></canvas><script>const particles:[];requestAnimationFrame(tick)</script>"
+        diagnostics = diagnose_html_candidate(src)
+        self.assertIn("initial-empty-canvas", str(diagnostics["warnings"]))
+        self.assertEqual(extend_candidate_check({"status":"PASS"},src)["status"],"PASS")
+
+    def test_pointer_inheritance_checks_do_not_block_unrelated_webpage(self):
+        src = """<html><style>#ui-layer{pointer-events:none}
+                  #game-canvas{pointer-events:auto}</style>
+                  <div id='ui-layer'><canvas id='game-canvas'></canvas></div>
+                  <script>canvas.addEventListener('pointermove',()=>{})</script></html>"""
+        self.assertFalse(diagnose_html_candidate(src)["blocking"])
+
     def test_nonhtml_source_left_alone(self):
         self.assertFalse(diagnose_html_candidate("const rgba = '#00f0ff';")["inspected"])
     def test_warning_not_blocking(self):
