@@ -1,4 +1,11 @@
 /* SE466_RING_UI_START */
+// Preserve all later extrusion control enhancements, changing only the numeric range.
+const se466OriginalBeginnerAmount=se430BeginnerAmount;
+se430BeginnerAmount=function(operation){
+ const config=se466OriginalBeginnerAmount(operation);
+ return operation==='extrude'&&config?{...config,min:-30,max:30,label:'Depth · signed local units (up to 30)'}:config;
+};
+
 // Native Model Studio controls: single source of geometry/history via se430ModelWorkshop.
 function se466RingUIInstall(panel){
  if(!panel||panel.dataset.se466RingUI)return;
