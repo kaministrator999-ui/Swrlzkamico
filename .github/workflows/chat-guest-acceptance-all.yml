@@ -1,0 +1,70 @@
+name: §C post-release guest acceptance - all 3 batches
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/chat-guest-acceptance-all.yml'
+  workflow_dispatch: {}
+permissions: {contents: read}
+concurrency:
+  group: swrlz-chat-guest-eval
+  cancel-in-progress: false
+jobs:
+  test_all:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 85
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - name: Install Chromium and pinned Playwright
+        run: |
+          python -m pip install playwright==1.56.0
+          python -m playwright install --with-deps chromium
+      - name: Compile evaluator
+        run: python -m py_compile scripts/eval_chat_guest_suite.py
+      - name: Evaluate every batch independently and preserve every result
+        id: batches
+        shell: bash
+        env:
+          SWRLZ_EVAL_BASE: https://kamiloki-swyrlz.hf.space
+          SWRLZ_EVAL_MODEL: 700m
+        run: |
+          set -uo pipefail
+          fail_count=0
+          for batch in 1 2 3; do
+            mkdir -p "reports/all-guest-batches/batch-$batch"
+            rm -rf reports/chat-guest-eval
+            echo "===== START GUEST BATCH $batch ====="
+            if python -u scripts/eval_chat_guest_suite.py --mode live --batch "$batch"; then
+              status=0
+            else
+              status=$?
+              fail_count=$((fail_count+1))
+            fi
+            if [[ -d reports/chat-guest-eval ]]; then
+              cp -a reports/chat-guest-eval/. "reports/all-guest-batches/batch-$batch/"
+              if [[ -f reports/chat-guest-eval/summary.md ]]; then
+                cat reports/chat-guest-eval/summary.md >> "$GITHUB_STEP_SUMMARY"
+                printf '\n---\n' >> "$GITHUB_STEP_SUMMARY"
+              fi
+            else
+              echo "No report produced for batch $batch" > "reports/all-guest-batches/batch-$batch/REPORT_MISSING.txt"
+            fi
+            echo "BATCH_RESULT batch=$batch exit=$status"
+          done
+          echo "failed_batches=$fail_count" >> "$GITHUB_OUTPUT"
+      - name: Upload all case reports and failure screenshots
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: guest-acceptance-all-${{ github.run_id }}
+          path: reports/all-guest-batches/
+          retention-days: 21
+          if-no-files-found: error
+      - name: Mark incomplete or failing acceptance
+        if: steps.batches.outputs.failed_batches != '0'
+        run: |
+          echo "::warning::Not all three guest batches passed; see uploaded reports."
+          exit 1
