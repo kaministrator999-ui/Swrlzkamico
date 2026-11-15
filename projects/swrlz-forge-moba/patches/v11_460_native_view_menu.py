@@ -65,7 +65,7 @@ def apply(html):
     # Raise only this native view flyout and bound its height for short screens.
     html=one(html,
         "position:absolute;top:92px;left:8px;z-index:126;",
-        "position:absolute;top:92px;left:8px;z-index:560;")
+        "position:absolute;top:92px;left:8px;z-index:2600;")
     html=one(html,
         "box-shadow:0 8px 28px #03060ae6;",
         "box-shadow:0 8px 28px #03060ae6;\n"
