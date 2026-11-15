@@ -50,7 +50,7 @@ for name,r in s['assets'].items():
  assert len(data)==r['bytes'] and hashlib.sha256(data).hexdigest()==r['sha256'],name
 if a.request:
  req=json.loads((ROOT/'DEPLOY_REQUEST.json').read_text())
- assert req['releaseVersion']=='v11.464'
+ assert req['releaseVersion']=='v11.465'
  assert req['deployMarker']=='SWYRL_ENGINE_DEPLOY_MARKER: V11_465_INSPECTOR_READABILITY'
  assert req['sourceIntegritySha256']==m['finalSha256']
 print(json.dumps({'status':'SEALED_SOURCE_VERIFIED','version':'v11.465',
