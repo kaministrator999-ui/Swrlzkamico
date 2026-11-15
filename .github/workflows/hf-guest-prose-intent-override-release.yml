@@ -4,6 +4,7 @@ on:
     branches: [main]
     paths:
       - '.github/workflows/hf-guest-prose-intent-override-release.yml'
+      - 'scripts/hf_guest_prose_intent_override_v1.py'
 permissions: {contents: read}
 concurrency:
   group: swrlz-chat-guest-eval
