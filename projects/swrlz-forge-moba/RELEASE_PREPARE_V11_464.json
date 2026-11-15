@@ -20,5 +20,8 @@
   ],
   "physicalPhoneVerified": false,
   "deploymentGate": "Seal actual source integrity first, then generate separate DEPLOY_REQUEST and run existing HF deployment",
-  "sourceTestAnchor": "tests/model_visual_polish_v11_464.mjs"
+  "sourceTestAnchor": "tests/model_visual_polish_v11_464.mjs",
+  "correctiveRetry": 1,
+  "previousFailedRun": 43753410092,
+  "repair": "First build found a native BoxHelper literal had changed in a previous patch. v11.464 now uses native atelierMeshGizmoBuild lifecycle to tint only the existing selected outline; verified fixture updated. No source geometry or transform handler modified."
 }
