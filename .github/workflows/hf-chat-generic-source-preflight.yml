@@ -42,18 +42,19 @@ jobs:
           from urllib.parse import quote
           prompt="Research: what are the moons of Mars? List their names."
           topic=search_terms(prompt)
-          search="https://en.wikipedia.org/w/rest.php/v1/search/page?q="+quote(topic,safe="")+"&limit=4"
+          search="https://en.wikipedia.org/w/rest.php/v1/search/page?q="+quote(topic,safe="")+"&limit=2"
           sample=mod._page_fetch(search)
           try:
               search_json=json.loads(sample.get("extract") or "{}")
               titles=[(x.get("title"),x.get("key")) for x in search_json.get("pages",[])[:4]]
           except (ValueError,TypeError):titles=[]
-          first=mod._page_fetch("https://en.wikipedia.org/api/rest_v1/page/summary/Moons_of_Mars")
+          first=mod._page_fetch("https://en.wikipedia.org/w/api.php?action=query&prop=extracts&exintro=1&explaintext=1&exsentences=3&titles=Moons_of_Mars&format=json&formatversion=2")
           try:
               summary_json=json.loads(first.get("extract") or "{}")
-              summary_title=summary_json.get("title")
-              summary_excerpt=str(summary_json.get("extract") or "")[:130]
-          except (ValueError,TypeError):
+              entry=(summary_json.get("query") or {}).get("pages",[{}])[0]
+              summary_title=entry.get("title")
+              summary_excerpt=str(entry.get("extract") or "")[:130]
+          except (ValueError,TypeError,IndexError):
               summary_title=summary_excerpt="invalid"
           print("SWRLZ_GENERIC_FALLBACK_DEBUG "+json.dumps({
               "topic":topic,"searchStatus":sample.get("status"),"searchFinal":sample.get("finalUrl"),
