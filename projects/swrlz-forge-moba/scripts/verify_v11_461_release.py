@@ -53,7 +53,7 @@ subprocess.run(['node',str(ROOT/'tests/model_vr_three_stage_v11_445.mjs'),str(ou
 subprocess.run(['node',str(ROOT/'tests/model_planar_face_pick_v11_450.mjs'),str(out/'index.html')],check=True)
 subprocess.run(['node',str(ROOT/'tests/model_face_orbit_v11_461.mjs'),str(out/'index.html')],check=True)
 subprocess.run(['node',str(ROOT/'tests/model_inset_dock_v11_451.mjs'),str(out/'index.html')],check=True)
-subprocess.run(['node',str(ROOT/'tests/model_touch_layout_v11_451.mjs'),str(out/'index.html')],check=True)
+subprocess.run(['node',str(ROOT/'tests/model_touch_layout_v11_461.mjs'),str(out/'index.html')],check=True)
 subprocess.run(['node',str(ROOT/'tests/model_camera_inset_v11_451.mjs'),str(out/'index.html')],check=True)
 subprocess.run(['node',str(ROOT/'tests/model_guided_face_workflow_v11_451.mjs'),str(out/'index.html')],check=True)
 subprocess.run(['node',str(ROOT/'tests/model_face_flyouts_v11_461.mjs'),str(out/'index.html')],check=True)
