@@ -169,7 +169,7 @@ def grounded_chronology_reply(prompt: str, bundle: Any) -> str | None:
         + "** as an expansion to the original " + subject + ".",
     ]
     features = next(
-        (row for row in sources if "expansion" in row["title"].lower()
+        (row for row in sources if label.lower() in row["title"].lower()
          and "manual" in row["title"].lower()
          and "Act V" in row["excerpt"]
          and "Druid" in row["excerpt"]
