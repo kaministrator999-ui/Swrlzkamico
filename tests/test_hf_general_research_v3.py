@@ -17,7 +17,7 @@ from api.selective_retrieval import (
     choose_retrieval, enrich_payload, historical_roster_detail_pages,
 )
 from scripts.hf_chat_general_research_v3_release import (
-    guarded_engine_patch,MARKER,TRUSTED_RESEARCH_POLICY,
+    guarded_engine_patch,MARKER,TRUSTED_RESEARCH_POLICY,accepts_natural_count_wording,
 )
 
 NAME_LIST=["Amazon","Barbarian","Paladin","Necromancer","Sorceress","Assassin","Druid"]
@@ -62,6 +62,14 @@ class GeneralResearchSynthesisTests(unittest.TestCase):
         self.assertEqual(result["verification"],"excerpts_only_not_automatic_semantic_entailment")
         self.assertIn("Phobos",result["sources"][0]["excerpt"])
         self.assertIn("bounded evidence",instruction_for_synthesis(None).lower()) if False else None
+
+    def test_acceptance_checks_natural_wording_not_fixed_response_phrase(self):
+        self.assertTrue(accepts_natural_count_wording(
+            "The expansion brought the total to seven.",7))
+        self.assertTrue(accepts_natural_count_wording(
+            "There are 7 playable classes.",7))
+        self.assertFalse(accepts_natural_count_wording(
+            "The expansion added two new classes to five.",7))
 
     def test_research_does_not_use_deterministic_reply_as_primary(self):
         self.assertEqual(facts()["total"],7)
