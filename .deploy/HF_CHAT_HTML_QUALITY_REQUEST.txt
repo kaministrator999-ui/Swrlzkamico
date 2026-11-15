@@ -4,5 +4,5 @@ CHANGE_SCOPE=source-preserving-coding-quality-and-html-validation
 MODEL=qwen3.5-9b
 THREADS=18
 CONTEXT_TOKENS=16384
-SOURCE_REF=48dccbb27ec802c9cb9d3029a0e6aa141726bf11
-REQUEST_NONCE=html-quality-acceptance-retry-20261114-v2
+SOURCE_REF=023c60c0b5ce46d38b03e93885463b92e6423877
+REQUEST_NONCE=html-quality-neon-auto-repair-v2-20261115-0523
