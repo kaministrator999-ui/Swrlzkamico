@@ -1,0 +1,16 @@
+name: Audit §E v11.463 native render & inspector
+on:
+  push:
+    branches: [main]
+    paths: ["projects/swrlz-forge-moba/scripts/audit_v11_463_view_sources.py"]
+  workflow_dispatch:
+permissions: {contents: read}
+jobs:
+  audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.11"}
+      - run: python projects/swrlz-forge-moba/scripts/audit_v11_463_view_sources.py
