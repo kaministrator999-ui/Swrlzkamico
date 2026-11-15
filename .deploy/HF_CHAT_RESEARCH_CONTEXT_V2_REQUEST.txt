@@ -1,0 +1,6 @@
+TARGET=kamiloki/Swyrlz
+APPROVED=1
+MODEL=qwen3.5-9b
+FEATURE=version-scoped-primary-source-research-v2
+SOURCE_REF=a14fbe672d499486ac63ee5f25b57c878674871a
+REQUEST_NONCE=research-context-20261115-source-evidence-run-01
