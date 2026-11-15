@@ -1,0 +1,30 @@
+name: Chat coding workspace and continuation validation
+on:
+  push:
+    branches: ["feature/chat-code-workspace-continuation-20261115"]
+    paths:
+      - "api/code_workspace.py"
+      - "api/lalm_station.py"
+      - "queues/swrlz_generation_v3.py"
+      - "tests/test_code_workspace.py"
+      - ".github/workflows/chat-code-workspace-validation.yml"
+  pull_request:
+    paths:
+      - "api/code_workspace.py"
+      - "api/lalm_station.py"
+      - "queues/swrlz_generation_v3.py"
+      - "tests/test_code_workspace.py"
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 7
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install minimal test dependencies
+        run: python -m pip install 'requests>=2.32,<3' 'fastapi>=0.116,<1'
+      - name: Compile changed Python modules
+        run: python -m py_compile api/code_workspace.py api/lalm_station.py queues/swrlz_generation_v3.py tests/test_code_workspace.py
+      - name: Run coding workspace tests
+        run: python -m unittest discover -s tests -p test_code_workspace.py -v
