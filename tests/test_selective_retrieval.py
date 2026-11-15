@@ -60,10 +60,11 @@ class RouterTests(unittest.TestCase):
             observed.append(url)
             title=("Diablo II: Lord of Destruction" if "Lord_of_Destruction" in url
                    else "Diablo II")
-            return {"extract":json.dumps({
+            fragment=json.dumps({
                 "type":"standard","title":title,
                 "extract":title+" is the historical Diablo II game or expansion.",
-                "content_urls":{"desktop":{"page":"https://en.wikipedia.org/wiki/"+title.replace(" ", "_")}}})}
+                "content_urls":{"desktop":{"page":"https://en.wikipedia.org/wiki/"+title.replace(" ", "_")}}})
+            return {"extract":fragment[:-3] if "Lord_of_Destruction" in url else fragment}
         prompt="Was Diablo II Classic released before Lord of Destruction expansion?"
         refs=reference_pages(prompt,fetch)
         self.assertEqual(len(refs),2)
