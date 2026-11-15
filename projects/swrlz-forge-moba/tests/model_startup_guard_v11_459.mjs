@@ -37,7 +37,7 @@ for(const token of [
  'SWYRL_ENGINE_DEPLOY_MARKER: V11_459_VIEWPORT_BOOT_GUARD',
  "window.SWRLZ_FORGE_BUILD={version:'v11.459'",
  '/* SE458_DOCK_AND_MODEL_CONTRAST_START */',
- 'SE457_CONVERSION_NO_FACE_GATE',
+ 'V11_457_CONVERSION_NO_FACE_GATE',
  'SE454_INSET_TOP_STEPS_START'
 ]){
  assert(html.includes(token),'Built HTML missing '+token);
