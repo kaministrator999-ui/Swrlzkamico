@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT (owner-approved)",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.454",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_454_INSET_TOP_STEPS",
-  "reason": "Two native top-of-viewport Set stages: adjustable Inset rim width, then signed inward Extrude depth, with live previews, stage-specific Cancel and separate Undo checkpoints. Preserve current project, Face flyouts, mobile camera and VR tools.",
-  "sourceCommit": "da06795b33d3337e32dd9d5a9abf34e1e645b4e3",
-  "sourceIntegritySha256": "886c6475a32ae86ca049148eb17b9cc04f69804be1008aa1336525a1c49155ab"
+  "releaseVersion": "v11.455",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_455_VIEW_READABILITY",
+  "reason": "Expose modeling view modes, clean solid/flat/clay materials, angle-filtered shaded wire and readable transient Inset cap; preserve native source, preview, camera, touch and VR.",
+  "sourceCommit": "52bd0561f0222e98e4a61fdae6c7a93a43233a80",
+  "sourceIntegritySha256": "a9b4ff6ede86388a8fd357f0aa9bdc8e6ca2a69362ce8d0bae5addc847106a5b"
 }
