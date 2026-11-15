@@ -1,0 +1,99 @@
+name: Guarded §C guest reload restoration release and Chromium acceptance
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/hf-guest-thread-restore-release.yml'
+permissions: {contents: read}
+concurrency:
+  group: swrlz-chat-guest-eval
+  cancel-in-progress: false
+jobs:
+  restore:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 50
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - name: Install pinned browser and HF dependencies
+        run: |
+          python -m pip install 'huggingface_hub>=0.34,<2' playwright==1.56.0
+          python -m playwright install --with-deps chromium
+      - name: Compile test and patch
+        run: |
+          python -m py_compile scripts/hf_guest_thread_restore_v1.py scripts/eval_chat_guest_suite.py
+      - name: Verify exact current HF UI source and rollback snapshot
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: python -u scripts/hf_guest_thread_restore_v1.py preflight
+      - name: Validate current live UI inline JavaScript candidate
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          html=Path("reports/guest-reload-restore-v1/after/chat/§wyrlz/index.html").read_text()
+          blocks=[m.group(1) for m in re.finditer(r'<script\b[^>]*>([\s\S]*?)</script\s*>',html,re.I) if m.group(1).strip()]
+          if len(blocks)!=1:raise SystemExit("Expected one actual Chat inline script")
+          Path("/tmp/swrlz-restore-ui-check.js").write_text(blocks[0])
+          PY
+          node --check /tmp/swrlz-restore-ui-check.js
+      - name: Archive exact HF before and after versions
+        uses: actions/upload-artifact@v4
+        with:
+          name: guest-hf-reload-source-rollback-${{ github.run_id }}
+          path: reports/guest-reload-restore-v1/
+          retention-days: 90
+          if-no-files-found: error
+      - name: Publish one-file guarded guest hydration fix
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          SWRLZ_GUEST_HYDRATION_APPROVED: '1'
+        run: python -u scripts/hf_guest_thread_restore_v1.py publish
+      - name: Verify Chromium guest reload and ordinary guest memory
+        id: acceptance
+        shell: bash
+        env:
+          SWRLZ_EVAL_BASE: https://kamiloki-swyrlz.hf.space
+          SWRLZ_EVAL_MODEL: 700m
+        run: |
+          set -uo pipefail
+          failures=0
+          for test in '3:guest-reload-restore' '1:context-name'; do
+            batch="${test%%:*}"
+            case="${test#*:}"
+            rm -rf reports/chat-guest-eval
+            if SWRLZ_TEST_BATCH="$batch" SWRLZ_TEST_CASE="$case" python -u - <<'PY'
+          import asyncio, os, sys
+          import scripts.eval_chat_guest_suite as suite
+          batch=os.environ["SWRLZ_TEST_BATCH"]
+          name=os.environ["SWRLZ_TEST_CASE"]
+          suite.CASES[batch]=[case for case in suite.CASES[batch] if case["id"]==name]
+          if len(suite.CASES[batch])!=1:raise RuntimeError("Requested case missing")
+          sys.exit(asyncio.run(suite.main("live",batch)))
+          PY
+            then status=0; else status=$?;failures=$((failures+1));fi
+            mkdir -p "reports/guest-reload-acceptance/$case"
+            if [[ -d reports/chat-guest-eval ]]; then
+              cp -a reports/chat-guest-eval/. "reports/guest-reload-acceptance/$case/"
+              cat reports/chat-guest-eval/summary.md >> "$GITHUB_STEP_SUMMARY" || true
+            fi
+            echo "TARGETED_GUEST_RESULT case=$case exit=$status"
+          done
+          echo "failed_cases=$failures" >> "$GITHUB_OUTPUT"
+      - name: Archive actual post-release Chromium transcripts and screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: guest-reload-chromium-acceptance-${{ github.run_id }}
+          path: reports/guest-reload-acceptance/
+          retention-days: 21
+          if-no-files-found: ignore
+      - name: Enforce live acceptance status
+        if: steps.acceptance.outputs.failed_cases != '0'
+        run: |
+          echo "::warning::At least one guest UI acceptance failed. Verify artifacts before claiming success."
+          exit 1
