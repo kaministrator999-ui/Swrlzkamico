@@ -13,5 +13,18 @@
   "repair": "Display-only flat lighting and bounded inset crease guide on low-poly topology, align orbit pivot to selected part or whole model at start of actual drag without changing distance/yaw/pitch, move right splitter entire hit area to rail side and enlarge touch width.",
   "sourcePatch": "patches/v11_461_model_edges_orbit_dock.py",
   "releaseSafety": "Do not publish until mobile Chromium passes real pan/orbit, left/right touch drags, all view modes and startup; verify 438 ordered patches and exact source SHA-256.",
-  "physicalPhoneVerified": false
+  "physicalPhoneVerified": false,
+  "finalBytes": 10176580,
+  "sourceIntegritySha256": "197a0cd10769fb3b4a0cc878801ae97876506759a42f490f649e079bd668e6e2",
+  "mobileBrowserRun": "https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/43691814367",
+  "browserObserved": {
+    "nativeViewButtons": 11,
+    "desktopLayoutLeftTouchResize": true,
+    "desktopLayoutRightTouchResize": true,
+    "simulatedPanDriftWorldUnits": 0.2127006390291785,
+    "newOrbitPivotCentered": true,
+    "newOrbitZoomPreserved": true,
+    "editorReady": true
+  },
+  "verified": true
 }
