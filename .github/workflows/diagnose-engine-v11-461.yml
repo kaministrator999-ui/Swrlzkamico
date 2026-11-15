@@ -1,0 +1,55 @@
+name: Diagnose §E v11.461 actual mobile orbit, splitters and inset mesh normals
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/diagnose-engine-v11-461.yml","projects/swrlz-forge-moba/tests/diagnose_mobile_modeler_v11_461.cjs"]
+  workflow_dispatch:
+permissions: {contents: read}
+jobs:
+  diagnose:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 17
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.11"}
+      - name: Assemble current source and print native mesh/camera/splitter excerpts
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path("projects/swrlz-forge-moba/source-manifest.json")
+          m=json.loads(p.read_text());m["finalSha256"]=None;m["finalBytes"]=None
+          p.write_text(json.dumps(m,ensure_ascii=False))
+          PY
+          python projects/swrlz-forge-moba/build_space.py --output /tmp/se461-diagnostic >/dev/null
+          python - <<'PY'
+          import re
+          from pathlib import Path
+          s=Path("/tmp/se461-diagnostic/index.html").read_text()
+          patterns={
+            "NORMALS":r"computeVertexNormals\(",
+            "FLAT":r"flatShading:",
+            "TOPOLOGY":r"kind==='topologyMesh'",
+            "TOPOLOGY_BUFFER":r"topologyMesh\.positions",
+            "GEOMETRY_HELPER":r"function (?:atelier\w*Geometry|renderParts|atelier\w*Mesh)\(",
+            "SPLITTER":r"function dragResize\(",
+            "SPLITTER_MAX":r"function se449ModelDockMax\(",
+            "CAMERA":r"cameraUpdate=function\(",
+            "TARGET":r"atelierDetailTarget=",
+          }
+          for label,pat in patterns.items():
+            matches=list(re.finditer(pat,s))
+            print("SE461_DIAG",label,"matches",len(matches),flush=True)
+            for i,m in enumerate(matches[:10]):
+              lo=max(0,m.start()-(400 if label in ("NORMALS","TOPOLOGY","TARGET") else 60))
+              hi=min(len(s),m.end()+(1200 if label in ("SPLITTER","SPLITTER_MAX","CAMERA","NORMALS","GEOMETRY_HELPER") else 380))
+              print("SE461_DIAG_CONTEXT",label,i,m.start(),repr(s[lo:hi]),flush=True)
+          PY
+      - name: Install browser for mobile hit testing and camera target diagnostics
+        run: |
+          npm install --no-save playwright@1.56.1
+          npx playwright install --with-deps --only-shell chromium
+      - name: Record real modeler splitter, camera and shading data
+        run: node projects/swrlz-forge-moba/tests/diagnose_mobile_modeler_v11_461.cjs
