@@ -9,7 +9,7 @@ p.add_argument('--request',action='store_true')
 a=p.parse_args()
 m=json.loads((ROOT/'source-manifest.json').read_text())
 assert m['name']=='§wyrl§ Engine v11.464'
-assert m['finalArtifact']=='swyrl_engine_v11_463.html'
+assert m['finalArtifact']=='swyrl_engine_v11_464.html'
 assert len(m['patches'])==441
 assert m['patches'][-2:]==['patches/v11_463_transform_history_bar.py','patches/v11_464_model_visual_inspector.py']
 out=Path(a.output).resolve()
@@ -28,12 +28,12 @@ for token in ["window.SWRLZ_FORGE_BUILD={version:'v11.464'",
  'se320ModelTransformAccess(panel,inspector);',
  'SE461_TOUCH_DOCK_BOUNDS_START','SE462_VIEW_AND_DOCK_STYLES_START']:
  assert token in h,token
-assert h.count(" source.engine='§wyrl§ Engine · Maker v11.464';source.version=11.463;")==5
+assert h.count(" source.engine='§wyrl§ Engine · Maker v11.464';source.version=11.464;")==5
 for name in ['model_visual_polish_v11_464.js','model_wire_clarity_v11_462.js','model_hard_surface_orbit_v11_461.js',
              'model_native_view_commands_v11_460.js']:
  subprocess.run(['node','--check',str(ROOT/'runtime'/name)],check=True)
 subprocess.run([sys.executable,str(ROOT/'scripts/check_inline_js_syntax_v11_266.py'),str(out/'index.html')],check=True)
-subprocess.run(['node',str(ROOT/'tests/model_transform_history_v11_463.mjs'),str(out/'index.html')],check=True)
+subprocess.run(['node',str(ROOT/'tests/model_transform_history_v11_464.mjs'),str(out/'index.html')],check=True)
 subprocess.run(['node',str(ROOT/'tests/model_visual_polish_v11_464.mjs'),str(out/'index.html')],check=True)
 subprocess.run(['node',str(ROOT/'tests/model_wire_clarity_v11_462.mjs')],check=True)
 subprocess.run(['node',str(ROOT/'tests/model_hard_surface_orbit_v11_461.mjs')],check=True)
