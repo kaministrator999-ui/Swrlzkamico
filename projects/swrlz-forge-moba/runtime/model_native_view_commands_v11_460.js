@@ -56,4 +56,7 @@ const se460ModelView=Object.freeze((()=>{
  }
  return {version:'v11.460',inspect,setMode,setCamera};
 })());
+// Export from within the original ModelAtelier closure. Its outer return
+// structure has changed across releases, but the closure state is definitive.
+window.SWYRL_ENGINE_MODEL_VIEW=se460ModelView;
 /* SE460_NATIVE_VIEW_COMMANDS_END */
