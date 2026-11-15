@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT (owner-approved)",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.449",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_449_MODEL_TOUCH_LAYOUT",
-  "reason": "Restore one-row Meshes/viewport/tools/inspector grid, properly draggable and bounded splitters, native Face-mode multitouch pinch/pan, and Undo-safe existing-topology vertex edit baking; protect authored meshes and existing VR interactions. Source verified; physical phone acceptance pending.",
-  "sourceCommit": "a2d3519bfc693b701c5488138725aa2f1aa00dd3",
-  "sourceIntegritySha256": "56719fcff0640b0b86250bc0be225e1ef640be2e10770549dc1858ba3cca6d92"
+  "releaseVersion": "v11.450",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_450_CAMERA_INSET_PREVIEW",
+  "reason": "Prevent side dock dragging from resetting model camera distance/pose, arm Inset/Extrude until a selected planar face can preview native geometry, and show the preview with disposable edge highlights; preserve Undo, UVs, controller input and existing touch gestures. Source verified; physical Android acceptance pending.",
+  "sourceCommit": "ec07315dbb1778fe399d802b6a2e23573599488b",
+  "sourceIntegritySha256": "6786f58c850dff6efbf91caba600049bfd5fb658055c6b5290bfc35b58554149"
 }
