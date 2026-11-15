@@ -1,0 +1,9 @@
+{
+  "schema": "swrlz-forge-release-prepare-v1",
+  "version": "v11.451",
+  "ownerApproved": true,
+  "reason": "Condense Face tools to a progressive sidebar with live Inset/Extrude previews, exact amount input and native Apply/Cancel",
+  "sourcePatch": "patches/v11_451_guided_face_workflow.py",
+  "expectedPrevious": "v11.450",
+  "verificationAttempt": 1
+}
