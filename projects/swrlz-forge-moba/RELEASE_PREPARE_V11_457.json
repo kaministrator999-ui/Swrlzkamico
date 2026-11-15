@@ -1,0 +1,10 @@
+{
+  "schema": "swrlz-forge-release-prepare-v1",
+  "version": "v11.457",
+  "ownerApproved": true,
+  "expectedPrevious": "v11.456",
+  "reason": "Fix zero-object-selection Face mode and the disabled Make editable & preview rim control without requiring a face on an unconverted primitive",
+  "sourcePatch": "patches/v11_457_conversion_no_face_gate.py",
+  "verificationAttempt": 1,
+  "note": "Screenshot-backed regression: selected cube, zero selected triangles, top conversion CTA hidden and legacy CTA disabled. Native convert, vertex-edit confirmation and Undo must remain authoritative."
+}
