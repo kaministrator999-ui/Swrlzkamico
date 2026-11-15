@@ -29,8 +29,8 @@ def digest(x):return hashlib.sha256(x).hexdigest()
 def candidate(original):
     source=original.decode("utf-8")
     if MARK in source:raise RuntimeError("Patch already installed")
-    if "swrlz-explicit-prose-finalizer-v1" not in source:
-        raise RuntimeError("Expected no-code delivery guard not present")
+    if "swrlz-prose-only-response-mode-v1" not in source or "prose_only_output=" not in source:
+        raise RuntimeError("Expected live no-code response mode and final output guard not present")
     if source.count(ANCHOR)!=1:
         raise RuntimeError("Unsafe mutation: authoritative intent assignment changed")
     source=source.replace(ANCHOR,PATCH,1)
