@@ -8,5 +8,8 @@
   "sourcePatch": "patches/v11_462_model_wire_clarity.py",
   "requiredVerification": "Exact compiled HTML SHA/bytes, new native wire regression, existing v11.460/461 view bridge, JS syntax and 77 assets",
   "physicalPhoneVerified": false,
-  "guardedDeployment": "Only seal workflow after checks, then separate DEPLOY_REQUEST and existing HF workflow"
+  "guardedDeployment": "Only seal workflow after checks, then separate DEPLOY_REQUEST and existing HF workflow",
+  "correctiveRetry": 1,
+  "repair": "Initial source compile found two </head> occurrences in assembled document; patch now inserts CSS at the first document head only, consistent with previous native patch chain.",
+  "priorFailedRun": 43718138795
 }
