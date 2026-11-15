@@ -4,10 +4,10 @@ on:
     branches: [main]
     paths:
       - "projects/swrlz-forge-moba/patches/v11_457_conversion_no_face_gate.py"
-      - "projects/swrlz-forge-moba/runtime/model_guided_primitive_conversion_v11_456.js"
-      - "projects/swrlz-forge-moba/runtime/model_guided_primitive_conversion_v11_456.css"
+      - "projects/swrlz-forge-moba/source-manifest.json"
+      - "projects/swrlz-forge-moba/scripts/verify_v11_457_release.py"
       - "projects/swrlz-forge-moba/tests/model_conversion_no_face_gate_v11_457.mjs"
-      - ".github/workflows/measure-engine-v11-456.yml"
+      - ".github/workflows/measure-engine-v11-457.yml"
   workflow_dispatch:
 permissions: {contents: read}
 jobs:
@@ -24,7 +24,6 @@ jobs:
           set -euo pipefail
           python -m py_compile projects/swrlz-forge-moba/patches/v11_457_conversion_no_face_gate.py
           node --check projects/swrlz-forge-moba/runtime/model_guided_primitive_conversion_v11_456.js
-          node --check projects/swrlz-forge-moba/runtime/model_guided_primitive_conversion_v11_456.js
       - name: Build actual candidate and measure final integrity without altering committed manifest
         run: |
           set -euo pipefail
@@ -34,7 +33,7 @@ jobs:
           p=Path('projects/swrlz-forge-moba/source-manifest.json')
           m=json.loads(p.read_text())
           assert m['name']=='§wyrl§ Engine v11.457'
-          assert m['patches'][-1]=='patches/v11_457_guided_primitive_conversion.py'
+          assert m['patches'][-1]=='patches/v11_457_conversion_no_face_gate.py'
           assert len(m['patches'])==434
           m['finalSha256']=None
           m['finalBytes']=None
