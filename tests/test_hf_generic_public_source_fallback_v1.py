@@ -29,10 +29,11 @@ def fetched(url):
                     {"key":"A_Princess_of_Mars","title":"A Princess of Mars",
                      "excerpt":"A novel about Mars."},
                 ]})}
-    if parsed.path=="/api/rest_v1/page/summary/Moons_of_Mars":
+    if parsed.path=="/w/api.php":
         return {"status":200,"finalUrl":url,
-                "extract":json.dumps({"type":"standard","title":"Moons of Mars",
-                                       "extract":SUMMARY})}
+                "extract":json.dumps({"query":{"pages":[{
+                    "pageid":1655082,"title":"Moons of Mars","extract":SUMMARY
+                }]}})}
     raise AssertionError("Unexpected public lookup: "+url)
 
 
@@ -69,9 +70,10 @@ class GenericPublicSourceFallbackTests(unittest.TestCase):
     def test_disambiguation_not_treated_as_answer(self):
         def fake(url):
             response=fetched(url)
-            if "/api/rest_v1/page/summary/" in url:
-                response={**response,"extract":json.dumps({
-                    "type":"disambiguation","title":"Moons of Mars","extract":SUMMARY})}
+            if "/w/api.php" in url:
+                response={**response,"extract":json.dumps({"query":{"pages":[{
+                    "title":"Moons of Mars","extract":"Moons of Mars may refer to several unrelated subjects."
+                }]}})}
             return response
         self.assertEqual(wikipedia_public_fallback("List moons of Mars",fake),[])
 
