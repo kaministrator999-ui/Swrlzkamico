@@ -55,4 +55,4 @@ def apply(html):
    "No new geometry pipeline or parallel edit state is introduced. The original v11.454 rim/depth Set buttons, v11.452 tool flyouts, native preview/Apply/Cancel/Undo, camera, save/load, desktop, mobile, and VR functionality remain in place.",
    "The conversion control is displayed only for a single convertible source during the rim stage and cannot commit any Inset or Extrude on its own."
   ])
- return html[:at]+json.dumps(notes,ensure_ascii=False,separators=(',',':').replace("</",r"<\/"))+html[at+width:]
+ return html[:at]+json.dumps(notes,ensure_ascii=False,separators=(',',':')).replace("</",r"<\/")+html[at+width:]
