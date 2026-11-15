@@ -22,7 +22,7 @@ jobs:
           focus={
             "lfm2_700m_engine.py":[(742,766),(944,967),(1108,1150)],
             "station.py":[(1378,1425),(1495,1555),(1570,1650),(1715,1800)],
-            "chat/§wyrlz/index.html":[(225,254),(3240,3355)],
+            "chat/§wyrlz/index.html":[(3574,3710),(4278,4328)],
             "api/selective_retrieval.py":[(1,90),(230,360)],
           }
           for path,ranges in focus.items():
