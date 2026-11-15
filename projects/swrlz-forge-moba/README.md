@@ -1,3 +1,9 @@
+## §E v11.450 · Stable camera on dock resize and visible Inset previews (2026-11-14)
+
+Changing Model Studio hierarchy/inspector widths no longer sends fake global browser-resize events on every splitter move; the existing stage ResizeObserver owns viewport sizing. The camera's resize callback preserves orbit distance, yaw, pitch, pan and focus target even if another resize handler tries to reframe. Perspective/projection aspect continues to resize with the viewport.
+
+Inset and Extrude on phone/desktop now support an armed tool workflow: select the tool then tap a flat face, or select the face before choosing the tool. The native face-region selection produces Preview (never Apply implicitly); compatible primitive conversion still uses native guards and confirmation for saved vertex edits. Successful preview meshes receive a transient colored edge outline so inset borders remain visible, automatically disposed on Apply or Cancel. Existing mesh/UV/history/VR ownership is unchanged. Physical Android acceptance pending.
+
 ## §E v11.449 · Meshes dock and two-finger camera repair (2026-11-14)
 
 Restores the Model Studio desktop-width four-column layout: Meshes hierarchy, viewport, main tools, and modifier inspector all occupy the same row. The old absolute splitter offsets and v11.448 in-grid splitter cells no longer push the Meshes library below the viewport. Existing accessible resizer handles float over the true dock edges and use the original pointer/keyboard resizing code with a minimum viewport width.
