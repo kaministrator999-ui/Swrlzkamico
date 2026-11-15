@@ -1,0 +1,83 @@
+/* SE465_NARROW_INSPECTOR_STYLES_START */
+/* The prior "overflow-wrap:anywhere" caused letter-per-line labels. */
+html #modelAtelierPanel[data-se320-ui] .atelier-inspector,
+html #modelAtelierPanel[data-se320-ui] .atelier-inspector :is(
+ button,summary,strong,small,label,p,span,h2,h3,h4,div){
+ overflow-wrap:normal!important;word-break:normal!important;
+ hyphens:none!important;
+}
+html #modelAtelierPanel[data-se320-ui] .atelier-inspector :is(button,summary){
+ white-space:normal!important;
+}
+html #modelAtelierPanel[data-se320-ui] .atelier-inspector :is(
+ input,select,textarea,button){
+ box-sizing:border-box!important;max-width:100%!important;
+}
+html #modelAtelierPanel[data-se320-ui] .se465-inspector-narrow-hint{
+ display:none!important;
+}
+/* When a user intentionally drags the inspector too narrow to read, don't
+   corrupt the controls or push aside the viewport; offer the EXISTING Expand
+   action. The real controls stay mounted and regain their natural layout. */
+html #modelAtelierPanel[data-se320-ui][data-se465-inspector-narrow=true]:not(
+ [data-se464-inspector-focus=true]) .atelier-inspector>.se465-inspector-narrow-hint{
+ display:block!important;
+ flex:0 0 auto!important;
+ margin:7px 0!important;padding:9px 7px!important;
+ min-width:0!important;
+ border-radius:8px!important;border:1px solid #5f8597!important;
+ background:#163142!important;color:#e3f8ff!important;
+ font:600 11px/1.5 system-ui!important;
+}
+html #modelAtelierPanel[data-se320-ui][data-se465-inspector-narrow=true]:not(
+ [data-se464-inspector-focus=true]) .atelier-inspector>.se465-inspector-narrow-hint strong{
+ display:block!important;margin-bottom:5px!important;
+ white-space:normal!important;font-size:11px!important;
+}
+html #modelAtelierPanel[data-se320-ui][data-se465-inspector-narrow=true]:not(
+ [data-se464-inspector-focus=true]) .atelier-inspector>.se465-inspector-narrow-hint p{
+ margin:0!important;white-space:normal!important;
+ overflow-wrap:normal!important;word-break:normal!important;
+}
+html #modelAtelierPanel[data-se320-ui][data-se465-inspector-narrow=true]:not(
+ [data-se464-inspector-focus=true]) .atelier-inspector>:not(.atelier-tool-handle):not(.se465-inspector-narrow-hint){
+ display:none!important;
+}
+html #modelAtelierPanel[data-se320-ui][data-se465-inspector-narrow=true]:not(
+ [data-se464-inspector-focus=true]) .atelier-inspector>.atelier-tool-handle{
+ display:flex!important;flex-wrap:wrap!important;gap:5px!important;
+}
+html #modelAtelierPanel[data-se320-ui][data-se465-inspector-narrow=true]:not(
+ [data-se464-inspector-focus=true]) .atelier-inspector>.atelier-tool-handle>:not(strong):not(button){
+ display:none!important;
+}
+html #modelAtelierPanel[data-se320-ui][data-se465-inspector-narrow=true]:not(
+ [data-se464-inspector-focus=true]) .atelier-inspector>.atelier-tool-handle>strong{
+ flex:1 0 100%!important;min-width:0!important;
+ white-space:normal!important;
+}
+html #modelAtelierPanel[data-se320-ui][data-se465-inspector-narrow=true]:not(
+ [data-se464-inspector-focus=true]) #se464InspectorFocus{
+ display:inline-flex!important;white-space:nowrap!important;
+ padding:7px 8px!important;
+}
+/* Expand/Dock needs to release the *real* native right-hand grid track.
+   v11.449 sets --se320-right!important, so the old v11.464 selector was
+   lower specificity and could leave unused dock width behind. */
+@media(max-width:920px),(pointer:coarse){
+ html #modelAtelierPanel.se187-modeler-page[data-se320-ui][data-se251-layout=desktop][data-se464-inspector-focus=true] .atelier-body{
+  --se320-right:0px!important;
+  grid-template-columns:var(--se320-left) minmax(0,1fr) var(--se320-rail) 0px!important;
+ }
+ html #modelAtelierPanel.se187-modeler-page[data-se320-ui][data-se251-layout=desktop][data-se464-inspector-focus=true] .atelier-body>.atelier-inspector{
+  grid-column:auto!important;grid-row:auto!important;
+ }
+ html #modelAtelierPanel[data-se320-ui][data-se464-inspector-focus=true] .atelier-inspector>.se465-inspector-narrow-hint{
+  display:none!important;
+ }
+ html #modelAtelierPanel[data-se320-ui][data-se464-inspector-focus=true] .atelier-inspector :is(
+  button,summary,select,input,textarea){
+  overflow-wrap:normal!important;word-break:normal!important;
+ }
+}
+/* SE465_NARROW_INSPECTOR_STYLES_END */
