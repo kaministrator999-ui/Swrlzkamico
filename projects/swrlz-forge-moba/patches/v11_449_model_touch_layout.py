@@ -20,9 +20,11 @@ def apply(html):
  # must own any given pointer event.
  html=one(html,
   "function atelierComponentPointerDown(e){\n if(atelierComponentMode==='mesh'||e.button!==0)return false;",
-  """function atelierComponentPointerDown(e){
+  """const se449ComponentPinchIds=new Set();
+function atelierComponentPointerDown(e){
  if(atelierComponentMode==='mesh'||e.button!==0)return false;
  if(e.pointerType==='touch'&&atelierCameraPointerDown(e)){
+  for(const id of atelierCameraTouches.keys())se449ComponentPinchIds.add(id);
   if(atelierComponentGesture)se447CameraOrbitStop(atelierComponentGesture,e,false);
   atelierComponentCancel();
   if(e.cancelable)e.preventDefault();
@@ -39,11 +41,14 @@ def apply(html):
  html=one(html,
   "function atelierComponentPointerUp(e){\n if(atelierComponentDrag)return atelierComponentGizmoUp(e);",
   """function atelierComponentPointerUp(e){
- if(atelierComponentMode!=='mesh'&&e.pointerType==='touch'&&atelierCameraPointerUp(e)){
-  if(atelierComponentGesture)se447CameraOrbitStop(atelierComponentGesture,e,false);
-  atelierComponentCancel();
-  if(e.cancelable)e.preventDefault();
-  return true;
+ if(atelierComponentMode!=='mesh'&&e.pointerType==='touch'){
+  const consumed=atelierCameraPointerUp(e),wasPinch=se449ComponentPinchIds.delete(e.pointerId);
+  if(consumed||wasPinch){
+   if(atelierComponentGesture)se447CameraOrbitStop(atelierComponentGesture,e,false);
+   atelierComponentCancel();
+   if(e.cancelable)e.preventDefault();
+   return true;
+  }
  }
  if(atelierComponentDrag)return atelierComponentGizmoUp(e);""")
  html=one(html,
