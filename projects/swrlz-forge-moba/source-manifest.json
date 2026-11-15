@@ -1,10 +1,10 @@
 {
   "schema": "swrlz-forge-source-v2",
-  "name": "§wyrl§ Engine v11.461",
+  "name": "§wyrl§ Engine v11.462",
   "baseArtifact": "swrlz_forge_v4.html",
   "baseBytes": 99591,
   "baseSha256": "a8299fe89fbb98d15c6091751b7a66931a66efec8eec5cb464e1286f21895856",
-  "finalArtifact": "swyrl_engine_v11_461.html",
+  "finalArtifact": "swyrl_engine_v11_462.html",
   "encoding": "gzip+base64-chunks",
   "chunks": [
     "payload/part-01.txt",
@@ -452,8 +452,9 @@
     "patches/v11_458_dock_orbit_contrast.py",
     "patches/v11_459_startup_guard.py",
     "patches/v11_460_native_view_menu.py",
-    "patches/v11_461_model_edges_orbit_dock.py"
+    "patches/v11_461_model_edges_orbit_dock.py",
+    "patches/v11_462_model_wire_clarity.py"
   ],
-  "finalBytes": 10176580,
-  "finalSha256": "197a0cd10769fb3b4a0cc878801ae97876506759a42f490f649e079bd668e6e2"
+  "finalBytes": 10185150,
+  "finalSha256": "ad794212cdcfec540fb05b41f224ca69169aef950453f09b4c53edb6e05b69f1"
 }
