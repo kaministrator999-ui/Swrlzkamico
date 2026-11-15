@@ -36,6 +36,7 @@ const sandbox=vm.createContext({
  atelierComponentGesture:null,atelierComponentDrag:null,
  atelierComponentGizmoDown:()=>false,atelierComponentGizmoMove:()=>true,atelierComponentGizmoUp:()=>true,
  atelierComponentChoose:()=>picks++,atelierComponentHit:()=>0,
+ selection:'cube',se430ModelWorkshop:{selectRegion:()=>{picks++;return {ok:true,faceIds:[0,1]};}},
  atelierComponentRegionPick:()=>[],atelierComponentIds:[],
  atelierComponentMax:512,atelierComponentRefresh:()=>{},
  atelierMeshClamp:(v,a,b)=>Math.min(b,Math.max(a,v)),
