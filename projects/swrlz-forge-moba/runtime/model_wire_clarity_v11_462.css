@@ -1,0 +1,31 @@
+/* SE462_VIEW_AND_DOCK_STYLES_START */
+html #modelAtelierPanel .se462-wire-options{
+ grid-column:1/-1;display:grid;grid-template-columns:1fr;gap:5px;
+ padding:7px 4px 3px;border-top:1px solid #647b91;color:#edf7ff;
+ font:600 11px/1.4 system-ui;
+}
+html #modelAtelierPanel .se462-wire-options label{
+ display:flex;align-items:center;gap:9px;min-height:32px;cursor:pointer;
+}
+html #modelAtelierPanel .se462-wire-options input{
+ appearance:auto;accent-color:#69eed1;min-width:17px;min-height:17px;
+}
+html #modelAtelierPanel #se455ViewMenu [aria-pressed=true]{
+ border:2px solid #91ffe8!important;box-shadow:0 0 0 1px #5caeb9!important;
+}
+html #modelAtelierPanel #modelAtelierToolRail :is(button[aria-pressed=true],button.active),
+html #modelAtelierPanel .atelier-inspector :is(button[aria-selected=true],button[aria-pressed=true],button.active){
+ outline:2px solid #8bffdd;outline-offset:-2px;
+}
+html #modelAtelierPanel .atelier-body>.se251-resize-grip:focus-visible{
+ outline:3px solid #b2ffec!important;outline-offset:-3px!important;
+}
+@media (max-width:920px){
+ html #modelAtelierPanel.se187-modeler-page[data-se251-layout=desktop] .atelier-body>.atelier-scene{
+  min-width:220px!important;
+ }
+ html #modelAtelierPanel .atelier-body>.se251-resize-grip::after{
+  background:#e2aaff!important;box-shadow:0 0 14px #c783ffba!important;
+ }
+}
+/* SE462_VIEW_AND_DOCK_STYLES_END */
