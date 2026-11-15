@@ -1,3 +1,7 @@
+## §E v11.462 · Clear editor wireframe and mobile dock sizing (2026-11-15)
+
+The next §E Model Studio display repair adds clean high-contrast topology edges, optional triangulation/hidden-line views, sharper inset Material shading and an improved phone viewport budget. All changes are non-destructive and follow a separate exact source-seal and Hugging Face deployment gate. See `projects/swrlz-forge-moba/docs/MODEL_WIRE_CLARITY_V11_462.md` for acceptance scope; verify workflow and actual hosted build before declaring live.
+
 ## §E v11.442 · A movable satchel tutorial for mobile browsers (2026-11-14)
 
 The regular browser lesson now reuses its existing tutor in a separate nonmodal window, with touch/mouse dragging, collapse, minimize/reopen, reset and viewport clamping. Phone instructions provide a manual connected body, thin flap, segmented strap and sphere clasp using the native editor. Transform is discoverable by name, and three-decimal numeric precision accepts the demonstrated dimensions and valid mesh-tool defaults. Existing VR windows, native geometry/history and project saving remain authoritative.
