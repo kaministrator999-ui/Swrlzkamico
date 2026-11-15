@@ -1,0 +1,68 @@
+name: Read-only preflight for §C selective retrieval
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/hf-selective-retrieval-preflight.yml"
+permissions:
+  contents: read
+concurrency:
+  group: swrlz-hf-space-deployment
+  cancel-in-progress: false
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: b34e39af2d0a2bb817991f9fd009df0cdfc35d2d
+          path: trial-source
+          fetch-depth: 1
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install existing Hugging Face client
+        run: python -m pip install --quiet "huggingface_hub>=0.34,<2"
+      - name: Run targeted router and source-drift regression
+        working-directory: trial-source
+        run: |
+          python -m unittest discover -s tests -p "test_selective_retrieval.py" -v
+          python -m unittest discover -s tests -p "test_hf_selective_retrieval_trial.py" -v
+      - name: Inspect exact current HF source, no modification
+        working-directory: trial-source
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          python - <<'PY'
+          import os,re,json
+          from pathlib import Path
+          from huggingface_hub import HfApi,hf_hub_download
+          token=os.environ.get("HF_TOKEN")
+          if not token:raise RuntimeError("Existing owner HF_TOKEN secret is absent")
+          api=HfApi(token=token)
+          info=api.repo_info("kamiloki/Swyrlz",repo_type="space")
+          revision=info.sha
+          files=set(api.list_repo_files("kamiloki/Swyrlz",repo_type="space",revision=revision))
+          watched=["lfm2_700m_engine.py","station.py","app.py","online_tools.py",
+                   "api/online_research.py","api/selective_retrieval.py",
+                   "qwen35_single_runtime.py","qwen_coder_engine.py"]
+          print("HF_SELECTIVE_PREFLIGHT "+json.dumps({"revision":revision,
+              "filesPresent":[name for name in watched if name in files]}))
+          for name in ["lfm2_700m_engine.py","station.py","online_tools.py","api/online_research.py"]:
+              if name not in files:continue
+              body=Path(hf_hub_download("kamiloki/Swyrlz",name,repo_type="space",
+                          revision=revision,token=token)).read_text("utf-8")
+              lines=body.splitlines()
+              patterns=(r"def generate_events\(",r"onlineContext",r"def research\(",
+                        r"online_tools",r"def _.*research",r"research_bundle",r"research_requested")
+              hits=[{"line":i+1,"code":line.strip()[:150]} for i,line in enumerate(lines)
+                    if any(re.search(pattern,line) for pattern in patterns)]
+              print("HF_SELECTIVE_HOOKS "+json.dumps({"file":name,"length":len(lines),
+                    "hits":hits[:35]},ensure_ascii=True))
+          PY
+      - name: Prepare exact-source candidate without publishing
+        working-directory: trial-source
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: python -u scripts/hf_chat_selective_retrieval_trial.py --out /tmp/swrlz-selective-preflight
