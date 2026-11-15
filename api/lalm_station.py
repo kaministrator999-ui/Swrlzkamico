@@ -204,6 +204,34 @@ def install(server, chat_extensions) -> None:
             return JSONResponse({"ok": False, "code": "LIVE_CODE_STATUS_UNAVAILABLE"},
                                 status_code=503, headers=_headers())
 
+    @app.get("/api/lalm_station/code-workspace", include_in_schema=False)
+    async def code_workspace_read(request: Request):
+        """Read complete generated files only for the authenticated job owner."""
+        try:
+            from api.code_workspace import workspace_snapshot
+            user_id = user_id_from_request(request)
+            request_id = str(request.query_params.get("requestId") or "")
+            thread_id = str(request.query_params.get("threadId") or "")
+            if not request_id or not thread_id:
+                raise ValueError("MISSING_CODING_WORKSPACE_IDENTITY")
+            full = str(request.query_params.get("includeContent") or "").lower() in {"1", "true"}
+            view = workspace_snapshot(user_id=user_id, request_id=request_id,
+                                      thread_id=thread_id, include_content=full)
+            return JSONResponse({"ok": True, "contract": "swrlz-code-workspace-v1",
+                                 **view}, headers=_headers())
+        except AuthenticationError as exc:
+            return JSONResponse({"ok": False, "code": "ACCOUNT_SESSION_INVALID",
+                                 "detail": str(exc)}, status_code=401, headers=_headers())
+        except LookupError:
+            return JSONResponse({"ok": False, "code": "CODING_WORKSPACE_NOT_FOUND"},
+                                status_code=404, headers=_headers())
+        except ValueError as exc:
+            return JSONResponse({"ok": False, "code": str(exc)},
+                                status_code=400, headers=_headers())
+        except Exception:
+            return JSONResponse({"ok": False, "code": "CODING_WORKSPACE_UNAVAILABLE"},
+                                status_code=503, headers=_headers())
+
     @app.post("/api/lalm_station/live-code", include_in_schema=False)
     async def live_code_control(request: Request):
         """Record steering/checkpoint intent without stopping the existing worker.
