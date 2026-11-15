@@ -1,4 +1,4 @@
-name: Read-only §C concurrent HF revision reconciliation
+name: Read-only §C concurrent HF revision reconciliation after other-release rollback
 on:
   push:
     branches: [main]
