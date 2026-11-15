@@ -1,0 +1,30 @@
+name: Preflight §C prose-only response mode
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/hf_guest_prose_response_mode_fix.py'
+      - '.github/workflows/hf-guest-prose-response-preflight.yml'
+permissions: {contents: read}
+jobs:
+  preflight:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - run: python -m pip install --quiet 'huggingface_hub>=0.34,<2'
+      - run: python -m py_compile scripts/hf_guest_prose_response_mode_fix.py
+      - name: Validate live source and three route-preservation cases
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: python -u scripts/hf_guest_prose_response_mode_fix.py preflight
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: hf-guest-prose-response-preflight-${{ github.run_id }}
+          path: reports/chat-prose-response-mode/
+          retention-days: 30
+          if-no-files-found: ignore
