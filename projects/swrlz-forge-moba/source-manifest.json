@@ -454,6 +454,6 @@
     "patches/v11_460_native_view_menu.py",
     "patches/v11_461_model_edges_orbit_dock.py"
   ],
-  "finalBytes": 10169795,
-  "finalSha256": "52a1ae0512dffc94a415a2e9391cda5b11385e8a8d3f91168685bbf4592cd1e5"
+  "finalBytes": 10176580,
+  "finalSha256": "197a0cd10769fb3b4a0cc878801ae97876506759a42f490f649e079bd668e6e2"
 }
