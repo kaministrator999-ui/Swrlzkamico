@@ -1,0 +1,138 @@
+name: Guarded §C source-preserving HTML feature patch — guest acceptance
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/hf-html-feature-patch-release.yml'
+permissions: {contents: read}
+concurrency:
+  group: swrlz-chat-guest-eval
+  cancel-in-progress: false
+jobs:
+  release_and_test:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 55
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - name: Install pinned HF and network-isolated Chromium test tooling
+        run: |
+          python -m pip install 'huggingface_hub>=0.34,<2' playwright==1.56.0
+          python -m playwright install --with-deps chromium
+      - run: |
+          python -m py_compile scripts/hf_html_feature_patch_first_v1.py
+          python -m py_compile scripts/eval_chat_guest_suite.py
+          python -m py_compile scripts/test_guest_html_functionality.py
+      - name: Pin live HF source and validate exact feature patch insertion
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: python -u scripts/hf_html_feature_patch_first_v1.py preflight
+      - name: Offline test of existing source-SHA patch application
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          python - <<'PY'
+          import importlib.util,hashlib
+          from huggingface_hub import hf_hub_download
+          from pathlib import Path
+          repo='kamiloki/Swyrlz'
+          source=Path(hf_hub_download(repo,'project_code_targeted_repair_v1.py',repo_type='space')).read_text()
+          ns={'__name__':'_patch_static_selfcheck'}
+          exec(compile(source,'project_code_targeted_repair_v1.py','exec'),ns)
+          html='```html\n<!doctype html><html><body><p>Ready</p><button>Change</button></body></html>\n```'
+          patch={'sourceSha256':hashlib.sha256(html.encode()).hexdigest(),
+                 'op':'insert_before','anchor':'</body>',
+                 'code':'<button id="reset">Reset</button>'}
+          output,receipt=ns['apply_patch'](html,patch)
+          assert output.count('Reset')==1 and '<button>Change</button>' in output
+          assert receipt['preservedPrefixChars']>0 and receipt['addedBytes']>0
+          patch['sourceSha256']='0'*64
+          try:ns['apply_patch'](html,patch)
+          except ns['TargetedRepairError'] as e:
+              assert e.code=='STALE_SOURCE'
+          else:raise AssertionError('Stale patch unexpectedly applied')
+          print('HTML_FEATURE_PATCH_HOST_SHA_SELFTEST_PASSED',flush=True)
+          PY
+      - name: Archive rollback source before modification
+        uses: actions/upload-artifact@v4
+        with:
+          name: feature-patch-before-source-${{ github.run_id }}
+          path: reports/swrlz-html-feature-patch/
+          retention-days: 90
+          if-no-files-found: error
+      - name: Publish one-file feature patch path
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          SWRLZ_FEATURE_PATCH_APPROVED: '1'
+        run: python -u scripts/hf_html_feature_patch_first_v1.py publish
+      - name: Allow serving worker to reload and verify resident coder readiness
+        run: |
+          python - <<'PY'
+          import json,time,urllib.request
+          url='https://kamiloki-swyrlz.hf.space/api/hf/qwen35-ready'
+          for n in range(30):
+              try:
+                  with urllib.request.urlopen(url,timeout=15) as r:data=json.load(r)
+                  if data.get('ready') is True and n>=3:
+                      print('FEATURE_PATCH_RESIDENT_READY',data.get('model'),n,flush=True)
+                      break
+              except Exception as e:print('MODEL_WARMUP',n,type(e).__name__,flush=True)
+              time.sleep(8)
+          else:raise RuntimeError('Coder not ready for guest test')
+          PY
+      - name: Generate a real page and revise it while retaining working source
+        id: model
+        shell: bash
+        env:
+          SWRLZ_EVAL_BASE: https://kamiloki-swyrlz.hf.space
+          SWRLZ_EVAL_MODEL: 700m
+        run: |
+          set -uo pipefail
+          if python -u - <<'PY'
+          import asyncio,sys
+          import scripts.eval_chat_guest_suite as e
+          e.CASES['2']=[x for x in e.CASES['2'] if x['id']=='html-button-ui']
+          if len(e.CASES['2'])!=1:raise RuntimeError('HTML test fixture missing')
+          sys.exit(asyncio.run(e.main('live','2')))
+          PY
+          then status=0;else status=$?;fi
+          echo "exit=$status" >> "$GITHUB_OUTPUT"
+          echo "FEATURE_PATCH_GUEST_ACCEPTANCE_EXIT=$status"
+      - name: Execute Change and Reset interactions in isolated Chromium
+        id: browser
+        if: steps.model.outputs.exit == '0'
+        shell: bash
+        run: |
+          set -uo pipefail
+          if python -u scripts/test_guest_html_functionality.py;then status=0;else status=$?;fi
+          echo "exit=$status" >> "$GITHUB_OUTPUT"
+      - name: Preserve complete anonymous test receipts and screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: feature-patch-guest-html-evidence-${{ github.run_id }}
+          path: reports/chat-guest-eval/
+          retention-days: 21
+          if-no-files-found: ignore
+      - name: Restore previous model source after failed live acceptance
+        if: steps.model.outputs.exit != '0' || steps.browser.outputs.exit != '0'
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          SWRLZ_FEATURE_PATCH_APPROVED: '1'
+        run: python -u scripts/hf_html_feature_patch_first_v1.py rollback
+      - name: Mark all acceptance gates required
+        if: steps.model.outputs.exit != '0' || steps.browser.outputs.exit != '0'
+        run: |
+          echo "::warning::Feature patch did not pass both full HTML and interactive browser acceptance. Rollback completed or blocked by a concurrent HF change."
+          exit 1
+      - name: Attach guest evidence summary
+        if: always()
+        run: |
+          if [[ -f reports/chat-guest-eval/summary.md ]]; then
+            cat reports/chat-guest-eval/summary.md >> "$GITHUB_STEP_SUMMARY"
+          fi
+          if [[ -f reports/chat-guest-eval/functional-report.json ]]; then
+            cat reports/chat-guest-eval/functional-report.json >> "$GITHUB_STEP_SUMMARY"
+          fi
