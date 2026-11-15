@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.465
+title: §wyrl§ Engine v11.466
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,10 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+## §E v11.466 · Ring and arc modeling (2026-11-15)
+
+Native Model Studio now has a candidate ring/arc modeling workflow: graph-radius outline or fill vertex selection with adjustable arc and orientation, selected component move/scale/tilt and proportional falloff, connected edge refinement, and bounded open-boundary ring extrusion. Face Extrude extends signed distance controls and supports outward cap scale, offset and tilt through the existing Preview/Apply/Cancel and Undo. The source is SHA-verified but mobile/VR owner acceptance is separate; complex inward collision, arbitrary quad loop-cut/dissolve and full VR controller parity remain unimplemented. See [ring and arc modeling technical note](docs/MODEL_RING_ARC_V11_466.md).
+
 ## §E v11.465 · Readable mobile Model Studio inspector (2026-11-15)
 
 User screenshots of v11.464 show the narrow inspector breaking tool labels into single letters. v11.465 restores whole-word wrapping; below 236 CSS px, the original inspector presents a compact **Expand** prompt instead of vertically shattered labels. Expanded native controls temporarily overlay the viewport while releasing the right grid track. Dock returns to the exact saved widths and original pointer grips. Existing camera, Undo, mesh, UV, VR and Model Studio view modes are unchanged. Source, test and Hugging Face release are separate verification steps. See [inspector readability release notes](docs/MODEL_INSPECTOR_READABILITY_V11_465.md).
