@@ -27,7 +27,9 @@ def apply(html):
  html=one(html,'/* SE430_MODEL_BEGINNER_UI_END */',
      '/* SE430_MODEL_BEGINNER_UI_END */\n'+
      '/* Previous verified behavior: SWYRL_ENGINE_DEPLOY_MARKER: V11_450_CAMERA_INSET_PREVIEW */\n'+js)
- html=one(html,'</head>','<style id="se451ProgressiveFaceDock">\n'+css+'\n</style>\n</head>')
+ # The engine includes more than one HTML closing head across embedded
+ # source templates; inject style only into the primary document head.
+ html=html.replace('</head>','<style id="se451ProgressiveFaceDock">\n'+css+'\n</style>\n</head>',1)
  for before,after in [
   ('ENGINE · MAKER v11.450','ENGINE · MAKER v11.451'),
   ('v11.450 · stable dock zoom and visible Inset preview','v11.451 · contextual face tool drawers'),
