@@ -1,0 +1,66 @@
+/* SE451_FACE_PROGRESSIVE_DOCK_CSS_START */
+html #modelAtelierPanel[data-se451-progressive="1"] .atelier-body{position:relative!important;isolation:isolate}
+/* Reclaim original inspector track only for face tools. All other modes keep
+   the authored native layout, saved sidebar widths, and resize gestures. */
+html #modelAtelierPanel.se187-modeler-page[data-se320-ui][data-se251-layout="desktop"][data-se451-face-open="true"] .atelier-body{
+ --se320-right:0px!important;
+ grid-template-columns:var(--se320-left) minmax(0,1fr) var(--se320-rail) 0px!important;
+}
+html #modelAtelierPanel[data-se451-face-open="true"] .atelier-body>.atelier-inspector{display:none!important}
+html #modelAtelierPanel[data-se451-face-open="true"] #se251-split-model-right{display:none!important}
+html #modelAtelierPanel[data-se451-progressive="1"] :is(#se451FaceOperations,#se451FaceSettings){
+ box-sizing:border-box;position:absolute;top:7px;min-width:0;max-height:calc(100% - 14px);
+ overflow-y:auto;overflow-x:hidden;z-index:55;border:1px solid #6697a0;
+ border-radius:11px;background:#151b2d;color:#e7f5fb;box-shadow:0 8px 26px #02060bcc;
+ overscroll-behavior:contain;touch-action:pan-y;transition:transform .17s ease,opacity .17s ease;
+}
+html #modelAtelierPanel[data-se451-progressive="1"] :is(#se451FaceOperations,#se451FaceSettings)[hidden]{display:none!important}
+html #modelAtelierPanel[data-se451-progressive="1"] #se451FaceOperations{right:calc(var(--se320-rail,78px) + 6px);width:148px}
+html #modelAtelierPanel[data-se451-progressive="1"] #se451FaceSettings{right:calc(var(--se320-rail,78px) + 162px);width:clamp(210px,27vw,272px)}
+html #modelAtelierPanel[data-se451-progressive="1"] :is(#se451FaceOperations,#se451FaceSettings)>header{
+ position:sticky;top:0;z-index:1;display:flex;align-items:center;gap:6px;
+ justify-content:space-between;padding:7px 8px;border-bottom:1px solid #52737f;
+ background:#263247;min-height:40px;
+}
+html #modelAtelierPanel[data-se451-progressive="1"] :is(#se451FaceOperations,#se451FaceSettings)>header strong{font:700 12px/1.35 system-ui;min-width:0}
+html #modelAtelierPanel[data-se451-progressive="1"] :is(#se451FaceOperations,#se451FaceSettings) button{
+ cursor:pointer;min-height:39px;min-width:38px;padding:6px 8px;color:#e9f9ff;
+ border:1px solid #527784;background:#293347;border-radius:7px;font:600 11px/1.35 system-ui;
+}
+html #modelAtelierPanel[data-se451-progressive="1"] :is(#se451FaceOperations,#se451FaceSettings) button:focus-visible{outline:2px solid #8bf8d2;outline-offset:1px}
+html #modelAtelierPanel[data-se451-progressive="1"] #se451FaceOperations .se451-tool-list{padding:7px;display:flex;flex-flow:column nowrap;gap:6px}
+html #modelAtelierPanel[data-se451-progressive="1"] #se451FaceOperations .se451-tool-list button{text-align:left;min-height:42px}
+html #modelAtelierPanel[data-se451-progressive="1"] #se451FaceOperations button[aria-pressed="true"]{background:#22685f;border-color:#96f2d4}
+html #modelAtelierPanel[data-se451-progressive="1"] #se451FaceOperations .se451-menu-help{margin:3px 8px 10px;color:#bed8e1;font:11px/1.4 system-ui}
+html #modelAtelierPanel[data-se451-progressive="1"] #se451FaceSettings{padding-bottom:9px}
+html #modelAtelierPanel[data-se451-progressive="1"] #se451FaceMessage{margin:8px 9px;padding:6px;background:#12323c;border-left:3px solid #89e4cf;color:#ceeff2;font:11px/1.4 system-ui;overflow-wrap:anywhere}
+html #modelAtelierPanel[data-se451-progressive="1"] #se451FaceSettings .se451-range-label{display:block;font:600 11px/1.4 system-ui;margin:10px 10px 3px;color:#bfdbeb}
+html #modelAtelierPanel[data-se451-progressive="1"] #se451FaceRange{display:block;width:calc(100% - 20px);height:30px;margin:2px 10px;accent-color:#83ecd4}
+html #modelAtelierPanel[data-se451-progressive="1"] #se451NativeHolder>.se430-native-workshop{margin:6px 8px;padding:6px;border:0;background:transparent}
+html #modelAtelierPanel[data-se451-progressive="1"] #se451NativeHolder>.se430-native-workshop :is(legend,p,label:first-of-type,#modelAtelierWorkshopConvert,#modelAtelierWorkshopSelectRegion){display:none!important}
+html #modelAtelierPanel[data-se451-progressive="1"] #se451NativeHolder .se430-native-workshop label{margin:4px 0}
+html #modelAtelierPanel[data-se451-progressive="1"] #se451NativeHolder #se430AmountLabel{display:block!important;font:11px/1.4 system-ui;color:#c4e5e7}
+html #modelAtelierPanel[data-se451-progressive="1"] #se451NativeHolder #modelAtelierWorkshopAmount{width:100%;min-height:38px}
+html #modelAtelierPanel[data-se451-progressive="1"] #se451NativeHolder .se430-native-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+html #modelAtelierPanel[data-se451-progressive="1"] #se451NativeHolder #modelAtelierWorkshopPreview{grid-column:1/-1;background:#1c7060;color:white}
+html #modelAtelierPanel[data-se451-progressive="1"] #se451NativeHolder #modelAtelierWorkshopApply{background:#285783;color:white}
+html #modelAtelierPanel[data-se451-progressive="1"] #se451NativeHolder button:disabled{opacity:.45;cursor:not-allowed}
+html #modelAtelierPanel[data-se451-progressive="1"] #se451NativeHolder #se430WorkshopFeedback{display:block;line-height:1.4;font-size:11px;overflow-wrap:anywhere;margin-top:6px;color:#cce5e8}
+/* Compact: preserve the 3D canvas; stages become operations then a settings
+   sheet rather than three permanent tiny columns. No camera framing events. */
+html #modelAtelierPanel[data-se251-layout="compact"][data-se451-face-open="true"] .atelier-body{grid-template-rows:minmax(0,1fr) 54px 0px!important}
+html #modelAtelierPanel[data-se251-layout="compact"] #se451FaceOperations{
+ top:auto;bottom:calc(54px + 6px);right:6px;width:min(178px,calc(100% - 12px));max-height:min(56dvh,430px);
+}
+html #modelAtelierPanel[data-se251-layout="compact"] #se451FaceSettings{
+ top:auto;bottom:calc(54px + 6px);right:6px;width:min(310px,calc(100% - 12px));max-height:min(56dvh,480px);
+}
+html #modelAtelierPanel[data-se251-layout="compact"][data-se451-stage="settings"] #se451FaceOperations{display:none!important}
+@media(max-width:699px){
+ html #modelAtelierPanel[data-se251-layout="desktop"][data-se451-face-open="true"] #se451FaceOperations{width:125px}
+ html #modelAtelierPanel[data-se251-layout="desktop"][data-se451-face-open="true"] #se451FaceSettings{
+  right:calc(var(--se320-rail,78px) + 135px);width:min(230px,calc(100% - 215px));max-height:70%;
+ }
+}
+@media(prefers-reduced-motion:reduce){html #modelAtelierPanel[data-se451-progressive="1"] :is(#se451FaceOperations,#se451FaceSettings){transition:none}}
+/* SE451_FACE_PROGRESSIVE_DOCK_CSS_END */
