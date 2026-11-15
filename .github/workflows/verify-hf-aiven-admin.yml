@@ -47,6 +47,13 @@ jobs:
               if re.search(r"token\s*=|secret\s*=|password\s*=|authorization",value,re.I):
                   value="[redacted potentially sensitive initialization]"
               print("source line",i+1,":",value)
+          print("Relevant live authentication context:")
+          for start,end in ((425,440),(484,504)):
+              for pos in range(start-1, min(end,len(lines))):
+                  value=lines[pos].strip()[:210]
+                  if re.search(r"(?:token|secret|password|authorization)\s*=",value,re.I):
+                      value="[redacted sensitive initialization]"
+                  print("source line",pos+1,":",value)
           PY
       - name: Verify against exact current HF Station (read-only)
         env:
