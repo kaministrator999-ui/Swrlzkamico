@@ -18,6 +18,9 @@ def once(html,old,new):
 
 def apply(html):
  html=once(html,"SWYRL_ENGINE_DEPLOY_MARKER: V11_456_GUIDED_PRIMITIVE_CONVERSION",MARKER)
+ html=once(html,"/* SE456_GUIDED_PRIMITIVE_CONVERSION_END */",
+  "/* SE456_GUIDED_PRIMITIVE_CONVERSION_END */\n"+
+  "/* Historical v11.456 marker: SWYRL_ENGINE_DEPLOY_MARKER: V11_456_GUIDED_PRIMITIVE_CONVERSION */")
 
  # Native Face mode is allowed to have a selected part with objectCount==0:
  # the mesh selection list is separate from the active editable component.
