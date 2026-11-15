@@ -90,6 +90,15 @@ def _source_score(title: str, excerpt: str, query: str) -> int:
     title_words = set(re.findall(r"[a-z0-9]+", title.lower()))
     return count + 2 * len(wanted & title_words)
 
+def active_runtime_revision(metadata: Any, expected: str) -> bool:
+    """Only verify after Hugging Face serves the actual published revision."""
+    if not isinstance(metadata, dict) or not expected:
+        return False
+    runtime = metadata.get("runtime")
+    return (isinstance(runtime, dict)
+            and runtime.get("sha") == expected
+            and runtime.get("stage") == "RUNNING")
+
 def bounded_evidence(bundle: Any, *, query: str = "", max_items: int = 4,
                      max_chars: int = 3600) -> dict[str, Any]:
     """Bound evidence before inserting it into the model context."""
