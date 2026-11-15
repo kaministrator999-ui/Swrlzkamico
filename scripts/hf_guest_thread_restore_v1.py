@@ -58,7 +58,7 @@ def candidate(before):
 
 def static_checks(after):
     s=after.decode()
-    if s.count("stationFirstHydration")!=5:
+    if s.count("stationFirstHydration")!=4:
         raise RuntimeError("Hydration flag reference count unexpected "+str(s.count("stationFirstHydration")))
     for term in ("const stationCurrent=", "chatThreads[0]?.id","if(initialId){draftThread=false;activeThreadId=initialId;}",
       "if(draftThread && !activeThreadId && !pendingDraftThread)","stationFirstHydration=false; draftThread=true"):
