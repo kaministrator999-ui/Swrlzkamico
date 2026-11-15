@@ -52,6 +52,26 @@ class RouterTests(unittest.TestCase):
         self.assertEqual(receipt["phase"],"RESEARCH_UNAVAILABLE")
         self.assertNotIn("onlineContext",unchanged)
 
+    def test_numbered_reference_page_handoff(self):
+        import json
+        from api.selective_retrieval import reference_pages
+        observed=[]
+        def fetch(url):
+            observed.append(url)
+            title=("Diablo II: Lord of Destruction" if "Lord_of_Destruction" in url
+                   else "Diablo II")
+            return {"extract":json.dumps({
+                "type":"standard","title":title,
+                "extract":title+" is the historical Diablo II game or expansion.",
+                "content_urls":{"desktop":{"page":"https://en.wikipedia.org/wiki/"+title.replace(" ", "_")}}})}
+        prompt="Was Diablo II Classic released before Lord of Destruction expansion?"
+        refs=reference_pages(prompt,fetch)
+        self.assertEqual(len(refs),2)
+        self.assertTrue(all(url.startswith("https://en.wikipedia.org/api/rest_v1/") for url in observed))
+        payload,receipt=enrich_payload({"prompt":prompt},None,fetch_page=fetch,enabled=True)
+        self.assertEqual(receipt["phase"],"RESEARCH_READY")
+        self.assertEqual(payload["onlineContext"]["resultCount"],2)
+
     def test_relevance_rejects_wrong_game_version(self):
         irrelevant={"evidence":[{"title":"Diablo IV", "url":"https://example.org/diablo4",
                                   "snippet":"Diablo IV is an action role-playing video game"},
