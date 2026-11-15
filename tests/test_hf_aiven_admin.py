@@ -92,19 +92,25 @@ class ExactSourcePatchTests(unittest.TestCase):
     SAMPLE = '''from fastapi import FastAPI
 import uuid
 app=FastAPI()
+def _legacy_account_session(request):
+    sid = request.cookies.get("swrlz_hf_account")
+    return sid,account_chat_store.load_login(sid)
 def _account_session(request):
-    return None, None
+    return _legacy_account_session(request)
 @app.post("/api/account/google")
 def login(request):
     claims=google_id_token.verify_oauth2_token(credential, g_req, CLIENT)
     user={"id":"google:"+claims["sub"],"email":claims["email"]}
     sid=uuid.uuid4().hex
-    with _lock:_hf_accounts[sid]=user
+    account_chat_store.save_login(sid,user)
+@app.post("/api/account/logout")
+def logout(request):
+    return None
 '''
     def test_patch_preserves_existing_login_and_app(self):
         result = release.patch_station(self.SAMPLE)
         self.assertIn("user['emailVerified']=claims.get('email_verified') is True", result)
-        self.assertIn("_install_aiven_admin(app, _account_session)", result)
+        self.assertIn("_install_aiven_admin(app, _legacy_account_session)", result)
         self.assertEqual(result.count('google_id_token.verify_oauth2_token'), 1)
         self.assertEqual(result.count(release.MARKER), 1)
 
