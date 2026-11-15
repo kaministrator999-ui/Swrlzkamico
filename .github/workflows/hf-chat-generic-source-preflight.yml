@@ -1,0 +1,58 @@
+name: §C generic public-source fallback preflight
+on:
+  push:
+    branches: [fix/chat-tagged-research-evidence-v1]
+    paths:
+      - "api/generic_public_source_fallback_v1.py"
+      - "scripts/hf_chat_generic_public_fallback_v1.py"
+      - "tests/test_hf_generic_public_source_fallback_v1.py"
+      - ".github/workflows/hf-chat-generic-source-preflight.yml"
+permissions: {contents: read}
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.11"}
+      - run: python -m pip install --quiet "huggingface_hub>=0.34,<2"
+      - name: Test safe dynamic sources and no guessed claims
+        run: |
+          set -euo pipefail
+          python -m unittest discover -s tests -p 'test_hf_generic_public_source_fallback_v1.py' -v
+          python -m unittest discover -s tests -p 'test_hf_tagged_research_evidence_v1.py' -v
+          python -m py_compile api/generic_public_source_fallback_v1.py scripts/hf_chat_generic_public_fallback_v1.py
+      - name: Stage exact current HF public research source without publishing
+        run: |
+          set -euo pipefail
+          python -u scripts/hf_chat_generic_public_fallback_v1.py --out swrlz-generic-research-source-backup
+      - name: Probe generalized Wikipedia search through existing bounded HF public fetcher
+        run: |
+          python - <<'PY'
+          import importlib.util,sys,json
+          from huggingface_hub import HfApi,hf_hub_download
+          from api.generic_public_source_fallback_v1 import wikipedia_public_fallback
+          space="kamiloki/Swyrlz";rev=HfApi().repo_info(space,repo_type="space").sha
+          path=hf_hub_download(space,"api/online_research.py",repo_type="space",revision=rev)
+          spec=importlib.util.spec_from_file_location("swrlz_generic_safe_fetch_check",path)
+          mod=importlib.util.module_from_spec(spec);sys.modules[spec.name]=mod
+          spec.loader.exec_module(mod)
+          found=wikipedia_public_fallback(
+              "Research: what are the moons of Mars? List their names.",mod._page_fetch)
+          summary={"count":len(found),
+                   "sourceTitles":[x.get("title") for x in found],
+                   "urls":[x.get("url") for x in found],
+                   "namesSupported":bool(found and "Phobos" in found[0].get("snippet","")
+                                          and "Deimos" in found[0].get("snippet",""))}
+          print("SWRLZ_GENERIC_SOURCE_REAL_PROBE "+json.dumps(summary),flush=True)
+          assert summary["namesSupported"],summary
+          assert all(x.get("url","").startswith("https://en.wikipedia.org/wiki/") for x in found)
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: swrlz-generic-source-staged-backup
+          path: swrlz-generic-research-source-backup/
+          retention-days: 7
+          if-no-files-found: warn
