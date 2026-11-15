@@ -60,6 +60,10 @@ const deadline=setTimeout(()=>{console.error('SE460_BROWSER_HARD_TIMEOUT');proce
  console.log('SE460_NATIVE_BRIDGE_READY '+JSON.stringify(native));
  if(!native.view?.available||!native.camera?.ready)
   throw Error('Native Model Atelier scene/view or camera bridge is not ready');
+ // The release-notes dialog intentionally blocks UI until dismissed.
+ // Close it as a normal prerequisite for inspecting the Model Studio controls.
+ await page.evaluate(()=>{const notes=document.querySelector('#seReleaseNotesDialog[open]');
+  if(notes&&typeof notes.close==='function')notes.close();});
  const clicks=[];
  for(const mode of ['shaded','overlay','wireframe','xray','flat','clay','solid']){
   await page.locator('#se455ViewButton').click({timeout:7000});
