@@ -5,7 +5,7 @@
 (function(){
  'use strict';
  let panel=null,bar=null,step='idle',partId=null,lastGood=.2,depthMax=1;
- let busy=false,pendingValue=null,queued=false,feedback='';
+ let busy=false,pendingValue=null,queued=false,feedback='',invalidAttempt=false;
  const api=()=>se430BeginnerAPI();
  const opInput=()=>panel?.querySelector('#modelAtelierWorkshopOperation');
  const nativeAmount=()=>panel?.querySelector('#modelAtelierWorkshopAmount');
@@ -51,7 +51,7 @@
   exact.min=range.min;exact.max=range.max;exact.step=range.step;
   exact.setAttribute('aria-label',isDepth?'Inward depth in local units':'Inset fraction of selected face');
   range.setAttribute('aria-label',isDepth?'Preview inward cavity depth':'Preview inset rim width');
-  set.disabled=busy||!validPreview(s);
+  set.disabled=busy||invalidAttempt||!validPreview(s);
   set.textContent=isDepth?'Set depth':'Set rim';
   if(!feedback){
    const hint=isDepth?'Drag for cavity depth; Set commits.':'Drag for rim thickness; Set continues to depth.';
@@ -63,22 +63,22 @@
  function syncValue(raw){
   if(busy||step==='idle'||raw===''||!Number.isFinite(Number(raw)))return;
   const depth=step==='depth';
-  const min=depth?.005:.03,max=depth?depthMax:.8;
+  const min=depth ? .005 : .03,max=depth ? depthMax : .8;
   const value=Math.round(Math.max(min,Math.min(max,Number(raw)))*1000)/1000;
   const s=state(),op=expected();
   // Refuse to replace a preview owned by a different tool.
   if(s?.preview?.active&&s.preview.operation!==op){
-   message('Apply or Cancel the other preview first.');draw();return;
+   invalidAttempt=true;message('Apply or Cancel the other preview first.');draw();return;
   }
   if(!s?.operations?.[op]?.available){
-   message(s?.operations?.[op]?.reason||'Tap the connected face first.');draw();return;
+   invalidAttempt=true;message(s?.operations?.[op]?.reason||'Tap the connected face first.');draw();return;
   }
   const result=api()?.preview(op,{amount:depth?-value:value});
   if(result?.ok){
-   lastGood=depth?-value:value;feedback='';
+   invalidAttempt=false;lastGood=depth?-value:value;feedback='';
    const native=nativeAmount();if(native)native.value=number(lastGood);
   }else{
-   message(result?.reason||'That value cannot be previewed; the previous valid shape is preserved.');
+   invalidAttempt=true;message(result?.reason||'That value cannot be previewed; the previous valid shape is preserved.');
   }
   se430BeginnerResult(result);draw();
  }
@@ -108,7 +108,7 @@
   step='rim';partId=s?.selection?.partId||null;
   lastGood=s?.preview?.operation==='inset'&&Number.isFinite(s.preview.stats?.fraction)?s.preview.stats.fraction:
    Math.max(.03,Math.min(.8,Number(nativeAmount()?.value)||.2));
-  feedback='';
+  feedback='';invalidAttempt=false;
   firstPreview();
   draw();return true;
  }
@@ -122,7 +122,7 @@
   }
   step='depth';depthMax=maxDepth();
   lastGood=-Math.min(.15,Math.max(.005,depthMax*.3));
-  feedback='';
+  feedback='';invalidAttempt=false;
   se430BeginnerSetOperation('extrude',lastGood);
   const after=state();
   if(after?.operations?.extrude?.available){
@@ -134,16 +134,17 @@
     if(result?.ok){lastGood=-candidate;break;}
    }
    if(result?.ok){
+    invalidAttempt=false;
     if(nativeAmount())nativeAmount().value=number(lastGood);
     se430BeginnerResult(result);
-   }else message(result?.reason||'Choose a shallower cavity depth.');
+   }else {invalidAttempt=true;message(result?.reason||'Choose a shallower cavity depth.');}
   }else message(after?.operations?.extrude?.reason||'Select the inner face to begin depth.');
   draw();
  }
  function setStage(){
   if(step==='idle'||busy)return false;
   const s=state();
-  if(!validPreview(s)){message('Make a valid preview before pressing Set.');draw();return false;}
+  if(invalidAttempt||!validPreview(s)){message('Make a valid preview before pressing Set.');draw();return false;}
   busy=true;
   const completed=step,expectedPart=partId;
   const r=api()?.apply();
@@ -166,7 +167,7 @@
    const s=state();if(s?.preview?.active&&s.preview.operation===expected())se430BeginnerResult(api()?.cancel());
   }
   const wasDepth=step==='depth';
-  step='idle';partId=null;feedback='';
+  step='idle';partId=null;feedback='';invalidAttempt=false;
   draw();
   window.SWYRL_ENGINE_FACE_FLYOUTS_452?.close?.();
   if(cancelPreview&&typeof status==='function'){
@@ -185,7 +186,7 @@
    // A face tap can arm/produce the preview in a microtask; don't steal it.
    queueMicrotask(()=>{if(step==='rim'&&!state()?.preview?.active)firstPreview();});
   }
-  if(validPreview(s)&&s.preview.stats){
+  if(!invalidAttempt&&validPreview(s)&&s.preview.stats){
    const value=step==='rim'?s.preview.stats.fraction:s.preview.stats.depth;
    if(Number.isFinite(value)){
     lastGood=value;feedback='';
