@@ -45,18 +45,18 @@ jobs:
         working-directory: release-source
         run: |
           set -euo pipefail
-          python -m py_compile scripts/html_code_quality_v1.py scripts/hf_chat_html_quality_release_v1.py
+          python -m py_compile scripts/html_code_quality_v1.py scripts/hf_chat_html_quality_v2_release.py
           python -m unittest discover -s scripts -p "test_html_code_quality_v1.py" -v
           python -m unittest discover -s scripts -p "test_hf_chat_html_quality_release_v1.py" -v
       - name: Read exact live source, snapshot prior bytes and preflight safe patch
         working-directory: release-source
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
-        run: python -u scripts/hf_chat_html_quality_release_v1.py preflight
+        run: python -u scripts/hf_chat_html_quality_v2_release.py preflight
       - uses: actions/upload-artifact@v4
         with:
-          name: swrlz-html-quality-v1-exact-prior-source
-          path: release-source/swrlz-html-quality-v1-backup/
+          name: swrlz-html-quality-v2-exact-prior-source
+          path: release-source/swrlz-html-quality-v2-backup/
           retention-days: 14
           if-no-files-found: error
       - name: Publish guarded quality update, then require live model and coding acceptance
@@ -67,5 +67,5 @@ jobs:
           SWRLZ_HTML_QUALITY_APPROVED: "1"
         run: |
           set -euo pipefail
-          python -u scripts/hf_chat_html_quality_release_v1.py publish
-          echo "SWRLZ_HTML_QUALITY_LIVE_VERIFIED"
+          python -u scripts/hf_chat_html_quality_v2_release.py publish
+          echo "SWRLZ_HTML_QUALITY_V2_LIVE_VERIFIED"
