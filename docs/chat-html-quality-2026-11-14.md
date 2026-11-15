@@ -32,3 +32,13 @@ The new validator rejects only specifically recognized defects; potential Canvas
 - The user's specific generated Aether page has not been patched, overwritten or committed.
 - Mobile performance needs real-device benchmarking; static warnings are not quantified FPS gains.
 - The integration is safe to promote only after repeatable baseline + guarded live acceptance; source-level tests alone are insufficient.
+
+## Final guarded release (verified)
+
+- Read-only preflight with baseline live coder: https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/43672835617 — **success**. Seven HTML diagnostics tests, four release/rollback tests, exact live-source AST/source SHA preflight, and synthetic baseline live HTML generation. Baseline completed 4,963 HTML chars with matching request ID and validator \`PASS\`.
+- Second guarded release: https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/43673090268 — **success**, protected source SHA with unchanged model/hardware/user data. Accepted Hugging Face source revision \`fe4e0bd87a30ac63117998e43a682e0aa54e668c\` (prior rollback source \`1d43aa7a75795b3ccc008d136f48eff791514fea\`).
+- Synthetic attempt one produced 247 provisional code deltas but no matching terminal/validation receipt; **rejected**, not counted as success.
+- The retry used a fresh anonymous session; final 6,335 HTML chars, 350 provisional deltas, terminal \`COMPLETE\`, matching request ID, candidate validator \`PASS\`, and zero specifically detected HTML defects.
+- Final workflow logged \`LIVE_RELEASE_KEPT\`. Exact source and rollback receipts retained in the workflow artifacts.
+
+**Scope of proof:** successful end-to-end normal synthetic HTML generation through the real §C API with the quality overlay integrated, in addition to deterministic tests of defect rejection. This does not prove improved performance on the user's physical phone or that the user's much larger Aether source was itself edited. The earlier session failure remains in the release history.
