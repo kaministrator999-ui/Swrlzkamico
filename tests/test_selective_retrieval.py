@@ -52,6 +52,14 @@ class RouterTests(unittest.TestCase):
         self.assertEqual(receipt["phase"],"RESEARCH_UNAVAILABLE")
         self.assertNotIn("onlineContext",unchanged)
 
+    def test_revision_must_be_actually_running(self):
+        from api.selective_retrieval import active_runtime_revision
+        newer="new-commit"
+        self.assertFalse(active_runtime_revision({"runtime":{"sha":"old-commit","stage":"RUNNING"}},newer))
+        self.assertFalse(active_runtime_revision({"runtime":{"sha":newer,"stage":"RUNNING_APP_STARTING"}},newer))
+        self.assertFalse(active_runtime_revision({"runtime":{"sha":newer,"stage":"BUILDING"}},newer))
+        self.assertTrue(active_runtime_revision({"runtime":{"sha":newer,"stage":"RUNNING"}},newer))
+
     def test_numbered_reference_page_handoff(self):
         import json
         from api.selective_retrieval import reference_pages
