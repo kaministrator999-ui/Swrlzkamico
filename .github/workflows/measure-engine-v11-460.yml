@@ -1,0 +1,69 @@
+name: Verify §E v11.460 interactive Display and Camera views
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/measure-engine-v11-460.yml"
+      - "projects/swrlz-forge-moba/patches/v11_460_native_view_menu.py"
+      - "projects/swrlz-forge-moba/runtime/model_native_view_commands_v11_460.js"
+      - "projects/swrlz-forge-moba/tests/model_native_view_commands_v11_460.mjs"
+      - "projects/swrlz-forge-moba/tests/browser_modeler_view_controls_v11_460.cjs"
+  workflow_dispatch:
+permissions: {contents: read}
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.11"}
+      - name: Build unsealed candidate and run source tests
+        run: |
+          set -euo pipefail
+          python -m py_compile projects/swrlz-forge-moba/patches/v11_460_native_view_menu.py
+          node --check projects/swrlz-forge-moba/runtime/model_native_view_commands_v11_460.js
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path('projects/swrlz-forge-moba/source-manifest.json')
+          m=json.loads(p.read_text())
+          assert m['name']=='§wyrl§ Engine v11.460'
+          assert m['patches'][-1]=='patches/v11_460_native_view_menu.py'
+          assert len(m['patches'])==437
+          m['finalSha256']=None;m['finalBytes']=None
+          p.write_text(json.dumps(m,ensure_ascii=False,indent=2)+'\n')
+          PY
+          python projects/swrlz-forge-moba/build_space.py --output /tmp/se460-browser
+          python projects/swrlz-forge-moba/scripts/check_inline_js_syntax_v11_266.py /tmp/se460-browser/index.html
+          node projects/swrlz-forge-moba/tests/model_native_view_commands_v11_460.mjs /tmp/se460-browser/index.html
+          node projects/swrlz-forge-moba/tests/model_view_readability_v11_460.mjs /tmp/se460-browser/index.html
+          node projects/swrlz-forge-moba/tests/model_startup_guard_v11_460.mjs /tmp/se460-browser/index.html
+          node projects/swrlz-forge-moba/tests/model_conversion_no_face_gate_v11_460.mjs /tmp/se460-browser/index.html
+          node projects/swrlz-forge-moba/tests/model_inset_top_steps_v11_454.mjs /tmp/se460-browser/index.html
+          node projects/swrlz-forge-moba/tests/model_dock_orbit_contrast_v11_460.mjs /tmp/se460-browser/index.html
+      - name: Install Chromium for actual mobile viewport interaction
+        run: |
+          npm install --no-save playwright@1.56.1
+          npx playwright install --with-deps --only-shell chromium
+      - name: Click all Display and Camera buttons in real Model Studio
+        run: node projects/swrlz-forge-moba/tests/browser_modeler_view_controls_v11_460.cjs
+      - name: Measure exact release artifact SHA-256 only after browser success
+        run: |
+          python - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          b=Path('/tmp/se460-browser/index.html').read_bytes()
+          result={"version":"v11.460","finalBytes":len(b),
+            "finalSha256":hashlib.sha256(b).hexdigest(),
+            "realMobileViewClicksPassed":True}
+          Path('se460-integrity.json').write_text(json.dumps(result,indent=2)+'\n')
+          print('SE460_SOURCE_INTEGRITY',json.dumps(result,sort_keys=True),flush=True)
+          PY
+      - uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: se460-view-controls-and-browser-integrity
+          path: se460-integrity.json
+          retention-days: 14
+          if-no-files-found: error
