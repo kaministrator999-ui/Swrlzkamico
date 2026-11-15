@@ -54,6 +54,24 @@ def main() -> None:
                           if ("code" in k or "generation" in k
                               or "preview" in k or "resume" in k or "patch" in k)}
         }, ensure_ascii=False))
+        selected = (("_swrlz_auto_code_chain", "_swrlz_complete_code_followup", "live_code_control",
+                     "stream_generation") if name == "station.py" else
+                    ("_swrlz_code_candidate_preview", "_swrlz_pause_code_events"))
+        for function in selected:
+            bounds = functions.get(function)
+            if not bounds:
+                print("FUNCTION_MISSING", name, function)
+                continue
+            start, stop = bounds
+            if function == "_swrlz_code_candidate_preview":
+                stop = min(stop, start + 130)
+            if function == "stream_generation":
+                start = min(stop, start + 30)
+                stop = min(stop, start + 65)
+            print("FUNCTION_INSPECT", json.dumps({
+                "file": name, "name": function, "start": start, "end": stop,
+                "lines": [f"{i + 1}: {lines[i]}" for i in range(start - 1, stop)]
+            }, ensure_ascii=False))
         for marker in MARKERS[name]:
             hits = [i for i, line in enumerate(lines) if marker in line]
             print("ANCHOR", json.dumps({"file": name, "marker": marker, "count": len(hits)}))
