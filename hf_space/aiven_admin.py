@@ -76,7 +76,8 @@ def _authorized(user: dict | None) -> bool:
     """Require the signed-in Google identity, never the public display name."""
     if not isinstance(user, dict):
         return False
-    subject = os.environ.get("SWRLZ_ADMIN_GOOGLE_SUB", "").strip()
+    subject = (os.environ.get("SWRLZ_ADMIN_GOOGLE_SUB", "").strip()
+               or os.environ.get("SWRLZ_SANDBOX_WRITE_GOOGLE_SUB", "").strip())
     owner_email = os.environ.get("SWRLZ_ADMIN_GOOGLE_EMAIL", "").strip().casefold()
     if not (subject or owner_email):
         return False  # fail closed until the private owner allowlist is configured
