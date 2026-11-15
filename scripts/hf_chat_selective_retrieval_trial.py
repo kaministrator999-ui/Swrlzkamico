@@ -18,6 +18,7 @@ RESEARCH = "api/online_research.py"
 MODULE = "api/selective_retrieval.py"
 ANCHOR = "def generate_events(payload):\n"
 INJECTION = r'''def generate_events(payload):
+    import os
     # swrlz-selective-factual-retrieval-v1: no web search unless owner enables.
     # Never transmit history, identity, files or source changes to search.
     if os.environ.get("SWRLZ_SELECTIVE_RETRIEVAL_ENABLED") == "1":
@@ -42,8 +43,6 @@ def patch_engine(text: str) -> str:
         raise RuntimeError("Current live generator anchor missing or ambiguous")
     if "onlineContext" not in text:
         raise RuntimeError("Live model has no proven onlineContext hook")
-    if "import os" not in text:
-        raise RuntimeError("Engine lacks imported os; refuse source assumptions")
     after = text.replace(ANCHOR, INJECTION, 1)
     assert after.replace(INJECTION, ANCHOR, 1) == text
     ast.parse(after, filename=ENGINE)
