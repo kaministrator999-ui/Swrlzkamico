@@ -1,0 +1,78 @@
+name: Guarded §C conversational no-code fix and guest tests
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/hf-lfm-prose-guard-release.yml'
+permissions: {contents: read}
+concurrency:
+  group: swrlz-chat-guest-eval
+  cancel-in-progress: false
+jobs:
+  release:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 48
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - run: |
+          python -m pip install 'huggingface_hub>=0.34,<2' playwright==1.56.0
+          python -m playwright install --with-deps chromium
+      - run: python -m py_compile scripts/hf_lfm_prose_guard_v1.py scripts/eval_chat_guest_suite.py
+      - name: Pin current Space revision and validate no-code conversational source
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: python -u scripts/hf_lfm_prose_guard_v1.py preflight
+      - uses: actions/upload-artifact@v4
+        with:
+          name: lfm-no-code-rollback-${{ github.run_id }}
+          path: reports/swrlz-lfm-prose-guard/
+          retention-days: 90
+          if-no-files-found: error
+      - name: Publish exact-source conversational correction
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          SWRLZ_LFM_PROSE_APPROVED: '1'
+        run: python -u scripts/hf_lfm_prose_guard_v1.py publish
+      - name: Test no-code Python repair and JavaScript follow-up in anonymous Chat
+        id: accept
+        env:
+          SWRLZ_EVAL_BASE: https://kamiloki-swyrlz.hf.space
+          SWRLZ_EVAL_MODEL: 700m
+        shell: bash
+        run: |
+          set -uo pipefail
+          fails=0
+          for case in python-repair explain-then-code; do
+            rm -rf reports/chat-guest-eval
+            if SWRLZ_TEST_CASE="$case" python -u - <<'PY'
+          import asyncio,os,sys
+          import scripts.eval_chat_guest_suite as e
+          name=os.environ['SWRLZ_TEST_CASE']
+          e.CASES['1']=[c for c in e.CASES['1'] if c['id']==name]
+          if len(e.CASES['1'])!=1:raise RuntimeError("Missing requested fixture")
+          sys.exit(asyncio.run(e.main('live','1')))
+          PY
+            then code=0;else code=$?;fails=$((fails+1));fi
+            mkdir -p "reports/lfm-prose-acceptance/$case"
+            if [[ -d reports/chat-guest-eval ]]; then
+              cp -a reports/chat-guest-eval/. "reports/lfm-prose-acceptance/$case/"
+              cat reports/chat-guest-eval/summary.md >> "$GITHUB_STEP_SUMMARY" || true
+            fi
+            echo "LFM_NO_CODE_LIVE_CASE case=$case exit=$code"
+          done
+          echo "fails=$fails" >> "$GITHUB_OUTPUT"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: lfm-no-code-live-results-${{ github.run_id }}
+          path: reports/lfm-prose-acceptance/
+          retention-days: 21
+          if-no-files-found: ignore
+      - name: Mark failed acceptance
+        if: steps.accept.outputs.fails != '0'
+        run: |
+          echo "::warning::Conversational no-code guest acceptance incomplete; inspect cases."
+          exit 1
