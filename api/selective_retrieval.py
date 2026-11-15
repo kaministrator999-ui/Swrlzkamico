@@ -30,7 +30,8 @@ def choose_retrieval(prompt: Any, *, has_evidence: bool = False,
         return Decision("direct", "already_grounded_or_private")
     if re.search(r"(?:https?://|www\.|\x60{3}|\b(?:password|api.?key|token|secret|ssn|social security|"
                  r"medical record|my account|my email|my calendar|my finances|my bank|"
-                 r"my symptoms|our repository|our repo|our code|my private)\b)", text, re.I):
+                 r"my symptoms|our repository|our repo|our code|my private|"
+                 r"my|mine|our|ours|your|earlier we|last chat|this conversation)\b)", text, re.I):
         return Decision("direct", "sensitive_or_source_bound")
     if re.search(r"\b(?:write|implement|fix|refactor|debug|deploy|commit|edit|"
                  r"create|generate|draw|make me|build me)\b", text, re.I):
