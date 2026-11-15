@@ -16,7 +16,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: 96655bfe777181263cf3f2d52f8f25cd9743b837
+          ref: a0128fc7390050810e9b20b80b4bd8c81f7e067a
           path: trial-source
           fetch-depth: 1
       - uses: actions/setup-python@v5
@@ -29,6 +29,9 @@ jobs:
         run: |
           python -m unittest discover -s tests -p "test_selective_retrieval.py" -v
           python -m unittest discover -s tests -p "test_hf_selective_retrieval_trial.py" -v
+      - name: Check guarded release Python syntax
+        working-directory: trial-source
+        run: python -m py_compile scripts/hf_chat_selective_retrieval_release.py
       - name: Inspect exact current HF source, no modification
         working-directory: trial-source
         env:
@@ -124,19 +127,15 @@ jobs:
           module=importlib.util.module_from_spec(spec)
           sys.modules[spec.name]=module
           spec.loader.exec_module(module)
-          from api.selective_retrieval import search_queries,bounded_evidence
+          from api.selective_retrieval import enrich_payload
           prompt="Was Diablo II Classic released before Lord of Destruction expansion?"
-          queries=search_queries(prompt)
-          result=module.research({"prompt":prompt,"researchQueries":queries,
-                                  "requestId":"selective-retrieval-synthetic-probe"})
-          evidence=result.get("evidence") or []
-          selected=bounded_evidence(result,query=prompt)
+          enriched,route=enrich_payload({"prompt":prompt},module.research,
+                    fetch_page=module._page_fetch,enabled=True)
+          selected=enriched.get("onlineContext") or {}
           print("HF_SELECTIVE_LIVE_PROVIDER "+json.dumps({
-             "provider":result.get("provider"),"rawResults":len(evidence),
-             "relevantResults":selected["resultCount"],
-             "queryPlan":queries,
-             "sampleTitles":[str(x.get("title") or "")[:120] for x in selected["evidence"][:4]]
+             "route":route["phase"],"relevantResults":selected.get("resultCount",0),
+             "sampleTitles":[str(x.get("title") or "")[:120] for x in selected.get("evidence",[])[:4]]
           }))
-          if not selected["resultCount"]:
+          if route["phase"]!="RESEARCH_READY" or not selected.get("resultCount"):
               raise RuntimeError("NO_RELEVANT_DIABLO_II_PUBLIC_EVIDENCE")
           PY
