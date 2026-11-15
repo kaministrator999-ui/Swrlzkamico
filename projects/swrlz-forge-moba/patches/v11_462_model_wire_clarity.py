@@ -16,8 +16,8 @@ def apply(html):
  # Source-owned view extension within original ModelAtelier closure.
  html=one(html,'/* SE461_HARD_SURFACE_ORBIT_END */',
   '/* SE461_HARD_SURFACE_ORBIT_END */\n'+js)
- html=one(html,'</head>',
-  '<style id="se462ViewAndDockStyles">\n'+css+'\n</style>\n</head>')
+ html=html.replace('</head>',
+  '<style id="se462ViewAndDockStyles">\n'+css+'\n</style>\n</head>',1)
  # Existing native splitter budget had reserved just 190px for the viewport.
  # On a desktop-style mobile layout give it 35% (240-330px) instead.
  html=one(html,'return {width,rail,budget:Math.max(290,Math.floor(width-rail-190))};',
