@@ -62,6 +62,13 @@ def completed_files(text: str) -> dict[str, str]:
         files[path] = match.group(2).rstrip("\n")
         if len(files) >= MAX_FILES:
             break
+    # A plain standalone HTML document is a valid single-file artifact too.
+    if not files and not text.count(FENCE):
+        plain = str(text or "").strip()
+        if (re.match(r"(?is)^<!doctype\\s+html\\b|^<html\\b", plain)
+                and re.search(r"(?is)</html\\s*>\\s*$", plain)
+                and len(plain) <= MAX_FILE_CHARS):
+            files["index.html"] = plain
     return files
 
 
