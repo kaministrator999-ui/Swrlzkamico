@@ -1,0 +1,9 @@
+{
+  "schema": "swrlz-forge-release-prepare-v1",
+  "version": "v11.455",
+  "ownerApproved": true,
+  "reason": "Improve modeling viewport readability, default opaque solid shading, discoverable view modes, edge-filtered wire overlay and inset cap visibility",
+  "sourcePatch": "patches/v11_455_model_view_readability.py",
+  "expectedPrevious": "v11.454",
+  "verificationAttempt": 1
+}
