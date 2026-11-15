@@ -82,7 +82,7 @@ if(process.argv[2]){
   "if(d.rightCollapsed){d.left=Math.max(145,Math.min(d.left,budget));return;}",
   "const other=side==='left'",
   'node.setPointerCapture?.(e.pointerId)',
-  'SE457_CONVERSION_NO_FACE_GATE',
+  'V11_457_CONVERSION_NO_FACE_GATE',
   'SE454_INSET_TOP_STEPS_START'])assert(html.includes(value),'Integrated engine lacks '+value);
 }
 console.log('SE458_DOCK_ORBIT_CONTRAST_PASS: collapsing inspector releases width, touch grip accessible, cached dark edges dispose, post-edit orbit pivot corrected without zoom/rotation reset');
