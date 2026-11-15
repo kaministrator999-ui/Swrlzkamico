@@ -1,0 +1,64 @@
+name: Measure §E v11.456 guided cube conversion
+on:
+  push:
+    branches: [main]
+    paths:
+      - "projects/swrlz-forge-moba/patches/v11_456_guided_primitive_conversion.py"
+      - "projects/swrlz-forge-moba/runtime/model_guided_primitive_conversion_v11_456.js"
+      - "projects/swrlz-forge-moba/runtime/model_guided_primitive_conversion_v11_456.css"
+      - "projects/swrlz-forge-moba/tests/model_guided_primitive_conversion_v11_456.mjs"
+      - ".github/workflows/measure-engine-v11-456.yml"
+  workflow_dispatch:
+permissions: {contents: read}
+jobs:
+  measure:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Verify source syntax and native conversion interaction
+        run: |
+          set -euo pipefail
+          python -m py_compile projects/swrlz-forge-moba/patches/v11_456_guided_primitive_conversion.py
+          node --check projects/swrlz-forge-moba/runtime/model_guided_primitive_conversion_v11_456.js
+          node projects/swrlz-forge-moba/tests/model_guided_primitive_conversion_v11_456.mjs
+      - name: Build actual candidate and measure final integrity without altering committed manifest
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path('projects/swrlz-forge-moba/source-manifest.json')
+          m=json.loads(p.read_text())
+          assert m['name']=='§wyrl§ Engine v11.456'
+          assert m['patches'][-1]=='patches/v11_456_guided_primitive_conversion.py'
+          assert len(m['patches'])==433
+          m['finalSha256']=None
+          m['finalBytes']=None
+          p.write_text(json.dumps(m,ensure_ascii=False,indent=2)+'\n')
+          PY
+          python projects/swrlz-forge-moba/build_space.py --output dist/se456
+          node projects/swrlz-forge-moba/tests/model_guided_primitive_conversion_v11_456.mjs dist/se456/index.html
+          node projects/swrlz-forge-moba/tests/model_inset_top_steps_v11_454.mjs dist/se456/index.html
+          node projects/swrlz-forge-moba/tests/model_face_flyouts_v11_456.mjs dist/se456/index.html
+          node projects/swrlz-forge-moba/tests/model_view_readability_v11_456.mjs dist/se456/index.html
+          python projects/swrlz-forge-moba/scripts/check_inline_js_syntax_v11_266.py dist/se456/index.html
+          python - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          p=Path('dist/se456/index.html')
+          b=p.read_bytes()
+          r={'version':'v11.456','finalBytes':len(b),'finalSha256':hashlib.sha256(b).hexdigest(),'validated':True}
+          Path('se456-integrity.json').write_text(json.dumps(r,indent=2)+'\n')
+          print('SE456_SOURCE_INTEGRITY '+json.dumps(r,sort_keys=True),flush=True)
+          PY
+      - uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: se456-source-integrity-receipt
+          path: se456-integrity.json
+          retention-days: 14
+          if-no-files-found: error
