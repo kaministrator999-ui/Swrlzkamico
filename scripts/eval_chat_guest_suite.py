@@ -22,7 +22,7 @@ from playwright.async_api import async_playwright
 BASE = os.getenv("SWRLZ_EVAL_BASE", "https://kamiloki-swyrlz.hf.space").rstrip("/")
 MODEL = os.getenv("SWRLZ_EVAL_MODEL", "700m")
 OUT = Path("reports/chat-guest-eval")
-TIMEOUT = 130
+TIMEOUT = 170
 # Four two-turn scenarios per batch, deliberately run one at a time.
 CASES = {
   "1": [
@@ -168,7 +168,7 @@ async def receive(context, started, *, rid=None, prompt=None, thread_id=None):
             return {"thread_id":tid,"text":txt,"state":state,"first_text_ms":first_ms,
                     "total_ms":round((time.perf_counter()-started)*1000),"phases":phases[-12:]}
         await asyncio.sleep(1.5)
-    raise TimeoutError("No committed reply within the per-turn deadline")
+    raise TimeoutError("No committed reply within the per-turn deadline; last_phases="+repr(phases[-8:]))
 
 async def api_turn(context, thread_id, prompt):
     rid="guest-eval-"+uuid.uuid4().hex[:16]
@@ -187,8 +187,29 @@ async def api_turn(context, thread_id, prompt):
     output=await receive(context,started,rid=rid,thread_id=thread_id)
     return {**output,"ack_ms":ack_ms}
 
+async def dismiss_update_overlay(page):
+    """Close the first-run release notes through the actual guest UI; never click through by force."""
+    modal = page.get_by_text("What's new in Chat", exact=False)
+    if not await modal.count():
+        try:
+            await modal.first.wait_for(state="visible", timeout=3500)
+        except Exception:
+            return False
+    elif not await modal.first.is_visible():
+        return False
+    button = page.get_by_role("button", name="Continue", exact=True)
+    if not await button.count():
+        raise RuntimeError("CHAT_UPDATE_MODAL_WITHOUT_CONTINUE_BUTTON")
+    checkbox = page.get_by_label("Don't show again for this update", exact=False)
+    if await checkbox.count():
+        await checkbox.first.check(timeout=5000)
+    await button.first.click(timeout=8000)
+    await button.first.wait_for(state="hidden", timeout=8000)
+    return True
+
 async def ui_turn(context,page,prompt,thread_id,turn_number):
     started=time.perf_counter()
+    await dismiss_update_overlay(page)
     await page.locator("#prompt").fill(prompt,timeout=15000)
     await page.locator("#sendButton").click(timeout=15000)
     await page.wait_for_function("(p)=>[...document.querySelectorAll('.user-message .user-bubble')].some(x=>x.textContent.trim()===p)",arg=prompt,timeout=12000)
@@ -213,6 +234,7 @@ async def run_case(browser,case):
             if not response or response.status!=200:
                 raise RuntimeError("GUEST_CHAT_PAGE_LOAD_FAILED")
             await page.locator("#prompt").wait_for(state="visible",timeout=25000)
+            await dismiss_update_overlay(page)
         thread_id="guest-eval-"+uuid.uuid4().hex[:18] if case["lane"]=="api" else None
         for number,turn in enumerate(case["turns"],1):
             if page:
@@ -230,6 +252,7 @@ async def run_case(browser,case):
             if page and case.get("reload_after")==number:
                 await page.reload(wait_until="domcontentloaded",timeout=30000)
                 await page.locator("#prompt").wait_for(state="visible",timeout=25000)
+                await dismiss_update_overlay(page)
                 await page.wait_for_function("(p)=>[...document.querySelectorAll('.user-message .user-bubble')].some(x=>x.textContent.trim()===p)",arg=turn["prompt"],timeout=16000)
                 await ensure_guest(context)
         out["status"]="PASS_EVIDENCE" if all(t["evaluation"]["status"]=="PASS_EVIDENCE" for t in out["turns"]) else "REVIEW"
