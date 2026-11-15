@@ -58,7 +58,7 @@ function se466RingUIInstall(panel){
   '<div class="se466-row"><label>Tilt X °<input id="modelAtelierWorkshopExtrudeTiltX" type="number" min="-180" max="180" step="5" value="0"></label>'+
   '<label>Tilt Y °<input id="modelAtelierWorkshopExtrudeTiltY" type="number" min="-180" max="180" step="5" value="0"></label>'+
   '<label>Tilt Z °<input id="modelAtelierWorkshopExtrudeTiltZ" type="number" min="-180" max="180" step="5" value="0"></label></div>';
- native.querySelector('#modelAtelierWorkshopAmount')?.closest('label')?.after(face);
+ block.after(face);
  const value=id=>Number(panel.querySelector('#'+id)?.value),action=()=>{
   return {scale:value('se466Scale'),leftScale:value('se466ScaleLeft'),rightScale:value('se466ScaleRight'),
    offset:['X','Y','Z'].map(a=>value('se466Move'+a)),tilt:['X','Y','Z'].map(a=>value('se466Tilt'+a)),
