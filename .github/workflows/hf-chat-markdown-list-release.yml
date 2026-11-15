@@ -1,0 +1,60 @@
+name: Guarded §C Markdown list continuity UI release
+on:
+  push:
+    branches: [main]
+    paths: [".deploy/HF_CHAT_MARKDOWN_LIST_REQUEST.txt"]
+permissions: {contents: read}
+concurrency:
+  group: swrlz-hf-space-deployment
+  cancel-in-progress: false
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - name: Require pinned owner-approved UI-only repair
+        id: owner
+        shell: bash
+        run: |
+          set -euo pipefail
+          f=.deploy/HF_CHAT_MARKDOWN_LIST_REQUEST.txt
+          test -f "$f"
+          field() { sed -n "s/^$1=//p" "$f" | tail -n 1; }
+          test "$(field APPROVED)" = "1"
+          test "$(field TARGET)" = "kamiloki/Swyrlz"
+          test "$(field FEATURE)" = "markdown-list-numbering-ui-v1"
+          source_ref="$(field SOURCE_REF)"
+          [[ "$source_ref" =~ ^[0-9a-f]{40}$ ]]
+          echo "ref=$source_ref" >> "$GITHUB_OUTPUT"
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.owner.outputs.ref }}
+          path: reviewed-source
+          fetch-depth: 1
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.11"}
+      - name: Install existing HF client
+        run: python -m pip install --quiet "huggingface_hub>=0.34,<2"
+      - name: Verify exact Markdown parser regression
+        working-directory: reviewed-source
+        run: |
+          set -euo pipefail
+          python -m unittest discover -s tests -p 'test_hf_chat_markdown_list_continuity_v1.py' -v
+          python -m py_compile scripts/hf_chat_markdown_list_continuity_v1.py
+      - name: Publish only §C chat HTML and verify exact running UI
+        working-directory: reviewed-source
+        timeout-minutes: 22
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          SWRLZ_LIST_CONTINUITY_DEPLOY_APPROVED: "1"
+        run: |
+          set -euo pipefail
+          python -u scripts/hf_chat_markdown_list_continuity_v1.py --deploy
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: swrlz-markdown-list-exact-original-ui-backup
+          path: reviewed-source/swrlz-list-continuity-rollback/
+          retention-days: 14
+          if-no-files-found: warn
