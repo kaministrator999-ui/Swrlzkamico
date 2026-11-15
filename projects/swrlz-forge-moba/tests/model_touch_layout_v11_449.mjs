@@ -18,7 +18,7 @@ const slice=(start,end)=>{
  return html.slice(a,b+end.length);
 };
 const camera=slice('function atelierCameraTouchMetrics(){','function atelierViewportInstall(){').replace(/function atelierViewportInstall\(\)\{$/,'');
-const component=slice('function atelierComponentPointerDown(e){','function atelierComponentSnapshot(){').replace(/function atelierComponentSnapshot\(\)\{$/,'');
+const component=slice('const se449ComponentPinchIds=new Set();','function atelierComponentSnapshot(){').replace(/function atelierComponentSnapshot\(\)\{$/,'');
 const smooth=slice('/* SE447_FACE_CAMERA_ORBIT_START */','/* SE447_FACE_CAMERA_ORBIT_END */');
 const frames=new Map();let seq=0,cameraUpdates=0,pans=0,picks=0;
 const orbit={yaw:0,pitch:0,distance:8};
