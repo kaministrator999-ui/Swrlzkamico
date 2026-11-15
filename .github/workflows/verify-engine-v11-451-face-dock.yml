@@ -1,0 +1,26 @@
+name: Verify §E v11.451 contextual Face dock before release
+on:
+  push:
+    branches: [feature/se-v11-451-progressive-face-dock]
+    paths:
+      - "projects/swrlz-forge-moba/runtime/model_face_progressive_v11_451.js"
+      - "projects/swrlz-forge-moba/runtime/model_face_progressive_v11_451.css"
+      - "projects/swrlz-forge-moba/patches/v11_451_progressive_face_dock.py"
+      - "projects/swrlz-forge-moba/tests/model_face_progressive_v11_451.mjs"
+      - "projects/swrlz-forge-moba/scripts/preflight_v11_451_face_dock.py"
+      - ".github/workflows/verify-engine-v11-451-face-dock.yml"
+permissions: {contents: read}
+jobs:
+  preflight:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.11"}
+      - uses: actions/setup-node@v4
+        with: {node-version: "22"}
+      - name: Validate Python patch and release preflight
+        run: python -m py_compile projects/swrlz-forge-moba/patches/v11_451_progressive_face_dock.py projects/swrlz-forge-moba/scripts/preflight_v11_451_face_dock.py
+      - name: Build next complete engine and test genuine Inset, camera, mobile layout and native API
+        run: python projects/swrlz-forge-moba/scripts/preflight_v11_451_face_dock.py
