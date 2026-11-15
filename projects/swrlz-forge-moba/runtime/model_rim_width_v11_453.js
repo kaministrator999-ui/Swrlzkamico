@@ -5,6 +5,7 @@
  'use strict';
  let panel=null,button=null,cta=null,tooltip=null,source=null,mesh=null,origin=null,boundaryPoint=null;
  let currentState=null,dragging=false,pointerId=null,scheduled=false,pending=null;
+ let lastTopology=null,lastSelection='',lastMesh=null;
  const api=()=>se430BeginnerAPI();
  const amount=()=>panel?.querySelector('#modelAtelierWorkshopAmount');
  const isInset=()=>panel?.querySelector('#modelAtelierWorkshopOperation')?.value==='inset';
@@ -51,9 +52,14 @@
   if(!currentState?.preview?.active||currentState.preview.operation!=='inset'||!isInset())return false;
   const id=currentState.selection?.partId,part=id&&partById(id),m=id&&nativeMesh(id);
   if(part?.kind!=='topologyMesh'||!part.topologyMesh||!m||!currentState.selection.faceIds?.length)return false;
+  const selected=currentState.selection.faceIds.join(',');
+  if(lastTopology===part.topologyMesh&&lastSelection===selected&&lastMesh===m&&origin&&boundaryPoint){
+   mesh=m;return true;
+  }
   let region;
   try{region=se430MeshOps.region(part.topologyMesh,currentState.selection.faceIds);}catch{return false;}
   if(!region?.ok||!region.boundary.length)return false;
+  lastTopology=part.topologyMesh;lastSelection=selected;lastMesh=m;
   source=region;mesh=m;
   origin=new THREE.Vector3(...region.centroid);
   boundaryPoint=new THREE.Vector3(...part.topologyMesh.positions.slice(region.boundary[0]*3,region.boundary[0]*3+3));
