@@ -1,0 +1,26 @@
+/* SE461_TOUCH_DOCK_BOUNDS_START */
+/* Right grip hit-test: the inspector covers the half of the old 28px hit box
+   INSIDE its own column. Put the whole native splitter on the tool-rail side.
+   Do not replace the pointer/keyboard resize listeners or saved widths. */
+html #modelAtelierPanel.se187-modeler-page[data-se320-ui][data-se251-layout=desktop] .atelier-body>#se251-split-model-left,
+html #modelAtelierPanel.se187-modeler-page[data-se320-ui][data-se251-layout=desktop] .atelier-body>#se251-split-model-right{
+ width:36px!important;
+ touch-action:none!important;pointer-events:auto!important;
+ z-index:1400!important;
+}
+html #modelAtelierPanel.se187-modeler-page[data-se320-ui][data-se251-layout=desktop] .atelier-body>#se251-split-model-left{
+ left:calc(var(--se320-left) - 18px)!important;
+}
+html #modelAtelierPanel.se187-modeler-page[data-se320-ui][data-se251-layout=desktop] .atelier-body>#se251-split-model-right{
+ right:calc(var(--se320-right) + 1px)!important;
+}
+html #modelAtelierPanel.se187-modeler-page[data-se320-ui][data-se251-layout=desktop] .atelier-body>#se251-split-model-left::after{
+ left:16px!important;width:4px!important;
+}
+html #modelAtelierPanel.se187-modeler-page[data-se320-ui][data-se251-layout=desktop] .atelier-body>#se251-split-model-right::after{
+ left:30px!important;width:4px!important;
+}
+html #modelAtelierPanel.se187-modeler-page[data-se320-ui][data-se251-layout=compact] .atelier-body>.se251-resize-grip{
+ display:none!important;
+}
+/* SE461_TOUCH_DOCK_BOUNDS_END */
