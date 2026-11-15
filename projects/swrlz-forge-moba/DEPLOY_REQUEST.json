@@ -4,7 +4,7 @@
   "target": "kamiloki/swrlz-forge-moba",
   "releaseVersion": "v11.461",
   "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_461_MODEL_EDGES_ORBIT_DOCK",
-  "reason": "Owner-reported inset rim surface appears distorted despite correct Shaded Wire geometry, right phone resize splitter obstructed by inspector, and orbit spins around stale pivot. Native bounded-topology face lighting and edge overlay are display-only; actual mobile Chromium verified both touch splitters, 11 view controls and orbit reanchoring from deliberate two-finger pan while preserving zoom. Existing native Inset/Undo and startup preserved.",
-  "sourceCommit": "73ef0ef3851bb0182af0000653d83c523c92f112",
+  "reason": "Owner-reported inset rim surface appears distorted despite correct Shaded Wire geometry, right phone resize splitter obstructed by inspector, and orbit spins around stale pivot. Native bounded-topology face lighting and edge overlay are display-only; actual mobile Chromium verified both touch splitters, 11 view controls and orbit reanchoring from deliberate two-finger pan while preserving zoom. Existing native Inset/Undo and startup preserved. Deployment retry: complete sealed 438-patch source verification and current-version Face/Multitouch compatibility tests passed in run 43692365338; originals unchanged.",
+  "sourceCommit": "fc4a474f465955affc78c1d3c82cd3b8102af4f9",
   "sourceIntegritySha256": "197a0cd10769fb3b4a0cc878801ae97876506759a42f490f649e079bd668e6e2"
 }
