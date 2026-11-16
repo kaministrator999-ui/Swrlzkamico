@@ -12,7 +12,7 @@ assert m['name']=='§wyrl§ Engine v11.467'
 assert m['finalArtifact']=='swyrl_engine_v11_467.html'
 assert len(m['patches'])==444 and m['patches'][-1]=='patches/v11_467_quest_browser_editor.py'
 assert isinstance(m['finalBytes'],int) and isinstance(m['finalSha256'],str)
-for name in ['model_ring_kernel_v11_466.js','model_ring_bridge_v11_466.js','model_ring_ui_v11_466.js']:
+for name in ['model_ring_kernel_v11_466.js','model_ring_bridge_v11_466.js','model_ring_ui_v11_466.js','model_quest_browser_input_v11_467.js']:
  subprocess.run(['node','--check',str(ROOT/'runtime'/name)],check=True)
 subprocess.run(['node',str(ROOT/'tests/model_ring_kernel_v11_466.mjs')],check=True)
 out=Path(a.output).resolve()
@@ -44,7 +44,7 @@ for filename,r in receipt['assets'].items():
 if a.request:
  req=json.loads((ROOT/'DEPLOY_REQUEST.json').read_text('utf8'))
  assert req['releaseVersion']=='v11.467'
- assert req['deployMarker']=='SWYRL_ENGINE_DEPLOY_MARKER: V11_466_RING_ARC_MODELING'
+ assert req['deployMarker']=='SWYRL_ENGINE_DEPLOY_MARKER: V11_467_QUEST_EDITOR_INPUT'
  assert req['target']=='kamiloki/swrlz-forge-moba'
  assert req['sourceIntegritySha256']==m['finalSha256']
  assert req['sourceCommit']
