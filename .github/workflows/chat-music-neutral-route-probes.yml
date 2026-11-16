@@ -27,6 +27,27 @@ jobs:
           SWRLZ_EVAL_MODEL: 700m
           SWRLZ_RESEARCH_LYRICS_TURN_TIMEOUT: '215'
         run: python -u -m scripts.eval_chat_music_neutral_route_probes
+      - name: Audit real guest lyric/prose answers for recurring-line runaway
+        if: always()
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          from api.noncode_repetition_guard_v1 import RepetitionWatch
+          file=Path("reports/swrlz-music-intent-probes/report.json")
+          if not file.exists():
+              raise SystemExit("No guest model outputs to examine")
+          results=json.loads(file.read_text()).get("results", [])
+          findings=[]
+          for item in results:
+              response=item.get("response") or ""
+              watcher=RepetitionWatch()
+              evidence=watcher.observe(response+"\\n")
+              findings.append((item.get("id"),item.get("status"),evidence))
+              if evidence:
+                  raise SystemExit("Detected repetitive guest output: "+str(item.get("id")))
+          print("LIVE_GUEST_NONCODE_LOOP_AUDIT",findings)
+          PY
       - uses: actions/upload-artifact@v4
         if: always()
         with:
