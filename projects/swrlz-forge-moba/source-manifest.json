@@ -470,6 +470,6 @@
     "patches/v11_476_account_first_workspace.py",
     "patches/v11_477_selection_hierarchy.py"
   ],
-  "finalBytes": null,
-  "finalSha256": null
+  "finalBytes": 10404868,
+  "finalSha256": "0a0c417d8271a01dd8684e71751df8f037b65d14bfeb962348f13c88486e7910"
 }
