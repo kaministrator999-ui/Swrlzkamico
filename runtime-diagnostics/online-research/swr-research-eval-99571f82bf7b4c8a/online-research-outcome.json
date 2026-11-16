@@ -1,0 +1,774 @@
+{
+  "schema": "swrlz-github-online-research-outcome-v2",
+  "requestId": "swr-research-eval-99571f82bf7b4c8a",
+  "modelId": "700m",
+  "eventType": "ONLINE_RESEARCH_OUTCOME",
+  "sourceRef": "f149dd857e3d9219f5cae7da0286b5dbfec85c42",
+  "persistedAtUnixMs": 1794849784653,
+  "diagnostic": {
+    "schema": "swrlz-online-research-outcome-v2",
+    "terminalState": "COMPLETE",
+    "research": {
+      "contract": "swrlz-online-camera-v1",
+      "observabilityRevision": "v181-song-metadata-clean-form-integrity",
+      "kind": "search",
+      "status": "NO_RESULTS",
+      "reason": "existing-lyrics-retrieval",
+      "provider": "bounded-web-search-chain-v1",
+      "resultCount": 0,
+      "widgetKinds": [],
+      "sourceCount": 0,
+      "locationRequired": false,
+      "usedExplicitClientLocation": false,
+      "elapsedMs": 768,
+      "lyricsSourceAttemptCount": 1,
+      "lyricsFetchDebug": [
+        {
+          "attempt": 1,
+          "origin": "research-evidence",
+          "requestedUrl": "https://security.vt.edu/about/security-lab/join-itsl/",
+          "finalUrl": "https://security.vt.edu/about/security-lab/join-itsl/",
+          "searchResultTitle": "How to join the IT Security Lab - Virginia Tech",
+          "fetchedPageTitle": "How to join the IT Security Lab | IT Security Office | Virginia Tech",
+          "fetchStatus": null,
+          "fetchedContent": {
+            "chars": 10262,
+            "sha256": "4412a9a07fedfbb0947a3022becfcaf0d1192b0bc8f9a7ad38414c817a4c3d7f",
+            "anchorIndex": null,
+            "anchorLine": "",
+            "sectionMarkers": [],
+            "performerMarkers": [],
+            "preview": "How to join the IT Security Lab | IT Security Office | Virginia Tech\nSkip to main content\nSkip to search\nVirginia Tech®\nhome\nUniversal Access Toggle\nUniversal Access\nClose Universal Access dialog\nUniversal Access Options\nReport a\nbarrier\nAccessibility\nportal\nPause all background videos",
+            "previewChars": 286,
+            "previewLimit": 600
+          },
+          "extractorOutput": {
+            "chars": 0,
+            "sha256": "",
+            "preview": "",
+            "previewChars": 0,
+            "previewLimit": 600
+          },
+          "extractorDiagnostics": {
+            "requestedScope": "full-lyrics",
+            "rawChars": 10262,
+            "rawLineCount": 589,
+            "anchorIndex": null,
+            "anchorLine": "",
+            "scopedLineCount": 66,
+            "scopedNonEmptyLineCount": 39,
+            "contentLineCount": 24,
+            "musicalSectionCueCount": 0,
+            "performerCueCount": 0,
+            "blankSeparatedChunkCount": 27,
+            "acceptedBlockCount": 3,
+            "blockLineCounts": [
+              2,
+              3,
+              2
+            ],
+            "continuousRunEligible": false,
+            "terminalBoundaryKind": "PAGE_NOISE_BOUNDARY",
+            "terminalBoundaryLine": "Menu",
+            "decision": "REJECTED",
+            "reason": "INSUFFICIENT_FULL_LYRIC_STRUCTURE",
+            "resultChars": 0,
+            "resultLineCount": 0
+          },
+          "sourceIdentityVerified": false,
+          "sourceIdentityScore": 0,
+          "snippetOverlapCount": 0,
+          "snippetInformativeTokenCount": 0,
+          "snippetSequenceSpan": 0,
+          "musicalSectionCount": 0,
+          "performerCueCount": 0,
+          "outcome": "REJECTED",
+          "rejectionReason": "NO_STRUCTURED_LYRIC_BODY"
+        }
+      ],
+      "blockedLyricsSourceFamilies": [],
+      "musicStructureDebug": null,
+      "candidateAdmissionDebug": [
+        {
+          "query": "Research how synthesizers and sequencers shaped early electronic pop arrangements, citing an accessible public source. Explain the functions without requesting or reproducing lyrics from any recording.",
+          "title": "Previous Research | IT Security Office | Virginia Tech",
+          "url": "https://security.vt.edu/about/security-lab/previous-research/",
+          "source": "security.vt.edu",
+          "rank": 1,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "research"
+          ],
+          "coreTerms": [
+            "research",
+            "how",
+            "synthesizers",
+            "sequencers",
+            "shaped",
+            "early",
+            "electronic",
+            "pop",
+            "arrangements",
+            "citing",
+            "accessible",
+            "public"
+          ],
+          "snippetPreview": "In an effort to solve this problem, researchers have explored different methods of visualizing network security threats. There is little …"
+        },
+        {
+          "query": "Research how synthesizers and sequencers shaped early electronic pop arrangements, citing an accessible public source. Explain the functions without requesting or reproducing lyrics from any recording.",
+          "title": "Current Research | IT Security Office | Virginia Tech",
+          "url": "https://security.vt.edu/about/security-lab/current-research/",
+          "source": "security.vt.edu",
+          "rank": 2,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "research"
+          ],
+          "coreTerms": [
+            "research",
+            "how",
+            "synthesizers",
+            "sequencers",
+            "shaped",
+            "early",
+            "electronic",
+            "pop",
+            "arrangements",
+            "citing",
+            "accessible",
+            "public"
+          ],
+          "snippetPreview": "Our research in network security visualizations strives to improve the perspective of concerned users and network security …"
+        },
+        {
+          "query": "Research how synthesizers and sequencers shaped early electronic pop arrangements, citing an accessible public source. Explain the functions without requesting or reproducing lyrics from any recording.",
+          "title": "IT Security Lab | IT Security Office | Virginia Tech",
+          "url": "https://security.vt.edu/about/security-lab/",
+          "source": "security.vt.edu",
+          "rank": 3,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "research"
+          ],
+          "coreTerms": [
+            "research",
+            "how",
+            "synthesizers",
+            "sequencers",
+            "shaped",
+            "early",
+            "electronic",
+            "pop",
+            "arrangements",
+            "citing",
+            "accessible",
+            "public"
+          ],
+          "snippetPreview": "The Virginia Tech Information Technology Security Laboratory (ITSL) focuses on education and research in computer and network …"
+        },
+        {
+          "query": "Research how synthesizers and sequencers shaped early electronic pop arrangements, citing an accessible public source. Explain the functions without requesting or reproducing lyrics from any recording.",
+          "title": "How to join the IT Security Lab - Virginia Tech",
+          "url": "https://security.vt.edu/about/security-lab/join-itsl/",
+          "source": "security.vt.edu",
+          "rank": 4,
+          "allowed": true,
+          "reason": "SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "research",
+            "how"
+          ],
+          "coreTerms": [
+            "research",
+            "how",
+            "synthesizers",
+            "sequencers",
+            "shaped",
+            "early",
+            "electronic",
+            "pop",
+            "arrangements",
+            "citing",
+            "accessible",
+            "public"
+          ],
+          "snippetPreview": "Current and past research projects include: The lab has the ability to conduct research with undergraduate and graduate students. If …"
+        },
+        {
+          "query": "Research how synthesizers and sequencers shaped early electronic pop arrangements, citing an accessible public source. Explain the functions without requesting or reproducing lyrics from any recording.",
+          "title": "Dissertations & Thesis | IT Security Office | Virginia Tech",
+          "url": "https://security.vt.edu/about/security-lab/dissertations/",
+          "source": "security.vt.edu",
+          "rank": 5,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [],
+          "coreTerms": [
+            "research",
+            "how",
+            "synthesizers",
+            "sequencers",
+            "shaped",
+            "early",
+            "electronic",
+            "pop",
+            "arrangements",
+            "citing",
+            "accessible",
+            "public"
+          ],
+          "snippetPreview": ""
+        },
+        {
+          "query": "Research how synthesizers and sequencers shaped early electronic pop arrangements, citing an accessible public source. Explain the functions without requesting or reproducing lyrics from any recording.",
+          "title": "| IT Security Office | Virginia Tech",
+          "url": "https://security.vt.edu/about/security-lab/sidebar/",
+          "source": "security.vt.edu",
+          "rank": 6,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [],
+          "coreTerms": [
+            "research",
+            "how",
+            "synthesizers",
+            "sequencers",
+            "shaped",
+            "early",
+            "electronic",
+            "pop",
+            "arrangements",
+            "citing",
+            "accessible",
+            "public"
+          ],
+          "snippetPreview": ""
+        },
+        {
+          "query": "Research how synthesizers and sequencers shaped early electronic pop arrangements, citing an accessible public source. Explain the functions without requesting or reproducing lyrics from any recording.",
+          "title": "Publications | IT Security Office | Virginia Tech",
+          "url": "https://security.vt.edu/about/security-lab/publications/",
+          "source": "security.vt.edu",
+          "rank": 7,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "public"
+          ],
+          "coreTerms": [
+            "research",
+            "how",
+            "synthesizers",
+            "sequencers",
+            "shaped",
+            "early",
+            "electronic",
+            "pop",
+            "arrangements",
+            "citing",
+            "accessible",
+            "public"
+          ],
+          "snippetPreview": "Mar 26, 2019 · Proceedings of the IEEE Symposium on 3D User Interfaces (3DUI '14)"
+        }
+      ],
+      "songIdentity": {},
+      "songDiscoveryPlan": [],
+      "lyricsRescueSearchDebug": [],
+      "lyricsMaxPageAttempts": 3,
+      "lyricsFallbackExhausted": true,
+      "rawPromptStored": false
+    },
+    "trace": [
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794849783881,
+        "phase": "RESEARCH_STARTED",
+        "activity": "Online research started",
+        "provider": "bounded-web-search-chain-v1",
+        "site": "",
+        "url": ""
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794849783882,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794849784036,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "activity": "No usable results from provider",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "httpStatus": 202,
+        "resultCount": 0
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794849784036,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794849784169,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "activity": "No usable results from provider",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "httpStatus": 202,
+        "resultCount": 0
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794849784169,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794849784420,
+        "phase": "SEARCH_PROVIDER_RESULTS",
+        "activity": "Search results found",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "httpStatus": 200,
+        "resultCount": 7
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794849784420,
+        "phase": "SEARCH_PROVIDER_SELECTED",
+        "activity": "Using bing-html",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "resultCount": 7
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794849784422,
+        "phase": "PAGE_FETCH_STARTED",
+        "activity": "Visiting result page",
+        "provider": "web-page",
+        "site": "security.vt.edu",
+        "url": "https://security.vt.edu/about/security-lab/join-itsl/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794849784641,
+        "phase": "PAGE_FETCH_COMPLETE",
+        "activity": "Page fetched",
+        "provider": "web-page",
+        "site": "security.vt.edu",
+        "url": "https://security.vt.edu/about/security-lab/join-itsl/",
+        "httpStatus": 200,
+        "responseBytes": 94475
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794849784645,
+        "phase": "RESEARCH_COMPLETE",
+        "activity": "Online research complete",
+        "provider": "bounded-web-search-chain-v1",
+        "site": "",
+        "url": "",
+        "resultCount": 1
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "phase": "LYRICS_SOURCE_VERIFICATION",
+        "provider": "lyrics-verifier",
+        "site": "security.vt.edu",
+        "url": "https://security.vt.edu/about/security-lab/join-itsl/",
+        "activity": "Checking fetched lyrics candidate",
+        "atUnixMs": 1794849784645
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "phase": "LYRICS_SOURCE_REJECTED",
+        "provider": "lyrics-verifier",
+        "site": "security.vt.edu",
+        "url": "https://security.vt.edu/about/security-lab/join-itsl/",
+        "activity": "Lyrics candidate did not satisfy verification",
+        "atUnixMs": 1794849784648
+      }
+    ],
+    "sources": [],
+    "sourceSites": [],
+    "widgets": [],
+    "widgetKinds": [],
+    "statusTrail": [
+      {
+        "phase": "QUEUED",
+        "reason": "Accepted by Workstation",
+        "atUnixMs": 1794849783853
+      },
+      {
+        "phase": "GENERATING",
+        "reason": "Workstation admitted generation",
+        "atUnixMs": 1794849783875
+      },
+      {
+        "seq": 1,
+        "phase": "PROGRAMMING_INTENT",
+        "reason": "",
+        "atUnixMs": 1794849783878
+      },
+      {
+        "seq": 2,
+        "phase": "SEARCH_STARTED",
+        "reason": "I’m on it — looking up Research how synthesizers and sequencers shaped early electronic pop arrangements, citing an accessible public source. Explain the functions without requesting or reproducing ly",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH"
+        ],
+        "atUnixMs": 1794849783880
+      },
+      {
+        "seq": 3,
+        "phase": "RESEARCH_STARTED",
+        "reason": "Online research started",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "",
+        "url": "",
+        "provider": "bounded-web-search-chain-v1",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794849783881
+      },
+      {
+        "seq": 4,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "provider": "duckduckgo-html",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794849783882
+      },
+      {
+        "seq": 5,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "reason": "No usable results from provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "provider": "duckduckgo-html",
+        "httpStatus": 202,
+        "resultCount": 0,
+        "atUnixMs": 1794849784036
+      },
+      {
+        "seq": 6,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "provider": "duckduckgo-lite",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794849784036
+      },
+      {
+        "seq": 7,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "reason": "No usable results from provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "provider": "duckduckgo-lite",
+        "httpStatus": 202,
+        "resultCount": 0,
+        "atUnixMs": 1794849784169
+      },
+      {
+        "seq": 8,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "provider": "bing-html",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794849784169
+      },
+      {
+        "seq": 9,
+        "phase": "SEARCH_PROVIDER_RESULTS",
+        "reason": "Search results found",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "provider": "bing-html",
+        "httpStatus": 200,
+        "resultCount": 7,
+        "atUnixMs": 1794849784421
+      },
+      {
+        "seq": 10,
+        "phase": "SEARCH_PROVIDER_SELECTED",
+        "reason": "Using bing-html",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "provider": "bing-html",
+        "httpStatus": null,
+        "resultCount": 7,
+        "atUnixMs": 1794849784421
+      },
+      {
+        "seq": 11,
+        "phase": "PAGE_FETCH_STARTED",
+        "reason": "Visiting result page",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "security.vt.edu",
+        "url": "https://security.vt.edu/about/security-lab/join-itsl/",
+        "provider": "web-page",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794849784423
+      },
+      {
+        "seq": 12,
+        "phase": "PAGE_FETCH_COMPLETE",
+        "reason": "Page fetched",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "security.vt.edu",
+        "url": "https://security.vt.edu/about/security-lab/join-itsl/",
+        "provider": "web-page",
+        "httpStatus": 200,
+        "resultCount": null,
+        "atUnixMs": 1794849784648
+      },
+      {
+        "seq": 13,
+        "phase": "RESEARCH_COMPLETE",
+        "reason": "Online research complete",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "",
+        "url": "",
+        "provider": "bounded-web-search-chain-v1",
+        "httpStatus": null,
+        "resultCount": 1,
+        "atUnixMs": 1794849784648
+      },
+      {
+        "seq": 14,
+        "phase": "LYRICS_SOURCE_VERIFICATION",
+        "reason": "Checking fetched lyrics candidate",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "security.vt.edu",
+        "url": "https://security.vt.edu/about/security-lab/join-itsl/",
+        "provider": "lyrics-verifier",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794849784648
+      },
+      {
+        "seq": 15,
+        "phase": "LYRICS_SOURCE_REJECTED",
+        "reason": "Lyrics candidate did not satisfy verification",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "security.vt.edu",
+        "url": "https://security.vt.edu/about/security-lab/join-itsl/",
+        "provider": "lyrics-verifier",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794849784649
+      },
+      {
+        "seq": 16,
+        "phase": "ONLINE_RESEARCH",
+        "reason": "NO_RESULTS",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH"
+        ],
+        "atUnixMs": 1794849784650
+      },
+      {
+        "seq": 17,
+        "phase": "SEARCH_COMPLETE",
+        "reason": "Online retrieval no_results.",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH"
+        ],
+        "atUnixMs": 1794849784651
+      },
+      {
+        "seq": 18,
+        "phase": "LYRICS_VERIFICATION_BLOCKED",
+        "reason": "I found search results for the lyrics, but I couldn't verify the requested lyric text from fetched evidence, so I won't reconstruct it from memory.",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "LYRICS",
+          "GROUNDING"
+        ],
+        "atUnixMs": 1794849784651
+      },
+      {
+        "seq": 20,
+        "phase": "COMPLETE",
+        "reason": "",
+        "atUnixMs": 1794849784651
+      },
+      {
+        "phase": "PERSISTING",
+        "reason": "Saving the response to the chat",
+        "atUnixMs": 1794849784651
+      }
+    ],
+    "responseCognition": {},
+    "programmingIntent": {
+      "schema": "swrlz-programming-intent-v1",
+      "codingTask": false,
+      "projectContext": "none",
+      "changeClass": "none",
+      "artifactContinuation": false,
+      "artifactMutationRequested": false,
+      "artifactTargetId": "",
+      "artifactTargetMessageId": "",
+      "baseRevision": 0,
+      "baseSourceHash": "",
+      "newProject": false,
+      "source": "brain-router"
+    },
+    "candidateValidation": {},
+    "candidateAttempts": [],
+    "generationTelemetry": {},
+    "engineCompletionTelemetry": {
+      "totalLatencyMs": null,
+      "loadLatencyMs": null,
+      "firstDeltaLatencyMs": null
+    },
+    "contextBudget": {},
+    "resourcePlan": {},
+    "responseResourceUsage": {
+      "schema": "swrlz-response-resource-usage-v1",
+      "scope": "shared-cgroup-v2",
+      "source": "cgroup-v2",
+      "isolatedModelAttribution": false,
+      "wallTimeMs": 776,
+      "capacity": {
+        "cpuLimitCores": 16.0,
+        "cpuLimitState": "measured",
+        "memoryLimitBytes": 104000000000,
+        "memoryLimitState": "measured"
+      },
+      "observed": {
+        "cgroupCpuUsageUsecDelta": 219446,
+        "averageCgroupCpuCores": 0.283,
+        "memoryStartBytes": 7719981056,
+        "memoryEndBytes": 7721738240,
+        "memoryEndMinusStartBytes": 1757184,
+        "memoryPeakSampledBytes": 7721738240,
+        "memoryPeakAboveStartBytes": 1757184,
+        "memorySampleCount": 2,
+        "memorySamplingIntervalMs": 1000
+      },
+      "attribution": "Shared container readings include concurrent work; they are not exclusive CPU/RAM use by this model.",
+      "routeId": "700m",
+      "configuredEngineThreadBudget": null,
+      "outcome": "COMPLETE"
+    },
+    "finalResponse": "I found search results for the lyrics, but I couldn't verify the requested lyric text from fetched evidence, so I won't reconstruct it from memory.",
+    "finalResponseSha256": "b6fd72ce42d1ea9b8b6e2e4097ee293e0bec3153c5772663f955ff48cdad536a",
+    "requestedModelId": "700m",
+    "selectedModelId": "700m",
+    "stationTiming": {
+      "acceptedAtUnixMs": 1794849783853,
+      "startedAtUnixMs": 1794849783875,
+      "completedAtUnixMs": 1794849784651,
+      "queueWaitMs": 22,
+      "stationRunMs": 776,
+      "endToEndMs": 798
+    },
+    "rawPromptStored": false,
+    "historyStored": false,
+    "preciseLocationStored": false,
+    "privateReasoningStored": false
+  }
+}
