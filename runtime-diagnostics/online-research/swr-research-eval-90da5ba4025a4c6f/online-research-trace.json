@@ -1,0 +1,304 @@
+{
+  "schema": "swrlz-github-online-research-trace-v1",
+  "requestId": "swr-research-eval-90da5ba4025a4c6f",
+  "modelId": "700m",
+  "eventType": "ONLINE_RESEARCH_TRACE",
+  "sourceRef": "f149dd857e3d9219f5cae7da0286b5dbfec85c42",
+  "persistedAtUnixMs": 1794807777482,
+  "diagnostic": {
+    "schema": "swrlz-online-research-log-v1",
+    "research": {
+      "contract": "swrlz-online-camera-v1",
+      "observabilityRevision": "v181-song-metadata-clean-form-integrity",
+      "kind": "search",
+      "status": "OK",
+      "reason": "explicit-web-intent",
+      "provider": "bounded-web-search-chain-v1",
+      "resultCount": 3,
+      "widgetKinds": [
+        "search-results"
+      ],
+      "sourceCount": 3,
+      "locationRequired": false,
+      "usedExplicitClientLocation": false,
+      "elapsedMs": 941,
+      "lyricsSourceAttemptCount": 0,
+      "lyricsFetchDebug": [],
+      "blockedLyricsSourceFamilies": [],
+      "musicStructureDebug": null,
+      "candidateAdmissionDebug": [
+        {
+          "query": "Without a new web search, summarize in two sentences why not every new moon gives a total solar eclipse. Use the evidence you already cited and identify any remaining uncertainty.",
+          "title": "WITHOUT Definition & Meaning - Merriam-Webster",
+          "url": "https://www.merriam-webster.com/dictionary/without",
+          "source": "www.merriam-webster.com",
+          "rank": 1,
+          "allowed": true,
+          "reason": "NON_LYRICS_PASS",
+          "neededHits": 0,
+          "matchedTerms": [],
+          "coreTerms": [],
+          "snippetPreview": "Nov 3, 2026 · Examples of without in a Sentence Preposition Do you take your coffee with or without sugar? Don't leave home …"
+        },
+        {
+          "query": "Without a new web search, summarize in two sentences why not every new moon gives a total solar eclipse. Use the evidence you already cited and identify any remaining uncertainty.",
+          "title": "WITHOUT | English meaning - Cambridge Dictionary",
+          "url": "https://dictionary.cambridge.org/dictionary/english/without",
+          "source": "dictionary.cambridge.org",
+          "rank": 2,
+          "allowed": true,
+          "reason": "NON_LYRICS_PASS",
+          "neededHits": 0,
+          "matchedTerms": [],
+          "coreTerms": [],
+          "snippetPreview": "The preposition without means ‘not having something’ or ‘lacking something’: … He came out without a coat. He looks younger …"
+        },
+        {
+          "query": "Without a new web search, summarize in two sentences why not every new moon gives a total solar eclipse. Use the evidence you already cited and identify any remaining uncertainty.",
+          "title": "WITHOUT Synonyms: 34 Similar and Opposite Words - Merriam-Webster",
+          "url": "https://www.merriam-webster.com/thesaurus/without",
+          "source": "www.merriam-webster.com",
+          "rank": 3,
+          "allowed": true,
+          "reason": "NON_LYRICS_PASS",
+          "neededHits": 0,
+          "matchedTerms": [],
+          "coreTerms": [],
+          "snippetPreview": "3 days ago · Synonyms for WITHOUT: wanting, absent, minus, sans, beyond, outside, except, outside of; Antonyms of WITHOUT: …"
+        },
+        {
+          "query": "Without a new web search, summarize in two sentences why not every new moon gives a total solar eclipse. Use the evidence you already cited and identify any remaining uncertainty.",
+          "title": "WITHOUT Definition & Meaning | Dictionary .com",
+          "url": "https://www.dictionary.com/browse/without",
+          "source": "www.dictionary.com",
+          "rank": 4,
+          "allowed": true,
+          "reason": "NON_LYRICS_PASS",
+          "neededHits": 0,
+          "matchedTerms": [],
+          "coreTerms": [],
+          "snippetPreview": "WITHOUT definition: with the absence, omission, or avoidance of; not with; with no or none of; lacking. See examples of without …"
+        },
+        {
+          "query": "Without a new web search, summarize in two sentences why not every new moon gives a total solar eclipse. Use the evidence you already cited and identify any remaining uncertainty.",
+          "title": "Without - definition of without by The Free Dictionary",
+          "url": "https://www.thefreedictionary.com/without",
+          "source": "www.thefreedictionary.com",
+          "rank": 5,
+          "allowed": true,
+          "reason": "NON_LYRICS_PASS",
+          "neededHits": 0,
+          "matchedTerms": [],
+          "coreTerms": [],
+          "snippetPreview": "Define without. without synonyms, without pronunciation, without translation, English dictionary definition of without. adv. 1. On the …"
+        },
+        {
+          "query": "Without a new web search, summarize in two sentences why not every new moon gives a total solar eclipse. Use the evidence you already cited and identify any remaining uncertainty.",
+          "title": "without - WordReference.com Dictionary of English",
+          "url": "https://www.wordreference.com/definition/without",
+          "source": "www.wordreference.com",
+          "rank": 6,
+          "allowed": true,
+          "reason": "NON_LYRICS_PASS",
+          "neededHits": 0,
+          "matchedTerms": [],
+          "coreTerms": [],
+          "snippetPreview": "outside of: both within and without the house or the city. beyond the compass, limits, range, or scope of (now used chiefly in …"
+        },
+        {
+          "query": "Without a new web search, summarize in two sentences why not every new moon gives a total solar eclipse. Use the evidence you already cited and identify any remaining uncertainty.",
+          "title": "WITHOUT Synonyms & Antonyms - 25 words | Thesaurus .com",
+          "url": "https://www.thesaurus.com/browse/without",
+          "source": "www.thesaurus.com",
+          "rank": 7,
+          "allowed": true,
+          "reason": "NON_LYRICS_PASS",
+          "neededHits": 0,
+          "matchedTerms": [],
+          "coreTerms": [],
+          "snippetPreview": "Find 25 different ways to say WITHOUT, along with antonyms, related words, and example sentences at Thesaurus.com."
+        },
+        {
+          "query": "Without a new web search, summarize in two sentences why not every new moon gives a total solar eclipse. Use the evidence you already cited and identify any remaining uncertainty.",
+          "title": "WITHOUT | definition in the Cambridge English Dictionary",
+          "url": "https://dictionary.cambridge.org/us/dictionary/english/without",
+          "source": "dictionary.cambridge.org",
+          "rank": 8,
+          "allowed": true,
+          "reason": "NON_LYRICS_PASS",
+          "neededHits": 0,
+          "matchedTerms": [],
+          "coreTerms": [],
+          "snippetPreview": "The preposition without means ‘not having something’ or ‘lacking something’: … He came out without a coat. He looks younger …"
+        }
+      ],
+      "songIdentity": {},
+      "songDiscoveryPlan": [],
+      "lyricsRescueSearchDebug": [],
+      "lyricsMaxPageAttempts": 0,
+      "lyricsFallbackExhausted": false,
+      "rawPromptStored": false
+    },
+    "trace": [
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794807776540,
+        "phase": "RESEARCH_STARTED",
+        "activity": "Online research started",
+        "provider": "bounded-web-search-chain-v1",
+        "site": "",
+        "url": ""
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794807776541,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794807776691,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "activity": "No usable results from provider",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "httpStatus": 202,
+        "resultCount": 0
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794807776692,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794807776834,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "activity": "No usable results from provider",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "httpStatus": 202,
+        "resultCount": 0
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794807776835,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794807777173,
+        "phase": "SEARCH_PROVIDER_RESULTS",
+        "activity": "Search results found",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "httpStatus": 200,
+        "resultCount": 8
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794807777173,
+        "phase": "SEARCH_PROVIDER_SELECTED",
+        "activity": "Using bing-html",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "resultCount": 8
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794807777175,
+        "phase": "PAGE_FETCH_STARTED",
+        "activity": "Visiting result page",
+        "provider": "web-page",
+        "site": "www.merriam-webster.com",
+        "url": "https://www.merriam-webster.com/dictionary/without"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794807777211,
+        "phase": "PAGE_FETCH_ERROR",
+        "activity": "Page fetch failed",
+        "provider": "web-page",
+        "site": "www.merriam-webster.com",
+        "url": "https://www.merriam-webster.com/dictionary/without",
+        "errorType": "HTTPError"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794807777214,
+        "phase": "PAGE_FETCH_STARTED",
+        "activity": "Visiting result page",
+        "provider": "web-page",
+        "site": "www.merriam-webster.com",
+        "url": "https://www.merriam-webster.com/thesaurus/without"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794807777251,
+        "phase": "PAGE_FETCH_ERROR",
+        "activity": "Page fetch failed",
+        "provider": "web-page",
+        "site": "www.merriam-webster.com",
+        "url": "https://www.merriam-webster.com/thesaurus/without",
+        "errorType": "HTTPError"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794807777253,
+        "phase": "PAGE_FETCH_STARTED",
+        "activity": "Visiting result page",
+        "provider": "web-page",
+        "site": "dictionary.cambridge.org",
+        "url": "https://dictionary.cambridge.org/dictionary/english/without"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794807777480,
+        "phase": "PAGE_FETCH_COMPLETE",
+        "activity": "Page fetched",
+        "provider": "web-page",
+        "site": "dictionary.cambridge.org",
+        "url": "https://dictionary.cambridge.org/dictionary/english/without",
+        "httpStatus": 200,
+        "responseBytes": 314957
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794807777481,
+        "phase": "RESEARCH_COMPLETE",
+        "activity": "Online research complete",
+        "provider": "bounded-web-search-chain-v1",
+        "site": "",
+        "url": "",
+        "resultCount": 3
+      }
+    ],
+    "sourceSites": [
+      "www.merriam-webster.com",
+      "dictionary.cambridge.org"
+    ],
+    "widgetKinds": [
+      "search-results"
+    ],
+    "requestedModelId": "700m",
+    "selectedModelId": "700m",
+    "rawPromptStored": false,
+    "historyStored": false,
+    "preciseLocationStored": false
+  }
+}
