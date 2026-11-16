@@ -10,11 +10,11 @@ a=parser.parse_args()
 m=json.loads((ROOT/'source-manifest.json').read_text('utf8'))
 assert m['name']=='§wyrl§ Engine v11.467'
 assert m['finalArtifact']=='swyrl_engine_v11_467.html'
-assert len(m['patches'])==444 and m['patches'][-1]=='patches/v11_467_ring_arc_modeling.py'
+assert len(m['patches'])==444 and m['patches'][-1]=='patches/v11_467_vr_grip_release.py'
 assert isinstance(m['finalBytes'],int) and isinstance(m['finalSha256'],str)
-for name in ['model_ring_kernel_v11_467.js','model_ring_bridge_v11_467.js','model_ring_ui_v11_467.js']:
+for name in ['model_ring_kernel_v11_466.js','model_ring_bridge_v11_466.js','model_ring_ui_v11_466.js']:
  subprocess.run(['node','--check',str(ROOT/'runtime'/name)],check=True)
-subprocess.run(['node',str(ROOT/'tests/model_ring_kernel_v11_467.mjs')],check=True)
+subprocess.run(['node',str(ROOT/'tests/model_ring_kernel_v11_466.mjs')],check=True)
 out=Path(a.output).resolve()
 subprocess.run([sys.executable,str(ROOT/'build_space.py'),'--output',str(out)],check=True)
 data=(out/'index.html').read_bytes()
@@ -31,7 +31,7 @@ for token in [
  'modelAtelierWorkshopExtrudeScale','setRingAnchor','selectRing',
  'modelAtelierWorkshopPreview','modelAtelierWorkshopApply']:
  assert token in html,token
-assert html.count(" source.engine='§wyrl§ Engine · Maker v11.467';source.version=11.466;")==5
+assert html.count(" source.engine='§wyrl§ Engine · Maker v11.467';source.version=11.467;")==5
 subprocess.run([sys.executable,str(ROOT/'scripts/check_inline_js_syntax_v11_266.py'),str(out/'index.html')],check=True)
 receipt=json.loads((out/'SOURCE.json').read_text('utf8'))
 for k,v in [('sourceVersion',m['name']),('finalBytes',len(data)),('finalSha256',m['finalSha256']),('patches',m['patches'])]:
