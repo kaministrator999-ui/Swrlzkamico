@@ -1,0 +1,22 @@
+name: Live §C bounded tool recovery and accepted offer acceptance
+on:
+  push:
+    branches: [test/chat-tool-recovery-live-20261116]
+    paths:
+      - "scripts/probe_hf_tool_recovery_live_v1.py"
+      - ".github/workflows/chat-tool-recovery-live-acceptance.yml"
+permissions: {contents: read}
+jobs:
+  guest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 24
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.11"}
+      - name: Run anonymous two-turn real-model acceptance on exact verified Space
+        run: |
+          set -euo pipefail
+          python -m pip install -q 'huggingface_hub>=0.34,<2' requests
+          python -m py_compile scripts/probe_hf_tool_recovery_live_v1.py
+          python -u scripts/probe_hf_tool_recovery_live_v1.py
