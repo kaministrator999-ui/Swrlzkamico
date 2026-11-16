@@ -87,7 +87,7 @@ def apply(html):
       'tap versus drag threshold')
     html=once(html,
       """ const end=()=>{if(start){start=null;save();window.dispatchEvent(new Event('resize'))}};
-  node.addEventListener('pointerup',end);node.addEventListener('pointercancel',end);""",
+ node.addEventListener('pointerup',end);node.addEventListener('pointercancel',end);""",
       """ const end=e=>{
   if(!start||e?.pointerId!==start.pointer)return;
   const tap=e.type==='pointerup'&&!start.moved&&layout()==='desktop';
