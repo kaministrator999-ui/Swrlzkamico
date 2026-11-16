@@ -37,9 +37,12 @@ jobs:
           scope="$(get CHANGE_SCOPE)"
           mode=deploy
           if [ -n "$scope" ]; then
-            test "$scope" = "noncode-output-limit-recovery-v1" || { echo "::error::Unknown scoped Space release mode."; exit 1; }
-            [[ "$source_ref" =~ ^[0-9a-f]{40}$ ]] || { echo "::error::Hotfix requires immutable source commit SHA."; exit 1; }
-            mode=hotfix-output-budget
+            [[ "$source_ref" =~ ^[0-9a-f]{40}$ ]] || { echo "::error::Scoped release requires immutable source commit SHA."; exit 1; }
+            case "$scope" in
+              noncode-output-limit-recovery-v1) mode=hotfix-output-budget ;;
+              music-transform-quality-v1) mode=hotfix-music-transform ;;
+              *) echo "::error::Unknown scoped Space release mode."; exit 1 ;;
+            esac
           fi
           test "$target" = "kamiloki/Swyrlz" || { echo "::error::TARGET must be the existing kamiloki/Swyrlz Space."; exit 1; }
           if [ "$approved" != "1" ]; then
