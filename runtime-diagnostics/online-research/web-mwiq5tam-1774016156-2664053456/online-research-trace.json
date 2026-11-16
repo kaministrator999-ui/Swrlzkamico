@@ -1,0 +1,2521 @@
+{
+  "schema": "swrlz-github-online-research-trace-v1",
+  "requestId": "web-mwiq5tam-1774016156-2664053456",
+  "modelId": "700m",
+  "eventType": "ONLINE_RESEARCH_TRACE",
+  "sourceRef": "f149dd857e3d9219f5cae7da0286b5dbfec85c42",
+  "persistedAtUnixMs": 1794800984673,
+  "diagnostic": {
+    "schema": "swrlz-online-research-log-v1",
+    "research": {
+      "contract": "swrlz-online-camera-v1",
+      "observabilityRevision": "v181-song-metadata-clean-form-integrity",
+      "kind": "search",
+      "status": "NO_RESULTS",
+      "reason": "existing-lyrics-retrieval",
+      "provider": "bounded-web-search-chain-v1",
+      "resultCount": 0,
+      "widgetKinds": [],
+      "sourceCount": 0,
+      "locationRequired": false,
+      "usedExplicitClientLocation": false,
+      "elapsedMs": 4878,
+      "lyricsSourceAttemptCount": 0,
+      "lyricsFetchDebug": [],
+      "blockedLyricsSourceFamilies": [],
+      "musicStructureDebug": null,
+      "candidateAdmissionDebug": [
+        {
+          "query": "Never gonna be defeated lyrics",
+          "title": "NEVER Definition & Meaning - Merriam-Webster",
+          "url": "https://www.merriam-webster.com/dictionary/never",
+          "source": "www.merriam-webster.com",
+          "rank": 1,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "never"
+          ],
+          "coreTerms": [
+            "never",
+            "gonna",
+            "defeated"
+          ],
+          "snippetPreview": "Nov 9, 2026 · The meaning of NEVER is not ever : at no time. How to use never in a sentence."
+        },
+        {
+          "query": "Never gonna be defeated lyrics",
+          "title": "Heart - Never - YouTube",
+          "url": "https://www.youtube.com/watch?v=zWzy5q_M5Ho",
+          "source": "www.youtube.com",
+          "rank": 2,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "never"
+          ],
+          "coreTerms": [
+            "never",
+            "gonna",
+            "defeated"
+          ],
+          "snippetPreview": "Feb 7, 2011 · Official Music Video for Never performed by Heart. Follow Heart Instagram: / heartofficial Twitter: / officialheart …"
+        },
+        {
+          "query": "Never gonna be defeated lyrics",
+          "title": "Never - definition of never by The Free Dictionary",
+          "url": "https://www.thefreedictionary.com/never",
+          "source": "www.thefreedictionary.com",
+          "rank": 3,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "never"
+          ],
+          "coreTerms": [
+            "never",
+            "gonna",
+            "defeated"
+          ],
+          "snippetPreview": "Define never. never synonyms, never pronunciation, never translation, English dictionary definition of never. adv. 1. Not ever; on no …"
+        },
+        {
+          "query": "Never gonna be defeated lyrics",
+          "title": "NEVER | English meaning - Cambridge Dictionary",
+          "url": "https://dictionary.cambridge.org/dictionary/english/never",
+          "source": "dictionary.cambridge.org",
+          "rank": 4,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "never"
+          ],
+          "coreTerms": [
+            "never",
+            "gonna",
+            "defeated"
+          ],
+          "snippetPreview": "NEVER definition: 1. not at any time or not on any occasion: 2. used as a way of saying \"never\" with extra emphasis…. Learn more."
+        },
+        {
+          "query": "Never gonna be defeated lyrics",
+          "title": "Never",
+          "url": "http://www.never.co.kr/",
+          "source": "www.never.co.kr",
+          "rank": 5,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "never"
+          ],
+          "coreTerms": [
+            "never",
+            "gonna",
+            "defeated"
+          ],
+          "snippetPreview": "Never is a platform offering diverse services and products to its users."
+        },
+        {
+          "query": "Never gonna be defeated lyrics",
+          "title": "XXXtentacion - NEVER (Lyrics ) - YouTube",
+          "url": "https://www.youtube.com/watch?v=8612bTeI1o8",
+          "source": "www.youtube.com",
+          "rank": 6,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "never"
+          ],
+          "coreTerms": [
+            "never",
+            "gonna",
+            "defeated"
+          ],
+          "snippetPreview": "Jan 8, 2017 · XXXtentacion - NEVER (Lyrics) Turn on notifications (🔔) when you subscribe to see new videos first! Let us know what …"
+        },
+        {
+          "query": "Never gonna be defeated lyrics",
+          "title": "NEVER EVER Definition & Meaning - Merriam-Webster",
+          "url": "https://www.merriam-webster.com/dictionary/never%20ever",
+          "source": "www.merriam-webster.com",
+          "rank": 7,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "never"
+          ],
+          "coreTerms": [
+            "never",
+            "gonna",
+            "defeated"
+          ],
+          "snippetPreview": "3 days ago · The meaning of NEVER EVER is —used especially in speech as a more forceful way to say 'never'. How to use never …"
+        },
+        {
+          "query": "Never gonna be defeated lyrics",
+          "title": "Never - Definition, Meaning & Synonyms | Vocabulary.com",
+          "url": "https://www.vocabulary.com/dictionary/never",
+          "source": "www.vocabulary.com",
+          "rank": 8,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "never"
+          ],
+          "coreTerms": [
+            "never",
+            "gonna",
+            "defeated"
+          ],
+          "snippetPreview": "The adverb never means \"at no time,\" or \"not at all.\" If you're never going to win a Monopoly game against your brother, you won't …"
+        }
+      ],
+      "songIdentity": {
+        "schema": "swrlz-song-identity-v1",
+        "rawSubject": "\"Never gonna be defeated\"",
+        "title": "Never gonna be defeated",
+        "titleFolded": "never gonna be defeated",
+        "titleTokens": [
+          "never",
+          "gonna",
+          "be",
+          "defeated"
+        ],
+        "primaryArtist": "",
+        "primaryArtistFolded": "",
+        "artistTokens": [],
+        "featuredArtists": [],
+        "requestedVersion": null,
+        "ambiguity": {
+          "level": "low",
+          "score": 2,
+          "commonWordCollision": [],
+          "shortTitle": false,
+          "punctuationHeavy": false,
+          "quotedTitleRequired": false,
+          "artistRequired": false
+        }
+      },
+      "songDiscoveryPlan": [
+        {
+          "strategy": "exact-title",
+          "query": "\"Never gonna be defeated\" lyrics"
+        },
+        {
+          "strategy": "title-song",
+          "query": "\"Never gonna be defeated\" song lyrics"
+        },
+        {
+          "strategy": "source-family-disambiguation",
+          "query": "\"Never gonna be defeated\" lyrics site:genius.com"
+        },
+        {
+          "strategy": "source-family-disambiguation",
+          "query": "\"Never gonna be defeated\" lyrics site:azlyrics.com"
+        },
+        {
+          "strategy": "source-family-disambiguation",
+          "query": "\"Never gonna be defeated\" lyrics site:musixmatch.com"
+        },
+        {
+          "strategy": "source-family-disambiguation",
+          "query": "\"Never gonna be defeated\" lyrics site:allthelyrics.com"
+        },
+        {
+          "strategy": "source-family-disambiguation",
+          "query": "\"Never gonna be defeated\" lyrics site:lyricsfreak.com"
+        }
+      ],
+      "lyricsRescueSearchDebug": [
+        {
+          "query": "\"Never gonna be defeated\" lyrics",
+          "strategy": "exact-title",
+          "resultCount": 8,
+          "admittedCount": 0,
+          "errorType": "",
+          "candidates": [
+            {
+              "title": "NEVER Definition & Meaning - Merriam-Webster",
+              "url": "https://www.merriam-webster.com/dictionary/never",
+              "source": "www.merriam-webster.com",
+              "rank": 1,
+              "allowed": false,
+              "score": -40,
+              "reason": "TITLE_MISMATCH",
+              "signals": [
+                "NON_LYRIC_DOMAIN",
+                "NON_LYRIC_CONTENT"
+              ],
+              "exactTitle": false,
+              "titleHits": 1,
+              "artistHits": 0,
+              "exactArtist": false,
+              "titleNeeded": 2,
+              "lyricDomain": false,
+              "versionMatch": false,
+              "versionMismatch": false,
+              "negativeContentHints": [
+                "dictionary",
+                "definition",
+                "meaning of"
+              ],
+              "decision": "",
+              "sourceFamily": "",
+              "identityScore": 0,
+              "sectionMarkersInSnippet": false,
+              "lyricTitleCue": false
+            },
+            {
+              "title": "Heart - Never - YouTube",
+              "url": "https://www.youtube.com/watch?v=zWzy5q_M5Ho",
+              "source": "www.youtube.com",
+              "rank": 2,
+              "allowed": true,
+              "score": 10,
+              "reason": "ADMITTED",
+              "signals": [],
+              "exactTitle": false,
+              "titleHits": 2,
+              "artistHits": 0,
+              "exactArtist": false,
+              "titleNeeded": 2,
+              "lyricDomain": false,
+              "versionMatch": false,
+              "versionMismatch": false,
+              "negativeContentHints": [],
+              "decision": "",
+              "sourceFamily": "",
+              "identityScore": 0,
+              "sectionMarkersInSnippet": false,
+              "lyricTitleCue": false
+            },
+            {
+              "title": "Never - definition of never by The Free Dictionary",
+              "url": "https://www.thefreedictionary.com/never",
+              "source": "www.thefreedictionary.com",
+              "rank": 3,
+              "allowed": false,
+              "score": -40,
+              "reason": "TITLE_MISMATCH",
+              "signals": [
+                "NON_LYRIC_DOMAIN",
+                "NON_LYRIC_CONTENT"
+              ],
+              "exactTitle": false,
+              "titleHits": 1,
+              "artistHits": 0,
+              "exactArtist": false,
+              "titleNeeded": 2,
+              "lyricDomain": false,
+              "versionMatch": false,
+              "versionMismatch": false,
+              "negativeContentHints": [
+                "dictionary",
+                "definition",
+                "translation"
+              ],
+              "decision": "",
+              "sourceFamily": "",
+              "identityScore": 0,
+              "sectionMarkersInSnippet": false,
+              "lyricTitleCue": false
+            },
+            {
+              "title": "NEVER | English meaning - Cambridge Dictionary",
+              "url": "https://dictionary.cambridge.org/dictionary/english/never",
+              "source": "dictionary.cambridge.org",
+              "rank": 4,
+              "allowed": false,
+              "score": -33,
+              "reason": "TITLE_MISMATCH",
+              "signals": [
+                "NON_LYRIC_DOMAIN",
+                "NON_LYRIC_CONTENT"
+              ],
+              "exactTitle": false,
+              "titleHits": 1,
+              "artistHits": 0,
+              "exactArtist": false,
+              "titleNeeded": 2,
+              "lyricDomain": false,
+              "versionMatch": false,
+              "versionMismatch": false,
+              "negativeContentHints": [
+                "dictionary",
+                "definition"
+              ],
+              "decision": "",
+              "sourceFamily": "",
+              "identityScore": 0,
+              "sectionMarkersInSnippet": false,
+              "lyricTitleCue": false
+            },
+            {
+              "title": "Never",
+              "url": "http://www.never.co.kr/",
+              "source": "www.never.co.kr",
+              "rank": 5,
+              "allowed": false,
+              "score": -2,
+              "reason": "TITLE_MISMATCH",
+              "signals": [
+                "NON_LYRIC_CONTENT"
+              ],
+              "exactTitle": false,
+              "titleHits": 1,
+              "artistHits": 0,
+              "exactArtist": false,
+              "titleNeeded": 2,
+              "lyricDomain": false,
+              "versionMatch": false,
+              "versionMismatch": false,
+              "negativeContentHints": [
+                "product"
+              ],
+              "decision": "",
+              "sourceFamily": "",
+              "identityScore": 0,
+              "sectionMarkersInSnippet": false,
+              "lyricTitleCue": false
+            },
+            {
+              "title": "XXXtentacion - NEVER (Lyrics ) - YouTube",
+              "url": "https://www.youtube.com/watch?v=8612bTeI1o8",
+              "source": "www.youtube.com",
+              "rank": 6,
+              "allowed": true,
+              "score": 15,
+              "reason": "ADMITTED",
+              "signals": [
+                "LYRIC_CONTENT_HINT"
+              ],
+              "exactTitle": false,
+              "titleHits": 2,
+              "artistHits": 0,
+              "exactArtist": false,
+              "titleNeeded": 2,
+              "lyricDomain": false,
+              "versionMatch": false,
+              "versionMismatch": false,
+              "negativeContentHints": [],
+              "decision": "",
+              "sourceFamily": "",
+              "identityScore": 0,
+              "sectionMarkersInSnippet": false,
+              "lyricTitleCue": false
+            },
+            {
+              "title": "NEVER EVER Definition & Meaning - Merriam-Webster",
+              "url": "https://www.merriam-webster.com/dictionary/never%20ever",
+              "source": "www.merriam-webster.com",
+              "rank": 7,
+              "allowed": false,
+              "score": -40,
+              "reason": "TITLE_MISMATCH",
+              "signals": [
+                "NON_LYRIC_DOMAIN",
+                "NON_LYRIC_CONTENT"
+              ],
+              "exactTitle": false,
+              "titleHits": 1,
+              "artistHits": 0,
+              "exactArtist": false,
+              "titleNeeded": 2,
+              "lyricDomain": false,
+              "versionMatch": false,
+              "versionMismatch": false,
+              "negativeContentHints": [
+                "dictionary",
+                "definition",
+                "meaning of"
+              ],
+              "decision": "",
+              "sourceFamily": "",
+              "identityScore": 0,
+              "sectionMarkersInSnippet": false,
+              "lyricTitleCue": false
+            },
+            {
+              "title": "Never - Definition, Meaning & Synonyms | Vocabulary.com",
+              "url": "https://www.vocabulary.com/dictionary/never",
+              "source": "www.vocabulary.com",
+              "rank": 8,
+              "allowed": false,
+              "score": -9,
+              "reason": "TITLE_MISMATCH",
+              "signals": [
+                "NON_LYRIC_CONTENT"
+              ],
+              "exactTitle": false,
+              "titleHits": 1,
+              "artistHits": 0,
+              "exactArtist": false,
+              "titleNeeded": 2,
+              "lyricDomain": false,
+              "versionMatch": false,
+              "versionMismatch": false,
+              "negativeContentHints": [
+                "dictionary",
+                "definition"
+              ],
+              "decision": "",
+              "sourceFamily": "",
+              "identityScore": 0,
+              "sectionMarkersInSnippet": false,
+              "lyricTitleCue": false
+            }
+          ]
+        },
+        {
+          "query": "\"Never gonna be defeated\" song lyrics",
+          "strategy": "title-song",
+          "resultCount": 8,
+          "admittedCount": 0,
+          "errorType": "",
+          "candidates": [
+            {
+              "title": "Fox News - Breaking News Updates | Latest News Headlines ...",
+              "url": "https://www.foxnews.com/?msockid=00695f5c3faa61c42e16474f3e6c6016",
+              "source": "www.foxnews.com",
+              "rank": 1,
+              "allowed": false,
+              "score": 0,
+              "reason": "TITLE_MISMATCH",
+              "signals": [],
+              "exactTitle": false,
+              "titleHits": 0,
+              "artistHits": 0,
+              "exactArtist": false,
+              "titleNeeded": 2,
+              "lyricDomain": false,
+              "versionMatch": false,
+              "versionMismatch": false,
+              "negativeContentHints": [],
+              "decision": "",
+              "sourceFamily": "",
+              "identityScore": 0,
+              "sectionMarkersInSnippet": false,
+              "lyricTitleCue": false
+            },
+            {
+              "title": "How The Doctor At The Center Of Latest Texas Children’s Hospital ...",
+              "url": "https://www.dailywire.com/news/how-the-doctor-at-the-center-of-latest-texas-childrens-hospital-scandal-built-an-alliance-with-transgender-activists",
+              "source": "www.dailywire.com",
+              "rank": 2,
+              "allowed": false,
+              "score": 5,
+              "reason": "TITLE_MISMATCH",
+              "signals": [],
+              "exactTitle": false,
+              "titleHits": 1,
+              "artistHits": 0,
+              "exactArtist": false,
+              "titleNeeded": 2,
+              "lyricDomain": false,
+              "versionMatch": false,
+              "versionMismatch": false,
+              "negativeContentHints": [],
+              "decision": "",
+              "sourceFamily": "",
+              "identityScore": 0,
+              "sectionMarkersInSnippet": false,
+              "lyricTitleCue": false
+            },
+            {
+              "title": "‘America Is Still Worth Fighting For’: World War II Veteran Earns ...",
+              "url": "https://www.dailywire.com/news/america-is-still-worth-fighting-for-world-war-ii-veteran-earns-standing-ovation-at-rnc",
+              "source": "www.dailywire.com",
+              "rank": 3,
+              "allowed": false,
+              "score": 0,
+              "reason": "TITLE_MISMATCH",
+              "signals": [],
+              "exactTitle": false,
+              "titleHits": 0,
+              "artistHits": 0,
+              "exactArtist": false,
+              "titleNeeded": 2,
+              "lyricDomain": false,
+              "versionMatch": false,
+              "versionMismatch": false,
+              "negativeContentHints": [],
+              "decision": "",
+              "sourceFamily": "",
+              "identityScore": 0,
+              "sectionMarkersInSnippet": false,
+              "lyricTitleCue": false
+            },
+            {
+              "title": "Bucyrus and Crawford County News - Telegraph-Forum",
+              "url": "https://www.bucyrustelegraphforum.com/news/",
+              "source": "www.bucyrustelegraphforum.com",
+              "rank": 4,
+              "allowed": false,
+              "score": 0,
+              "reason": "TITLE_MISMATCH",
+              "signals": [],
+              "exactTitle": false,
+              "titleHits": 0,
+              "artistHits": 0,
+              "exactArtist": false,
+              "titleNeeded": 2,
+              "lyricDomain": false,
+              "versionMatch": false,
+              "versionMismatch": false,
+              "negativeContentHints": [],
+              "decision": "",
+              "sourceFamily": "",
+              "identityScore": 0,
+              "sectionMarkersInSnippet": false,
+              "lyricTitleCue": false
+            },
+            {
+              "title": "Michael family legacy: Industry, race horses, homes",
+              "url": "https://www.bucyrustelegraphforum.com/story/news/history/2016/03/04/michael-family-legacy-industry-race-horses-homes/81309702/",
+              "source": "www.bucyrustelegraphforum.com",
+              "rank": 5,
+              "allowed": false,
+              "score": 5,
+              "reason": "TITLE_MISMATCH",
+              "signals": [],
+              "exactTitle": false,
+              "titleHits": 1,
+              "artistHits": 0,
+              "exactArtist": false,
+              "titleNeeded": 2,
+              "lyricDomain": false,
+              "versionMatch": false,
+              "versionMismatch": false,
+              "negativeContentHints": [],
+              "decision": "",
+              "sourceFamily": "",
+              "identityScore": 0,
+              "sectionMarkersInSnippet": false,
+              "lyricTitleCue": false
+            },
+            {
+              "title": "Fox Business Star ‘Permanently Disfigured’ After Vicious Dog Attack ...",
+              "url": "https://www.dailywire.com/news/fox-business-star-permanently-disfigured-after-vicious-dog-attack-youll-never-guess-the-breed",
+              "source": "www.dailywire.com",
+              "rank": 6,
+              "allowed": false,
+              "score": 5,
+              "reason": "TITLE_MISMATCH",
+              "signals": [],
+              "exactTitle": false,
+              "titleHits": 1,
+              "artistHits": 0,
+              "exactArtist": false,
+              "titleNeeded": 2,
+              "lyricDomain": false,
+              "versionMatch": false,
+              "versionMismatch": false,
+              "negativeContentHints": [],
+              "decision": "",
+              "sourceFamily": "",
+              "identityScore": 0,
+              "sectionMarkersInSnippet": false,
+              "lyricTitleCue": false
+            },
+            {
+              "title": "Daughters Of The American Revolution Board Rejects Proposal To …",
+              "url": "https://www.dailywire.com/news/daughters-of-the-american-revolution-board-rejects-proposal-to-keep-trans-identifying-men-out",
+              "source": "www.dailywire.com",
+              "rank": 7,
+              "allowed": false,
+              "score": 0,
+              "reason": "TITLE_MISMATCH",
+              "signals": [],
+              "exactTitle": false,
+              "titleHits": 0,
+              "artistHits": 0,
+              "exactArtist": false,
+              "titleNeeded": 2,
+              "lyricDomain": false,
+              "versionMatch": false,
+              "versionMismatch": false,
+              "negativeContentHints": [],
+              "decision": "",
+              "sourceFamily": "",
+              "identityScore": 0,
+              "sectionMarkersInSnippet": false,
+              "lyricTitleCue": false
+            },
+            {
+              "title": "Fox News Pulls The Plug As Trump’s Media Ban Takes Unexpected Turn",
+              "url": "https://www.dailywire.com/news/fox-news-pulls-the-plug-as-trumps-media-ban-takes-unexpected-turn",
+              "source": "www.dailywire.com",
+              "rank": 8,
+              "allowed": false,
+              "score": 0,
+              "reason": "TITLE_MISMATCH",
+              "signals": [],
+              "exactTitle": false,
+              "titleHits": 0,
+              "artistHits": 0,
+              "exactArtist": false,
+              "titleNeeded": 2,
+              "lyricDomain": false,
+              "versionMatch": false,
+              "versionMismatch": false,
+              "negativeContentHints": [],
+              "decision": "",
+              "sourceFamily": "",
+              "identityScore": 0,
+              "sectionMarkersInSnippet": false,
+              "lyricTitleCue": false
+            }
+          ]
+        },
+        {
+          "query": "\"Never gonna be defeated\" lyrics site:genius.com",
+          "strategy": "source-family-disambiguation",
+          "resultCount": 8,
+          "admittedCount": 0,
+          "errorType": "",
+          "candidates": [
+            {
+              "title": "NEVER Definition & Meaning - Merriam-Webster",
+              "url": "https://www.merriam-webster.com/dictionary/never",
+              "source": "www.merriam-webster.com",
+              "rank": 1,
+              "allowed": false,
+              "score": -40,
+              "reason": "TITLE_MISMATCH",
+              "signals": [
+                "NON_LYRIC_DOMAIN",
+                "NON_LYRIC_CONTENT"
+              ],
+              "exactTitle": false,
+              "titleHits": 1,
+              "artistHits": 0,
+              "exactArtist": false,
+              "titleNeeded": 2,
+              "lyricDomain": false,
+              "versionMatch": false,
+              "versionMismatch": false,
+              "negativeContentHints": [
+                "dictionary",
+                "definition",
+                "meaning of"
+              ],
+              "decision": "",
+              "sourceFamily": "",
+              "identityScore": 0,
+              "sectionMarkersInSnippet": false,
+              "lyricTitleCue": false
+            },
+            {
+              "title": "Heart - Never - YouTube",
+              "url": "https://www.youtube.com/watch?v=zWzy5q_M5Ho",
+              "source": "www.youtube.com",
+              "rank": 2,
+              "allowed": true,
+              "score": 10,
+              "reason": "ADMITTED",
+              "signals": [],
+              "exactTitle": false,
+              "titleHits": 2,
+              "artistHits": 0,
+              "exactArtist": false,
+              "titleNeeded": 2,
+              "lyricDomain": false,
+              "versionMatch": false,
+              "versionMismatch": false,
+              "negativeContentHints": [],
+              "decision": "",
+              "sourceFamily": "",
+              "identityScore": 0,
+              "sectionMarkersInSnippet": false,
+              "lyricTitleCue": false
+            },
+            {
+              "title": "Never - definition of never by The Free Dictionary",
+              "url": "https://www.thefreedictionary.com/never",
+              "source": "www.thefreedictionary.com",
+              "rank": 3,
+              "allowed": false,
+              "score": -40,
+              "reason": "TITLE_MISMATCH",
+              "signals": [
+                "NON_LYRIC_DOMAIN",
+                "NON_LYRIC_CONTENT"
+              ],
+              "exactTitle": false,
+              "titleHits": 1,
+              "artistHits": 0,
+              "exactArtist": false,
+              "titleNeeded": 2,
+              "lyricDomain": false,
+              "versionMatch": false,
+              "versionMismatch": false,
+              "negativeContentHints": [
+                "dictionary",
+                "definition",
+                "translation"
+              ],
+              "decision": "",
+              "sourceFamily": "",
+              "identityScore": 0,
+              "sectionMarkersInSnippet": false,
+              "lyricTitleCue": false
+            },
+            {
+              "title": "NEVER | English meaning - Cambridge Dictionary",
+              "url": "https://dictionary.cambridge.org/dictionary/english/never",
+              "source": "dictionary.cambridge.org",
+              "rank": 4,
+              "allowed": false,
+              "score": -33,
+              "reason": "TITLE_MISMATCH",
+              "signals": [
+                "NON_LYRIC_DOMAIN",
+                "NON_LYRIC_CONTENT"
+              ],
+              "exactTitle": false,
+              "titleHits": 1,
+              "artistHits": 0,
+              "exactArtist": false,
+              "titleNeeded": 2,
+              "lyricDomain": false,
+              "versionMatch": false,
+              "versionMismatch": false,
+              "negativeContentHints": [
+                "dictionary",
+                "definition"
+              ],
+              "decision": "",
+              "sourceFamily": "",
+              "identityScore": 0,
+              "sectionMarkersInSnippet": false,
+              "lyricTitleCue": false
+            },
+            {
+              "title": "Never",
+              "url": "http://www.never.co.kr/",
+              "source": "www.never.co.kr",
+              "rank": 5,
+              "allowed": false,
+              "score": -2,
+              "reason": "TITLE_MISMATCH",
+              "signals": [
+                "NON_LYRIC_CONTENT"
+              ],
+              "exactTitle": false,
+              "titleHits": 1,
+              "artistHits": 0,
+              "exactArtist": false,
+              "titleNeeded": 2,
+              "lyricDomain": false,
+              "versionMatch": false,
+              "versionMismatch": false,
+              "negativeContentHints": [
+                "product"
+              ],
+              "decision": "",
+              "sourceFamily": "",
+              "identityScore": 0,
+              "sectionMarkersInSnippet": false,
+              "lyricTitleCue": false
+            },
+            {
+              "title": "XXXtentacion - NEVER (Lyrics ) - YouTube",
+              "url": "https://www.youtube.com/watch?v=8612bTeI1o8",
+              "source": "www.youtube.com",
+              "rank": 6,
+              "allowed": true,
+              "score": 15,
+              "reason": "ADMITTED",
+              "signals": [
+                "LYRIC_CONTENT_HINT"
+              ],
+              "exactTitle": false,
+              "titleHits": 2,
+              "artistHits": 0,
+              "exactArtist": false,
+              "titleNeeded": 2,
+              "lyricDomain": false,
+              "versionMatch": false,
+              "versionMismatch": false,
+              "negativeContentHints": [],
+              "decision": "",
+              "sourceFamily": "",
+              "identityScore": 0,
+              "sectionMarkersInSnippet": false,
+              "lyricTitleCue": false
+            },
+            {
+              "title": "NEVER EVER Definition & Meaning - Merriam-Webster",
+              "url": "https://www.merriam-webster.com/dictionary/never%20ever",
+              "source": "www.merriam-webster.com",
+              "rank": 7,
+              "allowed": false,
+              "score": -40,
+              "reason": "TITLE_MISMATCH",
+              "signals": [
+                "NON_LYRIC_DOMAIN",
+                "NON_LYRIC_CONTENT"
+              ],
+              "exactTitle": false,
+              "titleHits": 1,
+              "artistHits": 0,
+              "exactArtist": false,
+              "titleNeeded": 2,
+              "lyricDomain": false,
+              "versionMatch": false,
+              "versionMismatch": false,
+              "negativeContentHints": [
+                "dictionary",
+                "definition",
+                "meaning of"
+              ],
+              "decision": "",
+              "sourceFamily": "",
+              "identityScore": 0,
+              "sectionMarkersInSnippet": false,
+              "lyricTitleCue": false
+            },
+            {
+              "title": "Never - Definition, Meaning & Synonyms | Vocabulary.com",
+              "url": "https://www.vocabulary.com/dictionary/never",
+              "source": "www.vocabulary.com",
+              "rank": 8,
+              "allowed": false,
+              "score": -9,
+              "reason": "TITLE_MISMATCH",
+              "signals": [
+                "NON_LYRIC_CONTENT"
+              ],
+              "exactTitle": false,
+              "titleHits": 1,
+              "artistHits": 0,
+              "exactArtist": false,
+              "titleNeeded": 2,
+              "lyricDomain": false,
+              "versionMatch": false,
+              "versionMismatch": false,
+              "negativeContentHints": [
+                "dictionary",
+                "definition"
+              ],
+              "decision": "",
+              "sourceFamily": "",
+              "identityScore": 0,
+              "sectionMarkersInSnippet": false,
+              "lyricTitleCue": false
+            }
+          ]
+        },
+        {
+          "query": "\"Never gonna be defeated\" lyrics site:azlyrics.com",
+          "strategy": "source-family-disambiguation",
+          "resultCount": 8,
+          "admittedCount": 0,
+          "errorType": "",
+          "candidates": [
+            {
+              "title": "NEVER Definition & Meaning - Merriam-Webster",
+              "url": "https://www.merriam-webster.com/dictionary/never",
+              "source": "www.merriam-webster.com",
+              "rank": 1,
+              "allowed": false,
+              "score": -40,
+              "reason": "TITLE_MISMATCH",
+              "signals": [
+                "NON_LYRIC_DOMAIN",
+                "NON_LYRIC_CONTENT"
+              ],
+              "exactTitle": false,
+              "titleHits": 1,
+              "artistHits": 0,
+              "exactArtist": false,
+              "titleNeeded": 2,
+              "lyricDomain": false,
+              "versionMatch": false,
+              "versionMismatch": false,
+              "negativeContentHints": [
+                "dictionary",
+                "definition",
+                "meaning of"
+              ],
+              "decision": "",
+              "sourceFamily": "",
+              "identityScore": 0,
+              "sectionMarkersInSnippet": false,
+              "lyricTitleCue": false
+            },
+            {
+              "title": "Heart - Never - YouTube",
+              "url": "https://www.youtube.com/watch?v=zWzy5q_M5Ho",
+              "source": "www.youtube.com",
+              "rank": 2,
+              "allowed": true,
+              "score": 10,
+              "reason": "ADMITTED",
+              "signals": [],
+              "exactTitle": false,
+              "titleHits": 2,
+              "artistHits": 0,
+              "exactArtist": false,
+              "titleNeeded": 2,
+              "lyricDomain": false,
+              "versionMatch": false,
+              "versionMismatch": false,
+              "negativeContentHints": [],
+              "decision": "",
+              "sourceFamily": "",
+              "identityScore": 0,
+              "sectionMarkersInSnippet": false,
+              "lyricTitleCue": false
+            },
+            {
+              "title": "Never - definition of never by The Free Dictionary",
+              "url": "https://www.thefreedictionary.com/never",
+              "source": "www.thefreedictionary.com",
+              "rank": 3,
+              "allowed": false,
+              "score": -40,
+              "reason": "TITLE_MISMATCH",
+              "signals": [
+                "NON_LYRIC_DOMAIN",
+                "NON_LYRIC_CONTENT"
+              ],
+              "exactTitle": false,
+              "titleHits": 1,
+              "artistHits": 0,
+              "exactArtist": false,
+              "titleNeeded": 2,
+              "lyricDomain": false,
+              "versionMatch": false,
+              "versionMismatch": false,
+              "negativeContentHints": [
+                "dictionary",
+                "definition",
+                "translation"
+              ],
+              "decision": "",
+              "sourceFamily": "",
+              "identityScore": 0,
+              "sectionMarkersInSnippet": false,
+              "lyricTitleCue": false
+            },
+            {
+              "title": "NEVER | English meaning - Cambridge Dictionary",
+              "url": "https://dictionary.cambridge.org/dictionary/english/never",
+              "source": "dictionary.cambridge.org",
+              "rank": 4,
+              "allowed": false,
+              "score": -33,
+              "reason": "TITLE_MISMATCH",
+              "signals": [
+                "NON_LYRIC_DOMAIN",
+                "NON_LYRIC_CONTENT"
+              ],
+              "exactTitle": false,
+              "titleHits": 1,
+              "artistHits": 0,
+              "exactArtist": false,
+              "titleNeeded": 2,
+              "lyricDomain": false,
+              "versionMatch": false,
+              "versionMismatch": false,
+              "negativeContentHints": [
+                "dictionary",
+                "definition"
+              ],
+              "decision": "",
+              "sourceFamily": "",
+              "identityScore": 0,
+              "sectionMarkersInSnippet": false,
+              "lyricTitleCue": false
+            },
+            {
+              "title": "Never",
+              "url": "http://www.never.co.kr/",
+              "source": "www.never.co.kr",
+              "rank": 5,
+              "allowed": false,
+              "score": -2,
+              "reason": "TITLE_MISMATCH",
+              "signals": [
+                "NON_LYRIC_CONTENT"
+              ],
+              "exactTitle": false,
+              "titleHits": 1,
+              "artistHits": 0,
+              "exactArtist": false,
+              "titleNeeded": 2,
+              "lyricDomain": false,
+              "versionMatch": false,
+              "versionMismatch": false,
+              "negativeContentHints": [
+                "product"
+              ],
+              "decision": "",
+              "sourceFamily": "",
+              "identityScore": 0,
+              "sectionMarkersInSnippet": false,
+              "lyricTitleCue": false
+            },
+            {
+              "title": "XXXtentacion - NEVER (Lyrics ) - YouTube",
+              "url": "https://www.youtube.com/watch?v=8612bTeI1o8",
+              "source": "www.youtube.com",
+              "rank": 6,
+              "allowed": true,
+              "score": 15,
+              "reason": "ADMITTED",
+              "signals": [
+                "LYRIC_CONTENT_HINT"
+              ],
+              "exactTitle": false,
+              "titleHits": 2,
+              "artistHits": 0,
+              "exactArtist": false,
+              "titleNeeded": 2,
+              "lyricDomain": false,
+              "versionMatch": false,
+              "versionMismatch": false,
+              "negativeContentHints": [],
+              "decision": "",
+              "sourceFamily": "",
+              "identityScore": 0,
+              "sectionMarkersInSnippet": false,
+              "lyricTitleCue": false
+            },
+            {
+              "title": "NEVER EVER Definition & Meaning - Merriam-Webster",
+              "url": "https://www.merriam-webster.com/dictionary/never%20ever",
+              "source": "www.merriam-webster.com",
+              "rank": 7,
+              "allowed": false,
+              "score": -40,
+              "reason": "TITLE_MISMATCH",
+              "signals": [
+                "NON_LYRIC_DOMAIN",
+                "NON_LYRIC_CONTENT"
+              ],
+              "exactTitle": false,
+              "titleHits": 1,
+              "artistHits": 0,
+              "exactArtist": false,
+              "titleNeeded": 2,
+              "lyricDomain": false,
+              "versionMatch": false,
+              "versionMismatch": false,
+              "negativeContentHints": [
+                "dictionary",
+                "definition",
+                "meaning of"
+              ],
+              "decision": "",
+              "sourceFamily": "",
+              "identityScore": 0,
+              "sectionMarkersInSnippet": false,
+              "lyricTitleCue": false
+            },
+            {
+              "title": "Never - Definition, Meaning & Synonyms | Vocabulary.com",
+              "url": "https://www.vocabulary.com/dictionary/never",
+              "source": "www.vocabulary.com",
+              "rank": 8,
+              "allowed": false,
+              "score": -9,
+              "reason": "TITLE_MISMATCH",
+              "signals": [
+                "NON_LYRIC_CONTENT"
+              ],
+              "exactTitle": false,
+              "titleHits": 1,
+              "artistHits": 0,
+              "exactArtist": false,
+              "titleNeeded": 2,
+              "lyricDomain": false,
+              "versionMatch": false,
+              "versionMismatch": false,
+              "negativeContentHints": [
+                "dictionary",
+                "definition"
+              ],
+              "decision": "",
+              "sourceFamily": "",
+              "identityScore": 0,
+              "sectionMarkersInSnippet": false,
+              "lyricTitleCue": false
+            }
+          ]
+        },
+        {
+          "query": "\"Never gonna be defeated\" lyrics site:musixmatch.com",
+          "strategy": "source-family-disambiguation",
+          "resultCount": 8,
+          "admittedCount": 0,
+          "errorType": "",
+          "candidates": [
+            {
+              "title": "NEVER Definition & Meaning - Merriam-Webster",
+              "url": "https://www.merriam-webster.com/dictionary/never",
+              "source": "www.merriam-webster.com",
+              "rank": 1,
+              "allowed": false,
+              "score": -40,
+              "reason": "TITLE_MISMATCH",
+              "signals": [
+                "NON_LYRIC_DOMAIN",
+                "NON_LYRIC_CONTENT"
+              ],
+              "exactTitle": false,
+              "titleHits": 1,
+              "artistHits": 0,
+              "exactArtist": false,
+              "titleNeeded": 2,
+              "lyricDomain": false,
+              "versionMatch": false,
+              "versionMismatch": false,
+              "negativeContentHints": [
+                "dictionary",
+                "definition",
+                "meaning of"
+              ],
+              "decision": "",
+              "sourceFamily": "",
+              "identityScore": 0,
+              "sectionMarkersInSnippet": false,
+              "lyricTitleCue": false
+            },
+            {
+              "title": "Heart - Never - YouTube",
+              "url": "https://www.youtube.com/watch?v=zWzy5q_M5Ho",
+              "source": "www.youtube.com",
+              "rank": 2,
+              "allowed": true,
+              "score": 10,
+              "reason": "ADMITTED",
+              "signals": [],
+              "exactTitle": false,
+              "titleHits": 2,
+              "artistHits": 0,
+              "exactArtist": false,
+              "titleNeeded": 2,
+              "lyricDomain": false,
+              "versionMatch": false,
+              "versionMismatch": false,
+              "negativeContentHints": [],
+              "decision": "",
+              "sourceFamily": "",
+              "identityScore": 0,
+              "sectionMarkersInSnippet": false,
+              "lyricTitleCue": false
+            },
+            {
+              "title": "Never - definition of never by The Free Dictionary",
+              "url": "https://www.thefreedictionary.com/never",
+              "source": "www.thefreedictionary.com",
+              "rank": 3,
+              "allowed": false,
+              "score": -40,
+              "reason": "TITLE_MISMATCH",
+              "signals": [
+                "NON_LYRIC_DOMAIN",
+                "NON_LYRIC_CONTENT"
+              ],
+              "exactTitle": false,
+              "titleHits": 1,
+              "artistHits": 0,
+              "exactArtist": false,
+              "titleNeeded": 2,
+              "lyricDomain": false,
+              "versionMatch": false,
+              "versionMismatch": false,
+              "negativeContentHints": [
+                "dictionary",
+                "definition",
+                "translation"
+              ],
+              "decision": "",
+              "sourceFamily": "",
+              "identityScore": 0,
+              "sectionMarkersInSnippet": false,
+              "lyricTitleCue": false
+            },
+            {
+              "title": "NEVER | English meaning - Cambridge Dictionary",
+              "url": "https://dictionary.cambridge.org/dictionary/english/never",
+              "source": "dictionary.cambridge.org",
+              "rank": 4,
+              "allowed": false,
+              "score": -33,
+              "reason": "TITLE_MISMATCH",
+              "signals": [
+                "NON_LYRIC_DOMAIN",
+                "NON_LYRIC_CONTENT"
+              ],
+              "exactTitle": false,
+              "titleHits": 1,
+              "artistHits": 0,
+              "exactArtist": false,
+              "titleNeeded": 2,
+              "lyricDomain": false,
+              "versionMatch": false,
+              "versionMismatch": false,
+              "negativeContentHints": [
+                "dictionary",
+                "definition"
+              ],
+              "decision": "",
+              "sourceFamily": "",
+              "identityScore": 0,
+              "sectionMarkersInSnippet": false,
+              "lyricTitleCue": false
+            },
+            {
+              "title": "Never",
+              "url": "http://www.never.co.kr/",
+              "source": "www.never.co.kr",
+              "rank": 5,
+              "allowed": false,
+              "score": -2,
+              "reason": "TITLE_MISMATCH",
+              "signals": [
+                "NON_LYRIC_CONTENT"
+              ],
+              "exactTitle": false,
+              "titleHits": 1,
+              "artistHits": 0,
+              "exactArtist": false,
+              "titleNeeded": 2,
+              "lyricDomain": false,
+              "versionMatch": false,
+              "versionMismatch": false,
+              "negativeContentHints": [
+                "product"
+              ],
+              "decision": "",
+              "sourceFamily": "",
+              "identityScore": 0,
+              "sectionMarkersInSnippet": false,
+              "lyricTitleCue": false
+            },
+            {
+              "title": "XXXtentacion - NEVER (Lyrics ) - YouTube",
+              "url": "https://www.youtube.com/watch?v=8612bTeI1o8",
+              "source": "www.youtube.com",
+              "rank": 6,
+              "allowed": true,
+              "score": 15,
+              "reason": "ADMITTED",
+              "signals": [
+                "LYRIC_CONTENT_HINT"
+              ],
+              "exactTitle": false,
+              "titleHits": 2,
+              "artistHits": 0,
+              "exactArtist": false,
+              "titleNeeded": 2,
+              "lyricDomain": false,
+              "versionMatch": false,
+              "versionMismatch": false,
+              "negativeContentHints": [],
+              "decision": "",
+              "sourceFamily": "",
+              "identityScore": 0,
+              "sectionMarkersInSnippet": false,
+              "lyricTitleCue": false
+            },
+            {
+              "title": "NEVER EVER Definition & Meaning - Merriam-Webster",
+              "url": "https://www.merriam-webster.com/dictionary/never%20ever",
+              "source": "www.merriam-webster.com",
+              "rank": 7,
+              "allowed": false,
+              "score": -40,
+              "reason": "TITLE_MISMATCH",
+              "signals": [
+                "NON_LYRIC_DOMAIN",
+                "NON_LYRIC_CONTENT"
+              ],
+              "exactTitle": false,
+              "titleHits": 1,
+              "artistHits": 0,
+              "exactArtist": false,
+              "titleNeeded": 2,
+              "lyricDomain": false,
+              "versionMatch": false,
+              "versionMismatch": false,
+              "negativeContentHints": [
+                "dictionary",
+                "definition",
+                "meaning of"
+              ],
+              "decision": "",
+              "sourceFamily": "",
+              "identityScore": 0,
+              "sectionMarkersInSnippet": false,
+              "lyricTitleCue": false
+            },
+            {
+              "title": "Never - Definition, Meaning & Synonyms | Vocabulary.com",
+              "url": "https://www.vocabulary.com/dictionary/never",
+              "source": "www.vocabulary.com",
+              "rank": 8,
+              "allowed": false,
+              "score": -9,
+              "reason": "TITLE_MISMATCH",
+              "signals": [
+                "NON_LYRIC_CONTENT"
+              ],
+              "exactTitle": false,
+              "titleHits": 1,
+              "artistHits": 0,
+              "exactArtist": false,
+              "titleNeeded": 2,
+              "lyricDomain": false,
+              "versionMatch": false,
+              "versionMismatch": false,
+              "negativeContentHints": [
+                "dictionary",
+                "definition"
+              ],
+              "decision": "",
+              "sourceFamily": "",
+              "identityScore": 0,
+              "sectionMarkersInSnippet": false,
+              "lyricTitleCue": false
+            }
+          ]
+        },
+        {
+          "query": "\"Never gonna be defeated\" lyrics site:allthelyrics.com",
+          "strategy": "source-family-disambiguation",
+          "resultCount": 8,
+          "admittedCount": 0,
+          "errorType": "",
+          "candidates": [
+            {
+              "title": "NEVER Definition & Meaning - Merriam-Webster",
+              "url": "https://www.merriam-webster.com/dictionary/never",
+              "source": "www.merriam-webster.com",
+              "rank": 1,
+              "allowed": false,
+              "score": -40,
+              "reason": "TITLE_MISMATCH",
+              "signals": [
+                "NON_LYRIC_DOMAIN",
+                "NON_LYRIC_CONTENT"
+              ],
+              "exactTitle": false,
+              "titleHits": 1,
+              "artistHits": 0,
+              "exactArtist": false,
+              "titleNeeded": 2,
+              "lyricDomain": false,
+              "versionMatch": false,
+              "versionMismatch": false,
+              "negativeContentHints": [
+                "dictionary",
+                "definition",
+                "meaning of"
+              ],
+              "decision": "",
+              "sourceFamily": "",
+              "identityScore": 0,
+              "sectionMarkersInSnippet": false,
+              "lyricTitleCue": false
+            },
+            {
+              "title": "Heart - Never - YouTube",
+              "url": "https://www.youtube.com/watch?v=zWzy5q_M5Ho",
+              "source": "www.youtube.com",
+              "rank": 2,
+              "allowed": true,
+              "score": 10,
+              "reason": "ADMITTED",
+              "signals": [],
+              "exactTitle": false,
+              "titleHits": 2,
+              "artistHits": 0,
+              "exactArtist": false,
+              "titleNeeded": 2,
+              "lyricDomain": false,
+              "versionMatch": false,
+              "versionMismatch": false,
+              "negativeContentHints": [],
+              "decision": "",
+              "sourceFamily": "",
+              "identityScore": 0,
+              "sectionMarkersInSnippet": false,
+              "lyricTitleCue": false
+            },
+            {
+              "title": "Never - definition of never by The Free Dictionary",
+              "url": "https://www.thefreedictionary.com/never",
+              "source": "www.thefreedictionary.com",
+              "rank": 3,
+              "allowed": false,
+              "score": -40,
+              "reason": "TITLE_MISMATCH",
+              "signals": [
+                "NON_LYRIC_DOMAIN",
+                "NON_LYRIC_CONTENT"
+              ],
+              "exactTitle": false,
+              "titleHits": 1,
+              "artistHits": 0,
+              "exactArtist": false,
+              "titleNeeded": 2,
+              "lyricDomain": false,
+              "versionMatch": false,
+              "versionMismatch": false,
+              "negativeContentHints": [
+                "dictionary",
+                "definition",
+                "translation"
+              ],
+              "decision": "",
+              "sourceFamily": "",
+              "identityScore": 0,
+              "sectionMarkersInSnippet": false,
+              "lyricTitleCue": false
+            },
+            {
+              "title": "NEVER | English meaning - Cambridge Dictionary",
+              "url": "https://dictionary.cambridge.org/dictionary/english/never",
+              "source": "dictionary.cambridge.org",
+              "rank": 4,
+              "allowed": false,
+              "score": -33,
+              "reason": "TITLE_MISMATCH",
+              "signals": [
+                "NON_LYRIC_DOMAIN",
+                "NON_LYRIC_CONTENT"
+              ],
+              "exactTitle": false,
+              "titleHits": 1,
+              "artistHits": 0,
+              "exactArtist": false,
+              "titleNeeded": 2,
+              "lyricDomain": false,
+              "versionMatch": false,
+              "versionMismatch": false,
+              "negativeContentHints": [
+                "dictionary",
+                "definition"
+              ],
+              "decision": "",
+              "sourceFamily": "",
+              "identityScore": 0,
+              "sectionMarkersInSnippet": false,
+              "lyricTitleCue": false
+            },
+            {
+              "title": "Never",
+              "url": "http://www.never.co.kr/",
+              "source": "www.never.co.kr",
+              "rank": 5,
+              "allowed": false,
+              "score": -2,
+              "reason": "TITLE_MISMATCH",
+              "signals": [
+                "NON_LYRIC_CONTENT"
+              ],
+              "exactTitle": false,
+              "titleHits": 1,
+              "artistHits": 0,
+              "exactArtist": false,
+              "titleNeeded": 2,
+              "lyricDomain": false,
+              "versionMatch": false,
+              "versionMismatch": false,
+              "negativeContentHints": [
+                "product"
+              ],
+              "decision": "",
+              "sourceFamily": "",
+              "identityScore": 0,
+              "sectionMarkersInSnippet": false,
+              "lyricTitleCue": false
+            },
+            {
+              "title": "XXXtentacion - NEVER (Lyrics ) - YouTube",
+              "url": "https://www.youtube.com/watch?v=8612bTeI1o8",
+              "source": "www.youtube.com",
+              "rank": 6,
+              "allowed": true,
+              "score": 15,
+              "reason": "ADMITTED",
+              "signals": [
+                "LYRIC_CONTENT_HINT"
+              ],
+              "exactTitle": false,
+              "titleHits": 2,
+              "artistHits": 0,
+              "exactArtist": false,
+              "titleNeeded": 2,
+              "lyricDomain": false,
+              "versionMatch": false,
+              "versionMismatch": false,
+              "negativeContentHints": [],
+              "decision": "",
+              "sourceFamily": "",
+              "identityScore": 0,
+              "sectionMarkersInSnippet": false,
+              "lyricTitleCue": false
+            },
+            {
+              "title": "NEVER EVER Definition & Meaning - Merriam-Webster",
+              "url": "https://www.merriam-webster.com/dictionary/never%20ever",
+              "source": "www.merriam-webster.com",
+              "rank": 7,
+              "allowed": false,
+              "score": -40,
+              "reason": "TITLE_MISMATCH",
+              "signals": [
+                "NON_LYRIC_DOMAIN",
+                "NON_LYRIC_CONTENT"
+              ],
+              "exactTitle": false,
+              "titleHits": 1,
+              "artistHits": 0,
+              "exactArtist": false,
+              "titleNeeded": 2,
+              "lyricDomain": false,
+              "versionMatch": false,
+              "versionMismatch": false,
+              "negativeContentHints": [
+                "dictionary",
+                "definition",
+                "meaning of"
+              ],
+              "decision": "",
+              "sourceFamily": "",
+              "identityScore": 0,
+              "sectionMarkersInSnippet": false,
+              "lyricTitleCue": false
+            },
+            {
+              "title": "Never - Definition, Meaning & Synonyms | Vocabulary.com",
+              "url": "https://www.vocabulary.com/dictionary/never",
+              "source": "www.vocabulary.com",
+              "rank": 8,
+              "allowed": false,
+              "score": -9,
+              "reason": "TITLE_MISMATCH",
+              "signals": [
+                "NON_LYRIC_CONTENT"
+              ],
+              "exactTitle": false,
+              "titleHits": 1,
+              "artistHits": 0,
+              "exactArtist": false,
+              "titleNeeded": 2,
+              "lyricDomain": false,
+              "versionMatch": false,
+              "versionMismatch": false,
+              "negativeContentHints": [
+                "dictionary",
+                "definition"
+              ],
+              "decision": "",
+              "sourceFamily": "",
+              "identityScore": 0,
+              "sectionMarkersInSnippet": false,
+              "lyricTitleCue": false
+            }
+          ]
+        },
+        {
+          "query": "\"Never gonna be defeated\" lyrics site:lyricsfreak.com",
+          "strategy": "source-family-disambiguation",
+          "resultCount": 8,
+          "admittedCount": 0,
+          "errorType": "",
+          "candidates": [
+            {
+              "title": "NEVER Definition & Meaning - Merriam-Webster",
+              "url": "https://www.merriam-webster.com/dictionary/never",
+              "source": "www.merriam-webster.com",
+              "rank": 1,
+              "allowed": false,
+              "score": -40,
+              "reason": "TITLE_MISMATCH",
+              "signals": [
+                "NON_LYRIC_DOMAIN",
+                "NON_LYRIC_CONTENT"
+              ],
+              "exactTitle": false,
+              "titleHits": 1,
+              "artistHits": 0,
+              "exactArtist": false,
+              "titleNeeded": 2,
+              "lyricDomain": false,
+              "versionMatch": false,
+              "versionMismatch": false,
+              "negativeContentHints": [
+                "dictionary",
+                "definition",
+                "meaning of"
+              ],
+              "decision": "",
+              "sourceFamily": "",
+              "identityScore": 0,
+              "sectionMarkersInSnippet": false,
+              "lyricTitleCue": false
+            },
+            {
+              "title": "Heart - Never - YouTube",
+              "url": "https://www.youtube.com/watch?v=zWzy5q_M5Ho",
+              "source": "www.youtube.com",
+              "rank": 2,
+              "allowed": true,
+              "score": 10,
+              "reason": "ADMITTED",
+              "signals": [],
+              "exactTitle": false,
+              "titleHits": 2,
+              "artistHits": 0,
+              "exactArtist": false,
+              "titleNeeded": 2,
+              "lyricDomain": false,
+              "versionMatch": false,
+              "versionMismatch": false,
+              "negativeContentHints": [],
+              "decision": "",
+              "sourceFamily": "",
+              "identityScore": 0,
+              "sectionMarkersInSnippet": false,
+              "lyricTitleCue": false
+            },
+            {
+              "title": "Never - definition of never by The Free Dictionary",
+              "url": "https://www.thefreedictionary.com/never",
+              "source": "www.thefreedictionary.com",
+              "rank": 3,
+              "allowed": false,
+              "score": -40,
+              "reason": "TITLE_MISMATCH",
+              "signals": [
+                "NON_LYRIC_DOMAIN",
+                "NON_LYRIC_CONTENT"
+              ],
+              "exactTitle": false,
+              "titleHits": 1,
+              "artistHits": 0,
+              "exactArtist": false,
+              "titleNeeded": 2,
+              "lyricDomain": false,
+              "versionMatch": false,
+              "versionMismatch": false,
+              "negativeContentHints": [
+                "dictionary",
+                "definition",
+                "translation"
+              ],
+              "decision": "",
+              "sourceFamily": "",
+              "identityScore": 0,
+              "sectionMarkersInSnippet": false,
+              "lyricTitleCue": false
+            },
+            {
+              "title": "NEVER | English meaning - Cambridge Dictionary",
+              "url": "https://dictionary.cambridge.org/dictionary/english/never",
+              "source": "dictionary.cambridge.org",
+              "rank": 4,
+              "allowed": false,
+              "score": -33,
+              "reason": "TITLE_MISMATCH",
+              "signals": [
+                "NON_LYRIC_DOMAIN",
+                "NON_LYRIC_CONTENT"
+              ],
+              "exactTitle": false,
+              "titleHits": 1,
+              "artistHits": 0,
+              "exactArtist": false,
+              "titleNeeded": 2,
+              "lyricDomain": false,
+              "versionMatch": false,
+              "versionMismatch": false,
+              "negativeContentHints": [
+                "dictionary",
+                "definition"
+              ],
+              "decision": "",
+              "sourceFamily": "",
+              "identityScore": 0,
+              "sectionMarkersInSnippet": false,
+              "lyricTitleCue": false
+            },
+            {
+              "title": "Never",
+              "url": "http://www.never.co.kr/",
+              "source": "www.never.co.kr",
+              "rank": 5,
+              "allowed": false,
+              "score": -2,
+              "reason": "TITLE_MISMATCH",
+              "signals": [
+                "NON_LYRIC_CONTENT"
+              ],
+              "exactTitle": false,
+              "titleHits": 1,
+              "artistHits": 0,
+              "exactArtist": false,
+              "titleNeeded": 2,
+              "lyricDomain": false,
+              "versionMatch": false,
+              "versionMismatch": false,
+              "negativeContentHints": [
+                "product"
+              ],
+              "decision": "",
+              "sourceFamily": "",
+              "identityScore": 0,
+              "sectionMarkersInSnippet": false,
+              "lyricTitleCue": false
+            },
+            {
+              "title": "XXXtentacion - NEVER (Lyrics ) - YouTube",
+              "url": "https://www.youtube.com/watch?v=8612bTeI1o8",
+              "source": "www.youtube.com",
+              "rank": 6,
+              "allowed": true,
+              "score": 15,
+              "reason": "ADMITTED",
+              "signals": [
+                "LYRIC_CONTENT_HINT"
+              ],
+              "exactTitle": false,
+              "titleHits": 2,
+              "artistHits": 0,
+              "exactArtist": false,
+              "titleNeeded": 2,
+              "lyricDomain": false,
+              "versionMatch": false,
+              "versionMismatch": false,
+              "negativeContentHints": [],
+              "decision": "",
+              "sourceFamily": "",
+              "identityScore": 0,
+              "sectionMarkersInSnippet": false,
+              "lyricTitleCue": false
+            },
+            {
+              "title": "NEVER EVER Definition & Meaning - Merriam-Webster",
+              "url": "https://www.merriam-webster.com/dictionary/never%20ever",
+              "source": "www.merriam-webster.com",
+              "rank": 7,
+              "allowed": false,
+              "score": -40,
+              "reason": "TITLE_MISMATCH",
+              "signals": [
+                "NON_LYRIC_DOMAIN",
+                "NON_LYRIC_CONTENT"
+              ],
+              "exactTitle": false,
+              "titleHits": 1,
+              "artistHits": 0,
+              "exactArtist": false,
+              "titleNeeded": 2,
+              "lyricDomain": false,
+              "versionMatch": false,
+              "versionMismatch": false,
+              "negativeContentHints": [
+                "dictionary",
+                "definition",
+                "meaning of"
+              ],
+              "decision": "",
+              "sourceFamily": "",
+              "identityScore": 0,
+              "sectionMarkersInSnippet": false,
+              "lyricTitleCue": false
+            },
+            {
+              "title": "Never - Definition, Meaning & Synonyms | Vocabulary.com",
+              "url": "https://www.vocabulary.com/dictionary/never",
+              "source": "www.vocabulary.com",
+              "rank": 8,
+              "allowed": false,
+              "score": -9,
+              "reason": "TITLE_MISMATCH",
+              "signals": [
+                "NON_LYRIC_CONTENT"
+              ],
+              "exactTitle": false,
+              "titleHits": 1,
+              "artistHits": 0,
+              "exactArtist": false,
+              "titleNeeded": 2,
+              "lyricDomain": false,
+              "versionMatch": false,
+              "versionMismatch": false,
+              "negativeContentHints": [
+                "dictionary",
+                "definition"
+              ],
+              "decision": "",
+              "sourceFamily": "",
+              "identityScore": 0,
+              "sectionMarkersInSnippet": false,
+              "lyricTitleCue": false
+            }
+          ]
+        }
+      ],
+      "lyricsMaxPageAttempts": 3,
+      "lyricsFallbackExhausted": true,
+      "rawPromptStored": false
+    },
+    "trace": [
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794800979792,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794800979936,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "activity": "No usable results from provider",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "httpStatus": 202,
+        "resultCount": 0
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794800979936,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794800980063,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "activity": "No usable results from provider",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "httpStatus": 202,
+        "resultCount": 0
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794800980063,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794800981129,
+        "phase": "SEARCH_PROVIDER_RESULTS",
+        "activity": "Search results found",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "httpStatus": 200,
+        "resultCount": 8
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794800981129,
+        "phase": "SEARCH_PROVIDER_SELECTED",
+        "activity": "Using bing-html",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "resultCount": 8
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794800981130,
+        "phase": "RESEARCH_COMPLETE",
+        "activity": "Online research complete",
+        "provider": "bounded-web-search-chain-v1",
+        "site": "",
+        "url": "",
+        "resultCount": 0
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "phase": "LYRICS_RESCUE_SEARCH",
+        "provider": "bounded-web-search-chain-v1",
+        "site": "",
+        "url": "",
+        "activity": "Trying bounded lyrics discovery search",
+        "atUnixMs": 1794800981130
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794800981130,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794800981263,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "activity": "No usable results from provider",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "httpStatus": 202,
+        "resultCount": 0
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794800981263,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794800981388,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "activity": "No usable results from provider",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "httpStatus": 202,
+        "resultCount": 0
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794800981388,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794800981579,
+        "phase": "SEARCH_PROVIDER_RESULTS",
+        "activity": "Search results found",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "httpStatus": 200,
+        "resultCount": 8
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794800981579,
+        "phase": "SEARCH_PROVIDER_SELECTED",
+        "activity": "Using bing-html",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "resultCount": 8
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "phase": "LYRICS_RESCUE_SEARCH",
+        "provider": "bounded-web-search-chain-v1",
+        "site": "",
+        "url": "",
+        "activity": "Trying bounded lyrics discovery search",
+        "atUnixMs": 1794800981582
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794800981582,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794800981711,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "activity": "No usable results from provider",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "httpStatus": 202,
+        "resultCount": 0
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794800981712,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794800981828,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "activity": "No usable results from provider",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "httpStatus": 202,
+        "resultCount": 0
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794800981828,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794800982083,
+        "phase": "SEARCH_PROVIDER_RESULTS",
+        "activity": "Search results found",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "httpStatus": 200,
+        "resultCount": 8
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794800982083,
+        "phase": "SEARCH_PROVIDER_SELECTED",
+        "activity": "Using bing-html",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "resultCount": 8
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "phase": "LYRICS_RESCUE_SEARCH",
+        "provider": "bounded-web-search-chain-v1",
+        "site": "",
+        "url": "",
+        "activity": "Trying bounded lyrics discovery search",
+        "atUnixMs": 1794800982085
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794800982085,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794800982214,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "activity": "No usable results from provider",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "httpStatus": 202,
+        "resultCount": 0
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794800982214,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794800982344,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "activity": "No usable results from provider",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "httpStatus": 202,
+        "resultCount": 0
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794800982344,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794800982533,
+        "phase": "SEARCH_PROVIDER_RESULTS",
+        "activity": "Search results found",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "httpStatus": 200,
+        "resultCount": 8
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794800982533,
+        "phase": "SEARCH_PROVIDER_SELECTED",
+        "activity": "Using bing-html",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "resultCount": 8
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "phase": "LYRICS_RESCUE_SEARCH",
+        "provider": "bounded-web-search-chain-v1",
+        "site": "",
+        "url": "",
+        "activity": "Trying bounded lyrics discovery search",
+        "atUnixMs": 1794800982535
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794800982535,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794800982670,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "activity": "No usable results from provider",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "httpStatus": 202,
+        "resultCount": 0
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794800982670,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794800982794,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "activity": "No usable results from provider",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "httpStatus": 202,
+        "resultCount": 0
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794800982794,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794800983062,
+        "phase": "SEARCH_PROVIDER_RESULTS",
+        "activity": "Search results found",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "httpStatus": 200,
+        "resultCount": 8
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794800983062,
+        "phase": "SEARCH_PROVIDER_SELECTED",
+        "activity": "Using bing-html",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "resultCount": 8
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "phase": "LYRICS_RESCUE_SEARCH",
+        "provider": "bounded-web-search-chain-v1",
+        "site": "",
+        "url": "",
+        "activity": "Trying bounded lyrics discovery search",
+        "atUnixMs": 1794800983065
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794800983065,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794800983198,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "activity": "No usable results from provider",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "httpStatus": 202,
+        "resultCount": 0
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794800983198,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794800983330,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "activity": "No usable results from provider",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "httpStatus": 202,
+        "resultCount": 0
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794800983331,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794800983515,
+        "phase": "SEARCH_PROVIDER_RESULTS",
+        "activity": "Search results found",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "httpStatus": 200,
+        "resultCount": 8
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794800983515,
+        "phase": "SEARCH_PROVIDER_SELECTED",
+        "activity": "Using bing-html",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "resultCount": 8
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "phase": "LYRICS_RESCUE_SEARCH",
+        "provider": "bounded-web-search-chain-v1",
+        "site": "",
+        "url": "",
+        "activity": "Trying bounded lyrics discovery search",
+        "atUnixMs": 1794800983517
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794800983517,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794800983645,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "activity": "No usable results from provider",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "httpStatus": 202,
+        "resultCount": 0
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794800983645,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794800983779,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "activity": "No usable results from provider",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "httpStatus": 202,
+        "resultCount": 0
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794800983779,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794800984012,
+        "phase": "SEARCH_PROVIDER_RESULTS",
+        "activity": "Search results found",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "httpStatus": 200,
+        "resultCount": 8
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794800984012,
+        "phase": "SEARCH_PROVIDER_SELECTED",
+        "activity": "Using bing-html",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "resultCount": 8
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "phase": "LYRICS_RESCUE_SEARCH",
+        "provider": "bounded-web-search-chain-v1",
+        "site": "",
+        "url": "",
+        "activity": "Trying bounded lyrics discovery search",
+        "atUnixMs": 1794800984014
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794800984014,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794800984146,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "activity": "No usable results from provider",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "httpStatus": 202,
+        "resultCount": 0
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794800984146,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794800984293,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "activity": "No usable results from provider",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "httpStatus": 202,
+        "resultCount": 0
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794800984293,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794800984667,
+        "phase": "SEARCH_PROVIDER_RESULTS",
+        "activity": "Search results found",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "httpStatus": 200,
+        "resultCount": 8
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794800984667,
+        "phase": "SEARCH_PROVIDER_SELECTED",
+        "activity": "Using bing-html",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "resultCount": 8
+      }
+    ],
+    "sourceSites": [],
+    "widgetKinds": [],
+    "requestedModelId": "700m",
+    "selectedModelId": "700m",
+    "rawPromptStored": false,
+    "historyStored": false,
+    "preciseLocationStored": false
+  }
+}
