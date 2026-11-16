@@ -118,10 +118,12 @@ def _build(owner,token):
                 _STATE[owner]["done"]=min(total,offset+len(ids))
         freq=Counter()
         for entry in docs: freq.update(entry["terms"].keys())
+        continuity_index=continuity.latest_imported_signals(docs)
         with _LOCK:
             if _EPOCH[owner]!=token:return
             _STATE[owner]={"state":"ready","done":len(docs),"total":total,
-                           "docs":docs,"frequency":freq}
+                           "docs":docs,"frequency":freq,
+                           "continuityIndex":continuity_index}
     except Exception:
         with _LOCK:
             if _EPOCH[owner]==token:
@@ -226,8 +228,14 @@ def interaction_context(owner,prompt,native_threads,active_thread_id=""):
     with _LOCK:
         generation=_EPOCH[owner]
         current=_STATE.get(owner)
-        docs=list(current["docs"]) if current and current.get("state")=="ready" else ()
-    if not docs:
+        ready=bool(current and current.get("state")=="ready")
+        if ready and "continuityIndex" in current:
+            # Indexing computes this once; no O(all imported threads) scan
+            # or private archive reads on an ordinary conversational turn.
+            docs=[{"continuitySignals":list(current["continuityIndex"])}]
+        else:
+            docs=list(current["docs"]) if ready else ()
+    if not ready:
         warm(owner)
     context=continuity.compose(prompt,native_threads,docs,active_thread_id)
     with _LOCK:
