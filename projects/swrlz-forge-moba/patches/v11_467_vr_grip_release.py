@@ -26,7 +26,7 @@ def apply(html):
  """if(['grab','pan','two-hand'].includes(event.action)&&record)se340FinishGesture(record);""")
  html=one(html,
  """for(const record of s.controllers){
-   const grip=sample.buttons[record.input?.handedness==='left'?'LG':'RG'];record.held=!!grip?.down;""",
+  const grip=sample.buttons[record.input?.handedness==='left'?'LG':'RG'];record.held=!!grip?.down;""",
  """// Frame-level physical-state fallback for missed WebXR squeezeend events.
   // Never hold a camera gesture hostage to a stale event or tracked grip pose.
   if(s.gesture?.kind==='view'){
@@ -36,7 +36,7 @@ def apply(html):
    if(!primary?.down||pairEnded)se340FinishGesture(g.record);
   }
   for(const record of s.controllers){
-   const grip=sample.buttons[record.input?.handedness==='left'?'LG':'RG'];record.held=!!grip?.down;""")
+  const grip=sample.buttons[record.input?.handedness==='left'?'LG':'RG'];record.held=!!grip?.down;""")
  html=one(html,"SWYRL_ENGINE_DEPLOY_MARKER: V11_466_RING_ARC_MODELING","SWYRL_ENGINE_DEPLOY_MARKER: V11_467_VR_GRIP_RELEASE")
  html=one(html,"window.SWRLZ_FORGE_BUILD={version:'v11.466'","window.SWRLZ_FORGE_BUILD={version:'v11.467'")
  html=one(html,"<title>§wyrl§ Engine · Maker v11.466</title>","<title>§wyrl§ Engine · Maker v11.467</title>")
