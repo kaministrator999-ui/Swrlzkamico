@@ -1,0 +1,37 @@
+name: Diagnose §C Hugging Face Space state (read only)
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/diagnose-swyrlz-chat-space-readonly.yml"]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  status:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Query public Space status and origin health
+        run: |
+          python - <<'PY'
+          import json,urllib.request,urllib.error
+          uri='https://huggingface.co/api/spaces/kamiloki/Swyrlz'
+          req=urllib.request.Request(uri,headers={'User-Agent':'SWRLZ-ReadOnly-Diagnostic/1'})
+          try:
+              with urllib.request.urlopen(req,timeout=20) as response: data=json.load(response)
+              runtime=data.get('runtime') or {}
+              print('SECHAT_SPACE_STATUS='+json.dumps({'repo':data.get('id'),'sha':data.get('sha'),
+              'stage':runtime.get('stage'),'hardware':runtime.get('hardware',{}).get('current') if isinstance(runtime.get('hardware'),dict) else None,
+              'errorCode':runtime.get('errorCode'),'errorMessage':str(runtime.get('errorMessage') or '')[:250],
+              'sdk':data.get('sdk'),'private':data.get('private')},sort_keys=True),flush=True)
+          except urllib.error.HTTPError as e:
+              print('SECHAT_SPACE_HTTP_ERROR',e.code,str(e.reason)[:150],flush=True)
+          for u in ['https://kamiloki-swyrlz.hf.space/','https://kamiloki-swyrlz.hf.space/health']:
+              try:
+                  with urllib.request.urlopen(urllib.request.Request(u,headers={'User-Agent':'SWRLZ-ReadOnly-Health/1'}),timeout=12) as r:
+                      print('SECHAT_PROBE',u,'status',r.status,'type',r.headers.get('Content-Type',''),flush=True)
+              except urllib.error.HTTPError as e:
+                  print('SECHAT_PROBE',u,'status',e.code,'reason',str(e.reason)[:90],flush=True)
+              except Exception as e:
+                  print('SECHAT_PROBE',u,'exception',type(e).__name__,str(e)[:100],flush=True)
+          PY
