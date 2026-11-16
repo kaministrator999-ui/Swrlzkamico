@@ -7,12 +7,12 @@ on:
       - 'scripts/hf_music_research_intent_routing_v1.py'
 permissions: {contents: read}
 concurrency:
-  group: swrlz-chat-guest-eval
+  group: swrlz-chat-hf-music-route-release
   cancel-in-progress: false
 jobs:
   release:
     runs-on: ubuntu-24.04
-    timeout-minutes: 65
+    timeout-minutes: 85
     steps:
       - uses: actions/checkout@v4
         with: {persist-credentials: false}
