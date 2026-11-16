@@ -1,0 +1,891 @@
+{
+  "schema": "swrlz-github-online-research-outcome-v2",
+  "requestId": "swr-research-eval-a950340ed4d546ff",
+  "modelId": "700m",
+  "eventType": "ONLINE_RESEARCH_OUTCOME",
+  "sourceRef": "f149dd857e3d9219f5cae7da0286b5dbfec85c42",
+  "persistedAtUnixMs": 1794805705580,
+  "diagnostic": {
+    "schema": "swrlz-online-research-outcome-v2",
+    "terminalState": "COMPLETE",
+    "research": {
+      "contract": "swrlz-online-camera-v1",
+      "observabilityRevision": "v181-song-metadata-clean-form-integrity",
+      "kind": "search",
+      "status": "OK",
+      "reason": "explicit-web-intent",
+      "provider": "bounded-web-search-chain-v1",
+      "resultCount": 3,
+      "widgetKinds": [
+        "search-results"
+      ],
+      "sourceCount": 3,
+      "locationRequired": false,
+      "usedExplicitClientLocation": false,
+      "elapsedMs": 24722,
+      "lyricsSourceAttemptCount": 0,
+      "lyricsFetchDebug": [],
+      "blockedLyricsSourceFamilies": [],
+      "musicStructureDebug": null,
+      "candidateAdmissionDebug": [
+        {
+          "query": "Without a new web search, summarize in two sentences why not every new moon gives a total solar eclipse. Use the evidence you already cited and identify any remaining uncertainty.",
+          "title": "WITHOUT Definition & Meaning - Merriam-Webster",
+          "url": "https://www.merriam-webster.com/dictionary/without",
+          "source": "www.merriam-webster.com",
+          "rank": 1,
+          "allowed": true,
+          "reason": "NON_LYRICS_PASS",
+          "neededHits": 0,
+          "matchedTerms": [],
+          "coreTerms": [],
+          "snippetPreview": "Nov 3, 2026 · Examples of without in a Sentence Preposition Do you take your coffee with or without sugar? Don't leave home …"
+        },
+        {
+          "query": "Without a new web search, summarize in two sentences why not every new moon gives a total solar eclipse. Use the evidence you already cited and identify any remaining uncertainty.",
+          "title": "WITHOUT | English meaning - Cambridge Dictionary",
+          "url": "https://dictionary.cambridge.org/dictionary/english/without",
+          "source": "dictionary.cambridge.org",
+          "rank": 2,
+          "allowed": true,
+          "reason": "NON_LYRICS_PASS",
+          "neededHits": 0,
+          "matchedTerms": [],
+          "coreTerms": [],
+          "snippetPreview": "The preposition without means ‘not having something’ or ‘lacking something’: … He came out without a coat. He looks younger …"
+        },
+        {
+          "query": "Without a new web search, summarize in two sentences why not every new moon gives a total solar eclipse. Use the evidence you already cited and identify any remaining uncertainty.",
+          "title": "WITHOUT Synonyms: 34 Similar and Opposite Words - Merriam-Webster",
+          "url": "https://www.merriam-webster.com/thesaurus/without",
+          "source": "www.merriam-webster.com",
+          "rank": 3,
+          "allowed": true,
+          "reason": "NON_LYRICS_PASS",
+          "neededHits": 0,
+          "matchedTerms": [],
+          "coreTerms": [],
+          "snippetPreview": "3 days ago · Synonyms for WITHOUT: wanting, absent, minus, sans, beyond, outside, except, outside of; Antonyms of WITHOUT: …"
+        },
+        {
+          "query": "Without a new web search, summarize in two sentences why not every new moon gives a total solar eclipse. Use the evidence you already cited and identify any remaining uncertainty.",
+          "title": "WITHOUT Definition & Meaning | Dictionary .com",
+          "url": "https://www.dictionary.com/browse/without",
+          "source": "www.dictionary.com",
+          "rank": 4,
+          "allowed": true,
+          "reason": "NON_LYRICS_PASS",
+          "neededHits": 0,
+          "matchedTerms": [],
+          "coreTerms": [],
+          "snippetPreview": "WITHOUT definition: with the absence, omission, or avoidance of; not with; with no or none of; lacking. See examples of without …"
+        },
+        {
+          "query": "Without a new web search, summarize in two sentences why not every new moon gives a total solar eclipse. Use the evidence you already cited and identify any remaining uncertainty.",
+          "title": "Without - definition of without by The Free Dictionary",
+          "url": "https://www.thefreedictionary.com/without",
+          "source": "www.thefreedictionary.com",
+          "rank": 5,
+          "allowed": true,
+          "reason": "NON_LYRICS_PASS",
+          "neededHits": 0,
+          "matchedTerms": [],
+          "coreTerms": [],
+          "snippetPreview": "Define without. without synonyms, without pronunciation, without translation, English dictionary definition of without. adv. 1. On the …"
+        },
+        {
+          "query": "Without a new web search, summarize in two sentences why not every new moon gives a total solar eclipse. Use the evidence you already cited and identify any remaining uncertainty.",
+          "title": "without - WordReference.com Dictionary of English",
+          "url": "https://www.wordreference.com/definition/without",
+          "source": "www.wordreference.com",
+          "rank": 6,
+          "allowed": true,
+          "reason": "NON_LYRICS_PASS",
+          "neededHits": 0,
+          "matchedTerms": [],
+          "coreTerms": [],
+          "snippetPreview": "outside of: both within and without the house or the city. beyond the compass, limits, range, or scope of (now used chiefly in …"
+        },
+        {
+          "query": "Without a new web search, summarize in two sentences why not every new moon gives a total solar eclipse. Use the evidence you already cited and identify any remaining uncertainty.",
+          "title": "WITHOUT Synonyms & Antonyms - 25 words | Thesaurus .com",
+          "url": "https://www.thesaurus.com/browse/without",
+          "source": "www.thesaurus.com",
+          "rank": 7,
+          "allowed": true,
+          "reason": "NON_LYRICS_PASS",
+          "neededHits": 0,
+          "matchedTerms": [],
+          "coreTerms": [],
+          "snippetPreview": "Find 25 different ways to say WITHOUT, along with antonyms, related words, and example sentences at Thesaurus.com."
+        },
+        {
+          "query": "Without a new web search, summarize in two sentences why not every new moon gives a total solar eclipse. Use the evidence you already cited and identify any remaining uncertainty.",
+          "title": "WITHOUT | definition in the Cambridge English Dictionary",
+          "url": "https://dictionary.cambridge.org/us/dictionary/english/without",
+          "source": "dictionary.cambridge.org",
+          "rank": 8,
+          "allowed": true,
+          "reason": "NON_LYRICS_PASS",
+          "neededHits": 0,
+          "matchedTerms": [],
+          "coreTerms": [],
+          "snippetPreview": "The preposition without means ‘not having something’ or ‘lacking something’: … He came out without a coat. He looks younger …"
+        }
+      ],
+      "songIdentity": {},
+      "songDiscoveryPlan": [],
+      "lyricsRescueSearchDebug": [],
+      "lyricsMaxPageAttempts": 0,
+      "lyricsFallbackExhausted": false,
+      "rawPromptStored": false
+    },
+    "trace": [
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794805617862,
+        "phase": "RESEARCH_STARTED",
+        "activity": "Online research started",
+        "provider": "bounded-web-search-chain-v1",
+        "site": "",
+        "url": ""
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794805617862,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794805629905,
+        "phase": "SEARCH_PROVIDER_ERROR",
+        "activity": "Provider failed",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "errorType": "URLError"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794805629907,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794805641952,
+        "phase": "SEARCH_PROVIDER_ERROR",
+        "activity": "Provider failed",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "errorType": "URLError"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794805641954,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794805642286,
+        "phase": "SEARCH_PROVIDER_RESULTS",
+        "activity": "Search results found",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "httpStatus": 200,
+        "resultCount": 8
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794805642287,
+        "phase": "SEARCH_PROVIDER_SELECTED",
+        "activity": "Using bing-html",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "resultCount": 8
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794805642289,
+        "phase": "PAGE_FETCH_STARTED",
+        "activity": "Visiting result page",
+        "provider": "web-page",
+        "site": "www.merriam-webster.com",
+        "url": "https://www.merriam-webster.com/dictionary/without"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794805642327,
+        "phase": "PAGE_FETCH_ERROR",
+        "activity": "Page fetch failed",
+        "provider": "web-page",
+        "site": "www.merriam-webster.com",
+        "url": "https://www.merriam-webster.com/dictionary/without",
+        "errorType": "HTTPError"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794805642330,
+        "phase": "PAGE_FETCH_STARTED",
+        "activity": "Visiting result page",
+        "provider": "web-page",
+        "site": "www.merriam-webster.com",
+        "url": "https://www.merriam-webster.com/thesaurus/without"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794805642367,
+        "phase": "PAGE_FETCH_ERROR",
+        "activity": "Page fetch failed",
+        "provider": "web-page",
+        "site": "www.merriam-webster.com",
+        "url": "https://www.merriam-webster.com/thesaurus/without",
+        "errorType": "HTTPError"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794805642370,
+        "phase": "PAGE_FETCH_STARTED",
+        "activity": "Visiting result page",
+        "provider": "web-page",
+        "site": "dictionary.cambridge.org",
+        "url": "https://dictionary.cambridge.org/dictionary/english/without"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794805642583,
+        "phase": "PAGE_FETCH_COMPLETE",
+        "activity": "Page fetched",
+        "provider": "web-page",
+        "site": "dictionary.cambridge.org",
+        "url": "https://dictionary.cambridge.org/dictionary/english/without",
+        "httpStatus": 200,
+        "responseBytes": 314957
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794805642583,
+        "phase": "RESEARCH_COMPLETE",
+        "activity": "Online research complete",
+        "provider": "bounded-web-search-chain-v1",
+        "site": "",
+        "url": "",
+        "resultCount": 3
+      }
+    ],
+    "sources": [
+      {
+        "title": "WITHOUT Definition & Meaning - Merriam-Webster",
+        "source": "www.merriam-webster.com",
+        "url": "https://www.merriam-webster.com/dictionary/without",
+        "snippet": "",
+        "rank": null
+      },
+      {
+        "title": "WITHOUT Synonyms: 34 Similar and Opposite Words - Merriam-Webster",
+        "source": "www.merriam-webster.com",
+        "url": "https://www.merriam-webster.com/thesaurus/without",
+        "snippet": "",
+        "rank": null
+      },
+      {
+        "title": "WITHOUT | English meaning - Cambridge Dictionary",
+        "source": "dictionary.cambridge.org",
+        "url": "https://dictionary.cambridge.org/dictionary/english/without",
+        "snippet": "",
+        "rank": null
+      }
+    ],
+    "sourceSites": [
+      "dictionary.cambridge.org",
+      "www.merriam-webster.com"
+    ],
+    "widgets": [
+      {
+        "contract": "swrlz-widget-v1",
+        "kind": "search-results",
+        "version": 1,
+        "title": "Online search · Without a new web search, summarize in two sentences why not every new moon gives a total ",
+        "provider": "bounded-web-search-chain-v1",
+        "data": {
+          "query": "Without a new web search, summarize in two sentences why not every new moon gives a total solar eclipse. Use the evidence you already cited and identify any remaining uncertainty.",
+          "results": [
+            {
+              "title": "WITHOUT Definition & Meaning - Merriam-Webster",
+              "url": "https://www.merriam-webster.com/dictionary/without",
+              "snippet": "Nov 3, 2026 · Examples of without in a Sentence Preposition Do you take your coffee with or without sugar? Don't leave home …",
+              "source": "www.merriam-webster.com"
+            },
+            {
+              "title": "WITHOUT Synonyms: 34 Similar and Opposite Words - Merriam-Webster",
+              "url": "https://www.merriam-webster.com/thesaurus/without",
+              "snippet": "3 days ago · Synonyms for WITHOUT: wanting, absent, minus, sans, beyond, outside, except, outside of; Antonyms of WITHOUT: …",
+              "source": "www.merriam-webster.com"
+            },
+            {
+              "title": "WITHOUT | English meaning - Cambridge Dictionary",
+              "url": "https://dictionary.cambridge.org/dictionary/english/without",
+              "snippet": "The preposition without means ‘not having something’ or ‘lacking something’: … He came out without a coat. He looks younger …",
+              "source": "dictionary.cambridge.org"
+            }
+          ]
+        }
+      }
+    ],
+    "widgetKinds": [
+      "search-results"
+    ],
+    "statusTrail": [
+      {
+        "phase": "QUEUED",
+        "reason": "Accepted by Workstation",
+        "atUnixMs": 1794805617842
+      },
+      {
+        "phase": "GENERATING",
+        "reason": "Workstation admitted generation",
+        "atUnixMs": 1794805617855
+      },
+      {
+        "seq": 1,
+        "phase": "PROGRAMMING_INTENT",
+        "reason": "",
+        "atUnixMs": 1794805617857
+      },
+      {
+        "seq": 2,
+        "phase": "SEARCH_STARTED",
+        "reason": "I’m on it — looking up Without a new web search, summarize in two sentences why not every new moon gives a total solar eclipse. Use the evidence you already cited and identify any remaining uncertaint",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH"
+        ],
+        "atUnixMs": 1794805617861
+      },
+      {
+        "seq": 3,
+        "phase": "RESEARCH_STARTED",
+        "reason": "Online research started",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "",
+        "url": "",
+        "provider": "bounded-web-search-chain-v1",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794805617862
+      },
+      {
+        "seq": 4,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "provider": "duckduckgo-html",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794805617862
+      },
+      {
+        "seq": 5,
+        "phase": "SEARCH_PROVIDER_ERROR",
+        "reason": "Provider failed",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "provider": "duckduckgo-html",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794805629907
+      },
+      {
+        "seq": 6,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "provider": "duckduckgo-lite",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794805629907
+      },
+      {
+        "seq": 7,
+        "phase": "SEARCH_PROVIDER_ERROR",
+        "reason": "Provider failed",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "provider": "duckduckgo-lite",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794805641954
+      },
+      {
+        "seq": 8,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "provider": "bing-html",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794805641954
+      },
+      {
+        "seq": 9,
+        "phase": "SEARCH_PROVIDER_RESULTS",
+        "reason": "Search results found",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "provider": "bing-html",
+        "httpStatus": 200,
+        "resultCount": 8,
+        "atUnixMs": 1794805642287
+      },
+      {
+        "seq": 10,
+        "phase": "SEARCH_PROVIDER_SELECTED",
+        "reason": "Using bing-html",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "provider": "bing-html",
+        "httpStatus": null,
+        "resultCount": 8,
+        "atUnixMs": 1794805642287
+      },
+      {
+        "seq": 11,
+        "phase": "PAGE_FETCH_STARTED",
+        "reason": "Visiting result page",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.merriam-webster.com",
+        "url": "https://www.merriam-webster.com/dictionary/without",
+        "provider": "web-page",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794805642289
+      },
+      {
+        "seq": 12,
+        "phase": "PAGE_FETCH_ERROR",
+        "reason": "Page fetch failed",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.merriam-webster.com",
+        "url": "https://www.merriam-webster.com/dictionary/without",
+        "provider": "web-page",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794805642327
+      },
+      {
+        "seq": 13,
+        "phase": "PAGE_FETCH_STARTED",
+        "reason": "Visiting result page",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.merriam-webster.com",
+        "url": "https://www.merriam-webster.com/thesaurus/without",
+        "provider": "web-page",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794805642330
+      },
+      {
+        "seq": 14,
+        "phase": "PAGE_FETCH_ERROR",
+        "reason": "Page fetch failed",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.merriam-webster.com",
+        "url": "https://www.merriam-webster.com/thesaurus/without",
+        "provider": "web-page",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794805642367
+      },
+      {
+        "seq": 15,
+        "phase": "PAGE_FETCH_STARTED",
+        "reason": "Visiting result page",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "dictionary.cambridge.org",
+        "url": "https://dictionary.cambridge.org/dictionary/english/without",
+        "provider": "web-page",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794805642370
+      },
+      {
+        "seq": 16,
+        "phase": "PAGE_FETCH_COMPLETE",
+        "reason": "Page fetched",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "dictionary.cambridge.org",
+        "url": "https://dictionary.cambridge.org/dictionary/english/without",
+        "provider": "web-page",
+        "httpStatus": 200,
+        "resultCount": null,
+        "atUnixMs": 1794805642583
+      },
+      {
+        "seq": 17,
+        "phase": "RESEARCH_COMPLETE",
+        "reason": "Online research complete",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "",
+        "url": "",
+        "provider": "bounded-web-search-chain-v1",
+        "httpStatus": null,
+        "resultCount": 3,
+        "atUnixMs": 1794805642583
+      },
+      {
+        "seq": 18,
+        "phase": "ONLINE_RESEARCH",
+        "reason": "OK",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH"
+        ],
+        "atUnixMs": 1794805642584
+      },
+      {
+        "seq": 19,
+        "phase": "WIDGET_READY",
+        "reason": "search-results",
+        "categories": [
+          "WIDGET"
+        ],
+        "atUnixMs": 1794805642585
+      },
+      {
+        "seq": 20,
+        "phase": "SEARCH_COMPLETE",
+        "reason": "Online retrieval ok.",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH"
+        ],
+        "atUnixMs": 1794805642585
+      },
+      {
+        "seq": 21,
+        "phase": "DIAGNOSTIC_READY",
+        "reason": "",
+        "atUnixMs": 1794805642590
+      },
+      {
+        "seq": 22,
+        "phase": "RESPONSE_COGNITION",
+        "reason": "",
+        "atUnixMs": 1794805642592
+      },
+      {
+        "seq": 23,
+        "phase": "LOADING",
+        "reason": "",
+        "categories": [],
+        "atUnixMs": 1794805642593
+      },
+      {
+        "seq": 24,
+        "phase": "PROFILE_CONTEXT_READY",
+        "reason": "swrlz-qwen35-profile-v5",
+        "categories": [],
+        "atUnixMs": 1794805642614
+      },
+      {
+        "seq": 25,
+        "phase": "CONTEXT_BUDGETED",
+        "reason": "",
+        "atUnixMs": 1794805642614
+      },
+      {
+        "seq": 26,
+        "phase": "GENERATING",
+        "reason": "",
+        "categories": [],
+        "atUnixMs": 1794805642614
+      },
+      {
+        "seq": 27,
+        "phase": "RESOURCE_ALLOCATED",
+        "reason": "Workstation inference budget active",
+        "atUnixMs": 1794805642615
+      },
+      {
+        "seq": 28,
+        "phase": "CANDIDATE_ATTEMPT",
+        "reason": "attempt=1",
+        "atUnixMs": 1794805705576
+      },
+      {
+        "seq": 29,
+        "phase": "CANDIDATE_NOT_APPLICABLE",
+        "reason": "",
+        "atUnixMs": 1794805705576
+      },
+      {
+        "seq": 30,
+        "phase": "GENERATION_TELEMETRY",
+        "reason": "",
+        "atUnixMs": 1794805705576
+      },
+      {
+        "seq": 32,
+        "phase": "COMPLETE",
+        "reason": "",
+        "atUnixMs": 1794805705577
+      },
+      {
+        "phase": "PERSISTING",
+        "reason": "Saving the response to the chat",
+        "atUnixMs": 1794805705579
+      }
+    ],
+    "responseCognition": {
+      "schema": "swrlz-response-cognition-v1",
+      "relation": "standalone",
+      "operation": "summarize",
+      "historyAvailable": true,
+      "historyTurns": 2,
+      "anchorUserIndex": 0,
+      "anchorAssistantIndex": 1,
+      "explicitReference": false,
+      "questionLike": false,
+      "detailMode": "normal",
+      "requestedCount": null,
+      "outputOnly": false,
+      "preserveConstraint": false,
+      "programming": false,
+      "deliverable": "none",
+      "sourcePreference": "public"
+    },
+    "programmingIntent": {
+      "schema": "swrlz-programming-intent-v1",
+      "codingTask": false,
+      "projectContext": "none",
+      "changeClass": "none",
+      "artifactContinuation": false,
+      "artifactMutationRequested": false,
+      "artifactTargetId": "",
+      "artifactTargetMessageId": "",
+      "baseRevision": 0,
+      "baseSourceHash": "",
+      "newProject": false,
+      "source": "brain-router"
+    },
+    "candidateValidation": {
+      "status": "NOT_APPLICABLE",
+      "reasons": [],
+      "finishReason": "stop",
+      "generationComplete": true
+    },
+    "candidateAttempts": [
+      {
+        "schema": "swrlz-candidate-attempt-v1",
+        "attempt": 1,
+        "trigger": "initial-streaming",
+        "durationMs": 62959.954,
+        "firstTokenLatencyMs": 48116.407,
+        "deltaChunks": 174,
+        "finishReason": "stop",
+        "requestedMaxTokens": 1024,
+        "usage": {},
+        "candidateFingerprint": "fea676708ed2833d",
+        "changedFromPreviousAttempt": null,
+        "changedFromRepairTarget": null,
+        "validationStatus": "NOT_APPLICABLE",
+        "validationReasons": [],
+        "accepted": false
+      }
+    ],
+    "generationTelemetry": {
+      "schema": "swrlz-programming-generation-telemetry-v1",
+      "attemptCount": 1,
+      "regenerationCount": 0,
+      "firstCandidateRejected": false,
+      "finalAcceptedAttempt": null,
+      "finalCandidateStatus": "NOT_APPLICABLE",
+      "guardedTurn": false,
+      "repairTurn": false,
+      "strictLanguage": false,
+      "modelLoadLatencyMs": 21.436,
+      "visibleFirstDeltaLatencyMs": 48138.929,
+      "engineTotalLatencyMs": 62983.042,
+      "totalCandidateGenerationMs": 62959.954,
+      "attempts": [
+        {
+          "schema": "swrlz-candidate-attempt-v1",
+          "attempt": 1,
+          "trigger": "initial-streaming",
+          "durationMs": 62959.954,
+          "firstTokenLatencyMs": 48116.407,
+          "deltaChunks": 174,
+          "finishReason": "stop",
+          "requestedMaxTokens": 1024,
+          "usage": {},
+          "candidateFingerprint": "fea676708ed2833d",
+          "changedFromPreviousAttempt": null,
+          "changedFromRepairTarget": null,
+          "validationStatus": "NOT_APPLICABLE",
+          "validationReasons": [],
+          "accepted": false
+        }
+      ]
+    },
+    "engineCompletionTelemetry": {
+      "totalLatencyMs": 62983.042,
+      "loadLatencyMs": 21.436,
+      "firstDeltaLatencyMs": 48138.929
+    },
+    "contextBudget": {
+      "contextWindowTokens": 16384,
+      "inputBudgetTokens": 15232,
+      "estimatedInputTokens": 3277,
+      "reservedOutputTokens": 1024,
+      "historyMessagesDropped": 0,
+      "historyMessagesKept": 2,
+      "repairTurn": false,
+      "repairContext": {},
+      "tokenBreakdown": {
+        "system": 2875,
+        "history": 363,
+        "currentPrompt": 39,
+        "total": 3277
+      }
+    },
+    "resourcePlan": {
+      "cpuCapacity": 16,
+      "decodeThreads": 16,
+      "batchThreads": 16,
+      "maxResponseTokens": 1024
+    },
+    "responseResourceUsage": {
+      "schema": "swrlz-response-resource-usage-v1",
+      "scope": "shared-cgroup-v2",
+      "source": "cgroup-v2",
+      "isolatedModelAttribution": false,
+      "wallTimeMs": 87721,
+      "capacity": {
+        "cpuLimitCores": 16.0,
+        "cpuLimitState": "measured",
+        "memoryLimitBytes": 104000000000,
+        "memoryLimitState": "measured"
+      },
+      "observed": {
+        "cgroupCpuUsageUsecDelta": 989703475,
+        "averageCgroupCpuCores": 11.282,
+        "memoryStartBytes": 7698513920,
+        "memoryEndBytes": 8056213504,
+        "memoryEndMinusStartBytes": 357699584,
+        "memoryPeakSampledBytes": 8056213504,
+        "memoryPeakAboveStartBytes": 357699584,
+        "memorySampleCount": 89,
+        "memorySamplingIntervalMs": 1000
+      },
+      "attribution": "Shared container readings include concurrent work; they are not exclusive CPU/RAM use by this model.",
+      "routeId": "700m",
+      "configuredEngineThreadBudget": {
+        "cpuCapacity": 16,
+        "decodeThreads": 16,
+        "batchThreads": 16,
+        "maxResponseTokens": 1024
+      },
+      "outcome": "COMPLETE"
+    },
+    "finalResponse": "A total solar eclipse requires the Moon to be in a \"new moon\" phase *and* positioned near one of the points where its orbit crosses Earth's orbital plane (a node), because the Moon's orbit is tilted about 5° relative to Earth's. Consequently, most new moons occur when the Moon is slightly above or below the Sun in the sky, preventing the alignment needed for an eclipse.\n\nThe remaining uncertainty lies in the precise timing of future node crossings relative to the lunar cycle, which determines exactly which new moons will result in eclipses; however, NASA's eclipse catalogs predict these events with high confidence based on well-understood orbital mechanics.\n\n**Source:** NASA Eclipse Web Site: [https://eclipse.gsfc.nasa.gov/SEcat/SEcat.html](https://eclipse.gsfc.nasa.gov/SEcat/SEcat.html)",
+    "finalResponseSha256": "19cdd5e2f33e911f9d58de683136a07d2a879ea5e1e390178638b9e9d04d8f53",
+    "requestedModelId": "700m",
+    "selectedModelId": "700m",
+    "stationTiming": {
+      "acceptedAtUnixMs": 1794805617842,
+      "startedAtUnixMs": 1794805617855,
+      "completedAtUnixMs": 1794805705579,
+      "queueWaitMs": 13,
+      "stationRunMs": 87724,
+      "endToEndMs": 87737
+    },
+    "rawPromptStored": false,
+    "historyStored": false,
+    "preciseLocationStored": false,
+    "privateReasoningStored": false
+  }
+}
