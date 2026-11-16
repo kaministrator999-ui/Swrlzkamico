@@ -26,7 +26,7 @@ AFTER_Q='''            if addition:
                 # Never accept fragments or multiple files, and keep native
                 # finishReason untouched (this is a host parser stop).
                 tail="".join(parts)[-256:]
-                if re.search(r"(?is)</html>\\s*(?:\x60{3})?\\s*\\Z",tail):
+                if re.search(r"(?is)</html>\s*(?:\x60{3})?\s*\Z",tail):
                     complete,parsed=_swrlz_close_complete_html_fence("".join(parts))
                     if parsed:
                         part_observation["sourceCompleteByParser"]=True
@@ -124,9 +124,9 @@ def static_tests(out):
     try:
         def parser(s):
             stripped=s.rstrip()
-            complete=bool(re.search(r"(?is)</html>\\s*(?:\x60{3})?\\s*\\Z",stripped)
-                          and re.search(r"<html\\b",stripped,re.I)
-                          and re.search(r"<body\\b",stripped,re.I)
+            complete=bool(re.search(r"(?is)</html>\s*(?:\x60{3})?\s*\Z",stripped)
+                          and re.search(r"<html\b",stripped,re.I)
+                          and re.search(r"<body\b",stripped,re.I)
                           and stripped.count("<html")==1)
             return (s,complete)
         def observe(o,c):
