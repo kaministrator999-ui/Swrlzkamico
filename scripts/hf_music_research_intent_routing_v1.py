@@ -10,6 +10,43 @@ from pathlib import Path
 from huggingface_hub import HfApi,hf_hub_download,CommitOperationAdd
 SPACE="kamiloki/Swyrlz";FILE="online_tools.py";ROOT=Path("reports/swrlz-music-router-v1")
 MARK="swrlz-research-music-operation-disambiguation-v1"
+OLD_INSTALLED_WEB=r'''    # swrlz-research-music-operation-disambiguation-v1: actual research commands
+    # initiate a public-source search, but descriptions of past research do not.
+    research_command=bool(re.search(
+        r"(?i)^\s*(?:(?:please|could you|can you)\s+)?"
+        r"(?:research|look into|investigate)\b",text))
+    explicit_web = bool(_EXPLICIT_WEB.search(text) or research_command)'''
+OLD_INSTALLED_LYRIC=r'''    # Lyric *analysis* and revision of a just-created/user-authored song are
+    # not requests to retrieve an external song's published lyric text.
+    musical_analysis=bool(re.search(
+        r"(?i)\b(?:research|compare|explain|describe|analy[sz]e|understand|"
+        r"structure|songwriting|rhythm|rhythmic|flow|meter|rhyme|forms?|"
+        r"genres?|patterns?|subdivisions?|bars?)\b",text))
+    creative_revision=bool(re.search(
+        r"(?i)\b(?:revise|rewrite|remix|adapt|transform|rework|polish|"
+        r"edit|change|improve|continue)\b.{0,180}"
+        r"\b(?:song|lyrics?|verses?|chorus|bridge|hook|stanza)\b",text))
+    # Retrieval requires an explicit request for existing lyric text. A word
+    # like 'lyrics' alone is insufficient to activate verification.
+    lyric_text_demand=bool(re.search(
+        r"(?i)\b(?:give|show|provide|print|quote|reproduce|copy|find|fetch|"
+        r"retrieve|transcribe|recite|look\s+up|search\s+for)\b.{0,100}"
+        r"\b(?:lyrics?|words\s+to\s+(?:the\s+)?song)\b"
+        r"|\b(?:full|complete|all\s+the)\s+(?:song\s+)?lyrics?"
+        r"\s+(?:of|to|for)\b"
+        r"|\blyrics?\s+(?:of|to|for)\s+(?:the\s+)?(?:song|track)\b",
+        text))
+    explicit_lookup_verb=bool(re.search(
+        r"(?i)\b(?:find|fetch|retrieve|look\s+up|search\s+for|quote|"
+        r"transcribe|recite|reproduce|show|give|provide|print)\b"
+        r".{0,100}\b(?:lyrics?|words\s+to\s+(?:the\s+)?song)\b",text))
+    published_full_lyrics=bool(re.search(
+        r"(?i)\b(?:full|complete|all\s+the)\s+(?:song\s+)?lyrics?"
+        r"\s+(?:of|to|for)\b",text))
+    lyrics_lookup=(bool(_LYRICS_LOOKUP.search(text)) and lyric_text_demand
+                   and not (creative_revision and not explicit_lookup_verb)
+                   and not (musical_analysis and not
+                            (explicit_lookup_verb or published_full_lyrics)))'''
 OLD_WEB='''    explicit_web = bool(_EXPLICIT_WEB.search(text))'''
 NEW_WEB=r'''    # swrlz-research-music-operation-disambiguation-v1: actual research commands
     # initiate a public-source search, but descriptions of past research do not.
@@ -82,7 +119,13 @@ def one(text,old,new,name):
     return text.replace(old,new,1)
 def build(raw):
     s=raw.decode("utf-8")
-    if MARK in s:raise RuntimeError("Music operation routing already installed")
+    if MARK in s:
+        # Upgrade only our exact previously installed patch. Any other Space
+        # revision is rejected instead of overwriting unrelated live changes.
+        s=one(s,OLD_INSTALLED_WEB,NEW_WEB,"installed research classification")
+        s=one(s,OLD_INSTALLED_LYRIC,NEW_LYRIC,"installed lyrics classification")
+        compile(s,FILE,"exec")
+        return s.encode("utf-8")
     s=one(s,OLD_WEB,NEW_WEB,"explicit research")
     s=one(s,OLD_LYRIC,NEW_LYRIC,"lyrics intent")
     s=one(s,OLD_WEATHER,NEW_WEATHER,"weather intent")
@@ -156,6 +199,20 @@ def test(raw):
         if bool(result["requested"])!=requested or result["kind"]!=kind or result.get("contentMode")!=mode:
             print("CLASSIFIER_ROUTING_DIAGNOSTIC", "prompt="+repr(prompt), "result="+repr(result), "source_lines="+repr([line.strip() for line in (ast.get_source_segment(source,node) or "").splitlines() if any(word in line for word in ("explicit_web","lyrics_lookup","weather_intent","research_command"))]),flush=True)
             raise AssertionError("Misroute "+repr(prompt)+" -> "+repr(result))
+    # Prove safe two-step upgrade from the currently deployed patch version;
+    # the same script must work on an unpatched Space or after its first release.
+    fixture=("def _operation_fixture():\n"+OLD_WEB+"\n"+OLD_LYRIC+"\n"
+             +OLD_WEATHER+"\n"+OLD_WEATHER2+"\n        pass\n").encode()
+    patch_v1=fixture.decode().replace(OLD_WEB,OLD_INSTALLED_WEB,1)\
+        .replace(OLD_LYRIC,OLD_INSTALLED_LYRIC,1)\
+        .replace(OLD_WEATHER,NEW_WEATHER,1)\
+        .replace(OLD_WEATHER2,NEW_WEATHER2,1).encode()
+    upgraded=build(patch_v1)
+    assert NEW_WEB.encode() in upgraded
+    assert NEW_LYRIC.encode() in upgraded
+    assert MARK.encode() in upgraded
+    assert upgraded!=patch_v1
+    print("MUSIC_OPERATION_PATCH_UPGRADE_PASS",flush=True)
     print("MUSIC_OPERATION_ROUTING_REGRESSIONS_PASS",len(cases),flush=True)
 
 def stage(api):
