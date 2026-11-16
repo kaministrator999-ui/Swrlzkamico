@@ -1654,6 +1654,18 @@ async def send(request:Request):
                     payload["verifiedPrivateAnswer"]=historical
                 else:
                     payload["archiveEvidence"] = historical
+            # Passive continuity is distinct from a requested full history search.
+            # Reuse the existing verified-account opt-in; never make old user
+            # preferences authoritative or upload archive material to telemetry.
+            if not private_history_intent and chatgpt_account_memory.enabled(google_owner):
+                interaction=chatgpt_account_memory.interaction_context(
+                    google_owner,prompt,s["threads"],active_thread_id=tid)
+                if interaction:
+                    previous=str(payload.get("archiveEvidence") or "")
+                    # Model routes already cap archiveEvidence; prioritize the
+                    # source-attributed preference/correction hints on small models.
+                    remaining=max(0,2350-len(interaction)-1)
+                    payload["archiveEvidence"]=(interaction+"\n"+previous[:remaining])[:2350]
         except Exception:
             if private_history_intent:
                 payload["verifiedPrivateAnswer"]=(
