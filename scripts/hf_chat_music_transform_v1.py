@@ -43,10 +43,6 @@ def patch_structure(source: str) -> str:
         'r"(?i)\\b(?:those|these|earlier|previous|provided|above|reference|study|from\\s+that)\\b"',
         'r"(?i)\\b(?:those|these|earlier|previous|provided|above|reference|study|from\\s+that|from\\s+it|this|that|it)\\b"',
         "reference pointer")
-    source=once(source,
-        '        creative_music_transform_request(prompt)\\n        and _CREATIVE_REFERENCE_POINTER.search(str(prompt or ""))',
-        '        (creative_music_transform_request(prompt)\\n         or transformation_contract(prompt, reference_available=True) is not None)\\n        and _CREATIVE_REFERENCE_POINTER.search(str(prompt or ""))',
-        "source-referenced remix/parody pointer")
     wrapper='''# swrlz-song-transformation-quality-v1: extend existing router, do not
 # divert ordinary song lookups or music-analysis questions into generation.
 _swrlz_prior_creative_transform_request=creative_music_transform_request
