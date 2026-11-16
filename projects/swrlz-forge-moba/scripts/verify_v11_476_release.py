@@ -67,7 +67,7 @@ for filename,expected in receipt['assets'].items():
 if args.request:
  req=json.loads((ROOT/'DEPLOY_REQUEST.json').read_text('utf8'))
  assert req['releaseVersion']=='v11.476'
- assert req['deployMarker']=='SWYRL_ENGINE_DEPLOY_MARKER: V11_475_PROGRESSIVE_RAIL_VISIBILITY'
+ assert req['deployMarker']=='SWYRL_ENGINE_DEPLOY_MARKER: V11_476_ACCOUNT_FIRST_WORKSPACE'
  assert req['target']=='kamiloki/swrlz-forge-moba'
  assert req['sourceIntegritySha256']==m['finalSha256']
  assert req['sourceCommit']
