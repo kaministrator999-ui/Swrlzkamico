@@ -131,6 +131,17 @@ const server=http.createServer((req,res)=>{
     const moved=await page.evaluate(()=>window.SWYRL_ENGINE_RING_HIGHLIGHT_478.inspect());
     assert(moved.selectedSlots.includes(1),'New fill center must appear in selected group');
     assert.equal(moved.highlightedCount,moved.selectedCount,'New center must refresh every highlight');
+    const heightDiagnostic=await page.evaluate(()=>{
+      const element=document.getElementById('se478RingHeightSlider');
+      const rect=element?.getBoundingClientRect();
+      const style=element&&getComputedStyle(element);
+      return {height:window.SWYRL_ENGINE_RING_HEIGHT_478?.inspect?.(),
+        hidden:element?.hidden,display:style?.display,visibility:style?.visibility,
+        opacity:style?.opacity,rect:rect&&{width:rect.width,height:rect.height,x:rect.x,y:rect.y},
+        parentDisplay:element&&getComputedStyle(element.parentElement).display,
+        modeler:document.getElementById('modelAtelierPanel')?.className};
+    });
+    console.log('SE478_HEIGHT_VISIBILITY_'+cfg.name+' '+JSON.stringify(heightDiagnostic));
     await page.waitForSelector('#se478RingHeightSlider',{state:'visible',timeout:5000});
     const beforeLift=await page.evaluate(()=>window.SWYRL_ENGINE_MODEL_WORKSHOP.inspect());
     await page.locator('#se478HeightRange').evaluate(el=>{
