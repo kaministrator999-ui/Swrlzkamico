@@ -16,7 +16,17 @@ NEW_WEB=r'''    # swrlz-research-music-operation-disambiguation-v1: actual resea
     research_command=bool(re.search(
         r"(?i)^\s*(?:(?:please|could you|can you)\s+)?"
         r"(?:research|look into|investigate)\b",text))
-    explicit_web = bool(_EXPLICIT_WEB.search(text) or research_command)'''
+    # Explicit instructions not to perform ANOTHER lookup are not an
+    # instruction to search, even when they include the words "web search".
+    # An affirmative initial "Research..." command remains authoritative.
+    no_new_lookup=bool(re.search(
+        r"(?i)\b(?:without|don't|do not|skip|avoid|no)\s+"
+        r"(?:(?:doing|running|performing)\s+)?"
+        r"(?:(?:a|an|another|new|fresh)\s+)?"
+        r"(?:(?:web|online|public)\s+)?"
+        r"(?:look\s*up|lookup|search|research|browse)\b",text))
+    explicit_web = bool(research_command or
+                        (_EXPLICIT_WEB.search(text) and not no_new_lookup))'''
 OLD_LYRIC='''    lyrics_lookup=bool(_LYRICS_LOOKUP.search(text)) and not (lyrics_creative and not explicit_web)'''
 NEW_LYRIC=r'''    # Lyric *analysis* and revision of a just-created/user-authored song are
     # not requests to retrieve an external song's published lyric text.
@@ -128,6 +138,10 @@ def test(raw):
       ("Explain the lyric structure and flow of 12-bar blues.",False,"none",None),
       ("Write an original song using the weather forecast for Topeka, Kansas.",True,"weather",None),
       ("I did some research on lyrical song form yesterday.",False,"none",None),
+      ("Without a new web search, summarize the eclipse evidence you previously cited.",False,"none",None),
+      ("Don't do another web lookup; summarize the two expansion classes.",False,"none",None),
+      ("Skip searching again and use the previous sources.",False,"none",None),
+      ("Research public sources about blues form. Do not fetch any published song lyrics.",True,"search",None),
       ("Please look it up online: the history of hip-hop genres.",True,"search",None),
     ]
     for prompt,requested,kind,mode in cases:
