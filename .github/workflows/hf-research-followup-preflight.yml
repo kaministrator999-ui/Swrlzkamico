@@ -1,0 +1,30 @@
+name: Preflight §C cited research followup without new lookup
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/hf_research_no_lookup_followup_v1.py'
+      - '.github/workflows/hf-research-followup-preflight.yml'
+permissions: {contents: read}
+jobs:
+  preflight:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 13
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - run: python -m pip install --quiet 'huggingface_hub>=0.34,<2'
+      - run: python -m py_compile scripts/hf_research_no_lookup_followup_v1.py
+      - name: Verify live factual engine and 9 prior-source followup fixtures
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: python -u scripts/hf_research_no_lookup_followup_v1.py preflight
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: sourced-followup-preflight-${{ github.run_id }}
+          path: reports/swrlz-research-followup-v1/
+          retention-days: 14
+          if-no-files-found: ignore
