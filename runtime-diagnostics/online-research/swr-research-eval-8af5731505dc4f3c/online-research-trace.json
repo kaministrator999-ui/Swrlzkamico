@@ -1,0 +1,380 @@
+{
+  "schema": "swrlz-github-online-research-trace-v1",
+  "requestId": "swr-research-eval-8af5731505dc4f3c",
+  "modelId": "700m",
+  "eventType": "ONLINE_RESEARCH_TRACE",
+  "sourceRef": "f149dd857e3d9219f5cae7da0286b5dbfec85c42",
+  "persistedAtUnixMs": 1794805902173,
+  "diagnostic": {
+    "schema": "swrlz-online-research-log-v1",
+    "research": {
+      "contract": "swrlz-online-camera-v1",
+      "observabilityRevision": "v181-song-metadata-clean-form-integrity",
+      "kind": "search",
+      "status": "NO_RESULTS",
+      "reason": "existing-lyrics-retrieval",
+      "provider": "bounded-web-search-chain-v1",
+      "resultCount": 0,
+      "widgetKinds": [],
+      "sourceCount": 0,
+      "locationRequired": false,
+      "usedExplicitClientLocation": false,
+      "elapsedMs": 24648,
+      "lyricsSourceAttemptCount": 0,
+      "lyricsFetchDebug": [],
+      "blockedLyricsSourceFamilies": [],
+      "musicStructureDebug": null,
+      "candidateAdmissionDebug": [
+        {
+          "query": "Revise the entire song, keeping the title, both verses and original chorus hook exactly as before, but make the bridge a turning point where the narrator willingly goes home instead of escaping. Return the COMPLETE revised lyrics with labeled sections. The chorus wording should stay unchanged.",
+          "title": "REVISE Definition & Meaning - Merriam-Webster",
+          "url": "https://www.merriam-webster.com/dictionary/revise",
+          "source": "www.merriam-webster.com",
+          "rank": 1,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "revise"
+          ],
+          "coreTerms": [
+            "revise",
+            "entire",
+            "keeping",
+            "title",
+            "both",
+            "chorus",
+            "hook",
+            "exactly",
+            "before",
+            "but",
+            "make",
+            "bridge"
+          ],
+          "snippetPreview": "3 days ago · The meaning of REVISE is an act of revising : revision. How to use revise in a sentence. Synonym Discussion of Revise."
+        },
+        {
+          "query": "Revise the entire song, keeping the title, both verses and original chorus hook exactly as before, but make the bridge a turning point where the narrator willingly goes home instead of escaping. Return the COMPLETE revised lyrics with labeled sections. The chorus wording should stay unchanged.",
+          "title": "Revise – Free AI Document Editor",
+          "url": "https://revise.io/",
+          "source": "revise.io",
+          "rank": 2,
+          "allowed": true,
+          "reason": "SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "revise",
+            "entire",
+            "before"
+          ],
+          "coreTerms": [
+            "revise",
+            "entire",
+            "keeping",
+            "title",
+            "both",
+            "chorus",
+            "hook",
+            "exactly",
+            "before",
+            "but",
+            "make",
+            "bridge"
+          ],
+          "snippetPreview": "Revise is an AI document editor. Write, proofread, reformat, or revise entire documents. Review every change before accepting it. …"
+        },
+        {
+          "query": "Revise the entire song, keeping the title, both verses and original chorus hook exactly as before, but make the bridge a turning point where the narrator willingly goes home instead of escaping. Return the COMPLETE revised lyrics with labeled sections. The chorus wording should stay unchanged.",
+          "title": "REVISE | English meaning - Cambridge Dictionary",
+          "url": "https://dictionary.cambridge.org/dictionary/english/revise",
+          "source": "dictionary.cambridge.org",
+          "rank": 3,
+          "allowed": true,
+          "reason": "SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "revise",
+            "bridge"
+          ],
+          "coreTerms": [
+            "revise",
+            "entire",
+            "keeping",
+            "title",
+            "both",
+            "chorus",
+            "hook",
+            "exactly",
+            "before",
+            "but",
+            "make",
+            "bridge"
+          ],
+          "snippetPreview": "REVISE definition: 1. to look at or consider again an idea, piece of writing, etc. in order to correct or improve it…. Learn more."
+        },
+        {
+          "query": "Revise the entire song, keeping the title, both verses and original chorus hook exactly as before, but make the bridge a turning point where the narrator willingly goes home instead of escaping. Return the COMPLETE revised lyrics with labeled sections. The chorus wording should stay unchanged.",
+          "title": "Revise AI | AI writing editor that keeps your voice",
+          "url": "https://www.revise.net/",
+          "source": "www.revise.net",
+          "rank": 4,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "revise"
+          ],
+          "coreTerms": [
+            "revise",
+            "entire",
+            "keeping",
+            "title",
+            "both",
+            "chorus",
+            "hook",
+            "exactly",
+            "before",
+            "but",
+            "make",
+            "bridge"
+          ],
+          "snippetPreview": "Revise is an AI writing editor built as a Grammarly alternative for people who want more control. Grammarly is strong at catching …"
+        },
+        {
+          "query": "Revise the entire song, keeping the title, both verses and original chorus hook exactly as before, but make the bridge a turning point where the narrator willingly goes home instead of escaping. Return the COMPLETE revised lyrics with labeled sections. The chorus wording should stay unchanged.",
+          "title": "Free AI Rewriter - Revise",
+          "url": "https://revise.io/ai-rewriter",
+          "source": "revise.io",
+          "rank": 5,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "revise"
+          ],
+          "coreTerms": [
+            "revise",
+            "entire",
+            "keeping",
+            "title",
+            "both",
+            "chorus",
+            "hook",
+            "exactly",
+            "before",
+            "but",
+            "make",
+            "bridge"
+          ],
+          "snippetPreview": "Free AI rewriter for rewriting, cleaning up, summarizing, translating, and transforming short text with quick prompts."
+        },
+        {
+          "query": "Revise the entire song, keeping the title, both verses and original chorus hook exactly as before, but make the bridge a turning point where the narrator willingly goes home instead of escaping. Return the COMPLETE revised lyrics with labeled sections. The chorus wording should stay unchanged.",
+          "title": "REVISE Synonyms: 94 Similar and Opposite Words - Merriam-Webster",
+          "url": "https://www.merriam-webster.com/thesaurus/revise",
+          "source": "www.merriam-webster.com",
+          "rank": 6,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "revise"
+          ],
+          "coreTerms": [
+            "revise",
+            "entire",
+            "keeping",
+            "title",
+            "both",
+            "chorus",
+            "hook",
+            "exactly",
+            "before",
+            "but",
+            "make",
+            "bridge"
+          ],
+          "snippetPreview": "Nov 9, 2026 · Synonyms for REVISE: modify, change, alter, remodel, rework, transform, recast, redo; Antonyms of REVISE: set, fix, …"
+        },
+        {
+          "query": "Revise the entire song, keeping the title, both verses and original chorus hook exactly as before, but make the bridge a turning point where the narrator willingly goes home instead of escaping. Return the COMPLETE revised lyrics with labeled sections. The chorus wording should stay unchanged.",
+          "title": "REVISE Definition & Meaning | Dictionary .com",
+          "url": "https://www.dictionary.com/browse/revise",
+          "source": "www.dictionary.com",
+          "rank": 7,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "revise"
+          ],
+          "coreTerms": [
+            "revise",
+            "entire",
+            "keeping",
+            "title",
+            "both",
+            "chorus",
+            "hook",
+            "exactly",
+            "before",
+            "but",
+            "make",
+            "bridge"
+          ],
+          "snippetPreview": "REVISE definition: to amend or alter. See examples of revise used in a sentence."
+        },
+        {
+          "query": "Revise the entire song, keeping the title, both verses and original chorus hook exactly as before, but make the bridge a turning point where the narrator willingly goes home instead of escaping. Return the COMPLETE revised lyrics with labeled sections. The chorus wording should stay unchanged.",
+          "title": "Revise - Definition, Meaning & Synonyms | Vocabulary.com",
+          "url": "https://www.vocabulary.com/dictionary/revise",
+          "source": "www.vocabulary.com",
+          "rank": 8,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "revise"
+          ],
+          "coreTerms": [
+            "revise",
+            "entire",
+            "keeping",
+            "title",
+            "both",
+            "chorus",
+            "hook",
+            "exactly",
+            "before",
+            "but",
+            "make",
+            "bridge"
+          ],
+          "snippetPreview": "To revise means to alter or improve a preliminary draft of something, usually a text. When you want your writing to be really great, …"
+        }
+      ],
+      "songIdentity": {},
+      "songDiscoveryPlan": [],
+      "lyricsRescueSearchDebug": [],
+      "lyricsMaxPageAttempts": 3,
+      "lyricsFallbackExhausted": true,
+      "rawPromptStored": false
+    },
+    "trace": [
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794805877523,
+        "phase": "RESEARCH_STARTED",
+        "activity": "Online research started",
+        "provider": "bounded-web-search-chain-v1",
+        "site": "",
+        "url": ""
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794805877524,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794805889579,
+        "phase": "SEARCH_PROVIDER_ERROR",
+        "activity": "Provider failed",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "errorType": "URLError"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794805889580,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794805901632,
+        "phase": "SEARCH_PROVIDER_ERROR",
+        "activity": "Provider failed",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "errorType": "URLError"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794805901633,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794805901936,
+        "phase": "SEARCH_PROVIDER_RESULTS",
+        "activity": "Search results found",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "httpStatus": 200,
+        "resultCount": 8
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794805901937,
+        "phase": "SEARCH_PROVIDER_SELECTED",
+        "activity": "Using bing-html",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "resultCount": 8
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794805901940,
+        "phase": "PAGE_FETCH_STARTED",
+        "activity": "Visiting result page",
+        "provider": "web-page",
+        "site": "dictionary.cambridge.org",
+        "url": "https://dictionary.cambridge.org/dictionary/english/revise"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794805902163,
+        "phase": "PAGE_FETCH_COMPLETE",
+        "activity": "Page fetched",
+        "provider": "web-page",
+        "site": "dictionary.cambridge.org",
+        "url": "https://dictionary.cambridge.org/dictionary/english/revise",
+        "httpStatus": 200,
+        "responseBytes": 346868
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794805902170,
+        "phase": "RESEARCH_COMPLETE",
+        "activity": "Online research complete",
+        "provider": "bounded-web-search-chain-v1",
+        "site": "",
+        "url": "",
+        "resultCount": 0
+      }
+    ],
+    "sourceSites": [],
+    "widgetKinds": [],
+    "requestedModelId": "700m",
+    "selectedModelId": "700m",
+    "rawPromptStored": false,
+    "historyStored": false,
+    "preciseLocationStored": false
+  }
+}
