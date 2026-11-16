@@ -1,7 +1,7 @@
 """Local deterministic grader regressions for §C anonymous Chromium round 2."""
 import unittest
 
-from scripts.eval_chat_research_lyrics_conversations import CASES, ORIGINAL_TEST_LINES, check
+from scripts.eval_chat_research_lyrics_conversations import CASES, ORIGINAL_TEST_LINES, check, failure_types
 
 
 def fails(kind, body, prev=None):
@@ -52,6 +52,34 @@ class BroadGuestGraderTests(unittest.TestCase):
         okay=check("source_ack","Acknowledged, I have your original lines.",
                    phases=["GENERATING","COMPLETE"])
         self.assertEqual("PASS_EVIDENCE",okay["status"])
+
+    def test_code_draft_status_is_not_valid_plain_language_or_song_response(self):
+        reply=("The source has been generated but did not pass code validation. "
+               "Send Continue code to retry repairing the saved source.")
+        for kind in ("debugging","pop_adaptation","remaster_original","feedback_only"):
+            with self.subTest(kind=kind):
+                self.assertIn("no_code_generator_hijack",fails(kind,reply))
+        benign=check("source_ack","Understood; these are your original authored lines.",
+                     phases=["GENERATING","COMPLETE"])
+        self.assertEqual("PASS_EVIDENCE",benign["status"])
+        code_phase=check("source_ack","Understood; these are your original authored lines.",
+                         phases=["CODE_DRAFT_STREAMING"])
+        self.assertIn("no_code_generator_hijack",
+                      [t["check"] for t in code_phase["checks"] if not t["pass"]])
+
+    def test_failure_family_classification_uses_observed_evidence(self):
+        sample={"outcome":"REVIEW","turns":[{"evaluation":{"checks":[
+            {"check":"no_code_generator_hijack","pass":False},
+            {"check":"no_unrequested_web_tool","pass":False},
+            {"check":"verse1","pass":False}
+        ]}}]}
+        self.assertEqual(["CODE_ROUTE","CONTENT_OR_FORMAT_REVIEW",
+                          "UNREQUESTED_RESEARCH"],failure_types(sample))
+        blocked={"outcome":"BLOCKED","error":"TimeoutError: no reply","turns":[]}
+        self.assertEqual(["TURN_TIMEOUT"],failure_types(blocked))
+        good={"outcome":"PASS_EVIDENCE","turns":[{"evaluation":{
+            "checks":[{"check":"no_code_generator_hijack","pass":True}]}}]}
+        self.assertEqual([],failure_types(good))
 
     def test_weather_title_does_not_require_a_forecast(self):
         fictional=("Rain Glass Lantern\nVerse 1: rain in the window.\n"
