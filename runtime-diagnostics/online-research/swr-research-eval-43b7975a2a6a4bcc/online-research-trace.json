@@ -1,0 +1,359 @@
+{
+  "schema": "swrlz-github-online-research-trace-v1",
+  "requestId": "swr-research-eval-43b7975a2a6a4bcc",
+  "modelId": "700m",
+  "eventType": "ONLINE_RESEARCH_TRACE",
+  "sourceRef": "f149dd857e3d9219f5cae7da0286b5dbfec85c42",
+  "persistedAtUnixMs": 1794851953709,
+  "diagnostic": {
+    "schema": "swrlz-online-research-log-v1",
+    "research": {
+      "contract": "swrlz-online-camera-v1",
+      "observabilityRevision": "v181-song-metadata-clean-form-integrity",
+      "kind": "search",
+      "status": "NO_RESULTS",
+      "reason": "existing-lyrics-retrieval",
+      "provider": "bounded-web-search-chain-v1",
+      "resultCount": 0,
+      "widgetKinds": [],
+      "sourceCount": 0,
+      "locationRequired": false,
+      "usedExplicitClientLocation": false,
+      "elapsedMs": 600,
+      "lyricsSourceAttemptCount": 0,
+      "lyricsFetchDebug": [],
+      "blockedLyricsSourceFamilies": [],
+      "musicStructureDebug": null,
+      "candidateAdmissionDebug": [
+        {
+          "query": "These two fictional original lines are my own, not from a recording. Simply acknowledge receipt, and don't produce lyrics yet: A toaster argues with my clock at dawn My coffee made a map and wandered on",
+          "title": "THESE | English meaning - Cambridge Dictionary",
+          "url": "https://dictionary.cambridge.org/dictionary/english/these",
+          "source": "dictionary.cambridge.org",
+          "rank": 1,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "these"
+          ],
+          "coreTerms": [
+            "these",
+            "two",
+            "fictional",
+            "lines",
+            "own",
+            "not",
+            "from",
+            "recording",
+            "simply",
+            "acknowledge",
+            "receipt",
+            "don"
+          ],
+          "snippetPreview": "THESE definition: 1. plural of this 2. plural of this 3. pl of this . Learn more."
+        },
+        {
+          "query": "These two fictional original lines are my own, not from a recording. Simply acknowledge receipt, and don't produce lyrics yet: A toaster argues with my clock at dawn My coffee made a map and wandered on",
+          "title": "THESE Definition & Meaning - Merriam-Webster",
+          "url": "https://www.merriam-webster.com/dictionary/these",
+          "source": "www.merriam-webster.com",
+          "rank": 2,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "these"
+          ],
+          "coreTerms": [
+            "these",
+            "two",
+            "fictional",
+            "lines",
+            "own",
+            "not",
+            "from",
+            "recording",
+            "simply",
+            "acknowledge",
+            "receipt",
+            "don"
+          ],
+          "snippetPreview": "1 day ago · The meaning of THESE is plural of this."
+        },
+        {
+          "query": "These two fictional original lines are my own, not from a recording. Simply acknowledge receipt, and don't produce lyrics yet: A toaster argues with my clock at dawn My coffee made a map and wandered on",
+          "title": "THESE Definition & Meaning | Dictionary .com",
+          "url": "https://www.dictionary.com/browse/these",
+          "source": "www.dictionary.com",
+          "rank": 3,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "these"
+          ],
+          "coreTerms": [
+            "these",
+            "two",
+            "fictional",
+            "lines",
+            "own",
+            "not",
+            "from",
+            "recording",
+            "simply",
+            "acknowledge",
+            "receipt",
+            "don"
+          ],
+          "snippetPreview": "THESE definition: plural of this. See examples of these used in a sentence."
+        },
+        {
+          "query": "These two fictional original lines are my own, not from a recording. Simply acknowledge receipt, and don't produce lyrics yet: A toaster argues with my clock at dawn My coffee made a map and wandered on",
+          "title": "THESE | definition in the Cambridge English Dictionary",
+          "url": "https://dictionary.cambridge.org/us/dictionary/english/these",
+          "source": "dictionary.cambridge.org",
+          "rank": 4,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "these"
+          ],
+          "coreTerms": [
+            "these",
+            "two",
+            "fictional",
+            "lines",
+            "own",
+            "not",
+            "from",
+            "recording",
+            "simply",
+            "acknowledge",
+            "receipt",
+            "don"
+          ],
+          "snippetPreview": "THESE meaning: 1. plural of this 2. plural of this 3. pl of this . Learn more."
+        },
+        {
+          "query": "These two fictional original lines are my own, not from a recording. Simply acknowledge receipt, and don't produce lyrics yet: A toaster argues with my clock at dawn My coffee made a map and wandered on",
+          "title": "These - definition of these by The Free Dictionary",
+          "url": "https://www.thefreedictionary.com/these",
+          "source": "www.thefreedictionary.com",
+          "rank": 5,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "these"
+          ],
+          "coreTerms": [
+            "these",
+            "two",
+            "fictional",
+            "lines",
+            "own",
+            "not",
+            "from",
+            "recording",
+            "simply",
+            "acknowledge",
+            "receipt",
+            "don"
+          ],
+          "snippetPreview": "Define these. these synonyms, these pronunciation, these translation, English dictionary definition of these. pron. & adj. Plural of this. …"
+        },
+        {
+          "query": "These two fictional original lines are my own, not from a recording. Simply acknowledge receipt, and don't produce lyrics yet: A toaster argues with my clock at dawn My coffee made a map and wandered on",
+          "title": "Demonstratives in English Grammar – This, That, These , Those",
+          "url": "https://vocaberry.com/grammar/demonstratives-this-that-these-those/",
+          "source": "vocaberry.com",
+          "rank": 6,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "these"
+          ],
+          "coreTerms": [
+            "these",
+            "two",
+            "fictional",
+            "lines",
+            "own",
+            "not",
+            "from",
+            "recording",
+            "simply",
+            "acknowledge",
+            "receipt",
+            "don"
+          ],
+          "snippetPreview": "Demonstratives point to people or things in context. In English, they include this, that, these, those, and act as pronouns or determiners."
+        },
+        {
+          "query": "These two fictional original lines are my own, not from a recording. Simply acknowledge receipt, and don't produce lyrics yet: A toaster argues with my clock at dawn My coffee made a map and wandered on",
+          "title": "These - Wikipedia",
+          "url": "https://en.m.wikipedia.org/wiki/These",
+          "source": "en.m.wikipedia.org",
+          "rank": 7,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "these"
+          ],
+          "coreTerms": [
+            "these",
+            "two",
+            "fictional",
+            "lines",
+            "own",
+            "not",
+            "from",
+            "recording",
+            "simply",
+            "acknowledge",
+            "receipt",
+            "don"
+          ],
+          "snippetPreview": "This disambiguation page lists articles associated with the title These. If an internal link incorrectly led you here, you may wish to …"
+        },
+        {
+          "query": "These two fictional original lines are my own, not from a recording. Simply acknowledge receipt, and don't produce lyrics yet: A toaster argues with my clock at dawn My coffee made a map and wandered on",
+          "title": "these - Wiktionary, the free dictionary",
+          "url": "https://en.m.wiktionary.org/wiki/these",
+          "source": "en.m.wiktionary.org",
+          "rank": 8,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "these"
+          ],
+          "coreTerms": [
+            "these",
+            "two",
+            "fictional",
+            "lines",
+            "own",
+            "not",
+            "from",
+            "recording",
+            "simply",
+            "acknowledge",
+            "receipt",
+            "don"
+          ],
+          "snippetPreview": "Oct 20, 2026 · These pretzels are making me thirsty. 2019 September 20, “MDF vs HDF: Understanding Differences and Best Uses …"
+        }
+      ],
+      "songIdentity": {},
+      "songDiscoveryPlan": [],
+      "lyricsRescueSearchDebug": [],
+      "lyricsMaxPageAttempts": 3,
+      "lyricsFallbackExhausted": true,
+      "rawPromptStored": false
+    },
+    "trace": [
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794851953108,
+        "phase": "RESEARCH_STARTED",
+        "activity": "Online research started",
+        "provider": "bounded-web-search-chain-v1",
+        "site": "",
+        "url": ""
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794851953109,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794851953258,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "activity": "No usable results from provider",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "httpStatus": 202,
+        "resultCount": 0
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794851953258,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794851953397,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "activity": "No usable results from provider",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "httpStatus": 202,
+        "resultCount": 0
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794851953397,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794851953706,
+        "phase": "SEARCH_PROVIDER_RESULTS",
+        "activity": "Search results found",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "httpStatus": 200,
+        "resultCount": 8
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794851953706,
+        "phase": "SEARCH_PROVIDER_SELECTED",
+        "activity": "Using bing-html",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "resultCount": 8
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794851953707,
+        "phase": "RESEARCH_COMPLETE",
+        "activity": "Online research complete",
+        "provider": "bounded-web-search-chain-v1",
+        "site": "",
+        "url": "",
+        "resultCount": 0
+      }
+    ],
+    "sourceSites": [],
+    "widgetKinds": [],
+    "requestedModelId": "700m",
+    "selectedModelId": "700m",
+    "rawPromptStored": false,
+    "historyStored": false,
+    "preciseLocationStored": false
+  }
+}
