@@ -1,0 +1,112 @@
+name: Guarded §C verified HTML stream completion — guest and browser tests
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/hf-html-parser-stop-release.yml'
+permissions: {contents: read}
+concurrency:
+  group: swrlz-chat-guest-eval
+  cancel-in-progress: false
+jobs:
+  release:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 50
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - name: Install pinned client and headless browser
+        run: |
+          python -m pip install 'huggingface_hub>=0.34,<2' playwright==1.56.0
+          python -m playwright install --with-deps chromium
+      - name: Compile patch and guest acceptance probes
+        run: |
+          python -m py_compile scripts/hf_html_verified_stream_stop_v1.py
+          python -m py_compile scripts/eval_chat_seeded_html.py
+          python -m py_compile scripts/eval_chat_guest_suite.py
+          python -m py_compile scripts/test_guest_html_functionality.py
+      - name: Pin live coder and telemetry, test full HTML closure vs provider finish signal
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: python -u scripts/hf_html_verified_stream_stop_v1.py preflight
+      - name: Preserve exact source for both files before publication
+        uses: actions/upload-artifact@v4
+        with:
+          name: html-verified-parser-rollback-${{ github.run_id }}
+          path: reports/html-verified-stream-closure/
+          retention-days: 90
+          if-no-files-found: error
+      - name: Publish two-file guarded HTML source closure correction
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          SWRLZ_HTML_PARSER_STOP_APPROVED: '1'
+        run: python -u scripts/hf_html_verified_stream_stop_v1.py publish
+      - name: Ensure the resident model is available after the update
+        run: |
+          python - <<'PY'
+          import json,time,urllib.request
+          url='https://kamiloki-swyrlz.hf.space/api/hf/qwen35-ready'
+          for index in range(30):
+              try:
+                  with urllib.request.urlopen(url,timeout=12) as r:data=json.load(r)
+                  if data.get('ready') is True and index>=3:
+                      print('HTML_PARSER_RESIDENT_READY',data.get('model'),index,flush=True);break
+              except Exception as exc:print('MODEL_NOT_READY',index,type(exc).__name__,flush=True)
+              time.sleep(8)
+          else:raise RuntimeError('Runtime unavailable for safe live acceptance')
+          PY
+      - name: Import known HTML and execute full Reset revision in Chromium
+        id: seeded
+        shell: bash
+        env:
+          SWRLZ_EVAL_BASE: https://kamiloki-swyrlz.hf.space
+          SWRLZ_EVAL_MODEL: 700m
+          SWRLZ_SEEDED_TIMEOUT_SECONDS: '165'
+        run: |
+          set -uo pipefail
+          if python -u -m scripts.eval_chat_seeded_html;then code=0;else code=$?;fi
+          echo "exit=$code" >> "$GITHUB_OUTPUT"
+          echo "VERIFIED_PARSER_SEEDED_EXIT=$code"
+      - name: Test fresh standalone HTML page without any imported source
+        if: steps.seeded.outputs.exit == '0'
+        id: new
+        shell: bash
+        env:
+          SWRLZ_EVAL_BASE: https://kamiloki-swyrlz.hf.space
+          SWRLZ_EVAL_MODEL: 700m
+        run: |
+          set -uo pipefail
+          if python -u - <<'PY'
+          import asyncio,sys
+          import scripts.eval_chat_guest_suite as suite
+          suite.CASES['2']=[case for case in suite.CASES['2'] if case['id']=='html-button-ui']
+          if len(suite.CASES['2'])!=1:raise RuntimeError('HTML fixture unavailable')
+          suite.CASES['2'][0]['turns']=suite.CASES['2'][0]['turns'][:1]
+          sys.exit(asyncio.run(suite.main('live','2')))
+          PY
+          then code=0;else code=$?;fi
+          echo "exit=$code" >> "$GITHUB_OUTPUT"
+          echo "VERIFIED_PARSER_NEW_PAGE_EXIT=$code"
+      - name: Preserve exact guest test evidence and HTML outputs
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: html-parser-guest-acceptance-${{ github.run_id }}
+          path: |
+            reports/chat-seeded-html/
+            reports/chat-guest-eval/
+          retention-days: 21
+          if-no-files-found: ignore
+      - name: Restore both prior production sources if acceptance fails
+        if: steps.seeded.outputs.exit != '0' || steps.new.outputs.exit != '0'
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          SWRLZ_HTML_PARSER_STOP_APPROVED: '1'
+        run: python -u scripts/hf_html_verified_stream_stop_v1.py rollback
+      - name: Enforce live acceptance
+        if: steps.seeded.outputs.exit != '0' || steps.new.outputs.exit != '0'
+        run: |
+          echo "::warning::HTML stream closure did not meet both seeded and new-page acceptance. Review retained source and results."
+          exit 1
