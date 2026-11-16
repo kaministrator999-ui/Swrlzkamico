@@ -4,7 +4,7 @@
   "target": "kamiloki/swrlz-forge-moba",
   "releaseVersion": "v11.476",
   "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_476_ACCOUNT_FIRST_WORKSPACE",
-  "reason": "Ship Google-first sign-in/start screen, native saved-account/on-device project picker, selected automatic project or last saved project/studio/model camera restoration, and a full-screen animated §C Page Down/SIGNAL LOST view with Reconnect and offline local-editor exit. Preserve Google token isolation, native revision guards, modeling, VR, and local data. Browser phone and desktop-site checks succeeded with reduced-motion and release-notes click-interception regression.",
+  "reason": "Ship Google-first sign-in/start screen, native saved-account/on-device project picker, selected automatic project or last saved project/studio/model camera restoration, and a full-screen animated §C Page Down/SIGNAL LOST view with Reconnect and offline local-editor exit. Preserve Google token isolation, native revision guards, modeling, VR, and local data. Browser phone and desktop-site checks succeeded with reduced-motion and release-notes click-interception regression. Deployment retry after correcting verifier's stale v11.475 request-marker assertion; source artifact and SHA-256 unchanged.",
   "sourceCommit": "4afeee71653d5301e816d7cd035128b4fceb4b1a",
   "sourceIntegritySha256": "0985fb17a559b345c7881ec30d7d1b421da36f031a53abfdcf6abfa4242ae5ec"
 }
