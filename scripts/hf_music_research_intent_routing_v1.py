@@ -11,42 +11,53 @@ from huggingface_hub import HfApi,hf_hub_download,CommitOperationAdd
 SPACE="kamiloki/Swyrlz";FILE="online_tools.py";ROOT=Path("reports/swrlz-music-router-v1")
 MARK="swrlz-research-music-operation-disambiguation-v1"
 OLD_WEB='''    explicit_web = bool(_EXPLICIT_WEB.search(text))'''
-NEW_WEB='''    # swrlz-research-music-operation-disambiguation-v1: "research how"
-    # and "cite sources" request public evidence even without the word online.
-    # Never treat describing one's own research as a retrieval command.
+NEW_WEB=r'''    # swrlz-research-music-operation-disambiguation-v1: actual research commands
+    # initiate a public-source search, but descriptions of past research do not.
     research_command=bool(re.search(
-        r"(?i)^\\s*(?:(?:please|could you|can you)\\s+)?"
-        r"(?:research|look into|investigate)\\b",text))
+        r"(?i)^\s*(?:(?:please|could you|can you)\s+)?"
+        r"(?:research|look into|investigate)\b",text))
     explicit_web = bool(_EXPLICIT_WEB.search(text) or research_command)'''
 OLD_LYRIC='''    lyrics_lookup=bool(_LYRICS_LOOKUP.search(text)) and not (lyrics_creative and not explicit_web)'''
-NEW_LYRIC='''    # "Research lyric flow" / "explain verse structure" are NOT asks for
-    # any existing recording's lyric transcription, even with web research.
-    # Keep explicit text-lookup verbs and named "lyrics of/for" on the
-    # original verified-lyrics path, with all its source rules intact.
+NEW_LYRIC=r'''    # Lyric *analysis* and revision of a just-created/user-authored song are
+    # not requests to retrieve an external song's published lyric text.
     musical_analysis=bool(re.search(
-        r"(?i)\\b(?:research|compare|explain|describe|analy[sz]e|understand|"
+        r"(?i)\b(?:research|compare|explain|describe|analy[sz]e|understand|"
         r"structure|songwriting|rhythm|rhythmic|flow|meter|rhyme|forms?|"
-        r"genres?|patterns?|subdivisions?|bars?)\\b",text))
+        r"genres?|patterns?|subdivisions?|bars?)\b",text))
+    creative_revision=bool(re.search(
+        r"(?i)\b(?:revise|rewrite|remix|adapt|transform|rework|polish|"
+        r"edit|change|improve|continue)\b.{0,180}"
+        r"\b(?:song|lyrics?|verses?|chorus|bridge|hook|stanza)\b",text))
+    # Retrieval requires an explicit request for existing lyric text. A word
+    # like 'lyrics' alone is insufficient to activate verification.
     lyric_text_demand=bool(re.search(
-        r"(?i)\\b(?:give|show|print|quote|reproduce|copy|find|fetch|"
-        r"retrieve|transcribe|recite|look\\s+up)\\b.{0,70}"
-        r"\\b(?:lyrics?|words\\s+to\\s+(?:the\\s+)?song)\\b"
-        r"|\\b(?:full|complete|all\\s+the)\\s+(?:song\\s+)?lyrics?\\b"
-        r"|\\blyrics?\\s+(?:of|to|for)\\s+(?:the\\s+)?(?:song|track|[\\\"'])",
+        r"(?i)\b(?:give|show|provide|print|quote|reproduce|copy|find|fetch|"
+        r"retrieve|transcribe|recite|look\s+up|search\s+for)\b.{0,100}"
+        r"\b(?:lyrics?|words\s+to\s+(?:the\s+)?song)\b"
+        r"|\b(?:full|complete|all\s+the)\s+(?:song\s+)?lyrics?"
+        r"\s+(?:of|to|for)\b"
+        r"|\blyrics?\s+(?:of|to|for)\s+(?:the\s+)?(?:song|track)\b",
         text))
-    lyrics_lookup=(bool(_LYRICS_LOOKUP.search(text))
-                   and not (lyrics_creative and not lyric_text_demand)
-                   and not (musical_analysis and not lyric_text_demand))'''
+    explicit_lookup_verb=bool(re.search(
+        r"(?i)\b(?:find|fetch|retrieve|look\s+up|search\s+for|quote|"
+        r"transcribe|recite|reproduce|show|give|provide|print)\b"
+        r".{0,100}\b(?:lyrics?|words\s+to\s+(?:the\s+)?song)\b",text))
+    published_full_lyrics=bool(re.search(
+        r"(?i)\b(?:full|complete|all\s+the)\s+(?:song\s+)?lyrics?"
+        r"\s+(?:of|to|for)\b",text))
+    lyrics_lookup=(bool(_LYRICS_LOOKUP.search(text)) and lyric_text_demand
+                   and not (creative_revision and not explicit_lookup_verb)
+                   and not (musical_analysis and not
+                            (explicit_lookup_verb or published_full_lyrics)))'''
 OLD_WEATHER='''    weather_intent=bool(_WEATHER_TERMS.search(text) and not weather_negated)'''
-NEW_WEATHER='''    # Weather vocabulary inside an ORIGINAL SONG TITLE or creative setting
-    # must not launch a live weather widget. Explicit weather/forecast/data
-    # requests retain the original structured provider.
+NEW_WEATHER=r'''    # Rain/snow in user-supplied lyric lines, fiction or song titles is NOT
+    # a weather lookup. Require an actual live meteorological question/request.
     explicit_weather_data=bool(re.search(
-        r"(?i)\\b(?:weather|forecast|temperature|humidity|barometric|"
-        r"precipitation|wind\\s+speed|chance\\s+of\\s+(?:rain|snow)|"
-        r"will\\s+it\\s+(?:rain|snow))\\b",text))
-    weather_intent=bool(_WEATHER_TERMS.search(text) and not weather_negated
-                        and not (lyrics_creative and not explicit_weather_data))'''
+        r"(?i)\b(?:weather|forecast|temperature|humidity|barometric|"
+        r"precipitation|wind\s+speed|chance\s+of\s+(?:rain|snow)|"
+        r"will\s+it\s+(?:rain|snow)|(?:is|will)\s+it\s+(?:raining|snowing)|"
+        r"what(?:'s| is)\s+the\s+(?:rain|snow))\b",text))
+    weather_intent=bool(explicit_weather_data and not weather_negated)'''
 OLD_WEATHER2='''    if _WEATHER_TERMS.search(text) and not weather_negated and not programming.get("codingTask"):'''
 NEW_WEATHER2='''    if weather_intent and not programming.get("codingTask"):'''
 def sha(x):return hashlib.sha256(x).hexdigest()
@@ -92,6 +103,7 @@ def test(raw):
       "_search_query_from_prompt":lambda s:s[:500],
       "creative_music_transform_request":lambda s:bool(re.search(
           r"\b(?:write|create|compose|generate|rewrite)\b.{0,120}\b(?:original|lyrics?|song|rap|verses?)\b",s,re.I)),
+      "music_feedback_followup":lambda p,h=None:False,
       "is_simple_checkin":lambda s:False,
       "ONLINE_CONTRACT":"contract",
     }
@@ -107,6 +119,11 @@ def test(raw):
       ("What's the weather in Topeka, Kansas?",True,"weather",None),
       ("Please find full lyrics to the song 'Example Song'.",True,"search","lyrics-verification"),
       ("Research full lyrics of the song 'Example Song'.",True,"search","lyrics-verification"),
+      ("Provide the lyrics for Roll Call by Tech N9ne.",True,"search","lyrics-verification"),
+      ("Revise the entire song, keeping its chorus and return the COMPLETE revised lyrics.",False,"none",None),
+      ("These original fictional verses are mine. A paper key hums against the rain. Just acknowledge them.",False,"none",None),
+      ("I wrote a song about rain, here are my lyrics. Don't generate anything yet.",False,"none",None),
+      ("Is it raining right now in Topeka, Kansas?",True,"weather",None),
       ("Research public articles about early blues arrangements and provide source links.",True,"search",None),
       ("Explain the lyric structure and flow of 12-bar blues.",False,"none",None),
       ("Write an original song using the weather forecast for Topeka, Kansas.",True,"weather",None),
@@ -116,6 +133,7 @@ def test(raw):
     for prompt,requested,kind,mode in cases:
         result=fn(prompt,[],{},None)
         if bool(result["requested"])!=requested or result["kind"]!=kind or result.get("contentMode")!=mode:
+            print("CLASSIFIER_ROUTING_DIAGNOSTIC", "prompt="+repr(prompt), "result="+repr(result), "source_lines="+repr([line.strip() for line in (ast.get_source_segment(source,node) or "").splitlines() if any(word in line for word in ("explicit_web","lyrics_lookup","weather_intent","research_command"))]),flush=True)
             raise AssertionError("Misroute "+repr(prompt)+" -> "+repr(result))
     print("MUSIC_OPERATION_ROUTING_REGRESSIONS_PASS",len(cases),flush=True)
 

@@ -5,6 +5,10 @@ on:
     paths:
       - 'scripts/hf_music_research_intent_routing_v1.py'
       - '.github/workflows/hf-music-research-routing-preflight.yml'
+  pull_request:
+    paths:
+      - 'scripts/hf_music_research_intent_routing_v1.py'
+      - '.github/workflows/hf-music-research-routing-preflight.yml'
 permissions: {contents: read}
 jobs:
   preflight:
@@ -15,9 +19,13 @@ jobs:
         with: {persist-credentials: false}
       - uses: actions/setup-python@v5
         with: {python-version: '3.11'}
-      - run: python -m pip install --quiet 'huggingface_hub>=0.34,<2'
+      - run: python -m pip install --quiet 'huggingface_hub>=0.34,<2' playwright==1.56.0
       - run: python -m py_compile scripts/hf_music_research_intent_routing_v1.py
-      - name: Run actual deployed classifier with 14 operation-routing fixtures
+      - name: Compile expanded guest evaluator and execute deterministic checks
+        run: |
+          python -m py_compile scripts/eval_chat_research_lyrics_conversations.py
+          python -m unittest discover -s tests -p 'test_chat_broad_guest_round2.py' -v
+      - name: Run actual deployed classifier with expanded operation-routing fixtures
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: python -u scripts/hf_music_research_intent_routing_v1.py preflight

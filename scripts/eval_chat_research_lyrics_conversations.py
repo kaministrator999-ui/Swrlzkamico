@@ -115,6 +115,76 @@ CASES["conversation"].append(
   ]}
 )
 
+
+# Round 3: additional fully synthetic, isolated guest conversations. Each
+# scenario tests a different failure mode, not merely a reworded first turn.
+CASES["research"].extend([
+  {"id":"seasons-source-vs-distance","turns":[
+    {"kind":"season_research","online":True,"prompt":"Research using a public science education source why Earth has seasons. Explain axial tilt and sunlight angle, and distinguish this from the incorrect claim that seasons are caused mainly by Earth's distance from the Sun. Include a source URL."},
+    {"kind":"season_followup","prompt":"Use only the research above, without a new search: why do the northern and southern hemispheres have opposite seasons? Keep it concise and don't invent a source."}
+  ]},
+  {"id":"music-theory-analysis-without-recording-lyrics","turns":[
+    {"kind":"song_structure_research","online":True,"prompt":"Research twelve-bar blues AAB verse structure and compare it to pop verse, pre-chorus and chorus sections. Explain which phrase repeats in AAB and why musical bars are not the same thing as lyric lines. Cite a public teaching source. Do not look up or quote any published song lyrics."},
+    {"kind":"blues_lyrics","prompt":"Using your explanation, compose exactly TWO brand-new fictional AAB blues verses about a railway platform. Label Verse 1 and Verse 2. In each verse sing one A line, repeat it exactly, then sing one different B line. No chorus."}
+  ]},
+  {"id":"electronic-music-history-context","turns":[
+    {"kind":"music_history_research","online":True,"prompt":"Research how synthesizers and sequencers shaped early electronic pop arrangements, citing an accessible public source. Explain the functions without requesting or reproducing lyrics from any recording."},
+    {"kind":"music_history_followup","prompt":"Without a new web lookup, explain whether a synth-pop song must always use an electronic drum machine. Answer based on instrument roles, not a made-up universal rule."}
+  ]}
+])
+CASES["songwriting"].extend([
+  {"id":"rain-title-not-a-weather-lookup","turns":[
+    {"kind":"weather_safe_song","prompt":"Write a complete ORIGINAL song titled 'Rain Glass Lantern' with Verse 1, Chorus, Verse 2, Chorus, Bridge and Final Chorus. In the fictional story a lantern shines through rainy glass. This is creative writing, not a weather question. Make both verses have different events and the bridge a turning point."},
+    {"kind":"weather_safe_rewrite","prompt":"Revise that ORIGINAL song's bridge so the protagonist chooses to return home to their family. Keep the title 'Rain Glass Lantern', both verses and the recurring chorus, and return all lyrics with section labels. Do not look up a real recording."}
+  ]},
+  {"id":"eight-bar-rap-followed-by-editorial-critique","turns":[
+    {"kind":"rap_original","prompt":"Write a fresh eight-bar boom-bap rap about a fictional midnight inventor. Number bars 1 through 8, then add a labeled four-line Hook and one sentence about stresses or flow. Show inventive internal rhyme; do not imitate a performer."},
+    {"kind":"feedback_only","prompt":"Don't write another rap. Explain where the plot in bars 1-4 moves forward in bars 5-8, and identify anything about actual rhythm or musical flow that you cannot verify from text alone. No web lookup."}
+  ]},
+  {"id":"folk-song-perspective-change","turns":[
+    {"kind":"folk_story","prompt":"Write an original folk ballad titled 'Paper Compass' about a father and daughter using a hand-drawn map. Label Verse 1, Chorus, Verse 2, Chorus, Bridge and Final Chorus. Give the bridge a concrete discovery, not a generic pep talk."},
+    {"kind":"folk_rewrite","prompt":"Rewrite the full song with its title, map, chorus and emotional arc preserved, but replace the father with an older BROTHER. Do not refer to a published song or fetch lyrics."}
+  ]}
+])
+CASES["conversation"].extend([
+  {"id":"exact-list-revision-and-numbering","turns":[
+    {"kind":"list_initial","prompt":"For a fictional inventory, list exactly four paint swatches, numbered 1 to 4: cobalt, maroon, ivory and olive. No additional colors or repeated numbering."},
+    {"kind":"list_revision","prompt":"Correction: remove ONLY maroon from that list. Return the remaining three colors numbered 1, 2, 3 with no new colors and don't mention the removed one."}
+  ]},
+  {"id":"fictional-context-weather-word-ambiguity","turns":[
+    {"kind":"fictional_ack","prompt":"For a pretend story, a robin stands in rain holding a small amber sign. This is fiction, not a forecast or a location request. Restate the scene in one sentence."},
+    {"kind":"fictional_followup","prompt":"Change the bird to a sparrow but keep the amber sign. Don't check the weather; this is still a fictional scene."}
+  ]},
+  {"id":"debugger-no-fabricated-inspection","turns":[
+    {"kind":"debugging","prompt":"Suggest three concrete things I can inspect when a mobile web button occasionally ignores touch. You have no access to my code. Do not claim you've fixed it or suggest nonexistent DOM APIs."},
+    {"kind":"debugging","prompt":"Now the same issue also happens in desktop Chrome. Update the debugging checks to include overlapping elements and pointer events. You still have not inspected any code."}
+  ]}
+])
+CASES["transformations"].extend([
+  {"id":"parody-of-user-authored-station-verse","turns":[
+    {"kind":"source_ack","prompt":"These two fictional original lines are my own, not from a recording. Simply acknowledge receipt, and don't produce lyrics yet:\nA toaster argues with my clock at dawn\nMy coffee made a map and wandered on"},
+    {"kind":"parody_original","prompt":"Make a fully original comedic parody of my fictional toaster scene. Use labeled Verse 1, Chorus, Verse 2 and Bridge, with escalating appliance mishaps and a punchline. Don't quote the lines verbatim, and don't research existing songs."},
+    {"kind":"feedback_only","prompt":"I'm critiquing the joke, not requesting another song. Explain where the comic escalation occurs and what a human would still need to judge about the timing. No search and no new lyrics."}
+  ]},
+  {"id":"remaster-preserve-authored-hook","turns":[
+    {"kind":"song_seed","prompt":"Write a short ORIGINAL song called Little Lighthouse about a tiny beacon guiding a boat. Include Verse 1, Chorus, Verse 2 and Bridge. Make the EXACT chorus hook 'Little lighthouse, bring me home'. This is user-directed fictional material."},
+    {"kind":"remaster_original","prompt":"Remaster the wording of the original fictional song: keep the hook 'Little lighthouse, bring me home' EXACTLY, keep a harbor/shore setting, give both verses more concrete action, and return the complete song. This is a rewrite, not a search for a recording."}
+  ]},
+  {"id":"fictional-lullaby-to-electropop","turns":[
+    {"kind":"source_ack","prompt":"Remember this original fictional lullaby line I just wrote: 'A paper moon is humming through the bedroom window.' Acknowledge it briefly; no web and no forecast."},
+    {"kind":"genre_switch","prompt":"Adapt the idea of my fictional paper-moon lullaby into a fully original electropop song. Use Verse 1, Pre-Chorus, Chorus, Verse 2, Bridge and Final Chorus. Invent a new hook and separate events in the verses. Don't search for published lyrics."}
+  ]}
+])
+
+# Chromium verifies real phone-sized DOM interaction, not only API transport:
+# two practical context tests plus one full song composition/revision through
+# visible guest chat. All other cases use Chromium's isolated request context.
+UI_SCENARIOS={"correction-and-memory","fictional-context-weather-word-ambiguity",
+              "rain-title-not-a-weather-lookup"}
+for _batch in CASES.values():
+    for _case in _batch:
+        _case["lane"]="ui" if _case["id"] in UI_SCENARIOS else "api"
+
 LINK=re.compile(r"https?://[^\s<>)\]\"']+",re.I)
 SECTIONS={
   "verse1":re.compile(r"(?im)^\s*(?:\*{0,2}|\[)(?:verse\s*1|first verse)\b"),
@@ -151,7 +221,7 @@ def aab_count(text):
             if normalized:lyric.append(normalized)
         if len(lyric)==3 and lyric[0]==lyric[1] and lyric[2]!=lyric[0]:hits+=1
     return hits
-def check(kind,text,previous=None):
+def check(kind,text,previous=None,phases=None,allow_search=False):
     low=text.lower()
     tests=[]
     def test(name,value):tests.append({"check":name,"pass":bool(value)})
@@ -160,6 +230,18 @@ def check(kind,text,previous=None):
     test("no_generation_or_router_error",not bool(re.search(
         r"(?i)(?:generation failed|HTTP Error 5\d\d|LYRICS_VERIFICATION_BLOCKED|"
         r"WEATHER_RETRIEVAL_BLOCKED|internal server error|traceback \(most recent)",text)))
+    # Every scenario in this suite asks for ORIGINAL lyrics or public research
+    # about a subject, never external copyrighted lyric reproduction.
+    test("no_lyrics_lookup_hijack",not bool(re.search(
+        r"(?i)I found search results for the lyrics|couldn.t verify the requested lyric text|LYRICS_VERIFICATION_BLOCKED",text)))
+    test("no_weather_lookup_hijack",not bool(re.search(
+        r"(?i)I need a city/region|location before I can check live weather|WEATHER_RETRIEVAL_BLOCKED",text)))
+    test("no_local_inference_failure",not bool(re.search(
+        r"(?i)Local Qwen inference failed|please try again|upstream inference error|model overloaded",text)))
+    if phases is not None and not allow_search:
+        network_phases={"SEARCH_STARTED","SEARCH_PROVIDER_VISIT","WEATHER_FETCH_COMPLETE",
+                        "LYRICS_VERIFICATION_BLOCKED","WEATHER_RETRIEVAL_BLOCKED"}
+        test("no_unrequested_web_tool",not any(p in network_phases for p in phases))
     if kind=="d2_classes":
         for k in ("Amazon","Assassin","Barbarian","Druid","Necromancer","Paladin","Sorceress"):
             test("class:"+k,bool(re.search(r"\b"+k+r"\b",text,re.I)))
@@ -241,10 +323,10 @@ def check(kind,text,previous=None):
         test("regular_480",bool(re.search(r"\$?\s*480(?:\.00)?\b",text)))
         test("overtime_90",bool(re.search(r"\$?\s*90(?:\.00)?\b",text)))
     elif kind=="metaphor":
-        test("metaphor_grounded",bool(re.search(r"bug|joke|metaphor|figurative|software|app|UI",text,re.I)))
+        test("metaphor_grounded",bool(re.search(r"bug|joke|metaphor|figurative|software|app|UI|glitch|easter egg|layout",text,re.I)))
         test("not_literal",not bool(re.search(r"actual gremlin|real creature|literally a gremlin",text,re.I)))
     elif kind=="source_ack":
-        test("acknowledged_source",bool(re.search(r"(?i)receiv|got|provided|original|reference",text)))
+        test("acknowledged_source",bool(re.search(r"(?i)receiv|got|provided|original|reference|acknowledg|noted|understood|have (?:those|your|the) lines|ready",text)))
         test("no_generated_verse",not bool(re.search(r"(?im)^\s*\[?(?:verse|chorus)\s*\d*\]?\s*:?\s*$",text)))
     elif kind=="original_remix":
         test("verse_1",bool(re.search(r"(?i)verse\s*1",text)))
@@ -256,16 +338,103 @@ def check(kind,text,previous=None):
         v1=section(text,r"verse\s*1").strip().casefold()
         v2=section(text,r"verse\s*2").strip().casefold()
         test("distinct_verses",bool(v1 and v2 and v1!=v2))
+        source_bigrams=set()
+        for line in ORIGINAL_TEST_LINES:
+            words=re.findall(r"[a-z]+",line.casefold())
+            source_bigrams.update(" ".join(words[i:i+2]) for i in range(len(words)-1))
+        output_words=re.findall(r"[a-z]+",text.casefold())
+        output_bigrams=set(" ".join(output_words[i:i+2]) for i in range(len(output_words)-1))
+        # Two incidental shared word pairs are tolerable; recycling several
+        # distinctive scene fragments is not a fresh interpretation.
+        reused=[b for b in source_bigrams & output_bigrams if
+                not b.startswith(("the ","and ","a ","my ","of ","to ","in ","at "))]
+        test("limited_recycled_source_imagery",len(reused)<3)
     elif kind=="feedback_only":
         test("explains_revision_reasoning",bool(re.search(r"(?i)verse|story|different|event|flow|judge",text)))
         test("no_new_song",not bool(re.search(r"(?im)^\s*(?:\*{0,2}|\[)verse\s*[12]\b",text)))
         test("not_research_hijacked",not bool(re.search(r"(?i)lyrics.*verif|cannot.*retrieve.*lyrics",text)))
+    elif kind=="weather_safe_song":
+        for token in ("verse 1","chorus","verse 2","bridge"):
+            test("section_"+token,token in low)
+        test("requested_title","rain glass lantern" in low)
+        test("substantial_original_song",len(text)>=240)
+    elif kind=="weather_safe_rewrite":
+        test("title_kept","rain glass lantern" in low)
+        test("bridge_changed",bool(re.search(r"(?i)bridge",text) and re.search(r"(?i)home|return|family",text)))
+        test("complete_song",len(text)>=240 and "verse 1" in low and "verse 2" in low)
+    elif kind=="folk_story":
+        test("requested_title","paper compass" in low)
+        for token in ("verse 1","verse 2","chorus","bridge"):
+            test("section_"+token,token in low)
+        test("story",bool(re.search(r"(?i)compass|map",text) and re.search(r"(?i)father|daughter",text)))
+    elif kind=="folk_rewrite":
+        test("new_relation",bool(re.search(r"(?i)brother",text)))
+        test("kept_theme",bool(re.search(r"(?i)compass|map",text)))
+        test("full_rewrite",len(text)>=280 and "bridge" in low and "chorus" in low)
+    elif kind=="list_initial":
+        for color in ("cobalt","maroon","ivory","olive"):
+            test("listed_"+color,color in low)
+        test("no_scarlet","scarlet" not in low)
+    elif kind=="list_revision":
+        for color in ("cobalt","ivory","olive"):
+            test("retained_"+color,color in low)
+        test("maroon_removed","maroon" not in low)
+        test("only_three",len(re.findall(r"(?m)^\s*(?:[-*]|\d+[.)])\s+",text))<=3)
+    elif kind=="fictional_ack":
+        test("fictional_robin","robin" in low)
+        test("fictional_rain","rain" in low)
+    elif kind=="fictional_followup":
+        test("amber_kept","amber" in low)
+        test("updated_bird","sparrow" in low)
+        test("no_real_weather_data",not bool(re.search(r"(?i)forecast|temperature|weather station|humidity",text)))
+    elif kind=="parody_original":
+        for token in ("verse 1","chorus","verse 2"):
+            test("section_"+token,token in low)
+        test("comic_turn",bool(re.search(r"(?i)robot|toaster|spoon|receipt|kitchen|appliance",text)))
+        test("complete",len(text)>=200)
+        test("no_verbatim_owner_line",not any(line.lower() in low for line in ("a toaster argues with my clock at dawn","my coffee made a map and wandered on")))
+    elif kind=="song_seed":
+        test("chorus",bool(re.search(r"(?i)chorus",text)))
+        test("user_hook","little lighthouse" in low)
+        test("verse",bool(re.search(r"(?i)verse",text)))
+    elif kind=="remaster_original":
+        test("same_hook","little lighthouse, bring me home" in low)
+        test("complete_rewrite",len(text)>=200 and "verse" in low and "chorus" in low)
+        test("different_scene",bool(re.search(r"(?i)harbor|pier|boat|shore",text)))
+    elif kind=="genre_switch":
+        for token in ("verse 1","verse 2","pre-chorus","chorus","bridge"):
+            test("section_"+token,token in low or (token=="pre-chorus" and "pre chorus" in low))
+        test("lullaby_reference",bool(re.search(r"(?i)moon|bedtime|sleep|lantern",text)))
+        test("complete",len(text)>=240)
+        test("not_a_verbatim_lullaby", "a paper moon is humming through the bedroom window" not in low)
+    elif kind=="season_research":
+        test("tilt",bool(re.search(r"(?i)tilt|axial inclination",text)))
+        test("sunlight",bool(re.search(r"(?i)sunlight|solar|sun|daylight",text)))
+        test("cites_source",len(urls)>=1)
+        test("not_distance_cause",bool(re.search(r"(?i)not.*distanc|tilt.*(?:instead|rather)",text)))
+    elif kind=="season_followup":
+        test("tilt_kept",bool(re.search(r"(?i)tilt|axial",text)))
+        test("north_south_opposite",bool(re.search(r"(?i)opposite|northern|southern|hemispher",text)))
+    elif kind=="music_history_research":
+        test("synth",bool(re.search(r"(?i)synthesiz|synth",text)))
+        test("sequencer",bool(re.search(r"(?i)sequenc|oscillator|analog|electronic",text)))
+        test("citation",len(urls)>=1)
+    elif kind=="music_history_followup":
+        test("electronic_context",bool(re.search(r"(?i)synth|sequenc|oscillator|electronic",text)))
+        test("acknowledge_limits",bool(re.search(r"(?i)context|depends|vary|not always|not every|instrument",text)))
     elif kind=="pop_adaptation":
         for marker in ("verse 1","verse 2","pre-chorus","chorus","bridge","final chorus"):
             test("section_"+marker,marker in low or (marker=="pre-chorus" and "pre chorus" in low))
         test("train_setting",bool(re.search(r"(?i)train|platform|station|rail",text)))
         test("complete_rewrite",len(text)>=350)
         test("aab_not_universal",not bool(re.search(r"(?im)^.*\bAAB\b.*$",text)))
+        def repeated_verse_lines(body):
+            normalized=[re.sub(r"^(?:[AB]:\s*)","",re.sub(r"\W+"," ",line.casefold()).strip())
+                        for line in body.splitlines() if line.strip()]
+            return any(len(a)>10 and a==b for a,b in zip(normalized,normalized[1:]))
+        test("no_blues_aab_copied_into_pop_verses",
+             not any(repeated_verse_lines(section(text,r"verse\s*"+str(n)))
+                     for n in (1,2)))
     elif kind=="public_science":
         test("eclipse_alignment",bool(re.search(r"(?i)moon",text) and re.search(r"(?i)sun",text) and re.search(r"(?i)earth",text)))
         test("partial_and_total",bool(re.search(r"(?i)partial",text) and re.search(r"(?i)total",text)))
@@ -322,20 +491,46 @@ async def ask(context,thread_id,prompt,online):
     return result
 
 async def scenario(browser,case):
-    context=await browser.new_context()
-    result={"id":case["id"],"turns":[],"outcome":"UNTESTED"}
-    thread_id="swr-music-test-"+uuid.uuid4().hex[:18]
+    lane=case.get("lane","api")
+    context=await browser.new_context(**({"viewport":{"width":390,"height":844},
+              "is_mobile":True,"has_touch":True} if lane=="ui" else {}))
+    result={"id":case["id"],"lane":lane,"turns":[],"outcome":"UNTESTED"}
+    thread_id="swr-music-test-"+uuid.uuid4().hex[:18] if lane=="api" else None
     previous=None
+    page=None
     try:
         await base.ensure_guest(context)
         await base.sync(context)
+        if lane=="ui":
+            page=await context.new_page()
+            page_response=await page.goto(BASE+"/",wait_until="domcontentloaded",timeout=30000)
+            if not page_response or page_response.status!=200:
+                raise RuntimeError("GUEST_UI_PAGE_HTTP_ERROR")
+            await page.locator("#prompt").wait_for(state="visible",timeout=25000)
+            await base.dismiss_update_overlay(page)
         for n,turn in enumerate(case["turns"],1):
-            response=await ask(context,thread_id,turn["prompt"],turn.get("online",False))
+            if page is not None:
+                if turn.get("online"):
+                    raise RuntimeError("UI_LANE_DOES_NOT_OVERRIDE_RESEARCH_PROFILE")
+                previous_timeout=base.TIMEOUT
+                base.TIMEOUT=BASE_TIMEOUT
+                try:
+                    response=await base.ui_turn(context,page,turn["prompt"],thread_id,n)
+                finally:
+                    base.TIMEOUT=previous_timeout
+                if thread_id is not None and response["thread_id"]!=thread_id:
+                    raise RuntimeError("GUEST_UI_THREAD_CHANGED")
+                thread_id=response["thread_id"]
+            else:
+                response=await ask(context,thread_id,turn["prompt"],turn.get("online",False))
             raw=response.pop("text")
-            grade=check(turn["kind"],raw,previous)
+            grade=check(turn["kind"],raw,previous,
+                        phases=response.get("phases",[]),allow_search=turn.get("online",False))
             excerpt=base.redact(raw,14000)
             result["turns"].append({
-                "turn":n,"research_mode_requested":turn.get("online",False),
+                "turn":n,"lane":lane,"ui_response_visible":response.get("ui_response_visible"),
+                "ui_rendered_chars":response.get("ui_rendered_chars"),
+                "research_mode_requested":turn.get("online",False),
                 "prompt":turn["prompt"],"kind":turn["kind"],"response":excerpt,
                 "response_chars":len(raw),"terminal_state":response.get("state"),
                 "candidate_validation_status":response.get("candidate_validation_status"),
@@ -388,7 +583,7 @@ async def main(batch):
                      "runtime_ms":round((time.perf_counter()-started)*1000)}}
     (OUT/"report.json").write_text(json.dumps(data,ensure_ascii=False,indent=2)+"\n")
     lines=["# §C Research / Lyrics / General Conversations — "+batch,"",
-           "Test-only, guest-only; no changes to deployed source.","",
+           "Test-only, guest-only; 3 mobile Chromium UI scenarios and the remainder through isolated Chromium request contexts. No changes to deployed source.","",
            "Actual model transcripts are in report.json. Keyword/structure checks are limited evidence, not a human songwriting-quality score.","",
            "| Scenario | Result | Completed turns |","|---|---|---:|"]
     for r in results:lines.append(f"| {r['id']} | {r['outcome']} | {len(r['turns'])} |")
@@ -400,6 +595,13 @@ async def main(batch):
     # REVIEW and BLOCKED are evidence to investigate; preserve all batches
     # while allowing the next category to run. The workflow summary exposes
     # acceptance status, but the workflow itself is diagnostic, not a release.
+    # Keep the default diagnostic mode for exploratory history. Strict mode
+    # makes new CI an actual acceptance gate: a green workflow can no longer
+    # be misread as all model replies passing.
+    if os.getenv("SWRLZ_BROAD_STRICT")=="1" and (
+        data["summary"]["review_scenarios"] or data["summary"]["blocked_scenarios"]):
+        print("SWRLZ_BROAD_ACCEPTANCE_FAILURE",json.dumps(data["summary"]),flush=True)
+        return 1
     return 0
 if __name__=="__main__":
     parser=argparse.ArgumentParser()

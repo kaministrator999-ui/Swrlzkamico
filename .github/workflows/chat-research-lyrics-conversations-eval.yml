@@ -8,6 +8,7 @@ on:
     paths:
       - 'scripts/eval_chat_research_lyrics_conversations.py'
       - 'tests/test_chat_broad_guest_round2.py'
+      - 'scripts/hf_music_research_intent_routing_v1.py'
       - '.github/workflows/chat-research-lyrics-conversations-eval.yml'
   workflow_dispatch: {}
 permissions: {contents: read}
@@ -17,7 +18,7 @@ concurrency:
 jobs:
   evaluate:
     runs-on: ubuntu-24.04
-    timeout-minutes: 42
+    timeout-minutes: 65
     strategy:
       fail-fast: false
       max-parallel: 1
@@ -42,6 +43,7 @@ jobs:
           SWRLZ_EVAL_BASE: https://kamiloki-swyrlz.hf.space
           SWRLZ_EVAL_MODEL: 700m
           SWRLZ_RESEARCH_LYRICS_TURN_TIMEOUT: '215'
+          SWRLZ_BROAD_STRICT: '1'
         run: python -u -m scripts.eval_chat_research_lyrics_conversations --batch ${{ matrix.batch }}
       - name: Preserve full synthetic answers and per-turn checks
         uses: actions/upload-artifact@v4
