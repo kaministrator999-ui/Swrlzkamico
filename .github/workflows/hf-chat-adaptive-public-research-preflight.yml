@@ -1,0 +1,72 @@
+name: §C adaptive two-pass public research preflight
+on:
+  push:
+    branches: [fix/chat-adaptive-research-coverage-v1]
+    paths:
+      - "api/adaptive_public_research_v1.py"
+      - "api/research_evidence_envelope_v1.py"
+      - "scripts/hf_chat_adaptive_research_v1.py"
+      - "tests/test_hf_adaptive_public_research_v1.py"
+      - ".github/workflows/hf-chat-adaptive-public-research-preflight.yml"
+permissions: {contents: read}
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 16
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.11"}
+      - name: Install existing Hugging Face SDK
+        run: python -m pip install --quiet "huggingface_hub>=0.34,<2"
+      - name: Test generalized source coverage and privacy
+        run: |
+          set -euo pipefail
+          python -m unittest discover -s tests -p 'test_hf_adaptive_public_research_v1.py' -v
+          python -m unittest discover -s tests -p 'test_hf_tagged_research_evidence_v1.py' -v
+          python -m unittest discover -s tests -p 'test_hf_generic_public_source_fallback_v1.py' -v
+          python -m py_compile api/adaptive_public_research_v1.py scripts/hf_chat_adaptive_research_v1.py
+      - name: Stage exact active HF source and verify Python grammar
+        run: |
+          set -euo pipefail
+          python -u scripts/hf_chat_adaptive_research_v1.py --out swrlz-adaptive-research-rollback
+      - name: Verify new source wrapper against real existing selective retrieval
+        run: |
+          python - <<'PY'
+          import ast,importlib.util,json,sys,types
+          from pathlib import Path
+          from huggingface_hub import HfApi,hf_hub_download
+          root=Path("swrlz-adaptive-research-rollback/candidate")
+          source=(root/"api/selective_retrieval.py").read_text()
+          ast.parse(source)
+          # The original historical helper stays authoritative and is
+          # inspected directly at the same immutable HF revision.
+          rev=HfApi().repo_info("kamiloki/Swyrlz",repo_type="space").sha
+          path=hf_hub_download("kamiloki/Swyrlz","api/research_context_v2.py",
+                               repo_type="space",revision=rev)
+          historic=types.ModuleType("api.research_context_v2")
+          historic.__file__=path
+          exec(compile(Path(path).read_text(),path,"exec"),historic.__dict__)
+          sys.modules["api.research_context_v2"]=historic
+          spec=importlib.util.spec_from_file_location("api.selective_retrieval",
+                                                    root/"api/selective_retrieval.py")
+          selective=importlib.util.module_from_spec(spec)
+          sys.modules[spec.name]=selective
+          spec.loader.exec_module(selective)
+          assertion={
+              "publicExplanation":selective.choose_retrieval(
+                  "Explain how eclipses work, including lunar geometry, eclipse types and eye safety.").action,
+              "casual":selective.choose_retrieval("Hello there").action,
+              "private":selective.choose_retrieval("Explain our private repo history").action,
+          }
+          print("SWRLZ_ADAPTIVE_INTEGRATED_ROUTING "+json.dumps(assertion),flush=True)
+          assert assertion=={"publicExplanation":"retrieve",
+                             "casual":"direct","private":"direct"},assertion
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: swrlz-adaptive-research-staged-source
+          path: swrlz-adaptive-research-rollback/
+          retention-days: 7
+          if-no-files-found: warn
