@@ -117,8 +117,9 @@ def compose(prompt, native_threads, imported_docs=(), active_thread_id=""):
             continue
         content = _safe_text(message.get("text"))
         if not content: continue
+        body_hits = query.intersection(terms(content))
         overlap = query.intersection(terms(title) | terms(content))
-        if len(overlap) >= 2:
+        if body_hits and len(overlap) >= 2:
             topical.append((len(overlap), _stamp(message.get("createdAt")), tid, content[:250]))
     for doc in (imported_docs or []):
         if isinstance(doc, dict):
