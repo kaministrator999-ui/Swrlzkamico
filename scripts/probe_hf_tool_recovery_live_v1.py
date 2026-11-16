@@ -11,7 +11,7 @@ import time
 import uuid
 import requests
 from huggingface_hub import HfApi
-from scripts.probe_hf_http500_feedback_live_v1 import send_and_wait,BASE
+from probe_hf_http500_feedback_live_v1 import send_and_wait,BASE
 
 SPACE="kamiloki/Swyrlz"
 EXPECTED="971de186d00ff0d59494e2cabaeb8b181d17bbbc"
