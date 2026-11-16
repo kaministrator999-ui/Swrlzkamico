@@ -1,0 +1,279 @@
+{
+  "schema": "swrlz-github-online-research-trace-v1",
+  "requestId": "swr-research-eval-59985bd14c20437e",
+  "modelId": "700m",
+  "eventType": "ONLINE_RESEARCH_TRACE",
+  "sourceRef": "f149dd857e3d9219f5cae7da0286b5dbfec85c42",
+  "persistedAtUnixMs": 1794810720441,
+  "diagnostic": {
+    "schema": "swrlz-online-research-log-v1",
+    "research": {
+      "contract": "swrlz-online-camera-v1",
+      "observabilityRevision": "v181-song-metadata-clean-form-integrity",
+      "kind": "search",
+      "status": "NO_RESULTS",
+      "reason": "existing-lyrics-retrieval",
+      "provider": "bounded-web-search-chain-v1",
+      "resultCount": 0,
+      "widgetKinds": [],
+      "sourceCount": 0,
+      "locationRequired": false,
+      "usedExplicitClientLocation": false,
+      "elapsedMs": 612,
+      "lyricsSourceAttemptCount": 0,
+      "lyricsFetchDebug": [],
+      "blockedLyricsSourceFamilies": [],
+      "musicStructureDebug": null,
+      "candidateAdmissionDebug": [
+        {
+          "query": "or quote any published song lyrics",
+          "title": "Popular Quotes",
+          "url": "https://www.goodreads.com/quotes",
+          "source": "www.goodreads.com",
+          "rank": 1,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "quote"
+          ],
+          "coreTerms": [
+            "quote",
+            "any"
+          ],
+          "snippetPreview": "“Be yourself; everyone else is already taken.” “I'm selfish, impatient and a little insecure. I make mistakes, I am out of control and at …"
+        },
+        {
+          "query": "or quote any published song lyrics",
+          "title": "100+ Most Famous Quotes Of All Time (Updated 2026)",
+          "url": "https://wisdomquotes.com/famous-quotes/",
+          "source": "wisdomquotes.com",
+          "rank": 2,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "quote"
+          ],
+          "coreTerms": [
+            "quote",
+            "any"
+          ],
+          "snippetPreview": "Oct 23, 2026 · Here are the 100 most famous quotes of all time. I hope you’ll enjoy them! All that we are is the result of what we have …"
+        },
+        {
+          "query": "or quote any published song lyrics",
+          "title": "Inspirational Quotes by Famous Authors - BrainyQuote",
+          "url": "https://www.brainyquote.com/",
+          "source": "www.brainyquote.com",
+          "rank": 3,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "quote"
+          ],
+          "coreTerms": [
+            "quote",
+            "any"
+          ],
+          "snippetPreview": "Nearly a million quotes from famous authors on love, life, success and more. Find the perfect quote and a picture to share."
+        },
+        {
+          "query": "or quote any published song lyrics",
+          "title": "Quote of the Day - BrainyQuote",
+          "url": "https://www.brainyquote.com/quote_of_the_day",
+          "source": "www.brainyquote.com",
+          "rank": 4,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "quote"
+          ],
+          "coreTerms": [
+            "quote",
+            "any"
+          ],
+          "snippetPreview": "1 day ago · Inspirational and motivational quotes to share on X, Facebook and Slack: a new Quote of the Day plus Funny, Love, Art …"
+        },
+        {
+          "query": "or quote any published song lyrics",
+          "title": "QUOTE Definition & Meaning - Merriam-Webster",
+          "url": "https://www.merriam-webster.com/dictionary/quote",
+          "source": "www.merriam-webster.com",
+          "rank": 5,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "quote"
+          ],
+          "coreTerms": [
+            "quote",
+            "any"
+          ],
+          "snippetPreview": "2 days ago · The meaning of QUOTE is to speak or write (a passage) from another usually with credit acknowledgment. How to use …"
+        },
+        {
+          "query": "or quote any published song lyrics",
+          "title": "Inspirational Quotes (77717 quotes)",
+          "url": "https://www.goodreads.com/quotes/tag/inspirational",
+          "source": "www.goodreads.com",
+          "rank": 6,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "quote"
+          ],
+          "coreTerms": [
+            "quote",
+            "any"
+          ],
+          "snippetPreview": "“Imperfection is beauty, madness is genius and it's better to be absolutely ridiculous than absolutely boring.” “There are only two …"
+        },
+        {
+          "query": "or quote any published song lyrics",
+          "title": "160 Quotes of the Day for Daily Inspiration, Motivation and Lots of ...",
+          "url": "https://www.positivityblog.com/quote-of-the-day/",
+          "source": "www.positivityblog.com",
+          "rank": 7,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "quote"
+          ],
+          "coreTerms": [
+            "quote",
+            "any"
+          ],
+          "snippetPreview": "Mar 26, 2025 · Looking for a quote of the day to help you make the most of today? To renew your motivation, inspiration and give …"
+        },
+        {
+          "query": "or quote any published song lyrics",
+          "title": "225 Life Quotes—Inspiring the Happy, Good and Funny in Life",
+          "url": "https://parade.com/937586/parade/life-quotes/",
+          "source": "parade.com",
+          "rank": 8,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "quote"
+          ],
+          "coreTerms": [
+            "quote",
+            "any"
+          ],
+          "snippetPreview": "Jul 1, 2022 · These famous sayings and quotes about life will inspire positivity and good, happy feelings. Enjoy some inspirational …"
+        }
+      ],
+      "songIdentity": {},
+      "songDiscoveryPlan": [],
+      "lyricsRescueSearchDebug": [],
+      "lyricsMaxPageAttempts": 3,
+      "lyricsFallbackExhausted": true,
+      "rawPromptStored": false
+    },
+    "trace": [
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794810719828,
+        "phase": "RESEARCH_STARTED",
+        "activity": "Online research started",
+        "provider": "bounded-web-search-chain-v1",
+        "site": "",
+        "url": ""
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794810719829,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794810719969,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "activity": "No usable results from provider",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "httpStatus": 202,
+        "resultCount": 0
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794810719969,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794810720099,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "activity": "No usable results from provider",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "httpStatus": 202,
+        "resultCount": 0
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794810720099,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794810720438,
+        "phase": "SEARCH_PROVIDER_RESULTS",
+        "activity": "Search results found",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "httpStatus": 200,
+        "resultCount": 8
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794810720438,
+        "phase": "SEARCH_PROVIDER_SELECTED",
+        "activity": "Using bing-html",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "resultCount": 8
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794810720439,
+        "phase": "RESEARCH_COMPLETE",
+        "activity": "Online research complete",
+        "provider": "bounded-web-search-chain-v1",
+        "site": "",
+        "url": "",
+        "resultCount": 0
+      }
+    ],
+    "sourceSites": [],
+    "widgetKinds": [],
+    "requestedModelId": "700m",
+    "selectedModelId": "700m",
+    "rawPromptStored": false,
+    "historyStored": false,
+    "preciseLocationStored": false
+  }
+}
