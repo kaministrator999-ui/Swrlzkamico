@@ -10,7 +10,7 @@ old={"role":"user","text":"I prefer detailed answers when explaining projects.",
 docs=[{"continuitySignals":archive_signals([old],"old-imported-chat")}]
 native=[{"id":"other","title":"My projects","messages":[
     {"role":"user","text":"Please always verify source and tests for my projects.",
-     "createdAt":1800000000}]}]
+     "createdAt":1750000000}]}]
 state={ALICE:{"state":"ready","docs":docs,"done":1,"total":1}}
 
 with patch.object(memory,"enabled",side_effect=lambda owner: owner==ALICE), \
