@@ -1,0 +1,28 @@
+name: §C tool-capability recovery preflight
+on:
+  push:
+    branches: [fix/chat-tool-capability-recovery-20261116]
+    paths:
+      - "api/tool_capability_recovery_v1.py"
+      - "scripts/hf_chat_tool_recovery_release_v1.py"
+      - "tests/test_tool_capability_recovery_v1.py"
+      - ".github/workflows/chat-tool-recovery-preflight.yml"
+permissions: {contents: read}
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.11"}
+      - name: Run privacy, one-retry, research, acceptance and cancellation tests
+        run: |
+          set -euo pipefail
+          python -m unittest discover -s tests -p 'test_tool_capability_recovery_v1.py' -v
+          python -m py_compile api/tool_capability_recovery_v1.py scripts/hf_chat_tool_recovery_release_v1.py
+      - name: Compile patch against immutable live Hugging Face engine without publishing
+        run: |
+          set -euo pipefail
+          python -m pip install -q 'huggingface_hub>=0.34,<2'
+          python -u scripts/hf_chat_tool_recovery_release_v1.py preflight
