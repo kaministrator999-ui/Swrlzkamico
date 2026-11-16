@@ -1,0 +1,51 @@
+name: Measure §E v11.475 mobile progressive rail visibility
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/measure-engine-v11-475.yml"
+      - "projects/swrlz-forge-moba/patches/v11_475_progressive_rail_visibility.py"
+      - "projects/swrlz-forge-moba/runtime/model_progressive_rail_fix_v11_475.*"
+      - "projects/swrlz-forge-moba/scripts/prepare_v11_475_release.py"
+      - "projects/swrlz-forge-moba/scripts/verify_v11_475_release.py"
+      - "projects/swrlz-forge-moba/tests/model_progressive_rail_fix_v11_475.mjs"
+      - "projects/swrlz-forge-moba/tests/model_progressive_browser_v11_475.cjs"
+      - "projects/swrlz-forge-moba/source-manifest.json"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: se475-source-measure
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 24
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Build, measure and verify native §E progressive source
+        run: python projects/swrlz-forge-moba/scripts/prepare_v11_475_release.py
+      - name: Install Chromium browser for real touch interaction verification
+        run: |
+          npm install --no-save playwright@1.56.1
+          npx playwright install --with-deps --only-shell chromium
+      - name: Tap category, flyout, Vertex mode and Ring Fill on touch layouts
+        run: node projects/swrlz-forge-moba/tests/model_progressive_browser_v11_475.cjs projects/swrlz-forge-moba/_release_v11_475_candidate
+      - name: Save measured manifest and browser screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: se475-source-and-touch-receipt
+          path: |
+            projects/swrlz-forge-moba/source-manifest.json
+            projects/swrlz-forge-moba/_release_v11_475_candidate/se475-*.png
