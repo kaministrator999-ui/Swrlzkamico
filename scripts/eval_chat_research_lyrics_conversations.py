@@ -176,6 +176,37 @@ CASES["transformations"].extend([
   ]}
 ])
 
+
+# Round 4: higher-order reasoning and answer quality. All facts here are
+# synthetic, explicit in each isolated guest thread and verifiable without web.
+# Graders check supported claims/constraints, not model eloquence.
+CASES["reasoning"]=[
+  {"id":"client-server-direction","turns":[
+    {"kind":"handoff_forward","prompt":"In a toy web app the CLIENT browser sends a JSON request to a SERVER API. State the request direction in one short line; do not invent intermediate components."},
+    {"kind":"handoff_reverse","prompt":"Now the server has produced its reply. In the same toy app, what is the direction of the response? Say the direction directly without repeating the request direction as the answer."}
+  ]},
+  {"id":"conflicting-evidence-retained","turns":[
+    {"kind":"conflicting_sources","prompt":"Two synthetic reports refer to DIFFERENT datasets: ALPHA records 120 completed units, BETA records 145 completed units. State both figures and explain why a single consolidated total cannot be determined from this alone. Do not invent a merged figure or cite real sources."},
+    {"kind":"corrected_sources","prompt":"Correction: only ALPHA's completed-unit count changes from 120 to 135; BETA remains 145. Give the updated pair and whether a combined unique count is now known. Do not treat the datasets as proven disjoint."}
+  ]},
+  {"id":"guest-browser-constraints","turns":[
+    {"kind":"guest_constraints","prompt":"Plan a hypothetical two-device game lobby: a phone and a VR headset must connect through their browsers; joining is guest-only, with no account requirement and no app download. Give three concrete checks before inviting players. Do not silently change the constraints."},
+    {"kind":"guest_constraints_update","prompt":"Change just one constraint: a DESKTOP browser joins as a third device. Keep guest-only access, browser play, and no download. Update the checks without adding login or installations."}
+  ]},
+  {"id":"tests-are-not-deployments","turns":[
+    {"kind":"unverified_tests","prompt":"A synthetic build has exactly two failing tests and one passing test. You have not inspected the code or rerun anything. Report what is known and recommend the next verification action without claiming a fix."},
+    {"kind":"tests_vs_deploy","prompt":"Update from the test team: now THREE tests pass, but nobody has deployed the build. Summarize the new test state and the separate deployment state. Do not claim live success."}
+  ]},
+  {"id":"controlled-benchmark-reasoning","turns":[
+    {"kind":"benchmark_confounded","prompt":"A synthetic performance report shows version A at 140 ms and version B at 180 ms, but each was measured on a different host. Can we claim a causal speed improvement? Explain the confound and recommend a controlled comparison."},
+    {"kind":"benchmark_controlled","prompt":"A controlled same-host rerun instead measures A at 140 ms and B at 165 ms. Report which one is faster in this test and by how many milliseconds, but don't claim universal performance from a single benchmark."}
+  ]},
+  {"id":"surgical-task-update","turns":[
+    {"kind":"task_list","prompt":"For a hypothetical chat project list exactly these three pending tasks: fix the Stop button, improve lyric formatting, and change the logo. Do not claim any task is completed."},
+    {"kind":"task_list_revision","prompt":"Revise ONLY task 3: replace 'change the logo' with 'design a dark-theme icon'. Tasks 1 and 2 must remain pending and unchanged. Give the complete updated list, with no fourth task or claim of code changes."}
+  ]}
+]
+
 # Chromium verifies real phone-sized DOM interaction, not only API transport:
 # two practical context tests plus one full song composition/revision through
 # visible guest chat. All other cases use Chromium's isolated request context.
@@ -263,7 +294,61 @@ def check(kind,text,previous=None,phases=None,allow_search=False):
         network_phases={"SEARCH_STARTED","SEARCH_PROVIDER_VISIT","WEATHER_FETCH_COMPLETE",
                         "LYRICS_VERIFICATION_BLOCKED","WEATHER_RETRIEVAL_BLOCKED"}
         test("no_unrequested_web_tool",not any(p in network_phases for p in phases))
-    if kind=="d2_classes":
+    if kind=="handoff_forward":
+        test("request_client_to_server",bool(re.search(r"(?i)client\s*(?:→|->|[- ]to[- ]|toward(?:s)?|sends?\s+(?:a\s+)?(?:json\s+)?request\s+to)\s*server",text)))
+        test("no_false_reverse",not bool(re.search(r"(?i)^(?:server\s*(?:→|->|to)\s*client)\s*$",text.strip())))
+    elif kind=="handoff_reverse":
+        test("reply_server_to_client",bool(re.search(r"(?i)server\s*(?:→|->|[- ]to[- ]|toward(?:s)?|sends?\s+(?:the\s+)?(?:reply|response)\s+to)\s*client",text)))
+    elif kind=="conflicting_sources":
+        test("alpha_120",bool(re.search(r"(?is)\balpha\b.{0,55}\b120\b",text)))
+        test("beta_145",bool(re.search(r"(?is)\bbeta\b.{0,55}\b145\b",text)))
+        test("uncertain_combined",bool(re.search(r"(?i)cannot|can't|not (?:possible|known|enough)|unknown|different datasets|overlap|disjoint|cannot determine",text)))
+        test("not_fabricated_sum",not bool(re.search(r"(?i)(?:total|combined|merged)\s*(?:is|:|=)\s*265\b",text)))
+    elif kind=="corrected_sources":
+        test("alpha_135",bool(re.search(r"(?is)\balpha\b.{0,55}\b135\b",text)))
+        test("beta_145",bool(re.search(r"(?is)\bbeta\b.{0,55}\b145\b",text)))
+        test("no_old_alpha",not bool(re.search(r"(?is)\balpha\b.{0,20}(?:is|:|=)\s*120\b",text)))
+        test("no_invented_union",bool(re.search(r"(?i)unknown|cannot|can't|overlap|not (?:known|enough|determined)|disjoint",text)))
+    elif kind=="guest_constraints":
+        test("phone_and_vr",bool(re.search(r"(?i)phone|mobile",text) and re.search(r"(?i)\bvr\b|headset",text)))
+        test("browser",bool(re.search(r"(?i)browser|web",text)))
+        test("guest",bool(re.search(r"(?i)guest|without (?:an? )?account|no login|no sign",text)))
+        test("no_forced_install",not bool(re.search(r"(?i)(?:must|need|require)\s+(?:to\s+)?(?:install|download|sign in|log in|register)",text)))
+    elif kind=="guest_constraints_update":
+        test("third_desktop",bool(re.search(r"(?i)desktop",text)))
+        test("guest_kept",bool(re.search(r"(?i)guest|no (?:account|login)|without.*(?:account|login)",text)))
+        test("browsers_kept",bool(re.search(r"(?i)browser|web",text)))
+        test("no_forced_install",not bool(re.search(r"(?i)(?:must|need|require)\s+(?:to\s+)?(?:install|download|sign in|log in|register)",text)))
+    elif kind=="unverified_tests":
+        test("two_fail",bool(re.search(r"(?i)(?:\b2\b|two).{0,25}fail|fail.{0,25}(?:\b2\b|two)",text)))
+        test("one_pass",bool(re.search(r"(?i)(?:\b1\b|one).{0,25}pass|pass.{0,25}(?:\b1\b|one)",text)))
+        test("no_fake_fix",not bool(re.search(r"(?i)\bi (?:fixed|patched|reran|verified|deployed)\b",text)))
+        test("next_check",bool(re.search(r"(?i)inspect|reproduc|rerun|investigat|check|test|trace|logs?",text)))
+    elif kind=="tests_vs_deploy":
+        test("three_pass",bool(re.search(r"(?i)(?:\b3\b|three).{0,30}pass|pass.{0,30}(?:\b3\b|three)",text)))
+        test("not_deployed",bool(re.search(r"(?i)not deployed|not yet deployed|haven't deployed|hasn't been deployed|no deployment|not live|deployment.*pending",text)))
+        test("no_live_claim",not bool(re.search(r"(?i)\b(?:now|already) live\b|successfully deployed|deployed to production",text)))
+    elif kind=="benchmark_confounded":
+        test("both_measurements",bool(re.search(r"\b140\b",text) and re.search(r"\b180\b",text)))
+        test("confounding",bool(re.search(r"(?i)host|environment|hardware|machine|controlled|confound",text)))
+        test("not_causal_claim",bool(re.search(r"(?i)cannot|can't|not (?:necessarily|reliably|enough)|uncertain|confound|doesn't prove",text)))
+    elif kind=="benchmark_controlled":
+        test("both_measurements",bool(re.search(r"\b140\b",text) and re.search(r"\b165\b",text)))
+        test("difference_25ms",bool(re.search(r"(?i)\b25\s*(?:ms|milliseconds)\b",text)))
+        test("a_faster",bool(re.search(r"(?i)\bA\b.{0,30}(?:fast|quick|low)|(?:fast|quick|low).{0,30}\bA\b",text)))
+        test("scope_calibrated",bool(re.search(r"(?i)test|single|measurement|run|not necessarily|other (?:hosts|workloads)",text)))
+    elif kind=="task_list":
+        for n,p in (("stop",r"\bstop\b"),("lyrics",r"lyric"),("logo",r"logo")):
+            test("task_"+n,bool(re.search(p,text,re.I)))
+        test("not_completed_claim",not bool(re.search(r"(?i)\bi (?:fixed|completed|changed|deployed)\b",text)))
+    elif kind=="task_list_revision":
+        test("stop_kept",bool(re.search(r"(?i)\bstop\b",text)))
+        test("lyrics_kept",bool(re.search(r"(?i)lyric",text)))
+        test("new_icon_task",bool(re.search(r"(?i)dark[- ]theme",text) and re.search(r"(?i)icon",text)))
+        test("no_logo_task",not bool(re.search(r"(?im)^\s*(?:[-*]|\d+[.):])?\s*(?:change|update|redesign)\s+(?:the\s+)?logo",text)))
+        test("no_fourth_task",len(re.findall(r"(?m)^\s*(?:\d+[.)]|[-*])\s+\S+",text))<=3)
+        test("not_claimed_done",not bool(re.search(r"(?i)\bi (?:fixed|completed|changed|deployed)\b",text)))
+    elif kind=="d2_classes":
         for k in ("Amazon","Assassin","Barbarian","Druid","Necromancer","Paladin","Sorceress"):
             test("class:"+k,bool(re.search(r"\b"+k+r"\b",text,re.I)))
         test("no_other_game_class",not re.search(r"\b(monk|demon hunter|witch doctor|crusader)\b",low))
