@@ -1,0 +1,15 @@
+{
+  "schema": "swrlz-knowledge-followup-v1",
+  "requestId": "swr-research-eval-43b7975a2a6a4bcc",
+  "modelId": "700m",
+  "eventType": "KNOWLEDGE_ACQUISITION_FOLLOWUP_2",
+  "sourceRef": "f149dd857e3d9219f5cae7da0286b5dbfec85c42",
+  "persistedAtUnixMs": 1794852053410,
+  "diagnostic": {
+    "schema": "swrlz-knowledge-followup-v1",
+    "parentRequestId": "swr-research-eval-43b7975a2a6a4bcc",
+    "turnIndex": 2,
+    "userText": "I'm critiquing the joke, not requesting another song. Explain where the comic escalation occurs and what a human would still need to judge about the timing. No search and no new lyrics.",
+    "capturedAtUnixMs": 1794852053409
+  }
+}
