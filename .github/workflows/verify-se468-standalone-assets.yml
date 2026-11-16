@@ -1,4 +1,4 @@
-name: Validate §E v11.468 independent studio assets
+name: Verify sealed §E v11.468 independent studio assets
 on:
   push:
     branches: [feat/se468-standalone-studio-assets]
