@@ -31,7 +31,7 @@ m['finalSha256']=hashlib.sha256(source).hexdigest()
 manifest_path.write_text(json.dumps(m,ensure_ascii=False,indent=2)+'\n','utf8')
 subprocess.run([sys.executable,str(ROOT/'scripts/verify_v11_478_release.py'),
  '--output',str(ROOT/'_release_v11_478_verified')],check=True)
-print('SE477_MEASURED_RECEIPT='+json.dumps({
+print('SE478_MEASURED_RECEIPT='+json.dumps({
  'version':'v11.478','bytes':m['finalBytes'],'sha256':m['finalSha256'],
  'patches':len(m['patches'])
 },sort_keys=True),flush=True)
