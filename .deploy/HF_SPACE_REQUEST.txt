@@ -1,5 +1,5 @@
 TARGET=kamiloki/Swyrlz
 APPROVED=1
-CHANGE_SCOPE=noncode-output-limit-recovery-v1
-SOURCE_REF=a4af52d3d2290c7efda3cd78176acb9016c4c29b
-REQUEST_NONCE=noncode-limit-lyrics-20261115-a4af52d3-r1
+CHANGE_SCOPE=music-transform-quality-v1
+SOURCE_REF=0db83901e549801c0c31563b9b08233a167654a2
+REQUEST_NONCE=music-transform-stop-20261115-0db83901-r1
