@@ -276,7 +276,9 @@ def snapshot():
     modified=candidate(before)
     BACKUP.mkdir(parents=True,exist_ok=True)
     for name,data in before.items():
-        (BACKUP / name).write_bytes(data)
+        target=BACKUP / name
+        target.parent.mkdir(parents=True,exist_ok=True)
+        target.write_bytes(data)
     record={"schema":"swrlz-music-transformation-release-v1",
             "space":SPACE,"revision":rev,
             "before":{f:sha(v) for f,v in before.items()},
