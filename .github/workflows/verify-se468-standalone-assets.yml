@@ -1,7 +1,7 @@
 name: Verify sealed §E v11.468 independent studio assets
 on:
   push:
-    branches: [feat/se468-standalone-studio-assets]
+    branches: [feat/se468-standalone-studio-assets, fix/se468-release-gate]
   workflow_dispatch:
 permissions:
   contents: read
