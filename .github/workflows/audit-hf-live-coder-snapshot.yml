@@ -33,6 +33,13 @@ jobs:
               raw=file.read_bytes()
               (root/filename).write_bytes(raw)
               manifest['files'][filename]={'sha256':hashlib.sha256(raw).hexdigest(),'bytes':len(raw)}
+          import ast
+          brain=(root/'brain_programming.py').read_text()
+          manifest['brainIntentFunctions']=[
+            node.name for node in ast.parse(brain).body
+            if isinstance(node,ast.FunctionDef) and
+            any(fragment in node.name for fragment in ('programming','code','source'))
+          ]
           (root/'manifest.json').write_text(json.dumps(manifest,indent=2))
           print('SNAPSHOT_REVISION',rev,'FILES',list(manifest['files']))
           PY
@@ -40,5 +47,5 @@ jobs:
         with:
           name: hf-live-coder-audit-${{ github.run_id }}
           path: reports/hf-live-coder-audit/
-          retention-days: 7
+          retention-days: 14
           if-no-files-found: error
