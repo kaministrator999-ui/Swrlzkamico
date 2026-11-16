@@ -469,6 +469,6 @@
     "patches/v11_475_progressive_rail_visibility.py",
     "patches/v11_476_account_first_workspace.py"
   ],
-  "finalBytes": null,
-  "finalSha256": null
+  "finalBytes": 10391275,
+  "finalSha256": "0985fb17a559b345c7881ec30d7d1b421da36f031a53abfdcf6abfa4242ae5ec"
 }
