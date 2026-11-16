@@ -21,3 +21,22 @@ jobs:
             print('===',needle,'at',i,'===')
             print(s[i:i+2900] if i>=0 else 'MISSING')
           PY
+      - name: Validate candidate pinch reset against assembled editor
+        run: |
+          python - <<'PY'
+          import importlib.util
+          from pathlib import Path
+          root=Path('projects/swrlz-forge-moba')
+          p=root/'patches/v11_467_browser_pinch_release.py'
+          spec=importlib.util.spec_from_file_location('se467',p)
+          mod=importlib.util.module_from_spec(spec);spec.loader.exec_module(mod)
+          html=Path('/tmp/se467-browser-inspect/index.html').read_text()
+          updated=mod.apply(html)
+          assert 'if(atelierCameraTouches.size===1)pressed=null;' in updated
+          assert 'pressed={x:pt.x,y:pt.y,yaw:orbit.yaw,pitch:orbit.pitch,moved:true}' not in updated
+          assert 'for(const id of atelierCameraTouches.keys())atelierCameraConsumedTouches.add(id);' in updated
+          assert len(updated)>len(html)-300
+          Path('/tmp/se467-browser-inspect/candidate.html').write_text(updated)
+          print('SE467_CANDIDATE_PATCH_APPLIES')
+          PY
+          python projects/swrlz-forge-moba/scripts/check_inline_js_syntax_v11_266.py /tmp/se467-browser-inspect/candidate.html
