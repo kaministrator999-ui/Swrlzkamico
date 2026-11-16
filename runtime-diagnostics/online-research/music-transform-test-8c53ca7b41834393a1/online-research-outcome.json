@@ -1,0 +1,413 @@
+{
+  "schema": "swrlz-github-online-research-outcome-v2",
+  "requestId": "music-transform-test-8c53ca7b41834393a1",
+  "modelId": "700m",
+  "eventType": "ONLINE_RESEARCH_OUTCOME",
+  "sourceRef": "f149dd857e3d9219f5cae7da0286b5dbfec85c42",
+  "persistedAtUnixMs": 1794803169224,
+  "diagnostic": {
+    "schema": "swrlz-online-research-outcome-v2",
+    "terminalState": "COMPLETE",
+    "research": {
+      "contract": "swrlz-online-camera-v1",
+      "observabilityRevision": "v181-song-metadata-clean-form-integrity",
+      "kind": "multi",
+      "status": "ERROR",
+      "reason": "weather-time-intent",
+      "provider": null,
+      "resultCount": 0,
+      "widgetKinds": [],
+      "sourceCount": 0,
+      "locationRequired": false,
+      "usedExplicitClientLocation": false,
+      "elapsedMs": 510,
+      "lyricsSourceAttemptCount": 0,
+      "lyricsFetchDebug": [],
+      "blockedLyricsSourceFamilies": [],
+      "musicStructureDebug": null,
+      "candidateAdmissionDebug": [],
+      "songIdentity": null,
+      "songDiscoveryPlan": [],
+      "lyricsRescueSearchDebug": [],
+      "lyricsMaxPageAttempts": 0,
+      "lyricsFallbackExhausted": false,
+      "rawPromptStored": false
+    },
+    "trace": [
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "phase": "WEATHER_GEOCODE_VISIT",
+        "provider": "Open-Meteo",
+        "site": "geocoding-api.open-meteo.com",
+        "url": "https://geocoding-api.open-meteo.com/v1/search",
+        "activity": "Resolving weather location",
+        "atUnixMs": 1794803054754
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "phase": "WEATHER_GEOCODE_COMPLETE",
+        "provider": "Open-Meteo",
+        "site": "geocoding-api.open-meteo.com",
+        "url": "https://geocoding-api.open-meteo.com/v1/search",
+        "activity": "Weather provider response received",
+        "atUnixMs": 1794803055264,
+        "httpStatus": 200,
+        "responseBytes": 31
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "phase": "WEATHER_LOCATION_NOT_FOUND",
+        "provider": "Open-Meteo",
+        "site": "geocoding-api.open-meteo.com",
+        "url": "https://geocoding-api.open-meteo.com/v1/search",
+        "activity": "Weather location could not be resolved",
+        "atUnixMs": 1794803055264
+      }
+    ],
+    "sources": [],
+    "sourceSites": [],
+    "widgets": [],
+    "widgetKinds": [],
+    "statusTrail": [
+      {
+        "phase": "QUEUED",
+        "reason": "Accepted by Workstation",
+        "atUnixMs": 1794803054743
+      },
+      {
+        "phase": "GENERATING",
+        "reason": "Workstation admitted generation",
+        "atUnixMs": 1794803054747
+      },
+      {
+        "seq": 1,
+        "phase": "PROGRAMMING_INTENT",
+        "reason": "",
+        "atUnixMs": 1794803054750
+      },
+      {
+        "seq": 2,
+        "phase": "SEARCH_STARTED",
+        "reason": "I’m on it — looking up Create a complete ORIGINAL folk-rap remix from this little song fragment I wrote. Make a fresh new title, Verse 1, Chorus, Verse 2, Chorus, Verse 3, and Outro. Each verse should",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "MULTI"
+        ],
+        "atUnixMs": 1794803054750
+      },
+      {
+        "seq": 3,
+        "phase": "WEATHER_GEOCODE_VISIT",
+        "reason": "Resolving weather location",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "geocoding-api.open-meteo.com",
+        "url": "https://geocoding-api.open-meteo.com/v1/search",
+        "provider": "Open-Meteo",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794803054754
+      },
+      {
+        "seq": 4,
+        "phase": "WEATHER_GEOCODE_COMPLETE",
+        "reason": "Weather provider response received",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "geocoding-api.open-meteo.com",
+        "url": "https://geocoding-api.open-meteo.com/v1/search",
+        "provider": "Open-Meteo",
+        "httpStatus": 200,
+        "resultCount": null,
+        "atUnixMs": 1794803055264
+      },
+      {
+        "seq": 5,
+        "phase": "WEATHER_LOCATION_NOT_FOUND",
+        "reason": "Weather location could not be resolved",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "geocoding-api.open-meteo.com",
+        "url": "https://geocoding-api.open-meteo.com/v1/search",
+        "provider": "Open-Meteo",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794803055264
+      },
+      {
+        "seq": 6,
+        "phase": "ONLINE_RESEARCH",
+        "reason": "ERROR",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "MULTI"
+        ],
+        "atUnixMs": 1794803055264
+      },
+      {
+        "seq": 7,
+        "phase": "SEARCH_COMPLETE",
+        "reason": "Online retrieval error.",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "MULTI"
+        ],
+        "atUnixMs": 1794803055265
+      },
+      {
+        "seq": 8,
+        "phase": "DIAGNOSTIC_READY",
+        "reason": "",
+        "atUnixMs": 1794803055267
+      },
+      {
+        "seq": 9,
+        "phase": "RESPONSE_COGNITION",
+        "reason": "",
+        "atUnixMs": 1794803055268
+      },
+      {
+        "seq": 10,
+        "phase": "LOADING",
+        "reason": "",
+        "categories": [],
+        "atUnixMs": 1794803056561
+      },
+      {
+        "seq": 11,
+        "phase": "PROFILE_CONTEXT_READY",
+        "reason": "swrlz-qwen35-profile-v5",
+        "categories": [],
+        "atUnixMs": 1794803056585
+      },
+      {
+        "seq": 12,
+        "phase": "CONTEXT_BUDGETED",
+        "reason": "",
+        "atUnixMs": 1794803056585
+      },
+      {
+        "seq": 13,
+        "phase": "GENERATING",
+        "reason": "",
+        "categories": [],
+        "atUnixMs": 1794803056585
+      },
+      {
+        "seq": 14,
+        "phase": "RESOURCE_ALLOCATED",
+        "reason": "Workstation inference budget active",
+        "atUnixMs": 1794803056585
+      },
+      {
+        "seq": 15,
+        "phase": "CANDIDATE_ATTEMPT",
+        "reason": "attempt=1",
+        "atUnixMs": 1794803169221
+      },
+      {
+        "seq": 17,
+        "phase": "CANDIDATE_PASS",
+        "reason": "",
+        "atUnixMs": 1794803169221
+      },
+      {
+        "seq": 18,
+        "phase": "GENERATION_TELEMETRY",
+        "reason": "",
+        "atUnixMs": 1794803169221
+      },
+      {
+        "seq": 19,
+        "phase": "COMPLETE",
+        "reason": "",
+        "atUnixMs": 1794803169221
+      },
+      {
+        "phase": "PERSISTING",
+        "reason": "Saving the response to the chat",
+        "atUnixMs": 1794803169222
+      }
+    ],
+    "responseCognition": {
+      "schema": "swrlz-response-cognition-v1",
+      "relation": "standalone",
+      "operation": "create",
+      "historyAvailable": false,
+      "historyTurns": 0,
+      "anchorUserIndex": null,
+      "anchorAssistantIndex": null,
+      "explicitReference": true,
+      "questionLike": false,
+      "detailMode": "normal",
+      "requestedCount": null,
+      "outputOnly": false,
+      "preserveConstraint": true,
+      "programming": false,
+      "deliverable": "text",
+      "sourcePreference": "unspecified"
+    },
+    "programmingIntent": {
+      "schema": "swrlz-programming-intent-v1",
+      "codingTask": false,
+      "projectContext": "none",
+      "changeClass": "none",
+      "artifactContinuation": false,
+      "artifactMutationRequested": false,
+      "artifactTargetId": "",
+      "artifactTargetMessageId": "",
+      "baseRevision": 0,
+      "baseSourceHash": "",
+      "newProject": false,
+      "source": "brain-router"
+    },
+    "candidateValidation": {
+      "schema": "swrlz-music-quality-v1",
+      "status": "PASS",
+      "reasons": [],
+      "sectionCount": 6,
+      "verseCount": 3,
+      "lyricLineCount": 40,
+      "finishReason": "stop",
+      "generationComplete": true
+    },
+    "candidateAttempts": [
+      {
+        "schema": "swrlz-candidate-attempt-v1",
+        "attempt": 1,
+        "trigger": "music-transform-remix",
+        "durationMs": 112634.125,
+        "firstTokenLatencyMs": 56003.372,
+        "deltaChunks": 626,
+        "finishReason": "stop",
+        "requestedMaxTokens": 1024,
+        "usage": {},
+        "candidateFingerprint": "594f9a51308c8b70",
+        "changedFromPreviousAttempt": null,
+        "changedFromRepairTarget": null,
+        "validationStatus": "PASS",
+        "validationReasons": [],
+        "accepted": true
+      }
+    ],
+    "generationTelemetry": {
+      "schema": "swrlz-programming-generation-telemetry-v1",
+      "attemptCount": 1,
+      "regenerationCount": 0,
+      "firstCandidateRejected": false,
+      "finalAcceptedAttempt": 1,
+      "finalCandidateStatus": "PASS",
+      "guardedTurn": false,
+      "repairTurn": false,
+      "strictLanguage": false,
+      "modelLoadLatencyMs": 23.688,
+      "visibleFirstDeltaLatencyMs": 112659.745,
+      "engineTotalLatencyMs": 112659.776,
+      "totalCandidateGenerationMs": 112634.125,
+      "attempts": [
+        {
+          "schema": "swrlz-candidate-attempt-v1",
+          "attempt": 1,
+          "trigger": "music-transform-remix",
+          "durationMs": 112634.125,
+          "firstTokenLatencyMs": 56003.372,
+          "deltaChunks": 626,
+          "finishReason": "stop",
+          "requestedMaxTokens": 1024,
+          "usage": {},
+          "candidateFingerprint": "594f9a51308c8b70",
+          "changedFromPreviousAttempt": null,
+          "changedFromRepairTarget": null,
+          "validationStatus": "PASS",
+          "validationReasons": [],
+          "accepted": true
+        }
+      ]
+    },
+    "engineCompletionTelemetry": {
+      "totalLatencyMs": 112659.776,
+      "loadLatencyMs": 23.688,
+      "firstDeltaLatencyMs": 112659.745
+    },
+    "contextBudget": {
+      "contextWindowTokens": 16384,
+      "inputBudgetTokens": 15232,
+      "estimatedInputTokens": 3822,
+      "reservedOutputTokens": 1024,
+      "historyMessagesDropped": 0,
+      "historyMessagesKept": 0,
+      "repairTurn": false,
+      "repairContext": {},
+      "tokenBreakdown": {
+        "system": 3672,
+        "history": 0,
+        "currentPrompt": 150,
+        "total": 3822
+      }
+    },
+    "resourcePlan": {
+      "cpuCapacity": 16,
+      "decodeThreads": 16,
+      "batchThreads": 16,
+      "maxResponseTokens": 1024
+    },
+    "responseResourceUsage": {
+      "schema": "swrlz-response-resource-usage-v1",
+      "scope": "shared-cgroup-v2",
+      "source": "cgroup-v2",
+      "isolatedModelAttribution": false,
+      "wallTimeMs": 114474,
+      "capacity": {
+        "cpuLimitCores": 16.0,
+        "cpuLimitState": "measured",
+        "memoryLimitBytes": 104000000000,
+        "memoryLimitState": "measured"
+      },
+      "observed": {
+        "cgroupCpuUsageUsecDelta": 1769096983,
+        "averageCgroupCpuCores": 15.454,
+        "memoryStartBytes": 11051700224,
+        "memoryEndBytes": 11055378432,
+        "memoryEndMinusStartBytes": 3678208,
+        "memoryPeakSampledBytes": 11055636480,
+        "memoryPeakAboveStartBytes": 3936256,
+        "memorySampleCount": 116,
+        "memorySamplingIntervalMs": 1000
+      },
+      "attribution": "Shared container readings include concurrent work; they are not exclusive CPU/RAM use by this model.",
+      "routeId": "700m",
+      "configuredEngineThreadBudget": {
+        "cpuCapacity": 16,
+        "decodeThreads": 16,
+        "batchThreads": 16,
+        "maxResponseTokens": 1024
+      },
+      "outcome": "COMPLETE"
+    },
+    "finalResponse": "```\n[Verse 1]\nIn a quiet brass observatory the first lantern began to glow\nA clock beneath the moon kept time for footsteps in the snow\nThe keeper found a tiny gear behind the cedar door\nAnd heard a distant signal from the lighthouse on the shore\nThe glass was cold against the palm, a frostbite on the skin\nWhile the needle spun a circle where the winter winds had been\nHe traced the frost along the pane, a map of where we've been\nBefore the storm could swallow up the light we used to keep within\n\n[Chorus]\nTick-tock, the world is breaking, but the rhythm holds the line\nTick-tock, the winter's ending, but the warmth is still divine\nTick-tock, the gears are turning, spinning out a brand new design\nTick-tock, the signal's coming, calling through the winter pine\n\n[Verse 2]\nThe keeper pulled the lever down, the brass began to sing\nA melody of copper pipes and steam that made the winter ring\nHe watched the frost retreat in waves, a river made of light\nThe gears inside the clockwork turned to chase away the night\nA child stepped out from under the eaves, a coat of wool and gray\nShe held a lantern in her hand, a beacon for the day\nThe keeper smiled, a secret shared, a bond of steel and bone\nThey walked together through the snow, no longer walking alone\n\n[Chorus]\nTick-tock, the world is breaking, but the rhythm holds the line\nTick-tock, the winter's ending, but the warmth is still divine\nTick-tock, the gears are turning, spinning out a brand new design\nTick-tock, the signal's coming, calling through the winter pine\n\n[Verse 3]\nThe sun began to rise above the hills, a golden, burning eye\nThe frost had melted into puddles where the snow had died\nThe keeper watched the world awaken, a new and different scene\nThe gears had stopped their frantic spinning, the clock was now serene\nThe child had grown, a woman now, with eyes of stormy blue\nShe held the keeper's hand once more, a promise to renew\nThe brass observatory stood still, a monument to time\nA quiet place where memories lived, and where the heart could climb\n\n[Outro]\nTick-tock, the world is breaking, but the rhythm holds the line\nTick-tock, the winter's ending, but the warmth is still divine\nTick-tock, the gears are turning, spinning out a brand new design\nTick-tock, the signal's coming, calling through the winter pine\nTick-tock, the world is breaking, but the rhythm holds the line\nTick-tock, the winter's ending, but the warmth is still divine\nTick-tock, the gears are turning, spinning out a brand new design\nTick-tock, the signal's coming, calling through the winter pine\n```",
+    "finalResponseSha256": "ff6528f176f655932a19f07ecc7e08e40dd8f19434a0960fc798ff23e5f1bdfb",
+    "requestedModelId": "700m",
+    "selectedModelId": "700m",
+    "stationTiming": {
+      "acceptedAtUnixMs": 1794803054743,
+      "startedAtUnixMs": 1794803054747,
+      "completedAtUnixMs": 1794803169222,
+      "queueWaitMs": 4,
+      "stationRunMs": 114475,
+      "endToEndMs": 114479
+    },
+    "rawPromptStored": false,
+    "historyStored": false,
+    "preciseLocationStored": false,
+    "privateReasoningStored": false
+  }
+}
