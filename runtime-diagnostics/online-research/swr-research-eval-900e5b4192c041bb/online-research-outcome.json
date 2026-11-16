@@ -1,0 +1,895 @@
+{
+  "schema": "swrlz-github-online-research-outcome-v2",
+  "requestId": "swr-research-eval-900e5b4192c041bb",
+  "modelId": "700m",
+  "eventType": "ONLINE_RESEARCH_OUTCOME",
+  "sourceRef": "f149dd857e3d9219f5cae7da0286b5dbfec85c42",
+  "persistedAtUnixMs": 1794851156385,
+  "diagnostic": {
+    "schema": "swrlz-online-research-outcome-v2",
+    "terminalState": "COMPLETE",
+    "research": {
+      "contract": "swrlz-online-camera-v1",
+      "observabilityRevision": "v181-song-metadata-clean-form-integrity",
+      "kind": "search",
+      "status": "OK",
+      "reason": "freshness-intent",
+      "provider": "bounded-web-search-chain-v1",
+      "resultCount": 3,
+      "widgetKinds": [
+        "search-results"
+      ],
+      "sourceCount": 3,
+      "locationRequired": false,
+      "usedExplicitClientLocation": false,
+      "elapsedMs": 1429,
+      "lyricsSourceAttemptCount": 0,
+      "lyricsFetchDebug": [],
+      "blockedLyricsSourceFamilies": [],
+      "musicStructureDebug": null,
+      "candidateAdmissionDebug": [
+        {
+          "query": "In a fictional cafe there is exactly ONE cook named Rae working alone today. The second cook is absent. A delivery is due in 15 minutes. Restate the constraints without adding staff.",
+          "title": "FICTIONAL Definition & Meaning - Merriam-Webster",
+          "url": "https://www.merriam-webster.com/dictionary/fictional",
+          "source": "www.merriam-webster.com",
+          "rank": 1,
+          "allowed": true,
+          "reason": "NON_LYRICS_PASS",
+          "neededHits": 0,
+          "matchedTerms": [],
+          "coreTerms": [],
+          "snippetPreview": "2 days ago · The meaning of FICTIONAL is of, relating to, characterized by, or occurring in fiction : invented by the imagination. How …"
+        },
+        {
+          "query": "In a fictional cafe there is exactly ONE cook named Rae working alone today. The second cook is absent. A delivery is due in 15 minutes. Restate the constraints without adding staff.",
+          "title": "Fictional – Bring AI Characters to Life",
+          "url": "http://fictional.ai/",
+          "source": "fictional.ai",
+          "rank": 2,
+          "allowed": true,
+          "reason": "NON_LYRICS_PASS",
+          "neededHits": 0,
+          "matchedTerms": [],
+          "coreTerms": [],
+          "snippetPreview": "Bring AI characters to life on Fictional. Living, visual and proactive: characters post photos and short videos, chat with you and keep …"
+        },
+        {
+          "query": "In a fictional cafe there is exactly ONE cook named Rae working alone today. The second cook is absent. A delivery is due in 15 minutes. Restate the constraints without adding staff.",
+          "title": "FICTION Definition & Meaning - Merriam-Webster",
+          "url": "https://www.merriam-webster.com/dictionary/fiction",
+          "source": "www.merriam-webster.com",
+          "rank": 3,
+          "allowed": true,
+          "reason": "NON_LYRICS_PASS",
+          "neededHits": 0,
+          "matchedTerms": [],
+          "coreTerms": [],
+          "snippetPreview": "3 days ago · The meaning of FICTION is something invented by the imagination or feigned; specifically : an invented story. How to …"
+        },
+        {
+          "query": "In a fictional cafe there is exactly ONE cook named Rae working alone today. The second cook is absent. A delivery is due in 15 minutes. Restate the constraints without adding staff.",
+          "title": "FICTIONAL | English meaning - Cambridge Dictionary",
+          "url": "https://dictionary.cambridge.org/dictionary/english/fictional",
+          "source": "dictionary.cambridge.org",
+          "rank": 4,
+          "allowed": true,
+          "reason": "NON_LYRICS_PASS",
+          "neededHits": 0,
+          "matchedTerms": [],
+          "coreTerms": [],
+          "snippetPreview": "(Definition of fictional from the Cambridge Advanced Learner's Dictionary & Thesaurus © Cambridge University Press)"
+        },
+        {
+          "query": "In a fictional cafe there is exactly ONE cook named Rae working alone today. The second cook is absent. A delivery is due in 15 minutes. Restate the constraints without adding staff.",
+          "title": "Fictional - definition of fictional by The Free Dictionary",
+          "url": "https://www.thefreedictionary.com/fictional",
+          "source": "www.thefreedictionary.com",
+          "rank": 5,
+          "allowed": true,
+          "reason": "NON_LYRICS_PASS",
+          "neededHits": 0,
+          "matchedTerms": [],
+          "coreTerms": [],
+          "snippetPreview": "Fictional also means 'relating to fiction and the telling of stories'. James Joyce's final fictional experiment was a novel composed …"
+        },
+        {
+          "query": "In a fictional cafe there is exactly ONE cook named Rae working alone today. The second cook is absent. A delivery is due in 15 minutes. Restate the constraints without adding staff.",
+          "title": "FICTIONAL Definition & Meaning | Dictionary .com",
+          "url": "https://www.dictionary.com/browse/fictional",
+          "source": "www.dictionary.com",
+          "rank": 6,
+          "allowed": true,
+          "reason": "NON_LYRICS_PASS",
+          "neededHits": 0,
+          "matchedTerms": [],
+          "coreTerms": [],
+          "snippetPreview": "Fictional is almost always applied to stories and characters that are part of creative works, like books and movies, whereas fictitious …"
+        },
+        {
+          "query": "In a fictional cafe there is exactly ONE cook named Rae working alone today. The second cook is absent. A delivery is due in 15 minutes. Restate the constraints without adding staff.",
+          "title": "Fiction - Wikipedia",
+          "url": "https://en.wikipedia.org/wiki/Fiction",
+          "source": "en.wikipedia.org",
+          "rank": 7,
+          "allowed": true,
+          "reason": "NON_LYRICS_PASS",
+          "neededHits": 0,
+          "matchedTerms": [],
+          "coreTerms": [],
+          "snippetPreview": "Aside from real-world connections, some fictional works may depict characters and events within their own context, entirely separate …"
+        },
+        {
+          "query": "In a fictional cafe there is exactly ONE cook named Rae working alone today. The second cook is absent. A delivery is due in 15 minutes. Restate the constraints without adding staff.",
+          "title": "fictional - Wiktionary, the free dictionary",
+          "url": "https://en.wiktionary.org/wiki/fictional",
+          "source": "en.wiktionary.org",
+          "rank": 8,
+          "allowed": true,
+          "reason": "NON_LYRICS_PASS",
+          "neededHits": 0,
+          "matchedTerms": [],
+          "coreTerms": [],
+          "snippetPreview": "Oct 13, 2026 · fictional (comparative more fictional, superlative most fictional) Invented, as opposed to real. Synonyms: imaginary, …"
+        }
+      ],
+      "songIdentity": {},
+      "songDiscoveryPlan": [],
+      "lyricsRescueSearchDebug": [],
+      "lyricsMaxPageAttempts": 0,
+      "lyricsFallbackExhausted": false,
+      "rawPromptStored": false
+    },
+    "trace": [
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794851111938,
+        "phase": "RESEARCH_STARTED",
+        "activity": "Online research started",
+        "provider": "bounded-web-search-chain-v1",
+        "site": "",
+        "url": ""
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794851111939,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794851112074,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "activity": "No usable results from provider",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "httpStatus": 202,
+        "resultCount": 0
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794851112074,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794851112205,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "activity": "No usable results from provider",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "httpStatus": 202,
+        "resultCount": 0
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794851112205,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794851112589,
+        "phase": "SEARCH_PROVIDER_RESULTS",
+        "activity": "Search results found",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "httpStatus": 200,
+        "resultCount": 8
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794851112589,
+        "phase": "SEARCH_PROVIDER_SELECTED",
+        "activity": "Using bing-html",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "resultCount": 8
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794851112591,
+        "phase": "PAGE_FETCH_STARTED",
+        "activity": "Visiting result page",
+        "provider": "web-page",
+        "site": "www.merriam-webster.com",
+        "url": "https://www.merriam-webster.com/dictionary/fictional"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794851112638,
+        "phase": "PAGE_FETCH_ERROR",
+        "activity": "Page fetch failed",
+        "provider": "web-page",
+        "site": "www.merriam-webster.com",
+        "url": "https://www.merriam-webster.com/dictionary/fictional",
+        "errorType": "HTTPError"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794851112640,
+        "phase": "PAGE_FETCH_STARTED",
+        "activity": "Visiting result page",
+        "provider": "web-page",
+        "site": "fictional.ai",
+        "url": "http://fictional.ai/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794851112718,
+        "phase": "PAGE_FETCH_COMPLETE",
+        "activity": "Page fetched",
+        "provider": "web-page",
+        "site": "fictional.ai",
+        "url": "http://fictional.ai/",
+        "httpStatus": 200,
+        "responseBytes": 6798
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794851112720,
+        "phase": "PAGE_FETCH_STARTED",
+        "activity": "Visiting result page",
+        "provider": "web-page",
+        "site": "dictionary.cambridge.org",
+        "url": "https://dictionary.cambridge.org/dictionary/english/fictional"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794851113367,
+        "phase": "PAGE_FETCH_COMPLETE",
+        "activity": "Page fetched",
+        "provider": "web-page",
+        "site": "dictionary.cambridge.org",
+        "url": "https://dictionary.cambridge.org/dictionary/english/fictional",
+        "httpStatus": 200,
+        "responseBytes": 292063
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794851113368,
+        "phase": "RESEARCH_COMPLETE",
+        "activity": "Online research complete",
+        "provider": "bounded-web-search-chain-v1",
+        "site": "",
+        "url": "",
+        "resultCount": 3
+      }
+    ],
+    "sources": [
+      {
+        "title": "FICTIONAL Definition & Meaning - Merriam-Webster",
+        "source": "www.merriam-webster.com",
+        "url": "https://www.merriam-webster.com/dictionary/fictional",
+        "snippet": "",
+        "rank": null
+      },
+      {
+        "title": "Fictional – Bring AI Characters to Life",
+        "source": "fictional.ai",
+        "url": "http://fictional.ai/",
+        "snippet": "",
+        "rank": null
+      },
+      {
+        "title": "FICTIONAL | English meaning - Cambridge Dictionary",
+        "source": "dictionary.cambridge.org",
+        "url": "https://dictionary.cambridge.org/dictionary/english/fictional",
+        "snippet": "",
+        "rank": null
+      }
+    ],
+    "sourceSites": [
+      "dictionary.cambridge.org",
+      "fictional.ai",
+      "www.merriam-webster.com"
+    ],
+    "widgets": [
+      {
+        "contract": "swrlz-widget-v1",
+        "kind": "search-results",
+        "version": 1,
+        "title": "Online search · In a fictional cafe there is exactly ONE cook named Rae working alone today. The second co",
+        "provider": "bounded-web-search-chain-v1",
+        "data": {
+          "query": "In a fictional cafe there is exactly ONE cook named Rae working alone today. The second cook is absent. A delivery is due in 15 minutes. Restate the constraints without adding staff.",
+          "results": [
+            {
+              "title": "FICTIONAL Definition & Meaning - Merriam-Webster",
+              "url": "https://www.merriam-webster.com/dictionary/fictional",
+              "snippet": "2 days ago · The meaning of FICTIONAL is of, relating to, characterized by, or occurring in fiction : invented by the imagination. How …",
+              "source": "www.merriam-webster.com"
+            },
+            {
+              "title": "Fictional – Bring AI Characters to Life",
+              "url": "http://fictional.ai/",
+              "snippet": "Bring AI characters to life on Fictional. Living, visual and proactive: characters post photos and short videos, chat with you and keep …",
+              "source": "fictional.ai"
+            },
+            {
+              "title": "FICTIONAL | English meaning - Cambridge Dictionary",
+              "url": "https://dictionary.cambridge.org/dictionary/english/fictional",
+              "snippet": "(Definition of fictional from the Cambridge Advanced Learner's Dictionary & Thesaurus © Cambridge University Press)",
+              "source": "dictionary.cambridge.org"
+            }
+          ]
+        }
+      }
+    ],
+    "widgetKinds": [
+      "search-results"
+    ],
+    "statusTrail": [
+      {
+        "phase": "QUEUED",
+        "reason": "Accepted by Workstation",
+        "atUnixMs": 1794851111931
+      },
+      {
+        "phase": "GENERATING",
+        "reason": "Workstation admitted generation",
+        "atUnixMs": 1794851111934
+      },
+      {
+        "seq": 1,
+        "phase": "PROGRAMMING_INTENT",
+        "reason": "",
+        "atUnixMs": 1794851111936
+      },
+      {
+        "seq": 2,
+        "phase": "SEARCH_STARTED",
+        "reason": "I’m on it — looking up In a fictional cafe there is exactly ONE cook named Rae working alone today. The second cook is absent. A delivery is due in 15 minutes. Restate the constraints without adding s",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH"
+        ],
+        "atUnixMs": 1794851111938
+      },
+      {
+        "seq": 3,
+        "phase": "RESEARCH_STARTED",
+        "reason": "Online research started",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "",
+        "url": "",
+        "provider": "bounded-web-search-chain-v1",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794851111939
+      },
+      {
+        "seq": 4,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "provider": "duckduckgo-html",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794851111939
+      },
+      {
+        "seq": 5,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "reason": "No usable results from provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "provider": "duckduckgo-html",
+        "httpStatus": 202,
+        "resultCount": 0,
+        "atUnixMs": 1794851112074
+      },
+      {
+        "seq": 6,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "provider": "duckduckgo-lite",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794851112074
+      },
+      {
+        "seq": 7,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "reason": "No usable results from provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "provider": "duckduckgo-lite",
+        "httpStatus": 202,
+        "resultCount": 0,
+        "atUnixMs": 1794851112205
+      },
+      {
+        "seq": 8,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "provider": "bing-html",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794851112205
+      },
+      {
+        "seq": 9,
+        "phase": "SEARCH_PROVIDER_RESULTS",
+        "reason": "Search results found",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "provider": "bing-html",
+        "httpStatus": 200,
+        "resultCount": 8,
+        "atUnixMs": 1794851112589
+      },
+      {
+        "seq": 10,
+        "phase": "SEARCH_PROVIDER_SELECTED",
+        "reason": "Using bing-html",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "provider": "bing-html",
+        "httpStatus": null,
+        "resultCount": 8,
+        "atUnixMs": 1794851112589
+      },
+      {
+        "seq": 11,
+        "phase": "PAGE_FETCH_STARTED",
+        "reason": "Visiting result page",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.merriam-webster.com",
+        "url": "https://www.merriam-webster.com/dictionary/fictional",
+        "provider": "web-page",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794851112591
+      },
+      {
+        "seq": 12,
+        "phase": "PAGE_FETCH_ERROR",
+        "reason": "Page fetch failed",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.merriam-webster.com",
+        "url": "https://www.merriam-webster.com/dictionary/fictional",
+        "provider": "web-page",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794851112638
+      },
+      {
+        "seq": 13,
+        "phase": "PAGE_FETCH_STARTED",
+        "reason": "Visiting result page",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "fictional.ai",
+        "url": "http://fictional.ai/",
+        "provider": "web-page",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794851112640
+      },
+      {
+        "seq": 14,
+        "phase": "PAGE_FETCH_COMPLETE",
+        "reason": "Page fetched",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "fictional.ai",
+        "url": "http://fictional.ai/",
+        "provider": "web-page",
+        "httpStatus": 200,
+        "resultCount": null,
+        "atUnixMs": 1794851112718
+      },
+      {
+        "seq": 15,
+        "phase": "PAGE_FETCH_STARTED",
+        "reason": "Visiting result page",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "dictionary.cambridge.org",
+        "url": "https://dictionary.cambridge.org/dictionary/english/fictional",
+        "provider": "web-page",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794851112720
+      },
+      {
+        "seq": 16,
+        "phase": "PAGE_FETCH_COMPLETE",
+        "reason": "Page fetched",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "dictionary.cambridge.org",
+        "url": "https://dictionary.cambridge.org/dictionary/english/fictional",
+        "provider": "web-page",
+        "httpStatus": 200,
+        "resultCount": null,
+        "atUnixMs": 1794851113368
+      },
+      {
+        "seq": 17,
+        "phase": "RESEARCH_COMPLETE",
+        "reason": "Online research complete",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "",
+        "url": "",
+        "provider": "bounded-web-search-chain-v1",
+        "httpStatus": null,
+        "resultCount": 3,
+        "atUnixMs": 1794851113368
+      },
+      {
+        "seq": 18,
+        "phase": "ONLINE_RESEARCH",
+        "reason": "OK",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH"
+        ],
+        "atUnixMs": 1794851113368
+      },
+      {
+        "seq": 19,
+        "phase": "WIDGET_READY",
+        "reason": "search-results",
+        "categories": [
+          "WIDGET"
+        ],
+        "atUnixMs": 1794851113369
+      },
+      {
+        "seq": 20,
+        "phase": "SEARCH_COMPLETE",
+        "reason": "Online retrieval ok.",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH"
+        ],
+        "atUnixMs": 1794851113369
+      },
+      {
+        "seq": 21,
+        "phase": "DIAGNOSTIC_READY",
+        "reason": "",
+        "atUnixMs": 1794851113371
+      },
+      {
+        "seq": 22,
+        "phase": "RESPONSE_COGNITION",
+        "reason": "",
+        "atUnixMs": 1794851113371
+      },
+      {
+        "seq": 23,
+        "phase": "LOADING",
+        "reason": "",
+        "categories": [],
+        "atUnixMs": 1794851113372
+      },
+      {
+        "seq": 24,
+        "phase": "PROFILE_CONTEXT_READY",
+        "reason": "swrlz-qwen35-profile-v5",
+        "categories": [],
+        "atUnixMs": 1794851113386
+      },
+      {
+        "seq": 25,
+        "phase": "CONTEXT_BUDGETED",
+        "reason": "",
+        "atUnixMs": 1794851113386
+      },
+      {
+        "seq": 26,
+        "phase": "GENERATING",
+        "reason": "",
+        "categories": [],
+        "atUnixMs": 1794851113386
+      },
+      {
+        "seq": 27,
+        "phase": "RESOURCE_ALLOCATED",
+        "reason": "Workstation inference budget active",
+        "atUnixMs": 1794851113387
+      },
+      {
+        "seq": 28,
+        "phase": "CANDIDATE_ATTEMPT",
+        "reason": "attempt=1",
+        "atUnixMs": 1794851156382
+      },
+      {
+        "seq": 29,
+        "phase": "CANDIDATE_NOT_APPLICABLE",
+        "reason": "",
+        "atUnixMs": 1794851156382
+      },
+      {
+        "seq": 30,
+        "phase": "GENERATION_TELEMETRY",
+        "reason": "",
+        "atUnixMs": 1794851156382
+      },
+      {
+        "seq": 32,
+        "phase": "COMPLETE",
+        "reason": "",
+        "atUnixMs": 1794851156383
+      },
+      {
+        "phase": "PERSISTING",
+        "reason": "Saving the response to the chat",
+        "atUnixMs": 1794851156383
+      }
+    ],
+    "responseCognition": {
+      "schema": "swrlz-response-cognition-v1",
+      "relation": "standalone",
+      "operation": "respond",
+      "historyAvailable": false,
+      "historyTurns": 0,
+      "anchorUserIndex": null,
+      "anchorAssistantIndex": null,
+      "explicitReference": true,
+      "questionLike": false,
+      "detailMode": "normal",
+      "requestedCount": null,
+      "outputOnly": false,
+      "preserveConstraint": false,
+      "programming": false,
+      "deliverable": "none",
+      "sourcePreference": "unspecified"
+    },
+    "programmingIntent": {
+      "schema": "swrlz-programming-intent-v1",
+      "codingTask": false,
+      "projectContext": "none",
+      "changeClass": "none",
+      "artifactContinuation": false,
+      "artifactMutationRequested": false,
+      "artifactTargetId": "",
+      "artifactTargetMessageId": "",
+      "baseRevision": 0,
+      "baseSourceHash": "",
+      "newProject": false,
+      "source": "brain-router"
+    },
+    "candidateValidation": {
+      "status": "NOT_APPLICABLE",
+      "reasons": [],
+      "finishReason": "stop",
+      "generationComplete": true
+    },
+    "candidateAttempts": [
+      {
+        "schema": "swrlz-candidate-attempt-v1",
+        "attempt": 1,
+        "trigger": "initial-streaming",
+        "durationMs": 42994.66,
+        "firstTokenLatencyMs": 39822.334,
+        "deltaChunks": 38,
+        "finishReason": "stop",
+        "requestedMaxTokens": 1024,
+        "usage": {},
+        "candidateFingerprint": "96a2999aca9dc094",
+        "changedFromPreviousAttempt": null,
+        "changedFromRepairTarget": null,
+        "validationStatus": "NOT_APPLICABLE",
+        "validationReasons": [],
+        "accepted": false
+      }
+    ],
+    "generationTelemetry": {
+      "schema": "swrlz-programming-generation-telemetry-v1",
+      "attemptCount": 1,
+      "regenerationCount": 0,
+      "firstCandidateRejected": false,
+      "finalAcceptedAttempt": null,
+      "finalCandidateStatus": "NOT_APPLICABLE",
+      "guardedTurn": false,
+      "repairTurn": false,
+      "strictLanguage": false,
+      "modelLoadLatencyMs": 13.486,
+      "visibleFirstDeltaLatencyMs": 39836.664,
+      "engineTotalLatencyMs": 43009.398,
+      "totalCandidateGenerationMs": 42994.66,
+      "attempts": [
+        {
+          "schema": "swrlz-candidate-attempt-v1",
+          "attempt": 1,
+          "trigger": "initial-streaming",
+          "durationMs": 42994.66,
+          "firstTokenLatencyMs": 39822.334,
+          "deltaChunks": 38,
+          "finishReason": "stop",
+          "requestedMaxTokens": 1024,
+          "usage": {},
+          "candidateFingerprint": "96a2999aca9dc094",
+          "changedFromPreviousAttempt": null,
+          "changedFromRepairTarget": null,
+          "validationStatus": "NOT_APPLICABLE",
+          "validationReasons": [],
+          "accepted": false
+        }
+      ]
+    },
+    "engineCompletionTelemetry": {
+      "totalLatencyMs": 43009.398,
+      "loadLatencyMs": 13.486,
+      "firstDeltaLatencyMs": 39836.664
+    },
+    "contextBudget": {
+      "contextWindowTokens": 16384,
+      "inputBudgetTokens": 15232,
+      "estimatedInputTokens": 2851,
+      "reservedOutputTokens": 1024,
+      "historyMessagesDropped": 0,
+      "historyMessagesKept": 0,
+      "repairTurn": false,
+      "repairContext": {},
+      "tokenBreakdown": {
+        "system": 2806,
+        "history": 0,
+        "currentPrompt": 45,
+        "total": 2851
+      }
+    },
+    "resourcePlan": {
+      "cpuCapacity": 16,
+      "decodeThreads": 16,
+      "batchThreads": 16,
+      "maxResponseTokens": 1024
+    },
+    "responseResourceUsage": {
+      "schema": "swrlz-response-resource-usage-v1",
+      "scope": "shared-cgroup-v2",
+      "source": "cgroup-v2",
+      "isolatedModelAttribution": false,
+      "wallTimeMs": 44448,
+      "capacity": {
+        "cpuLimitCores": 16.0,
+        "cpuLimitState": "measured",
+        "memoryLimitBytes": 104000000000,
+        "memoryLimitState": "measured"
+      },
+      "observed": {
+        "cgroupCpuUsageUsecDelta": 661129305,
+        "averageCgroupCpuCores": 14.874,
+        "memoryStartBytes": 9318072320,
+        "memoryEndBytes": 9353953280,
+        "memoryEndMinusStartBytes": 35880960,
+        "memoryPeakSampledBytes": 9354280960,
+        "memoryPeakAboveStartBytes": 36208640,
+        "memorySampleCount": 46,
+        "memorySamplingIntervalMs": 1000
+      },
+      "attribution": "Shared container readings include concurrent work; they are not exclusive CPU/RAM use by this model.",
+      "routeId": "700m",
+      "configuredEngineThreadBudget": {
+        "cpuCapacity": 16,
+        "decodeThreads": 16,
+        "batchThreads": 16,
+        "maxResponseTokens": 1024
+      },
+      "outcome": "COMPLETE"
+    },
+    "finalResponse": "In a fictional cafe, there is exactly one cook named Rae working alone today. The second cook is absent. A delivery is due in 15 minutes. No additional staff are added.",
+    "finalResponseSha256": "96a2999aca9dc094977572123f879db769e90eac9242120e181cd6d33381d968",
+    "requestedModelId": "700m",
+    "selectedModelId": "700m",
+    "stationTiming": {
+      "acceptedAtUnixMs": 1794851111931,
+      "startedAtUnixMs": 1794851111934,
+      "completedAtUnixMs": 1794851156383,
+      "queueWaitMs": 3,
+      "stationRunMs": 44449,
+      "endToEndMs": 44452
+    },
+    "rawPromptStored": false,
+    "historyStored": false,
+    "preciseLocationStored": false,
+    "privateReasoningStored": false
+  }
+}
