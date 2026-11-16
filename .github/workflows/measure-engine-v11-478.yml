@@ -16,7 +16,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 concurrency:
   group: se478-ring-vertex-source-measure
@@ -42,6 +42,16 @@ jobs:
           npx playwright install --with-deps --only-shell chromium
       - name: Test Extrude/Inset ring and fill selection, full point overlays, native height preview and Apply/Cancel
         run: node projects/swrlz-forge-moba/tests/model_ring_vertex_highlight_browser_v11_478.cjs projects/swrlz-forge-moba/_release_v11_478_candidate
+      - name: Seal verified source SHA and bytes to main
+        if: success() && github.ref == 'refs/heads/main'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add projects/swrlz-forge-moba/source-manifest.json
+          if ! git diff --cached --quiet; then
+            git commit -m "§E v11.478: seal Chromium-verified ring height HTML source checksum"
+            git push origin HEAD:main
+          fi
       - name: Preserve exact source receipt and viewport screenshots
         if: always()
         uses: actions/upload-artifact@v4
