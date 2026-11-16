@@ -1,0 +1,35 @@
+name: Read-only §C Station research input route trace audit
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/hf-chat-station-research-input-audit.yml"]
+permissions: {contents: read}
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - run: python -m pip install --quiet "huggingface_hub>=0.34,<2"
+      - name: Exact Station guest payload and engine model dispatch seaming
+        run: |
+          python - <<'PY'
+          from huggingface_hub import HfApi,hf_hub_download
+          from pathlib import Path
+          import json,re
+          space="kamiloki/Swyrlz";rev=HfApi().repo_info(space,repo_type="space").sha
+          for path in ("station.py","lfm2_700m_engine.py"):
+            source=Path(hf_hub_download(space,path,repo_type="space",revision=rev)).read_text()
+            lines=source.splitlines()
+            matches=[]
+            expressions=(r"privateResearchContext",r"onlineContext",r"sourceChangeIdentity",
+                         r"codingTask",r"githubSourceChangeTask",r"generate_events(",r"lalm_station")
+            for i,line in enumerate(lines):
+              if any(expr in line for expr in expressions):
+                matches.append((i+1,line.strip()[:240]))
+            print("SWRLZ_STATION_INPUT_MATCHES "+json.dumps({"revision":rev,"path":path,"matches":matches[:190]},ensure_ascii=False),flush=True)
+            if path=="station.py":
+              for num,_ in matches:
+                if 1200<num<2100 and any("generate_events" in lines[num-1] or marker in lines[num-1] for marker in ("payload", "onlineContext","privateResearchContext","sourceChangeIdentity","codingTask")):
+                  start=max(0,num-12);end=min(len(lines),num+18)
+                  print("SWRLZ_STATION_INPUT_SECTION "+json.dumps({"start":start+1,"lines":[str(j+1)+":"+lines[j][:300] for j in range(start,end)]},ensure_ascii=False),flush=True)
+          PY
