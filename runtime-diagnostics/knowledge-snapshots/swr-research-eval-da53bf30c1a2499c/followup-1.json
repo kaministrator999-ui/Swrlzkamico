@@ -1,0 +1,15 @@
+{
+  "schema": "swrlz-knowledge-followup-v1",
+  "requestId": "swr-research-eval-da53bf30c1a2499c",
+  "modelId": "700m",
+  "eventType": "KNOWLEDGE_ACQUISITION_FOLLOWUP_1",
+  "sourceRef": "f149dd857e3d9219f5cae7da0286b5dbfec85c42",
+  "persistedAtUnixMs": 1794813359175,
+  "diagnostic": {
+    "schema": "swrlz-knowledge-followup-v1",
+    "parentRequestId": "swr-research-eval-da53bf30c1a2499c",
+    "turnIndex": 1,
+    "userText": "Make a fully original comedic parody of my fictional toaster scene. Use labeled Verse 1, Chorus, Verse 2 and Bridge, with escalating appliance mishaps and a punchline. Don't quote the lines verbatim, and don't research existing songs.",
+    "capturedAtUnixMs": 1794813359175
+  }
+}
