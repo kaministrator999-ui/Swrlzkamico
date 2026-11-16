@@ -73,8 +73,8 @@ async def main():
                                                "X-SWRLZ-Request-Id":rid},timeout=30000)
             result["http_status"]=ack.status
             if ack.status!=202:
-                result["error"]="IMPORT_OR_SEND_REJECTED:"+str(ack.status)+
-                    ":"+(await ack.text())[:300]
+                result["error"]=("IMPORT_OR_SEND_REJECTED:"+str(ack.status)+
+                                 ":"+(await ack.text())[:300])
                 return 1
             payload=await ack.json()
             if payload.get("requestId")!=rid or payload.get("accepted") is False:
