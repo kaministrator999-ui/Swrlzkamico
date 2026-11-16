@@ -7,7 +7,7 @@ on:
       - 'scripts/hf_guest_prose_intent_override_v1.py'
 permissions: {contents: read}
 concurrency:
-  group: swrlz-chat-guest-eval
+  group: swrlz-hf-space-deployment
   cancel-in-progress: false
 jobs:
   release:
@@ -34,11 +34,13 @@ jobs:
           retention-days: 90
           if-no-files-found: error
       - name: Publish exact revision-guarded coder intent correction
+        id: published
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
           SWRLZ_PROSE_OVERRIDE_APPROVED: '1'
         run: python -u scripts/hf_guest_prose_intent_override_v1.py publish
       - name: Confirm live 9B ready before eval
+        id: ready
         run: |
           python - <<'PY'
           import json,time,urllib.request
@@ -89,6 +91,12 @@ jobs:
           path: reports/no-code-precedence-acceptance/
           retention-days: 21
           if-no-files-found: ignore
-      - name: Require both live cases pass
-        if: steps.tests.outputs.failures != '0'
+      - name: Roll back exact coder source when live acceptance or readiness fails
+        if: ${{ always() && steps.published.outcome == 'success' && (steps.ready.outcome != 'success' || steps.tests.outputs.failures != '0') }}
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          SWRLZ_PROSE_OVERRIDE_APPROVED: '1'
+        run: python -u scripts/hf_guest_prose_intent_override_v1.py rollback
+      - name: Require live readiness and all regression cases accepted
+        if: ${{ always() && steps.published.outcome == 'success' && (steps.ready.outcome != 'success' || steps.tests.outputs.failures != '0') }}
         run: exit 1
