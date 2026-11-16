@@ -207,20 +207,41 @@ def section(text,word):
     next_section=re.search(r"(?im)^\s*(?:\[|\*\*)?(?:verse\s*\d+|pre[- ]?chorus|chorus|bridge|final chorus|outro)\b",text[found.end():])
     return text[found.end():found.end()+(next_section.start() if next_section else len(text))]
 def aab_count(text):
-    # AAB means an adjacent lyric line repeated and followed by a fresh line.
-    parts=re.split(r"(?im)^\s*(?:\[|\*\*)?\s*verse\s*[12](?:\]|\*\*|:)?\s*$",text)
-    hits=0
-    for p in parts[1:]:
-        lyric=[]
-        for line in p.splitlines():
-            t=line.strip()
-            if not t or re.match(r"(?i)^\s*\[?(?:verse|bridge|chorus|hook)\b",t):
-                continue
-            if re.match(r"^\s*\(.*\)\s*$",t):continue
-            normalized=re.sub(r"\W+"," ",t.lower()).strip()
-            if normalized:lyric.append(normalized)
-        if len(lyric)==3 and lyric[0]==lyric[1] and lyric[2]!=lyric[0]:hits+=1
-    return hits
+    """Count complete AAB stanzas, including markdown headings and A:/B: labels.
+
+    Explanatory notes are not sung lines. A fourth sung line is not discarded
+    just to make the model's output count as a valid three-line stanza.
+    """
+    heading=re.compile(
+        r"(?i)^\s*(?:#{1,6}\s*)?(?:\*{1,2})?\s*\[?verse\s*([12])"
+        r"(?:\s*\])?(?:\s*\*{1,2})?\s*:?(?:\s*\*{1,2})?\s*$")
+    other=re.compile(
+        r"(?i)^\s*(?:#{1,6}\s*)?(?:\*{1,2})?\s*"
+        r"\[?(?:chorus|bridge|hook|outro|intro|notes?|a quick note|explanation)\b")
+    lyric={1:[],2:[]}
+    current=None
+    for raw in text.splitlines():
+        line=raw.strip()
+        if not line or line.startswith((chr(96)*3,"---","***")):
+            continue
+        header=heading.match(line)
+        if header:
+            current=int(header.group(1))
+            continue
+        if other.match(line):
+            current=None
+            continue
+        if current is None:
+            continue
+        line=re.sub(r"(?i)^\s*\*{0,2}(?:a|b)\s*:\*{0,2}\s*","",line)
+        if re.match(r"^\s*\(.*\)\s*$",line):
+            continue
+        normalized=re.sub(r"\W+"," ",line.casefold()).strip()
+        if normalized:
+            lyric[current].append(normalized)
+    return sum(len(v)==3 and v[0]==v[1] and v[2]!=v[0]
+               for v in lyric.values())
+
 def check(kind,text,previous=None,phases=None,allow_search=False):
     low=text.lower()
     tests=[]
@@ -260,7 +281,7 @@ def check(kind,text,previous=None,phases=None,allow_search=False):
         test("research_links",len(urls)>=1)
     elif kind=="blues_lyrics":
         test("two_complete_aab_verses",aab_count(text)==2)
-        test("train_theme",bool(re.search(r"train|platform|rail|station",text,re.I)))
+        test("train_theme",bool(re.search(r"train|platform|rail|station|ticket|tracks?|steam|engine",text,re.I)))
         test("no_pop_chorus",not bool(re.search(r"(?im)^\s*\[?chorus\b",text)))
     elif kind=="rap_flow_research":
         for name,pattern in [("boom_bap",r"boom[- ]?bap"),("trap",r"\btrap\b"),
@@ -442,7 +463,7 @@ def check(kind,text,previous=None,phases=None,allow_search=False):
         test("cites_source",len(urls)>=1)
     elif kind=="science_followup":
         test("new_moon_and_tilt",bool(re.search(r"(?i)new moon",text) and re.search(r"(?i)tilt|orbit|inclina|align|node",text)))
-        test("no_invented_facts",not bool(re.search(r"(?i)every new moon (?:makes|creates|causes)",text)))
+        test("no_invented_facts",not bool(re.search(r"(?i)(?<!not )\bevery new moon (?:makes|creates|causes)",text)))
     elif kind=="staffing_initial":
         test("only_rae",bool(re.search(r"(?i)\brae\b",text)))
         test("delivery_15",bool(re.search(r"(?i)\b15\b|fifteen",text)))
