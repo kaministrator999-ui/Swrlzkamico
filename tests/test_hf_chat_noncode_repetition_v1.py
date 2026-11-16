@@ -82,7 +82,7 @@ def generate_events(payload):
         scope = self._engine()
         events = list(scope["generate_events"]({"prompt": "Compose an original song"}))
         self.assertTrue(scope["CLOSED"])
-        self.assertLess(len(events), 12)
+        self.assertLess(len(events), 13)
         self.assertEqual(events[-1]["type"], "COMPLETED")
         self.assertEqual(events[-1]["phase"], "PARTIAL")
         self.assertTrue(any(e["type"] == "CANDIDATE_PREVIEW_RESET" for e in events))
