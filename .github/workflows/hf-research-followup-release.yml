@@ -38,21 +38,14 @@ jobs:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
           SWRLZ_FOLLOWUP_APPROVED: '1'
         run: python -u scripts/hf_research_no_lookup_followup_v1.py publish
-      - name: Wait for serving revision to settle beyond previous worker
+      - name: Confirm exact approved source revision is RUNNING before QA
+        id: revision
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: |
-          python - <<'PY'
-          import urllib.request,json,time
-          url='https://kamiloki-swyrlz.hf.space/api/hf/qwen35-ready'
-          for i in range(25):
-              try:
-                  with urllib.request.urlopen(url,timeout=12) as r:v=json.load(r)
-                  if v.get('ready') is True and i>=3:
-                      print('RESEARCH_FOLLOWUP_WORKER_READY',i,flush=True);break
-              except Exception as e:print('RESTART_WAIT',i,type(e).__name__,flush=True)
-              time.sleep(8)
-          else:raise RuntimeError('Serving model not ready')
-          time.sleep(75)
-          PY
+          python -m py_compile scripts/hf_wait_exact_serving_revision.py
+          SWRLZ_REVISION_GATE_SELFTEST=1 python -u scripts/hf_wait_exact_serving_revision.py
+          python -u scripts/hf_wait_exact_serving_revision.py --manifest reports/swrlz-research-followup-v1/manifest.json --limit-seconds 900 --poll-seconds 12
       - name: Verify no-repeat-lookup Diablo II conversation from primary publisher answer
         id: verify
         shell: bash
@@ -94,13 +87,13 @@ jobs:
           retention-days: 21
           if-no-files-found: ignore
       - name: Restore exact prior engine if the live no-lookup task fails
-        if: steps.verify.outputs.exit != '0'
+        if: ${{ always() && (steps.verify.outputs.exit != '0' || steps.revision.outcome != 'success') }}
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
           SWRLZ_FOLLOWUP_APPROVED: '1'
         run: python -u scripts/hf_research_no_lookup_followup_v1.py rollback
       - name: Require completed cited-answer continuity
-        if: steps.verify.outputs.exit != '0'
+        if: ${{ always() && (steps.verify.outputs.exit != '0' || steps.revision.outcome != 'success') }}
         run: |
           echo "::warning::Cited research continuation did not pass; see rollback and transcripts."
           exit 1
