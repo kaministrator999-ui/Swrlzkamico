@@ -97,6 +97,30 @@ jobs:
           assert not metadata["facetsNeedingVerification"],metadata
           assert len(packet)>=3,packet
           PY
+      - name: Confirm topic-level encyclopedia fallback with actual safe public fetcher
+        run: |
+          python - <<'PY'
+          import importlib.util,json,sys
+          from huggingface_hub import HfApi,hf_hub_download
+          from api.adaptive_public_research_v1 import encyclopedia_topic,plan_public_research
+          from api.generic_public_source_fallback_v1 import wikipedia_public_fallback
+          space="kamiloki/Swyrlz"
+          rev=HfApi().repo_info(space,repo_type="space").sha
+          path=hf_hub_download(space,"api/online_research.py",repo_type="space",revision=rev)
+          spec=importlib.util.spec_from_file_location("swrlz_adaptive_public_safe_fetch",path)
+          module=importlib.util.module_from_spec(spec)
+          sys.modules[spec.name]=module
+          spec.loader.exec_module(module)
+          question="Explain how eclipses work, including lunar geometry, eclipse types, and eye safety."
+          topic=encyclopedia_topic(plan_public_research(question))
+          sources=wikipedia_public_fallback(topic,module._page_fetch)
+          report={"topic":topic,"sourceCount":len(sources),
+                  "titles":[x.get("title") for x in sources],
+                  "urls":[x.get("url") for x in sources]}
+          print("SWRLZ_ADAPTIVE_REAL_OVERVIEW_SOURCE "+json.dumps(report),flush=True)
+          assert topic=="eclipse",report
+          assert any("eclipse" in x.get("title","").lower() for x in sources),report
+          PY
       - uses: actions/upload-artifact@v4
         if: always()
         with:
