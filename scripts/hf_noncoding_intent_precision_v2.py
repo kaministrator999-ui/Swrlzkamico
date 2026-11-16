@@ -31,6 +31,18 @@ HELPER=r'''def _swrlz_noncode_deliverable_v2(text: str) -> bool:
     body=" ".join(str(text or "").split())
     if not body:
         return False
+    # Explicit list edits and debugging advice are text deliverables even
+    # when the sentence quotes code names or says "not inspected the code".
+    text_revision=bool(re.search(
+        r"(?i)\b(?:list\s+exactly\s+(?:these|the|three|\d+)|"
+        r"revise\s+only\s+task\s*\d+|"
+        r"(?:update|revise)\s+(?:the\s+)?"
+        r"(?:debugging|inspection|troubleshooting)\s+(?:checks|steps|advice))\b",
+        body))
+    if text_revision and not re.search(
+        r"(?i)\b(?:write|generate|implement|patch|edit|modify)\b"
+        r".{0,65}\b(?:code|source|script|file|function)\b",body):
+        return True
     # Never override a request to produce or change executable source.
     code_delivery=bool(re.search(
         r"(?i)\b(?:write|generate|implement|build|create|make|fix|repair|"
@@ -58,7 +70,7 @@ HELPER=r'''def _swrlz_noncode_deliverable_v2(text: str) -> bool:
         return True
     explicit_noncode=bool(re.search(
         r"(?i)\b(?:state|explain|describe|summari[sz]e|compare|report|list|"
-        r"outline|discuss|acknowledge|answer|identify|recommend|plan|"
+        r"outline|discuss|acknowledge|answer|identify|recommend|plan|suggest|"
         r"what\s+is|what\s+are|what's|which\s+(?:one|is)|why|"
         r"how\s+(?:does|do|would)|can\s+we\s+claim|"
         r"give\s+(?:three|\d+)\s+concrete\s+checks|"
@@ -119,6 +131,8 @@ NONCODE=(
     "Simply acknowledge these two original lyrics I wrote; don't produce new lyrics yet.",
     "Explain how to debug why a mobile touch button ignores taps; no code required.",
     "Research AAB blues structure and explain which phrase repeats, with citations.",
+    "Suggest three things to inspect when a mobile web button ignores touch. You have not seen my code.",
+    "Now the same issue also happens in desktop Chrome. Update the debugging checks to include overlapping elements. You have not inspected any code.",
     "A synthetic performance report shows version A at 140ms and B at 180ms on different hosts. Can we claim a speed improvement?",
 )
 CODE=(
@@ -132,6 +146,7 @@ CODE=(
     "Show the complete CSS source for this layout.",
     "Please provide code implementing a small song lyrics editor.",
     "Generate a script that tests a browser application.",
+    "Write Python code to update debugging checks for the browser.",
     "Explain the fix without writing code, then write the complete Python function.",
 )
 
