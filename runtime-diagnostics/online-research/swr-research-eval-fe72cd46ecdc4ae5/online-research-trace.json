@@ -1,0 +1,265 @@
+{
+  "schema": "swrlz-github-online-research-trace-v1",
+  "requestId": "swr-research-eval-fe72cd46ecdc4ae5",
+  "modelId": "700m",
+  "eventType": "ONLINE_RESEARCH_TRACE",
+  "sourceRef": "f149dd857e3d9219f5cae7da0286b5dbfec85c42",
+  "persistedAtUnixMs": 1794855637684,
+  "diagnostic": {
+    "schema": "swrlz-online-research-log-v1",
+    "research": {
+      "contract": "swrlz-online-camera-v1",
+      "observabilityRevision": "v181-song-metadata-clean-form-integrity",
+      "kind": "search",
+      "status": "OK",
+      "reason": "explicit-web-intent",
+      "provider": "bounded-web-search-chain-v1",
+      "resultCount": 1,
+      "widgetKinds": [
+        "search-results"
+      ],
+      "sourceCount": 1,
+      "locationRequired": false,
+      "usedExplicitClientLocation": false,
+      "elapsedMs": 766,
+      "lyricsSourceAttemptCount": 0,
+      "lyricsFetchDebug": [],
+      "blockedLyricsSourceFamilies": [],
+      "musicStructureDebug": null,
+      "candidateAdmissionDebug": [
+        {
+          "query": "Research using a public science education source why Earth has seasons. Explain axial tilt and sunlight angle, and distinguish this from the incorrect claim that seasons are caused mainly by Earth's distance from the Sun. Include a source URL.",
+          "title": "Research - Wikipedia",
+          "url": "https://en.wikipedia.org/wiki/Research",
+          "source": "en.wikipedia.org",
+          "rank": 1,
+          "allowed": true,
+          "reason": "NON_LYRICS_PASS",
+          "neededHits": 0,
+          "matchedTerms": [],
+          "coreTerms": [],
+          "snippetPreview": "Research is creative and systematic work undertaken to increase the stock of knowledge. [1] It involves the collection, organization, …"
+        },
+        {
+          "query": "Research using a public science education source why Earth has seasons. Explain axial tilt and sunlight angle, and distinguish this from the incorrect claim that seasons are caused mainly by Earth's distance from the Sun. Include a source URL.",
+          "title": "RESEARCH Definition & Meaning - Merriam-Webster",
+          "url": "https://www.merriam-webster.com/dictionary/research",
+          "source": "www.merriam-webster.com",
+          "rank": 2,
+          "allowed": true,
+          "reason": "NON_LYRICS_PASS",
+          "neededHits": 0,
+          "matchedTerms": [],
+          "coreTerms": [],
+          "snippetPreview": "Nov 9, 2026 · The meaning of RESEARCH is studious inquiry or examination; especially : investigation or experimentation aimed at …"
+        },
+        {
+          "query": "Research using a public science education source why Earth has seasons. Explain axial tilt and sunlight angle, and distinguish this from the incorrect claim that seasons are caused mainly by Earth's distance from the Sun. Include a source URL.",
+          "title": "ResearchGate | Find and share research",
+          "url": "https://www.researchgate.net/",
+          "source": "www.researchgate.net",
+          "rank": 3,
+          "allowed": true,
+          "reason": "NON_LYRICS_PASS",
+          "neededHits": 0,
+          "matchedTerms": [],
+          "coreTerms": [],
+          "snippetPreview": "Access 135+ million publications and connect with 20+ million researchers. Join for free and gain visibility by uploading your research."
+        },
+        {
+          "query": "Research using a public science education source why Earth has seasons. Explain axial tilt and sunlight angle, and distinguish this from the incorrect claim that seasons are caused mainly by Earth's distance from the Sun. Include a source URL.",
+          "title": "Research",
+          "url": "https://research.nih.gov/",
+          "source": "research.nih.gov",
+          "rank": 4,
+          "allowed": true,
+          "reason": "NON_LYRICS_PASS",
+          "neededHits": 0,
+          "matchedTerms": [],
+          "coreTerms": [],
+          "snippetPreview": "Research priorities, publications and resources Navigate NIH's scientific strategy, access the world's largest biomedical literature …"
+        },
+        {
+          "query": "Research using a public science education source why Earth has seasons. Explain axial tilt and sunlight angle, and distinguish this from the incorrect claim that seasons are caused mainly by Earth's distance from the Sun. Include a source URL.",
+          "title": "Research | SPJ",
+          "url": "https://spj.science.org/journal/research",
+          "source": "spj.science.org",
+          "rank": 5,
+          "allowed": true,
+          "reason": "NON_LYRICS_PASS",
+          "neededHits": 0,
+          "matchedTerms": [],
+          "coreTerms": [],
+          "snippetPreview": "3 days ago · The Open Access journal Research, published in association with CAST, publishes innovative, wide-ranging research in …"
+        },
+        {
+          "query": "Research using a public science education source why Earth has seasons. Explain axial tilt and sunlight angle, and distinguish this from the incorrect claim that seasons are caused mainly by Earth's distance from the Sun. Include a source URL.",
+          "title": "Google Scholar",
+          "url": "https://www.scholar.google.com/",
+          "source": "www.scholar.google.com",
+          "rank": 6,
+          "allowed": true,
+          "reason": "NON_LYRICS_PASS",
+          "neededHits": 0,
+          "matchedTerms": [],
+          "coreTerms": [],
+          "snippetPreview": "Google Scholar provides a simple way to broadly search for scholarly literature. Search across a wide variety of disciplines and …"
+        },
+        {
+          "query": "Research using a public science education source why Earth has seasons. Explain axial tilt and sunlight angle, and distinguish this from the incorrect claim that seasons are caused mainly by Earth's distance from the Sun. Include a source URL.",
+          "title": "Research | Research .com",
+          "url": "https://research.com/research",
+          "source": "research.com",
+          "rank": 7,
+          "allowed": true,
+          "reason": "NON_LYRICS_PASS",
+          "neededHits": 0,
+          "matchedTerms": [],
+          "coreTerms": [],
+          "snippetPreview": "Oct 26, 2026 · Academic research is judged by more than an interesting topic or a polished paper. A strong study must ask a …"
+        },
+        {
+          "query": "Research using a public science education source why Earth has seasons. Explain axial tilt and sunlight angle, and distinguish this from the incorrect claim that seasons are caused mainly by Earth's distance from the Sun. Include a source URL.",
+          "title": "Search | ResearchGate",
+          "url": "https://www.researchgate.net/search/publications",
+          "source": "www.researchgate.net",
+          "rank": 8,
+          "allowed": true,
+          "reason": "NON_LYRICS_PASS",
+          "neededHits": 0,
+          "matchedTerms": [],
+          "coreTerms": [],
+          "snippetPreview": "Find the research you need | With 160+ million publication pages, 1+ million questions, and 25+ million researchers, this is where …"
+        }
+      ],
+      "songIdentity": {},
+      "songDiscoveryPlan": [],
+      "lyricsRescueSearchDebug": [],
+      "lyricsMaxPageAttempts": 0,
+      "lyricsFallbackExhausted": false,
+      "rawPromptStored": false
+    },
+    "trace": [
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794855636917,
+        "phase": "RESEARCH_STARTED",
+        "activity": "Online research started",
+        "provider": "bounded-web-search-chain-v1",
+        "site": "",
+        "url": ""
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794855636918,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794855637059,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "activity": "No usable results from provider",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "httpStatus": 202,
+        "resultCount": 0
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794855637059,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794855637211,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "activity": "No usable results from provider",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "httpStatus": 202,
+        "resultCount": 0
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794855637211,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794855637469,
+        "phase": "SEARCH_PROVIDER_RESULTS",
+        "activity": "Search results found",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "httpStatus": 200,
+        "resultCount": 8
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794855637469,
+        "phase": "SEARCH_PROVIDER_SELECTED",
+        "activity": "Using bing-html",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "resultCount": 8
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794855637471,
+        "phase": "PAGE_FETCH_STARTED",
+        "activity": "Visiting result page",
+        "provider": "web-page",
+        "site": "en.wikipedia.org",
+        "url": "https://en.wikipedia.org/wiki/Research"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794855637682,
+        "phase": "PAGE_FETCH_COMPLETE",
+        "activity": "Page fetched",
+        "provider": "web-page",
+        "site": "en.wikipedia.org",
+        "url": "https://en.wikipedia.org/wiki/Research",
+        "httpStatus": 200,
+        "responseBytes": 630569
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794855637683,
+        "phase": "RESEARCH_COMPLETE",
+        "activity": "Online research complete",
+        "provider": "bounded-web-search-chain-v1",
+        "site": "",
+        "url": "",
+        "resultCount": 1
+      }
+    ],
+    "sourceSites": [
+      "en.wikipedia.org"
+    ],
+    "widgetKinds": [
+      "search-results"
+    ],
+    "requestedModelId": "700m",
+    "selectedModelId": "700m",
+    "rawPromptStored": false,
+    "historyStored": false,
+    "preciseLocationStored": false
+  }
+}
