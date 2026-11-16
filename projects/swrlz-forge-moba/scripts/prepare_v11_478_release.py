@@ -13,9 +13,10 @@ assert m['name']=='§wyrl§ Engine v11.478'
 assert m['finalArtifact']=='swyrl_engine_v11_478.html'
 assert len(m['patches'])==455 and m['patches'][-1]=='patches/v11_478_ring_vertex_highlight.py'
 for file in ('model_vertex_entry_v11_477.js','model_progressive_hierarchy_v11_477.js',
-             'model_progressive_hierarchy_v11_477.css','model_ring_vertex_highlight_v11_478.js'):
+             'model_progressive_hierarchy_v11_477.css','model_ring_vertex_highlight_v11_478.js',
+             'model_ring_height_v11_478.js','model_ring_height_v11_478.css'):
  assert (ROOT/'runtime'/file).is_file()
-for file in ('model_vertex_entry_v11_477.js','model_progressive_hierarchy_v11_477.js','model_ring_vertex_highlight_v11_478.js'):
+for file in ('model_vertex_entry_v11_477.js','model_progressive_hierarchy_v11_477.js','model_ring_vertex_highlight_v11_478.js','model_ring_height_v11_478.js'):
  subprocess.run(['node','--check',str(ROOT/'runtime'/file)],check=True)
 subprocess.run(['node',str(ROOT/'tests/model_progressive_hierarchy_v11_477.mjs')],check=True)
 subprocess.run(['node',str(ROOT/'tests/model_ring_vertex_highlight_v11_478.mjs')],check=True)
