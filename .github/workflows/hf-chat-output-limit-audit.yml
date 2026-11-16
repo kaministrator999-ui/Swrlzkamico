@@ -56,3 +56,4 @@ jobs:
                 "lines":[str(i+1)+" "+lines[i] for i in range(a-1,min(b,len(lines)))]},
                 ensure_ascii=False),flush=True)
           PY
+# 2026-11-15: Re-run read-only live investigation for user-observed OUTPUTTOKENLIMIT on lyric generation.
