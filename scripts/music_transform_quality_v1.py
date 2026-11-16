@@ -174,21 +174,21 @@ def music_feedback_followup(prompt: str, history=None) -> bool:
     if not text:return False
     # Explicit positive new lookup wins. Bare references to the word 'lyrics'
     # in a correction do not trigger research.
-    if re.search(r"\\b(?:search|look\\s+up|find|fetch|retrieve|research|verify)\\b"
-                 r".{0,55}\\b(?:lyrics?|words\\s+to\\s+the\\s+song)\\b",text):
-        if not re.search(r"\\b(?:don't|do\\s+not|instead\\s+of|without|stop)\\b"
-                         r".{0,28}\\b(?:search|look\\s+up|find|fetch|retrieve|research)\\b",text):
+    if re.search(r"\b(?:search|look\s+up|find|fetch|retrieve|research|verify)\b"
+                 r".{0,55}\b(?:lyrics?|words\s+to\s+the\s+song)\b",text):
+        if not re.search(r"\b(?:don't|do\s+not|instead\s+of|without|stop)\b"
+                         r".{0,28}\b(?:search|look\s+up|find|fetch|retrieve|research)\b",text):
             return False
     critique=bool(re.search(
-        r"\\b(?:wrong|mistakes?|issues?|problems?|duplicat(?:ed|e|ion)|repeat(?:ed|ing)|"
-        r"doesn't\\s+match|didn't\\s+match|critique|feedback|you\\s+(?:missed|repeated|got)|"
-        r"not\\s+what\\s+i\\s+meant|what\\s+i\\s+(?:said|saw|noticed)|"
-        r"i\\s+was\\s+saying)\\b",text))
-    song=bool(re.search(r"\\b(?:remix|parody|remaster|song|rap|lyrics?|verses?|"
-                        r"your\\s+version|your\\s+(?:reply|response)|you\\s+wrote)\\b",text))
+        r"\b(?:wrong|mistakes?|issues?|problems?|duplicat(?:ed|e|ion)|repeat(?:ed|ing)|"
+        r"doesn't\s+match|didn't\s+match|critique|feedback|you\s+(?:missed|repeated|got)|"
+        r"not\s+what\s+i\s+meant|what\s+i\s+(?:said|saw|noticed)|"
+        r"i\s+was\s+saying)\b",text))
+    song=bool(re.search(r"\b(?:remix|parody|remaster|song|rap|lyrics?|verses?|"
+                        r"your\s+version|your\s+(?:reply|response)|you\s+wrote)\b",text))
     context=bool(any(
         isinstance(item,dict) and item.get("role")=="assistant" and
-        re.search(r"\\b(?:remix|parody|remaster|verse|chorus|song|rap)\\b",
+        re.search(r"\b(?:remix|parody|remaster|verse|chorus|song|rap)\b",
                   str(item.get("content") or item.get("text") or ""),re.I)
         for item in list(history or [])[-5:]
     ))
