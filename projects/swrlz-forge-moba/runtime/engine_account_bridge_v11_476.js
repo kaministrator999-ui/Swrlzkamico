@@ -5,6 +5,13 @@ window.SWYRL_ENGINE_STARTUP_ACCOUNT_476=Object.freeze({
  ready:()=>ready===true,
  connected:()=>se176AccountConnected===true,
  signIn:()=>signIn(),
+ retry(){
+  if(!frame)return false;
+  // Reload only the existing authenticated Chat iframe. Never touch local data.
+  const base=CHAT_ORIGIN+'/?forgeEmbed=1';
+  frame.src=base+'&reconnect='+Date.now();
+  return true;
+ },
  async list(){
   await se176RefreshProjects();
   return {
