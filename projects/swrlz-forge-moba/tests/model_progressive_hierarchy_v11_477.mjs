@@ -15,7 +15,7 @@ assert(!hierarchy.includes("{name:'Vertex',kind:'vertex'}"),'Vertex is selection
 for(const s of ["['vertex','Vertex']","['edge','Edge']","['face','Face']",
  "['single','Single vertex']","['ring','Vertex ring']","['fill','Filled vertex ring']",
  "['single','Single face']","['region','Face region']",
- "renderShapes()","function selectShape(shape)","nativeMode('vertex')","setRingAnchor"])
+ "renderShapes()","function selectShape(shape)","nativeMode('vertex')","selectRing("])
  assert(hierarchy.includes(s)||vertex.includes(s),'Missing '+s);
 assert(vertex.includes('atelierComponentOverlay'),'Overlay still native-owned');
 assert(vertex.includes('se350ModelTools.select(target.id)'),'Use one actual selected mesh');
