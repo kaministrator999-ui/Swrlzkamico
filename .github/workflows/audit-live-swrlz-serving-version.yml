@@ -1,0 +1,57 @@
+name: Diagnose §C live Space runtime vs repository source
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/audit-live-swrlz-serving-version.yml'
+permissions: {contents: read}
+jobs:
+  inspect:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - run: python -m pip install --quiet 'huggingface_hub>=0.34,<2'
+      - name: Collect current Space code revision and runtime state without changing anything
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          python - <<'PY'
+          from huggingface_hub import HfApi,hf_hub_download
+          from pathlib import Path
+          import os,json,hashlib,urllib.request
+          api=HfApi(token=os.environ.get('HF_TOKEN') or None)
+          repo='kamiloki/Swyrlz'
+          info=api.repo_info(repo,repo_type='space')
+          run=api.get_space_runtime(repo)
+          root=Path('reports/swrzl-serving-version');root.mkdir(parents=True,exist_ok=True)
+          d={'repo_sha':info.sha,'space_runtime':{
+            'stage':str(run.stage),'hardware':str(run.hardware),
+            'requested_hardware':str(run.requested_hardware),
+            'raw':{str(k):str(v)[:220] for k,v in (run.raw or {}).items() if k not in ('secrets','env','token')}},
+            'files':{},'endpoint':{}}
+          for name in ('online_tools.py','lfm2_700m_engine.py','station.py'):
+            raw=Path(hf_hub_download(repo,name,repo_type='space',revision=info.sha,token=api.token)).read_bytes()
+            d['files'][name]={'sha256':hashlib.sha256(raw).hexdigest(),
+                               'music_router_marker':'swrlz-research-music-operation-disambiguation-v1' in raw.decode('utf-8','replace'),
+                               'followup_marker':'swrlz-sourced-followup-no-lookup-v1' in raw.decode('utf-8','replace')}
+          for path in ('/api/hf/models','/api/hf/qwen35-ready'):
+            try:
+              with urllib.request.urlopen('https://kamiloki-swyrlz.hf.space'+path,timeout=20) as response:
+                data=json.load(response)
+              d['endpoint'][path]={str(k):str(v)[:250] for k,v in data.items()
+                                   if k.lower() not in ('token','secret','cookies')}
+            except Exception as e:
+              d['endpoint'][path]={'error':type(e).__name__}
+          (root/'manifest.json').write_text(json.dumps(d,indent=2)+'\n')
+          print('SPACE_SERVING_DIAGNOSTIC',json.dumps(d,ensure_ascii=False),flush=True)
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: swrlz-space-version-audit-${{ github.run_id }}
+          path: reports/swrzl-serving-version/
+          retention-days: 7
+          if-no-files-found: error
