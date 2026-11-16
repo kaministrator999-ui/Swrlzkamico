@@ -1,0 +1,42 @@
+name: Read-only inspection of live §C imported-source contract
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/audit-hf-project-source-contract.yml'
+permissions: {contents: read}
+jobs:
+  inspect:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - run: python -m pip install --quiet 'huggingface_hub>=0.34,<2'
+      - name: Read pinned source import normalization and model context
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          python - <<'PY'
+          from huggingface_hub import HfApi,hf_hub_download
+          from pathlib import Path
+          import os,hashlib,json
+          root=Path('reports/live-source-contract');root.mkdir(parents=True,exist_ok=True)
+          api=HfApi(token=os.environ.get('HF_TOKEN') or None)
+          rev=api.repo_info('kamiloki/Swyrlz',repo_type='space').sha
+          manifest={'revision':rev,'files':{}}
+          for p in ['project_source_intelligence_v1.py','project_revision_workspace.py']:
+              raw=Path(hf_hub_download('kamiloki/Swyrlz',p,repo_type='space',revision=rev,token=api.token)).read_bytes()
+              (root/p).write_bytes(raw)
+              manifest['files'][p]=hashlib.sha256(raw).hexdigest()
+          (root/'manifest.json').write_text(json.dumps(manifest))
+          print('PROJECT_SOURCE_CONTRACT_REVISION',rev)
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: live-import-contract-${{ github.run_id }}
+          path: reports/live-source-contract/
+          retention-days: 7
+          if-no-files-found: error
