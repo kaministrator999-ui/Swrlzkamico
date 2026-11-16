@@ -19,8 +19,8 @@ jobs:
           repo="kamiloki/Swyrlz";rev=HfApi().repo_info(repo,repo_type="space").sha
           print("SWRLZ_OUTER_ROUTE_REV",rev,flush=True)
           files={
-              "lfm2_700m_engine.py":[(742,778)],
-              "station.py":[(1390,1512)]
+              "lfm2_700m_engine.py":[(740,773)],
+              "station.py":[(1,95),(2020,2150)]
           }
           for f,ranges in files.items():
               lines=Path(hf_hub_download(repo,f,repo_type="space",revision=rev)).read_text().splitlines()
