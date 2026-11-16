@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT (owner-approved)",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.471",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_471_UV_VISIBLE_PROJECT_DELETE",
-  "reason": "Select authored Material view after UV texture import; add opt-in latitude-aware and manual U/V fit; local/account project deletion confirmation with storage receipt validation. No account records removed automatically. Real device acceptance pending.",
-  "sourceCommit": "4b6ee551de7499f048fc089d1c7b876c0fb99a73",
-  "sourceIntegritySha256": "5ab937f7eb31462f4eb6ae969f24ec9fec77346e0ab92ef4829ac58b7dc5ef94"
+  "releaseVersion": "v11.472",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_472_FULL_RES_TEXTURES",
+  "reason": "Keep imported PNG/JPEG bytes and original resolution; add user-selected GPU display sizes 4096/2048/1024/512/256, preserving account source and UV adjustments. Existing project/account limit unchanged. Requires Android/Quest acceptance.",
+  "sourceCommit": "173e201b3fe716e94be90cd037477c59fbc158de",
+  "sourceIntegritySha256": "91ff06da13b0b8e498f3f5fed81ea01026a2d172c46a03fc0e1abffb4553d323"
 }

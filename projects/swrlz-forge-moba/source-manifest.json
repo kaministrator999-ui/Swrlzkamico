@@ -465,6 +465,6 @@
     "patches/v11_471_uv_render_project_delete.py",
     "patches/v11_472_full_resolution_textures.py"
   ],
-  "finalBytes": null,
-  "finalSha256": null
+  "finalBytes": 10318077,
+  "finalSha256": "91ff06da13b0b8e498f3f5fed81ea01026a2d172c46a03fc0e1abffb4553d323"
 }
