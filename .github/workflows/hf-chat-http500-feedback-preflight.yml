@@ -3,6 +3,7 @@ on:
   push:
     paths:
       - "scripts/hf_chat_http500_feedback_v1.py"
+      - "scripts/music_transform_quality_v1.py"
       - "scripts/qwen_http500_recovery_v1.py"
       - "tests/test_qwen_http500_feedback_v1.py"
       - ".github/workflows/hf-chat-http500-feedback-preflight.yml"
