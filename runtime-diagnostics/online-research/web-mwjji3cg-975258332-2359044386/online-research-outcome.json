@@ -1,0 +1,259 @@
+{
+  "schema": "swrlz-github-online-research-outcome-v2",
+  "requestId": "web-mwjji3cg-975258332-2359044386",
+  "modelId": "700m",
+  "eventType": "ONLINE_RESEARCH_OUTCOME",
+  "sourceRef": "f149dd857e3d9219f5cae7da0286b5dbfec85c42",
+  "persistedAtUnixMs": 1794850259678,
+  "diagnostic": {
+    "schema": "swrlz-online-research-outcome-v2",
+    "terminalState": "COMPLETE",
+    "research": {
+      "contract": "swrlz-online-camera-v1",
+      "observabilityRevision": "v181-song-metadata-clean-form-integrity",
+      "kind": "weather",
+      "status": "ERROR",
+      "reason": "weather-intent",
+      "provider": null,
+      "resultCount": 0,
+      "widgetKinds": [],
+      "sourceCount": 0,
+      "locationRequired": false,
+      "usedExplicitClientLocation": false,
+      "elapsedMs": 519,
+      "lyricsSourceAttemptCount": 0,
+      "lyricsFetchDebug": [],
+      "blockedLyricsSourceFamilies": [],
+      "musicStructureDebug": null,
+      "candidateAdmissionDebug": [],
+      "songIdentity": null,
+      "songDiscoveryPlan": [],
+      "lyricsRescueSearchDebug": [],
+      "lyricsMaxPageAttempts": 0,
+      "lyricsFallbackExhausted": false,
+      "rawPromptStored": false
+    },
+    "trace": [
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "phase": "WEATHER_GEOCODE_VISIT",
+        "provider": "Open-Meteo",
+        "site": "geocoding-api.open-meteo.com",
+        "url": "https://geocoding-api.open-meteo.com/v1/search",
+        "activity": "Resolving weather location",
+        "atUnixMs": 1794850259155
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "phase": "WEATHER_GEOCODE_COMPLETE",
+        "provider": "Open-Meteo",
+        "site": "geocoding-api.open-meteo.com",
+        "url": "https://geocoding-api.open-meteo.com/v1/search",
+        "activity": "Weather provider response received",
+        "atUnixMs": 1794850259674,
+        "httpStatus": 200,
+        "responseBytes": 32
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "phase": "WEATHER_LOCATION_NOT_FOUND",
+        "provider": "Open-Meteo",
+        "site": "geocoding-api.open-meteo.com",
+        "url": "https://geocoding-api.open-meteo.com/v1/search",
+        "activity": "Weather location could not be resolved",
+        "atUnixMs": 1794850259674
+      }
+    ],
+    "sources": [],
+    "sourceSites": [],
+    "widgets": [],
+    "widgetKinds": [],
+    "statusTrail": [
+      {
+        "phase": "QUEUED",
+        "reason": "Accepted by Workstation",
+        "atUnixMs": 1794850259146
+      },
+      {
+        "phase": "GENERATING",
+        "reason": "Workstation admitted generation",
+        "atUnixMs": 1794850259149
+      },
+      {
+        "seq": 1,
+        "phase": "PROGRAMMING_INTENT",
+        "reason": "",
+        "atUnixMs": 1794850259153
+      },
+      {
+        "seq": 2,
+        "phase": "WEATHER_FETCH_STARTED",
+        "reason": "I’m on it — looking up Write a complete ORIGINAL song titled 'Rain Glass Lantern' with Verse 1, Chorus, Verse 2, Chorus, Bridge and Final Chorus. In the fictional story a lantern shines through rainy ",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "WEATHER"
+        ],
+        "atUnixMs": 1794850259154
+      },
+      {
+        "seq": 3,
+        "phase": "WEATHER_GEOCODE_VISIT",
+        "reason": "Resolving weather location",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "geocoding-api.open-meteo.com",
+        "url": "https://geocoding-api.open-meteo.com/v1/search",
+        "provider": "Open-Meteo",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794850259156
+      },
+      {
+        "seq": 4,
+        "phase": "WEATHER_GEOCODE_COMPLETE",
+        "reason": "Weather provider response received",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "geocoding-api.open-meteo.com",
+        "url": "https://geocoding-api.open-meteo.com/v1/search",
+        "provider": "Open-Meteo",
+        "httpStatus": 200,
+        "resultCount": null,
+        "atUnixMs": 1794850259674
+      },
+      {
+        "seq": 5,
+        "phase": "WEATHER_LOCATION_NOT_FOUND",
+        "reason": "Weather location could not be resolved",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "geocoding-api.open-meteo.com",
+        "url": "https://geocoding-api.open-meteo.com/v1/search",
+        "provider": "Open-Meteo",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794850259674
+      },
+      {
+        "seq": 6,
+        "phase": "ONLINE_RESEARCH",
+        "reason": "ERROR",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "WEATHER"
+        ],
+        "atUnixMs": 1794850259675
+      },
+      {
+        "seq": 7,
+        "phase": "WEATHER_FETCH_COMPLETE",
+        "reason": "Online retrieval error.",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "WEATHER"
+        ],
+        "atUnixMs": 1794850259676
+      },
+      {
+        "seq": 8,
+        "phase": "WEATHER_RETRIEVAL_BLOCKED",
+        "reason": "I reached the live weather service, but I couldn't resolve that place. Try a city with state/province or country, for example “Leavenworth, Kansas”.",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "WEATHER",
+          "ERROR"
+        ],
+        "atUnixMs": 1794850259676
+      },
+      {
+        "seq": 10,
+        "phase": "COMPLETE",
+        "reason": "",
+        "atUnixMs": 1794850259676
+      },
+      {
+        "phase": "PERSISTING",
+        "reason": "Saving the response to the chat",
+        "atUnixMs": 1794850259677
+      }
+    ],
+    "responseCognition": {},
+    "programmingIntent": {
+      "schema": "swrlz-programming-intent-v1",
+      "codingTask": false,
+      "projectContext": "none",
+      "changeClass": "none",
+      "artifactContinuation": false,
+      "artifactMutationRequested": false,
+      "artifactTargetId": "",
+      "artifactTargetMessageId": "",
+      "baseRevision": 0,
+      "baseSourceHash": "",
+      "newProject": false,
+      "source": "brain-router"
+    },
+    "candidateValidation": {},
+    "candidateAttempts": [],
+    "generationTelemetry": {},
+    "engineCompletionTelemetry": {
+      "totalLatencyMs": null,
+      "loadLatencyMs": null,
+      "firstDeltaLatencyMs": null
+    },
+    "contextBudget": {},
+    "resourcePlan": {},
+    "responseResourceUsage": {
+      "schema": "swrlz-response-resource-usage-v1",
+      "scope": "shared-cgroup-v2",
+      "source": "cgroup-v2",
+      "isolatedModelAttribution": false,
+      "wallTimeMs": 527,
+      "capacity": {
+        "cpuLimitCores": 16.0,
+        "cpuLimitState": "measured",
+        "memoryLimitBytes": 104000000000,
+        "memoryLimitState": "measured"
+      },
+      "observed": {
+        "cgroupCpuUsageUsecDelta": 92125,
+        "averageCgroupCpuCores": 0.175,
+        "memoryStartBytes": 8555458560,
+        "memoryEndBytes": 8557862912,
+        "memoryEndMinusStartBytes": 2404352,
+        "memoryPeakSampledBytes": 8557862912,
+        "memoryPeakAboveStartBytes": 2404352,
+        "memorySampleCount": 2,
+        "memorySamplingIntervalMs": 1000
+      },
+      "attribution": "Shared container readings include concurrent work; they are not exclusive CPU/RAM use by this model.",
+      "routeId": "700m",
+      "configuredEngineThreadBudget": null,
+      "outcome": "COMPLETE"
+    },
+    "finalResponse": "I reached the live weather service, but I couldn't resolve that place. Try a city with state/province or country, for example “Leavenworth, Kansas”.",
+    "finalResponseSha256": "0db78561b46d457dcb5261136742dd994bf82834b33f1115222b630daa6be9f6",
+    "requestedModelId": "700m",
+    "selectedModelId": "700m",
+    "stationTiming": {
+      "acceptedAtUnixMs": 1794850259146,
+      "startedAtUnixMs": 1794850259149,
+      "completedAtUnixMs": 1794850259677,
+      "queueWaitMs": 3,
+      "stationRunMs": 528,
+      "endToEndMs": 531
+    },
+    "rawPromptStored": false,
+    "historyStored": false,
+    "preciseLocationStored": false,
+    "privateReasoningStored": false
+  }
+}
