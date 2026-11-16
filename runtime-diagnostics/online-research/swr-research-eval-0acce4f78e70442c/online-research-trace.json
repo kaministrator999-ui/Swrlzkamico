@@ -1,0 +1,285 @@
+{
+  "schema": "swrlz-github-online-research-trace-v1",
+  "requestId": "swr-research-eval-0acce4f78e70442c",
+  "modelId": "700m",
+  "eventType": "ONLINE_RESEARCH_TRACE",
+  "sourceRef": "f149dd857e3d9219f5cae7da0286b5dbfec85c42",
+  "persistedAtUnixMs": 1794808700167,
+  "diagnostic": {
+    "schema": "swrlz-online-research-log-v1",
+    "research": {
+      "contract": "swrlz-online-camera-v1",
+      "observabilityRevision": "v181-song-metadata-clean-form-integrity",
+      "kind": "search",
+      "status": "OK",
+      "reason": "freshness-intent",
+      "provider": "bounded-web-search-chain-v1",
+      "resultCount": 2,
+      "widgetKinds": [
+        "search-results"
+      ],
+      "sourceCount": 2,
+      "locationRequired": false,
+      "usedExplicitClientLocation": false,
+      "elapsedMs": 891,
+      "lyricsSourceAttemptCount": 0,
+      "lyricsFetchDebug": [],
+      "blockedLyricsSourceFamilies": [],
+      "musicStructureDebug": null,
+      "candidateAdmissionDebug": [
+        {
+          "query": "In a fictional cafe there is exactly ONE cook named Rae working alone today. The second cook is absent. A delivery is due in 15 minutes. Restate the constraints without adding staff.",
+          "title": "FICTIONAL Definition & Meaning - Merriam-Webster",
+          "url": "https://www.merriam-webster.com/dictionary/fictional",
+          "source": "www.merriam-webster.com",
+          "rank": 1,
+          "allowed": true,
+          "reason": "NON_LYRICS_PASS",
+          "neededHits": 0,
+          "matchedTerms": [],
+          "coreTerms": [],
+          "snippetPreview": "2 days ago · The meaning of FICTIONAL is of, relating to, characterized by, or occurring in fiction : invented by the imagination. How …"
+        },
+        {
+          "query": "In a fictional cafe there is exactly ONE cook named Rae working alone today. The second cook is absent. A delivery is due in 15 minutes. Restate the constraints without adding staff.",
+          "title": "FICTIONAL | English meaning - Cambridge Dictionary",
+          "url": "https://dictionary.cambridge.org/dictionary/english/fictional",
+          "source": "dictionary.cambridge.org",
+          "rank": 2,
+          "allowed": true,
+          "reason": "NON_LYRICS_PASS",
+          "neededHits": 0,
+          "matchedTerms": [],
+          "coreTerms": [],
+          "snippetPreview": "(Definition of fictional from the Cambridge Advanced Learner's Dictionary & Thesaurus © Cambridge University Press)"
+        },
+        {
+          "query": "In a fictional cafe there is exactly ONE cook named Rae working alone today. The second cook is absent. A delivery is due in 15 minutes. Restate the constraints without adding staff.",
+          "title": "Fictional – Bring AI Characters to Life",
+          "url": "http://fictional.ai/",
+          "source": "fictional.ai",
+          "rank": 3,
+          "allowed": true,
+          "reason": "NON_LYRICS_PASS",
+          "neededHits": 0,
+          "matchedTerms": [],
+          "coreTerms": [],
+          "snippetPreview": "Bring AI characters to life on Fictional. Living, visual and proactive: characters post photos and short videos, chat with you and keep …"
+        },
+        {
+          "query": "In a fictional cafe there is exactly ONE cook named Rae working alone today. The second cook is absent. A delivery is due in 15 minutes. Restate the constraints without adding staff.",
+          "title": "FICTIONAL Definition & Meaning | Dictionary .com",
+          "url": "https://www.dictionary.com/browse/fictional",
+          "source": "www.dictionary.com",
+          "rank": 4,
+          "allowed": true,
+          "reason": "NON_LYRICS_PASS",
+          "neededHits": 0,
+          "matchedTerms": [],
+          "coreTerms": [],
+          "snippetPreview": "Fictional is almost always applied to stories and characters that are part of creative works, like books and movies, whereas fictitious …"
+        },
+        {
+          "query": "In a fictional cafe there is exactly ONE cook named Rae working alone today. The second cook is absent. A delivery is due in 15 minutes. Restate the constraints without adding staff.",
+          "title": "Fictional - definition of fictional by The Free Dictionary",
+          "url": "https://www.thefreedictionary.com/fictional",
+          "source": "www.thefreedictionary.com",
+          "rank": 5,
+          "allowed": true,
+          "reason": "NON_LYRICS_PASS",
+          "neededHits": 0,
+          "matchedTerms": [],
+          "coreTerms": [],
+          "snippetPreview": "Fictional also means 'relating to fiction and the telling of stories'. James Joyce's final fictional experiment was a novel composed …"
+        },
+        {
+          "query": "In a fictional cafe there is exactly ONE cook named Rae working alone today. The second cook is absent. A delivery is due in 15 minutes. Restate the constraints without adding staff.",
+          "title": "Fictional - Definition, Meaning & Synonyms | Vocabulary.com",
+          "url": "https://www.vocabulary.com/dictionary/fictional",
+          "source": "www.vocabulary.com",
+          "rank": 6,
+          "allowed": true,
+          "reason": "NON_LYRICS_PASS",
+          "neededHits": 0,
+          "matchedTerms": [],
+          "coreTerms": [],
+          "snippetPreview": "As the adjective form of fiction, fictional covers all the creative fabrications that arise out of a person's imagination, which might then …"
+        },
+        {
+          "query": "In a fictional cafe there is exactly ONE cook named Rae working alone today. The second cook is absent. A delivery is due in 15 minutes. Restate the constraints without adding staff.",
+          "title": "Fiction - Wikipedia",
+          "url": "https://en.wikipedia.org/wiki/Fiction",
+          "source": "en.wikipedia.org",
+          "rank": 7,
+          "allowed": true,
+          "reason": "NON_LYRICS_PASS",
+          "neededHits": 0,
+          "matchedTerms": [],
+          "coreTerms": [],
+          "snippetPreview": "Aside from real-world connections, some fictional works may depict characters and events within their own context, entirely separate …"
+        },
+        {
+          "query": "In a fictional cafe there is exactly ONE cook named Rae working alone today. The second cook is absent. A delivery is due in 15 minutes. Restate the constraints without adding staff.",
+          "title": "FICTION Definition & Meaning - Merriam-Webster",
+          "url": "https://www.merriam-webster.com/dictionary/fiction",
+          "source": "www.merriam-webster.com",
+          "rank": 8,
+          "allowed": true,
+          "reason": "NON_LYRICS_PASS",
+          "neededHits": 0,
+          "matchedTerms": [],
+          "coreTerms": [],
+          "snippetPreview": "3 days ago · The meaning of FICTION is something invented by the imagination or feigned; specifically : an invented story. How to …"
+        }
+      ],
+      "songIdentity": {},
+      "songDiscoveryPlan": [],
+      "lyricsRescueSearchDebug": [],
+      "lyricsMaxPageAttempts": 0,
+      "lyricsFallbackExhausted": false,
+      "rawPromptStored": false
+    },
+    "trace": [
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794808699275,
+        "phase": "RESEARCH_STARTED",
+        "activity": "Online research started",
+        "provider": "bounded-web-search-chain-v1",
+        "site": "",
+        "url": ""
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794808699275,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794808699408,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "activity": "No usable results from provider",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "httpStatus": 202,
+        "resultCount": 0
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794808699408,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794808699549,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "activity": "No usable results from provider",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "httpStatus": 202,
+        "resultCount": 0
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794808699549,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794808699912,
+        "phase": "SEARCH_PROVIDER_RESULTS",
+        "activity": "Search results found",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "httpStatus": 200,
+        "resultCount": 8
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794808699912,
+        "phase": "SEARCH_PROVIDER_SELECTED",
+        "activity": "Using bing-html",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "resultCount": 8
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794808699914,
+        "phase": "PAGE_FETCH_STARTED",
+        "activity": "Visiting result page",
+        "provider": "web-page",
+        "site": "www.merriam-webster.com",
+        "url": "https://www.merriam-webster.com/dictionary/fictional"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794808699950,
+        "phase": "PAGE_FETCH_ERROR",
+        "activity": "Page fetch failed",
+        "provider": "web-page",
+        "site": "www.merriam-webster.com",
+        "url": "https://www.merriam-webster.com/dictionary/fictional",
+        "errorType": "HTTPError"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794808699953,
+        "phase": "PAGE_FETCH_STARTED",
+        "activity": "Visiting result page",
+        "provider": "web-page",
+        "site": "dictionary.cambridge.org",
+        "url": "https://dictionary.cambridge.org/dictionary/english/fictional"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794808700164,
+        "phase": "PAGE_FETCH_COMPLETE",
+        "activity": "Page fetched",
+        "provider": "web-page",
+        "site": "dictionary.cambridge.org",
+        "url": "https://dictionary.cambridge.org/dictionary/english/fictional",
+        "httpStatus": 200,
+        "responseBytes": 292063
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794808700165,
+        "phase": "RESEARCH_COMPLETE",
+        "activity": "Online research complete",
+        "provider": "bounded-web-search-chain-v1",
+        "site": "",
+        "url": "",
+        "resultCount": 2
+      }
+    ],
+    "sourceSites": [
+      "www.merriam-webster.com",
+      "dictionary.cambridge.org"
+    ],
+    "widgetKinds": [
+      "search-results"
+    ],
+    "requestedModelId": "700m",
+    "selectedModelId": "700m",
+    "rawPromptStored": false,
+    "historyStored": false,
+    "preciseLocationStored": false
+  }
+}
