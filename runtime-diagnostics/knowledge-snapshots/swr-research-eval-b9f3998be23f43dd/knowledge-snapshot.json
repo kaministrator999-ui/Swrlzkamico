@@ -1,0 +1,85 @@
+{
+  "schema": "swrlz-knowledge-acquisition-snapshot-v1",
+  "requestId": "swr-research-eval-b9f3998be23f43dd",
+  "modelId": "700m",
+  "eventType": "KNOWLEDGE_ACQUISITION_SNAPSHOT",
+  "sourceRef": "f149dd857e3d9219f5cae7da0286b5dbfec85c42",
+  "persistedAtUnixMs": 1794798058380,
+  "diagnostic": {
+    "schema": "swrlz-knowledge-acquisition-snapshot-v1",
+    "requestId": "swr-research-eval-b9f3998be23f43dd",
+    "trigger": {
+      "userText": "Write a COMPLETE original synth-pop song titled 'Signal in the Rain' about someone leaving an empty station and choosing their own road. Use labeled Verse 1, Pre-Chorus, Chorus, Verse 2, Pre-Chorus, Chorus, Bridge, Final Chorus. The chorus must contain a memorable repeated hook. Verses should advance the story, pre-chorus should build tension, bridge should change perspective. No references to other songs or artists.",
+      "sha256": "8cc17df701b8d80d833c680389cc6cff6dd4a4b7170f399737ef3da7b355982b"
+    },
+    "research": {
+      "kind": "weather",
+      "status": "LOCATION_REQUIRED",
+      "provider": "",
+      "reason": "weather-intent",
+      "query": "",
+      "resultCount": 0,
+      "sources": [],
+      "sourceSites": [],
+      "widgetKinds": [],
+      "trace": []
+    },
+    "answer": {
+      "text": "I need a city/region or an explicitly shared location before I can check live weather.",
+      "sha256": "9e0a5fceef5cddc5d5d9b8e35b289114a1c316ec9cc4f2cedb7b9cf517279883"
+    },
+    "followUpWindow": {
+      "maxUserTurns": 3,
+      "captured": [],
+      "state": "OPEN"
+    },
+    "review": {
+      "state": "PENDING",
+      "promoteToLocalKnowledge": false,
+      "notes": []
+    },
+    "privacy": {
+      "preciseLocationStored": false,
+      "privateReasoningStored": false,
+      "fullHistoryStored": false
+    },
+    "statusTrail": [
+      {
+        "phase": "QUEUED",
+        "reason": "Accepted by Workstation"
+      },
+      {
+        "phase": "GENERATING",
+        "reason": "Workstation admitted generation"
+      },
+      {
+        "phase": "PROGRAMMING_INTENT",
+        "reason": ""
+      },
+      {
+        "phase": "WEATHER_FETCH_STARTED",
+        "reason": "I’m on it — looking up Write a COMPLETE original synth-pop song titled 'Signal in the Rain' about someone leaving an empty station and choosing their own road. Use labeled Verse 1, Pre-Chorus, Chorus,"
+      },
+      {
+        "phase": "ONLINE_RESEARCH",
+        "reason": "LOCATION_REQUIRED"
+      },
+      {
+        "phase": "WEATHER_FETCH_COMPLETE",
+        "reason": "Online retrieval location_required."
+      },
+      {
+        "phase": "WEATHER_RETRIEVAL_BLOCKED",
+        "reason": "I need a city/region or an explicitly shared location before I can check live weather."
+      },
+      {
+        "phase": "COMPLETE",
+        "reason": ""
+      },
+      {
+        "phase": "PERSISTING",
+        "reason": "Saving the response to the chat"
+      }
+    ]
+  }
+}
