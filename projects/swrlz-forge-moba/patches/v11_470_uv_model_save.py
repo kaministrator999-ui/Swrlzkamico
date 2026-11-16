@@ -399,6 +399,21 @@ function se184RenderCloudProjects(rows){""",
         'new model clears previous account identity')
 
     html=once(html,
+        """   await api.save('modeler',true);
+  }
+  return;""",
+        """   const saved=await api.save('modeler',true);
+   se371Display(saved?'Model saved to account.':
+    'Model save failed. Check your sign-in and Studio assets status.',!saved);
+  }
+  return;""",
+        'owner-visible account save status')
+    html=once(html,
+        """   if(changed){cloudRows=[];userKey=identity;autoRestoredKey='';cloudRefs.clear();}""",
+        """   if(changed){cloudRows=[];userKey=identity;autoRestoredKey='';cloudRefs.clear();
+    se470Working.clear();}""",
+        'account switch invalidates active model save revision')
+    html=once(html,
         'SWYRL_ENGINE_DEPLOY_MARKER: V11_469_UV_SHAPE_FIT',MARKER,'version marker')
     for old,new in [
         ('ENGINE · MAKER v11.469','ENGINE · MAKER v11.470'),
