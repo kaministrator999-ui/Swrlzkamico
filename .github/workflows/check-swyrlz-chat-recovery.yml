@@ -1,0 +1,31 @@
+name: Verify §C Chat recovery runtime (read only)
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/check-swyrlz-chat-recovery.yml"]
+permissions:
+  contents: read
+jobs:
+  health:
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    steps:
+      - name: Check Hugging Face runtime and public endpoints without changes
+        run: |
+          python - <<'PY'
+          import json,urllib.request,urllib.error
+          target='https://huggingface.co/api/spaces/kamiloki/Swyrlz'
+          req=urllib.request.Request(target,headers={'User-Agent':'SWRLZ-Status-Verification/1'})
+          with urllib.request.urlopen(req,timeout=20) as f: data=json.load(f)
+          runtime=data.get('runtime') or {}
+          print('SECHAT_VERIFY='+json.dumps({'sha':data.get('sha'),'stage':runtime.get('stage'),
+             'errorMessage':str(runtime.get('errorMessage') or '')[:220]},sort_keys=True),flush=True)
+          for endpoint in ['https://kamiloki-swyrlz.hf.space/','https://kamiloki-swyrlz.hf.space/health']:
+              try:
+                  with urllib.request.urlopen(urllib.request.Request(endpoint,headers={'User-Agent':'SWRLZ-Status-Verification/1'}),timeout=15) as f:
+                      print('SECHAT_ENDPOINT',endpoint,f.status,flush=True)
+              except urllib.error.HTTPError as e:
+                  print('SECHAT_ENDPOINT',endpoint,e.code,flush=True)
+              except Exception as e:
+                  print('SECHAT_ENDPOINT',endpoint,type(e).__name__,flush=True)
+          PY
