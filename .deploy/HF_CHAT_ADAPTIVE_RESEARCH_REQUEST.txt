@@ -2,5 +2,5 @@ TARGET=kamiloki/Swyrlz
 APPROVED=1
 MODEL=qwen3.5-9b
 FEATURE=adaptive-public-multipass-research-v1
-SOURCE_REF=35cf2342ac09e437fa2cadbcaf15df65a6f05873
-REQUEST_NONCE=adaptive-research-20261115-evidence-survives-filter-03
+SOURCE_REF=9f742e07a24687ca4c9de84ead3344615491af69
+REQUEST_NONCE=adaptive-research-20261115-exact-topic-source-recovery-04
