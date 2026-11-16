@@ -107,20 +107,20 @@ NEW_WEATHER=r'''    # User-described weather words are not a live-data request.
     # Require an explicit meteorological operation; a fictional rain scene,
     # song title or a negated forecast instruction must stay in normal chat.
     explicit_weather_data=bool(re.search(
-        r"(?i)\\b(?:weather|forecast|temperature|humidity|barometric|"
-        r"precipitation|wind\\s+speed|chance\\s+of\\s+(?:rain|snow)|"
-        r"will\\s+it\\s+(?:rain|snow)|(?:is|will)\\s+it\\s+(?:raining|snowing)|"
-        r"what(?:'s| is)\\s+the\\s+(?:rain|snow))\\b",text))
+        r"(?i)\b(?:weather|forecast|temperature|humidity|barometric|"
+        r"precipitation|wind\s+speed|chance\s+of\s+(?:rain|snow)|"
+        r"will\s+it\s+(?:rain|snow)|(?:is|will)\s+it\s+(?:raining|snowing)|"
+        r"what(?:'s| is)\s+the\s+(?:rain|snow))\b",text))
     fiction_or_song=bool(re.search(
-        r"(?i)\\b(?:fictional|pretend|story|scene|original\\s+song|"
-        r"lyrics?|lullaby|poem|verse|chorus|song\\s+title)\\b",text))
+        r"(?i)\b(?:fictional|pretend|story|scene|original\s+song|"
+        r"lyrics?|lullaby|poem|verse|chorus|song\s+title)\b",text))
     weather_used_as_source=bool(re.search(
-        r"(?i)\\b(?:use|using|based\\s+on|include)\\b.{0,55}"
-        r"\\b(?:weather\\s+forecast|current\\s+weather|live\\s+weather|"
-        r"actual\\s+forecast|today's\\s+forecast)\\b",text))
+        r"(?i)\b(?:use|using|based\s+on|include)\b.{0,55}"
+        r"\b(?:weather\s+forecast|current\s+weather|live\s+weather|"
+        r"actual\s+forecast|today's\s+forecast)\b",text))
     explicit_weather_negation=bool(re.search(
-        r"(?i)\\b(?:not|no|without|don't|do\\s+not|never)\\b.{0,30}"
-        r"\\b(?:weather|forecast|live\\s+data|location\\s+request)\\b",text))
+        r"(?i)\b(?:not|no|without|don't|do\s+not|never)\b.{0,30}"
+        r"\b(?:weather|forecast|live\s+data|location\s+request)\b",text))
     weather_intent=bool(explicit_weather_data and not weather_negated
                         and not (explicit_weather_negation and not weather_used_as_source)
                         and not (fiction_or_song and not weather_used_as_source))'''
