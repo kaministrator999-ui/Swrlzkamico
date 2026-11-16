@@ -40,13 +40,14 @@ jobs:
           assert "hotfix-music-transform" in Path(".github/workflows/manual-hf-space.yml").read_text()
           base=(patch.BACKUP/patch.UI).read_text()
           generated=patch.patch_ui(base)
-          scripts=re.findall(r'<script(?:\\s[^>]*)?>([\\s\\S]*?)</script>',generated,re.I)
+          scripts=re.findall(r'<script(?:\s[^>]*)?>([\s\S]*?)</script>',generated,re.I)
           with tempfile.TemporaryDirectory() as folder:
               for i,code in enumerate(scripts):
                   if not code.strip():continue
                   path=Path(folder)/f"inline_{i}.js"
                   path.write_text(code)
                   subprocess.run(["node","--check",str(path)],check=True)
+          assert scripts, "No inline JS found to verify"
           print("CANONICAL_MUSIC_RELEASE_AND_UI_SYNTAX_PASS",len(scripts))
           PY
       - uses: actions/upload-artifact@v4
