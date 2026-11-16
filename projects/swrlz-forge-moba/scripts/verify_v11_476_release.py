@@ -14,7 +14,7 @@ a.add_argument('--request',action='store_true')
 args=a.parse_args()
 m=json.loads((ROOT/'source-manifest.json').read_text('utf8'))
 assert m['name']=='§wyrl§ Engine v11.476'
-assert m['finalArtifact']=='swyrl_engine_v11_475.html'
+assert m['finalArtifact']=='swyrl_engine_v11_476.html'
 assert len(m['patches'])==453 and m['patches'][-1]=='patches/v11_476_account_first_workspace.py'
 assert isinstance(m['finalBytes'],int) and isinstance(m['finalSha256'],str)
 for f in ('model_progressive_rail_fix_v11_475.js','model_progressive_tools_v11_474.js','model_ring_kernel_v11_466.js',
