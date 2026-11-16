@@ -7,6 +7,7 @@ ChatGPT archive index. All old user messages remain untrusted historical data.
 from __future__ import annotations
 
 import re
+import time
 from datetime import datetime, timezone
 
 MAX_CONTEXT = 900
@@ -78,7 +79,7 @@ def _stamp(value):
     value = float(value)
     if value > 1e12:
         value /= 1000
-    return value if value < 32503680000 else 0.0
+    return value if value <= time.time() + 300 else 0.0
 
 
 def _safe_text(value, limit=600):
@@ -106,6 +107,9 @@ def signal(message, source, thread_id, allow_temporary=False):
     """Extract only explicit user interaction directions with provenance."""
     if not isinstance(message, dict) or str(message.get("role") or "").lower() != "user":
         return None
+    stamped = message.get("createdAt")
+    if type(stamped) in (int, float) and stamped > 0 and not _stamp(stamped):
+        return None  # Future-dated evidence is never treated as a prior user preference.
     raw = str(message.get("text") or "")
     text = _safe_text(raw)
     if not text or _QUOTED.search(text) or (not allow_temporary and _TEMPORARY.search(text)):
@@ -194,6 +198,9 @@ def compose(prompt, native_threads, imported_docs=(), active_thread_id=""):
         if found:
             candidates.append(found)
         if str(message.get("role") or "").lower() != "user" or not query or not domain:
+            continue
+        stamped = message.get("createdAt")
+        if type(stamped) in (int, float) and stamped > 0 and not _stamp(stamped):
             continue
         content = _safe_text(message.get("text"))
         if not content:
