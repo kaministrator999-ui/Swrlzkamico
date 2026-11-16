@@ -4,7 +4,8 @@ on:
     paths:
       - ".github/workflows/hf-live-intent-source-snapshot.yml"
       - "scripts/hf_live_intent_qa_v2.py"
-      - "tests/test_hf_live_intent_qa_v2.py"
+      - "scripts/hf_guest_prose_intent_override_v1.py"
+      - "scripts/hf_music_research_intent_routing_v1.py"
 permissions:
   contents: read
 jobs:
@@ -36,6 +37,10 @@ jobs:
           (output/'manifest.json').write_text(json.dumps(manifest,indent=2)+'\n')
           print('READONLY_HF_INTENT_SOURCE_SNAPSHOT',json.dumps(manifest),flush=True)
           PY
+      - name: Verify coder current-operation precedence against exact deployed source
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: python -u scripts/hf_guest_prose_intent_override_v1.py preflight
       - uses: actions/upload-artifact@v4
         with:
           name: sc-source-snapshot
