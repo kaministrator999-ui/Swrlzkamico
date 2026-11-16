@@ -1,0 +1,398 @@
+{
+  "schema": "swrlz-github-online-research-trace-v1",
+  "requestId": "swr-research-eval-de364f4173c641ce",
+  "modelId": "700m",
+  "eventType": "ONLINE_RESEARCH_TRACE",
+  "sourceRef": "f149dd857e3d9219f5cae7da0286b5dbfec85c42",
+  "persistedAtUnixMs": 1794849531084,
+  "diagnostic": {
+    "schema": "swrlz-online-research-log-v1",
+    "research": {
+      "contract": "swrlz-online-camera-v1",
+      "observabilityRevision": "v181-song-metadata-clean-form-integrity",
+      "kind": "search",
+      "status": "OK",
+      "reason": "explicit-web-intent",
+      "provider": "bounded-web-search-chain-v1",
+      "resultCount": 8,
+      "widgetKinds": [
+        "search-results"
+      ],
+      "sourceCount": 8,
+      "locationRequired": false,
+      "usedExplicitClientLocation": false,
+      "elapsedMs": 1426,
+      "lyricsSourceAttemptCount": 0,
+      "lyricsFetchDebug": [],
+      "blockedLyricsSourceFamilies": [],
+      "musicStructureDebug": null,
+      "candidateAdmissionDebug": [
+        {
+          "query": "Without a new web search, summarize in two sentences why not every new moon gives a total solar eclipse. Use the evidence you already cited and identify any remaining uncertainty.",
+          "title": "Yahoo",
+          "url": "https://www.yahoo.com/",
+          "source": "www.yahoo.com",
+          "rank": 1,
+          "allowed": true,
+          "reason": "NON_LYRICS_PASS",
+          "neededHits": 0,
+          "matchedTerms": [],
+          "coreTerms": [],
+          "snippetPreview": "News, email and search are just the beginning. Discover more every day. Find your yodel."
+        },
+        {
+          "query": "Without a new web search, summarize in two sentences why not every new moon gives a total solar eclipse. Use the evidence you already cited and identify any remaining uncertainty.",
+          "title": "Yahoo: Can you unfinalize teams? : r/FFCommish - Reddit",
+          "url": "https://www.reddit.com/r/FFCommish/comments/cg4dbj/yahoo_can_you_unfinalize_teams/",
+          "source": "www.reddit.com",
+          "rank": 2,
+          "allowed": true,
+          "reason": "NON_LYRICS_PASS",
+          "neededHits": 0,
+          "matchedTerms": [],
+          "coreTerms": [],
+          "snippetPreview": "Jul 21, 2019 · then go to Yahoo's Fantasy Football home page. Where it shows all your teams. You should see text saying \"My …"
+        },
+        {
+          "query": "Without a new web search, summarize in two sentences why not every new moon gives a total solar eclipse. Use the evidence you already cited and identify any remaining uncertainty.",
+          "title": "I tested out Yahoo's paid \"additional opponent each week\" feature so ...",
+          "url": "https://www.reddit.com/r/fantasyfootball/comments/16b3py6/i_tested_out_yahoos_paid_additional_opponent_each/",
+          "source": "www.reddit.com",
+          "rank": 3,
+          "allowed": true,
+          "reason": "NON_LYRICS_PASS",
+          "neededHits": 0,
+          "matchedTerms": [],
+          "coreTerms": [],
+          "snippetPreview": "Sep 5, 2023 · Tldr: Interesting concept, but poorly implemented. I keep a 2nd \"experiment\" league in Yahoo alongside my main one …"
+        },
+        {
+          "query": "Without a new web search, summarize in two sentences why not every new moon gives a total solar eclipse. Use the evidence you already cited and identify any remaining uncertainty.",
+          "title": "Push trade through on Yahoo!? : r/FFCommish - Reddit",
+          "url": "https://www.reddit.com/r/FFCommish/comments/3n54yt/push_trade_through_on_yahoo/",
+          "source": "www.reddit.com",
+          "rank": 4,
+          "allowed": true,
+          "reason": "NON_LYRICS_PASS",
+          "neededHits": 0,
+          "matchedTerms": [],
+          "coreTerms": [],
+          "snippetPreview": "Oct 1, 2015 · go to your My Team tab and at the top there should be a transaction above the grid where your team is. I think if you …"
+        },
+        {
+          "query": "Without a new web search, summarize in two sentences why not every new moon gives a total solar eclipse. Use the evidence you already cited and identify any remaining uncertainty.",
+          "title": "Do you remember playing on Yahoo! games? : r/90s - Reddit",
+          "url": "https://www.reddit.com/r/90s/comments/ztyn6q/do_you_remember_playing_on_yahoo_games/",
+          "source": "www.reddit.com",
+          "rank": 5,
+          "allowed": true,
+          "reason": "NON_LYRICS_PASS",
+          "neededHits": 0,
+          "matchedTerms": [],
+          "coreTerms": [],
+          "snippetPreview": "Dec 24, 2022 · Yahoo games, Yahoo chat, Yahoo message boards and BBS profiles, you name it. I was really fond of the Yahoo …"
+        },
+        {
+          "query": "Without a new web search, summarize in two sentences why not every new moon gives a total solar eclipse. Use the evidence you already cited and identify any remaining uncertainty.",
+          "title": "Yahoo Data Breach settlement : r/Scams - Reddit",
+          "url": "https://www.reddit.com/r/Scams/comments/145eq3r/yahoo_data_breach_settlement/",
+          "source": "www.reddit.com",
+          "rank": 6,
+          "allowed": true,
+          "reason": "NON_LYRICS_PASS",
+          "neededHits": 0,
+          "matchedTerms": [],
+          "coreTerms": [],
+          "snippetPreview": "Jun 9, 2023 · Got an email today about Yahoo Data Breach class action settlement. Now I was likely a participant in the suit, and I …"
+        },
+        {
+          "query": "Without a new web search, summarize in two sentences why not every new moon gives a total solar eclipse. Use the evidence you already cited and identify any remaining uncertainty.",
+          "title": "Is there a way to set the draft order manually - Reddit",
+          "url": "https://www.reddit.com/r/YahooFantasy/comments/ck1bmc/is_there_a_way_to_set_the_draft_order_manually/",
+          "source": "www.reddit.com",
+          "rank": 7,
+          "allowed": true,
+          "reason": "NON_LYRICS_PASS",
+          "neededHits": 0,
+          "matchedTerms": [],
+          "coreTerms": [],
+          "snippetPreview": "Also I can't find an option to set the draft order. it lets you set it for auto draft or input the draft results. But I can't find anything that …"
+        },
+        {
+          "query": "Without a new web search, summarize in two sentences why not every new moon gives a total solar eclipse. Use the evidence you already cited and identify any remaining uncertainty.",
+          "title": "How has yahoo survived all these years? : r/NoStupidQuestions - Reddit",
+          "url": "https://www.reddit.com/r/NoStupidQuestions/comments/1b3rvfo/how_has_yahoo_survived_all_these_years/",
+          "source": "www.reddit.com",
+          "rank": 8,
+          "allowed": true,
+          "reason": "NON_LYRICS_PASS",
+          "neededHits": 0,
+          "matchedTerms": [],
+          "coreTerms": [],
+          "snippetPreview": "Still have a yahoo mail account because I don’t want to change it and update contacts. The fantasy football is the best platform. I …"
+        }
+      ],
+      "songIdentity": {},
+      "songDiscoveryPlan": [],
+      "lyricsRescueSearchDebug": [],
+      "lyricsMaxPageAttempts": 0,
+      "lyricsFallbackExhausted": false,
+      "rawPromptStored": false
+    },
+    "trace": [
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794849529656,
+        "phase": "RESEARCH_STARTED",
+        "activity": "Online research started",
+        "provider": "bounded-web-search-chain-v1",
+        "site": "",
+        "url": ""
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794849529657,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794849529800,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "activity": "No usable results from provider",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "httpStatus": 202,
+        "resultCount": 0
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794849529800,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794849529932,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "activity": "No usable results from provider",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "httpStatus": 202,
+        "resultCount": 0
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794849529932,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794849530182,
+        "phase": "SEARCH_PROVIDER_RESULTS",
+        "activity": "Search results found",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "httpStatus": 200,
+        "resultCount": 8
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794849530182,
+        "phase": "SEARCH_PROVIDER_SELECTED",
+        "activity": "Using bing-html",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "resultCount": 8
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794849530184,
+        "phase": "PAGE_FETCH_STARTED",
+        "activity": "Visiting result page",
+        "provider": "web-page",
+        "site": "www.yahoo.com",
+        "url": "https://www.yahoo.com/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794849530631,
+        "phase": "PAGE_FETCH_ERROR",
+        "activity": "Page fetch failed",
+        "provider": "web-page",
+        "site": "www.yahoo.com",
+        "url": "https://www.yahoo.com/",
+        "errorType": "ValueError"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794849530634,
+        "phase": "PAGE_FETCH_STARTED",
+        "activity": "Visiting result page",
+        "provider": "web-page",
+        "site": "www.reddit.com",
+        "url": "https://www.reddit.com/r/FFCommish/comments/cg4dbj/yahoo_can_you_unfinalize_teams/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794849530691,
+        "phase": "PAGE_FETCH_ERROR",
+        "activity": "Page fetch failed",
+        "provider": "web-page",
+        "site": "www.reddit.com",
+        "url": "https://www.reddit.com/r/FFCommish/comments/cg4dbj/yahoo_can_you_unfinalize_teams/",
+        "errorType": "HTTPError"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794849530695,
+        "phase": "PAGE_FETCH_STARTED",
+        "activity": "Visiting result page",
+        "provider": "web-page",
+        "site": "www.reddit.com",
+        "url": "https://www.reddit.com/r/90s/comments/ztyn6q/do_you_remember_playing_on_yahoo_games/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794849530760,
+        "phase": "PAGE_FETCH_ERROR",
+        "activity": "Page fetch failed",
+        "provider": "web-page",
+        "site": "www.reddit.com",
+        "url": "https://www.reddit.com/r/90s/comments/ztyn6q/do_you_remember_playing_on_yahoo_games/",
+        "errorType": "HTTPError"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794849530764,
+        "phase": "PAGE_FETCH_STARTED",
+        "activity": "Visiting result page",
+        "provider": "web-page",
+        "site": "www.reddit.com",
+        "url": "https://www.reddit.com/r/fantasyfootball/comments/16b3py6/i_tested_out_yahoos_paid_additional_opponent_each/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794849530828,
+        "phase": "PAGE_FETCH_ERROR",
+        "activity": "Page fetch failed",
+        "provider": "web-page",
+        "site": "www.reddit.com",
+        "url": "https://www.reddit.com/r/fantasyfootball/comments/16b3py6/i_tested_out_yahoos_paid_additional_opponent_each/",
+        "errorType": "HTTPError"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794849530832,
+        "phase": "PAGE_FETCH_STARTED",
+        "activity": "Visiting result page",
+        "provider": "web-page",
+        "site": "www.reddit.com",
+        "url": "https://www.reddit.com/r/FFCommish/comments/3n54yt/push_trade_through_on_yahoo/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794849530891,
+        "phase": "PAGE_FETCH_ERROR",
+        "activity": "Page fetch failed",
+        "provider": "web-page",
+        "site": "www.reddit.com",
+        "url": "https://www.reddit.com/r/FFCommish/comments/3n54yt/push_trade_through_on_yahoo/",
+        "errorType": "HTTPError"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794849530895,
+        "phase": "PAGE_FETCH_STARTED",
+        "activity": "Visiting result page",
+        "provider": "web-page",
+        "site": "www.reddit.com",
+        "url": "https://www.reddit.com/r/YahooFantasy/comments/ck1bmc/is_there_a_way_to_set_the_draft_order_manually/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794849530958,
+        "phase": "PAGE_FETCH_ERROR",
+        "activity": "Page fetch failed",
+        "provider": "web-page",
+        "site": "www.reddit.com",
+        "url": "https://www.reddit.com/r/YahooFantasy/comments/ck1bmc/is_there_a_way_to_set_the_draft_order_manually/",
+        "errorType": "HTTPError"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794849530962,
+        "phase": "PAGE_FETCH_STARTED",
+        "activity": "Visiting result page",
+        "provider": "web-page",
+        "site": "www.reddit.com",
+        "url": "https://www.reddit.com/r/Scams/comments/145eq3r/yahoo_data_breach_settlement/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794849531021,
+        "phase": "PAGE_FETCH_ERROR",
+        "activity": "Page fetch failed",
+        "provider": "web-page",
+        "site": "www.reddit.com",
+        "url": "https://www.reddit.com/r/Scams/comments/145eq3r/yahoo_data_breach_settlement/",
+        "errorType": "HTTPError"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794849531024,
+        "phase": "PAGE_FETCH_STARTED",
+        "activity": "Visiting result page",
+        "provider": "web-page",
+        "site": "www.reddit.com",
+        "url": "https://www.reddit.com/r/NoStupidQuestions/comments/1b3rvfo/how_has_yahoo_survived_all_these_years/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794849531080,
+        "phase": "PAGE_FETCH_ERROR",
+        "activity": "Page fetch failed",
+        "provider": "web-page",
+        "site": "www.reddit.com",
+        "url": "https://www.reddit.com/r/NoStupidQuestions/comments/1b3rvfo/how_has_yahoo_survived_all_these_years/",
+        "errorType": "HTTPError"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794849531082,
+        "phase": "RESEARCH_COMPLETE",
+        "activity": "Online research complete",
+        "provider": "bounded-web-search-chain-v1",
+        "site": "",
+        "url": "",
+        "resultCount": 8
+      }
+    ],
+    "sourceSites": [
+      "www.yahoo.com",
+      "www.reddit.com"
+    ],
+    "widgetKinds": [
+      "search-results"
+    ],
+    "requestedModelId": "700m",
+    "selectedModelId": "700m",
+    "rawPromptStored": false,
+    "historyStored": false,
+    "preciseLocationStored": false
+  }
+}
