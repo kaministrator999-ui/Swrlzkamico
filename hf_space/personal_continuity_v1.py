@@ -175,7 +175,7 @@ def compose(prompt, native_threads, imported_docs=(), active_thread_id=""):
     """
     query = terms(prompt)
     domain = _active_domain(str(prompt or ""))
-    if len(query) < 2 and not domain:
+    if re.fullmatch(r"(?i)\s*(?:(?:hi|hey|hello|yo|thanks|thank you|okay|ok|bye|lol|lmfao|good morning|good night)[!. ]*)", str(prompt or "").strip()):
         return ""
     # Even one-turn instructions (not stored as durable preferences) override
     # older preferences in their slot on the current generation.
@@ -189,9 +189,8 @@ def compose(prompt, native_threads, imported_docs=(), active_thread_id=""):
         slot, scope = _classify(str(prompt or ""))
         if slot:
             current = {"slot":slot, "scope":scope}
-    suppress = {(current["slot"], current["scope"])} if current else set()
-    if current and current["scope"] != "global":
-        suppress.add((current["slot"], "global"))
+    # New instructions win across every topic scope for this response.
+    suppress = {(current["slot"], scope) for scope in ("global","coding","creative")} if current else set()
     candidates, topical = [], []
     for tid, title, message in _native_messages(native_threads, active_thread_id):
         found = signal(message, "native-§c", tid)
