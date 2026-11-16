@@ -8,6 +8,8 @@ from __future__ import annotations
 
 import os
 import re
+import json
+from urllib.parse import quote,urlsplit
 from typing import Any, Callable
 
 MAX_FACETS = 3
@@ -181,6 +183,50 @@ def encyclopedia_topic(plan: dict[str,Any]) -> str:
     return _normalized(topic,75)
 
 
+def wikipedia_exact_public_title(topic: str, fetch_page: Any) -> list[dict[str,str]]:
+    """Fetch a short real overview by exact public subject, no search index.
+
+    Bounded MediaWiki plaintext intro, redirected hosts and disambiguation
+    pages rejected. Exact title match avoids attributing a similarly named
+    movie, game, company or unrelated subject to the requested concept.
+    """
+    topic=_normalized(topic,75)
+    if (not callable(fetch_page) or not topic or len(topic.split())>7
+            or not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9 '&.()_-]{1,74}",topic)):
+        return []
+    title=topic.replace(" ","_")
+    url=("https://en.wikipedia.org/w/api.php?"
+         "action=query&prop=extracts&exintro=1&explaintext=1"
+         "&exsentences=3&titles="+quote(title,safe="_()-")
+         +"&format=json&formatversion=2")
+    try:
+        fetched=fetch_page(url)
+        if not isinstance(fetched,dict) or int(fetched.get("status") or 0)!=200:
+            return []
+        final=urlsplit(str(fetched.get("finalUrl") or ""))
+        if final.scheme!="https" or final.hostname!="en.wikipedia.org" or final.path!="/w/api.php":
+            return []
+        result=json.loads(str(fetched.get("extract") or "")[:8000])
+        pages=(result.get("query") or {}).get("pages") if isinstance(result,dict) else None
+        if not isinstance(pages,list) or len(pages)!=1 or not isinstance(pages[0],dict):
+            return []
+        article=pages[0]
+        if "missing" in article:
+            return []
+        name=_normalized(article.get("title"),90)
+        if name.replace("_"," ").casefold()!=topic.replace("_"," ").casefold():
+            return []
+        excerpt=_normalized(article.get("extract"),630)
+        if len(excerpt)<45 or re.search(r"\bmay refer to\b",excerpt,re.I):
+            return []
+        return [{"title":"Wikipedia: "+name,
+                 "url":"https://en.wikipedia.org/wiki/"+quote(title,safe="_()-"),
+                 "snippet":excerpt,
+                 "referenceRole":"retrieved_public_encyclopedia_summary"}]
+    except (OSError,ValueError,TypeError,KeyError):
+        return []
+
+
 def adaptive_enrich(
     payload: Any,
     route: Any,
@@ -249,8 +295,10 @@ def adaptive_enrich(
             topic=encyclopedia_topic(plan)
             if topic:
                 try:
-                    from api.generic_public_source_fallback_v1 import wikipedia_public_fallback
-                    wiki=wikipedia_public_fallback(topic,fetch_page)
+                    wiki=wikipedia_exact_public_title(topic,fetch_page)
+                    if not wiki:
+                        from api.generic_public_source_fallback_v1 import wikipedia_public_fallback
+                        wiki=wikipedia_public_fallback(topic,fetch_page)
                     if wiki:
                         second={"evidence":wiki}
                         overview_topic=topic
