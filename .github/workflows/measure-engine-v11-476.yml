@@ -1,0 +1,49 @@
+name: Measure §E v11.476 account startup and Page Down
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/measure-engine-v11-476.yml"
+      - "projects/swrlz-forge-moba/patches/v11_476_account_first_workspace.py"
+      - "projects/swrlz-forge-moba/runtime/engine_account_start_v11_476.*"
+      - "projects/swrlz-forge-moba/runtime/engine_account_bridge_v11_476.js"
+      - "projects/swrlz-forge-moba/runtime/engine_resume_camera_v11_476.js"
+      - "projects/swrlz-forge-moba/scripts/prepare_v11_476_release.py"
+      - "projects/swrlz-forge-moba/scripts/verify_v11_476_release.py"
+      - "projects/swrlz-forge-moba/tests/engine_account_start_v11_476.mjs"
+      - "projects/swrlz-forge-moba/tests/engine_account_browser_v11_476.cjs"
+      - "projects/swrlz-forge-moba/source-manifest.json"
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: se476-source-measure
+  cancel-in-progress: true
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 24
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Build and seal 453-patch engine with account-startup checks
+        run: python projects/swrlz-forge-moba/scripts/prepare_v11_476_release.py
+      - name: Install Chromium touch test runner
+        run: |
+          npm install --no-save playwright@1.56.1
+          npx playwright install --with-deps --only-shell chromium
+      - name: Verify startup gate and full-screen offline fallback on touch layouts
+        run: node projects/swrlz-forge-moba/tests/engine_account_browser_v11_476.cjs projects/swrlz-forge-moba/_release_v11_476_candidate
+      - name: Preserve source receipt and browser screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: se476-startup-and-offline-page-receipt
+          path: |
+            projects/swrlz-forge-moba/source-manifest.json
+            projects/swrlz-forge-moba/_release_v11_476_candidate/se476-page-down-*.png
