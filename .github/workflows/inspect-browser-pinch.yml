@@ -1,0 +1,23 @@
+name: Inspect browser pinch gesture ownership
+on:
+  push:
+    branches: [fix/se467-browser-pinch-reset]
+    paths: [.github/workflows/inspect-browser-pinch.yml]
+  workflow_dispatch:
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Inspect assembled camera handlers
+        run: |
+          python projects/swrlz-forge-moba/scripts/verify_v11_466_release.py --output /tmp/se467-browser-inspect
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('/tmp/se467-browser-inspect/swyrl_engine_v11_466.html')
+          s=p.read_text()
+          for needle in ('function atelierCameraPointerDown','function atelierCameraPointerMove','function atelierCameraPointerUp','function pointerDown(e)','function pointerMove(e)','function pointerUp(e)'):
+            i=s.find(needle)
+            print('===',needle,'at',i,'===')
+            print(s[i:i+2900] if i>=0 else 'MISSING')
+          PY
