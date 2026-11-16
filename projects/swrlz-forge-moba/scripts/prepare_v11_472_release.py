@@ -11,7 +11,7 @@ manifest_file=ROOT/'source-manifest.json'
 request_file=ROOT/'DEPLOY_REQUEST.json'
 manifest=json.loads(manifest_file.read_text('utf8'))
 assert manifest['name']=='§wyrl§ Engine v11.472'
-assert manifest['finalArtifact']=='swyrl_engine_v11_471.html'
+assert manifest['finalArtifact']=='swyrl_engine_v11_472.html'
 assert len(manifest['patches'])==449
 assert manifest['patches'][-1]=='patches/v11_472_full_resolution_textures.py'
 manifest['finalBytes']=None
