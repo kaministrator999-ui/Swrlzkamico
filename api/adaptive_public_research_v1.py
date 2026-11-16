@@ -165,10 +165,20 @@ def encyclopedia_topic(plan: dict[str,Any]) -> str:
     subject=re.sub(r"\b(?:how|why|what|does|do|did|work|works|"
                    r"happen|happens|overview|explain|describe|about)\b",
                    " ",subject,flags=re.I)
-    subject=" ".join(subject.split())
-    if not subject:
+    words=[]
+    for word in subject.split():
+        low=word.lower()
+        if low.endswith("sses"):
+            word=word[:-2]
+        elif low.endswith("ses"):
+            word=word[:-1]
+        elif low.endswith("s") and not low.endswith(("ss","ics")):
+            word=word[:-1]
+        words.append(word)
+    topic=" ".join(words)
+    if not topic:
         return ""
-    return _normalized(subject,75)
+    return _normalized(topic,75)
 
 
 def adaptive_enrich(
