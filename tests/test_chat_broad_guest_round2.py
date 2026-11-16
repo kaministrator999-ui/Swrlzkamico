@@ -19,6 +19,64 @@ class BroadGuestGraderTests(unittest.TestCase):
                 for turn in case["turns"]:
                     self.assertTrue(turn["kind"] and turn["prompt"])
 
+    def test_expansion_covers_25_distinct_scenarios_and_52_turns(self):
+        self.assertEqual(25,sum(len(v) for v in CASES.values()))
+        self.assertEqual(52,sum(len(c["turns"]) for batch in CASES.values() for c in batch))
+        self.assertEqual(7,len(CASES["research"]))
+        self.assertEqual(5,len(CASES["songwriting"]))
+        self.assertEqual(8,len(CASES["conversation"]))
+        self.assertEqual(5,len(CASES["transformations"]))
+
+    def test_lyric_verification_hijack_is_never_accepted(self):
+        message=("I found search results for the lyrics, but I couldn't verify "
+                 "the requested lyric text from fetched evidence, so I won't reconstruct it.")
+        self.assertIn("no_lyrics_lookup_hijack",fails("pop_rewrite",message))
+        self.assertIn("no_lyrics_lookup_hijack",fails("song_structure_research",message))
+
+    def test_user_authored_verse_weather_hijack_is_never_accepted(self):
+        message="I need a city/region or an explicitly shared location before I can check live weather."
+        self.assertIn("no_weather_lookup_hijack",fails("source_ack",message))
+
+    def test_inference_failure_is_never_an_original_song(self):
+        message="Local Qwen inference failed after a retry. Your message was saved; please try again."
+        self.assertIn("no_local_inference_failure",fails("rap_original",message))
+
+    def test_network_phases_are_observable_not_masked_by_fluent_text(self):
+        grade=check("source_ack","Acknowledged, I have your original lines.",
+                    phases=["SEARCH_STARTED","SEARCH_PROVIDER_VISIT"])
+        self.assertIn("no_unrequested_web_tool",
+                      [x["check"] for x in grade["checks"] if not x["pass"]])
+        okay=check("source_ack","Acknowledged, I have your original lines.",
+                   phases=["GENERATING","COMPLETE"])
+        self.assertEqual("PASS_EVIDENCE",okay["status"])
+
+    def test_weather_title_does_not_require_a_forecast(self):
+        fictional=("Rain Glass Lantern\nVerse 1: rain in the window.\n"
+                   "Chorus: shine on\nVerse 2: turns back toward town.\n"
+                   "Bridge: chooses the road home.\n"*5)
+        self.assertEqual([],fails("weather_safe_song",fictional))
+
+    def test_adaptation_does_not_preserve_aab_verse_repetition(self):
+        copied=("\nVerse 1\nWait for the midnight train\n"
+                "Wait for the midnight train\nThen walk toward the lights.\n"
+                "Pre-Chorus\nA soft signal\nChorus\nHome again\n"
+                "Verse 2\nThe river is cold.\nBridge\nI turn.\n"
+                "Final Chorus\nHome again\n" + "Another lyric line\n"*12)
+        self.assertIn("no_blues_aab_copied_into_pop_verses",
+                      fails("pop_adaptation",copied))
+
+    def test_remix_recycles_too_many_source_images(self):
+        song=("[Verse 1]\nA paper key unlocks the station clock\n"
+              "The quiet roads become a purple noon\n[Chorus]\nA new bright song\n"
+              "[Verse 2]\nAnother visitor arrives\n[Bridge]\nThey choose the open road\n"
+              +"Independent new lyric line. "*30)
+        self.assertIn("limited_recycled_source_imagery",fails("original_remix",song))
+
+    def test_metaphorical_glitch_is_an_acceptable_joke(self):
+        reply=("It sounds like a glitchy layout, not a literal creature. "
+               "Let's inspect what triggers the UI issue.")
+        self.assertEqual([],fails("metaphor",reply))
+
     def test_500_does_not_count_as_a_song(self):
         self.assertIn("no_generation_or_router_error",
                       fails("pop_song","Generation failed: HTTP Error 500: Internal Server Error"))
