@@ -1,0 +1,696 @@
+{
+  "schema": "swrlz-github-online-research-outcome-v2",
+  "requestId": "swr-research-eval-b0be33b59dfc4131",
+  "modelId": "700m",
+  "eventType": "ONLINE_RESEARCH_OUTCOME",
+  "sourceRef": "f149dd857e3d9219f5cae7da0286b5dbfec85c42",
+  "persistedAtUnixMs": 1794850038739,
+  "diagnostic": {
+    "schema": "swrlz-online-research-outcome-v2",
+    "terminalState": "COMPLETE",
+    "research": {
+      "contract": "swrlz-online-camera-v1",
+      "observabilityRevision": "v181-song-metadata-clean-form-integrity",
+      "kind": "search",
+      "status": "NO_RESULTS",
+      "reason": "existing-lyrics-retrieval",
+      "provider": "bounded-web-search-chain-v1",
+      "resultCount": 0,
+      "widgetKinds": [],
+      "sourceCount": 0,
+      "locationRequired": false,
+      "usedExplicitClientLocation": false,
+      "elapsedMs": 952,
+      "lyricsSourceAttemptCount": 0,
+      "lyricsFetchDebug": [],
+      "blockedLyricsSourceFamilies": [],
+      "musicStructureDebug": null,
+      "candidateAdmissionDebug": [
+        {
+          "query": "Revise the entire song, keeping the title, both verses and original chorus hook exactly as before, but make the bridge a turning point where the narrator willingly goes home instead of escaping. Return the COMPLETE revised lyrics with labeled sections. The chorus wording should stay unchanged.",
+          "title": "REVISE Definition & Meaning - Merriam-Webster",
+          "url": "https://www.merriam-webster.com/dictionary/revise",
+          "source": "www.merriam-webster.com",
+          "rank": 1,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "revise"
+          ],
+          "coreTerms": [
+            "revise",
+            "entire",
+            "keeping",
+            "title",
+            "both",
+            "chorus",
+            "hook",
+            "exactly",
+            "before",
+            "but",
+            "make",
+            "bridge"
+          ],
+          "snippetPreview": "3 days ago · The meaning of REVISE is an act of revising : revision. How to use revise in a sentence. Synonym Discussion of Revise."
+        },
+        {
+          "query": "Revise the entire song, keeping the title, both verses and original chorus hook exactly as before, but make the bridge a turning point where the narrator willingly goes home instead of escaping. Return the COMPLETE revised lyrics with labeled sections. The chorus wording should stay unchanged.",
+          "title": "REVISE | English meaning - Cambridge Dictionary",
+          "url": "https://dictionary.cambridge.org/dictionary/english/revise",
+          "source": "dictionary.cambridge.org",
+          "rank": 2,
+          "allowed": true,
+          "reason": "SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "revise",
+            "bridge"
+          ],
+          "coreTerms": [
+            "revise",
+            "entire",
+            "keeping",
+            "title",
+            "both",
+            "chorus",
+            "hook",
+            "exactly",
+            "before",
+            "but",
+            "make",
+            "bridge"
+          ],
+          "snippetPreview": "REVISE definition: 1. to look at or consider again an idea, piece of writing, etc. in order to correct or improve it…. Learn more."
+        },
+        {
+          "query": "Revise the entire song, keeping the title, both verses and original chorus hook exactly as before, but make the bridge a turning point where the narrator willingly goes home instead of escaping. Return the COMPLETE revised lyrics with labeled sections. The chorus wording should stay unchanged.",
+          "title": "Revise – Free AI Document Editor",
+          "url": "https://revise.io/",
+          "source": "revise.io",
+          "rank": 3,
+          "allowed": true,
+          "reason": "SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "revise",
+            "entire",
+            "before"
+          ],
+          "coreTerms": [
+            "revise",
+            "entire",
+            "keeping",
+            "title",
+            "both",
+            "chorus",
+            "hook",
+            "exactly",
+            "before",
+            "but",
+            "make",
+            "bridge"
+          ],
+          "snippetPreview": "Revise is an AI document editor. Write, proofread, reformat, or revise entire documents. Review every change before accepting it. …"
+        },
+        {
+          "query": "Revise the entire song, keeping the title, both verses and original chorus hook exactly as before, but make the bridge a turning point where the narrator willingly goes home instead of escaping. Return the COMPLETE revised lyrics with labeled sections. The chorus wording should stay unchanged.",
+          "title": "Revise AI | AI writing editor that keeps your voice",
+          "url": "https://www.revise.net/",
+          "source": "www.revise.net",
+          "rank": 4,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "revise"
+          ],
+          "coreTerms": [
+            "revise",
+            "entire",
+            "keeping",
+            "title",
+            "both",
+            "chorus",
+            "hook",
+            "exactly",
+            "before",
+            "but",
+            "make",
+            "bridge"
+          ],
+          "snippetPreview": "Fiction writers, authors, and novelists use Revise as an AI line editor on drafts they already wrote. It polishes the prose; it does not …"
+        },
+        {
+          "query": "Revise the entire song, keeping the title, both verses and original chorus hook exactly as before, but make the bridge a turning point where the narrator willingly goes home instead of escaping. Return the COMPLETE revised lyrics with labeled sections. The chorus wording should stay unchanged.",
+          "title": "Free AI Rewriter - Revise",
+          "url": "https://revise.io/ai-rewriter",
+          "source": "revise.io",
+          "rank": 5,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "revise"
+          ],
+          "coreTerms": [
+            "revise",
+            "entire",
+            "keeping",
+            "title",
+            "both",
+            "chorus",
+            "hook",
+            "exactly",
+            "before",
+            "but",
+            "make",
+            "bridge"
+          ],
+          "snippetPreview": "Free AI rewriter for rewriting, cleaning up, summarizing, translating, and transforming short text with quick prompts."
+        },
+        {
+          "query": "Revise the entire song, keeping the title, both verses and original chorus hook exactly as before, but make the bridge a turning point where the narrator willingly goes home instead of escaping. Return the COMPLETE revised lyrics with labeled sections. The chorus wording should stay unchanged.",
+          "title": "REVISE Synonyms: 94 Similar and Opposite Words - Merriam-Webster",
+          "url": "https://www.merriam-webster.com/thesaurus/revise",
+          "source": "www.merriam-webster.com",
+          "rank": 6,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "revise"
+          ],
+          "coreTerms": [
+            "revise",
+            "entire",
+            "keeping",
+            "title",
+            "both",
+            "chorus",
+            "hook",
+            "exactly",
+            "before",
+            "but",
+            "make",
+            "bridge"
+          ],
+          "snippetPreview": "1 day ago · Some common synonyms of revise are amend, correct, emend, rectify, redress, reform, and remedy. While all these …"
+        },
+        {
+          "query": "Revise the entire song, keeping the title, both verses and original chorus hook exactly as before, but make the bridge a turning point where the narrator willingly goes home instead of escaping. Return the COMPLETE revised lyrics with labeled sections. The chorus wording should stay unchanged.",
+          "title": "Heating & Cooling - Revise",
+          "url": "https://www.callrevise.com/heating-cooling/",
+          "source": "www.callrevise.com",
+          "rank": 7,
+          "allowed": true,
+          "reason": "SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "revise",
+            "both"
+          ],
+          "coreTerms": [
+            "revise",
+            "entire",
+            "keeping",
+            "title",
+            "both",
+            "chorus",
+            "hook",
+            "exactly",
+            "before",
+            "but",
+            "make",
+            "bridge"
+          ],
+          "snippetPreview": "Jan 1, 2026 · Revise can help improve your indoor air quality during both heating and cooling seasons. Our products have air purifier …"
+        },
+        {
+          "query": "Revise the entire song, keeping the title, both verses and original chorus hook exactly as before, but make the bridge a turning point where the narrator willingly goes home instead of escaping. Return the COMPLETE revised lyrics with labeled sections. The chorus wording should stay unchanged.",
+          "title": "Revise - definition of revise by The Free Dictionary",
+          "url": "https://www.thefreedictionary.com/revise",
+          "source": "www.thefreedictionary.com",
+          "rank": 8,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "revise"
+          ],
+          "coreTerms": [
+            "revise",
+            "entire",
+            "keeping",
+            "title",
+            "both",
+            "chorus",
+            "hook",
+            "exactly",
+            "before",
+            "but",
+            "make",
+            "bridge"
+          ],
+          "snippetPreview": "1. to amend or alter: to revise an opinion. 2. to alter (something written or printed), in order to correct, improve, or update: to revise a …"
+        }
+      ],
+      "songIdentity": {},
+      "songDiscoveryPlan": [],
+      "lyricsRescueSearchDebug": [],
+      "lyricsMaxPageAttempts": 3,
+      "lyricsFallbackExhausted": true,
+      "rawPromptStored": false
+    },
+    "trace": [
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794850037782,
+        "phase": "RESEARCH_STARTED",
+        "activity": "Online research started",
+        "provider": "bounded-web-search-chain-v1",
+        "site": "",
+        "url": ""
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794850037783,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794850037932,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "activity": "No usable results from provider",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "httpStatus": 202,
+        "resultCount": 0
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794850037932,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794850038065,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "activity": "No usable results from provider",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "httpStatus": 202,
+        "resultCount": 0
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794850038066,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794850038502,
+        "phase": "SEARCH_PROVIDER_RESULTS",
+        "activity": "Search results found",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "httpStatus": 200,
+        "resultCount": 8
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794850038502,
+        "phase": "SEARCH_PROVIDER_SELECTED",
+        "activity": "Using bing-html",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "resultCount": 8
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794850038504,
+        "phase": "PAGE_FETCH_STARTED",
+        "activity": "Visiting result page",
+        "provider": "web-page",
+        "site": "dictionary.cambridge.org",
+        "url": "https://dictionary.cambridge.org/dictionary/english/revise"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794850038727,
+        "phase": "PAGE_FETCH_COMPLETE",
+        "activity": "Page fetched",
+        "provider": "web-page",
+        "site": "dictionary.cambridge.org",
+        "url": "https://dictionary.cambridge.org/dictionary/english/revise",
+        "httpStatus": 200,
+        "responseBytes": 346868
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794850038733,
+        "phase": "RESEARCH_COMPLETE",
+        "activity": "Online research complete",
+        "provider": "bounded-web-search-chain-v1",
+        "site": "",
+        "url": "",
+        "resultCount": 0
+      }
+    ],
+    "sources": [],
+    "sourceSites": [],
+    "widgets": [],
+    "widgetKinds": [],
+    "statusTrail": [
+      {
+        "phase": "QUEUED",
+        "reason": "Accepted by Workstation",
+        "atUnixMs": 1794850037771
+      },
+      {
+        "phase": "GENERATING",
+        "reason": "Workstation admitted generation",
+        "atUnixMs": 1794850037776
+      },
+      {
+        "seq": 1,
+        "phase": "PROGRAMMING_INTENT",
+        "reason": "",
+        "atUnixMs": 1794850037779
+      },
+      {
+        "seq": 2,
+        "phase": "SEARCH_STARTED",
+        "reason": "I’m on it — looking up Revise the entire song, keeping the title, both verses and original chorus hook exactly as before, but make the bridge a turning point where the narrator willingly goes home ins",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH"
+        ],
+        "atUnixMs": 1794850037782
+      },
+      {
+        "seq": 3,
+        "phase": "RESEARCH_STARTED",
+        "reason": "Online research started",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "",
+        "url": "",
+        "provider": "bounded-web-search-chain-v1",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794850037783
+      },
+      {
+        "seq": 4,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "provider": "duckduckgo-html",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794850037783
+      },
+      {
+        "seq": 5,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "reason": "No usable results from provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "provider": "duckduckgo-html",
+        "httpStatus": 202,
+        "resultCount": 0,
+        "atUnixMs": 1794850037932
+      },
+      {
+        "seq": 6,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "provider": "duckduckgo-lite",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794850037932
+      },
+      {
+        "seq": 7,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "reason": "No usable results from provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "provider": "duckduckgo-lite",
+        "httpStatus": 202,
+        "resultCount": 0,
+        "atUnixMs": 1794850038066
+      },
+      {
+        "seq": 8,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "provider": "bing-html",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794850038066
+      },
+      {
+        "seq": 9,
+        "phase": "SEARCH_PROVIDER_RESULTS",
+        "reason": "Search results found",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "provider": "bing-html",
+        "httpStatus": 200,
+        "resultCount": 8,
+        "atUnixMs": 1794850038502
+      },
+      {
+        "seq": 10,
+        "phase": "SEARCH_PROVIDER_SELECTED",
+        "reason": "Using bing-html",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "provider": "bing-html",
+        "httpStatus": null,
+        "resultCount": 8,
+        "atUnixMs": 1794850038502
+      },
+      {
+        "seq": 11,
+        "phase": "PAGE_FETCH_STARTED",
+        "reason": "Visiting result page",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "dictionary.cambridge.org",
+        "url": "https://dictionary.cambridge.org/dictionary/english/revise",
+        "provider": "web-page",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794850038505
+      },
+      {
+        "seq": 12,
+        "phase": "PAGE_FETCH_COMPLETE",
+        "reason": "Page fetched",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "dictionary.cambridge.org",
+        "url": "https://dictionary.cambridge.org/dictionary/english/revise",
+        "provider": "web-page",
+        "httpStatus": 200,
+        "resultCount": null,
+        "atUnixMs": 1794850038732
+      },
+      {
+        "seq": 13,
+        "phase": "RESEARCH_COMPLETE",
+        "reason": "Online research complete",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "",
+        "url": "",
+        "provider": "bounded-web-search-chain-v1",
+        "httpStatus": null,
+        "resultCount": 0,
+        "atUnixMs": 1794850038733
+      },
+      {
+        "seq": 14,
+        "phase": "ONLINE_RESEARCH",
+        "reason": "NO_RESULTS",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH"
+        ],
+        "atUnixMs": 1794850038736
+      },
+      {
+        "seq": 15,
+        "phase": "SEARCH_COMPLETE",
+        "reason": "Online retrieval no_results.",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH"
+        ],
+        "atUnixMs": 1794850038737
+      },
+      {
+        "seq": 16,
+        "phase": "LYRICS_VERIFICATION_BLOCKED",
+        "reason": "I found search results for the lyrics, but I couldn't verify the requested lyric text from fetched evidence, so I won't reconstruct it from memory.",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "LYRICS",
+          "GROUNDING"
+        ],
+        "atUnixMs": 1794850038737
+      },
+      {
+        "seq": 18,
+        "phase": "COMPLETE",
+        "reason": "",
+        "atUnixMs": 1794850038737
+      },
+      {
+        "phase": "PERSISTING",
+        "reason": "Saving the response to the chat",
+        "atUnixMs": 1794850038737
+      }
+    ],
+    "responseCognition": {},
+    "programmingIntent": {
+      "schema": "swrlz-programming-intent-v1",
+      "codingTask": false,
+      "projectContext": "none",
+      "changeClass": "none",
+      "artifactContinuation": false,
+      "artifactMutationRequested": false,
+      "artifactTargetId": "",
+      "artifactTargetMessageId": "",
+      "baseRevision": 0,
+      "baseSourceHash": "",
+      "newProject": false,
+      "source": "brain-router"
+    },
+    "candidateValidation": {},
+    "candidateAttempts": [],
+    "generationTelemetry": {},
+    "engineCompletionTelemetry": {
+      "totalLatencyMs": null,
+      "loadLatencyMs": null,
+      "firstDeltaLatencyMs": null
+    },
+    "contextBudget": {},
+    "resourcePlan": {},
+    "responseResourceUsage": {
+      "schema": "swrlz-response-resource-usage-v1",
+      "scope": "shared-cgroup-v2",
+      "source": "cgroup-v2",
+      "isolatedModelAttribution": false,
+      "wallTimeMs": 961,
+      "capacity": {
+        "cpuLimitCores": 16.0,
+        "cpuLimitState": "measured",
+        "memoryLimitBytes": 104000000000,
+        "memoryLimitState": "measured"
+      },
+      "observed": {
+        "cgroupCpuUsageUsecDelta": 243174,
+        "averageCgroupCpuCores": 0.253,
+        "memoryStartBytes": 8053035008,
+        "memoryEndBytes": 8058109952,
+        "memoryEndMinusStartBytes": 5074944,
+        "memoryPeakSampledBytes": 8058109952,
+        "memoryPeakAboveStartBytes": 5074944,
+        "memorySampleCount": 2,
+        "memorySamplingIntervalMs": 1000
+      },
+      "attribution": "Shared container readings include concurrent work; they are not exclusive CPU/RAM use by this model.",
+      "routeId": "700m",
+      "configuredEngineThreadBudget": null,
+      "outcome": "COMPLETE"
+    },
+    "finalResponse": "I found search results for the lyrics, but I couldn't verify the requested lyric text from fetched evidence, so I won't reconstruct it from memory.",
+    "finalResponseSha256": "b6fd72ce42d1ea9b8b6e2e4097ee293e0bec3153c5772663f955ff48cdad536a",
+    "requestedModelId": "700m",
+    "selectedModelId": "700m",
+    "stationTiming": {
+      "acceptedAtUnixMs": 1794850037771,
+      "startedAtUnixMs": 1794850037776,
+      "completedAtUnixMs": 1794850038737,
+      "queueWaitMs": 5,
+      "stationRunMs": 961,
+      "endToEndMs": 966
+    },
+    "rawPromptStored": false,
+    "historyStored": false,
+    "preciseLocationStored": false,
+    "privateReasoningStored": false
+  }
+}
