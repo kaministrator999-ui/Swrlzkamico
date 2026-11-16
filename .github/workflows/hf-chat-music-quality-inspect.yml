@@ -102,3 +102,20 @@ jobs:
               for n in range(start,min(end,len(lines))+1):
                 print("STOP_NATIVE",name,n,lines[n-1][:500],flush=True)
           PY
+
+      - name: Inspect current live Qwen model streaming class
+        shell: bash
+        run: |
+          python - <<'PY'
+          from huggingface_hub import HfApi,hf_hub_download
+          from pathlib import Path
+          import json,re
+          space="kamiloki/Swyrlz";rev=HfApi().repo_info(space,repo_type="space").sha
+          lines=Path(hf_hub_download(space,"qwen35_single_runtime.py",repo_type="space",revision=rev)).read_text().splitlines()
+          print("NATIVE_STOP_CURRENT",rev,len(lines),flush=True)
+          for n,line in enumerate(lines,1):
+            if re.search(r"def create_chat_completion|def _post|cancel|threading|HTTP|def _stream|response|def close|def load|def stop",line,re.I):
+              print("NATIVE_STOP_HIT",n,line[:300],flush=True)
+          for n in range(1,min(len(lines),295)+1):
+            print("NATIVE_STOP_LINE",n,lines[n-1][:400],flush=True)
+          PY
