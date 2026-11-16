@@ -15,7 +15,7 @@ permissions:
   contents: write
 concurrency:
   group: se471-verified-source-seal
-  cancel-in-progress: false
+  cancel-in-progress: true
 jobs:
   verify-and-seal:
     runs-on: ubuntu-24.04
