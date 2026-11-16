@@ -5,7 +5,7 @@
  // Only existing native §E project and §Chat account handlers can load data.
  const SESSION='swrlz.engine.last-session.v1';
  const $=id=>document.getElementById(id);
- let started=false,finished=false,account='pending',session=null,rows=[],opening=false,epoch=0,listing=false;
+ let started=false,finished=false,account='pending',session=null,rows=[],opening=false,epoch=0,listing=false,attempt=0;
  function read(){
   try{
    const o=JSON.parse(localStorage.getItem(SESSION)||'null');
@@ -37,6 +37,26 @@
   session={source,id,studio:currentStudio(),camera:null,updatedAt:Date.now()};
   // Native project routing may complete on its next microtask.
   queueMicrotask(()=>{if(session?.source===source&&session.id===id)persist();});
+ }
+ function offlineScreen(show){
+  const el=$('se476SignalLost');
+  if(el)el.hidden=!show;
+ }
+ function offlineDeadline(ms=16000){
+  const ticket=++attempt;
+  setTimeout(()=>{
+   if(ticket!==attempt||finished||account!=='pending')return;
+   account='offline';updateAccountStatus();offlineScreen(true);
+   void list();note('§C connection unavailable. Retry or continue with your on-device projects.',true);
+  },ms);
+ }
+ function retryConnection(){
+  if(finished)return;
+  account='pending';++epoch;updateAccountStatus();offlineScreen(false);
+  note('Reconnecting to §C… Local projects remain safe.');
+  const api=accountAPI();
+  if(api?.retry?.()!==true){offlineScreen(true);note('§C connection unavailable. Continue with local projects.',true);}
+  else offlineDeadline(14000);
  }
  function note(message,problem=false){
   const node=$('se476StartupStatus');
@@ -158,8 +178,9 @@
  }
  function onAccount(event){
   if(finished)return;
-  account=event.detail?.authenticated===true?'connected':'offline';
-  updateAccountStatus();
+  const connected=event.detail?.authenticated===true;
+  account=connected?'connected':'offline';++attempt;
+  updateAccountStatus();offlineScreen(!connected);
   if(account==='connected'){
    void list().then(()=>{
     if(finished)return;
@@ -180,6 +201,7 @@
   started=true;
   updateAccountStatus();paint();
   $('se476SignIn')?.addEventListener('click',signIn);
+  $('se476RetryConnection')?.addEventListener('click',retryConnection);
   $('se476ContinueLocal')?.addEventListener('click',continueLocal);
   $('se476Open')?.addEventListener('click',()=>void openSelected());
   $('se476Remember')?.addEventListener('change',e=>{
@@ -213,11 +235,10 @@
   };
   if(!warm()){let n=0;const tick=()=>{if(finished)return;if(warm())return;if(++n<20)setTimeout(tick,200);};setTimeout(tick,150);}
   // Account service outages must never block the locally persisted editor.
-  setTimeout(()=>{if(!finished&&account==='pending'){account='offline';updateAccountStatus();void list();
-   note('Google sign-in is unavailable right now. Local projects remain accessible.',true);}},16000);
+  offlineDeadline(16000);
  }
  window.SWYRL_ENGINE_STARTUP_476=Object.freeze({
-  markLoaded,readLast:()=>session?{...session}:null,
+  markLoaded,retryConnection,readLast:()=>session?{...session}:null,
   inspect:()=>({ready:started,finished,account,rows:rows.length,opening,selection:chosenRow(),default:defaults()}),
   refresh:()=>void list()
  });
