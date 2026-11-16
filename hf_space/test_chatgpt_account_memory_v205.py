@@ -42,6 +42,11 @@ with mock.patch.object(memory.account_chat_store,"_config",return_value={"dummy"
         if memory.status(ALICE)["state"]=="ready":break
         time.sleep(.01)
     assert memory.status(ALICE)["state"]=="ready",memory.status(ALICE)
+    assert memory._STATE[ALICE]["docs"][0]["continuitySignals"],"missing user-authored archive signals"
+    assert memory._STATE[ALICE]["continuityIndex"],"missing compact imported preference index"
+    assert len(memory._STATE[ALICE]["continuityIndex"]) <= len(memory._STATE[ALICE]["docs"][0]["continuitySignals"])
+    contextual=memory.interaction_context(ALICE,"Can you write rap lyrics?",[])
+    assert "technically intricate rap music" in contextual,contextual
     evidence=memory.retrieve(ALICE,"Do you remember my dragon rap wordplay music?")
     assert "technically intricate rap music" in evidence,evidence
     assert "Previous ChatGPT thread" in evidence and "user said" in evidence
@@ -58,6 +63,7 @@ with mock.patch.object(memory.account_chat_store,"_config",return_value={"dummy"
     assert memory.retrieve(BOB,"dragon rap music?")==""
     assert memory.configure(ALICE,False)["enabled"] is False
     assert memory.retrieve(ALICE,"dragon rap music?")==""
+    assert memory.interaction_context(ALICE,"rap lyrics",[])=="", "disabled import must not adapt"
     assert ALICE not in memory._STATE
     # Deletes/reimports invalidate every cached historical excerpt.
     memory.configure(ALICE,True)
