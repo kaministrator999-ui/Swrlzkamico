@@ -1,0 +1,15 @@
+{
+  "schema": "swrlz-knowledge-followup-v1",
+  "requestId": "web-mwjji3cg-975258332-2359044386",
+  "modelId": "700m",
+  "eventType": "KNOWLEDGE_ACQUISITION_FOLLOWUP_1",
+  "sourceRef": "f149dd857e3d9219f5cae7da0286b5dbfec85c42",
+  "persistedAtUnixMs": 1794850267881,
+  "diagnostic": {
+    "schema": "swrlz-knowledge-followup-v1",
+    "parentRequestId": "web-mwjji3cg-975258332-2359044386",
+    "turnIndex": 1,
+    "userText": "Revise that ORIGINAL song's bridge so the protagonist chooses to return home to their family. Keep the title 'Rain Glass Lantern', both verses and the recurring chorus, and return all lyrics with section labels. Do not look up a real recording.",
+    "capturedAtUnixMs": 1794850267880
+  }
+}
