@@ -1,0 +1,44 @@
+name: §C fresh HTML API vs UI route diagnostic (read only)
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/chat-html-api-vs-ui-diagnostic.yml'
+permissions: {contents: read}
+concurrency:
+  group: swrlz-chat-guest-eval
+  cancel-in-progress: false
+jobs:
+  api:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 16
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - run: |
+          python -m pip install playwright==1.56.0
+          python -m playwright install --with-deps chromium
+      - name: Fresh simple HTML page through guest Station API, not browser UI
+        env:
+          SWRLZ_EVAL_BASE: https://kamiloki-swyrlz.hf.space
+          SWRLZ_EVAL_MODEL: 700m
+        run: |
+          python -u - <<'PY'
+          import asyncio,sys
+          import scripts.eval_chat_guest_suite as e
+          cs=[c for c in e.CASES['2'] if c['id']=='html-button-ui']
+          if len(cs)!=1:raise RuntimeError("HTML fixture missing")
+          cs[0]['lane']='api'
+          cs[0]['turns']=cs[0]['turns'][:1]
+          e.CASES['2']=cs
+          sys.exit(asyncio.run(e.main('live','2')))
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: fresh-html-api-diagnostic-${{ github.run_id }}
+          path: reports/chat-guest-eval/
+          retention-days: 14
+          if-no-files-found: ignore
