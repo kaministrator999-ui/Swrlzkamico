@@ -1,0 +1,804 @@
+{
+  "schema": "swrlz-github-online-research-outcome-v2",
+  "requestId": "web-mwiq56br-1319511712-3678628665",
+  "modelId": "700m",
+  "eventType": "ONLINE_RESEARCH_OUTCOME",
+  "sourceRef": "f149dd857e3d9219f5cae7da0286b5dbfec85c42",
+  "persistedAtUnixMs": 1794800950433,
+  "diagnostic": {
+    "schema": "swrlz-online-research-outcome-v2",
+    "terminalState": "COMPLETE",
+    "research": {
+      "contract": "swrlz-online-camera-v1",
+      "observabilityRevision": "v181-song-metadata-clean-form-integrity",
+      "kind": "search",
+      "status": "NO_RESULTS",
+      "reason": "existing-lyrics-retrieval",
+      "provider": "bounded-web-search-chain-v1",
+      "resultCount": 0,
+      "widgetKinds": [],
+      "sourceCount": 0,
+      "locationRequired": false,
+      "usedExplicitClientLocation": false,
+      "elapsedMs": 671,
+      "lyricsSourceAttemptCount": 1,
+      "lyricsFetchDebug": [
+        {
+          "attempt": 1,
+          "origin": "research-evidence",
+          "requestedUrl": "https://www.here.com/",
+          "finalUrl": "https://www.here.com/",
+          "searchResultTitle": "HERE Technologies: The Live Map That Powers Real-World AI",
+          "fetchedPageTitle": "HERE Technologies: The Live Map That Powers Real-World AI",
+          "fetchStatus": null,
+          "fetchedContent": {
+            "chars": 3104,
+            "sha256": "9ebbac08a50ac75ae0e9a49a12bb0e71ddc2ae6e78c8a5718f22a2c6829a72d6",
+            "anchorIndex": null,
+            "anchorLine": "",
+            "sectionMarkers": [],
+            "performerMarkers": [],
+            "preview": "HERE Technologies: The Live Map That Powers Real-World AI\nHERE\nWhy HERE\nOur products Solutions Our services Get started Learn About\nContact us\nHere autocomplete\nWhy HERE Our products Solutions Our services Get started Learn About\nSlide 1 of 6\nPress Release\nHERE Technologies expands access to HERE Location Reasoning\nPress Release\nNIO and HERE Technologies expand European collaboration\nBlog\nTruck data is everywhere. Real decisions are the hard part\nBlog",
+            "previewChars": 455,
+            "previewLimit": 600
+          },
+          "extractorOutput": {
+            "chars": 0,
+            "sha256": "",
+            "preview": "",
+            "previewChars": 0,
+            "previewLimit": 600
+          },
+          "extractorDiagnostics": {
+            "requestedScope": "full-lyrics",
+            "rawChars": 3104,
+            "rawLineCount": 143,
+            "anchorIndex": null,
+            "anchorLine": "",
+            "scopedLineCount": 6,
+            "scopedNonEmptyLineCount": 4,
+            "contentLineCount": 3,
+            "musicalSectionCueCount": 0,
+            "performerCueCount": 0,
+            "blankSeparatedChunkCount": 3,
+            "acceptedBlockCount": 1,
+            "blockLineCounts": [
+              2
+            ],
+            "continuousRunEligible": false,
+            "terminalBoundaryKind": "PAGE_NOISE_BOUNDARY",
+            "terminalBoundaryLine": "Contact us",
+            "decision": "REJECTED",
+            "reason": "INSUFFICIENT_FULL_LYRIC_STRUCTURE",
+            "resultChars": 0,
+            "resultLineCount": 0
+          },
+          "sourceIdentityVerified": false,
+          "sourceIdentityScore": 0,
+          "snippetOverlapCount": 0,
+          "snippetInformativeTokenCount": 0,
+          "snippetSequenceSpan": 0,
+          "musicalSectionCount": 0,
+          "performerCueCount": 0,
+          "outcome": "REJECTED",
+          "rejectionReason": "NO_STRUCTURED_LYRIC_BODY"
+        }
+      ],
+      "blockedLyricsSourceFamilies": [],
+      "musicStructureDebug": null,
+      "candidateAdmissionDebug": [
+        {
+          "query": "Here's what I caught: 1. Verse 1 and Verse 3 are identical. Different artist labels, same lyrics. That's a clear duplication failure. 2. Verse 2 repeats itself. The chemistry and cooking metaphors are reused instead of developing new rhyme schemes.",
+          "title": "HERE Technologies: The Live Map That Powers Real-World AI",
+          "url": "https://www.here.com/",
+          "source": "www.here.com",
+          "rank": 1,
+          "allowed": true,
+          "reason": "SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "here",
+            "that"
+          ],
+          "coreTerms": [
+            "here",
+            "caught",
+            "identical",
+            "different",
+            "artist",
+            "labels",
+            "same",
+            "that",
+            "clear",
+            "duplication",
+            "failure",
+            "repeats"
+          ],
+          "snippetPreview": "HERE Technologies provides live map data, routing and location APIs, and a location platform that powers fleet, automotive and real …"
+        },
+        {
+          "query": "Here's what I caught: 1. Verse 1 and Verse 3 are identical. Different artist labels, same lyrics. That's a clear duplication failure. 2. Verse 2 repeats itself. The chemistry and cooking metaphors are reused instead of developing new rhyme schemes.",
+          "title": "HERE Technologies | The world's #1 location platform",
+          "url": "https://www.here.com/en-us",
+          "source": "www.here.com",
+          "rank": 2,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "here"
+          ],
+          "coreTerms": [
+            "here",
+            "caught",
+            "identical",
+            "different",
+            "artist",
+            "labels",
+            "same",
+            "that",
+            "clear",
+            "duplication",
+            "failure",
+            "repeats"
+          ],
+          "snippetPreview": "The unified map for automakers and enterprises."
+        },
+        {
+          "query": "Here's what I caught: 1. Verse 1 and Verse 3 are identical. Different artist labels, same lyrics. That's a clear duplication failure. 2. Verse 2 repeats itself. The chemistry and cooking metaphors are reused instead of developing new rhyme schemes.",
+          "title": "Here (2024 film) - Wikipedia",
+          "url": "https://en.m.wikipedia.org/wiki/Here_(2024_film)",
+          "source": "en.m.wikipedia.org",
+          "rank": 3,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "here"
+          ],
+          "coreTerms": [
+            "here",
+            "caught",
+            "identical",
+            "different",
+            "artist",
+            "labels",
+            "same",
+            "that",
+            "clear",
+            "duplication",
+            "failure",
+            "repeats"
+          ],
+          "snippetPreview": "Here is a 2024 American drama film produced and directed by Robert Zemeckis, who co-wrote the screenplay with Eric Roth, based …"
+        },
+        {
+          "query": "Here's what I caught: 1. Verse 1 and Verse 3 are identical. Different artist labels, same lyrics. That's a clear duplication failure. 2. Verse 2 repeats itself. The chemistry and cooking metaphors are reused instead of developing new rhyme schemes.",
+          "title": "HERE WeGo",
+          "url": "https://maps.here.com/",
+          "source": "maps.here.com",
+          "rank": 4,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "here"
+          ],
+          "coreTerms": [
+            "here",
+            "caught",
+            "identical",
+            "different",
+            "artist",
+            "labels",
+            "same",
+            "that",
+            "clear",
+            "duplication",
+            "failure",
+            "repeats"
+          ],
+          "snippetPreview": "Explore HERE WeGo for offline maps, real-time traffic updates, and navigation features with voice commands for seamless travel …"
+        },
+        {
+          "query": "Here's what I caught: 1. Verse 1 and Verse 3 are identical. Different artist labels, same lyrics. That's a clear duplication failure. 2. Verse 2 repeats itself. The chemistry and cooking metaphors are reused instead of developing new rhyme schemes.",
+          "title": "Here is back: the social rooms you remember, revived and rebuilt",
+          "url": "https://here.fm/",
+          "source": "here.fm",
+          "rank": 5,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "here"
+          ],
+          "coreTerms": [
+            "here",
+            "caught",
+            "identical",
+            "different",
+            "artist",
+            "labels",
+            "same",
+            "that",
+            "clear",
+            "duplication",
+            "failure",
+            "repeats"
+          ],
+          "snippetPreview": "The Here you remember is back: revived, rebuilt and growing up fast. Make a room, decorate it however you like, and hang out with …"
+        },
+        {
+          "query": "Here's what I caught: 1. Verse 1 and Verse 3 are identical. Different artist labels, same lyrics. That's a clear duplication failure. 2. Verse 2 repeats itself. The chemistry and cooking metaphors are reused instead of developing new rhyme schemes.",
+          "title": "HERE Definition & Meaning - Merriam-Webster",
+          "url": "https://www.merriam-webster.com/dictionary/here",
+          "source": "www.merriam-webster.com",
+          "rank": 6,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "here"
+          ],
+          "coreTerms": [
+            "here",
+            "caught",
+            "identical",
+            "different",
+            "artist",
+            "labels",
+            "same",
+            "that",
+            "clear",
+            "duplication",
+            "failure",
+            "repeats"
+          ],
+          "snippetPreview": "2 days ago · The meaning of HERE is in or at this place —often used interjectionally especially in answering a roll call. How to use …"
+        },
+        {
+          "query": "Here's what I caught: 1. Verse 1 and Verse 3 are identical. Different artist labels, same lyrics. That's a clear duplication failure. 2. Verse 2 repeats itself. The chemistry and cooking metaphors are reused instead of developing new rhyme schemes.",
+          "title": "HERE WeGo",
+          "url": "https://wego.here.com/",
+          "source": "wego.here.com",
+          "rank": 7,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "here"
+          ],
+          "coreTerms": [
+            "here",
+            "caught",
+            "identical",
+            "different",
+            "artist",
+            "labels",
+            "same",
+            "that",
+            "clear",
+            "duplication",
+            "failure",
+            "repeats"
+          ],
+          "snippetPreview": "HERE WeGo is a free app for planning routes, avoiding traffic, exploring places, and downloading maps with real-time updates and …"
+        },
+        {
+          "query": "Here's what I caught: 1. Verse 1 and Verse 3 are identical. Different artist labels, same lyrics. That's a clear duplication failure. 2. Verse 2 repeats itself. The chemistry and cooking metaphors are reused instead of developing new rhyme schemes.",
+          "title": "Here Technologies - Wikipedia",
+          "url": "https://en.m.wikipedia.org/wiki/Here_Technologies",
+          "source": "en.m.wikipedia.org",
+          "rank": 8,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "here"
+          ],
+          "coreTerms": [
+            "here",
+            "caught",
+            "identical",
+            "different",
+            "artist",
+            "labels",
+            "same",
+            "that",
+            "clear",
+            "duplication",
+            "failure",
+            "repeats"
+          ],
+          "snippetPreview": "Here Technologies (stylised and trade name as HERE and here) is a multinational group based in the Netherlands specialised in …"
+        }
+      ],
+      "songIdentity": {},
+      "songDiscoveryPlan": [],
+      "lyricsRescueSearchDebug": [],
+      "lyricsMaxPageAttempts": 3,
+      "lyricsFallbackExhausted": true,
+      "rawPromptStored": false
+    },
+    "trace": [
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794800949504,
+        "phase": "RESEARCH_STARTED",
+        "activity": "Online research started",
+        "provider": "bounded-web-search-chain-v1",
+        "site": "",
+        "url": ""
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794800949507,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794800949641,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "activity": "No usable results from provider",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "httpStatus": 202,
+        "resultCount": 0
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794800949641,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794800949775,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "activity": "No usable results from provider",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "httpStatus": 202,
+        "resultCount": 0
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794800949775,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794800950101,
+        "phase": "SEARCH_PROVIDER_RESULTS",
+        "activity": "Search results found",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "httpStatus": 200,
+        "resultCount": 8
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794800950101,
+        "phase": "SEARCH_PROVIDER_SELECTED",
+        "activity": "Using bing-html",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "resultCount": 8
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794800950103,
+        "phase": "PAGE_FETCH_STARTED",
+        "activity": "Visiting result page",
+        "provider": "web-page",
+        "site": "www.here.com",
+        "url": "https://www.here.com/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794800950169,
+        "phase": "PAGE_FETCH_COMPLETE",
+        "activity": "Page fetched",
+        "provider": "web-page",
+        "site": "www.here.com",
+        "url": "https://www.here.com/",
+        "httpStatus": 200,
+        "responseBytes": 309126
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794800950172,
+        "phase": "RESEARCH_COMPLETE",
+        "activity": "Online research complete",
+        "provider": "bounded-web-search-chain-v1",
+        "site": "",
+        "url": "",
+        "resultCount": 1
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "phase": "LYRICS_SOURCE_VERIFICATION",
+        "provider": "lyrics-verifier",
+        "site": "www.here.com",
+        "url": "https://www.here.com/",
+        "activity": "Checking fetched lyrics candidate",
+        "atUnixMs": 1794800950172
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "phase": "LYRICS_SOURCE_REJECTED",
+        "provider": "lyrics-verifier",
+        "site": "www.here.com",
+        "url": "https://www.here.com/",
+        "activity": "Lyrics candidate did not satisfy verification",
+        "atUnixMs": 1794800950173
+      }
+    ],
+    "sources": [],
+    "sourceSites": [],
+    "widgets": [],
+    "widgetKinds": [],
+    "statusTrail": [
+      {
+        "phase": "QUEUED",
+        "reason": "Accepted by Workstation",
+        "atUnixMs": 1794800949074
+      },
+      {
+        "phase": "GENERATING",
+        "reason": "Workstation admitted generation",
+        "atUnixMs": 1794800949498
+      },
+      {
+        "seq": 1,
+        "phase": "PROGRAMMING_INTENT",
+        "reason": "",
+        "atUnixMs": 1794800949501
+      },
+      {
+        "seq": 2,
+        "phase": "SEARCH_STARTED",
+        "reason": "I’m on it — looking up Here's what I caught: 1. Verse 1 and Verse 3 are identical. Different artist labels, same lyrics. That's a clear duplication failure. 2. Verse 2 repeats itself. The chemistry an",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH"
+        ],
+        "atUnixMs": 1794800949504
+      },
+      {
+        "seq": 3,
+        "phase": "RESEARCH_STARTED",
+        "reason": "Online research started",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "",
+        "url": "",
+        "provider": "bounded-web-search-chain-v1",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794800949505
+      },
+      {
+        "seq": 4,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "provider": "duckduckgo-html",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794800949507
+      },
+      {
+        "seq": 5,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "reason": "No usable results from provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "provider": "duckduckgo-html",
+        "httpStatus": 202,
+        "resultCount": 0,
+        "atUnixMs": 1794800949641
+      },
+      {
+        "seq": 6,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "provider": "duckduckgo-lite",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794800949641
+      },
+      {
+        "seq": 7,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "reason": "No usable results from provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "provider": "duckduckgo-lite",
+        "httpStatus": 202,
+        "resultCount": 0,
+        "atUnixMs": 1794800949775
+      },
+      {
+        "seq": 8,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "provider": "bing-html",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794800949775
+      },
+      {
+        "seq": 9,
+        "phase": "SEARCH_PROVIDER_RESULTS",
+        "reason": "Search results found",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "provider": "bing-html",
+        "httpStatus": 200,
+        "resultCount": 8,
+        "atUnixMs": 1794800950102
+      },
+      {
+        "seq": 10,
+        "phase": "SEARCH_PROVIDER_SELECTED",
+        "reason": "Using bing-html",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "provider": "bing-html",
+        "httpStatus": null,
+        "resultCount": 8,
+        "atUnixMs": 1794800950102
+      },
+      {
+        "seq": 11,
+        "phase": "PAGE_FETCH_STARTED",
+        "reason": "Visiting result page",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.here.com",
+        "url": "https://www.here.com/",
+        "provider": "web-page",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794800950104
+      },
+      {
+        "seq": 12,
+        "phase": "PAGE_FETCH_COMPLETE",
+        "reason": "Page fetched",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.here.com",
+        "url": "https://www.here.com/",
+        "provider": "web-page",
+        "httpStatus": 200,
+        "resultCount": null,
+        "atUnixMs": 1794800950169
+      },
+      {
+        "seq": 13,
+        "phase": "RESEARCH_COMPLETE",
+        "reason": "Online research complete",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "",
+        "url": "",
+        "provider": "bounded-web-search-chain-v1",
+        "httpStatus": null,
+        "resultCount": 1,
+        "atUnixMs": 1794800950172
+      },
+      {
+        "seq": 14,
+        "phase": "LYRICS_SOURCE_VERIFICATION",
+        "reason": "Checking fetched lyrics candidate",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.here.com",
+        "url": "https://www.here.com/",
+        "provider": "lyrics-verifier",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794800950176
+      },
+      {
+        "seq": 15,
+        "phase": "LYRICS_SOURCE_REJECTED",
+        "reason": "Lyrics candidate did not satisfy verification",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.here.com",
+        "url": "https://www.here.com/",
+        "provider": "lyrics-verifier",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794800950176
+      },
+      {
+        "seq": 16,
+        "phase": "ONLINE_RESEARCH",
+        "reason": "NO_RESULTS",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH"
+        ],
+        "atUnixMs": 1794800950177
+      },
+      {
+        "seq": 17,
+        "phase": "SEARCH_COMPLETE",
+        "reason": "Online retrieval no_results.",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH"
+        ],
+        "atUnixMs": 1794800950178
+      },
+      {
+        "seq": 18,
+        "phase": "LYRICS_VERIFICATION_BLOCKED",
+        "reason": "I found search results for the lyrics, but I couldn't verify the requested lyric text from fetched evidence, so I won't reconstruct it from memory.",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "LYRICS",
+          "GROUNDING"
+        ],
+        "atUnixMs": 1794800950178
+      },
+      {
+        "seq": 20,
+        "phase": "COMPLETE",
+        "reason": "",
+        "atUnixMs": 1794800950178
+      },
+      {
+        "phase": "PERSISTING",
+        "reason": "Saving the response to the chat",
+        "atUnixMs": 1794800950179
+      }
+    ],
+    "responseCognition": {},
+    "programmingIntent": {
+      "schema": "swrlz-programming-intent-v1",
+      "codingTask": false,
+      "projectContext": "none",
+      "changeClass": "none",
+      "artifactContinuation": false,
+      "artifactMutationRequested": false,
+      "artifactTargetId": "",
+      "artifactTargetMessageId": "",
+      "baseRevision": 0,
+      "baseSourceHash": "",
+      "newProject": false,
+      "source": "brain-router"
+    },
+    "candidateValidation": {},
+    "candidateAttempts": [],
+    "generationTelemetry": {},
+    "engineCompletionTelemetry": {
+      "totalLatencyMs": null,
+      "loadLatencyMs": null,
+      "firstDeltaLatencyMs": null
+    },
+    "contextBudget": {},
+    "resourcePlan": {},
+    "responseResourceUsage": {
+      "schema": "swrlz-response-resource-usage-v1",
+      "scope": "shared-cgroup-v2",
+      "source": "cgroup-v2",
+      "isolatedModelAttribution": false,
+      "wallTimeMs": 680,
+      "capacity": {
+        "cpuLimitCores": 16.0,
+        "cpuLimitState": "measured",
+        "memoryLimitBytes": 104000000000,
+        "memoryLimitState": "measured"
+      },
+      "observed": {
+        "cgroupCpuUsageUsecDelta": 251525,
+        "averageCgroupCpuCores": 0.37,
+        "memoryStartBytes": 6909325312,
+        "memoryEndBytes": 6912327680,
+        "memoryEndMinusStartBytes": 3002368,
+        "memoryPeakSampledBytes": 6912327680,
+        "memoryPeakAboveStartBytes": 3002368,
+        "memorySampleCount": 2,
+        "memorySamplingIntervalMs": 1000
+      },
+      "attribution": "Shared container readings include concurrent work; they are not exclusive CPU/RAM use by this model.",
+      "routeId": "700m",
+      "configuredEngineThreadBudget": null,
+      "outcome": "COMPLETE"
+    },
+    "finalResponse": "I found search results for the lyrics, but I couldn't verify the requested lyric text from fetched evidence, so I won't reconstruct it from memory.",
+    "finalResponseSha256": "b6fd72ce42d1ea9b8b6e2e4097ee293e0bec3153c5772663f955ff48cdad536a",
+    "requestedModelId": "700m",
+    "selectedModelId": "700m",
+    "stationTiming": {
+      "acceptedAtUnixMs": 1794800949074,
+      "startedAtUnixMs": 1794800949498,
+      "completedAtUnixMs": 1794800950179,
+      "queueWaitMs": 424,
+      "stationRunMs": 681,
+      "endToEndMs": 1105
+    },
+    "rawPromptStored": false,
+    "historyStored": false,
+    "preciseLocationStored": false,
+    "privateReasoningStored": false
+  }
+}
