@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.475
+title: §wyrl§ Engine v11.476
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,11 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+## §E v11.476 · Google-first workspace and Page Down (2026-11-16)
+
+The editor now displays a Google sign-in and native project picker before exposing the workspace. A checked automatic project takes precedence; otherwise the last successfully loaded saved project and studio are restored, with Model Studio camera state where available. If §C is unavailable, a full-screen animated SIGNAL LOST page offers reconnect or local/offline editing, preserving local project data. See [the v11.476 design and acceptance gates](docs/ACCOUNT_START_AND_PAGE_DOWN_V11_476.md). Real Google, mobile and VR user-device tests remain distinct from browser/source verification.
+
+
 ## §E v11.475 · Visible progressive Model Studio tools (2026-11-16)
 
 Owner screenshot showed Sculpt not replacing the highlighted Meshes category and no left tool flyout or top specific-mode bar. The new v11.475 adapter relocates the existing tool flyout outside the native right-rail overflow clip, synchronizes family highlighting, and positions the top mode row within the viewport beneath the transform bar. Native modeling handlers remain unchanged; touch desktop-site and compact layouts receive focused browser tests. See [progressive toolbar visibility repair](docs/MODEL_PROGRESSIVE_VISIBILITY_V11_475.md). Physical Moto/Quest acceptance remains pending.
