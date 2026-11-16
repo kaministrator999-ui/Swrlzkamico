@@ -210,12 +210,19 @@
   started=true;
   // Native release notes use the browser's top layer and otherwise intercept
   // clicks even above a fixed 2-billion-z-index account/outage gate.
-  const releaseDialog=$('seReleaseNotesDialog');
-  if(releaseDialog){
-   const defer=()=>{if(!finished&&releaseDialog.open)releaseDialog.close();};
-   defer();
-   new MutationObserver(defer).observe(releaseDialog,{attributes:true,attributeFilter:['open']});
-  }
+  // The notes dialog is assembled after this controller on some launch paths.
+  // Observe the native document until the startup gate releases; a dialog in
+  // the browser top layer intercepts *all* clicks regardless of CSS z-index.
+  const deferReleaseNotes=()=>{
+   if(finished)return;
+   const dialog=$('seReleaseNotesDialog');
+   if(dialog?.open)dialog.close();
+  };
+  const releaseObserver=new MutationObserver(deferReleaseNotes);
+  releaseObserver.observe(document.body,{subtree:true,childList:true,
+   attributes:true,attributeFilter:['open']});
+  deferReleaseNotes();
+  window.addEventListener('swrlz:engine-startup-complete',()=>releaseObserver.disconnect(),{once:true});
   updateAccountStatus();paint();
   $('se476SignIn')?.addEventListener('click',signIn);
   $('se476RetryConnection')?.addEventListener('click',retryConnection);
