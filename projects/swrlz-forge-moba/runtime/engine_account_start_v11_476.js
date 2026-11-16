@@ -97,12 +97,12 @@
    if(token===epoch){rows=rows.filter(x=>x.source==='local');paint();note('Account project sync unavailable. You can open locally.',true);}
   }finally{listing=false;}
  }
- function afterLoad(entry){
-  const previous=session?.source===entry?.source&&session?.id===entry?.id?{...session}:null;
-  if(entry?.source&&entry.id)markLoaded(entry.source,entry.id);
+ function afterLoad(entry,previous){
+  if(entry?.source&&entry.id&&!(session?.source===entry.source&&session.id===entry.id))markLoaded(entry.source,entry.id);
   if(previous?.studio){
    const studio=previous.studio,cam=previous.camera;
    if(session){session.studio=studio;session.camera=cam||null;}
+   queueMicrotask(persist);
    if(['game','modeler','particles','materials'].includes(studio)){
     queueMicrotask(()=>{window.SWYRL_ENGINE_STUDIOS?.change?.(studio);
      if(studio==='modeler'&&cam)restoreCamera(cam,0);});
@@ -118,18 +118,19 @@
   if(opening||finished)return;
   opening=true;
   const entry=override||chosenRow()||defaults();
+  const previous=session?.source===entry?.source&&session?.id===entry?.id?{...session}:null;
   try{
    if(entry?.source==='cloud'&&account!=='connected')throw Error('Sign in to load this Google project.');
    if(entry){
     note('Opening '+(entry.source==='cloud'?'Google':'on-device')+' project…');
     const api=accountAPI();
     if(!api||entry.source==='cloud'&&!api.ready?.())throw Error('Project loader is not connected.');
-    if(entry.explicit===true&&window.SWYRL_ENGINE_SAVED_DEFAULT?.report?.()?.success===true){
-     afterLoad(entry);finish();return;
+    if(entry.explicit===true&&window.SWYRL_ENGINE_SAVED_DEFAULT?.pending?.()==null&&window.SWYRL_ENGINE_SAVED_DEFAULT?.report?.()?.success===true){
+     afterLoad(entry,previous);finish();return;
     }
     const ok=entry.source==='cloud'?await api.loadCloud(entry.id):await api.loadLocal(entry.id);
     if(ok!==true)throw Error('Native project loader did not confirm success.');
-    afterLoad(entry);
+    afterLoad(entry,previous);
    }
    finish();
   }catch(err){
