@@ -1,0 +1,27 @@
+/* SE471_PROJECT_DELETE_STYLES_START */
+#projectHub .se471-delete-project{color:#ffd5d5;background:#56313c;border-color:#a36978}
+#projectHub .se471-delete-project:focus-visible{outline:2px solid #ffc0c0;outline-offset:2px}
+.se471-delete-dialog{position:fixed;inset:0;margin:auto;width:min(420px,calc(100vw - 28px));
+ max-width:calc(100vw - 28px);max-height:calc(100dvh - 32px);overflow:auto;
+ border:1px solid #cc8994;border-radius:13px;padding:18px;background:#1e1a29;
+ color:#f8f4ff;box-shadow:0 22px 90px #000c;font:14px/1.45 system-ui;z-index:2147483600}
+.se471-delete-dialog::backdrop{background:rgba(5,7,15,.79)}
+.se471-delete-dialog strong{display:block;font-size:17px;margin-bottom:8px}
+.se471-delete-dialog p{margin:7px 0 12px;overflow-wrap:anywhere}
+.se471-delete-actions{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:8px}
+.se471-delete-dialog button{padding:10px 13px;min-height:44px;border-radius:8px;
+ background:#38304b;color:#fff;border:1px solid #a095b5;font:600 13px system-ui}
+.se471-delete-dialog .se471-confirm-danger{background:#9d3247;border-color:#e77a8a}
+.se471-delete-dialog button:disabled{opacity:.45}
+.se471-delete-dialog button:focus-visible{outline:3px solid #c7eeff;outline-offset:2px}
+/* SE471_PROJECT_DELETE_STYLES_END */
+
+/* SE471_UV_FINE_FIT_STYLES_START */
+#modelAtelierUVLayout #se471UVFineTune{border-top:1px solid #517580;padding-top:8px;color:#e3faff;min-width:0}
+#modelAtelierUVLayout #se471UVFineTune summary{cursor:pointer;font-size:12px;font-weight:700;min-height:32px}
+#modelAtelierUVLayout #se471UVFineTune label{display:flex;flex-wrap:wrap;gap:4px 10px;align-items:center;margin:10px 0;color:#def5f7;font-size:12px}
+#modelAtelierUVLayout #se471UVFineTune input[type="range"]{display:block;flex:1 1 100%;width:100%;accent-color:#67d9d5;min-height:28px}
+#modelAtelierUVLayout #se471UVFineTune output{margin-left:auto;color:#fff;font-variant-numeric:tabular-nums;font-weight:700}
+#modelAtelierUVLayout #se471UVFineTune button{width:100%;min-height:42px;border:1px solid #6fada8;background:#275259}
+#modelAtelierUVLayout #se471UVFineTune p{font-size:11px;line-height:1.45;color:#badbe1}
+/* SE471_UV_FINE_FIT_STYLES_END */

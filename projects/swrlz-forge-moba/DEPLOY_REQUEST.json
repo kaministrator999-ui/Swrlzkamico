@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT (owner-approved)",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.470",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_470_UV_MODEL_SAVE",
-  "reason": "UV imported texture placement repaired; native Model Studio Save to account uses revisioned standalone model assets, avoids duplicate My Projects entries, and preserves local draft recovery. Physical Moto/Quest acceptance remains pending.",
-  "sourceCommit": "079b2282573e8cdc940b4da21d5d3428ea3e1d29",
-  "sourceIntegritySha256": "187aa8215a763b9d75d5be41507e44ceea35ef45cfc86bed1de0c0423ab962ec"
+  "releaseVersion": "v11.471",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_471_UV_VISIBLE_PROJECT_DELETE",
+  "reason": "Select authored Material view after UV texture import; add opt-in latitude-aware and manual U/V fit; local/account project deletion confirmation with storage receipt validation. No account records removed automatically. Real device acceptance pending.",
+  "sourceCommit": "4b6ee551de7499f048fc089d1c7b876c0fb99a73",
+  "sourceIntegritySha256": "5ab937f7eb31462f4eb6ae969f24ec9fec77346e0ab92ef4829ac58b7dc5ef94"
 }
