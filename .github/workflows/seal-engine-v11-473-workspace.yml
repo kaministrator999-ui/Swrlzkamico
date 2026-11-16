@@ -1,0 +1,54 @@
+name: Seal and verify §E v11.473 workspace folding
+on:
+  push:
+    branches: [feature/se473-free-uv-and-foldable-docks]
+    paths:
+      - ".github/workflows/seal-engine-v11-473-workspace.yml"
+      - ".github/workflows/deploy-swrlz-forge-moba.yml"
+      - "projects/swrlz-forge-moba/runtime/model_uv_screen_drag_v11_473.js"
+      - "projects/swrlz-forge-moba/runtime/model_tool_rail_fold_v11_473.js"
+      - "projects/swrlz-forge-moba/runtime/model_folding_workspace_v11_473.css"
+      - "projects/swrlz-forge-moba/patches/v11_473_folding_workspace.py"
+      - "projects/swrlz-forge-moba/scripts/prepare_v11_473_release.py"
+      - "projects/swrlz-forge-moba/scripts/verify_v11_473_release.py"
+      - "projects/swrlz-forge-moba/tests/*v11_473.mjs"
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: se473-model-workspace-seal
+  cancel-in-progress: true
+jobs:
+  verify-and-seal:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Verify full modeler build, UV movement, side grips and tool rail, plus inherited regressions
+        run: python projects/swrlz-forge-moba/scripts/prepare_v11_473_release.py
+      - name: Store verified source checksum and owner-approved deployment request
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add projects/swrlz-forge-moba/source-manifest.json projects/swrlz-forge-moba/DEPLOY_REQUEST.json
+          if ! git diff --cached --quiet; then
+            git commit -m "seal(§E): v11.473 native layout verification and HF source receipt"
+            git push origin HEAD:feature/se473-free-uv-and-foldable-docks
+          fi
+      - name: Attach build receipt
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: se473-workspace-folding-source
+          path: |
+            projects/swrlz-forge-moba/source-manifest.json
+            projects/swrlz-forge-moba/DEPLOY_REQUEST.json
+          if-no-files-found: error
