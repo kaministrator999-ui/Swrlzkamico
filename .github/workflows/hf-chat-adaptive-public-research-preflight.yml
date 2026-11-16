@@ -97,7 +97,7 @@ jobs:
           assert not metadata["facetsNeedingVerification"],metadata
           assert len(packet)>=3,packet
           PY
-      - name: Confirm topic-level encyclopedia fallback with actual safe public fetcher
+      - name: Confirm actual encyclopedia citations survive the live source relevance filter
         run: |
           python - <<'PY'
           import importlib.util,json,sys
