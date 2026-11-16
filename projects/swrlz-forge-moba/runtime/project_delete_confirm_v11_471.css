@@ -15,3 +15,13 @@
 .se471-delete-dialog button:disabled{opacity:.45}
 .se471-delete-dialog button:focus-visible{outline:3px solid #c7eeff;outline-offset:2px}
 /* SE471_PROJECT_DELETE_STYLES_END */
+
+/* SE471_UV_FINE_FIT_STYLES_START */
+#modelAtelierUVLayout #se471UVFineTune{border-top:1px solid #517580;padding-top:8px;color:#e3faff;min-width:0}
+#modelAtelierUVLayout #se471UVFineTune summary{cursor:pointer;font-size:12px;font-weight:700;min-height:32px}
+#modelAtelierUVLayout #se471UVFineTune label{display:flex;flex-wrap:wrap;gap:4px 10px;align-items:center;margin:10px 0;color:#def5f7;font-size:12px}
+#modelAtelierUVLayout #se471UVFineTune input[type="range"]{display:block;flex:1 1 100%;width:100%;accent-color:#67d9d5;min-height:28px}
+#modelAtelierUVLayout #se471UVFineTune output{margin-left:auto;color:#fff;font-variant-numeric:tabular-nums;font-weight:700}
+#modelAtelierUVLayout #se471UVFineTune button{width:100%;min-height:42px;border:1px solid #6fada8;background:#275259}
+#modelAtelierUVLayout #se471UVFineTune p{font-size:11px;line-height:1.45;color:#badbe1}
+/* SE471_UV_FINE_FIT_STYLES_END */
