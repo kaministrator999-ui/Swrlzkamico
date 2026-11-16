@@ -1,0 +1,259 @@
+{
+  "schema": "swrlz-knowledge-acquisition-snapshot-v1",
+  "requestId": "swr-research-eval-eb82368bbf2e449f",
+  "modelId": "700m",
+  "eventType": "KNOWLEDGE_ACQUISITION_SNAPSHOT",
+  "sourceRef": "f149dd857e3d9219f5cae7da0286b5dbfec85c42",
+  "persistedAtUnixMs": 1794855247878,
+  "diagnostic": {
+    "schema": "swrlz-knowledge-acquisition-snapshot-v1",
+    "requestId": "swr-research-eval-eb82368bbf2e449f",
+    "trigger": {
+      "userText": "Research and briefly compare boom-bap versus trap rhythm as backgrounds for rap lyric flow. Mention backbeat, subdivisions, hi-hat patterns, where a hook can sit, and that flow patterns vary by song. Cite at least one public music-education source link. Do not invent a rigid universal song structure or quote existing lyrics.",
+      "sha256": "ad40f4f7a021d54a1313895b740b40d42d8bf9c9175fb9f7d743819c72615081"
+    },
+    "research": {
+      "kind": "search",
+      "status": "OK",
+      "provider": "bounded-web-search-chain-v1",
+      "reason": "explicit-web-intent",
+      "query": "",
+      "resultCount": 1,
+      "sources": [
+        {
+          "title": "Search | ResearchGate",
+          "source": "www.researchgate.net",
+          "url": "https://www.researchgate.net/search/publications",
+          "snippet": "",
+          "rank": null
+        }
+      ],
+      "sourceSites": [
+        "www.researchgate.net"
+      ],
+      "widgetKinds": [
+        "search-results"
+      ],
+      "trace": [
+        {
+          "phase": "RESEARCH_STARTED",
+          "provider": "bounded-web-search-chain-v1",
+          "activity": "Online research started",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "SEARCH_PROVIDER_VISIT",
+          "provider": "duckduckgo-html",
+          "activity": "Searching provider",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "SEARCH_PROVIDER_EMPTY",
+          "provider": "duckduckgo-html",
+          "activity": "No usable results from provider",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "SEARCH_PROVIDER_VISIT",
+          "provider": "duckduckgo-lite",
+          "activity": "Searching provider",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "SEARCH_PROVIDER_EMPTY",
+          "provider": "duckduckgo-lite",
+          "activity": "No usable results from provider",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "SEARCH_PROVIDER_VISIT",
+          "provider": "bing-html",
+          "activity": "Searching provider",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "SEARCH_PROVIDER_RESULTS",
+          "provider": "bing-html",
+          "activity": "Search results found",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "SEARCH_PROVIDER_SELECTED",
+          "provider": "bing-html",
+          "activity": "Using bing-html",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "PAGE_FETCH_STARTED",
+          "provider": "web-page",
+          "activity": "Visiting result page",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "PAGE_FETCH_ERROR",
+          "provider": "web-page",
+          "activity": "Page fetch failed",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "RESEARCH_COMPLETE",
+          "provider": "bounded-web-search-chain-v1",
+          "activity": "Online research complete",
+          "status": null,
+          "elapsedMs": null
+        }
+      ]
+    },
+    "answer": {
+      "text": "```markdown\n{\"schema\":\"swrlz-music-request-v1\",\"workType\":\"comparative_analysis\",\"inventSectionLabels\":false,\"repeatedChorusByDefault\":false,\"reason\":\"research-comparison\"}\n# Boom-Bap vs. Trap: Rhythmic Landscapes for Rap Flow\n\nThe rhythmic foundation of a track dictates how a rapper's voice interacts with the beat. Here is a brief comparison of **boom-bap** and **trap** rhythms, focusing on the specific elements you requested.\n\n### 1. The Backbeat and Kick Placement\n*   **Boom-Bap:** This style relies heavily on a classic **backbeat** (emphasis on beats 2 and 4). The kick drum (the \"boom\") often hits on the downbeat (1) and the third beat, creating a heavy, head-nodding pulse. The snare or clap sits firmly on the backbeat, providing a rigid grid that encourages a steady, conversational flow.\n*   **Trap:** Trap music frequently **omits the traditional backbeat** or places the snare/clap on the **third beat** of a bar instead of the second. The kick drum pattern is more complex, often featuring rapid-fire rolls or syncopated patterns that cut across the bar lines. This creates a \"floating\" feel where the rapper must lock into the kick's syncopation rather than just the snare.\n\n### 2. Subdivisions and Hi-Hat Patterns\n*   **Boom-Bap:** Hi-hats in boom-bap are typically **16th-note** patterns that are relatively sparse and steady. They often open and close on the \"and\" of the beat (the off-beat) to create a swinging, triplet-like feel without actually using triplets. The subdivision is generally a straight quarter-note or eighth-note pulse underneath.\n*   **Trap:** Trap is defined by dense, rolling **32nd-note** or **triplet-based** hi-hat patterns. These hats often play continuously, creating a texture that fills the entire frequency spectrum. The rapid succession of hi-hat hits forces the rapper to articulate syllables faster and often aligns with the kick's off-beat hits, creating a \"choppier\" rhythmic delivery.\n\n### 3. Where the Hook Sits\n*   **Boom-Bap:** Hooks in this genre often sit **on top of the main groove**, aligning closely with the kick and snare hits.",
+      "sha256": "9959e26df798f06351e162b131651f4ff722abea1a9924c6313f265bc712cac1"
+    },
+    "followUpWindow": {
+      "maxUserTurns": 3,
+      "captured": [],
+      "state": "OPEN"
+    },
+    "review": {
+      "state": "PENDING",
+      "promoteToLocalKnowledge": false,
+      "notes": []
+    },
+    "privacy": {
+      "preciseLocationStored": false,
+      "privateReasoningStored": false,
+      "fullHistoryStored": false
+    },
+    "statusTrail": [
+      {
+        "phase": "QUEUED",
+        "reason": "Accepted by Workstation"
+      },
+      {
+        "phase": "GENERATING",
+        "reason": "Workstation admitted generation"
+      },
+      {
+        "phase": "PROGRAMMING_INTENT",
+        "reason": ""
+      },
+      {
+        "phase": "SEARCH_STARTED",
+        "reason": "I’m on it — looking up Research and briefly compare boom-bap versus trap rhythm as backgrounds for rap lyric flow. Mention backbeat, subdivisions, hi-hat patterns, where a hook can sit, and that flow "
+      },
+      {
+        "phase": "RESEARCH_STARTED",
+        "reason": "Online research started"
+      },
+      {
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider"
+      },
+      {
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "reason": "No usable results from provider"
+      },
+      {
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider"
+      },
+      {
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "reason": "No usable results from provider"
+      },
+      {
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider"
+      },
+      {
+        "phase": "SEARCH_PROVIDER_RESULTS",
+        "reason": "Search results found"
+      },
+      {
+        "phase": "SEARCH_PROVIDER_SELECTED",
+        "reason": "Using bing-html"
+      },
+      {
+        "phase": "PAGE_FETCH_STARTED",
+        "reason": "Visiting result page"
+      },
+      {
+        "phase": "PAGE_FETCH_ERROR",
+        "reason": "Page fetch failed"
+      },
+      {
+        "phase": "RESEARCH_COMPLETE",
+        "reason": "Online research complete"
+      },
+      {
+        "phase": "ONLINE_RESEARCH",
+        "reason": "OK"
+      },
+      {
+        "phase": "WIDGET_READY",
+        "reason": "search-results"
+      },
+      {
+        "phase": "SEARCH_COMPLETE",
+        "reason": "Online retrieval ok."
+      },
+      {
+        "phase": "DIAGNOSTIC_READY",
+        "reason": ""
+      },
+      {
+        "phase": "RESPONSE_COGNITION",
+        "reason": ""
+      },
+      {
+        "phase": "LOADING",
+        "reason": ""
+      },
+      {
+        "phase": "PROFILE_CONTEXT_READY",
+        "reason": "swrlz-qwen35-profile-v5"
+      },
+      {
+        "phase": "CONTEXT_BUDGETED",
+        "reason": ""
+      },
+      {
+        "phase": "GENERATING",
+        "reason": ""
+      },
+      {
+        "phase": "RESOURCE_ALLOCATED",
+        "reason": "Workstation inference budget active"
+      },
+      {
+        "phase": "CANDIDATE_ATTEMPT",
+        "reason": "attempt=1"
+      },
+      {
+        "phase": "GENERATION_TELEMETRY",
+        "reason": ""
+      },
+      {
+        "phase": "OUTPUT_LIMIT_PAUSED",
+        "reason": "The response reached a generation limit; existing visible text was retained. It may be incomplete."
+      },
+      {
+        "phase": "COMPLETE",
+        "reason": ""
+      },
+      {
+        "phase": "PERSISTING",
+        "reason": "Saving the response to the chat"
+      }
+    ]
+  }
+}
