@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT (owner-approved)",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.472",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_472_FULL_RES_TEXTURES",
-  "reason": "Keep imported PNG/JPEG bytes and original resolution; add user-selected GPU display sizes 4096/2048/1024/512/256, preserving account source and UV adjustments. Existing project/account limit unchanged. Requires Android/Quest acceptance.",
-  "sourceCommit": "173e201b3fe716e94be90cd037477c59fbc158de",
-  "sourceIntegritySha256": "91ff06da13b0b8e498f3f5fed81ea01026a2d172c46a03fc0e1abffb4553d323"
+  "releaseVersion": "v11.473",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_473_FOLDING_WORKSPACE",
+  "reason": "Allow UV popup screen-wide dragging and saved position, tap existing side dock resize grips to collapse/restore saved widths, and fold vertical tool rail upward with a persisted top handle. Existing viewport input and model edits unchanged. Requires Moto/Quest owner acceptance.",
+  "sourceCommit": "b7424dee276affa753597370cc1d80bfbd9645ed",
+  "sourceIntegritySha256": "b5a6690b7432da84c9a71dbf22545ecdbf809c8028476be90fcb6fb929fc6673"
 }

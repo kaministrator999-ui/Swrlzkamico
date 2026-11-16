@@ -1,0 +1,70 @@
+/* SE473_MODEL_FOLDING_WORKSPACE_STYLES_START */
+/* A free floating UV window retains its native UV widgets and 3D hit-test
+   isolation while moving anywhere inside the browser's visible viewport. */
+html #modelAtelierPanel #se355UVPopup.se355-uv-popup{
+ position:fixed!important;z-index:18000!important;
+ right:auto!important;bottom:auto!important;
+ max-width:calc(100vw - 12px)!important;
+ max-height:calc(100dvh - 12px)!important;
+ resize:both!important;
+}
+html #modelAtelierPanel #se355UVPopup .se355-uv-titlebar{
+ cursor:grab;touch-action:none!important;user-select:none!important;
+}
+html #modelAtelierPanel #se355UVPopup .se355-uv-grip{font-weight:700}
+html #modelAtelierPanel #se355UVPopup .se355-uv-titlebar:active{cursor:grabbing}
+/* The native saved splitter width stays unchanged while a tap collapses.
+   The same handle still supports drag-to-resize and keyboard arrows. */
+html #modelAtelierPanel.se187-modeler-page[data-se320-ui][data-se251-layout=desktop] .atelier-body>.se251-resize-grip{
+ cursor:col-resize!important;touch-action:none!important;
+}
+html #modelAtelierPanel.se187-modeler-page[data-se320-ui][data-se251-layout=desktop] .atelier-body>.se251-resize-grip::before{
+ content:'⇄';position:absolute;top:calc(50% - 17px);left:calc(50% - 14px);
+ width:28px;height:28px;display:grid;place-items:center;pointer-events:none;
+ font:800 16px system-ui;line-height:1;background:#312341;
+ color:#e7caff;border:1px solid #b98ad8;border-radius:8px;
+ box-shadow:0 2px 9px #0008;z-index:1;
+}
+html #modelAtelierPanel.se187-modeler-page[data-se320-ui][data-se251-layout=desktop] .atelier-body>.se251-resize-grip:focus-visible::before{
+ outline:3px solid #7ee6df;outline-offset:2px;
+}
+/* The right divider must remain tappable after the inspector is folded. */
+html #modelAtelierPanel.se187-modeler-page[data-se320-ui][data-se251-layout=desktop][data-se251-right-collapsed=true] .atelier-body>#se251-split-model-right,
+html #modelAtelierPanel.se187-modeler-page[data-se320-ui][data-se251-layout=desktop][data-se320-inspector-collapsed=true] .atelier-body>#se251-split-model-right{
+ display:block!important;pointer-events:auto!important;
+}
+/* Folding the tool-category rail does not alter any selection or tool state. */
+html #modelAtelierPanel.se187-modeler-page[data-se320-ui][data-se473-rail-collapsed=true][data-se251-layout=desktop]{
+ --se320-rail:42px!important;
+}
+html #modelAtelierPanel.se187-modeler-page[data-se320-ui] #modelAtelierToolRail #se473RailFold{
+ display:block!important;flex:0 0 auto!important;order:-999!important;
+ position:sticky!important;top:0;z-index:2;
+ width:100%!important;min-width:0!important;min-height:37px!important;
+ padding:5px 2px!important;margin:0 0 3px!important;
+ color:#eaffff!important;background:#31556a!important;
+ border:1px solid #79b9c7!important;border-radius:7px!important;
+ font:750 11px/1.25 system-ui!important;white-space:normal!important;
+}
+html #modelAtelierPanel.se187-modeler-page[data-se320-ui] #modelAtelierToolRail #se473RailFold:focus-visible{
+ outline:2px solid #aafde8!important;outline-offset:2px!important;
+}
+html #modelAtelierPanel.se187-modeler-page[data-se320-ui][data-se473-rail-collapsed=true] #modelAtelierToolRail>button:not(#se473RailFold){
+ display:none!important;
+}
+html #modelAtelierPanel.se187-modeler-page[data-se320-ui][data-se473-rail-collapsed=true] #modelAtelierToolRail{
+ overflow:hidden!important;background:#1b1428!important;
+}
+html #modelAtelierPanel.se187-modeler-page[data-se320-ui][data-se473-rail-collapsed=true] #modelAtelierToolRail #se473RailFold{
+ font-size:16px!important;min-height:40px!important;
+}
+html #modelAtelierPanel.se187-modeler-page[data-se320-ui][data-se251-layout=compact][data-se473-rail-collapsed=true] .atelier-body{
+ grid-template-rows:minmax(140px,1fr) 44px minmax(0,32dvh)!important;
+}
+@media (max-width:699px),(pointer:coarse){
+ html #modelAtelierPanel #se355UVPopup.se355-uv-popup{resize:none!important}
+ html #modelAtelierPanel.se187-modeler-page[data-se320-ui] #modelAtelierToolRail #se473RailFold{
+  min-height:44px!important;
+ }
+}
+/* SE473_MODEL_FOLDING_WORKSPACE_STYLES_END */
