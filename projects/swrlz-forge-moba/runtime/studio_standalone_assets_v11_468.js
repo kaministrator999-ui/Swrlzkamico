@@ -6,7 +6,7 @@
  const LABEL={modeler:'Model',particles:'Particle'};
  const MAX=8*1024*1024;
  const cloudRefs=new Map(),localCache=new Map();
- let busy=false,connected=false,cloudRows=[],userKey='',lastAutoKey='',autoRestoredKey='';
+ let busy=false,connected=false,cloudRows=[],userKey='',autoRestoredKey='';
  const api=()=>window.SWYRL_ENGINE_ACCOUNT_ASSETS;
  const mode=()=>window.SWYRL_ENGINE_STUDIOS?.active?.()==='particles'?'particles':
   window.SWYRL_ENGINE_WORKSPACES?.modelerActive?.()?'modeler':null;
@@ -191,10 +191,10 @@
    const identity=String(detail.user?.id||detail.user?.email||'');
    const changed=identity!==userKey;
    connected=detail.authenticated===true&&!!identity;
-   if(changed){cloudRows=[];userKey=identity;cloudRefs.clear();}
+   if(changed){cloudRows=[];userKey=identity;autoRestoredKey='';cloudRefs.clear();}
    refresh();
-   if(connected&&changed&&lastAutoKey!==identity){
-    lastAutoKey=identity;void listCloud().catch(e=>status('Account library: '+e.message,true));
+   if(connected&&changed){
+    void listCloud().catch(e=>status('Account library: '+e.message,true));
    }
   });
   window.addEventListener('swrlz:project-loaded',refresh);
