@@ -1,0 +1,20 @@
+name: Inspect §C deployed ZeroGPU handler scope (read only)
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/inspect-chat-zerogpu-handler.yml"]
+permissions:
+  contents: read
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fetch only public startup portion of Space app
+        run: |
+          python - <<'PY'
+          import urllib.request
+          url='https://huggingface.co/spaces/kamiloki/Swyrlz/resolve/main/app.py'
+          with urllib.request.urlopen(url,timeout=20) as r:lines=r.read().decode().splitlines()
+          for n in range(164,min(265,len(lines)+1)):
+              print('SECHAT_STARTUP',n,lines[n-1][:320],flush=True)
+          PY
