@@ -26,6 +26,9 @@ class BroadGuestGraderTests(unittest.TestCase):
         self.assertEqual(5,len(CASES["songwriting"]))
         self.assertEqual(8,len(CASES["conversation"]))
         self.assertEqual(5,len(CASES["transformations"]))
+        ui_cases=[c for batch in CASES.values() for c in batch if c.get("lane")=="ui"]
+        self.assertEqual(3,len(ui_cases))
+        self.assertTrue(all(not t.get("online") for c in ui_cases for t in c["turns"]))
 
     def test_lyric_verification_hijack_is_never_accepted(self):
         message=("I found search results for the lyrics, but I couldn't verify "
