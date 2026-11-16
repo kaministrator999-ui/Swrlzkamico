@@ -1,0 +1,2998 @@
+{
+  "schema": "swrlz-github-online-research-outcome-v2",
+  "requestId": "web-mwisi5zq-2216125360-397778307",
+  "modelId": "700m",
+  "eventType": "ONLINE_RESEARCH_OUTCOME",
+  "sourceRef": "f149dd857e3d9219f5cae7da0286b5dbfec85c42",
+  "persistedAtUnixMs": 1794804926864,
+  "diagnostic": {
+    "schema": "swrlz-online-research-outcome-v2",
+    "terminalState": "COMPLETE",
+    "research": {
+      "contract": "swrlz-online-camera-v1",
+      "observabilityRevision": "v181-song-metadata-clean-form-integrity",
+      "kind": "search",
+      "status": "OK",
+      "reason": "existing-lyrics-retrieval",
+      "provider": "bounded-web-search-chain-v1",
+      "resultCount": 1,
+      "widgetKinds": [
+        "search-results"
+      ],
+      "sourceCount": 1,
+      "locationRequired": false,
+      "usedExplicitClientLocation": false,
+      "elapsedMs": 10927,
+      "lyricsSourceAttemptCount": 1,
+      "lyricsFetchDebug": [
+        {
+          "attempt": 1,
+          "origin": "fallback-candidate",
+          "requestedUrl": "https://lyricsweb.com/song/tech-n9ne/tech-n9ne-roll-call",
+          "finalUrl": "https://lyricsweb.com/song/tech-n9ne/tech-n9ne-roll-call",
+          "searchResultTitle": "Roll Call by Tech N9ne Lyrics | LyricsWeb",
+          "fetchedPageTitle": "Roll Call by Tech N9ne Lyrics | LyricsWeb",
+          "fetchStatus": 200,
+          "fetchedContent": {
+            "chars": 13434,
+            "sha256": "dcc002684f211faf3cd1fe7d9791a62943d9fda28a3c2aa76597b6f90e553c8f",
+            "anchorIndex": 28,
+            "anchorLine": "Roll Call lyric data ↓",
+            "sectionMarkers": [
+              "[Intro: DJ Doc]",
+              "[Verse 1: Tech N9ne]",
+              "[Verse 2: King Iso]",
+              "[Chorus: Tech N9ne & Lex Bratcher]",
+              "[Verse 3: Joey Cool]",
+              "[Verse 4: JL & Yung Prez]",
+              "[Verse 5: Lex Bratcher]",
+              "[Chorus: Tech N9ne & Lex Bratcher]",
+              "[Verse 6: X-Raided]",
+              "[Verse 7: Rittz]"
+            ],
+            "performerMarkers": [],
+            "preview": "Produced by Wyshmaster Beats : credited as producer on 29 Tech N9ne songs we analyzed, since 2008.\nRoll Call lyric data ↓\n11K Plays\nDuration: 5:06\nView Artists\nView Album Add to Playlist\nReleased February 9, 2024\nLyrics\nText size: Small\n[Intro: DJ Doc]\nStrangers come out to play\n(Wyshmaster on the beat)\nStrangers come out to play\n[Verse 1: Tech N9ne]\nI am A-Aaron, I'm everywhere like say Breyon",
+            "previewChars": 397,
+            "previewLimit": 600
+          },
+          "extractorOutput": {
+            "chars": 8396,
+            "sha256": "08df16367274a2109981165c2a57ab6a03df939eb02760f75b630d1e7285e756",
+            "preview": "Strangers come out to play\n(Wyshmaster on the beat)\nStrangers come out to play\nI am A-Aaron, I'm everywhere like say Breyon\nI don't like the false and fakes they spawn\nSo when the tapes on I spray napalm\nDon't like the way lake Lanier was made race dom-\n-Ination hate I get impatient, mate\nWhen I hear an amazing break\nSo when invasion wakes, I play Draymond, uh\nCeiling fan in the winter, micro dose in the cinema\nA winnеr feelin' grand when I'm in her, healin' fans in a sprintеr\nI go both grim and sinister, I mess with the rare ones\nNever rollin' with the scare-some\nProclamation from the mayor d",
+            "previewChars": 600,
+            "previewLimit": 600
+          },
+          "extractorDiagnostics": {
+            "requestedScope": "full-lyrics",
+            "rawChars": 13434,
+            "rawLineCount": 548,
+            "anchorIndex": 28,
+            "anchorLine": "Roll Call lyric data ↓",
+            "scopedLineCount": 403,
+            "scopedNonEmptyLineCount": 204,
+            "contentLineCount": 187,
+            "musicalSectionCueCount": 10,
+            "performerCueCount": 0,
+            "blankSeparatedChunkCount": 200,
+            "acceptedBlockCount": 10,
+            "blockLineCounts": [
+              3,
+              22,
+              24,
+              8,
+              23,
+              24,
+              23,
+              8,
+              27,
+              25
+            ],
+            "continuousRunEligible": false,
+            "terminalBoundaryKind": "POST_SONG_META_BOUNDARY",
+            "terminalBoundaryLine": "Lyrics licensed and provided by LyricFind . All rights reserved.",
+            "decision": "ACCEPTED",
+            "reason": "MULTI_BLOCK_FULL_LYRICS",
+            "resultChars": 8396,
+            "resultLineCount": 187
+          },
+          "sourceIdentityVerified": true,
+          "sourceIdentityScore": 10,
+          "snippetOverlapCount": 0,
+          "snippetInformativeTokenCount": 0,
+          "snippetSequenceSpan": 0,
+          "musicalSectionCount": 10,
+          "performerCueCount": 0,
+          "outcome": "VERIFIED",
+          "rejectionReason": "VERIFIED"
+        }
+      ],
+      "blockedLyricsSourceFamilies": [],
+      "musicStructureDebug": {
+        "schema": "swrlz-music-structure-debug-v1",
+        "workType": "song",
+        "requestedScope": "full-lyrics",
+        "structureBasis": "explicit_musical_source_markers",
+        "sectionCount": 10,
+        "explicitSectionCount": 10,
+        "explicitMusicalSectionCount": 10,
+        "explicitPerformerCueCount": 0,
+        "sourceOrderPreserved": true,
+        "newlineEqualsBar": false,
+        "sections": [
+          {
+            "index": 1,
+            "rawLabel": "[Intro: DJ Doc]",
+            "type": "intro",
+            "number": null,
+            "performer": "DJ Doc",
+            "repeatCount": null,
+            "confidence": 1.0,
+            "basis": "explicit_source_marker",
+            "lineCount": 3,
+            "barCount": null
+          },
+          {
+            "index": 2,
+            "rawLabel": "[Verse 1: Tech N9ne]",
+            "type": "verse",
+            "number": 1,
+            "performer": "Tech N9ne",
+            "repeatCount": null,
+            "confidence": 1.0,
+            "basis": "explicit_source_marker",
+            "lineCount": 22,
+            "barCount": null
+          },
+          {
+            "index": 3,
+            "rawLabel": "[Verse 2: King Iso]",
+            "type": "verse",
+            "number": 2,
+            "performer": "King Iso",
+            "repeatCount": null,
+            "confidence": 1.0,
+            "basis": "explicit_source_marker",
+            "lineCount": 24,
+            "barCount": null
+          },
+          {
+            "index": 4,
+            "rawLabel": "[Chorus: Tech N9ne & Lex Bratcher]",
+            "type": "chorus",
+            "number": null,
+            "performer": "Tech N9ne & Lex Bratcher",
+            "repeatCount": null,
+            "confidence": 1.0,
+            "basis": "explicit_source_marker",
+            "lineCount": 8,
+            "barCount": null
+          },
+          {
+            "index": 5,
+            "rawLabel": "[Verse 3: Joey Cool]",
+            "type": "verse",
+            "number": 3,
+            "performer": "Joey Cool",
+            "repeatCount": null,
+            "confidence": 1.0,
+            "basis": "explicit_source_marker",
+            "lineCount": 23,
+            "barCount": null
+          },
+          {
+            "index": 6,
+            "rawLabel": "[Verse 4: JL & Yung Prez]",
+            "type": "verse",
+            "number": 4,
+            "performer": "JL & Yung Prez",
+            "repeatCount": null,
+            "confidence": 1.0,
+            "basis": "explicit_source_marker",
+            "lineCount": 24,
+            "barCount": null
+          },
+          {
+            "index": 7,
+            "rawLabel": "[Verse 5: Lex Bratcher]",
+            "type": "verse",
+            "number": 5,
+            "performer": "Lex Bratcher",
+            "repeatCount": null,
+            "confidence": 1.0,
+            "basis": "explicit_source_marker",
+            "lineCount": 23,
+            "barCount": null
+          },
+          {
+            "index": 8,
+            "rawLabel": "[Chorus: Tech N9ne & Lex Bratcher]",
+            "type": "chorus",
+            "number": null,
+            "performer": "Tech N9ne & Lex Bratcher",
+            "repeatCount": null,
+            "confidence": 1.0,
+            "basis": "explicit_source_marker",
+            "lineCount": 8,
+            "barCount": null
+          },
+          {
+            "index": 9,
+            "rawLabel": "[Verse 6: X-Raided]",
+            "type": "verse",
+            "number": 6,
+            "performer": "X-Raided",
+            "repeatCount": null,
+            "confidence": 1.0,
+            "basis": "explicit_source_marker",
+            "lineCount": 27,
+            "barCount": null
+          },
+          {
+            "index": 10,
+            "rawLabel": "[Verse 7: Rittz]",
+            "type": "verse",
+            "number": 7,
+            "performer": "Rittz",
+            "repeatCount": null,
+            "confidence": 1.0,
+            "basis": "explicit_source_marker",
+            "lineCount": 25,
+            "barCount": null
+          }
+        ],
+        "presentationChars": 8965,
+        "presentationSha256": "f7b42c7166ff637e66dddde5695e6606a3a8bb2f6517191779ff085af664f868",
+        "dividerPresentation": {
+          "outer": "---",
+          "inner": "────────",
+          "outerMeaning": "lyric_document_boundary",
+          "innerMeaning": "lyric_section_transition",
+          "blankLinesAroundDividers": true,
+          "mobileFirst": true
+        }
+      },
+      "candidateAdmissionDebug": [],
+      "songIdentity": {
+        "schema": "swrlz-song-identity-v1",
+        "rawSubject": "\"roll call\" by tech n9ne",
+        "title": "roll call",
+        "titleFolded": "roll call",
+        "titleTokens": [
+          "roll",
+          "call"
+        ],
+        "primaryArtist": "tech n9ne",
+        "primaryArtistFolded": "tech n9ne",
+        "artistTokens": [
+          "tech",
+          "n9ne"
+        ],
+        "featuredArtists": [],
+        "requestedVersion": null,
+        "ambiguity": {
+          "level": "low",
+          "score": 2,
+          "commonWordCollision": [],
+          "shortTitle": true,
+          "punctuationHeavy": false,
+          "quotedTitleRequired": false,
+          "artistRequired": true
+        }
+      },
+      "songDiscoveryPlan": [
+        {
+          "strategy": "exact-title-artist",
+          "query": "\"roll call\" \"tech n9ne\" lyrics"
+        },
+        {
+          "strategy": "artist-title-song",
+          "query": "\"tech n9ne\" \"roll call\" song lyrics"
+        },
+        {
+          "strategy": "source-family-disambiguation",
+          "query": "\"roll call\" \"tech n9ne\" lyrics site:genius.com"
+        },
+        {
+          "strategy": "title-artist-verse",
+          "query": "\"roll call\" \"tech n9ne\" verse chorus lyrics"
+        },
+        {
+          "strategy": "source-family-disambiguation",
+          "query": "\"roll call\" \"tech n9ne\" lyrics site:azlyrics.com"
+        },
+        {
+          "strategy": "source-family-disambiguation",
+          "query": "\"roll call\" \"tech n9ne\" lyrics site:musixmatch.com"
+        },
+        {
+          "strategy": "source-family-disambiguation",
+          "query": "\"roll call\" \"tech n9ne\" lyrics site:allthelyrics.com"
+        },
+        {
+          "strategy": "source-family-disambiguation",
+          "query": "\"roll call\" \"tech n9ne\" lyrics site:lyricsfreak.com"
+        }
+      ],
+      "lyricsRescueSearchDebug": [
+        {
+          "query": "\"roll call\" \"tech n9ne\" lyrics",
+          "strategy": "exact-title-artist",
+          "resultCount": 0,
+          "admittedCount": 0,
+          "errorType": "",
+          "candidates": []
+        },
+        {
+          "query": "\"tech n9ne\" \"roll call\" song lyrics",
+          "strategy": "artist-title-song",
+          "resultCount": 0,
+          "admittedCount": 0,
+          "errorType": "",
+          "candidates": []
+        },
+        {
+          "query": "\"roll call\" \"tech n9ne\" lyrics site:genius.com",
+          "strategy": "source-family-disambiguation",
+          "resultCount": 0,
+          "admittedCount": 0,
+          "errorType": "",
+          "candidates": []
+        },
+        {
+          "query": "\"roll call\" \"tech n9ne\" verse chorus lyrics",
+          "strategy": "title-artist-verse",
+          "resultCount": 0,
+          "admittedCount": 0,
+          "errorType": "",
+          "candidates": []
+        },
+        {
+          "query": "\"roll call\" \"tech n9ne\" lyrics site:azlyrics.com",
+          "strategy": "source-family-disambiguation",
+          "resultCount": 0,
+          "admittedCount": 0,
+          "errorType": "",
+          "candidates": []
+        },
+        {
+          "query": "\"roll call\" \"tech n9ne\" lyrics site:musixmatch.com",
+          "strategy": "source-family-disambiguation",
+          "resultCount": 0,
+          "admittedCount": 0,
+          "errorType": "",
+          "candidates": []
+        },
+        {
+          "query": "\"roll call\" \"tech n9ne\" lyrics site:allthelyrics.com",
+          "strategy": "source-family-disambiguation",
+          "resultCount": 0,
+          "admittedCount": 0,
+          "errorType": "",
+          "candidates": []
+        },
+        {
+          "query": "\"roll call\" \"tech n9ne\" lyrics site:lyricsfreak.com",
+          "strategy": "source-family-disambiguation",
+          "resultCount": 0,
+          "admittedCount": 0,
+          "errorType": "",
+          "candidates": []
+        }
+      ],
+      "lyricsMaxPageAttempts": 3,
+      "lyricsFallbackExhausted": false,
+      "rawPromptStored": false
+    },
+    "trace": [
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794804920316,
+        "phase": "SEARCH_PROVIDER_RESULTS",
+        "activity": "Search results found",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "httpStatus": 200,
+        "resultCount": 8
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794804920316,
+        "phase": "SEARCH_PROVIDER_IRRELEVANT",
+        "activity": "Provider returned no matching song/artist results",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "resultCount": 0
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794804920316,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching title and artist catalog",
+        "provider": "lrclib-api",
+        "site": "lrclib.net",
+        "url": "https://lrclib.net/api/search"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794804920771,
+        "phase": "SEARCH_PROVIDER_ERROR",
+        "activity": "Catalog source unavailable",
+        "provider": "lrclib-api",
+        "site": "lrclib.net",
+        "url": "https://lrclib.net/api/search",
+        "errorType": "ValueError"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "phase": "LYRICS_RESCUE_SEARCH",
+        "provider": "bounded-web-search-chain-v1",
+        "site": "",
+        "url": "",
+        "activity": "Trying bounded lyrics discovery search",
+        "atUnixMs": 1794804920772
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794804920772,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794804920898,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "activity": "No usable results from provider",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "httpStatus": 202,
+        "resultCount": 0
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794804920898,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794804921034,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "activity": "No usable results from provider",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "httpStatus": 202,
+        "resultCount": 0
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794804921035,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794804921270,
+        "phase": "SEARCH_PROVIDER_RESULTS",
+        "activity": "Search results found",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "httpStatus": 200,
+        "resultCount": 8
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794804921270,
+        "phase": "SEARCH_PROVIDER_IRRELEVANT",
+        "activity": "Provider returned no matching song/artist results",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "resultCount": 0
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794804921271,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching title and artist catalog",
+        "provider": "lrclib-api",
+        "site": "lrclib.net",
+        "url": "https://lrclib.net/api/search"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794804921718,
+        "phase": "SEARCH_PROVIDER_ERROR",
+        "activity": "Catalog source unavailable",
+        "provider": "lrclib-api",
+        "site": "lrclib.net",
+        "url": "https://lrclib.net/api/search",
+        "errorType": "ValueError"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "phase": "LYRICS_RESCUE_SEARCH",
+        "provider": "bounded-web-search-chain-v1",
+        "site": "",
+        "url": "",
+        "activity": "Trying bounded lyrics discovery search",
+        "atUnixMs": 1794804921719
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794804921719,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794804921862,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "activity": "No usable results from provider",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "httpStatus": 202,
+        "resultCount": 0
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794804921862,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794804921991,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "activity": "No usable results from provider",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "httpStatus": 202,
+        "resultCount": 0
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794804921991,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794804922360,
+        "phase": "SEARCH_PROVIDER_RESULTS",
+        "activity": "Search results found",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "httpStatus": 200,
+        "resultCount": 8
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794804922360,
+        "phase": "SEARCH_PROVIDER_IRRELEVANT",
+        "activity": "Provider returned no matching song/artist results",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "resultCount": 0
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794804922360,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching title and artist catalog",
+        "provider": "lrclib-api",
+        "site": "lrclib.net",
+        "url": "https://lrclib.net/api/search"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794804922808,
+        "phase": "SEARCH_PROVIDER_ERROR",
+        "activity": "Catalog source unavailable",
+        "provider": "lrclib-api",
+        "site": "lrclib.net",
+        "url": "https://lrclib.net/api/search",
+        "errorType": "ValueError"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "phase": "LYRICS_RESCUE_SEARCH",
+        "provider": "bounded-web-search-chain-v1",
+        "site": "",
+        "url": "",
+        "activity": "Trying bounded lyrics discovery search",
+        "atUnixMs": 1794804922808
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794804922808,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794804922939,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "activity": "No usable results from provider",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "httpStatus": 202,
+        "resultCount": 0
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794804922939,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794804923071,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "activity": "No usable results from provider",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "httpStatus": 202,
+        "resultCount": 0
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794804923071,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794804923284,
+        "phase": "SEARCH_PROVIDER_RESULTS",
+        "activity": "Search results found",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "httpStatus": 200,
+        "resultCount": 8
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794804923284,
+        "phase": "SEARCH_PROVIDER_IRRELEVANT",
+        "activity": "Provider returned no matching song/artist results",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "resultCount": 0
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794804923284,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching title and artist catalog",
+        "provider": "lrclib-api",
+        "site": "lrclib.net",
+        "url": "https://lrclib.net/api/search"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794804923733,
+        "phase": "SEARCH_PROVIDER_ERROR",
+        "activity": "Catalog source unavailable",
+        "provider": "lrclib-api",
+        "site": "lrclib.net",
+        "url": "https://lrclib.net/api/search",
+        "errorType": "ValueError"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "phase": "LYRICS_RESCUE_SEARCH",
+        "provider": "bounded-web-search-chain-v1",
+        "site": "",
+        "url": "",
+        "activity": "Trying bounded lyrics discovery search",
+        "atUnixMs": 1794804923734
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794804923734,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794804923870,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "activity": "No usable results from provider",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "httpStatus": 202,
+        "resultCount": 0
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794804923870,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794804923999,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "activity": "No usable results from provider",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "httpStatus": 202,
+        "resultCount": 0
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794804923999,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794804924329,
+        "phase": "SEARCH_PROVIDER_RESULTS",
+        "activity": "Search results found",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "httpStatus": 200,
+        "resultCount": 8
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794804924329,
+        "phase": "SEARCH_PROVIDER_IRRELEVANT",
+        "activity": "Provider returned no matching song/artist results",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "resultCount": 0
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794804924329,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching title and artist catalog",
+        "provider": "lrclib-api",
+        "site": "lrclib.net",
+        "url": "https://lrclib.net/api/search"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794804924780,
+        "phase": "SEARCH_PROVIDER_ERROR",
+        "activity": "Catalog source unavailable",
+        "provider": "lrclib-api",
+        "site": "lrclib.net",
+        "url": "https://lrclib.net/api/search",
+        "errorType": "ValueError"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "phase": "LYRICS_FALLBACK_FETCH",
+        "provider": "web-page",
+        "site": "lyricsweb.com",
+        "url": "https://lyricsweb.com/song/tech-n9ne/tech-n9ne-roll-call",
+        "activity": "Trying alternate lyrics source",
+        "atUnixMs": 1794804924782
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794804924814,
+        "phase": "PAGE_FETCH_STARTED",
+        "activity": "Visiting result page",
+        "provider": "web-page",
+        "site": "lyricsweb.com",
+        "url": "https://lyricsweb.com/song/tech-n9ne/tech-n9ne-roll-call"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794804925146,
+        "phase": "PAGE_FETCH_COMPLETE",
+        "activity": "Page fetched",
+        "provider": "web-page",
+        "site": "lyricsweb.com",
+        "url": "https://lyricsweb.com/song/tech-n9ne/tech-n9ne-roll-call",
+        "httpStatus": 200,
+        "responseBytes": 248288
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "phase": "LYRICS_SOURCE_VERIFICATION",
+        "provider": "lyrics-verifier",
+        "site": "lyricsweb.com",
+        "url": "https://lyricsweb.com/song/tech-n9ne/tech-n9ne-roll-call",
+        "activity": "Checking fetched lyrics candidate",
+        "atUnixMs": 1794804925146
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "phase": "LYRICS_SOURCE_IDENTITY_VERIFIED",
+        "provider": "lyrics-verifier",
+        "site": "lyricsweb.com",
+        "url": "https://lyricsweb.com/song/tech-n9ne/tech-n9ne-roll-call",
+        "activity": "Fetched destination matches the requested song identity",
+        "atUnixMs": 1794804925147
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "phase": "LYRICS_SOURCE_VERIFIED",
+        "provider": "lyrics-verifier",
+        "site": "lyricsweb.com",
+        "url": "https://lyricsweb.com/song/tech-n9ne/tech-n9ne-roll-call",
+        "activity": "Lyrics candidate verified",
+        "atUnixMs": 1794804925168
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794804925169,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794804925292,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "activity": "No usable results from provider",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "httpStatus": 202,
+        "resultCount": 0
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794804925293,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794804925467,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "activity": "No usable results from provider",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "httpStatus": 202,
+        "resultCount": 0
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794804925467,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794804925899,
+        "phase": "SEARCH_PROVIDER_RESULTS",
+        "activity": "Search results found",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "httpStatus": 200,
+        "resultCount": 8
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794804925900,
+        "phase": "SEARCH_PROVIDER_SELECTED",
+        "activity": "Using bing-html",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "resultCount": 8
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794804925900,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794804926037,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "activity": "No usable results from provider",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "httpStatus": 202,
+        "resultCount": 0
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794804926037,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794804926299,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "activity": "No usable results from provider",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "httpStatus": 202,
+        "resultCount": 0
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794804926299,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794804926531,
+        "phase": "SEARCH_PROVIDER_RESULTS",
+        "activity": "Search results found",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "httpStatus": 200,
+        "resultCount": 8
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794804926531,
+        "phase": "SEARCH_PROVIDER_SELECTED",
+        "activity": "Using bing-html",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "resultCount": 8
+      }
+    ],
+    "sources": [
+      {
+        "title": "Roll Call by Tech N9ne Lyrics | LyricsWeb",
+        "source": "lyricsweb.com",
+        "url": "https://lyricsweb.com/song/tech-n9ne/tech-n9ne-roll-call",
+        "snippet": "",
+        "rank": null
+      }
+    ],
+    "sourceSites": [
+      "lyricsweb.com"
+    ],
+    "widgets": [
+      {
+        "contract": "swrlz-widget-v1",
+        "kind": "search-results",
+        "version": 1,
+        "title": "Online search · roll call tech n9ne lyrics",
+        "provider": "bounded-web-search-chain-v1",
+        "data": {
+          "query": "roll call tech n9ne lyrics",
+          "results": [
+            {
+              "title": "Roll Call by Tech N9ne Lyrics | LyricsWeb",
+              "url": "https://lyricsweb.com/song/tech-n9ne/tech-n9ne-roll-call",
+              "snippet": "",
+              "source": "lyricsweb.com"
+            }
+          ]
+        }
+      }
+    ],
+    "widgetKinds": [
+      "search-results"
+    ],
+    "statusTrail": [
+      {
+        "phase": "QUEUED",
+        "reason": "Accepted by Workstation",
+        "atUnixMs": 1794804914502
+      },
+      {
+        "phase": "GENERATING",
+        "reason": "Workstation admitted generation",
+        "atUnixMs": 1794804915599
+      },
+      {
+        "seq": 1,
+        "phase": "PROGRAMMING_INTENT",
+        "reason": "",
+        "atUnixMs": 1794804915602
+      },
+      {
+        "seq": 2,
+        "phase": "SEARCH_STARTED",
+        "reason": "I’m on it — looking up roll call tech n9ne lyrics…",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH"
+        ],
+        "atUnixMs": 1794804915605
+      },
+      {
+        "seq": 3,
+        "phase": "RESEARCH_STARTED",
+        "reason": "Online research started",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "",
+        "url": "",
+        "provider": "bounded-web-search-chain-v1",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794804915606
+      },
+      {
+        "seq": 4,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "provider": "duckduckgo-html",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794804915613
+      },
+      {
+        "seq": 5,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "reason": "No usable results from provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "provider": "duckduckgo-html",
+        "httpStatus": 202,
+        "resultCount": 0,
+        "atUnixMs": 1794804915757
+      },
+      {
+        "seq": 6,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "provider": "duckduckgo-lite",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794804915757
+      },
+      {
+        "seq": 7,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "reason": "No usable results from provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "provider": "duckduckgo-lite",
+        "httpStatus": 202,
+        "resultCount": 0,
+        "atUnixMs": 1794804915921
+      },
+      {
+        "seq": 8,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "provider": "bing-html",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794804915921
+      },
+      {
+        "seq": 9,
+        "phase": "SEARCH_PROVIDER_RESULTS",
+        "reason": "Search results found",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "provider": "bing-html",
+        "httpStatus": 200,
+        "resultCount": 8,
+        "atUnixMs": 1794804916416
+      },
+      {
+        "seq": 10,
+        "phase": "SEARCH_PROVIDER_IRRELEVANT",
+        "reason": "Provider returned no matching song/artist results",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "provider": "bing-html",
+        "httpStatus": null,
+        "resultCount": 0,
+        "atUnixMs": 1794804916416
+      },
+      {
+        "seq": 11,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching title and artist catalog",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "lrclib.net",
+        "url": "https://lrclib.net/api/search",
+        "provider": "lrclib-api",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794804916416
+      },
+      {
+        "seq": 12,
+        "phase": "SEARCH_PROVIDER_ERROR",
+        "reason": "Catalog source unavailable",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "lrclib.net",
+        "url": "https://lrclib.net/api/search",
+        "provider": "lrclib-api",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794804916899
+      },
+      {
+        "seq": 13,
+        "phase": "RESEARCH_COMPLETE",
+        "reason": "Online research complete",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "",
+        "url": "",
+        "provider": "bounded-web-search-chain-v1",
+        "httpStatus": null,
+        "resultCount": 0,
+        "atUnixMs": 1794804916899
+      },
+      {
+        "seq": 14,
+        "phase": "LYRICS_RESCUE_SEARCH",
+        "reason": "Trying bounded lyrics discovery search",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "",
+        "url": "",
+        "provider": "bounded-web-search-chain-v1",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794804916899
+      },
+      {
+        "seq": 15,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "provider": "duckduckgo-html",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794804916899
+      },
+      {
+        "seq": 16,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "reason": "No usable results from provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "provider": "duckduckgo-html",
+        "httpStatus": 202,
+        "resultCount": 0,
+        "atUnixMs": 1794804917047
+      },
+      {
+        "seq": 17,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "provider": "duckduckgo-lite",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794804917048
+      },
+      {
+        "seq": 18,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "reason": "No usable results from provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "provider": "duckduckgo-lite",
+        "httpStatus": 202,
+        "resultCount": 0,
+        "atUnixMs": 1794804917180
+      },
+      {
+        "seq": 19,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "provider": "bing-html",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794804917180
+      },
+      {
+        "seq": 20,
+        "phase": "SEARCH_PROVIDER_RESULTS",
+        "reason": "Search results found",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "provider": "bing-html",
+        "httpStatus": 200,
+        "resultCount": 8,
+        "atUnixMs": 1794804917444
+      },
+      {
+        "seq": 21,
+        "phase": "SEARCH_PROVIDER_IRRELEVANT",
+        "reason": "Provider returned no matching song/artist results",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "provider": "bing-html",
+        "httpStatus": null,
+        "resultCount": 0,
+        "atUnixMs": 1794804917444
+      },
+      {
+        "seq": 22,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching title and artist catalog",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "lrclib.net",
+        "url": "https://lrclib.net/api/search",
+        "provider": "lrclib-api",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794804917444
+      },
+      {
+        "seq": 23,
+        "phase": "SEARCH_PROVIDER_ERROR",
+        "reason": "Catalog source unavailable",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "lrclib.net",
+        "url": "https://lrclib.net/api/search",
+        "provider": "lrclib-api",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794804917872
+      },
+      {
+        "seq": 24,
+        "phase": "LYRICS_RESCUE_SEARCH",
+        "reason": "Trying bounded lyrics discovery search",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "",
+        "url": "",
+        "provider": "bounded-web-search-chain-v1",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794804917872
+      },
+      {
+        "seq": 25,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "provider": "duckduckgo-html",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794804917872
+      },
+      {
+        "seq": 26,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "reason": "No usable results from provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "provider": "duckduckgo-html",
+        "httpStatus": 202,
+        "resultCount": 0,
+        "atUnixMs": 1794804918053
+      },
+      {
+        "seq": 27,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "provider": "duckduckgo-lite",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794804918053
+      },
+      {
+        "seq": 28,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "reason": "No usable results from provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "provider": "duckduckgo-lite",
+        "httpStatus": 202,
+        "resultCount": 0,
+        "atUnixMs": 1794804918198
+      },
+      {
+        "seq": 29,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "provider": "bing-html",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794804918198
+      },
+      {
+        "seq": 30,
+        "phase": "SEARCH_PROVIDER_RESULTS",
+        "reason": "Search results found",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "provider": "bing-html",
+        "httpStatus": 200,
+        "resultCount": 8,
+        "atUnixMs": 1794804918605
+      },
+      {
+        "seq": 31,
+        "phase": "SEARCH_PROVIDER_IRRELEVANT",
+        "reason": "Provider returned no matching song/artist results",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "provider": "bing-html",
+        "httpStatus": null,
+        "resultCount": 0,
+        "atUnixMs": 1794804918605
+      },
+      {
+        "seq": 32,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching title and artist catalog",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "lrclib.net",
+        "url": "https://lrclib.net/api/search",
+        "provider": "lrclib-api",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794804918605
+      },
+      {
+        "seq": 33,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "reason": "No matching lyric records",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "lrclib.net",
+        "url": "https://lrclib.net/api/search",
+        "provider": "lrclib-api",
+        "httpStatus": null,
+        "resultCount": 0,
+        "atUnixMs": 1794804918788
+      },
+      {
+        "seq": 34,
+        "phase": "LYRICS_RESCUE_SEARCH",
+        "reason": "Trying bounded lyrics discovery search",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "",
+        "url": "",
+        "provider": "bounded-web-search-chain-v1",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794804918788
+      },
+      {
+        "seq": 35,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "provider": "duckduckgo-html",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794804918788
+      },
+      {
+        "seq": 36,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "reason": "No usable results from provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "provider": "duckduckgo-html",
+        "httpStatus": 202,
+        "resultCount": 0,
+        "atUnixMs": 1794804918921
+      },
+      {
+        "seq": 37,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "provider": "duckduckgo-lite",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794804918921
+      },
+      {
+        "seq": 38,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "reason": "No usable results from provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "provider": "duckduckgo-lite",
+        "httpStatus": 202,
+        "resultCount": 0,
+        "atUnixMs": 1794804919064
+      },
+      {
+        "seq": 39,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "provider": "bing-html",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794804919064
+      },
+      {
+        "seq": 40,
+        "phase": "SEARCH_PROVIDER_RESULTS",
+        "reason": "Search results found",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "provider": "bing-html",
+        "httpStatus": 200,
+        "resultCount": 8,
+        "atUnixMs": 1794804919293
+      },
+      {
+        "seq": 41,
+        "phase": "SEARCH_PROVIDER_IRRELEVANT",
+        "reason": "Provider returned no matching song/artist results",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "provider": "bing-html",
+        "httpStatus": null,
+        "resultCount": 0,
+        "atUnixMs": 1794804919293
+      },
+      {
+        "seq": 42,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching title and artist catalog",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "lrclib.net",
+        "url": "https://lrclib.net/api/search",
+        "provider": "lrclib-api",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794804919293
+      },
+      {
+        "seq": 43,
+        "phase": "SEARCH_PROVIDER_ERROR",
+        "reason": "Catalog source unavailable",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "lrclib.net",
+        "url": "https://lrclib.net/api/search",
+        "provider": "lrclib-api",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794804919727
+      },
+      {
+        "seq": 44,
+        "phase": "LYRICS_RESCUE_SEARCH",
+        "reason": "Trying bounded lyrics discovery search",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "",
+        "url": "",
+        "provider": "bounded-web-search-chain-v1",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794804919728
+      },
+      {
+        "seq": 45,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "provider": "duckduckgo-html",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794804919728
+      },
+      {
+        "seq": 46,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "reason": "No usable results from provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "provider": "duckduckgo-html",
+        "httpStatus": 202,
+        "resultCount": 0,
+        "atUnixMs": 1794804919853
+      },
+      {
+        "seq": 47,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "provider": "duckduckgo-lite",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794804919853
+      },
+      {
+        "seq": 48,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "reason": "No usable results from provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "provider": "duckduckgo-lite",
+        "httpStatus": 202,
+        "resultCount": 0,
+        "atUnixMs": 1794804920000
+      },
+      {
+        "seq": 49,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "provider": "bing-html",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794804920000
+      },
+      {
+        "seq": 50,
+        "phase": "SEARCH_PROVIDER_RESULTS",
+        "reason": "Search results found",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "provider": "bing-html",
+        "httpStatus": 200,
+        "resultCount": 8,
+        "atUnixMs": 1794804920316
+      },
+      {
+        "seq": 51,
+        "phase": "SEARCH_PROVIDER_IRRELEVANT",
+        "reason": "Provider returned no matching song/artist results",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "provider": "bing-html",
+        "httpStatus": null,
+        "resultCount": 0,
+        "atUnixMs": 1794804920316
+      },
+      {
+        "seq": 52,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching title and artist catalog",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "lrclib.net",
+        "url": "https://lrclib.net/api/search",
+        "provider": "lrclib-api",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794804920316
+      },
+      {
+        "seq": 53,
+        "phase": "SEARCH_PROVIDER_ERROR",
+        "reason": "Catalog source unavailable",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "lrclib.net",
+        "url": "https://lrclib.net/api/search",
+        "provider": "lrclib-api",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794804920771
+      },
+      {
+        "seq": 54,
+        "phase": "LYRICS_RESCUE_SEARCH",
+        "reason": "Trying bounded lyrics discovery search",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "",
+        "url": "",
+        "provider": "bounded-web-search-chain-v1",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794804920772
+      },
+      {
+        "seq": 55,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "provider": "duckduckgo-html",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794804920772
+      },
+      {
+        "seq": 56,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "reason": "No usable results from provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "provider": "duckduckgo-html",
+        "httpStatus": 202,
+        "resultCount": 0,
+        "atUnixMs": 1794804920898
+      },
+      {
+        "seq": 57,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "provider": "duckduckgo-lite",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794804920898
+      },
+      {
+        "seq": 58,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "reason": "No usable results from provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "provider": "duckduckgo-lite",
+        "httpStatus": 202,
+        "resultCount": 0,
+        "atUnixMs": 1794804921035
+      },
+      {
+        "seq": 59,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "provider": "bing-html",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794804921035
+      },
+      {
+        "seq": 60,
+        "phase": "SEARCH_PROVIDER_RESULTS",
+        "reason": "Search results found",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "provider": "bing-html",
+        "httpStatus": 200,
+        "resultCount": 8,
+        "atUnixMs": 1794804921270
+      },
+      {
+        "seq": 61,
+        "phase": "SEARCH_PROVIDER_IRRELEVANT",
+        "reason": "Provider returned no matching song/artist results",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "provider": "bing-html",
+        "httpStatus": null,
+        "resultCount": 0,
+        "atUnixMs": 1794804921270
+      },
+      {
+        "seq": 62,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching title and artist catalog",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "lrclib.net",
+        "url": "https://lrclib.net/api/search",
+        "provider": "lrclib-api",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794804921271
+      },
+      {
+        "seq": 63,
+        "phase": "SEARCH_PROVIDER_ERROR",
+        "reason": "Catalog source unavailable",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "lrclib.net",
+        "url": "https://lrclib.net/api/search",
+        "provider": "lrclib-api",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794804921719
+      },
+      {
+        "seq": 64,
+        "phase": "LYRICS_RESCUE_SEARCH",
+        "reason": "Trying bounded lyrics discovery search",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "",
+        "url": "",
+        "provider": "bounded-web-search-chain-v1",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794804921719
+      },
+      {
+        "seq": 65,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "provider": "duckduckgo-html",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794804921719
+      },
+      {
+        "seq": 66,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "reason": "No usable results from provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "provider": "duckduckgo-html",
+        "httpStatus": 202,
+        "resultCount": 0,
+        "atUnixMs": 1794804921862
+      },
+      {
+        "seq": 67,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "provider": "duckduckgo-lite",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794804921862
+      },
+      {
+        "seq": 68,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "reason": "No usable results from provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "provider": "duckduckgo-lite",
+        "httpStatus": 202,
+        "resultCount": 0,
+        "atUnixMs": 1794804921991
+      },
+      {
+        "seq": 69,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "provider": "bing-html",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794804921991
+      },
+      {
+        "seq": 70,
+        "phase": "SEARCH_PROVIDER_RESULTS",
+        "reason": "Search results found",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "provider": "bing-html",
+        "httpStatus": 200,
+        "resultCount": 8,
+        "atUnixMs": 1794804922360
+      },
+      {
+        "seq": 71,
+        "phase": "SEARCH_PROVIDER_IRRELEVANT",
+        "reason": "Provider returned no matching song/artist results",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "provider": "bing-html",
+        "httpStatus": null,
+        "resultCount": 0,
+        "atUnixMs": 1794804922360
+      },
+      {
+        "seq": 72,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching title and artist catalog",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "lrclib.net",
+        "url": "https://lrclib.net/api/search",
+        "provider": "lrclib-api",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794804922360
+      },
+      {
+        "seq": 73,
+        "phase": "SEARCH_PROVIDER_ERROR",
+        "reason": "Catalog source unavailable",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "lrclib.net",
+        "url": "https://lrclib.net/api/search",
+        "provider": "lrclib-api",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794804922808
+      },
+      {
+        "seq": 74,
+        "phase": "LYRICS_RESCUE_SEARCH",
+        "reason": "Trying bounded lyrics discovery search",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "",
+        "url": "",
+        "provider": "bounded-web-search-chain-v1",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794804922809
+      },
+      {
+        "seq": 75,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "provider": "duckduckgo-html",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794804922809
+      },
+      {
+        "seq": 76,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "reason": "No usable results from provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "provider": "duckduckgo-html",
+        "httpStatus": 202,
+        "resultCount": 0,
+        "atUnixMs": 1794804922939
+      },
+      {
+        "seq": 77,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "provider": "duckduckgo-lite",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794804922939
+      },
+      {
+        "seq": 78,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "reason": "No usable results from provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "provider": "duckduckgo-lite",
+        "httpStatus": 202,
+        "resultCount": 0,
+        "atUnixMs": 1794804923071
+      },
+      {
+        "seq": 79,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "provider": "bing-html",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794804923071
+      },
+      {
+        "seq": 80,
+        "phase": "SEARCH_PROVIDER_RESULTS",
+        "reason": "Search results found",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "provider": "bing-html",
+        "httpStatus": 200,
+        "resultCount": 8,
+        "atUnixMs": 1794804923284
+      },
+      {
+        "seq": 81,
+        "phase": "SEARCH_PROVIDER_IRRELEVANT",
+        "reason": "Provider returned no matching song/artist results",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "provider": "bing-html",
+        "httpStatus": null,
+        "resultCount": 0,
+        "atUnixMs": 1794804923284
+      },
+      {
+        "seq": 82,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching title and artist catalog",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "lrclib.net",
+        "url": "https://lrclib.net/api/search",
+        "provider": "lrclib-api",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794804923284
+      },
+      {
+        "seq": 83,
+        "phase": "SEARCH_PROVIDER_ERROR",
+        "reason": "Catalog source unavailable",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "lrclib.net",
+        "url": "https://lrclib.net/api/search",
+        "provider": "lrclib-api",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794804923733
+      },
+      {
+        "seq": 84,
+        "phase": "LYRICS_RESCUE_SEARCH",
+        "reason": "Trying bounded lyrics discovery search",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "",
+        "url": "",
+        "provider": "bounded-web-search-chain-v1",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794804923734
+      },
+      {
+        "seq": 85,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "provider": "duckduckgo-html",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794804923734
+      },
+      {
+        "seq": 86,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "reason": "No usable results from provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "provider": "duckduckgo-html",
+        "httpStatus": 202,
+        "resultCount": 0,
+        "atUnixMs": 1794804923870
+      },
+      {
+        "seq": 87,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "provider": "duckduckgo-lite",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794804923870
+      },
+      {
+        "seq": 88,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "reason": "No usable results from provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "provider": "duckduckgo-lite",
+        "httpStatus": 202,
+        "resultCount": 0,
+        "atUnixMs": 1794804923999
+      },
+      {
+        "seq": 89,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "provider": "bing-html",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794804923999
+      },
+      {
+        "seq": 90,
+        "phase": "SEARCH_PROVIDER_RESULTS",
+        "reason": "Search results found",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "provider": "bing-html",
+        "httpStatus": 200,
+        "resultCount": 8,
+        "atUnixMs": 1794804924329
+      },
+      {
+        "seq": 91,
+        "phase": "SEARCH_PROVIDER_IRRELEVANT",
+        "reason": "Provider returned no matching song/artist results",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "provider": "bing-html",
+        "httpStatus": null,
+        "resultCount": 0,
+        "atUnixMs": 1794804924329
+      },
+      {
+        "seq": 92,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching title and artist catalog",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "lrclib.net",
+        "url": "https://lrclib.net/api/search",
+        "provider": "lrclib-api",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794804924329
+      },
+      {
+        "seq": 93,
+        "phase": "SEARCH_PROVIDER_ERROR",
+        "reason": "Catalog source unavailable",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "lrclib.net",
+        "url": "https://lrclib.net/api/search",
+        "provider": "lrclib-api",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794804924782
+      },
+      {
+        "seq": 94,
+        "phase": "LYRICS_FALLBACK_FETCH",
+        "reason": "Trying alternate lyrics source",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "lyricsweb.com",
+        "url": "https://lyricsweb.com/song/tech-n9ne/tech-n9ne-roll-call",
+        "provider": "web-page",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794804924782
+      },
+      {
+        "seq": 95,
+        "phase": "PAGE_FETCH_STARTED",
+        "reason": "Visiting result page",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "lyricsweb.com",
+        "url": "https://lyricsweb.com/song/tech-n9ne/tech-n9ne-roll-call",
+        "provider": "web-page",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794804924814
+      },
+      {
+        "seq": 96,
+        "phase": "PAGE_FETCH_COMPLETE",
+        "reason": "Page fetched",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "lyricsweb.com",
+        "url": "https://lyricsweb.com/song/tech-n9ne/tech-n9ne-roll-call",
+        "provider": "web-page",
+        "httpStatus": 200,
+        "resultCount": null,
+        "atUnixMs": 1794804925146
+      },
+      {
+        "seq": 97,
+        "phase": "LYRICS_SOURCE_VERIFICATION",
+        "reason": "Checking fetched lyrics candidate",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "lyricsweb.com",
+        "url": "https://lyricsweb.com/song/tech-n9ne/tech-n9ne-roll-call",
+        "provider": "lyrics-verifier",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794804925167
+      },
+      {
+        "seq": 98,
+        "phase": "LYRICS_SOURCE_IDENTITY_VERIFIED",
+        "reason": "Fetched destination matches the requested song identity",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "lyricsweb.com",
+        "url": "https://lyricsweb.com/song/tech-n9ne/tech-n9ne-roll-call",
+        "provider": "lyrics-verifier",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794804925167
+      },
+      {
+        "seq": 99,
+        "phase": "LYRICS_SOURCE_VERIFIED",
+        "reason": "Lyrics candidate verified",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "lyricsweb.com",
+        "url": "https://lyricsweb.com/song/tech-n9ne/tech-n9ne-roll-call",
+        "provider": "lyrics-verifier",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794804925169
+      },
+      {
+        "seq": 100,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "provider": "duckduckgo-html",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794804925169
+      },
+      {
+        "seq": 101,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "reason": "No usable results from provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "provider": "duckduckgo-html",
+        "httpStatus": 202,
+        "resultCount": 0,
+        "atUnixMs": 1794804925293
+      },
+      {
+        "seq": 102,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "provider": "duckduckgo-lite",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794804925293
+      },
+      {
+        "seq": 103,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "reason": "No usable results from provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "provider": "duckduckgo-lite",
+        "httpStatus": 202,
+        "resultCount": 0,
+        "atUnixMs": 1794804925467
+      },
+      {
+        "seq": 104,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "provider": "bing-html",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794804925468
+      },
+      {
+        "seq": 105,
+        "phase": "SEARCH_PROVIDER_RESULTS",
+        "reason": "Search results found",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "provider": "bing-html",
+        "httpStatus": 200,
+        "resultCount": 8,
+        "atUnixMs": 1794804925899
+      },
+      {
+        "seq": 106,
+        "phase": "SEARCH_PROVIDER_SELECTED",
+        "reason": "Using bing-html",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "provider": "bing-html",
+        "httpStatus": null,
+        "resultCount": 8,
+        "atUnixMs": 1794804925900
+      },
+      {
+        "seq": 107,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "provider": "duckduckgo-html",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794804925900
+      },
+      {
+        "seq": 108,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "reason": "No usable results from provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "provider": "duckduckgo-html",
+        "httpStatus": 202,
+        "resultCount": 0,
+        "atUnixMs": 1794804926037
+      },
+      {
+        "seq": 109,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "provider": "duckduckgo-lite",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794804926037
+      },
+      {
+        "seq": 110,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "reason": "No usable results from provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "provider": "duckduckgo-lite",
+        "httpStatus": 202,
+        "resultCount": 0,
+        "atUnixMs": 1794804926299
+      },
+      {
+        "seq": 111,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "provider": "bing-html",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794804926299
+      },
+      {
+        "seq": 112,
+        "phase": "SEARCH_PROVIDER_RESULTS",
+        "reason": "Search results found",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "provider": "bing-html",
+        "httpStatus": 200,
+        "resultCount": 8,
+        "atUnixMs": 1794804926531
+      },
+      {
+        "seq": 113,
+        "phase": "SEARCH_PROVIDER_SELECTED",
+        "reason": "Using bing-html",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "provider": "bing-html",
+        "httpStatus": null,
+        "resultCount": 8,
+        "atUnixMs": 1794804926531
+      },
+      {
+        "seq": 114,
+        "phase": "ONLINE_RESEARCH",
+        "reason": "OK",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH"
+        ],
+        "atUnixMs": 1794804926535
+      },
+      {
+        "seq": 115,
+        "phase": "WIDGET_READY",
+        "reason": "search-results",
+        "categories": [
+          "WIDGET"
+        ],
+        "atUnixMs": 1794804926536
+      },
+      {
+        "seq": 116,
+        "phase": "SEARCH_COMPLETE",
+        "reason": "Online retrieval ok.",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH"
+        ],
+        "atUnixMs": 1794804926537
+      },
+      {
+        "seq": 117,
+        "phase": "SOURCE_FOUND",
+        "reason": "There we go — I found relevant verified material on Roll Call by Tech N9ne Lyrics | LyricsWeb.",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "EVIDENCE",
+          "FOUND"
+        ],
+        "atUnixMs": 1794804926537
+      },
+      {
+        "seq": 118,
+        "phase": "EVIDENCE_SCOPING",
+        "reason": "Give me one second — preparing the requested material.",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "EVIDENCE",
+          "SCOPING"
+        ],
+        "atUnixMs": 1794804926537
+      },
+      {
+        "seq": 119,
+        "phase": "LYRICS_VERIFIED_PAYLOAD",
+        "reason": "Serving frozen lyrics payload from successfully fetched evidence.",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "LYRICS",
+          "GROUNDING"
+        ],
+        "atUnixMs": 1794804926537
+      },
+      {
+        "seq": 121,
+        "phase": "COMPLETE",
+        "reason": "",
+        "atUnixMs": 1794804926537
+      },
+      {
+        "phase": "PERSISTING",
+        "reason": "Saving the response to the chat",
+        "atUnixMs": 1794804926537
+      }
+    ],
+    "responseCognition": {},
+    "programmingIntent": {
+      "schema": "swrlz-programming-intent-v1",
+      "codingTask": false,
+      "projectContext": "none",
+      "changeClass": "none",
+      "artifactContinuation": false,
+      "artifactMutationRequested": false,
+      "artifactTargetId": "",
+      "artifactTargetMessageId": "",
+      "baseRevision": 0,
+      "baseSourceHash": "",
+      "newProject": false,
+      "source": "brain-router"
+    },
+    "candidateValidation": {},
+    "candidateAttempts": [],
+    "generationTelemetry": {},
+    "engineCompletionTelemetry": {
+      "totalLatencyMs": null,
+      "loadLatencyMs": null,
+      "firstDeltaLatencyMs": null
+    },
+    "contextBudget": {},
+    "resourcePlan": {},
+    "responseResourceUsage": {
+      "schema": "swrlz-response-resource-usage-v1",
+      "scope": "shared-cgroup-v2",
+      "source": "cgroup-v2",
+      "isolatedModelAttribution": false,
+      "wallTimeMs": 10938,
+      "capacity": {
+        "cpuLimitCores": 16.0,
+        "cpuLimitState": "measured",
+        "memoryLimitBytes": 104000000000,
+        "memoryLimitState": "measured"
+      },
+      "observed": {
+        "cgroupCpuUsageUsecDelta": 3065351,
+        "averageCgroupCpuCores": 0.28,
+        "memoryStartBytes": 13139779584,
+        "memoryEndBytes": 13144137728,
+        "memoryEndMinusStartBytes": 4358144,
+        "memoryPeakSampledBytes": 13144137728,
+        "memoryPeakAboveStartBytes": 4358144,
+        "memorySampleCount": 12,
+        "memorySamplingIntervalMs": 1000
+      },
+      "attribution": "Shared container readings include concurrent work; they are not exclusive CPU/RAM use by this model.",
+      "routeId": "700m",
+      "configuredEngineThreadBudget": null,
+      "outcome": "COMPLETE"
+    },
+    "finalResponse": "Okay — here’s the verified lyric text for **\"roll call\" by tech n9ne**:\n\n---\n\n**[Intro: DJ Doc]**\nStrangers come out to play\n(Wyshmaster on the beat)\nStrangers come out to play\n\n────────\n\n**[Verse 1: Tech N9ne]**\nI am A-Aaron, I'm everywhere like say Breyon\nI don't like the false and fakes they spawn\nSo when the tapes on I spray napalm\nDon't like the way lake Lanier was made race dom-\n-Ination hate I get impatient, mate\nWhen I hear an amazing break\nSo when invasion wakes, I play Draymond, uh\nCeiling fan in the winter, micro dose in the cinema\nA winnеr feelin' grand when I'm in her, healin' fans in a sprintеr\nI go both grim and sinister, I mess with the rare ones\nNever rollin' with the scare-some\nProclamation from the mayor done\nIt's really no comparison, my energy, beware, never glare, bums\nMy aura's something like a flare gun, or Bruce Leroy\nI'ma Troost B. Boy, and I boost thee noise, and I do be poised\nBut with the swimmin' I am who's devoid\nDon't ever make a goofy choice\nAnd lie profusely, we spooky, and you p'noid (Rrr)\nI used to like a lusty life\nNow I need that like a Muslim (Bruh) need Christ\nDon't let nobody touch me twice\nIf they don't know it's rude to say \"it must be nice\"\n\n────────\n\n**[Verse 2: King Iso]**\nLike I'm bumping Lyfe\nJennings I'm winning but in the beginning\nThem plenty didn't love King Is-O\nI'm rude my name is, I just said it\nGot problems? Dead it!\nFor beef I Bun B fries\nThere ain't a large or medium, better call and speak to one\nHit you all with what you call a front seat right\nI'm from the zero making a hundun c-notes\nAn unsung hero making the sluts sing why?\nRepping the middle where Malcolm Little hailed after getting held in a psychiatric prison cell\nHad to spit it but what you finna spit, it didn't sell, laughter!\nNow they wanna copy me saying \"mental health matters\"\nKilla Rel's back to makin' infidels have to get on their knees and pray and then they yell \"Master!\"\nI'm getting brain from a dame with a Yale Master's\nRed fitted cap on like I'm finna yell \"MAGA!\"\nThe fuck is you talkin' like Strange Music is over fool\nGiving 'em all the platinum and gold records you know it too\nEven the one Iso produced, steppin' on y'all in soldier boots\nNow fix how you talking like engineers up in the vocal booth\nI'm in the gym while men try stoning you\nGod body, the source, time to get my quotable\nBig time to little ones, a bit microbial\nI'm takin' all fades, that go for the fake homies, too, and I bet that I'm\n\n────────\n\n**[Chorus: Tech N9ne & Lex Bratcher]**\nNever gonna be defeated\nMoney never be depleted\nAnymore, folks don't need it\n'Cause the energy so completed\nRoll call\nSayin' my crew tough, ok, ok I know\nSo raw\nGotta turn this up, ok, ok, I know\n\n────────\n\n**[Verse 3: Joey Cool]**\nIf you waiting for me to give a crap, better have a lunch packed\nI ain't even upset, I ain't got a \"What!\" left\nI ain't really with it you dig it, you lookin suspect\nEverybody know I'm a chemist, I'm cooking up, jack, Muggs voice\nYou ain't got enough coupons\nYou couldn't afford it, you gonna need a Groupon\nYou witnessin' Joey C in his evolution\nThey knew me as Taven but I put Joey Cool on (Let's go)\nI would like to formally give apology\nAcknowledging anyone and everyone I ain't offended yet\nGot a gentlemen philosophy\nIt done been the policy ever since the people saw me on the internet\nAt the restaurant with the upper echelon\nA heavy one, I can show you how to pick a proper dinner set\nI had a conversation out with the delegation\nCheck it check it my ninja, that's usually where the winners at\nReal One, Swank Lord, Coolie Baby or The Chairman\nMe and Trav' skirted off in the McLaren\nCircle way too small for the square ones\nMan ya heard big Tech, it's a Roll Call\nAnd we still DIBKIS, man I told y'all, so raw\nSo we gone ball\nHold my 'Mana, yo, I'm 'bouta make a phone call, brrt\n\n────────\n\n**[Verse 4: JL & Yung Prez]**\nHello, I'm high, how're you, tada mean I'm JL the night owl who\nGot you wired to fire flower, I got firepower too\nWith the WTF out of the side I'll do\nWild crew yeah we blessed\nNo crowd 'round knew what the end of the tunnel's like\nYes I'll climb through from the stomach come growl sounds\nBut gals mouth droll, turn me up and consequently the AL-Pines blew\nWhew, whew, how's y'all view?\nWord to Coo the ceiling drop namaste on it\nFind a piece when they wonder where I be\nWay down in the jungle deep\nBaby girl put your weight on it\nWhat's popular homie really poppin' blockin' the boulevard\nWe shooting a movie pop up on me gassing the woodie spark\nGot my name in the discussion don't forget the B. Hood part\nTop up, top of the morning I'm off to a good start\nGood heart, same crew, same facts\nTito's or mi casamigos, we cashing in rain checks\nI done said too much, too many ain't catch\nLookin for something, I'ma have to put on the chain wax\nI be with the predators at the apex, and we all triumphant\nListen to me and don't skip a song, I love it\nYou said I was history I was on the wrong side of it\nBlaow!\n\n────────\n\n**[Verse 5: Lex Bratcher]**\nIt's Lex, I ain't luthin' (Take the grill out)\nI'm gracin' lanes like name's Suki\nWhen feminine brains study Yates\nYou get the dame fans saying\n\"She need to get a chain from Strange Music\"\nShe with the flavor, she make it rain, inclusive\nBeen bringing the pain so the naysayers don't do it\nAnd even if pay ain't arranged I'll always bang Bat and Snake so that iron'll bang on Beirut shit\nAnd I be killing ol' reeling motherfuckers with the IG videos\nI keep feeling those hypebeasts copy my lead but I know\nHigh key, I'm thee sight see when in Rome\nMight be in her phone\nShe wanting I, said she made of candy, her and her friend probably wanna go\nTie me nicely, guide me to the O\nAfter the \"I-E, I-E\", send 'em home\nOoh, these onlookers wanna be watching all my progress\nTruly got the mobs hooked on my ramen, got Maruchan\nSoon these newer groupies will see the very prophet\nSpoon full of booger sugars, the drug dealing Mary Poppins\nVery confidently burying opps in the necropolis\nFairly 'bout my \"bawk bawk\", Nando's-Peri, my favorite option\nTo eating haricot vert with High Deaf' and Joey at Azaba\nPlotting on how we rockin' all of the crowds that Tech has brought us and we obviously\n\n────────\n\n**[Chorus: Tech N9ne & Lex Bratcher]**\nNever gonna be defeated\nMoney never be depleted\nAnymore, folks don't need it\n'Cause the energy so completed\nRoll call\nSayin' my crew tough, ok, ok I know\nSo raw\nGotta turn this up, ok, ok, I know\n\n────────\n\n**[Verse 6: X-Raided]**\nI'm the X-R-A-I-D-E-D\nHot spitter, the Blocc figure from GBC\nMe and my co-d assisted more Star Wars than R2D2 and CP3\nOG, what you over there lookin' all hard for?\nMad I'm the one your lady legs stay ajar for\nNeverending Story, Falkor\nGet it jumping like parkour\nI came to Strange from the West\nWith a brain full of anger and death\nI was deranged and depressed\nI had a heart full of pain and the stress\nWas enough to put a strain on my chest\n(Bang!) Don't ever put a stain on my rep\nI'll put the flame on your flesh\nThe gang started to change how they stepped\nOnce Trav' put the chain on my neck\nAin't got the range or the depth\nFor me to have me to explain or impress you\nBut that ain't what I came to express\nArrr! Shiver me timbers, you so brave\nI didn't remember, I forgot to be afraid\nI'll get the clippers and take your fade\nI'll put you in the blender even if you a member\nYou ain't certified, you pretender\nThere's no hope, not a glimmer\nI'm an angel and a demon, I'm a saint and a sinner\nAnd I'm just getting started but I ain't no beginner\n\n────────\n\n**[Verse 7: Rittz]**\nHomie I been up for days on a bender\nThen I put the ink to the page like a printer\nI came to a simmer\nStarted rocking stages, Mesa to Denver\nI signed a deal then I became a Strange representer\nThey bitter, my chain and my bracelet, it shimmer like glitter\nIf that's your girlfriend, better get her\nShe told me let me give you head 'cause she a giver\nI got hoes all around the globe, no Tinder\nI came and left her hangin' like a blazer at coat check\nBlue diamonds in the watch, what you thought it was, topaz?\nWaking up to a thot I thought was hotter than CHROMAZZ\nEating some crab cakes, hollandaise and a poached egg\nIt's hard to process my process\nI'm so next level, could smell the cigar smoke on a goat's breath\nI'm grotesque, I enjoy provokin' your wokeness\nThese broke hoes get they throat stretched for a show pass, uh\nWhy you so mad at me? Bitch, don't be that way\nMaybe I'm like Stevie J and I'm in need of Faith\nMaybe I'm bitter because you don't consider me a great\nI might've started CNT but I ain't never leaving Strange\nTech told me kill 'em, get a shovel and a coffin\nShittin' on rappers, go hit the switch on the exhaust fan\nThey thought that I was down but really I was playin' possum\nI'm Strange affiliated, yea-uh-yea, yea-uh-yeah, CA-UH-COSM!\n\n---\n\n**Lyrics source:** Roll Call by Tech N9ne Lyrics | LyricsWeb — https://lyricsweb.com/song/tech-n9ne/tech-n9ne-roll-call",
+    "finalResponseSha256": "f7b42c7166ff637e66dddde5695e6606a3a8bb2f6517191779ff085af664f868",
+    "requestedModelId": "700m",
+    "selectedModelId": "700m",
+    "stationTiming": {
+      "acceptedAtUnixMs": 1794804914502,
+      "startedAtUnixMs": 1794804915599,
+      "completedAtUnixMs": 1794804926537,
+      "queueWaitMs": 1097,
+      "stationRunMs": 10938,
+      "endToEndMs": 12035
+    },
+    "rawPromptStored": false,
+    "historyStored": false,
+    "preciseLocationStored": false,
+    "privateReasoningStored": false
+  }
+}
