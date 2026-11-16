@@ -70,7 +70,7 @@ def _new_creative_command(prompt: str) -> bool:
     # Music terms are required except when the current thread has a documented'''
     replacement='''    kind,hit=match
     # An explicit critique is discussion even if it contains "remix" or "parody".
-    if music_feedback_followup(text) or not _new_creative_command(text):
+    if not _new_creative_command(text):
         return None
     # Music terms are required except when the current thread has a documented'''
     source=once(source,old,replacement,"intent gate")
