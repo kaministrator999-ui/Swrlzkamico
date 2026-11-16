@@ -1,0 +1,131 @@
+{
+  "schema": "swrlz-github-programming-attempt-log-v1",
+  "requestId": "swr-research-eval-7edaf0b12ba045a0",
+  "modelId": "700m",
+  "eventType": "PROGRAMMING_GENERATION_TELEMETRY",
+  "sourceRef": "f149dd857e3d9219f5cae7da0286b5dbfec85c42",
+  "persistedAtUnixMs": 1794807034422,
+  "diagnostic": {
+    "schema": "swrlz-station-programming-log-v1",
+    "generationTelemetry": {
+      "schema": "swrlz-programming-generation-telemetry-v1",
+      "attemptCount": 1,
+      "regenerationCount": 0,
+      "firstCandidateRejected": false,
+      "finalAcceptedAttempt": null,
+      "finalCandidateStatus": "NOT_APPLICABLE",
+      "guardedTurn": false,
+      "repairTurn": false,
+      "strictLanguage": false,
+      "modelLoadLatencyMs": 28.055,
+      "visibleFirstDeltaLatencyMs": 74334.512,
+      "engineTotalLatencyMs": 123802.813,
+      "totalCandidateGenerationMs": 123773.965,
+      "attempts": [
+        {
+          "schema": "swrlz-candidate-attempt-v1",
+          "attempt": 1,
+          "trigger": "initial-streaming",
+          "durationMs": 123773.965,
+          "firstTokenLatencyMs": 74306.299,
+          "deltaChunks": 567,
+          "finishReason": "stop",
+          "requestedMaxTokens": 4096,
+          "usage": {},
+          "candidateFingerprint": "42e71e5817d057b0",
+          "changedFromPreviousAttempt": null,
+          "changedFromRepairTarget": null,
+          "validationStatus": "NOT_APPLICABLE",
+          "validationReasons": [],
+          "accepted": false
+        }
+      ]
+    },
+    "stationTiming": {
+      "acceptedAtUnixMs": 1794806886245,
+      "startedAtUnixMs": 1794806886253,
+      "completedAtUnixMs": 1794807034417,
+      "queueWaitMs": 8,
+      "stationRunMs": 148164,
+      "endToEndMs": 148172
+    },
+    "responseResourceUsage": {
+      "schema": "swrlz-response-resource-usage-v1",
+      "scope": "shared-cgroup-v2",
+      "source": "cgroup-v2",
+      "isolatedModelAttribution": false,
+      "wallTimeMs": 148163,
+      "capacity": {
+        "cpuLimitCores": 16.0,
+        "cpuLimitState": "measured",
+        "memoryLimitBytes": 104000000000,
+        "memoryLimitState": "measured"
+      },
+      "observed": {
+        "cgroupCpuUsageUsecDelta": 1945918103,
+        "averageCgroupCpuCores": 13.134,
+        "memoryStartBytes": 9338609664,
+        "memoryEndBytes": 9729372160,
+        "memoryEndMinusStartBytes": 390762496,
+        "memoryPeakSampledBytes": 9730613248,
+        "memoryPeakAboveStartBytes": 392003584,
+        "memorySampleCount": 150,
+        "memorySamplingIntervalMs": 1000
+      },
+      "attribution": "Shared container readings include concurrent work; they are not exclusive CPU/RAM use by this model.",
+      "routeId": "700m",
+      "configuredEngineThreadBudget": {
+        "cpuCapacity": 16,
+        "decodeThreads": 18,
+        "batchThreads": 18,
+        "maxResponseTokens": 4096
+      },
+      "outcome": "COMPLETE"
+    },
+    "candidateValidation": {
+      "status": "NOT_APPLICABLE",
+      "reasons": [],
+      "detectedLanguages": [],
+      "activeRepairConstraints": {},
+      "behaviorLedger": {},
+      "structuredReceipt": {},
+      "executionVerified": null,
+      "verificationState": null
+    },
+    "repairConstraints": {
+      "schema": "swrlz-repair-constraints-v1",
+      "dependencyPolicy": "evidence-bounded",
+      "unavailableDependencies": [],
+      "forbiddenDependencies": [],
+      "currentReceiptDependencies": [],
+      "addedDependencies": [],
+      "carriedUnavailableDependencies": [],
+      "releasedDependencies": [],
+      "constraintCount": 0
+    },
+    "behaviorLedger": {
+      "currentScore": null,
+      "bestKnownScore": null,
+      "regressedCases": [],
+      "resolvedCases": [],
+      "preservePassingCases": [],
+      "rebaseRecommended": false,
+      "bestKnownArtifact": null,
+      "repairBaseMode": "latest-failing-source"
+    },
+    "behaviorRepairBase": {
+      "mode": "latest-failing-source",
+      "sourceFingerprint": null,
+      "artifactId": "",
+      "revision": 0,
+      "sourceHash": ""
+    },
+    "structuredReceipt": {},
+    "artifactReceipt": {
+      "action": null,
+      "revision": null,
+      "sourceHash": null,
+      "reason": null
+    }
+  }
+}
