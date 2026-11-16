@@ -1,0 +1,41 @@
+name: Read-only §C research kill-switch and model dispatch audit
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/hf-chat-research-runtime-config-audit.yml"]
+permissions: {contents: read}
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - run: python -m pip install --quiet "huggingface_hub>=0.34,<2"
+      - name: Inspect exposed public config and exactly installed model generator dispatch
+        run: |
+          python - <<'PY'
+          import json,urllib.request,re
+          from huggingface_hub import HfApi,hf_hub_download
+          from pathlib import Path
+          with urllib.request.urlopen("https://huggingface.co/api/spaces/kamiloki/Swyrlz",timeout=18) as response:
+            meta=json.load(response)
+          variables=meta.get("variables") or {}
+          selected={}
+          for k in ("SWRLZ_SELECTIVE_RETRIEVAL_ENABLED",
+                    "SWRLZ_ADAPTIVE_PUBLIC_RESEARCH_ENABLED",
+                    "SWRLZ_FACTUAL_CLAIM_GUARD_ENABLED"):
+            item=variables.get(k) if isinstance(variables,dict) else None
+            # Return only whether a public boolean override is 0/1; never
+            # print any unrelated credential or unknown variable value.
+            value=item.get("value") if isinstance(item,dict) else None
+            selected[k]=str(value) if str(value).lower() in ("0","1","true","false","off","on") else "not_publicly_declared"
+          print("SWRLZ_RESEARCH_PUBLIC_TOGGLES "+json.dumps(selected),flush=True)
+          space="kamiloki/Swyrlz";rev=HfApi().repo_info(space,repo_type="space").sha
+          for f in ("api/selective_retrieval.py","model_dispatch.py","station.py"):
+            try:lines=Path(hf_hub_download(space,f,repo_type="space",revision=rev)).read_text().splitlines()
+            except Exception as e:continue
+            matches=[(i+1,v.strip()[:250]) for i,v in enumerate(lines) if
+                "def dispatch(" in v or "_large_generate" in v or
+                "SWRLZ_SELECTIVE_RETRIEVAL_ENABLED" in v or
+                "def _generate(" in v]
+            print("SWRLZ_RESEARCH_DISPATCH "+json.dumps({"path":f,"matches":matches[:35]}),flush=True)
+          PY
