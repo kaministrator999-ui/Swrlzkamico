@@ -126,12 +126,80 @@ def inspect() -> dict:
     print("SWRLZ_QUALITY_SOURCE_PREFLIGHT", json.dumps(result), flush=True)
     return result
 
+
+def publish_guarded() -> dict:
+    """Authorized, optimistic-concurrency release to the existing Space only."""
+    import io
+    import os
+    from huggingface_hub import HfApi, hf_hub_download, CommitOperationAdd
+
+    if os.environ.get("SWRLZ_RESPONSE_QUALITY_RELEASE_APPROVED") != "1":
+        raise PermissionError("CANONICAL_RELEASE_APPROVAL_REQUIRED")
+    token = os.environ.get("HF_TOKEN")
+    expected_revision = os.environ.get("SWRLZ_EXPECTED_SPACE_REVISION", "")
+    if not token or not re.fullmatch(r"[0-9a-f]{40}", expected_revision):
+        raise PermissionError("RELEASE_TOKEN_AND_PINNED_SPACE_REVISION_REQUIRED")
+    api = HfApi(token=token)
+    current = str(api.repo_info(SPACE, repo_type="space").sha)
+    if current != expected_revision:
+        raise RuntimeError("SPACE_REVISION_CHANGED_REPREFLIGHT_REQUIRED")
+    original = Path(hf_hub_download(SPACE, ENGINE, repo_type="space",
+                                   revision=current, token=token)).read_bytes()
+    candidate = patch_engine(original.decode("utf-8")).encode("utf-8")
+    test_shared_profile(original.decode("utf-8"), candidate.decode("utf-8"))
+    backup_dir = Path("reports/chat-response-quality-v1/before")
+    backup_dir.mkdir(parents=True, exist_ok=True)
+    (backup_dir / ENGINE).write_bytes(original)
+    manifest = {
+        "contract": TAG, "sourceRevision": current,
+        "beforeSha256": hashlib.sha256(original).hexdigest(),
+        "afterSha256": hashlib.sha256(candidate).hexdigest(),
+        "file": ENGINE,
+    }
+    (backup_dir / "release-manifest.json").write_text(
+        json.dumps(manifest, indent=2) + "\n")
+    # Re-check after constructing the candidate: do not race another release.
+    if str(api.repo_info(SPACE, repo_type="space").sha) != current:
+        raise RuntimeError("CONCURRENT_SPACE_RELEASE_REFUSED")
+    result = api.create_commit(
+        repo_id=SPACE, repo_type="space", parent_commit=current,
+        operations=[CommitOperationAdd(path_in_repo=ENGINE,
+                                       path_or_fileobj=io.BytesIO(candidate))],
+        commit_message="§C shared response quality v1: grounded, coherent, intent-faithful replies")
+    published = str(result.oid)
+    try:
+        if str(api.repo_info(SPACE, repo_type="space").sha) != published:
+            raise RuntimeError("POST_RELEASE_SPACE_REVISION_MOVED")
+        readback = Path(hf_hub_download(
+            SPACE, ENGINE, repo_type="space", revision=published,
+            token=token)).read_bytes()
+        if readback != candidate:
+            raise RuntimeError("PUBLISHED_SOURCE_READBACK_MISMATCH")
+    except Exception:
+        # A rollback is safe only if the failed candidate still owns HEAD.
+        if str(api.repo_info(SPACE, repo_type="space").sha) == published:
+            api.create_commit(
+                repo_id=SPACE, repo_type="space", parent_commit=published,
+                operations=[CommitOperationAdd(
+                    path_in_repo=ENGINE, path_or_fileobj=io.BytesIO(original))],
+                commit_message="rollback(§C): restore exact previous response profile source")
+        raise
+    receipt = {**manifest, "publishedRevision": published,
+               "published": True, "verifiedReadback": True}
+    (backup_dir.parent / "release-receipt.json").write_text(
+        json.dumps(receipt, indent=2)+"\n")
+    print("SWRLZ_RESPONSE_QUALITY_PUBLISHED",
+          json.dumps(receipt, sort_keys=True), flush=True)
+    return receipt
+
 def main() -> None:
     parser=argparse.ArgumentParser()
-    parser.add_argument("mode", choices=["inspect"])
+    parser.add_argument("mode", choices=["inspect", "publish"])
     args=parser.parse_args()
     if args.mode == "inspect":
         inspect()
+    elif args.mode == "publish":
+        publish_guarded()
 
 if __name__ == "__main__":
     main()
