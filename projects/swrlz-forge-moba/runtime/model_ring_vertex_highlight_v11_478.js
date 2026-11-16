@@ -69,6 +69,7 @@
   const anchor=workshop()?.setRingAnchor?.();
   if(!anchor?.ok)return anchor||{ok:false,reason:'Could not set the ring center.'};
   const result=workshop()?.selectRing?.(options(mode));
+  window.SWYRL_ENGINE_RING_HEIGHT_478?.sync?.();
   return result||{ok:false,reason:'The ring selection was unavailable.'};
  }
  // The geometry preview clears regular component helpers. Restore only the
