@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT (owner-approved)",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.468",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_468_STANDALONE_STUDIO_ASSETS",
-  "reason": "Owner-requested independent Model Studio and Particle Studio asset authoring: local and Google-authenticated save/load, safe auto-restore into empty drafts, no automatic Game Studio imports, separate particle emitters and native game-project preservation. v11.467 Quest input fixes retained. Source sealed; v11.468 release verifier corrected and passed, account end-to-end and physical Quest/Moto acceptance pending.",
-  "sourceCommit": "07321d752c2500cab1f52fd824750e29f452c579",
-  "sourceIntegritySha256": "9f020a44a349a352072dc8b1fe19cb7302e81a3a3e7cc3609378536698aa1807"
+  "releaseVersion": "v11.469",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_469_UV_SHAPE_FIT",
+  "reason": "Transform-aware UV distortion heatmap and non-destructive shape-fit, with opt-in preview/apply/cancel/reset and native Undo. Existing mesh geometry and source painted PNG preserved. Device/VR acceptance remains owner tested.",
+  "sourceCommit": "a1b3ca66d346eabdc91ee014011585ab3bea59f8",
+  "sourceIntegritySha256": "d3f298e449bd98307471e37c500be4623d81cbf78cd91e248c2c094c03d3a920"
 }
