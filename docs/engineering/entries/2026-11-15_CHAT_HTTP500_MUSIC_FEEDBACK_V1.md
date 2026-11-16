@@ -25,3 +25,20 @@ At 10:39 PM the assistant wrote `Generation failed: QWEN35HTTP500` (underscores 
 - Exact-live code patch: `scripts/hf_chat_http500_feedback_v1.py`. It validates file anchors, parses modified Python with AST, pins one immutable parent Space SHA, records exact original byte hashes, commits only four existing files plus one helper, verifies every output by byte readback and attempts an exact-content rollback on verification failure.
 - Official release gate: `main:.deploy/HF_SPACE_REQUEST.txt` → `hf-space-request.yml` → `manual-hf-space.yml` with `CHANGE_SCOPE=http500-music-feedback-v1`.
 - No source commit equals deployment. A genuine guest follow-up response and real owner-device behavior remain acceptance stages after the release.
+
+## Production and acceptance receipts
+
+- Source PR: [#438](https://github.com/kaministrator999-ui/Swrlzkamico/pull/438), merged commit `78187b1e6ed13886fb4c96c69d4e869111aa2065`.
+- Scoped official release request commit: `38d0cf15b64fbb58341e689eaee990cafe6d059a`, `CHANGE_SCOPE=http500-music-feedback-v1`.
+- Governed release: [Actions #43807133417](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/43807133417), success. The exact pre-release Space revision `e49039b3af00d726742c84077ce3da3b10a0b425` advanced to `a72f505a00557ecd7218e6e68fff1fc2baad9e8a`. All five files byte-for-byte readback verified; previous exact files archived before mutation. Other deployment modes skipped.
+- Unit and actual-live-source preflight: [#43807012414](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/43807012414), success.
+- Independent guest acceptance workflow: [#43807349170](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/43807349170). Inspect its actual result before claiming user-visible quality. This test uses a synthetic lyric reference and an exact copy of the reported feedback text, never an account login.
+- Remaining uncertainty: this improves response routing and recovers one transient native 500; exact internal llama.cpp cause of the original screenshot's HTTP500 was not determined, and if the local server repeatedly returns 500 an ordinary FAILED result remains possible. Real-device/account-thread acceptance is separate from synthetic guest verification.
+
+## Real guest follow-up acceptance result
+
+- Workflow [#43807349170](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/43807349170): **PASS** on deployed `a72f505a00557ecd7218e6e68fff1fc2baad9e8a`; runtime confirmed RUNNING and serving exact SHA.
+- Synthetic reference/remix first turn: 202 accepted, final `COMPLETE`, 1,064 characters, 82,653 ms, no HTTP500 in visible terminal status.
+- The exact user's correction follow-up: 202 accepted, final `COMPLETE`, 261-character assistant response. No generated new song, no lyrics-retrieval status, no model-failure message, and no HTTP500 in terminal status.
+- Critical performance caveat: second turn required **286,414 ms** (approximately 4 minutes 46 seconds) despite only 261 characters. This could include model queue, input prefill, CPU decode, or a silent successful HTTP500 retry. Available guest receipts do not isolate the cause; do not claim it was fast or assume queue versus model fault.
+- Functional criteria for the reported critique: passed. Performance / user-owned historical long-thread reliability: **not accepted** by this single synthetic guest case; should be independently investigated before making latency claims.
