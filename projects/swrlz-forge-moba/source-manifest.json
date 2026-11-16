@@ -466,6 +466,6 @@
     "patches/v11_472_full_resolution_textures.py",
     "patches/v11_473_folding_workspace.py"
   ],
-  "finalBytes": null,
-  "finalSha256": null
+  "finalBytes": 10327388,
+  "finalSha256": "b5a6690b7432da84c9a71dbf22545ecdbf809c8028476be90fcb6fb929fc6673"
 }
