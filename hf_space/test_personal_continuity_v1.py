@@ -28,7 +28,7 @@ def run():
     assert "Current prompt" not in value
     unrelated = thread("unrelated", [msg("I visited my grandparents and planted flowers yesterday.",1770000002)],1770000002)
     assert "RELATED NATIVE" not in compose("Improve coding response tests", [unrelated], [], "current")
-    assert "EXPLICIT PAST USER" in value
+    assert "PRIVATE ACCOUNT HISTORICAL USER EVIDENCE" in value
     assert len(value) <= MAX_CONTEXT
     assert compose("hi",[],[]) == ""
     assert not archive_signals([msg("I prefer detailed answers",1750000000,"assistant")],"chatgpt")
