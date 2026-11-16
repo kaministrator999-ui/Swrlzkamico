@@ -17,7 +17,7 @@ assert manifest['patches'][-1]=='patches/v11_470_uv_model_save.py'
 manifest['finalBytes']=None
 manifest['finalSha256']=None
 manifest_file.write_text(json.dumps(manifest,ensure_ascii=False,indent=2)+'\n','utf8')
-output=ROOT/'_release_v11_469_candidate'
+output=ROOT/'_release_v11_470_candidate'
 subprocess.run([sys.executable,str(ROOT/'build_space.py'),'--output',str(output)],check=True)
 data=(output/'index.html').read_bytes()
 assert data==(output/'modeler.html').read_bytes()
@@ -35,7 +35,7 @@ request.update({
  'sourceIntegritySha256':manifest['finalSha256']
 })
 request_file.write_text(json.dumps(request,ensure_ascii=False,indent=2)+'\n','utf8')
-subprocess.run([sys.executable,str(ROOT/'scripts/verify_v11_469_release.py'),
- '--output',str(ROOT/'_release_v11_469_verified'),'--request'],check=True)
+subprocess.run([sys.executable,str(ROOT/'scripts/verify_v11_470_release.py'),
+ '--output',str(ROOT/'_release_v11_470_verified'),'--request'],check=True)
 print(json.dumps({'status':'SEALED','version':'v11.470','bytes':len(data),
  'sha256':manifest['finalSha256'],'patches':447}),flush=True)
