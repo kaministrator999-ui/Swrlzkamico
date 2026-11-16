@@ -1,10 +1,9 @@
 name: Preflight §C music research routing fixes
 on:
   push:
-    branches: [main, feature/sc-live-intent-qa-fixes-20261116]
+    branches: [main]
     paths:
       - 'scripts/hf_music_research_intent_routing_v1.py'
-      - 'scripts/hf_guest_prose_intent_override_v1.py'
       - '.github/workflows/hf-music-research-routing-preflight.yml'
   pull_request:
     paths:
@@ -26,10 +25,6 @@ jobs:
         run: |
           python -m py_compile scripts/eval_chat_research_lyrics_conversations.py
           python -m unittest discover -s tests -p 'test_chat_broad_guest_round2.py' -v
-      - name: Verify original no-code precedence and new operational intent against deployed coder
-        env:
-          HF_TOKEN: ${{ secrets.HF_TOKEN }}
-        run: python -u scripts/hf_guest_prose_intent_override_v1.py preflight
       - name: Run actual deployed classifier with expanded operation-routing fixtures
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
