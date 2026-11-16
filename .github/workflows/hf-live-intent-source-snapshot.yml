@@ -1,5 +1,9 @@
 name: "§C live intent source snapshot (read-only)"
 on:
+  push:
+    branches: [feature/sc-live-intent-qa-fixes-20261116]
+    paths:
+      - '.github/workflows/hf-live-intent-source-snapshot.yml'
   pull_request:
     paths:
       - ".github/workflows/hf-live-intent-source-snapshot.yml"
