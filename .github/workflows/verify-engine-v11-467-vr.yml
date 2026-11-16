@@ -1,0 +1,39 @@
+name: Validate §E v11.467 ring and arc modeling candidate
+on:
+  push:
+    branches:
+      - fix/se467-vr-two-grip-release
+    paths:
+      - ".github/workflows/verify-engine-v11-467-ring.yml"
+      - "projects/swrlz-forge-moba/patches/v11_467_vr_grip_release.py"
+      - "projects/swrlz-forge-moba/patches/v11_467_ring_arc_modeling.py"
+      - "projects/swrlz-forge-moba/scripts/prepare_v11_467_release.py"
+      - "projects/swrlz-forge-moba/scripts/verify_v11_467_release.py"
+      - "projects/swrlz-forge-moba/tests/model_ring_kernel_v11_467.mjs"
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: engine-v11-467-candidate
+  cancel-in-progress: true
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 22
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Build actual §E, test ring/arc mesh candidates, validate source and assets
+        run: python projects/swrlz-forge-moba/scripts/prepare_v11_467_release.py
+      - name: Preserve measured release manifest for inspection
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: engine-v11-467-source-seal
+          path: projects/swrlz-forge-moba/source-manifest.json
+          if-no-files-found: error
