@@ -1,0 +1,119 @@
+{
+  "schema": "swrlz-knowledge-acquisition-snapshot-v1",
+  "requestId": "web-mwjk25ak-2834976953-464359882",
+  "modelId": "700m",
+  "eventType": "KNOWLEDGE_ACQUISITION_SNAPSHOT",
+  "sourceRef": "f149dd857e3d9219f5cae7da0286b5dbfec85c42",
+  "persistedAtUnixMs": 1794851195301,
+  "diagnostic": {
+    "schema": "swrlz-knowledge-acquisition-snapshot-v1",
+    "requestId": "web-mwjk25ak-2834976953-464359882",
+    "trigger": {
+      "userText": "For a pretend story, a robin stands in rain holding a small amber sign. This is fiction, not a forecast or a location request. Restate the scene in one sentence.",
+      "sha256": "f88017760a56b16ea7b1dc19adb279cd4bbacb108408a042d161c58c447e6c2e"
+    },
+    "research": {
+      "kind": "weather",
+      "status": "ERROR",
+      "provider": "",
+      "reason": "weather-intent",
+      "query": "",
+      "resultCount": 0,
+      "sources": [],
+      "sourceSites": [],
+      "widgetKinds": [],
+      "trace": [
+        {
+          "phase": "WEATHER_GEOCODE_VISIT",
+          "provider": "Open-Meteo",
+          "activity": "Resolving weather location",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "WEATHER_GEOCODE_COMPLETE",
+          "provider": "Open-Meteo",
+          "activity": "Weather provider response received",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "WEATHER_LOCATION_NOT_FOUND",
+          "provider": "Open-Meteo",
+          "activity": "Weather location could not be resolved",
+          "status": null,
+          "elapsedMs": null
+        }
+      ]
+    },
+    "answer": {
+      "text": "I reached the live weather service, but I couldn't resolve that place. Try a city with state/province or country, for example “Leavenworth, Kansas”.",
+      "sha256": "0db78561b46d457dcb5261136742dd994bf82834b33f1115222b630daa6be9f6"
+    },
+    "followUpWindow": {
+      "maxUserTurns": 3,
+      "captured": [],
+      "state": "OPEN"
+    },
+    "review": {
+      "state": "PENDING",
+      "promoteToLocalKnowledge": false,
+      "notes": []
+    },
+    "privacy": {
+      "preciseLocationStored": false,
+      "privateReasoningStored": false,
+      "fullHistoryStored": false
+    },
+    "statusTrail": [
+      {
+        "phase": "QUEUED",
+        "reason": "Accepted by Workstation"
+      },
+      {
+        "phase": "GENERATING",
+        "reason": "Workstation admitted generation"
+      },
+      {
+        "phase": "PROGRAMMING_INTENT",
+        "reason": ""
+      },
+      {
+        "phase": "WEATHER_FETCH_STARTED",
+        "reason": "I’m on it — looking up For a pretend story, a robin stands in rain holding a small amber sign. This is fiction, not a forecast or a location request. Restate the scene in one sentence.…"
+      },
+      {
+        "phase": "WEATHER_GEOCODE_VISIT",
+        "reason": "Resolving weather location"
+      },
+      {
+        "phase": "WEATHER_GEOCODE_COMPLETE",
+        "reason": "Weather provider response received"
+      },
+      {
+        "phase": "WEATHER_LOCATION_NOT_FOUND",
+        "reason": "Weather location could not be resolved"
+      },
+      {
+        "phase": "ONLINE_RESEARCH",
+        "reason": "ERROR"
+      },
+      {
+        "phase": "WEATHER_FETCH_COMPLETE",
+        "reason": "Online retrieval error."
+      },
+      {
+        "phase": "WEATHER_RETRIEVAL_BLOCKED",
+        "reason": "I reached the live weather service, but I couldn't resolve that place. Try a city with state/province or country, for example “Leavenworth, Kansas”."
+      },
+      {
+        "phase": "COMPLETE",
+        "reason": ""
+      },
+      {
+        "phase": "PERSISTING",
+        "reason": "Saving the response to the chat"
+      }
+    ]
+  }
+}
