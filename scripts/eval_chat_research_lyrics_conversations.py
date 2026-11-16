@@ -251,6 +251,14 @@ def check(kind,text,previous=None,phases=None,allow_search=False):
     test("no_generation_or_router_error",not bool(re.search(
         r"(?i)(?:generation failed|HTTP Error 5\d\d|LYRICS_VERIFICATION_BLOCKED|"
         r"WEATHER_RETRIEVAL_BLOCKED|internal server error|traceback \(most recent)",text)))
+    # None of these scenarios asks for an executable program. A failed code
+    # draft is a routing error, not a response to a lyric or explanation task.
+    code_phases={"CODE_DRAFT_STREAMING","CODE_REPAIRING","RESUMING_CODE",
+                 "CODE_DRAFT_SAVED","CANDIDATE_INCOMPLETE"}
+    test("no_code_generator_hijack",not bool(
+        re.search(r"(?i)source has been generated but did not pass code validation|"
+                  r"send\s+\*{0,2}continue code|unverified draft is marked",text)
+        or (phases is not None and any(p in code_phases for p in phases))))
     # Every scenario in this suite asks for ORIGINAL lyrics or public research
     # about a subject, never external copyrighted lyric reproduction.
     test("no_lyrics_lookup_hijack",not bool(re.search(
@@ -484,6 +492,28 @@ def check(kind,text,previous=None,phases=None,allow_search=False):
             "link_count":len(urls),"link_hosts":list(dict.fromkeys(
                 urlsplit(url).hostname for url in urls if urlsplit(url).hostname))[:10]}
 
+def failure_types(result):
+    """Observable failure families, not inferred model-internal causes."""
+    labels=set()
+    if result.get("outcome")=="BLOCKED":
+        msg=result.get("error") or ""
+        labels.add("TURN_TIMEOUT" if "TimeoutError" in msg else "TRANSPORT_OR_UI_BLOCKER")
+    checks_to_type={
+        "no_weather_lookup_hijack":"WEATHER_ROUTE",
+        "no_lyrics_lookup_hijack":"PUBLISHED_LYRICS_ROUTE",
+        "no_code_generator_hijack":"CODE_ROUTE",
+        "no_unrequested_web_tool":"UNREQUESTED_RESEARCH",
+        "no_local_inference_failure":"INFERENCE_FAILURE",
+        "no_generation_or_router_error":"GENERATION_OR_ROUTER_ERROR",
+    }
+    for turn in result.get("turns",[]):
+        bad=[c["check"] for c in turn["evaluation"]["checks"] if not c["pass"]]
+        known=set(bad)&set(checks_to_type)
+        labels.update(checks_to_type[k] for k in known)
+        if set(bad)-set(checks_to_type):
+            labels.add("CONTENT_OR_FORMAT_REVIEW")
+    return sorted(labels)
+
 async def ask(context,thread_id,prompt,online):
     rid="swr-research-eval-"+uuid.uuid4().hex[:16]
     message={"protocolVersion":2,"modelId":MODEL,
@@ -569,6 +599,7 @@ async def scenario(browser,case):
         result["error"]=type(error).__name__+": "+base.redact(str(error),360)
     finally:
         await context.close()
+    result["failure_types"]=failure_types(result)
     return result
 
 async def main(batch):
@@ -587,7 +618,7 @@ async def main(batch):
                     "duration_ms":[t["total_ms"] for t in result["turns"]],
                     "research_source_links":[t["source_link_count"] for t in result["turns"]],
                     "failed_checks":[[x["check"] for x in t["evaluation"]["checks"] if not x["pass"]] for t in result["turns"]],
-                    "error":result.get("error")
+                    "error":result.get("error"),"failure_types":result.get("failure_types",[])
                 }),flush=True)
         finally:await browser.close()
     total=[t for r in results for t in r["turns"]]
@@ -600,6 +631,8 @@ async def main(batch):
                      "review_scenarios":sum(x["outcome"]=="REVIEW" for x in results),
                      "blocked_scenarios":sum(x["outcome"]=="BLOCKED" for x in results),
                      "completed_turns":len(total),
+                     "failure_type_counts":{kind:sum(kind in r.get("failure_types",[]) for r in results)
+                         for kind in sorted({key for r in results for key in r.get("failure_types",[])})},
                      "median_turn_ms":round(statistics.median(t["total_ms"] for t in total)) if total else None,
                      "runtime_ms":round((time.perf_counter()-started)*1000)}}
     (OUT/"report.json").write_text(json.dumps(data,ensure_ascii=False,indent=2)+"\n")
@@ -608,6 +641,8 @@ async def main(batch):
            "Actual model transcripts are in report.json. Keyword/structure checks are limited evidence, not a human songwriting-quality score.","",
            "| Scenario | Result | Completed turns |","|---|---|---:|"]
     for r in results:lines.append(f"| {r['id']} | {r['outcome']} | {len(r['turns'])} |")
+    lines.extend(["","Observed failure families: "+str(data["summary"]["failure_type_counts"]),
+                  "Failure families are telemetry/check evidence, not a definitive root-cause diagnosis.",""])
     lines.extend(["","Median latency of completed turns: "+str(data["summary"]["median_turn_ms"])+" ms",
       "Public research source URLs are recorded but are not automatically verified for authenticity.",
       "Original lyrics are synthetic test outputs; no published song lyrics were requested."])
