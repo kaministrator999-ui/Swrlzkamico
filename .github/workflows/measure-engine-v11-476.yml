@@ -12,7 +12,6 @@ on:
       - "projects/swrlz-forge-moba/scripts/verify_v11_476_release.py"
       - "projects/swrlz-forge-moba/tests/engine_account_start_v11_476.mjs"
       - "projects/swrlz-forge-moba/tests/engine_account_browser_v11_476.cjs"
-      - "projects/swrlz-forge-moba/source-manifest.json"
   workflow_dispatch:
 permissions:
   contents: read
