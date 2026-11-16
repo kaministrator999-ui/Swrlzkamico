@@ -39,3 +39,13 @@ still current, the repair routine restores the previous exact two file bytes.
 - Publication: only the canonical `main:.deploy/HF_SPACE_REQUEST.txt` request can authorize the scoped production release.
 - Live lyric acceptance: not proven by static tests; test a real generation with a length stop and inspect resulting saved message, status and absence of the extra `Generation failed` bubble.
 - If validation or deployment fails, retain the exact failed run and source/version receipts. Do not label the change live from a code commit alone.
+
+## Published production receipt
+
+- GitHub source integration: [PR #431](https://github.com/kaministrator999-ui/Swrlzkamico/pull/431), merge commit `a4af52d3d2290c7efda3cd78176acb9016c4c29b`.
+- Canonical authorized request: `main:.deploy/HF_SPACE_REQUEST.txt`, request commit `694dc13214c3920e99871303990dd6e9a5f5f502`, `CHANGE_SCOPE=noncode-output-limit-recovery-v1`.
+- Governed Space release: [Actions run 43797780182](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/43797780182), success. Source SHA and six trust-boundary unit tests verified in deploy job. Prior exact two engine files archived before upload.
+- Published previous Space revision: `1e6e232b281b9a87d18e7248a143ee7740c55273`.
+- New Space revision: `70e0a4fc6b179cda6f465c77b59c1eba4b36626e`, two-file byte-for-byte readback successful.
+- Scope verification: original general full-Space `prepare` deploy job was skipped; only scoped two-engine fix published. No model weights, context size, original song-source evidence or native editor changes.
+- Acceptance distinction: published source and unit-based length handling verified; specific user lyric thread/browser behavior under an actual limit remains to be observed. Do not claim a finished song from a length stop or automatic same-turn continuation. 
