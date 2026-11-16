@@ -1,0 +1,71 @@
+name: §C complete two-turn HTML creation and revision acceptance
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/chat-html-two-turn-final-acceptance.yml'
+permissions: {contents: read}
+concurrency:
+  group: swrlz-chat-guest-eval
+  cancel-in-progress: false
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 19
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - run: |
+          python -m pip install playwright==1.56.0
+          python -m playwright install --with-deps chromium
+      - run: |
+          python -m py_compile scripts/eval_chat_guest_suite.py
+          python -m py_compile scripts/test_guest_html_functionality.py
+      - name: Generate page then revise it to add Reset in the same anonymous mobile thread
+        env:
+          SWRLZ_EVAL_BASE: https://kamiloki-swyrlz.hf.space
+          SWRLZ_EVAL_MODEL: 700m
+        run: |
+          python -u - <<'PY'
+          import asyncio,sys
+          import scripts.eval_chat_guest_suite as e
+          cases=[c for c in e.CASES['2'] if c['id']=='html-button-ui']
+          if len(cases)!=1 or len(cases[0]['turns'])!=2:
+              raise RuntimeError('Expected exact two-turn HTML fixture')
+          cases[0]['lane']='ui'
+          e.CASES['2']=cases
+          sys.exit(asyncio.run(e.main('live','2')))
+          PY
+      - name: Execute first and revised HTML in network-isolated Chromium
+        run: python -u -m scripts.test_guest_html_functionality
+      - name: Confirm source assembly and complete preserved response
+        run: |
+          python - <<'PY'
+          import json,re
+          from pathlib import Path
+          p=Path('reports/chat-guest-eval/report.json')
+          result=json.loads(p.read_text())
+          c=next(x for x in result['results'] if x['id']=='html-button-ui')
+          assert c['status']=='PASS_EVIDENCE' and len(c['turns'])==2
+          a,b=c['turns']
+          assert a['response'].startswith('```html file=index.html'), 'First response did not use assembled source'
+          assert '<!doctype html>' in a['response'].lower()
+          assert 'Reset' in b['response'] and 'Change' in b['response']
+          assert all(x['evaluation']['status']=='PASS_EVIDENCE' for x in (a,b))
+          Path('reports/chat-guest-eval/acceptance.json').write_text(
+            json.dumps({'pass':True,'turns':2,'first_ms':a['total_ms'],'second_ms':b['total_ms'],
+                        'first_source_assembled':True,
+                        'interaction_test':'see functional-report.json'},indent=2)+'\n')
+          print('HTML_TWO_TURN_FINAL_PASS',json.dumps({
+              'first_ms':a['total_ms'],'second_ms':b['total_ms'],
+              'first_chars':a['chars'],'second_chars':b['chars']}),flush=True)
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: html-two-turn-final-acceptance-${{ github.run_id }}
+          path: reports/chat-guest-eval/
+          retention-days: 21
+          if-no-files-found: ignore
