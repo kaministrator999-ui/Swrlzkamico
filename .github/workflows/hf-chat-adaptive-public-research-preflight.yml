@@ -62,6 +62,40 @@ jobs:
           print("SWRLZ_ADAPTIVE_INTEGRATED_ROUTING "+json.dumps(assertion),flush=True)
           assert assertion=={"publicExplanation":"retrieve",
                              "casual":"direct","private":"direct"},assertion
+          prompt="Explain how eclipses work, including lunar geometry, eclipse types, and eye safety."
+          called=[]
+          def public_provider(request):
+              called.append(request)
+              if len(called)==1:
+                  return {"evidence":[{
+                      "title":"NASA eclipse lunar geometry",
+                      "url":"https://science.nasa.gov/eclipses/geometry/",
+                      "snippet":"Lunar geometry determines how the Earth, Moon, and Sun align for eclipses."
+                  }]}
+              return {"evidence":[
+                  {"title":"NASA eclipse types",
+                   "url":"https://science.nasa.gov/eclipses/types/",
+                   "snippet":"Eclipse types include total, partial, and annular eclipses."},
+                  {"title":"NASA eclipse eye safety",
+                   "url":"https://science.nasa.gov/eclipses/safety/",
+                   "snippet":"Eye safety is essential when viewing a solar eclipse."},
+              ]}
+          out,receipt=selective.enrich_payload(
+              {"prompt":prompt},public_provider,fetch_page=None,enabled=True)
+          metadata=(out.get("onlineContext") or {}).get("adaptiveResearch") or {}
+          packet=(out.get("onlineContext") or {}).get("evidence") or []
+          print("SWRLZ_ADAPTIVE_INTEGRATED_SEARCH "+json.dumps({
+              "phase":receipt.get("phase"),"researchCalls":len(called),
+              "extraQueries":called[-1].get("researchQueries"),
+              "passCount":metadata.get("passesAttempted"),
+              "unresolved":metadata.get("facetsNeedingVerification"),
+              "sourceTitles":[x.get("title") for x in packet]
+          }),flush=True)
+          assert receipt["phase"]=="RESEARCH_READY",receipt
+          assert len(called)==2,called
+          assert metadata["passesAttempted"]==2,metadata
+          assert not metadata["facetsNeedingVerification"],metadata
+          assert len(packet)>=3,packet
           PY
       - uses: actions/upload-artifact@v4
         if: always()
