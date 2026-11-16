@@ -12,7 +12,7 @@ on:
         description: "Validate package without publishing, or explicitly deploy"
         required: true
         type: choice
-        options: [inspect, benchmark, validate, deploy]
+        options: [inspect, benchmark, validate, deploy, hotfix-output-budget]
         default: validate
       approved:
         description: "Confirm replacement ONLY of existing kamiloki/Swyrlz after snapshot"
@@ -44,7 +44,46 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  hotfix_output_budget:
+    if: ${{ inputs.mode == 'hotfix-output-budget' && inputs.approved == 'yes' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.source_ref }}
+          fetch-depth: 1
+      - name: Enforce pinned immutable approved §C repair
+        shell: bash
+        run: |
+          set -euo pipefail
+          ref="${{ inputs.source_ref }}"
+          [[ "$ref" =~ ^[0-9a-f]{40}$ ]]
+          test "$(git rev-parse HEAD)" = "$ref"
+          test -f scripts/hf_chat_noncode_output_budget_v1.py
+          test -f tests/test_hf_chat_noncode_output_budget_v1.py
+      - name: Static generation guard and trust-boundary regressions
+        run: |
+          python -m unittest discover -s tests -p 'test_hf_chat_noncode_output_budget_v1.py' -v
+          python -m py_compile scripts/hf_chat_noncode_output_budget_v1.py
+      - name: Install Hugging Face client and snapshot exact live files
+        run: |
+          python -m pip install --quiet 'huggingface_hub>=0.34,<2'
+          python scripts/hf_chat_noncode_output_budget_v1.py snapshot
+      - uses: actions/upload-artifact@v4
+        with:
+          name: swrlz-pre-output-budget-exact-source
+          path: swrlz-output-limit-backup/
+          retention-days: 30
+          if-no-files-found: error
+      - name: Publish CAS-protected two-file §C fix to existing Space only
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          SWRLZ_OUTPUT_BUDGET_APPROVED: "1"
+        run: python -u scripts/hf_chat_noncode_output_budget_v1.py publish
+
   prepare:
+    if: ${{ inputs.mode != 'hotfix-output-budget' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

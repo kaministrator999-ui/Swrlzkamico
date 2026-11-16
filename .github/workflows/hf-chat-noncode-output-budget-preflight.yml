@@ -1,0 +1,39 @@
+name: §C non-code output budget recovery preflight
+on:
+  push:
+    paths:
+      - "scripts/hf_chat_noncode_output_budget_v1.py"
+      - "tests/test_hf_chat_noncode_output_budget_v1.py"
+      - ".github/workflows/hf-chat-noncode-output-budget-preflight.yml"
+      - ".github/workflows/manual-hf-space.yml"
+      - ".github/workflows/hf-space-request.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify source transformation and code gate preservation
+        run: python -m unittest discover -s tests -p 'test_hf_chat_noncode_output_budget_v1.py' -v
+      - name: Validate canonical deployment workflow structure (inert)
+        run: |
+          python -m pip install --quiet pyyaml
+          python - <<'PY'
+          from pathlib import Path
+          import yaml
+          manual=yaml.safe_load(Path(".github/workflows/manual-hf-space.yml").read_text())
+          request=yaml.safe_load(Path(".github/workflows/hf-space-request.yml").read_text())
+          assert "hotfix_output_budget" in manual["jobs"]
+          assert "prepare" in manual["jobs"]
+          assert "request" in request["jobs"] and "deploy" in request["jobs"]
+          assert "noncode-output-limit-recovery-v1" in Path(".github/workflows/hf-space-request.yml").read_text()
+          assert "mode: ${{ needs.request.outputs.mode }}" in Path(".github/workflows/hf-space-request.yml").read_text()
+          print("Canonical guard YAML: PASS")
+          PY
+      - name: Preflight current Hugging Face source without writing
+        run: |
+          python -m pip install --quiet 'huggingface_hub>=0.34,<2'
+          python -u scripts/hf_chat_noncode_output_budget_v1.py preflight
