@@ -313,12 +313,12 @@ def check(kind,text,previous=None,phases=None,allow_search=False):
         test("phone_and_vr",bool(re.search(r"(?i)phone|mobile",text) and re.search(r"(?i)\bvr\b|headset",text)))
         test("browser",bool(re.search(r"(?i)browser|web",text)))
         test("guest",bool(re.search(r"(?i)guest|without (?:an? )?account|no login|no sign",text)))
-        test("no_forced_install",not bool(re.search(r"(?i)(?:must|need|require)\s+(?:to\s+)?(?:install|download|sign in|log in|register)",text)))
+        test("no_forced_install",not bool(re.search(r"(?i)(?:must|need|require|only after you)\s+(?:to\s+)?(?:install|download|sign in|log in|register)",text)))
     elif kind=="guest_constraints_update":
         test("third_desktop",bool(re.search(r"(?i)desktop",text)))
         test("guest_kept",bool(re.search(r"(?i)guest|no (?:account|login)|without.*(?:account|login)",text)))
         test("browsers_kept",bool(re.search(r"(?i)browser|web",text)))
-        test("no_forced_install",not bool(re.search(r"(?i)(?:must|need|require)\s+(?:to\s+)?(?:install|download|sign in|log in|register)",text)))
+        test("no_forced_install",not bool(re.search(r"(?i)(?:must|need|require|only after you)\s+(?:to\s+)?(?:install|download|sign in|log in|register)",text)))
     elif kind=="unverified_tests":
         test("two_fail",bool(re.search(r"(?i)(?:\b2\b|two).{0,25}fail|fail.{0,25}(?:\b2\b|two)",text)))
         test("one_pass",bool(re.search(r"(?i)(?:\b1\b|one).{0,25}pass|pass.{0,25}(?:\b1\b|one)",text)))
