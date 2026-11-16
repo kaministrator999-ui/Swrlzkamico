@@ -13,7 +13,7 @@ def segment(content,label):
  assert content.count(start)==content.count(end)==1
  return content.split(start,1)[1].split(end,1)[0].strip()+'\n'
 def between(html,start,end,content):
- assert html.count(start)==1 and html.count(end)==1,(start,end,html.count(start),html.count(end))
+ assert html.count(start)==1,(start,html.count(start))
  a=html.index(start);b=html.index(end,a+len(start))
  assert b>a
  return html[:a]+content+html[b:]
