@@ -64,6 +64,51 @@ def _swrlz_operation_is_noncode(prompt):
 
 '''
 
+
+# swrlz-standalone-followup-prefill-v1: explain -> compact standalone function.
+PREFILL_OLD = '''    if source_change_mode or not programming.get("codingTask") or history:
+        return False'''
+PREFILL_NEW = r'''    if source_change_mode or not programming.get("codingTask"):
+        return False
+    # A fresh tiny function after one explanation is not a project edit.
+    # Accept only one bounded user/assistant exchange with no prior source.
+    if history:
+        if not isinstance(history,list) or len(history)!=2:
+            return False
+        if [str(h.get("role") or "") for h in history if isinstance(h,dict)]!=["user","assistant"]:
+            return False
+        previous=" ".join(str(h.get("content") or h.get("text") or "") for h in history)
+        if len(previous)>1800 or not re.search(
+            r"(?i)\b(?:explain|without\s+(?:writing\s+)?code|no\s+code)\b",
+            str(history[0].get("content") or history[0].get("text") or "")):
+            return False
+        if re.search(r"(?i)\x60\x60\x60|<script|(?:def|function|class)\s+\w+\s*\(",
+                     previous):
+            return False
+        if re.search(r"(?i)\b(?:existing\s+(?:file|project)|repository|github|"
+                     r"source\s+file|error\s+trace|patch|deployment|refactor)\b",
+                     previous):
+            return False'''
+SIGNATURE_OLD = r'''    if not re.search(r"\b(?:function|method|short|simple|small|snippet|hello world|example)\b",
+                     cleaned,re.I):
+        return False'''
+SIGNATURE_NEW = r'''    if not (re.search(r"\b(?:function|method|short|simple|small|snippet|hello world|example)\b",
+                      cleaned,re.I)
+            or re.search(r"\b[A-Za-z_]\w{0,32}\(\s*[A-Za-z_]\w{0,32}"
+                         r"(?:\s*,\s*[A-Za-z_]\w{0,32}){0,3}\s*\)",cleaned)):
+        return False'''
+BUDGET_OLD = '''            response_tokens=min(response_tokens,1024)'''
+BUDGET_NEW = '''            response_tokens=min(response_tokens,384 if history else 1024)'''
+RESUME_OLD = '''    auto_resume_existing_source=bool(code_delivery)'''
+RESUME_NEW = '''    # No long-code continuation for a self-contained small function.
+    auto_resume_existing_source=bool(code_delivery and not simple_code_prefill)'''
+
+def _replace_once(source, old, new, label):
+    if source.count(old)!=1:
+        raise RuntimeError("SMALL_FOLLOWUP_SOURCE_DRIFT:"+label+":"+str(source.count(old)))
+    return source.replace(old,new,1)
+
+
 def candidate(original):
     source=original.decode("utf-8")
     if "swrlz-current-operation-noncode-v2" in source:
@@ -93,6 +138,13 @@ def candidate(original):
     if source.count(func)<1:
         raise RuntimeError("Missing source generation entrypoint")
     source=source.replace(func,HELPER+func,1)
+    for old,new,label in (
+        (PREFILL_OLD,PREFILL_NEW,"history-gate"),
+        (SIGNATURE_OLD,SIGNATURE_NEW,"standalone-signature"),
+        (BUDGET_OLD,BUDGET_NEW,"bounded-token-budget"),
+        (RESUME_OLD,RESUME_NEW,"continuation-gate"),
+    ):
+        source=_replace_once(source,old,new,label)
     compile(source,FILE,"exec")
     return source.encode("utf-8")
 
@@ -143,7 +195,34 @@ def tests(content):
             raise AssertionError("Operation route mismatch: "+repr(prompt))
     if text.count("NONCODE_OPERATION_OVERRIDE")!=1:
         raise AssertionError("Non-code precedence missing from generator")
-    print("PROSE_OVERRIDE_STATIC_ACCEPTED 22",flush=True)
+    compact_helpers=[n for n in tree.body if isinstance(n,ast.FunctionDef)
+                     and n.name=="_swrlz_standalone_code_prefill"]
+    if len(compact_helpers)!=1:raise AssertionError("Standalone code helper missing")
+    ns={"re":re,"json":json}
+    exec(compile(ast.Module(body=compact_helpers,type_ignores=[]),FILE,"exec"),ns)
+    compact=ns["_swrlz_standalone_code_prefill"]
+    prompt="Now implement square(n) in JavaScript using multiplication, in a code block."
+    history=[{"role":"user","content":"I eventually want a JavaScript square(n) function. For now explain the goal WITHOUT writing code."},
+             {"role":"assistant","content":"The function squares its numeric input by multiplying it by itself."}]
+    cases=[
+        (prompt,{"codingTask":True},{},history,False,True),
+        (prompt,{"codingTask":True},{},[],False,True),
+        (prompt,{"codingTask":True},{},history,True,False),
+        (prompt,{"codingTask":False},{},history,False,False),
+        (prompt,{"codingTask":True,"newProject":True},{},history,False,False),
+        (prompt,{"codingTask":True},{},history+[{"role":"user","content":"more"}],False,False),
+        (prompt,{"codingTask":True},{},[{"role":"user","content":"Edit my GitHub repository's source file and explain the change."},{"role":"assistant","content":"This requires the project source."}],False,False),
+        (prompt,{"codingTask":True},{},[{"role":"user","content":"Explain this source: \x60\x60\x60js function square(n) {return n*n;}"},{"role":"assistant","content":"It squares n."}],False,False),
+        ("Deploy a small function to the existing project",{"codingTask":True},{},history,False,False),
+        (prompt,{"codingTask":True},{"projectThreadEvidence":{"id":1}},history,False,False),
+    ]
+    for case in cases:
+        *params,expected=case
+        if compact(*params)!=expected:
+            raise AssertionError("Wrong standalone follow-up route: "+repr(params[0]))
+    for required in ("384 if history else 1024","code_delivery and not simple_code_prefill"):
+        if required not in source:raise AssertionError("Bounded code delivery missing")
+    print("PROSE_OVERRIDE_STATIC_ACCEPTED 34",flush=True)
 
 def preflight(api):
     rev=api.repo_info(SPACE,repo_type="space").sha
