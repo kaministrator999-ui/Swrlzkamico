@@ -211,6 +211,13 @@ function se469InstallUI(){
   '</div>'+
   '<p>Preview is non-destructive. Apply stores a per-mesh sampling correction with Undo. Texture image, geometry, and original UV coordinates are preserved. A global correction can crop or repeat atlas artwork: for individual logos, use UV island adjustment instead.</p>';
  preview.append(root);
+ // Hidden UV windows must never leave an unapplied material preview visible.
+ new MutationObserver(records=>{
+  if(se469Candidate&&records.some(record=>
+      (record.target?.id==='se355UVPopup'||record.target===panel)&&record.target.hidden)){
+   se469Discard();se469UpdateUI();
+  }
+ }).observe(panel,{subtree:true,attributes:true,attributeFilter:['hidden']});
  for(const [id,cb] of Object.entries({
   se469UVAnalyze:se469Analyze,se469UVPreview:se469PreviewFit,
   se469UVApply:se469ApplyFit,se469UVCancel:se469CancelFit,
