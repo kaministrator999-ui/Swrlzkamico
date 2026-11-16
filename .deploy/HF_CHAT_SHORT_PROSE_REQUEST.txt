@@ -1,0 +1,6 @@
+TARGET=kamiloki/Swyrlz
+APPROVED=1
+SCOPE=explicit-brief-prose-output-cap-v1
+SOURCE_REF=429dc7d0e8d946552cc802e3a19cd1ef3f7face3
+EXPECTED_SPACE_REVISION=43229d11e9a2fcc1cd0d8fcec1811e981c158481
+NONCE=sc-explicit-short-prose-20261116-2115
