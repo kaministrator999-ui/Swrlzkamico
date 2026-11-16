@@ -21,8 +21,8 @@ subprocess.run(['node',str(ROOT/'tests/texture_full_resolution_v11_472.mjs')],ch
 out=Path(a.output).resolve()
 subprocess.run([sys.executable,str(ROOT/'build_space.py'),'--output',str(out)],check=True)
 data=(out/'index.html').read_bytes()
-subprocess.run(['node',str(ROOT/'tests/model_uv_save_v11_471.mjs'),str(out/'index.html')],check=True)
-subprocess.run(['node',str(ROOT/'tests/uv_view_project_delete_v11_471.mjs'),str(out/'index.html')],check=True)
+subprocess.run(['node',str(ROOT/'tests/model_uv_save_v11_472.mjs'),str(out/'index.html')],check=True)
+subprocess.run(['node',str(ROOT/'tests/uv_view_project_delete_v11_472.mjs'),str(out/'index.html')],check=True)
 subprocess.run(['node',str(ROOT/'tests/texture_full_resolution_integration_v11_472.mjs'),str(out/'index.html')],check=True)
 assert data==(out/'modeler.html').read_bytes()
 assert len(data)==m['finalBytes'] and hashlib.sha256(data).hexdigest()==m['finalSha256']
