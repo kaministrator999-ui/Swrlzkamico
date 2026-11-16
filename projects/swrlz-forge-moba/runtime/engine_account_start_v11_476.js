@@ -208,6 +208,14 @@
   if(started)return;
   if(!$('se476StartupGate'))return;
   started=true;
+  // Native release notes use the browser's top layer and otherwise intercept
+  // clicks even above a fixed 2-billion-z-index account/outage gate.
+  const releaseDialog=$('seReleaseNotesDialog');
+  if(releaseDialog){
+   const defer=()=>{if(!finished&&releaseDialog.open)releaseDialog.close();};
+   defer();
+   new MutationObserver(defer).observe(releaseDialog,{attributes:true,attributeFilter:['open']});
+  }
   updateAccountStatus();paint();
   $('se476SignIn')?.addEventListener('click',signIn);
   $('se476RetryConnection')?.addEventListener('click',retryConnection);
