@@ -9,7 +9,7 @@ parser.add_argument('--request',action='store_true')
 a=parser.parse_args()
 m=json.loads((ROOT/'source-manifest.json').read_text('utf8'))
 assert m['name']=='§wyrl§ Engine v11.471'
-assert m['finalArtifact']=='swyrl_engine_v11_470.html'
+assert m['finalArtifact']=='swyrl_engine_v11_471.html'
 assert len(m['patches'])==448 and m['patches'][-1]=='patches/v11_471_uv_render_project_delete.py'
 assert isinstance(m['finalBytes'],int) and isinstance(m['finalSha256'],str)
 for name in ['model_ring_kernel_v11_466.js','model_ring_bridge_v11_466.js','model_ring_ui_v11_466.js','model_quest_browser_input_v11_467.js','studio_standalone_assets_v11_468.js','model_uv_distortion_math_v11_469.js','model_uv_shape_fit_v11_469.js','uv_latitude_math_v11_471.js','uv_fine_fit_v11_471.js','project_delete_confirm_v11_471.js']:
@@ -20,7 +20,7 @@ subprocess.run(['node',str(ROOT/'tests/uv_latitude_math_v11_471.mjs')],check=Tru
 out=Path(a.output).resolve()
 subprocess.run([sys.executable,str(ROOT/'build_space.py'),'--output',str(out)],check=True)
 data=(out/'index.html').read_bytes()
-subprocess.run(['node',str(ROOT/'tests/model_uv_save_v11_470.mjs'),str(out/'index.html')],check=True)
+subprocess.run(['node',str(ROOT/'tests/model_uv_save_v11_471.mjs'),str(out/'index.html')],check=True)
 subprocess.run(['node',str(ROOT/'tests/uv_view_project_delete_v11_471.mjs'),str(out/'index.html')],check=True)
 assert data==(out/'modeler.html').read_bytes()
 assert len(data)==m['finalBytes'] and hashlib.sha256(data).hexdigest()==m['finalSha256']
