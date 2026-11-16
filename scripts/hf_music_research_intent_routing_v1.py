@@ -42,9 +42,13 @@ NEW_LYRIC='''    # Lyric *analysis* and revision of a just-created/user-authored
         r"(?i)\b(?:find|fetch|retrieve|look\s+up|search\s+for|quote|"
         r"transcribe|recite|reproduce|show|give|provide|print)\b"
         r".{0,100}\b(?:lyrics?|words\s+to\s+(?:the\s+)?song)\b",text))
+    published_full_lyrics=bool(re.search(
+        r"(?i)\b(?:full|complete|all\s+the)\s+(?:song\s+)?lyrics?"
+        r"\s+(?:of|to|for)\b",text))
     lyrics_lookup=(bool(_LYRICS_LOOKUP.search(text)) and lyric_text_demand
                    and not (creative_revision and not explicit_lookup_verb)
-                   and not (musical_analysis and not explicit_lookup_verb))'''
+                   and not (musical_analysis and not
+                            (explicit_lookup_verb or published_full_lyrics)))'''
 OLD_WEATHER='''    weather_intent=bool(_WEATHER_TERMS.search(text) and not weather_negated)'''
 NEW_WEATHER='''    # Rain/snow in user-supplied lyric lines, fiction or song titles is NOT
     # a weather lookup. Require an actual live meteorological question/request.
@@ -100,6 +104,7 @@ def test(raw):
       "_search_query_from_prompt":lambda s:s[:500],
       "creative_music_transform_request":lambda s:bool(re.search(
           r"\b(?:write|create|compose|generate|rewrite)\b.{0,120}\b(?:original|lyrics?|song|rap|verses?)\b",s,re.I)),
+      "music_feedback_followup":lambda p,h=None:False,
       "is_simple_checkin":lambda s:False,
       "ONLINE_CONTRACT":"contract",
     }
