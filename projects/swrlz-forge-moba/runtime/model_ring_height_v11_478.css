@@ -17,6 +17,11 @@ html #modelAtelierPanel.se187-modeler-page .atelier-body>#se478RingHeightSlider{
  pointer-events:auto!important;
  touch-action:auto!important;
 }
+html #modelAtelierPanel .atelier-body>#se478RingHeightSlider:not([hidden]){
+ display:block!important;
+ visibility:visible!important;
+ opacity:1!important;
+}
 html #modelAtelierPanel .atelier-body>#se478RingHeightSlider[hidden]{display:none!important}
 html #se478RingHeightSlider .se478-height-header,
 html #se478RingHeightSlider .se478-height-row,
