@@ -1,0 +1,51 @@
+name: Seal and verify §E v11.469 UV shape-fit
+on:
+  push:
+    branches: [feature/se469-uv-shape-fit]
+    paths:
+      - ".github/workflows/seal-engine-v11-469-uv.yml"
+      - ".github/workflows/deploy-swrlz-forge-moba.yml"
+      - "projects/swrlz-forge-moba/runtime/model_uv_*_v11_469.*"
+      - "projects/swrlz-forge-moba/patches/v11_469_uv_shape_fit.py"
+      - "projects/swrlz-forge-moba/scripts/prepare_v11_469_release.py"
+      - "projects/swrlz-forge-moba/scripts/verify_v11_469_release.py"
+      - "projects/swrlz-forge-moba/tests/model_uv_shape_fit_v11_469.mjs"
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: se469-uv-source-seal
+  cancel-in-progress: false
+jobs:
+  verify-and-seal:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Build actual candidate, verify inherited features, and seal byte receipt
+        run: python projects/swrlz-forge-moba/scripts/prepare_v11_469_release.py
+      - name: Commit measured source receipt and owner-approved release request
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add projects/swrlz-forge-moba/source-manifest.json projects/swrlz-forge-moba/DEPLOY_REQUEST.json
+          if ! git diff --cached --quiet; then
+            git commit -m "seal(§E): v11.469 verified native UV correction and HF request"
+            git push origin HEAD:feature/se469-uv-shape-fit
+          fi
+      - name: Store source receipt
+        uses: actions/upload-artifact@v4
+        with:
+          name: se469-uv-source-receipt
+          path: |
+            projects/swrlz-forge-moba/source-manifest.json
+            projects/swrlz-forge-moba/DEPLOY_REQUEST.json
+          if-no-files-found: error
