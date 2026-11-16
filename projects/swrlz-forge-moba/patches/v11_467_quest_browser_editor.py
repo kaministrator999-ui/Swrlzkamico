@@ -71,7 +71,7 @@ def apply(html):
   "[data-se464-inspector-focus=true]) .atelier-inspector>:not(.atelier-tool-handle):not(.se465-inspector-narrow-hint){",
   "[data-se464-inspector-focus=true]) .atelier-inspector>:not(.atelier-tool-handle):not(.se465-inspector-narrow-hint)[data-se467-never-hide]{")
  css=(ROOT/'runtime/model_quest_browser_input_v11_467.css').read_text('utf8')
- html=once(html,'</head>','<style id="se467QuestEditorStyles">\n'+css+'\n</style>\n</head>')
+ html=html.replace('</head>','<style id="se467QuestEditorStyles">\n'+css+'\n</style>\n</head>',1)
  html=once(html,'SWYRL_ENGINE_DEPLOY_MARKER: V11_466_RING_ARC_MODELING',MARKER)
  html=once(html,'ENGINE · MAKER v11.466','ENGINE · MAKER v11.467')
  html=once(html,'v11.466 · ring and arc modeling','v11.467 · Quest editor input and Extrude controls')
