@@ -8,7 +8,7 @@ def once(s,old,new):
  assert n==1,('v11.467 anchor',old[:130],n)
  return s.replace(old,new,1)
 def regex_once(s,pattern,replacement):
- out,n=re.subn(pattern,lambda _:replacement,s,count=1,flags=re.MULTILINE)
+ out,n=re.subn(pattern,lambda match:match.expand(replacement),s,count=1,flags=re.MULTILINE)
  assert n==1,('v11.467 regex anchor',pattern[:120],n)
  return out
 def apply(html):
