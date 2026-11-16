@@ -1,0 +1,30 @@
+name: Validate §E v11.468 independent studio assets
+on:
+  push:
+    branches: [feat/se468-standalone-studio-assets]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build sealed baseline and apply v11.468 patch
+        run: |
+          python projects/swrlz-forge-moba/scripts/verify_v11_467_release.py --output /tmp/se468-build --request
+          python - <<'PY'
+          from pathlib import Path
+          import importlib.util,hashlib
+          root=Path('projects/swrlz-forge-moba')
+          spec=importlib.util.spec_from_file_location('se468',root/'patches/v11_468_standalone_studio_assets.py')
+          module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
+          html=module.apply(Path('/tmp/se468-build/index.html').read_text())
+          Path('/tmp/se468-build/candidate.html').write_text(html)
+          print('SE468_BYTES',len(html.encode()),flush=True)
+          print('SE468_SHA256',hashlib.sha256(html.encode()).hexdigest(),flush=True)
+          PY
+          node --check projects/swrlz-forge-moba/runtime/studio_standalone_assets_v11_468.js
+          python projects/swrlz-forge-moba/scripts/check_inline_js_syntax_v11_266.py /tmp/se468-build/candidate.html
+          node projects/swrlz-forge-moba/tests/studio_project_routing_v11_320.cjs
+          node projects/swrlz-forge-moba/tests/model_quest_browser_input_v11_467.mjs /tmp/se468-build/candidate.html
