@@ -102,7 +102,7 @@ jobs:
           python - <<'PY'
           import importlib.util,json,sys
           from huggingface_hub import HfApi,hf_hub_download
-          from api.adaptive_public_research_v1 import encyclopedia_topic,plan_public_research
+          from api.adaptive_public_research_v1 import encyclopedia_topic,plan_public_research,wikipedia_exact_public_title
           from api.generic_public_source_fallback_v1 import wikipedia_public_fallback
           space="kamiloki/Swyrlz"
           rev=HfApi().repo_info(space,repo_type="space").sha
@@ -113,7 +113,11 @@ jobs:
           spec.loader.exec_module(module)
           question="Explain how eclipses work, including lunar geometry, eclipse types, and eye safety."
           topic=encyclopedia_topic(plan_public_research(question))
+          exact=wikipedia_exact_public_title(topic,module._page_fetch)
           sources=wikipedia_public_fallback(topic,module._page_fetch)
+          print("SWRLZ_ADAPTIVE_REAL_EXACT_TITLE "+json.dumps({
+              "topic":topic,"exactSources":[x.get("title") for x in exact]}),flush=True)
+          assert exact and exact[0]["url"].startswith("https://en.wikipedia.org/wiki/"),exact
           report={"topic":topic,"sourceCount":len(sources),
                   "titles":[x.get("title") for x in sources],
                   "urls":[x.get("url") for x in sources]}
