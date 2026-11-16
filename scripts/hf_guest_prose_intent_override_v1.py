@@ -3,7 +3,7 @@
 
 One-file source patch, exact HF revision pin, no model/weights/auth changes.
 """
-import ast,hashlib,json,os,sys
+import ast,hashlib,json,os,sys,re
 from pathlib import Path
 from huggingface_hub import HfApi,hf_hub_download,CommitOperationAdd
 SPACE="kamiloki/Swyrlz"
@@ -24,18 +24,67 @@ PATCH='''    programming=payload.get("programmingIntent") if isinstance(payload.
                    "reason":"Explicit explanation-only output contract took precedence over caller metadata."}
     if source_change_mode:'''
 
-def digest(x):return hashlib.sha256(x).hexdigest()
+def digest(x):return hashlib.sha256(x).hexdigest(HELPER=r'''# swrlz-current-operation-noncode-v2: current requested operation outranks stale coding hints.
+def _swrlz_operation_is_noncode(prompt):
+    text=" ".join(str(prompt or "").split())[:4000]
+    code_ask=bool(re.search(
+        r"(?i)\b(?:write|generate|provide|return|show|create|make)\b.{0,65}"
+        r"\b(?:code|source file|html|css|javascript|typescript|python|script|function|"
+        r"app|program|component|webpage|website|api|patch)\b"
+        r"|\b(?:implement|compile|commit|deploy|push|fix|patch|edit|modify|update)\b"
+        r".{0,85}\b(?:code|source|file|script|function|component|project|"
+        r"repository|repo|github|api|html|javascript|python|website|webpage)\b",
+        text))
+    if code_ask:return False
+    music=bool(re.search(r"(?i)\b(?:songs?|music|lyrics?|rap|blues|verses?|chorus|"
+                         r"hook|bridge|lullaby|remix|parody|remaster|synth.pop)\b",text))
+    operation=bool(re.search(r"(?i)\b(?:write|create|compose|draft|remix|remaster|"
+                             r"adapt|parody|revise|rewrite|keep|preserve|change|"
+                             r"compare|explain|research|acknowledge|remember|"
+                             r"critique|discuss|analy[sz]e|feedback)\b",text))
+    advice=bool(re.search(
+        r"(?i)\b(?:suggest|list|give|provide|explain|describe|update|revise)\b"
+        r".{0,140}\b(?:debugging checks?|checks?|things to inspect|"
+        r"diagnostic|causes?|explanation|advice|tips?|steps?)\b",
+        text))
+    return bool((music and operation) or advice)
+
+
+'''
 
 def candidate(original):
     source=original.decode("utf-8")
-    if MARK in source:raise RuntimeError("Patch already installed")
+    if "swrlz-current-operation-noncode-v2" in source:
+        raise RuntimeError("Operation-aware classifier already installed")
     if "swrlz-prose-only-response-mode-v1" not in source or "prose_only_output=" not in source:
-        raise RuntimeError("Expected live no-code response mode and final output guard not present")
-    if source.count(ANCHOR)!=1:
-        raise RuntimeError("Unsafe mutation: authoritative intent assignment changed")
-    source=source.replace(ANCHOR,PATCH,1)
+        raise RuntimeError("Expected live response mode and final output guard absent")
+    if MARK not in source:
+        if source.count(ANCHOR)!=1:
+            raise RuntimeError("Original prose-only precedence seam changed")
+        source=source.replace(ANCHOR,PATCH,1)
+    # Upgrade deployed original patch; never delete or replace its prior behavior.
+    installed='''    if source_change_mode:
+        programming={"codingTask":False}'''
+    if source.count(installed)!=1:
+        raise RuntimeError("Installed live source-change guard drifted")
+    injected='''    # swrlz-current-operation-noncode-v2: current music and advice turns are
+    # conversation, not code artifacts, unless the user asks for actual code.
+    if not source_change_mode and programming.get("codingTask") and _swrlz_operation_is_noncode(prompt):
+        programming={**programming,"codingTask":False,
+                     "needsFailureEvidence":False,"newProject":False,
+                     "source":"current-operation-noncode-v2","changeClass":"explain"}
+        yield {"type":"STATUS","phase":"NONCODE_OPERATION_OVERRIDE",
+               "reason":"Current user operation is not code generation."}
+'''
+    source=source.replace(installed,injected+installed,1)
+    func='def generate_events(payload):'
+    if source.count(func)<1:
+        raise RuntimeError("Missing source generation entrypoint")
+    source=source.replace(func,HELPER+func,1)
     compile(source,FILE,"exec")
     return source.encode("utf-8")
+
+)
 
 def tests(content):
     source=content.decode()
@@ -60,7 +109,26 @@ def tests(content):
     ]:
         if decision(source_change,caller,direct)!=expected:
             raise AssertionError("No-code precedence regression")
-    print("PROSE_OVERRIDE_STATIC_ACCEPTED 10",flush=True)
+    helpers=[n for n in tree.body if isinstance(n,ast.FunctionDef) and
+             n.name=="_swrlz_operation_is_noncode"]
+    if len(helpers)!=1:raise AssertionError("Missing bounded operation classifier")
+    ns={"re":re}
+    exec(compile(ast.Module(body=helpers,type_ignores=[]),FILE,"exec"),ns)
+    decide=ns["_swrlz_operation_is_noncode"]
+    for prompt,expected in [
+       ("Now adapt that fictional train-platform blues into an ORIGINAL compact pop song",True),
+       ("Update the debugging checks to include overlapping elements and pointer events",True),
+       ("Write a full original country song with a chorus",True),
+       ("Explain three debugging checks for a mobile web button",True),
+       ("Write JavaScript code to fix pointer events",False),
+       ("Build an HTML lyric editor with JavaScript",False),
+       ("Deploy a song generator app to the repository",False),
+    ]:
+        if decide(prompt)!=expected:
+            raise AssertionError("Operation route mismatch: "+repr(prompt))
+    if text.count("NONCODE_OPERATION_OVERRIDE")!=1:
+        raise AssertionError("Non-code precedence missing from generator")
+    print("PROSE_OVERRIDE_STATIC_ACCEPTED 18",flush=True)
 
 def preflight(api):
     rev=api.repo_info(SPACE,repo_type="space").sha
