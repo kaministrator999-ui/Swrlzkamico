@@ -61,7 +61,8 @@ HELPER=r'''def _swrlz_noncode_deliverable_v2(text: str) -> bool:
         r"outline|discuss|acknowledge|answer|identify|recommend|plan|"
         r"what\s+is|what\s+are|what's|which\s+(?:one|is)|why|"
         r"how\s+(?:does|do|would)|can\s+we\s+claim|"
-        r"give\s+(?:three|\d+)\s+concrete\s+checks)\b",body))
+        r"give\s+(?:three|\d+)\s+concrete\s+checks|"
+        r"change\s+just\s+one\s+constraint|update\s+the\s+checks)\b",body))
     return explicit_noncode
 '''
 
