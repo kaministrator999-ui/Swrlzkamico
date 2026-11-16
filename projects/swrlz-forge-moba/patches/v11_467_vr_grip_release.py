@@ -23,12 +23,7 @@ def apply(html):
    // Tracking persists after grip-up and would otherwise rotate indefinitely.""")
  html=one(html,
  """if(['grab','pan','two-hand'].includes(event.action)&&record)se340FinishGesture(record);""",
- """if(['grab','pan','two-hand'].includes(event.action)&&record){
-     const g=s.gesture;
-     if(g?.kind==='view'&&(g.record===record||g.pair&&(record===g.pair.left||record===g.pair.right)))
-      se340FinishGesture(record);
-     else se340FinishGesture(record);
-    }""")
+ """if(['grab','pan','two-hand'].includes(event.action)&&record)se340FinishGesture(record);""")
  html=one(html,
  """for(const record of s.controllers){
    const grip=sample.buttons[record.input?.handedness==='left'?'LG':'RG'];record.held=!!grip?.down;""",
