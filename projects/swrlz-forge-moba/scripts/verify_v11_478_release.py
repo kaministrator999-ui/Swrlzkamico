@@ -12,7 +12,7 @@ assert m['name']=='§wyrl§ Engine v11.478'
 assert m['finalArtifact']=='swyrl_engine_v11_478.html'
 assert len(m['patches'])==455 and m['patches'][-1]=='patches/v11_478_ring_vertex_highlight.py'
 assert isinstance(m['finalBytes'],int) and isinstance(m['finalSha256'],str)
-for file in ('model_vertex_entry_v11_477.js','model_progressive_hierarchy_v11_477.js','model_ring_vertex_highlight_v11_478.js',
+for file in ('model_vertex_entry_v11_477.js','model_progressive_hierarchy_v11_477.js','model_ring_vertex_highlight_v11_478.js','model_ring_height_v11_478.js',
              'model_progressive_rail_fix_v11_475.js','model_progressive_tools_v11_474.js',
              'model_ring_kernel_v11_466.js','model_ring_ui_v11_466.js'):
  subprocess.run(['node','--check',str(ROOT/'runtime'/file)],check=True)
@@ -34,6 +34,8 @@ for token in (
  'SWYRL_ENGINE_DEPLOY_MARKER: V11_478_RING_VERTEX_HIGHLIGHT',
  'SE477_VERTEX_ENTRY_START','SE477_SELECTION_HIERARCHY_STYLES_START',
  'SE478_RING_VERTEX_HIGHLIGHT_START','se478SelectedVertices',
+ 'SE478_RING_HEIGHT_SLIDER_START','SE478_RING_HEIGHT_STYLES_START',
+ 'se478RingHeightSlider','se478HeightRange',
  'window.SWYRL_ENGINE_RING_HIGHLIGHT_478=Object.freeze(',
  'function renderShapes(){','function selectShape(shape){',
  'id=\'se477SelectionShapes\'',
