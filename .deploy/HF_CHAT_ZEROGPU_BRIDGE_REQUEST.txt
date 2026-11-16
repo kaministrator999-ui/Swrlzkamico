@@ -1,0 +1,6 @@
+TARGET=kamiloki/Swyrlz
+APPROVED=1
+CHANGE_SCOPE=zerogpu-gradio-launch-bridge-v1
+SOURCE_REF=784a23ee9a6b407e4b6931c927d2a4dca0d745a3
+EXPECTED_SPACE_REVISION=a9ee611764ca2831b353d7f721cc8e4c0dcffb81
+REQUEST_NONCE=sc-zerogpu-gradio-bridge-20261116-2044
