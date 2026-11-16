@@ -1,0 +1,65 @@
+name: Guarded §C adaptive public research coverage release
+on:
+  push:
+    branches: [main]
+    paths: [".deploy/HF_CHAT_ADAPTIVE_RESEARCH_REQUEST.txt"]
+permissions: {contents: read}
+concurrency:
+  group: swrlz-hf-space-deployment
+  cancel-in-progress: false
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 42
+    steps:
+      - uses: actions/checkout@v4
+      - name: Require owner-approved reviewed §C research source
+        id: gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          file=.deploy/HF_CHAT_ADAPTIVE_RESEARCH_REQUEST.txt
+          test -f "$file"
+          get() { sed -n "s/^$1=//p" "$file" | tail -n 1; }
+          test "$(get APPROVED)" = "1"
+          test "$(get TARGET)" = "kamiloki/Swyrlz"
+          test "$(get MODEL)" = "qwen3.5-9b"
+          test "$(get FEATURE)" = "adaptive-public-multipass-research-v1"
+          ref="$(get SOURCE_REF)"
+          nonce="$(get REQUEST_NONCE)"
+          [[ "$ref" =~ ^[0-9a-f]{40}$ ]]
+          [[ "$nonce" =~ ^[a-z0-9-]{12,96}$ ]]
+          echo "ref=$ref" >> "$GITHUB_OUTPUT"
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.gate.outputs.ref }}
+          path: reviewed-source
+          fetch-depth: 1
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.11"}
+      - name: Install existing Hugging Face client
+        run: python -m pip install --quiet "huggingface_hub>=0.34,<2"
+      - name: Revalidate new adaptive and previous public-research regressions
+        working-directory: reviewed-source
+        run: |
+          set -euo pipefail
+          python -m unittest discover -s tests -p 'test_hf_adaptive_public_research_v1.py' -v
+          python -m unittest discover -s tests -p 'test_hf_tagged_research_evidence_v1.py' -v
+          python -m unittest discover -s tests -p 'test_hf_generic_public_source_fallback_v1.py' -v
+          python -m py_compile api/adaptive_public_research_v1.py scripts/hf_chat_adaptive_research_v1.py
+      - name: Publish guarded and verify real source-backed guest conversations
+        working-directory: reviewed-source
+        timeout-minutes: 37
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          SWRLZ_ADAPTIVE_PUBLIC_RESEARCH_DEPLOY_APPROVED: "1"
+        run: |
+          set -euo pipefail
+          python -u scripts/hf_chat_adaptive_research_v1.py --deploy
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: swrlz-adaptive-public-research-byte-exact-source-backup
+          path: reviewed-source/swrlz-adaptive-research-rollback/
+          retention-days: 14
+          if-no-files-found: warn
