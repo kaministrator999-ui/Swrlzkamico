@@ -65,7 +65,7 @@
  function accountAPI(){return window.SWYRL_ENGINE_STARTUP_ACCOUNT_476;}
  function updateAccountStatus(){
   const label=$('se476AccountLabel');
-  if(label)label.textContent=account==='connected'?'Google account connected':account==='offline'?'Using on-device projects':'Checking Google account…';
+  if(label)label.textContent=account==='connected'?'Google account connected':account==='guest'?'§C connected · Sign in with Google to sync projects':account==='offline'?'§C offline · On-device projects available':'Checking Google account…';
   const login=$('se476SignIn');
   if(login){login.hidden=account==='connected';login.disabled=account==='connected';}
  }
@@ -179,8 +179,8 @@
  function onAccount(event){
   if(finished)return;
   const connected=event.detail?.authenticated===true;
-  account=connected?'connected':'offline';++attempt;
-  updateAccountStatus();offlineScreen(!connected);
+  account=connected?'connected':'guest';++attempt;
+  updateAccountStatus();offlineScreen(false);
   if(account==='connected'){
    void list().then(()=>{
     if(finished)return;
@@ -191,8 +191,8 @@
     else note('Signed in. Choose a project or enter your current workspace.');
    });
   }else{
-   ++epoch;rows=rows.filter(x=>x.source==='local');paint();
-   note('Sign in to synchronize account projects, or continue with local projects.');
+   ++epoch;rows=rows.filter(x=>x.source==='local');paint();void list();
+   note('§C is connected. Sign in with Google or continue with local projects.');
   }
  }
  function install(){
