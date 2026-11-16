@@ -115,6 +115,67 @@ CASES["conversation"].append(
   ]}
 )
 
+
+# Round 3: additional fully synthetic, isolated guest conversations. Each
+# scenario tests a different failure mode, not merely a reworded first turn.
+CASES["research"].extend([
+  {"id":"seasons-source-vs-distance","turns":[
+    {"kind":"season_research","online":True,"prompt":"Research using a public science education source why Earth has seasons. Explain axial tilt and sunlight angle, and distinguish this from the incorrect claim that seasons are caused mainly by Earth's distance from the Sun. Include a source URL."},
+    {"kind":"season_followup","prompt":"Use only the research above, without a new search: why do the northern and southern hemispheres have opposite seasons? Keep it concise and don't invent a source."}
+  ]},
+  {"id":"music-theory-analysis-without-recording-lyrics","turns":[
+    {"kind":"song_structure_research","online":True,"prompt":"Research twelve-bar blues AAB verse structure and compare it to pop verse, pre-chorus and chorus sections. Explain which phrase repeats in AAB and why musical bars are not the same thing as lyric lines. Cite a public teaching source. Do not look up or quote any published song lyrics."},
+    {"kind":"blues_lyrics","prompt":"Using your explanation, compose exactly TWO brand-new fictional AAB blues verses about a railway platform. Label Verse 1 and Verse 2. In each verse sing one A line, repeat it exactly, then sing one different B line. No chorus."}
+  ]},
+  {"id":"electronic-music-history-context","turns":[
+    {"kind":"music_history_research","online":True,"prompt":"Research how synthesizers and sequencers shaped early electronic pop arrangements, citing an accessible public source. Explain the functions without requesting or reproducing lyrics from any recording."},
+    {"kind":"music_history_followup","prompt":"Without a new web lookup, explain whether a synth-pop song must always use an electronic drum machine. Answer based on instrument roles, not a made-up universal rule."}
+  ]}
+])
+CASES["songwriting"].extend([
+  {"id":"rain-title-not-a-weather-lookup","turns":[
+    {"kind":"weather_safe_song","prompt":"Write a complete ORIGINAL song titled 'Rain Glass Lantern' with Verse 1, Chorus, Verse 2, Chorus, Bridge and Final Chorus. In the fictional story a lantern shines through rainy glass. This is creative writing, not a weather question. Make both verses have different events and the bridge a turning point."},
+    {"kind":"weather_safe_rewrite","prompt":"Revise that ORIGINAL song's bridge so the protagonist chooses to return home to their family. Keep the title 'Rain Glass Lantern', both verses and the recurring chorus, and return all lyrics with section labels. Do not look up a real recording."}
+  ]},
+  {"id":"eight-bar-rap-followed-by-editorial-critique","turns":[
+    {"kind":"rap_original","prompt":"Write a fresh eight-bar boom-bap rap about a fictional midnight inventor. Number bars 1 through 8, then add a labeled four-line Hook and one sentence about stresses or flow. Show inventive internal rhyme; do not imitate a performer."},
+    {"kind":"feedback_only","prompt":"Don't write another rap. Explain where the plot in bars 1-4 moves forward in bars 5-8, and identify anything about actual rhythm or musical flow that you cannot verify from text alone. No web lookup."}
+  ]},
+  {"id":"folk-song-perspective-change","turns":[
+    {"kind":"folk_story","prompt":"Write an original folk ballad titled 'Paper Compass' about a father and daughter using a hand-drawn map. Label Verse 1, Chorus, Verse 2, Chorus, Bridge and Final Chorus. Give the bridge a concrete discovery, not a generic pep talk."},
+    {"kind":"folk_rewrite","prompt":"Rewrite the full song with its title, map, chorus and emotional arc preserved, but replace the father with an older BROTHER. Do not refer to a published song or fetch lyrics."}
+  ]}
+])
+CASES["conversation"].extend([
+  {"id":"exact-list-revision-and-numbering","turns":[
+    {"kind":"list_initial","prompt":"For a fictional inventory, list exactly four paint swatches, numbered 1 to 4: cobalt, maroon, ivory and olive. No additional colors or repeated numbering."},
+    {"kind":"list_revision","prompt":"Correction: remove ONLY maroon from that list. Return the remaining three colors numbered 1, 2, 3 with no new colors and don't mention the removed one."}
+  ]},
+  {"id":"fictional-context-weather-word-ambiguity","turns":[
+    {"kind":"fictional_ack","prompt":"For a pretend story, a robin stands in rain holding a small amber sign. This is fiction, not a forecast or a location request. Restate the scene in one sentence."},
+    {"kind":"fictional_followup","prompt":"Change the bird to a sparrow but keep the amber sign. Don't check the weather; this is still a fictional scene."}
+  ]},
+  {"id":"debugger-no-fabricated-inspection","turns":[
+    {"kind":"debugging","prompt":"Suggest three concrete things I can inspect when a mobile web button occasionally ignores touch. You have no access to my code. Do not claim you've fixed it or suggest nonexistent DOM APIs."},
+    {"kind":"debugging","prompt":"Now the same issue also happens in desktop Chrome. Update the debugging checks to include overlapping elements and pointer events. You still have not inspected any code."}
+  ]}
+])
+CASES["transformations"].extend([
+  {"id":"parody-of-user-authored-station-verse","turns":[
+    {"kind":"source_ack","prompt":"These two fictional original lines are my own, not from a recording. Simply acknowledge receipt, and don't produce lyrics yet:\nA toaster argues with my clock at dawn\nMy coffee made a map and wandered on"},
+    {"kind":"parody_original","prompt":"Make a fully original comedic parody of my fictional toaster scene. Use labeled Verse 1, Chorus, Verse 2 and Bridge, with escalating appliance mishaps and a punchline. Don't quote the lines verbatim, and don't research existing songs."},
+    {"kind":"feedback_only","prompt":"I'm critiquing the joke, not requesting another song. Explain where the comic escalation occurs and what a human would still need to judge about the timing. No search and no new lyrics."}
+  ]},
+  {"id":"remaster-preserve-authored-hook","turns":[
+    {"kind":"song_seed","prompt":"Write a short ORIGINAL song called Little Lighthouse about a tiny beacon guiding a boat. Include Verse 1, Chorus, Verse 2 and Bridge. Make the EXACT chorus hook 'Little lighthouse, bring me home'. This is user-directed fictional material."},
+    {"kind":"remaster_original","prompt":"Remaster the wording of the original fictional song: keep the hook 'Little lighthouse, bring me home' EXACTLY, keep a harbor/shore setting, give both verses more concrete action, and return the complete song. This is a rewrite, not a search for a recording."}
+  ]},
+  {"id":"fictional-lullaby-to-electropop","turns":[
+    {"kind":"source_ack","prompt":"Remember this original fictional lullaby line I just wrote: 'A paper moon is humming through the bedroom window.' Acknowledge it briefly; no web and no forecast."},
+    {"kind":"genre_switch","prompt":"Adapt the idea of my fictional paper-moon lullaby into a fully original electropop song. Use Verse 1, Pre-Chorus, Chorus, Verse 2, Bridge and Final Chorus. Invent a new hook and separate events in the verses. Don't search for published lyrics."}
+  ]}
+])
+
 LINK=re.compile(r"https?://[^\s<>)\]\"']+",re.I)
 SECTIONS={
   "verse1":re.compile(r"(?im)^\s*(?:\*{0,2}|\[)(?:verse\s*1|first verse)\b"),
