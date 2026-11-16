@@ -1,3 +1,25 @@
+/* SE471_UV_IMPORT_DISPLAY_START */
+const se471UVImportBase=se336ImportPaint;
+se336ImportPaint=async function(file){
+ const selected=se336SelectedMesh(),before=selected?.part?.uvPaintPNG;
+ const id=selected?.part?.id;
+ const result=await se471UVImportBase.apply(this,arguments);
+ const current=id&&partById(id);
+ // The native importer catches/report failures. Avoid a false success or view
+ // change when validation fails or the selected mesh is changed mid-upload.
+ if(!file||!current?.uvPaintPNG||current.uvPaintPNG===before||
+    current.id!==id)return result;
+ const switched=window.SWYRL_ENGINE_VIEW_READABILITY_455?.choose?.('shaded') ??
+   window.SWYRL_ENGINE_MODEL_VIEW?.setMode?.('shaded');
+ const selectedMesh=()=>modelRoot?.children?.find(m=>m.isMesh&&m.userData?.atelierId===id);
+ if(current.uvPaintPNG&&!selectedMesh()?.material?.map)renderParts();
+ const bound=!!selectedMesh()?.material?.map;
+ if(switched===false||!bound)
+  status('Image imported. Choose View → Material to see authored artwork; mesh material may need a refresh.',true);
+ else status('Imported texture visible on '+current.name+' in Material view. Use UV fine tuning for additional shape correction.');
+ return result;
+};
+/* SE471_UV_IMPORT_DISPLAY_END */
 /* SE471_UV_FINE_FIT_START */
 const se471GeometryBase=geometry;
 const se471CheckPartBase=checkPart;
