@@ -1,0 +1,15 @@
+{
+  "schema": "swrlz-knowledge-followup-v1",
+  "requestId": "swr-research-eval-f32b03ae049a428f",
+  "modelId": "700m",
+  "eventType": "KNOWLEDGE_ACQUISITION_FOLLOWUP_1",
+  "sourceRef": "f149dd857e3d9219f5cae7da0286b5dbfec85c42",
+  "persistedAtUnixMs": 1794807590264,
+  "diagnostic": {
+    "schema": "swrlz-knowledge-followup-v1",
+    "parentRequestId": "swr-research-eval-f32b03ae049a428f",
+    "turnIndex": 1,
+    "userText": "Now create original boom-bap rap lyrics for a fictional midnight inventor. Write exactly 8 numbered verse bars, then a clearly labeled 4-line hook. Use some internal rhyme and varied stresses while keeping one coherent story. Include a very short note on the intended flow after the lyrics. Do not imitate any named artist.",
+    "capturedAtUnixMs": 1794807590264
+  }
+}
