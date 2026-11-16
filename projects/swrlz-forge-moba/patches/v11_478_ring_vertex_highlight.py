@@ -28,8 +28,9 @@ def apply(html):
       '''  const selectedKeys=new Set(result.vertexIds.map(i=>
     p.topologyMesh.positions.slice(i*3,i*3+3)
      .map(v=>Math.round(Math.fround(v)*100000)).join(',')));''')
-    html=once(html,'</head>',
-      '<style id="se478RingHeightStyles">\\n'+height_css+'\\n</style>\\n</head>')
+    assert '</head>' in html
+    html=html.replace('</head>',
+      '<style id="se478RingHeightStyles">\\n'+height_css+'\\n</style>\\n</head>',1)
     for old,new in (
       ('SWYRL_ENGINE_DEPLOY_MARKER: V11_477_VERTEX_SELECTION_HIERARCHY',MARKER),
       ('ENGINE · MAKER v11.477','ENGINE · MAKER v11.478'),
