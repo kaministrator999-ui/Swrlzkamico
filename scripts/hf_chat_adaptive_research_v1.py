@@ -63,7 +63,7 @@ def enrich_payload(payload, researcher, *, fetch_page=None, enabled=False):
     from api.adaptive_public_research_v1 import adaptive_enrich
     return adaptive_enrich(
         enriched,route,researcher,bounded_evidence=bounded_evidence,
-        enabled=enabled)
+        fetch_page=fetch_page,enabled=enabled)
 '''
 
 ADAPTIVE_INFO=r'''
