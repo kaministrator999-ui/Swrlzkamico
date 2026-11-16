@@ -173,6 +173,9 @@ def publish(api):
         newrev=str(result.oid)
         live=Path(hf_hub_download(SPACE,FILE,repo_type="space",revision=newrev,token=api.token)).read_bytes()
         if live!=after:raise RuntimeError("Published bytes differed from candidate")
+        manifest=json.loads((OUT/"manifest.json").read_text())
+        manifest["publishedRevision"]=newrev
+        (OUT/"manifest.json").write_text(json.dumps(manifest,indent=2)+"\n")
         print("PROSE_OVERRIDE_PUBLISHED",json.dumps({"before":rev,"after":newrev}),flush=True)
     except Exception:
         if newrev and api.repo_info(SPACE,repo_type="space").sha==newrev:
@@ -182,8 +185,30 @@ def publish(api):
             print("PROSE_OVERRIDE_ROLLED_BACK",str(back.oid),flush=True)
         raise
 
+def rollback(api):
+    """Revert only the exact source this release published; fail closed on newer revisions."""
+    if os.getenv("SWRLZ_PROSE_OVERRIDE_APPROVED")!="1":
+        raise RuntimeError("Rollback approval missing")
+    manifest=json.loads((OUT/"manifest.json").read_text())
+    published=str(manifest.get("publishedRevision") or "")
+    if not published or api.repo_info(SPACE,repo_type="space").sha!=published:
+        raise RuntimeError("Source changed after our publication; refusing unsafe rollback")
+    old=(OUT/"before"/FILE).read_bytes()
+    if digest(old)!=manifest["beforeSHA256"]:
+        raise RuntimeError("Original source snapshot checksum mismatch")
+    result=api.create_commit(repo_id=SPACE,repo_type="space",parent_commit=published,
+             operations=[CommitOperationAdd(path_in_repo=FILE,path_or_fileobj=str(OUT/"before"/FILE))],
+             commit_message="Rollback §C operation intent after live acceptance failure")
+    rev=str(result.oid)
+    verified=Path(hf_hub_download(SPACE,FILE,repo_type="space",revision=rev,token=api.token)).read_bytes()
+    if verified!=old:raise RuntimeError("Rollback readback differs from original source")
+    print("PROSE_OPERATION_ACCEPTANCE_ROLLBACK",json.dumps({"before":published,"after":rev}),flush=True)
+
+
 if __name__=="__main__":
     args=sys.argv[1:] or ["preflight"]
-    if args not in (["preflight"],["publish"]):raise SystemExit("preflight|publish")
+    if args not in (["preflight"],["publish"],["rollback"]):raise SystemExit("preflight|publish|rollback")
     api=HfApi(token=os.getenv("HF_TOKEN") or None)
-    preflight(api) if args==["preflight"] else publish(api)
+    if args==["preflight"]:preflight(api)
+    elif args==["publish"]:publish(api)
+    else:rollback(api)
