@@ -1,0 +1,15 @@
+{
+  "schema": "swrlz-knowledge-followup-v1",
+  "requestId": "web-mwisi5zq-2216125360-397778307",
+  "modelId": "700m",
+  "eventType": "KNOWLEDGE_ACQUISITION_FOLLOWUP_2",
+  "sourceRef": "f149dd857e3d9219f5cae7da0286b5dbfec85c42",
+  "persistedAtUnixMs": 1794809653052,
+  "diagnostic": {
+    "schema": "swrlz-knowledge-followup-v1",
+    "parentRequestId": "web-mwisi5zq-2216125360-397778307",
+    "turnIndex": 2,
+    "userText": "Now can you use the original roll call song and craft a new song for me that goes as hard",
+    "capturedAtUnixMs": 1794809653050
+  }
+}
