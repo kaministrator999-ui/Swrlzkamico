@@ -26,6 +26,8 @@ def run():
     assert "verify GitHub" in value, value
     assert "RELATED PRIOR NATIVE" in value, value
     assert "Current prompt" not in value
+    unrelated = thread("unrelated", [msg("I visited my grandparents and planted flowers yesterday.",1850000002)],1850000002)
+    assert "RELATED PRIOR NATIVE" not in compose("Improve coding response tests", [unrelated], [], "current")
     assert "EXPLICIT PAST USER" in value
     assert len(value) <= MAX_CONTEXT
     assert compose("hi",[],[]) == ""
