@@ -37,6 +37,8 @@
   const p=state.panel;
   state.settings=!!open;
   p.dataset.se474SettingsOpen=String(state.settings);
+  p.dataset.se474SpecificType=state.toolType||'none';
+  p.dataset.se474SpecificMode=state.mode||'none';
   if(state.settings&&p.dataset.se251RightCollapsed==='true'){
    const toggle=p.querySelector('.se251-external-collapse');
    toggle?.click();
@@ -104,6 +106,8 @@
    state.family=family;state.tool='';state.toolType='';state.mode='';
    state.flyoutOpen=true;
   }
+  // Retire the old staged Face flyout if it was open before this selection.
+  if(state.panel.dataset.se452FaceOpen==='true')window.SWYRL_ENGINE_FACE_FLYOUTS_452?.close?.();
   // Activate the existing context without firing the legacy Face flyout.
   const native=toolList(family).find(x=>x.kind==='native');
   if(native)chooseContext(family,native.name);
@@ -155,6 +159,8 @@
   if(!state?.tool)return;
   if(previewPending()){feedback('Apply or Cancel the preview before changing operation modes.');return;}
   state.mode=mode;
+  state.panel.dataset.se474SpecificType=state.toolType||'none';
+  state.panel.dataset.se474SpecificMode=mode;
   let show=true;
   if(state.toolType==='vertex'){
    nativeMode('vertex');
@@ -193,7 +199,7 @@
   line.id='se474ToolFeedback';line.className='se474-tool-feedback';
   line.setAttribute('role','status');line.setAttribute('aria-live','polite');
   state={panel:p,rail,flyout,top,feedback:line,family:'',tool:'',toolType:'',mode:'',flyoutOpen:false,settings:false};
-  p.dataset.se474Progressive='true';p.dataset.se474SettingsOpen='false';
+  p.dataset.se474Progressive='true';p.dataset.se474SettingsOpen='false';p.dataset.se474SpecificType='none';
   // Capture just category choices before legacy "always show settings" and
   // Face flyout handlers. Native tools are activated through the same context.
   rail.addEventListener('click',event=>{
