@@ -102,6 +102,31 @@ class AdaptiveResearchTests(unittest.TestCase):
         self.assertEqual(original["onlineContext"]["resultCount"],1)
         self.assertEqual(receipt["sourceCount"],3)
 
+    def test_recovers_when_initial_public_research_finds_zero_sources(self):
+        seen=[]
+        def recovered(payload):
+            seen.append(payload)
+            return SECOND
+        revised,route=adaptive_enrich(
+            {"prompt":QUESTION}, {"phase":"RESEARCH_UNAVAILABLE",
+                                  "reason":"no_relevant_evidence"},
+            recovered,bounded_evidence=dummy_bounded)
+        self.assertEqual(route["phase"],"RESEARCH_READY")
+        self.assertEqual(route["reason"],"adaptive_facet_recovery")
+        self.assertEqual(len(seen),1)
+        self.assertEqual(len(seen[0]["researchQueries"]),3)
+        self.assertEqual(revised["onlineContext"]["resultCount"],3)
+        self.assertIn("eye safety",revised["onlineContext"]["adaptiveResearch"]
+                      ["facetsCoveredByRetrievedText"])
+
+    def test_remains_truthfully_unavailable_when_both_search_passes_fail(self):
+        out={"prompt":QUESTION}
+        result,route=adaptive_enrich(
+            out,{"phase":"RESEARCH_UNAVAILABLE","reason":"no_relevant_evidence"},
+            lambda _:{"evidence":[]},bounded_evidence=dummy_bounded)
+        self.assertEqual(route["phase"],"RESEARCH_UNAVAILABLE")
+        self.assertNotIn("onlineContext",result)
+
     def test_stops_when_first_sources_cover_facets(self):
         evidence=dummy_bounded({"evidence":FIRST["evidence"]+SECOND["evidence"]},query=QUESTION)
         evidence["coverage"]="references_unverified"
