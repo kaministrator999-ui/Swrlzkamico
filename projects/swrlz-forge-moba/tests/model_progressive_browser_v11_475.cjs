@@ -104,6 +104,7 @@ async function run(){
       ringPanel:!!document.getElementById('se466RingControls'),
       native:!!window.SWYRL_ENGINE_MODEL_WORKSHOP?.selectRing,
       fnType:typeof se466RingUIInstall,
+      bridgeType:typeof window.SWYRL_ENGINE_RING_UI_INSTALL_475,
       scripts:entries.map(e=>{
        const a=e.code.indexOf('function se466RingUIInstall');
        const b=e.code.indexOf('se430BeginnerInstall(panel);se466RingUIInstall(panel);');
@@ -114,6 +115,8 @@ async function run(){
      };
     });
     console.log('SE475_RING_SCOPE_'+cfg.name+' '+JSON.stringify(ringRuntime));
+    assert.equal(ringRuntime.bridgeType,'function','Ring installer must be exported from ModelAtelier scope');
+    assert.equal(ringRuntime.ringPanel,true,'Actual native ring settings panel must install');
     assert(errors.length===0,'Browser page errors '+JSON.stringify(errors.slice(0,4)));
     console.log('SE475_BROWSER_PASS_'+cfg.name);
    }finally{await page.close();}
