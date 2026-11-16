@@ -40,7 +40,14 @@
  }
  function offlineScreen(show){
   const el=$('se476SignalLost');
-  if(el)el.hidden=!show;
+  if(!el)return;
+  const wasHidden=el.hidden;
+  el.hidden=!show;
+  if(show&&wasHidden){
+   $('se476RetryConnection')?.focus?.({preventScroll:true});
+  }else if(!show&&!wasHidden){
+   $('se476SignIn')?.focus?.({preventScroll:true});
+  }
  }
  function offlineDeadline(ms=16000){
   const ticket=++attempt;
@@ -203,6 +210,7 @@
   $('se476SignIn')?.addEventListener('click',signIn);
   $('se476RetryConnection')?.addEventListener('click',retryConnection);
   $('se476ContinueLocal')?.addEventListener('click',continueLocal);
+  $('se476OfflineContinue')?.addEventListener('click',continueLocal);
   $('se476Open')?.addEventListener('click',()=>void openSelected());
   $('se476Remember')?.addEventListener('change',e=>{
    const entry=chosenRow();
