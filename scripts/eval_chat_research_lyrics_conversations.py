@@ -176,6 +176,15 @@ CASES["transformations"].extend([
   ]}
 ])
 
+# Chromium verifies real phone-sized DOM interaction, not only API transport:
+# two practical context tests plus one full song composition/revision through
+# visible guest chat. All other cases use Chromium's isolated request context.
+UI_SCENARIOS={"correction-and-memory","fictional-context-weather-word-ambiguity",
+              "rain-title-not-a-weather-lookup"}
+for _batch in CASES.values():
+    for _case in _batch:
+        _case["lane"]="ui" if _case["id"] in UI_SCENARIOS else "api"
+
 LINK=re.compile(r"https?://[^\s<>)\]\"']+",re.I)
 SECTIONS={
   "verse1":re.compile(r"(?im)^\s*(?:\*{0,2}|\[)(?:verse\s*1|first verse)\b"),
@@ -482,21 +491,46 @@ async def ask(context,thread_id,prompt,online):
     return result
 
 async def scenario(browser,case):
-    context=await browser.new_context()
-    result={"id":case["id"],"turns":[],"outcome":"UNTESTED"}
-    thread_id="swr-music-test-"+uuid.uuid4().hex[:18]
+    lane=case.get("lane","api")
+    context=await browser.new_context(**({"viewport":{"width":390,"height":844},
+              "is_mobile":True,"has_touch":True} if lane=="ui" else {}))
+    result={"id":case["id"],"lane":lane,"turns":[],"outcome":"UNTESTED"}
+    thread_id="swr-music-test-"+uuid.uuid4().hex[:18] if lane=="api" else None
     previous=None
+    page=None
     try:
         await base.ensure_guest(context)
         await base.sync(context)
+        if lane=="ui":
+            page=await context.new_page()
+            page_response=await page.goto(BASE+"/",wait_until="domcontentloaded",timeout=30000)
+            if not page_response or page_response.status!=200:
+                raise RuntimeError("GUEST_UI_PAGE_HTTP_ERROR")
+            await page.locator("#prompt").wait_for(state="visible",timeout=25000)
+            await base.dismiss_update_overlay(page)
         for n,turn in enumerate(case["turns"],1):
-            response=await ask(context,thread_id,turn["prompt"],turn.get("online",False))
+            if page is not None:
+                if turn.get("online"):
+                    raise RuntimeError("UI_LANE_DOES_NOT_OVERRIDE_RESEARCH_PROFILE")
+                previous_timeout=base.TIMEOUT
+                base.TIMEOUT=BASE_TIMEOUT
+                try:
+                    response=await base.ui_turn(context,page,turn["prompt"],thread_id,n)
+                finally:
+                    base.TIMEOUT=previous_timeout
+                if thread_id is not None and response["thread_id"]!=thread_id:
+                    raise RuntimeError("GUEST_UI_THREAD_CHANGED")
+                thread_id=response["thread_id"]
+            else:
+                response=await ask(context,thread_id,turn["prompt"],turn.get("online",False))
             raw=response.pop("text")
             grade=check(turn["kind"],raw,previous,
                         phases=response.get("phases",[]),allow_search=turn.get("online",False))
             excerpt=base.redact(raw,14000)
             result["turns"].append({
-                "turn":n,"research_mode_requested":turn.get("online",False),
+                "turn":n,"lane":lane,"ui_response_visible":response.get("ui_response_visible"),
+                "ui_rendered_chars":response.get("ui_rendered_chars"),
+                "research_mode_requested":turn.get("online",False),
                 "prompt":turn["prompt"],"kind":turn["kind"],"response":excerpt,
                 "response_chars":len(raw),"terminal_state":response.get("state"),
                 "candidate_validation_status":response.get("candidate_validation_status"),
@@ -549,7 +583,7 @@ async def main(batch):
                      "runtime_ms":round((time.perf_counter()-started)*1000)}}
     (OUT/"report.json").write_text(json.dumps(data,ensure_ascii=False,indent=2)+"\n")
     lines=["# §C Research / Lyrics / General Conversations — "+batch,"",
-           "Test-only, guest-only; no changes to deployed source.","",
+           "Test-only, guest-only; 3 mobile Chromium UI scenarios and the remainder through isolated Chromium request contexts. No changes to deployed source.","",
            "Actual model transcripts are in report.json. Keyword/structure checks are limited evidence, not a human songwriting-quality score.","",
            "| Scenario | Result | Completed turns |","|---|---|---:|"]
     for r in results:lines.append(f"| {r['id']} | {r['outcome']} | {len(r['turns'])} |")
