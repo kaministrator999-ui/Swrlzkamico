@@ -5,7 +5,7 @@ on:
       - Guarded §C music research and original lyric routing release
       - Guarded §C shared response-quality release
       - Guarded §C non-code intent precision release
-      - Guarded §C ZeroGPU Gradio launch bridge release
+      - Guarded §C prose-intent precedence fix and live guest acceptance
     types: [completed]
 permissions: {contents: read}
 concurrency:
