@@ -102,6 +102,7 @@
   if(entry?.source&&entry.id)markLoaded(entry.source,entry.id);
   if(previous?.studio){
    const studio=previous.studio,cam=previous.camera;
+   if(session){session.studio=studio;session.camera=cam||null;}
    if(['game','modeler','particles','materials'].includes(studio)){
     queueMicrotask(()=>{window.SWYRL_ENGINE_STUDIOS?.change?.(studio);
      if(studio==='modeler'&&cam)restoreCamera(cam,0);});
@@ -123,6 +124,9 @@
     note('Opening '+(entry.source==='cloud'?'Google':'on-device')+' project…');
     const api=accountAPI();
     if(!api||entry.source==='cloud'&&!api.ready?.())throw Error('Project loader is not connected.');
+    if(entry.explicit===true&&window.SWYRL_ENGINE_SAVED_DEFAULT?.report?.()?.success===true){
+     afterLoad(entry);finish();return;
+    }
     const ok=entry.source==='cloud'?await api.loadCloud(entry.id):await api.loadLocal(entry.id);
     if(ok!==true)throw Error('Native project loader did not confirm success.');
     afterLoad(entry);
