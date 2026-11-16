@@ -1,4 +1,5 @@
 TARGET=kamiloki/Swyrlz
 APPROVED=1
-SOURCE_REF=e8bacf3d653a348655e470024de36f99a4c7479d
-REQUEST_NONCE=chat-vision-natural-factual-prose-e8bacf3d-20261106-r1
+CHANGE_SCOPE=noncode-output-limit-recovery-v1
+SOURCE_REF=a4af52d3d2290c7efda3cd78176acb9016c4c29b
+REQUEST_NONCE=noncode-limit-lyrics-20261115-a4af52d3-r1
