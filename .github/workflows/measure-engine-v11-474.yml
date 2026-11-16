@@ -7,7 +7,6 @@ on:
       - ".github/workflows/measure-engine-v11-474.yml"
       - "projects/swrlz-forge-moba/patches/v11_474_progressive_model_tools.py"
       - "projects/swrlz-forge-moba/runtime/model_progressive_tools_v11_474.*"
-      - "projects/swrlz-forge-moba/source-manifest.json"
       - "projects/swrlz-forge-moba/scripts/prepare_v11_474_release.py"
       - "projects/swrlz-forge-moba/scripts/verify_v11_474_release.py"
       - "projects/swrlz-forge-moba/tests/model_progressive_tools_v11_474.mjs"
