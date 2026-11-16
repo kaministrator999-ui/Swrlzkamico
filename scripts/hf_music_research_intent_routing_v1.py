@@ -10,15 +10,13 @@ from pathlib import Path
 from huggingface_hub import HfApi,hf_hub_download,CommitOperationAdd
 SPACE="kamiloki/Swyrlz";FILE="online_tools.py";ROOT=Path("reports/swrlz-music-router-v1")
 MARK="swrlz-research-music-operation-disambiguation-v1"
-OLD_WEB='''    explicit_web = bool(_EXPLICIT_WEB.search(text))'''
-NEW_WEB=r'''    # swrlz-research-music-operation-disambiguation-v1: actual research commands
+OLD_INSTALLED_WEB=r'''    # swrlz-research-music-operation-disambiguation-v1: actual research commands
     # initiate a public-source search, but descriptions of past research do not.
     research_command=bool(re.search(
         r"(?i)^\s*(?:(?:please|could you|can you)\s+)?"
         r"(?:research|look into|investigate)\b",text))
     explicit_web = bool(_EXPLICIT_WEB.search(text) or research_command)'''
-OLD_LYRIC='''    lyrics_lookup=bool(_LYRICS_LOOKUP.search(text)) and not (lyrics_creative and not explicit_web)'''
-NEW_LYRIC=r'''    # Lyric *analysis* and revision of a just-created/user-authored song are
+OLD_INSTALLED_LYRIC=r'''    # Lyric *analysis* and revision of a just-created/user-authored song are
     # not requests to retrieve an external song's published lyric text.
     musical_analysis=bool(re.search(
         r"(?i)\b(?:research|compare|explain|describe|analy[sz]e|understand|"
@@ -49,6 +47,61 @@ NEW_LYRIC=r'''    # Lyric *analysis* and revision of a just-created/user-authore
                    and not (creative_revision and not explicit_lookup_verb)
                    and not (musical_analysis and not
                             (explicit_lookup_verb or published_full_lyrics)))'''
+OLD_WEB='''    explicit_web = bool(_EXPLICIT_WEB.search(text))'''
+NEW_WEB=r'''    # swrlz-research-music-operation-disambiguation-v1: actual research commands
+    # initiate a public-source search, but descriptions of past research do not.
+    research_command=bool(re.search(
+        r"(?i)^\s*(?:(?:please|could you|can you)\s+)?"
+        r"(?:research|look into|investigate)\b",text))
+    # Explicit instructions not to perform ANOTHER lookup are not an
+    # instruction to search, even when they include the words "web search".
+    # An affirmative initial "Research..." command remains authoritative.
+    no_new_lookup=bool(re.search(
+        r"(?i)\b(?:without|don't|do not|skip|avoid|no)\s+"
+        r"(?:(?:doing|running|performing)\s+)?"
+        r"(?:(?:a|an|another|new|fresh)\s+)?"
+        r"(?:(?:web|online|public)\s+)?"
+        r"(?:look\s*up|lookup|search|research|browse)\b",text))
+    explicit_web = bool(research_command or
+                        (_EXPLICIT_WEB.search(text) and not no_new_lookup))'''
+OLD_LYRIC='''    lyrics_lookup=bool(_LYRICS_LOOKUP.search(text)) and not (lyrics_creative and not explicit_web)'''
+NEW_LYRIC=r'''    # Lyric *analysis* and revision of a just-created/user-authored song are
+    # not requests to retrieve an external song's published lyric text.
+    musical_analysis=bool(re.search(
+        r"(?i)\b(?:research|compare|explain|describe|analy[sz]e|understand|"
+        r"structure|songwriting|rhythm|rhythmic|flow|meter|rhyme|forms?|"
+        r"genres?|patterns?|subdivisions?|bars?)\b",text))
+    creative_revision=bool(re.search(
+        r"(?i)\b(?:revise|rewrite|remix|adapt|transform|rework|polish|"
+        r"edit|change|improve|continue)\b.{0,180}"
+        r"\b(?:song|lyrics?|verses?|chorus|bridge|hook|stanza)\b",text))
+    # Retrieval requires an explicit request for existing lyric text. A word
+    # like 'lyrics' alone is insufficient to activate verification.
+    lyric_text_demand=bool(re.search(
+        r"(?i)\b(?:give|show|provide|print|quote|reproduce|copy|find|fetch|"
+        r"retrieve|transcribe|recite|look\s+up|search\s+for)\b.{0,100}"
+        r"\b(?:lyrics?|words\s+to\s+(?:the\s+)?song)\b"
+        r"|\b(?:full|complete|all\s+the)\s+(?:song\s+)?lyrics?"
+        r"\s+(?:of|to|for)\b"
+        r"|\blyrics?\s+(?:of|to|for)\s+(?:the\s+)?(?:song|track)\b",
+        text))
+    explicit_lookup_verb=bool(re.search(
+        r"(?i)\b(?:find|fetch|retrieve|look\s+up|search\s+for|quote|"
+        r"transcribe|recite|reproduce|show|give|provide|print)\b"
+        r".{0,100}\b(?:lyrics?|words\s+to\s+(?:the\s+)?song)\b",text))
+    published_full_lyrics=bool(re.search(
+        r"(?i)\b(?:full|complete|all\s+the)\s+(?:song\s+)?lyrics?"
+        r"\s+(?:of|to|for)\b",text))
+    negated_lyric_retrieval=bool(re.search(
+        r"(?i)\b(?:do\s+not|don't|never|avoid|without|skip)\s+"
+        r"(?:any\s+)?(?:look\s*up|search\s+for|find|fetch|retrieve|"
+        r"quote|reproduce|provide|show|print|transcribe|copy)\b"
+        r".{0,80}\b(?:lyrics?|words\s+to\s+(?:the\s+)?song)\b",text))
+    lyrics_lookup=(bool(_LYRICS_LOOKUP.search(text)) and lyric_text_demand
+                   and not negated_lyric_retrieval
+                   and not (creative_revision and not explicit_lookup_verb)
+                   and not (musical_analysis and not
+                            (explicit_lookup_verb or published_full_lyrics)))'''
 OLD_WEATHER='''    weather_intent=bool(_WEATHER_TERMS.search(text) and not weather_negated)'''
 NEW_WEATHER=r'''    # Rain/snow in user-supplied lyric lines, fiction or song titles is NOT
     # a weather lookup. Require an actual live meteorological question/request.
@@ -66,7 +119,13 @@ def one(text,old,new,name):
     return text.replace(old,new,1)
 def build(raw):
     s=raw.decode("utf-8")
-    if MARK in s:raise RuntimeError("Music operation routing already installed")
+    if MARK in s:
+        # Upgrade only our exact previously installed patch. Any other Space
+        # revision is rejected instead of overwriting unrelated live changes.
+        s=one(s,OLD_INSTALLED_WEB,NEW_WEB,"installed research classification")
+        s=one(s,OLD_INSTALLED_LYRIC,NEW_LYRIC,"installed lyrics classification")
+        compile(s,FILE,"exec")
+        return s.encode("utf-8")
     s=one(s,OLD_WEB,NEW_WEB,"explicit research")
     s=one(s,OLD_LYRIC,NEW_LYRIC,"lyrics intent")
     s=one(s,OLD_WEATHER,NEW_WEATHER,"weather intent")
@@ -128,6 +187,11 @@ def test(raw):
       ("Explain the lyric structure and flow of 12-bar blues.",False,"none",None),
       ("Write an original song using the weather forecast for Topeka, Kansas.",True,"weather",None),
       ("I did some research on lyrical song form yesterday.",False,"none",None),
+      ("Without a new web search, summarize the eclipse evidence you previously cited.",False,"none",None),
+      ("Don't do another web lookup; summarize the two expansion classes.",False,"none",None),
+      ("Skip searching again and use the previous sources.",False,"none",None),
+      ("Research public sources about blues form. Do not fetch any published song lyrics.",True,"search",None),
+      ("Don't look up published song lyrics; just explain an AAB verse.",False,"none",None),
       ("Please look it up online: the history of hip-hop genres.",True,"search",None),
     ]
     for prompt,requested,kind,mode in cases:
@@ -135,6 +199,20 @@ def test(raw):
         if bool(result["requested"])!=requested or result["kind"]!=kind or result.get("contentMode")!=mode:
             print("CLASSIFIER_ROUTING_DIAGNOSTIC", "prompt="+repr(prompt), "result="+repr(result), "source_lines="+repr([line.strip() for line in (ast.get_source_segment(source,node) or "").splitlines() if any(word in line for word in ("explicit_web","lyrics_lookup","weather_intent","research_command"))]),flush=True)
             raise AssertionError("Misroute "+repr(prompt)+" -> "+repr(result))
+    # Prove safe two-step upgrade from the currently deployed patch version;
+    # the same script must work on an unpatched Space or after its first release.
+    fixture=("def _operation_fixture():\n"+OLD_WEB+"\n"+OLD_LYRIC+"\n"
+             +OLD_WEATHER+"\n"+OLD_WEATHER2+"\n        pass\n").encode()
+    patch_v1=fixture.decode().replace(OLD_WEB,OLD_INSTALLED_WEB,1)\
+        .replace(OLD_LYRIC,OLD_INSTALLED_LYRIC,1)\
+        .replace(OLD_WEATHER,NEW_WEATHER,1)\
+        .replace(OLD_WEATHER2,NEW_WEATHER2,1).encode()
+    upgraded=build(patch_v1)
+    assert NEW_WEB.encode() in upgraded
+    assert NEW_LYRIC.encode() in upgraded
+    assert MARK.encode() in upgraded
+    assert upgraded!=patch_v1
+    print("MUSIC_OPERATION_PATCH_UPGRADE_PASS",flush=True)
     print("MUSIC_OPERATION_ROUTING_REGRESSIONS_PASS",len(cases),flush=True)
 
 def stage(api):
