@@ -8,7 +8,7 @@ from unittest.mock import patch
 
 from api.adaptive_public_research_v1 import (
     should_research_public_explanation,
-    plan_public_research,facet_coverage,adaptive_enrich,
+    plan_public_research,facet_coverage,adaptive_enrich,encyclopedia_topic,
     MAX_SEARCH_PASSES,
 )
 from api.research_evidence_envelope_v1 import build_envelope
@@ -118,6 +118,33 @@ class AdaptiveResearchTests(unittest.TestCase):
         self.assertEqual(revised["onlineContext"]["resultCount"],3)
         self.assertIn("eye safety",revised["onlineContext"]["adaptiveResearch"]
                       ["facetsCoveredByRetrievedText"])
+
+    def test_short_public_subject_recovers_after_empty_provider(self):
+        self.assertEqual(
+            encyclopedia_topic(plan_public_research(QUESTION)),
+            "eclipse")
+        from unittest.mock import patch
+        wiki_source={
+            "title":"Wikipedia: Eclipse",
+            "url":"https://en.wikipedia.org/wiki/Eclipse",
+            "snippet":"An eclipse is an astronomical event in which one astronomical body moves into the shadow of another."
+        }
+        called=[]
+        with patch("api.generic_public_source_fallback_v1.wikipedia_public_fallback",
+                   side_effect=lambda topic,fetch:(
+                       called.append(topic) or [wiki_source])):
+            out,route=adaptive_enrich(
+                {"prompt":QUESTION},
+                {"phase":"RESEARCH_UNAVAILABLE","reason":"no_relevant_evidence"},
+                lambda _:{"evidence":[]},
+                bounded_evidence=dummy_bounded,
+                fetch_page=lambda url:{"status":404})
+        self.assertEqual(called,["eclipse"])
+        self.assertEqual(route["phase"],"RESEARCH_READY")
+        self.assertEqual(out["onlineContext"]["resultCount"],1)
+        self.assertEqual(out["onlineContext"]["adaptiveResearch"]["passesAttempted"],2)
+        self.assertIn("encyclopedia subject: eclipse",
+                      out["onlineContext"]["adaptiveResearch"]["additionalSearchQueries"])
 
     def test_remains_truthfully_unavailable_when_both_search_passes_fail(self):
         out={"prompt":QUESTION}
