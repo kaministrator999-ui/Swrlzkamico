@@ -11,7 +11,7 @@ const expected=[
  "if(part.uvPaintPNG&&!shown()?.material?.map)renderParts();",
  "const tx=db.transaction(['projects','metadata'],'readwrite')",
  "data.delete(id);meta.delete(id)",
- "if(record.updatedAt&&saved.updatedAt!==record.updatedAt)",
+ "record.updatedAt&&saved.updatedAt!==record.updatedAt",
  "rpc('cloud.delete',{projectId:id,expectedRevision:record.revision})",
  "receipt?.ok!==true||receipt.projectId!==id||receipt.deletedRevision!==record.revision",
  "dialog.showModal();cancel.focus()",
