@@ -4,6 +4,7 @@ on:
     branches: [main]
     paths:
       - '.github/workflows/hf-music-research-routing-release.yml'
+      - 'scripts/hf_music_research_intent_routing_v1.py'
 permissions: {contents: read}
 concurrency:
   group: swrlz-chat-guest-eval
@@ -11,7 +12,7 @@ concurrency:
 jobs:
   release:
     runs-on: ubuntu-24.04
-    timeout-minutes: 38
+    timeout-minutes: 65
     steps:
       - uses: actions/checkout@v4
         with: {persist-credentials: false}
@@ -93,20 +94,50 @@ jobs:
           import asyncio,json
           from scripts import eval_chat_research_lyrics_conversations as ev
           case=next(x for x in ev.CASES['songwriting'] if x['id']=='synth-pop-dynamic-form')
-          case={**case,'turns':case['turns'][:1]}
           ev.CASES['songwriting']=[case]
           asyncio.run(ev.main('songwriting'))
-          turn=json.loads((ev.OUT/'report.json').read_text())['results'][0]['turns'][0]
-          print('ORIGINAL_SONG_ROUTE_RESULT',json.dumps({'status':turn['evaluation']['status'],'ms':turn['total_ms']}),flush=True)
-          assert 'i need a city/region' not in turn['response'].lower(), 'Still routed to weather'
-          assert 'search results for the lyrics' not in turn['response'].lower(), 'Still routed to lyric lookup'
-          assert turn['evaluation']['status']=='PASS_EVIDENCE', 'Original song incomplete'
+          result=json.loads((ev.OUT/'report.json').read_text())['results'][0]
+          print('ORIGINAL_SONG_AND_REVISION_RESULT',json.dumps({'outcome':result['outcome'],
+             'statuses':[t['evaluation']['status'] for t in result['turns']],
+             'milliseconds':[t['total_ms'] for t in result['turns']]}),flush=True)
+          assert result['outcome']=='PASS_EVIDENCE', 'Song or revision failed constraints'
+          assert len(result['turns'])==2, 'Both composition and native revision required'
+          for turn in result['turns']:
+              assert 'i need a city/region' not in turn['response'].lower(), 'Misrouted to weather'
+              assert 'search results for the lyrics' not in turn['response'].lower(), 'Misrouted to published lyrics'
           PY
           then ok=0;else ok=$?;fi
           echo "exit=$ok" >> "$GITHUB_OUTPUT"
           mkdir -p reports/music-routing-acceptance/song
           cp -a reports/chat-research-lyrics-conversation/. reports/music-routing-acceptance/song/ || true
           echo "ORIGINAL_SONG_ACCEPTANCE_EXIT=$ok"
+      - name: 'User-authored lyric acknowledgment (not weather research)'
+        id: authored
+        if: steps.song.outputs.exit == '0'
+        shell: bash
+        env:
+          SWRLZ_EVAL_BASE: https://kamiloki-swyrlz.hf.space
+          SWRLZ_EVAL_MODEL: 700m
+        run: |
+          set -uo pipefail
+          if python -u - <<'PY'
+          import asyncio,json
+          from scripts import eval_chat_research_lyrics_conversations as ev
+          case=next(c for c in ev.CASES['transformations'] if c['id']=='owner-verse-remix-and-feedback')
+          ev.CASES['transformations']=[{**case,'turns':case['turns'][:1]}]
+          asyncio.run(ev.main('transformations'))
+          result=json.loads((ev.OUT/'report.json').read_text())['results'][0]
+          print('AUTHORED_REFERENCE_ACK_RESULT',json.dumps({
+             'outcome':result['outcome'],
+             'phases':[t.get('phases') for t in result['turns']]}),flush=True)
+          assert result['outcome']=='PASS_EVIDENCE', 'Authored lyrics ack failed or hijacked'
+          PY
+          then ok=0;else ok=$?;fi
+          echo "exit=$ok" >> "$GITHUB_OUTPUT"
+          mkdir -p reports/music-routing-acceptance/authored
+          cp -a reports/chat-research-lyrics-conversation/. reports/music-routing-acceptance/authored/ || true
+          echo "AUTHORED_REFERENCE_ACCEPTANCE_EXIT=$ok"
+
       - name: Preserve all anonymous response transcripts and source receipts
         if: always()
         uses: actions/upload-artifact@v4
@@ -116,7 +147,7 @@ jobs:
           retention-days: 21
           if-no-files-found: ignore
       - name: Roll back exact source if either live acceptance fails
-        if: ${{ always() && (steps.research.outputs.exit != '0' || steps.song.outputs.exit != '0' || steps.revision.outcome != 'success') }}
+        if: ${{ always() && (steps.research.outputs.exit != '0' || steps.song.outputs.exit != '0' || steps.authored.outputs.exit != '0' || steps.revision.outcome != 'success') }}
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
           SWRLZ_MUSIC_ROUTING_APPROVED: '1'
