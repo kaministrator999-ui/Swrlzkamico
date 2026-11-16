@@ -25,8 +25,8 @@ def apply(html):
     html=once(html,'part.uvPaintPNG.length <= 360000',
               'part.uvPaintPNG.length <= 7000000',
               'native mesh schema source-length cap')
-    html=once(html,r'^data:image\/png;base64',
-              r'^data:image\/(?:png|jpeg);base64',
+    html=once(html,r'    /^data:image\/png;base64,[A-Za-z0-9+/=]+$/.test(part.uvPaintPNG);',
+              r'    /^data:image\/(?:png|jpeg);base64,[A-Za-z0-9+/=]+$/.test(part.uvPaintPNG);',
               'accept original PNG and JPEG data URLs')
     html=once(html,
               'Cyan guide lines are cleaned when detected; large images are resized for model saves.',
