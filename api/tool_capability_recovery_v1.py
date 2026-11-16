@@ -24,7 +24,7 @@ _RESEARCH = re.compile(r"\b(?:look up|search|research|browse|verify|sources?|cit
 _FALSE_TOOL_CLAIM = re.compile(
     r"(?is)\b(?:i|my (?:model|system))\s+"
     r"(?:can(?:not|'t|’t)|do\s+not|don't|don’t|am\s+unable\s+to|have\s+no\s+ability\s+to|lack\s+the\s+ability\s+to)"
-    r".{0,105}?\b(?:browse|search|access (?:the )?(?:internet|web)|"
+    r".{0,105}?\b(?:browse|search|access (?:to )?(?:the )?(?:internet|web)|"
     r"use (?:the )?(?:web|search)\s+(?:tool|function)|"
     r"fetch (?:from )?(?:the )?(?:internet|web)|live web)\b"
 )
