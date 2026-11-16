@@ -2,7 +2,7 @@ name: Inspect §E Quest browser editor source
 on:
   push:
     branches: [fix/se467-quest-browser-editor]
-    paths: [.github/workflows/inspect-se467-quest-editor.yml, 'projects/swrlz-forge-moba/patches/v11_467_quest_browser_editor.py', 'projects/swrlz-forge-moba/runtime/model_quest_browser_input_v11_467.js', 'projects/swrlz-forge-moba/runtime/model_quest_browser_input_v11_467.css']
+    paths: ['.github/workflows/inspect-se467-quest-editor.yml','projects/swrlz-forge-moba/source-manifest.json','projects/swrlz-forge-moba/DEPLOY_REQUEST.json','projects/swrlz-forge-moba/patches/v11_467_quest_browser_editor.py','projects/swrlz-forge-moba/runtime/model_quest_browser_input_v11_467.js','projects/swrlz-forge-moba/runtime/model_quest_browser_input_v11_467.css']
   workflow_dispatch:
 permissions:
   contents: read
@@ -11,60 +11,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Verify baseline and inspect real event handlers
+      - name: Verify sealed engine release
+        run: python projects/swrlz-forge-moba/scripts/verify_v11_467_release.py --output /tmp/se467-quest-inspect --request
+      - name: Verify native editor regression tests
         run: |
-          python projects/swrlz-forge-moba/scripts/verify_v11_466_release.py --output /tmp/se467-quest-inspect
-          python - <<'PY'
-          from pathlib import Path
-          s=Path('/tmp/se467-quest-inspect/index.html').read_text()
-          markers=[
-            'function atelierComponentPointerDown','function atelierComponentPointerMove','function atelierComponentPointerUp',
-            'function atelierComponentPick','function atelierSculptVertexPick','function atelierMeshGizmoDown',
-            'function atelierCameraPointerDown','function atelierCameraPointerUp','function atelierCameraPointerCancel',
-            'function pointerDown(e){','/* SE431_MODEL_GIZMO_ACCESS_END */',
-            'async function saveCloud','function saveCloud','cloud.save','cloud.list',
-            'se371CloudLinks','function atelierComponentRayPick','function atelierComponentHit',
-          ]
-          for needle in markers:
-            positions=[]
-            start=0
-            while True:
-              at=s.find(needle,start)
-              if at<0:break
-              positions.append(at);start=at+1
-              if len(positions)==5:break
-            print('===',needle,'positions',positions,flush=True)
-            for at in positions[-2:]:
-              print(s[max(0,at-350):at+2500],flush=True)
-          print('=== DOCK SELECTORS',flush=True)
-          for needle in ['.atelier-inspector','.atelier-scroll','.atelier-right','.se461','id="modelAtelierPanel"']:
-            positions=[i for i in range(len(s)) if False]
-            at=s.find(needle);print(needle,at,s[max(0,at-130):at+1000] if at>=0 else '',flush=True)
-          PY
-
-      - name: Apply integrated Quest input / extrusion patch and parse editor JS
-        run: |
-          node --check projects/swrlz-forge-moba/runtime/model_quest_browser_input_v11_467.js
-          python - <<'PY'
-          from pathlib import Path
-          import importlib.util,hashlib
-          root=Path('projects/swrlz-forge-moba')
-          spec=importlib.util.spec_from_file_location('candidate',root/'patches/v11_467_quest_browser_editor.py')
-          module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
-          source=Path('/tmp/se467-quest-inspect/index.html').read_text()
-          updated=module.apply(source)
-          assert 'SWYRL_ENGINE_DEPLOY_MARKER: V11_467_QUEST_EDITOR_INPUT' in updated
-          assert 'function se467QuestInstall(host)' in updated
-          assert 'if(atelierCameraTouches.size===1)pressed=null;' in updated
-          assert 'se467QuestInstall(panel);' in updated
-          assert 'radius' in updated.lower()
-          assert 'se466FaceExtrude' in updated
-          Path('/tmp/se467-quest-inspect/candidate.html').write_text(updated)
-          print('SE467_CANDIDATE_APPLIED',len(updated),flush=True)
-          print('SE467_FINAL_BYTES',len(updated.encode('utf8')),flush=True)
-          print('SE467_FINAL_SHA256',hashlib.sha256(updated.encode('utf8')).hexdigest(),flush=True)
-          PY
-          python projects/swrlz-forge-moba/scripts/check_inline_js_syntax_v11_266.py /tmp/se467-quest-inspect/candidate.html
-          node projects/swrlz-forge-moba/tests/model_component_selection_v11_430.mjs /tmp/se467-quest-inspect/candidate.html
-          node projects/swrlz-forge-moba/tests/model_quest_browser_input_v11_467.mjs /tmp/se467-quest-inspect/candidate.html
+          node projects/swrlz-forge-moba/tests/model_quest_browser_input_v11_467.mjs /tmp/se467-quest-inspect/index.html
+          node projects/swrlz-forge-moba/tests/model_component_selection_v11_430.mjs /tmp/se467-quest-inspect/index.html
           node projects/swrlz-forge-moba/tests/studio_project_routing_v11_320.cjs
