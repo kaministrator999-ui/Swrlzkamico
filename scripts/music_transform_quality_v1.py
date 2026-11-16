@@ -26,7 +26,7 @@ _MODES = [
     ("adaptation",r"\b(?:adapt|genre[- ]?swap|convert\s+(?:this|the)\s+song|turn\s+(?:this|the)\s+song\s+into)\b"),
     ("cover",r"\b(?:make|write|create|compose|arrange)\s+(?:a\s+|an\s+)?(?:new\s+)?cover\b"),
 ]
-_SONG_CUE = re.compile(r"\b(?:song|track|lyrics?|verse|rap|rhyme|hook|chorus|music|beat|bars?|freestyle)\b",re.I)
+_SONG_CUE = re.compile(r"\b(?:songs?|tracks?|lyrics?|verses?|rap|rhymes?|hooks?|choruses|music|beats?|bars?|freestyle)\b",re.I)
 _NON_CREATIVE = re.compile(
     r"^\s*(?:what|when|where|who|why|how|explain|research|look\s+up|"
     r"search|find|tell\s+me\s+about|compare|analy[sz]e|review|"
