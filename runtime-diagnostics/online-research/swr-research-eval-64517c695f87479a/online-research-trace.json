@@ -1,0 +1,351 @@
+{
+  "schema": "swrlz-github-online-research-trace-v1",
+  "requestId": "swr-research-eval-64517c695f87479a",
+  "modelId": "700m",
+  "eventType": "ONLINE_RESEARCH_TRACE",
+  "sourceRef": "f149dd857e3d9219f5cae7da0286b5dbfec85c42",
+  "persistedAtUnixMs": 1794848090019,
+  "diagnostic": {
+    "schema": "swrlz-online-research-log-v1",
+    "research": {
+      "contract": "swrlz-online-camera-v1",
+      "observabilityRevision": "v181-song-metadata-clean-form-integrity",
+      "kind": "search",
+      "status": "OK",
+      "reason": "explicit-web-intent",
+      "provider": "bounded-web-search-chain-v1",
+      "resultCount": 1,
+      "widgetKinds": [
+        "search-results"
+      ],
+      "sourceCount": 1,
+      "locationRequired": false,
+      "usedExplicitClientLocation": false,
+      "elapsedMs": 10629,
+      "lyricsSourceAttemptCount": 0,
+      "lyricsFetchDebug": [],
+      "blockedLyricsSourceFamilies": [],
+      "musicStructureDebug": null,
+      "candidateAdmissionDebug": [
+        {
+          "query": "Research how traditional 12-bar blues AAB lyric verses compare to a common modern pop verse, pre-chorus and chorus arrangement. Give a clear explanation of line repetition, musical bars, and what each section does. Cite public music-education source links. Explain that these are common patterns, not mandatory rules. Do not reproduce lyrics from published songs.",
+          "title": "Previous Research | IT Security Office | Virginia Tech",
+          "url": "https://security.vt.edu/about/security-lab/previous-research/",
+          "source": "security.vt.edu",
+          "rank": 1,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "research"
+          ],
+          "coreTerms": [
+            "research",
+            "how",
+            "traditional",
+            "12-bar",
+            "blues",
+            "aab",
+            "compare",
+            "common",
+            "modern",
+            "pop",
+            "pre-chorus",
+            "chorus"
+          ],
+          "snippetPreview": "In an effort to solve this problem, researchers have explored different methods of visualizing network security threats. There is little …"
+        },
+        {
+          "query": "Research how traditional 12-bar blues AAB lyric verses compare to a common modern pop verse, pre-chorus and chorus arrangement. Give a clear explanation of line repetition, musical bars, and what each section does. Cite public music-education source links. Explain that these are common patterns, not mandatory rules. Do not reproduce lyrics from published songs.",
+          "title": "Current Research | IT Security Office | Virginia Tech",
+          "url": "https://security.vt.edu/about/security-lab/current-research/",
+          "source": "security.vt.edu",
+          "rank": 2,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "research"
+          ],
+          "coreTerms": [
+            "research",
+            "how",
+            "traditional",
+            "12-bar",
+            "blues",
+            "aab",
+            "compare",
+            "common",
+            "modern",
+            "pop",
+            "pre-chorus",
+            "chorus"
+          ],
+          "snippetPreview": "Our research in network security visualizations strives to improve the perspective of concerned users and network security …"
+        },
+        {
+          "query": "Research how traditional 12-bar blues AAB lyric verses compare to a common modern pop verse, pre-chorus and chorus arrangement. Give a clear explanation of line repetition, musical bars, and what each section does. Cite public music-education source links. Explain that these are common patterns, not mandatory rules. Do not reproduce lyrics from published songs.",
+          "title": "IT Security Lab | IT Security Office | Virginia Tech",
+          "url": "https://security.vt.edu/about/security-lab/",
+          "source": "security.vt.edu",
+          "rank": 3,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "research"
+          ],
+          "coreTerms": [
+            "research",
+            "how",
+            "traditional",
+            "12-bar",
+            "blues",
+            "aab",
+            "compare",
+            "common",
+            "modern",
+            "pop",
+            "pre-chorus",
+            "chorus"
+          ],
+          "snippetPreview": "The Virginia Tech Information Technology Security Laboratory (ITSL) focuses on education and research in computer and network …"
+        },
+        {
+          "query": "Research how traditional 12-bar blues AAB lyric verses compare to a common modern pop verse, pre-chorus and chorus arrangement. Give a clear explanation of line repetition, musical bars, and what each section does. Cite public music-education source links. Explain that these are common patterns, not mandatory rules. Do not reproduce lyrics from published songs.",
+          "title": "How to join the IT Security Lab - Virginia Tech",
+          "url": "https://security.vt.edu/about/security-lab/join-itsl/",
+          "source": "security.vt.edu",
+          "rank": 4,
+          "allowed": true,
+          "reason": "SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "research",
+            "how"
+          ],
+          "coreTerms": [
+            "research",
+            "how",
+            "traditional",
+            "12-bar",
+            "blues",
+            "aab",
+            "compare",
+            "common",
+            "modern",
+            "pop",
+            "pre-chorus",
+            "chorus"
+          ],
+          "snippetPreview": "Current and past research projects include: The lab has the ability to conduct research with undergraduate and graduate students. If …"
+        },
+        {
+          "query": "Research how traditional 12-bar blues AAB lyric verses compare to a common modern pop verse, pre-chorus and chorus arrangement. Give a clear explanation of line repetition, musical bars, and what each section does. Cite public music-education source links. Explain that these are common patterns, not mandatory rules. Do not reproduce lyrics from published songs.",
+          "title": "Dissertations & Thesis | IT Security Office | Virginia Tech",
+          "url": "https://security.vt.edu/about/security-lab/dissertations/",
+          "source": "security.vt.edu",
+          "rank": 5,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [],
+          "coreTerms": [
+            "research",
+            "how",
+            "traditional",
+            "12-bar",
+            "blues",
+            "aab",
+            "compare",
+            "common",
+            "modern",
+            "pop",
+            "pre-chorus",
+            "chorus"
+          ],
+          "snippetPreview": ""
+        },
+        {
+          "query": "Research how traditional 12-bar blues AAB lyric verses compare to a common modern pop verse, pre-chorus and chorus arrangement. Give a clear explanation of line repetition, musical bars, and what each section does. Cite public music-education source links. Explain that these are common patterns, not mandatory rules. Do not reproduce lyrics from published songs.",
+          "title": "| IT Security Office | Virginia Tech",
+          "url": "https://security.vt.edu/about/security-lab/sidebar/",
+          "source": "security.vt.edu",
+          "rank": 6,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [],
+          "coreTerms": [
+            "research",
+            "how",
+            "traditional",
+            "12-bar",
+            "blues",
+            "aab",
+            "compare",
+            "common",
+            "modern",
+            "pop",
+            "pre-chorus",
+            "chorus"
+          ],
+          "snippetPreview": ""
+        },
+        {
+          "query": "Research how traditional 12-bar blues AAB lyric verses compare to a common modern pop verse, pre-chorus and chorus arrangement. Give a clear explanation of line repetition, musical bars, and what each section does. Cite public music-education source links. Explain that these are common patterns, not mandatory rules. Do not reproduce lyrics from published songs.",
+          "title": "Publications | IT Security Office | Virginia Tech",
+          "url": "https://security.vt.edu/about/security-lab/publications/",
+          "source": "security.vt.edu",
+          "rank": 7,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [],
+          "coreTerms": [
+            "research",
+            "how",
+            "traditional",
+            "12-bar",
+            "blues",
+            "aab",
+            "compare",
+            "common",
+            "modern",
+            "pop",
+            "pre-chorus",
+            "chorus"
+          ],
+          "snippetPreview": "Mar 26, 2019 · Proceedings of the IEEE Symposium on 3D User Interfaces (3DUI '14)"
+        }
+      ],
+      "songIdentity": {},
+      "songDiscoveryPlan": [],
+      "lyricsRescueSearchDebug": [],
+      "lyricsMaxPageAttempts": 0,
+      "lyricsFallbackExhausted": false,
+      "rawPromptStored": false
+    },
+    "trace": [
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794848079389,
+        "phase": "RESEARCH_STARTED",
+        "activity": "Online research started",
+        "provider": "bounded-web-search-chain-v1",
+        "site": "",
+        "url": ""
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794848079395,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794848079557,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "activity": "No usable results from provider",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "httpStatus": 202,
+        "resultCount": 0
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794848079558,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794848079706,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "activity": "No usable results from provider",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "httpStatus": 202,
+        "resultCount": 0
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794848079706,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794848079932,
+        "phase": "SEARCH_PROVIDER_RESULTS",
+        "activity": "Search results found",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "httpStatus": 200,
+        "resultCount": 7
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794848079933,
+        "phase": "SEARCH_PROVIDER_SELECTED",
+        "activity": "Using bing-html",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "resultCount": 7
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794848079935,
+        "phase": "PAGE_FETCH_STARTED",
+        "activity": "Visiting result page",
+        "provider": "web-page",
+        "site": "security.vt.edu",
+        "url": "https://security.vt.edu/about/security-lab/join-itsl/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794848090016,
+        "phase": "PAGE_FETCH_ERROR",
+        "activity": "Page fetch failed",
+        "provider": "web-page",
+        "site": "security.vt.edu",
+        "url": "https://security.vt.edu/about/security-lab/join-itsl/",
+        "errorType": "TimeoutError"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794848090017,
+        "phase": "RESEARCH_COMPLETE",
+        "activity": "Online research complete",
+        "provider": "bounded-web-search-chain-v1",
+        "site": "",
+        "url": "",
+        "resultCount": 1
+      }
+    ],
+    "sourceSites": [
+      "security.vt.edu"
+    ],
+    "widgetKinds": [
+      "search-results"
+    ],
+    "requestedModelId": "700m",
+    "selectedModelId": "700m",
+    "rawPromptStored": false,
+    "historyStored": false,
+    "preciseLocationStored": false
+  }
+}
