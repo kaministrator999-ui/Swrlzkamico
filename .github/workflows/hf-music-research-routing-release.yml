@@ -7,7 +7,7 @@ on:
       - 'scripts/hf_music_research_intent_routing_v1.py'
 permissions: {contents: read}
 concurrency:
-  group: swrlz-hf-space-deployment
+  group: swrlz-chat-hf-music-route-release
   cancel-in-progress: false
 jobs:
   release:
