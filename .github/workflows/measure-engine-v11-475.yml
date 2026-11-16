@@ -11,7 +11,6 @@ on:
       - "projects/swrlz-forge-moba/scripts/verify_v11_475_release.py"
       - "projects/swrlz-forge-moba/tests/model_progressive_rail_fix_v11_475.mjs"
       - "projects/swrlz-forge-moba/tests/model_progressive_browser_v11_475.cjs"
-      - "projects/swrlz-forge-moba/source-manifest.json"
   workflow_dispatch:
 
 permissions:
