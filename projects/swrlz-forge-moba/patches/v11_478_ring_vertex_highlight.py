@@ -28,29 +28,6 @@ def apply(html):
       '''  const selectedKeys=new Set(result.vertexIds.map(i=>
     p.topologyMesh.positions.slice(i*3,i*3+3)
      .map(v=>Math.round(Math.fround(v)*100000)).join(',')));''')
-    # Highlight every selected slot (no sampling/192-item selection cap).
-    # Unselected points alone retain the usual large-mesh downsampling.
-    html=once(html,
-      '   make([...selected].map(i=>top.vertices[i]).filter(x=>x!==undefined),0xffd776,11);',
-      '''   const selectedSlots=[...selected].filter(i=>Number.isInteger(i)&&i>=0&&i<top.vertices.length);
-   const shape=window.SWYRL_ENGINE_PROGRESSIVE_TOOLS_474?.inspect?.()?.shape;
-   const ringMode=shape==='ring'||shape==='fill';
-   make(selectedSlots.map(i=>top.vertices[i]),
-    shape==='fill'?0xffa56a:shape==='ring'?0xffe369:0xffd776,
-    ringMode?(typeof matchMedia==='function'&&matchMedia('(pointer:coarse)').matches?16:13):11);
-   if(selectedSlots.length){
-    const marker=root.children[root.children.length-1];
-    if(marker?.isPoints){marker.userData.se478SelectedVertices=true;
-     marker.userData.se478SelectionShape=ringMode?shape:'single';}
-   }''')
-    # Preserve live selected-vertex markers during the reversible height
-    # preview. Other topology tools retain their ordinary overlay clearing.
-    html=once(html,
-      '   atelierComponentOverlayClear();atelierMeshGizmoClear();\\n   renderPreview();',
-      '''   if(operation==='ringTransform'&&atelierComponentMode==='vertex'){
-    atelierComponentOverlayBuild();atelierMeshGizmoClear();
-   }else{atelierComponentOverlayClear();atelierMeshGizmoClear();}
-   renderPreview();''')
     html=once(html,'</head>',
       '<style id="se478RingHeightStyles">\\n'+height_css+'\\n</style>\\n</head>')
     for old,new in (
