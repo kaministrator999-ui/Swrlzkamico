@@ -26,7 +26,9 @@
   }catch{return null;}
  }
  function persist(){
-  if(!session)return;
+  // Never replace an existing last-session camera/studio with background
+  // startup defaults before the account/project choice has resolved.
+  if(!finished||!session)return;
   session.studio=currentStudio();
   if(session.studio==='modeler')session.camera=captureCamera()||session.camera||null;
   session.updatedAt=Date.now();
