@@ -117,4 +117,74 @@
  #se476SignalLost *,#se476SignalLost:before,#se476SignalLost *:before,#se476SignalLost *:after{animation:none!important}
 }
 
+/* Full-screen Page Down state when the Chat Space does not answer.
+   Served by independent static §E, so it still works while §C is a 503. */
+#se476StartupGate #se476SignalLost:not([hidden]){
+ position:fixed!important;inset:0!important;z-index:300!important;
+ display:flex!important;flex-direction:column!important;align-items:center!important;
+ justify-content:center!important;
+ padding:clamp(18px,5vh,54px) clamp(16px,5vw,45px)!important;
+ margin:0!important;border:0!important;border-radius:0!important;
+ box-sizing:border-box!important;overflow:auto!important;
+ background:
+  radial-gradient(ellipse 56% 50% at 50% 43%,#173e57 0%,#11182c 64%,#090c18 100%)!important;
+ text-align:center!important;
+ box-shadow:inset 0 0 160px #080a17!important;
+}
+#se476StartupGate #se476SignalLost:not([hidden]):before{
+ background:
+  repeating-linear-gradient(0deg,transparent 0 3px,#89e7f009 4px 5px),
+  linear-gradient(90deg,transparent 0%,#4af5d607 50%,transparent 100%),
+  repeating-linear-gradient(90deg,transparent 0 62px,#5d84b51a 63px 64px)!important;
+ opacity:.75;animation:se476Scanlines 13s linear infinite!important;
+}
+#se476StartupGate #se476SignalLost:not([hidden]):after{
+ content:'';position:absolute;inset:0;z-index:0;pointer-events:none;
+ background:conic-gradient(from 0deg at 50% 48%,
+  #7efcf600 0deg,#7efcf610 22deg,#7efcf600 46deg,#d67cff0c 180deg,#7efcf600 360deg);
+ animation:se476PortalSweep 18s linear infinite;
+}
+#se476StartupGate #se476SignalLost .se476-signal-art{
+ width:clamp(180px,40vw,300px);height:clamp(145px,30vh,220px);
+ flex:0 0 auto;margin:0 auto 12px;
+}
+#se476StartupGate #se476SignalLost .se476-signal-rings{inset:13% 22%}
+#se476StartupGate #se476SignalLost .se476-signal-glyph{
+ font-size:clamp(64px,11vw,110px);filter:drop-shadow(0 0 35px #3beef0);
+}
+#se476StartupGate #se476SignalLost .se476-signal-code{
+ font-size:clamp(11px,2.8vw,15px)!important;letter-spacing:.17em;
+}
+#se476StartupGate #se476SignalLost h2.se476-signal-title{
+ font-size:clamp(35px,9vw,76px)!important;margin:10px auto 8px!important;
+ letter-spacing:.15em!important;
+}
+#se476StartupGate #se476SignalLost .se476-signal-detail{
+ font-size:clamp(13px,3vw,17px)!important;max-width:540px!important;
+}
+#se476StartupGate #se476SignalLost .se476-offline-actions{
+ display:flex;gap:12px;flex-wrap:wrap;justify-content:center;
+ width:100%;max-width:475px;margin:20px auto 0;
+}
+#se476StartupGate #se476SignalLost .se476-offline-actions button{
+ flex:1 1 200px;min-height:51px;max-width:100%;
+ font-size:14px;font-weight:750;
+}
+#se476StartupGate #se476SignalLost #se476OfflineContinue{
+ background:#242b4b;color:#e6e9ff;border-color:#717dba;
+}
+#se476StartupGate #se476SignalLost .se476-offline-footnote{
+ font:550 11px/1.5 ui-monospace,monospace;color:#9eb7cc;
+ letter-spacing:.08em;margin-top:16px!important;
+}
+@keyframes se476PortalSweep{to{transform:rotate(360deg)}}
+@media(max-width:560px){
+ #se476StartupGate #se476SignalLost:not([hidden]){justify-content:flex-start!important}
+ #se476StartupGate #se476SignalLost .se476-signal-art{margin-top:3vh;height:140px}
+}
+@media(prefers-reduced-motion:reduce){
+ #se476StartupGate #se476SignalLost:not([hidden]):before,
+ #se476StartupGate #se476SignalLost:not([hidden]):after{animation:none!important}
+}
+
 /* SE476_ACCOUNT_START_STYLES_END */
