@@ -152,6 +152,31 @@ jobs:
           print("SWRLZ_ADAPTIVE_REAL_FULL_RECOVERY "+json.dumps(report2),flush=True)
           assert receipt.get("phase")=="RESEARCH_READY",report2
           assert len(cards)>=1,report2
+          # Additional independent multi-part public question; the same
+          # logic must find a real article without any hardcoded answer.
+          mars="Explain the moons of Mars, including Phobos, Deimos, and orbital characteristics."
+          mars_topic=encyclopedia_topic(plan_public_research(mars))
+          mars_out,mars_route=adaptive_enrich(
+              {"prompt":mars},{"phase":"RESEARCH_UNAVAILABLE",
+                               "reason":"no_relevant_evidence"},
+              lambda _:{"evidence":[]},
+              bounded_evidence=selective.bounded_evidence,
+              fetch_page=module._page_fetch)
+          mars_cards=(mars_out.get("onlineContext") or {}).get("evidence") or []
+          print("SWRLZ_ADAPTIVE_REAL_MARS_RECOVERY "+json.dumps({
+              "topic":mars_topic,"phase":mars_route.get("phase"),
+              "sourceCount":len(mars_cards),
+              "titles":[c.get("title") for c in mars_cards],
+              "hasNamedMoons":any(
+                  "Phobos" in str(c.get("excerpt") or "") and
+                  "Deimos" in str(c.get("excerpt") or "") for c in mars_cards)
+          }),flush=True)
+          assert mars_topic=="moons of Mars"
+          assert mars_route.get("phase")=="RESEARCH_READY",mars_route
+          assert mars_cards
+          assert any("Phobos" in str(c.get("excerpt") or "")
+                     and "Deimos" in str(c.get("excerpt") or "")
+                     for c in mars_cards)
           PY
       - uses: actions/upload-artifact@v4
         if: always()
