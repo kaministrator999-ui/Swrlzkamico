@@ -59,7 +59,7 @@ def main():
              or bool(re.search(r"i can.{0,100}(?:rewrite|revise|redo|rework|remix)",last)))
     log("critique",length=len(prior),offeredRewrite=offered,
         hasUnwantedVerse=bool(re.search(r"(?m)^\s*\[?verse 1\]?",prior,re.I)),
-        elapsedMs=meta["elapsedMs"])
+        elapsedMs=meta["elapsedMs"],syntheticTail=prior[-320:])
     if not offered:
         raise AssertionError("Follow-up offer was not actually made; cannot test acceptance")
     answer,receipt=send_and_wait(session,thread,"Yes please")
