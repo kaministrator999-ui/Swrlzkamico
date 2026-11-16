@@ -82,7 +82,7 @@
      if(link?.id===record.id)cloudRefs.delete(localId);
     window.dispatchEvent(new CustomEvent('swrlz:account-project-deleted',
      {detail:{id:record.id}}));
-    await se170Refresh();
+    if(typeof se170Refresh==='function')await se170Refresh();
    }else{
     se184LocalPreviews.delete(record.id);
     await se175RefreshLocal();
