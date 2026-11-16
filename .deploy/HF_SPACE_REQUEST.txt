@@ -1,5 +1,5 @@
 TARGET=kamiloki/Swyrlz
 APPROVED=1
-CHANGE_SCOPE=http500-music-feedback-v1
-SOURCE_REF=78187b1e6ed13886fb4c96c69d4e869111aa2065
-REQUEST_NONCE=http500-remix-feedback-20261115-78187b1e-r1
+CHANGE_SCOPE=tool-capability-recovery-v1
+SOURCE_REF=3135bacd085a5359e4ba397ea89b45436d6084b1
+REQUEST_NONCE=tool-capability-recovery-20261116-source-3135bacd-r1
