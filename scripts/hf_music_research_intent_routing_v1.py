@@ -103,14 +103,27 @@ NEW_LYRIC=r'''    # Lyric *analysis* and revision of a just-created/user-authore
                    and not (musical_analysis and not
                             (explicit_lookup_verb or published_full_lyrics)))'''
 OLD_WEATHER='''    weather_intent=bool(_WEATHER_TERMS.search(text) and not weather_negated)'''
-NEW_WEATHER=r'''    # Rain/snow in user-supplied lyric lines, fiction or song titles is NOT
-    # a weather lookup. Require an actual live meteorological question/request.
+NEW_WEATHER=r'''    # User-described weather words are not a live-data request.
+    # Require an explicit meteorological operation; a fictional rain scene,
+    # song title or a negated forecast instruction must stay in normal chat.
     explicit_weather_data=bool(re.search(
-        r"(?i)\b(?:weather|forecast|temperature|humidity|barometric|"
-        r"precipitation|wind\s+speed|chance\s+of\s+(?:rain|snow)|"
-        r"will\s+it\s+(?:rain|snow)|(?:is|will)\s+it\s+(?:raining|snowing)|"
-        r"what(?:'s| is)\s+the\s+(?:rain|snow))\b",text))
-    weather_intent=bool(explicit_weather_data and not weather_negated)'''
+        r"(?i)\\b(?:weather|forecast|temperature|humidity|barometric|"
+        r"precipitation|wind\\s+speed|chance\\s+of\\s+(?:rain|snow)|"
+        r"will\\s+it\\s+(?:rain|snow)|(?:is|will)\\s+it\\s+(?:raining|snowing)|"
+        r"what(?:'s| is)\\s+the\\s+(?:rain|snow))\\b",text))
+    fiction_or_song=bool(re.search(
+        r"(?i)\\b(?:fictional|pretend|story|scene|original\\s+song|"
+        r"lyrics?|lullaby|poem|verse|chorus|song\\s+title)\\b",text))
+    weather_used_as_source=bool(re.search(
+        r"(?i)\\b(?:use|using|based\\s+on|include)\\b.{0,55}"
+        r"\\b(?:weather\\s+forecast|current\\s+weather|live\\s+weather|"
+        r"actual\\s+forecast|today's\\s+forecast)\\b",text))
+    explicit_weather_negation=bool(re.search(
+        r"(?i)\\b(?:not|no|without|don't|do\\s+not|never)\\b.{0,30}"
+        r"\\b(?:weather|forecast|live\\s+data|location\\s+request)\\b",text))
+    weather_intent=bool(explicit_weather_data and not weather_negated
+                        and not (explicit_weather_negation and not weather_used_as_source)
+                        and not (fiction_or_song and not weather_used_as_source))'''
 OLD_WEATHER2='''    if _WEATHER_TERMS.search(text) and not weather_negated and not programming.get("codingTask"):'''
 NEW_WEATHER2='''    if weather_intent and not programming.get("codingTask"):'''
 def sha(x):return hashlib.sha256(x).hexdigest()
@@ -190,6 +203,13 @@ def test(raw):
       ("Without a new web search, summarize the eclipse evidence you previously cited.",False,"none",None),
       ("Don't do another web lookup; summarize the two expansion classes.",False,"none",None),
       ("Skip searching again and use the previous sources.",False,"none",None),
+      ("For a pretend story, a robin stands in rain holding a small amber sign. This is fiction, not a forecast or a location request.",False,"none",None),
+      ("Write a complete ORIGINAL song titled 'Rain Glass Lantern' with a fictional station scene, not a forecast.",False,"none",None),
+      ("Remember my original fictional lullaby line: a paper moon hums through the rain. No forecast.",False,"none",None),
+      ("These original fictional song lines are mine and mention rain. Simply acknowledge.",False,"none",None),
+      ("Research twelve-bar blues AAB lyric verse structure with public sources. Do not quote published lyrics.",True,"search",None),
+      ("Revise the entire song, preserving the original chorus hook and complete revised lyrics.",False,"none",None),
+      ("Write an original song using the weather forecast for Topeka, Kansas.",True,"weather",None),
       ("Research public sources about blues form. Do not fetch any published song lyrics.",True,"search",None),
       ("Don't look up published song lyrics; just explain an AAB verse.",False,"none",None),
       ("Please look it up online: the history of hip-hop genres.",True,"search",None),
