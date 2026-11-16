@@ -25,6 +25,30 @@ jobs:
         run: |
           python -m pip install --quiet 'huggingface_hub>=0.34,<2'
           python -u scripts/hf_chat_music_transform_v1.py snapshot
+      - name: Validate canonical deployment gate and patched browser syntax
+        run: |
+          python -m pip install --quiet pyyaml
+          python - <<'PY'
+          from pathlib import Path
+          import yaml,re,subprocess,tempfile
+          from scripts import hf_chat_music_transform_v1 as patch
+          manual=yaml.safe_load(Path(".github/workflows/manual-hf-space.yml").read_text())
+          request=yaml.safe_load(Path(".github/workflows/hf-space-request.yml").read_text())
+          assert "hotfix_music_transform" in manual["jobs"]
+          assert "hotfix_output_budget" in manual["jobs"]
+          assert "music-transform-quality-v1" in Path(".github/workflows/hf-space-request.yml").read_text()
+          assert "hotfix-music-transform" in Path(".github/workflows/manual-hf-space.yml").read_text()
+          base=(patch.BACKUP/patch.UI).read_text()
+          generated=patch.patch_ui(base)
+          scripts=re.findall(r'<script(?:\\s[^>]*)?>([\\s\\S]*?)</script>',generated,re.I)
+          with tempfile.TemporaryDirectory() as folder:
+              for i,code in enumerate(scripts):
+                  if not code.strip():continue
+                  path=Path(folder)/f"inline_{i}.js"
+                  path.write_text(code)
+                  subprocess.run(["node","--check",str(path)],check=True)
+          print("CANONICAL_MUSIC_RELEASE_AND_UI_SYNTAX_PASS",len(scripts))
+          PY
       - uses: actions/upload-artifact@v4
         with:
           name: swrlz-music-transform-readonly-source-${{ github.run_id }}
