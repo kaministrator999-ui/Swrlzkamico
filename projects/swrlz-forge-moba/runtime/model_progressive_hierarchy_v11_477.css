@@ -1,0 +1,79 @@
+/* SE477_SELECTION_HIERARCHY_STYLES_START */
+html #modelAtelierPanel.se187-modeler-page[data-se475-mounted=true] .atelier-body>#se477SelectionShapes{
+ position:absolute!important;
+ z-index:176!important;
+ display:flex!important;
+ align-items:center!important;
+ flex-flow:row nowrap!important;
+ min-width:0!important;
+ min-height:47px!important;
+ max-height:58px!important;
+ top:var(--se477-shapes-y,105px)!important;
+ left:var(--se477-shapes-x,6px)!important;
+ right:auto!important;
+ width:var(--se477-shapes-width,calc(100% - 12px))!important;
+ max-width:calc(100% - 10px)!important;
+ box-sizing:border-box!important;
+ padding:4px 7px!important;
+ gap:5px!important;
+ background:#152e40f5!important;
+ border:1px solid #7194a8!important;
+ border-radius:9px!important;
+ box-shadow:0 4px 14px #0009!important;
+ overflow-x:auto!important;
+ overflow-y:hidden!important;
+ overscroll-behavior-x:contain!important;
+ touch-action:pan-x!important;
+ pointer-events:auto!important;
+ scrollbar-width:thin!important;
+}
+html #modelAtelierPanel.se187-modeler-page[data-se475-mounted=true] .atelier-body>#se477SelectionShapes[hidden]{
+ display:none!important;
+}
+html #modelAtelierPanel[data-se475-mounted=true] #se477SelectionShapes .se477-selection-label{
+ flex:0 0 auto;max-width:125px;overflow:hidden;text-overflow:ellipsis;
+ font:750 11px/1.25 system-ui;white-space:nowrap;color:#a7e4df;padding:0 5px;
+}
+html #modelAtelierPanel[data-se475-mounted=true] #se477SelectionShapes button{
+ flex:0 0 auto;box-sizing:border-box;min-height:38px;min-width:70px;
+ padding:6px 11px;border:1px solid #5c8098;border-radius:7px;
+ background:#294259;color:#eefaff;
+ font:650 12px/1.1 system-ui;white-space:nowrap;touch-action:manipulation;
+}
+html #modelAtelierPanel[data-se475-mounted=true] #se477SelectionShapes button[aria-pressed=true]{
+ background:#176979;border-color:#9ceadd;color:white;
+}
+html #modelAtelierPanel[data-se475-mounted=true] #se477SelectionShapes button:focus-visible{
+ outline:2px solid #a3fff0;outline-offset:2px;
+}
+/* The first top row (Vertex / Edge / Face) selects component type; the
+   inspector may only show parameters for the specific selection below. */
+html #modelAtelierPanel[data-se474-progressive=true][data-se474-settings-open=true][data-se477-selection-type=vertex] #modelAtelierTopologyWorkshop,
+html #modelAtelierPanel[data-se474-progressive=true][data-se474-settings-open=true][data-se477-selection-type=vertex] #se466FaceExtrude{
+ display:none!important;
+}
+html #modelAtelierPanel[data-se474-progressive=true][data-se474-settings-open=true][data-se477-selection-type=vertex][data-se477-selection-shape=ring] #se466RingControls:not([hidden]),
+html #modelAtelierPanel[data-se474-progressive=true][data-se474-settings-open=true][data-se477-selection-type=vertex][data-se477-selection-shape=fill] #se466RingControls:not([hidden]){
+ display:block!important;flex:0 0 auto!important;
+ min-width:0!important;
+}
+html #modelAtelierPanel[data-se474-progressive=true][data-se474-settings-open=true][data-se477-selection-type=face] #modelAtelierTopologyWorkshop{
+ display:block!important;min-width:0!important;flex:0 0 auto!important;
+}
+html #modelAtelierPanel[data-se474-progressive=true][data-se474-settings-open=true][data-se477-selection-type=face] #se466RingControls{
+ display:none!important;
+}
+html #modelAtelierPanel[data-se474-progressive=true][data-se474-settings-open=true][data-se477-operation=true] #atelierContextWorkbench{
+ display:none!important;
+}
+/* On compact phones, the two independent horizontal strips scroll without
+   shifting the viewport, and never become a second inspector. */
+@media(max-width:699px),(pointer:coarse){
+ html #modelAtelierPanel.se187-modeler-page[data-se475-mounted=true] .atelier-body>#se477SelectionShapes{
+  max-width:calc(100% - 10px)!important;touch-action:pan-x!important;
+ }
+}
+@media(prefers-reduced-motion:reduce){
+ html #modelAtelierPanel[data-se475-mounted=true] #se477SelectionShapes{transition:none!important}
+}
+/* SE477_SELECTION_HIERARCHY_STYLES_END */
