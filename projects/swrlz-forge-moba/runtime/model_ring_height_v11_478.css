@@ -1,7 +1,7 @@
 /* SE478_RING_HEIGHT_STYLES_START */
-html #modelAtelierPanel.se187-modeler-page .atelier-body>#se478RingHeightSlider{
+html #modelAtelierPanel.se187-modeler-page >#se478RingHeightSlider{
  position:absolute!important;
- z-index:185!important;
+ z-index:2147!important;
  left:50%!important;
  bottom:50px!important;
  transform:translateX(-50%)!important;
@@ -17,7 +17,7 @@ html #modelAtelierPanel.se187-modeler-page .atelier-body>#se478RingHeightSlider{
  pointer-events:auto!important;
  touch-action:auto!important;
 }
-html body #modelAtelierPanel .atelier-body>section#se478RingHeightSlider:not([hidden]){
+html body #modelAtelierPanel >section#se478RingHeightSlider:not([hidden]){
  display:flex!important;
  flex-direction:column!important;
  align-items:stretch!important;
@@ -39,7 +39,7 @@ html body #modelAtelierPanel .atelier-body>section#se478RingHeightSlider:not([hi
  visibility:visible!important;
  opacity:1!important;
 }
-html #modelAtelierPanel .atelier-body>#se478RingHeightSlider[hidden]{display:none!important}
+html #modelAtelierPanel >#se478RingHeightSlider[hidden]{display:none!important}
 html #se478RingHeightSlider .se478-height-header,
 html #se478RingHeightSlider .se478-height-row,
 html #se478RingHeightSlider .se478-height-actions{
@@ -65,7 +65,7 @@ html #se478RingHeightSlider .se478-height-actions button{
 html #se478RingHeightSlider .se478-height-actions button:disabled{opacity:.45!important}
 html #se478RingHeightSlider .se478-height-actions small{font:10px system-ui!important;color:#a7c7d4!important}
 @media(max-height:410px){
- html #modelAtelierPanel.se187-modeler-page .atelier-body>#se478RingHeightSlider{
+ html #modelAtelierPanel.se187-modeler-page >#se478RingHeightSlider{
   bottom:8px!important;padding:5px 8px!important;
  }
 }
