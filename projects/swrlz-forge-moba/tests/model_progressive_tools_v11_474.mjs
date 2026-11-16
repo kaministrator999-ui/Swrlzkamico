@@ -44,7 +44,7 @@ const doc={readyState:'complete',body:new El(),
  querySelector(selector){return selector==='#modelAtelierPanel'?p:null;},
  createElement(tag){return new El(tag);}
 };
-const calls=[],mesh={preview:{active:false},selection:{ids:[6],faceIds:[0],partId:'mesh-1'},ring:{centered:false}};
+const calls=[],mesh={preview:{active:false},selection:{mode:'vertex',ids:[6],faceIds:[0],partId:'mesh-1'},ring:{centered:false}};
 const bridge={inspect:()=>mesh,setComponentMode:mode=>{calls.push(['component',mode]);return {ok:true};},
  setRingAnchor:()=>{mesh.ring.centered=true;calls.push(['anchor']);return {ok:true};},
  selectRing:opts=>{calls.push(['ring',opts]);return {ok:true,message:'selected '+opts.mode};},
@@ -68,6 +68,7 @@ assert.equal(api.inspect().settings,false,'Tool must not open inspector');
 api.chooseMode('single');
 assert.equal(api.inspect().settings,false,'Single selection has no settings');
 api.chooseMode('fill');
+assert.equal(calls.filter(x=>x[0]==='component'&&x[1]==='vertex').length,0,'Reusing Vertex mode must preserve the selected ring center');
 assert.equal(api.inspect().settings,true,'Ring Fill must show settings');
 assert.equal(ringMode.value,'fill');
 assert(calls.some(x=>x[0]==='ring'&&x[1].mode==='fill'&&x[1].steps===3));
