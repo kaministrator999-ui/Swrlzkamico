@@ -76,14 +76,21 @@ def apply(html):
   return;
  }
  if(se371ActionBusy)return;""",'model Save Project explicit account')
+    # Preserve the existing native button creation and styling; only customize
+    # the modeler scope after its buttons have been mounted.
     html=once(html,
-        """ for(const [label,mode] of [['Save Project','save'],['Clone Project','clone']]){
-  const button=document.createElement('button');""",
-        """ for(const [label,mode] of (scope==='model'
-   ?[['Save to account','save']]
-   :[['Save Project','save'],['Clone Project','clone']])){
-  const button=document.createElement('button');""",
-        'model Save button explicit destination')
+        "function se371UpdateButtons(){",
+        """const se470PriorProjectButtons=se371Buttons;
+se371Buttons=function(host,scope){
+ se470PriorProjectButtons(host,scope);
+ if(scope==='model'){
+  const saved=host?.querySelector('[data-se371-controls="model"] [data-se371-action="save"]');
+  if(saved){saved.textContent='Save to account';saved.title='Explicitly save this model to your account';}
+  host?.querySelector('[data-se371-controls="model"] [data-se371-action="clone"]')?.remove();
+ }
+};
+function se371UpdateButtons(){""",
+        'model Save controls');
 
     # Explicit account asset writes reuse one working model identity and cloud
     # revision. Local draft recovery and manual local saves remain separate.
