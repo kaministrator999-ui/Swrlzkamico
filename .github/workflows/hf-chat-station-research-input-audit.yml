@@ -28,7 +28,7 @@ jobs:
                 matches.append((i+1,line.strip()[:240]))
             print("SWRLZ_STATION_INPUT_MATCHES "+json.dumps({"revision":rev,"path":path,"matches":matches[:190]},ensure_ascii=False),flush=True)
             if path=="station.py":
-              for lo,hi in ((1100,1170),(1250,1390),(2310,2395)):
+              for lo,hi in ((1390,1560),(2440,2620)):
                 print("SWRLZ_STATION_HANDLER "+json.dumps({"lo":lo,"lines":[str(i+1)+":"+lines[i][:300] for i in range(lo-1,min(hi,len(lines)))]},ensure_ascii=False),flush=True)
               for num,_ in matches:
                 if 1200<num<2100 and any("generate_events" in lines[num-1] or marker in lines[num-1] for marker in ("payload", "onlineContext","privateResearchContext","sourceChangeIdentity","codingTask")):
