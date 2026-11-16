@@ -75,6 +75,8 @@
   if(!bar)return;
   bar.hidden=!type;
   if(!type)return;
+  const dock=type==='modeler'?document.querySelector('#modelAtelierPanel .atelier-inspector'):document.getElementById('se223Panel');
+  if(dock&&bar.parentElement!==dock)dock.prepend(bar);
   const sel=bar.querySelector('select');
   const previous=sel.value;
   sel.replaceChildren();
@@ -154,7 +156,7 @@
   bar.id='se468AssetBar';bar.hidden=true;bar.setAttribute('aria-label','Standalone studio asset library');
   bar.innerHTML='<strong>Studio assets</strong><select aria-label="Saved studio assets"></select><button id="se468LocalSave" type="button">Save locally</button><button id="se468CloudSave" type="button">Save to account</button><button id="se468CloudRefresh" type="button">Refresh account</button><button id="se468Load" type="button">Load selected</button><span id="se468AssetStatus" role="status">Assets stay separate from Game Studio until explicitly imported.</span>';
   const style=document.createElement('style');style.textContent=
-   '#se468AssetBar{position:fixed;left:50%;bottom:10px;transform:translateX(-50%);z-index:2147481000;background:#152238;color:#f0f7ff;border:1px solid #64839d;border-radius:12px;padding:8px;display:flex;align-items:center;flex-wrap:wrap;gap:6px;width:min(96vw,820px);max-height:38dvh;overflow:auto;box-shadow:0 6px 25px #0009;font:12px system-ui}#se468AssetBar[hidden]{display:none!important}#se468AssetBar button,#se468AssetBar select{min-height:34px;background:#243650;color:white;border:1px solid #7891a9;border-radius:6px;padding:5px}#se468AssetBar select{flex:1;min-width:130px}#se468AssetStatus{flex-basis:100%}#se468AssetStatus[data-error=true]{color:#ffb2a5}';
+   '#se468AssetBar{position:relative;z-index:1;background:#152238;color:#f0f7ff;border:1px solid #64839d;border-radius:12px;padding:8px;display:flex;align-items:center;flex-wrap:wrap;gap:6px;width:100%;max-width:100%;max-height:none;overflow:auto;box-shadow:0 6px 25px #0009;font:12px system-ui}#se468AssetBar[hidden]{display:none!important}#se468AssetBar button,#se468AssetBar select{min-height:34px;background:#243650;color:white;border:1px solid #7891a9;border-radius:6px;padding:5px}#se468AssetBar select{flex:1;min-width:130px}#se468AssetStatus{flex-basis:100%}#se468AssetStatus[data-error=true]{color:#ffb2a5}';
   document.head.append(style);document.body.append(bar);
   bar.querySelector('#se468LocalSave').onclick=()=>void save(mode(),false);
   bar.querySelector('#se468CloudSave').onclick=()=>void save(mode(),true);
