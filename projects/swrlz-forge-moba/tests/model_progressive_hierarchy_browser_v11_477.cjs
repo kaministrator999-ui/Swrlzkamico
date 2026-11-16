@@ -73,6 +73,7 @@ const server=http.createServer((req,res)=>{
     });
     console.log('SE477_VERTEX_ENTRY_'+cfg.name+' '+JSON.stringify(selected));
     assert.equal(selected.state.operation,true);
+    assert.equal(selected.state.flyout,false,'Tool flyout must collapse after operation selection to expose selection bars');
     assert.equal(selected.state.selectionType,'vertex');
     assert.equal(selected.state.shape,'single');
     assert.equal(selected.vertex.mode,'vertex');
@@ -109,6 +110,7 @@ const server=http.createServer((req,res)=>{
     assert.equal(face.state.selectionType,'face');
     assert.equal(face.mode,'face');
     assert(face.shapes.includes('Face region'));
+    await sculpt.click({timeout:12000}); // reopen the retained operation list
     await page.locator('#se474ToolFlyout button[data-se474-value="Inset"]').click({timeout:12000});
     const inset=await page.evaluate(()=>({
      state:window.SWYRL_ENGINE_PROGRESSIVE_TOOLS_474.inspect(),
