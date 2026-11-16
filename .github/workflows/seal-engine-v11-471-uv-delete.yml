@@ -1,0 +1,52 @@
+name: Seal and verify §E v11.471 UV texture and project deletion
+on:
+  push:
+    branches: [fix/se471-uv-render-project-delete]
+    paths:
+      - ".github/workflows/seal-engine-v11-471-uv-delete.yml"
+      - "projects/swrlz-forge-moba/runtime/project_delete_confirm_v11_471.*"
+      - "projects/swrlz-forge-moba/runtime/uv_*_v11_471.js"
+      - "projects/swrlz-forge-moba/patches/v11_471_uv_render_project_delete.py"
+      - "projects/swrlz-forge-moba/scripts/prepare_v11_471_release.py"
+      - "projects/swrlz-forge-moba/scripts/verify_v11_471_release.py"
+      - "projects/swrlz-forge-moba/tests/uv_*_v11_471.mjs"
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: se471-verified-source-seal
+  cancel-in-progress: false
+jobs:
+  verify-and-seal:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Build full engine, validate all old and new regressions, seal exact artifact bytes
+        run: python projects/swrlz-forge-moba/scripts/prepare_v11_471_release.py
+      - name: Persist exact source receipt and deploy request
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add projects/swrlz-forge-moba/source-manifest.json projects/swrlz-forge-moba/DEPLOY_REQUEST.json
+          if ! git diff --cached --quiet; then
+            git commit -m "seal(§E): verified v11.471 source bytes and release request"
+            git push origin HEAD:fix/se471-uv-render-project-delete
+          fi
+      - name: Store release verification receipt
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: se471-uv-render-project-delete
+          path: |
+            projects/swrlz-forge-moba/source-manifest.json
+            projects/swrlz-forge-moba/DEPLOY_REQUEST.json
+          if-no-files-found: error
