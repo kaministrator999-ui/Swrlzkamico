@@ -1,0 +1,32 @@
+name: Diagnose §C ZeroGPU runtime startup logs (read only)
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/diagnose-chat-zerogpu-logs-20261116.yml"]
+permissions:
+  contents: read
+jobs:
+  logs:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Install authenticated Hub client for private Space logs
+        run: python -m pip install --quiet 'huggingface_hub>=1.16,<2'
+      - name: Read current startup errors and ZeroGPU registration without changes
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          python - <<'PY'
+          import os,re
+          from huggingface_hub import HfApi
+          api=HfApi(token=os.environ.get('HF_TOKEN'))
+          keep=re.compile(r'ZeroGPU|@spaces\.GPU|startup|Startup|ERROR|Error|Traceback|Exception|Import|HF_WARMUP|HF_MODEL_ROUTES|engine|python app.py',re.I)
+          found=[]
+          try:
+              for line in api.fetch_space_logs('kamiloki/Swyrlz',follow=False):
+                  s=str(line).strip()
+                  if keep.search(s) and len(found)<100:found.append(s[:350])
+          except Exception as e:print('SECHAT_LOG_FETCH_FAILURE',type(e).__name__,str(e)[:120],flush=True)
+          for line in found[-65:]:print('SECHAT_RUNTIME_LOG',line,flush=True)
+          print('SECHAT_FILTERED_COUNT',len(found),flush=True)
+          PY
