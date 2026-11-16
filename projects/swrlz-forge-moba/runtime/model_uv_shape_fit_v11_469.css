@@ -1,0 +1,26 @@
+/* SE469_UV_SHAPE_FIT_STYLES_START */
+#modelAtelierUVLayout #se469UVShapeFit{
+ display:grid;grid-template-columns:minmax(0,1fr);gap:8px;
+ background:#152e39;border:1px solid #638d9a;border-radius:8px;
+ padding:9px;min-width:0;color:#dbf9ff;
+}
+#modelAtelierUVLayout #se469UVShapeFit strong{font-size:13px;color:#d3fbff}
+#modelAtelierUVLayout #se469UVShapeFit p{font-size:11px;line-height:1.4;color:#b8dce2;margin:0;overflow-wrap:anywhere}
+#modelAtelierUVLayout #se469UVShapeStatus{color:#fff1c5;font-size:12px;font-weight:600;min-height:20px}
+#modelAtelierUVLayout #se469UVShapeFit .se469-uv-controls{
+ display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;
+}
+#modelAtelierUVLayout #se469UVShapeFit button{
+ min-height:40px;padding:8px 6px;font-size:11px;border-radius:8px;
+ color:#f5ffff;background:#254958;border:1px solid #6d9bab;
+ white-space:normal;overflow-wrap:anywhere;
+}
+#modelAtelierUVLayout #se469UVShapeFit button:disabled{opacity:.38;cursor:default}
+#modelAtelierUVLayout #se469UVShapeFit button:focus-visible{outline:2px solid #64ffe2;outline-offset:2px}
+#modelAtelierUVLayout #se469UVShapeFit #se469UVApply{background:#246053;border-color:#77bd9b}
+#modelAtelierUVLayout #se469UVShapeFit #se469UVCancel{background:#523b4b}
+@media (max-width:700px),(pointer:coarse){
+ #modelAtelierUVLayout #se469UVShapeFit{padding:7px}
+ #modelAtelierUVLayout #se469UVShapeFit button{min-height:44px}
+}
+/* SE469_UV_SHAPE_FIT_STYLES_END */
