@@ -72,9 +72,9 @@ def apply(html):
  });
  function validEnvelope(value){""")
  html=once(html,
-  "    setStatus(payload.authenticated?'Your Chat account is connected.':'Sign in to load your Chat history and save projects to your account.');return;",
-  """    window.dispatchEvent(new CustomEvent('swrlz:account-assets',{detail:{authenticated:payload.authenticated===true,user:payload.user||null}}));
-    setStatus(payload.authenticated?'Your Chat account is connected.':'Sign in to load your Chat history and save projects to your account.');return;""")
+  "  if(type==='account.status'){",
+  """  if(type==='account.status'){
+    window.dispatchEvent(new CustomEvent('swrlz:account-assets',{detail:{authenticated:payload.authenticated===true,user:payload.user||null}}));""")
  html=once(html,
   "    revoke('Chat session changed.');\n  }\n}",
   """    if(type==='account.logout'||payload.reason==='account-changed')
