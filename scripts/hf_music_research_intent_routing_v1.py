@@ -48,83 +48,71 @@ OLD_INSTALLED_LYRIC=r'''    # Lyric *analysis* and revision of a just-created/us
                    and not (musical_analysis and not
                             (explicit_lookup_verb or published_full_lyrics)))'''
 OLD_WEB='''    explicit_web = bool(_EXPLICIT_WEB.search(text))'''
-NEW_WEB=r'''    # swrlz-research-music-operation-disambiguation-v1: actual research commands
-    # initiate a public-source search, but descriptions of past research do not.
+NEW_WEB=r'''    # swrlz-research-music-operation-disambiguation-v1
+    # Affirmative research prompts search; words inside negative requests don't.
     research_command=bool(re.search(
         r"(?i)^\s*(?:(?:please|could you|can you)\s+)?"
         r"(?:research|look into|investigate)\b",text))
-    # Explicit instructions not to perform ANOTHER lookup are not an
-    # instruction to search, even when they include the words "web search".
-    # An affirmative initial "Research..." command remains authoritative.
     no_new_lookup=bool(re.search(
-        r"(?i)\b(?:without|don't|do not|skip|avoid|no)\s+"
-        r"(?:(?:doing|running|performing)\s+)?"
-        r"(?:(?:a|an|another|new|fresh)\s+)?"
-        r"(?:(?:web|online|public)\s+)?"
-        r"(?:look\s*up|lookup|search|research|browse)\b",text))
-    explicit_web = bool(research_command or
-                        (_EXPLICIT_WEB.search(text) and not no_new_lookup))'''
+        r"(?i)\b(?:without|don't|do not|never|skip|avoid|no|not)\b"
+        r".{0,65}\b(?:web\s+search|online\s+search|search|"
+        r"look\s*up|lookup|research|browse)\b",text))
+    explicit_web=bool(research_command or
+                      (_EXPLICIT_WEB.search(text) and not no_new_lookup))'''
 OLD_LYRIC='''    lyrics_lookup=bool(_LYRICS_LOOKUP.search(text)) and not (lyrics_creative and not explicit_web)'''
-NEW_LYRIC=r'''    # Lyric *analysis* and revision of a just-created/user-authored song are
-    # not requests to retrieve an external song's published lyric text.
-    musical_analysis=bool(re.search(
-        r"(?i)\b(?:research|compare|explain|describe|analy[sz]e|understand|"
-        r"structure|songwriting|rhythm|rhythmic|flow|meter|rhyme|forms?|"
-        r"genres?|patterns?|subdivisions?|bars?)\b",text))
-    creative_revision=bool(re.search(
-        r"(?i)\b(?:revise|rewrite|remix|adapt|transform|rework|polish|"
-        r"edit|change|improve|continue)\b.{0,180}"
-        r"\b(?:song|lyrics?|verses?|chorus|bridge|hook|stanza)\b",text))
-    # Retrieval requires an explicit request for existing lyric text. A word
-    # like 'lyrics' alone is insufficient to activate verification.
-    lyric_text_demand=bool(re.search(
-        r"(?i)\b(?:give|show|provide|print|quote|reproduce|copy|find|fetch|"
-        r"retrieve|transcribe|recite|look\s+up|search\s+for)\b.{0,100}"
-        r"\b(?:lyrics?|words\s+to\s+(?:the\s+)?song)\b"
-        r"|\b(?:full|complete|all\s+the)\s+(?:song\s+)?lyrics?"
-        r"\s+(?:of|to|for)\b"
-        r"|\blyrics?\s+(?:of|to|for)\s+(?:the\s+)?(?:song|track)\b",
-        text))
-    explicit_lookup_verb=bool(re.search(
-        r"(?i)\b(?:find|fetch|retrieve|look\s+up|search\s+for|quote|"
-        r"transcribe|recite|reproduce|show|give|provide|print)\b"
-        r".{0,100}\b(?:lyrics?|words\s+to\s+(?:the\s+)?song)\b",text))
+NEW_LYRIC=r'''    # "Lyrics" as subject matter or user-authored content is not an
+    # affirmative request for a published recording's transcript.
+    affirmative_lyrics_request=bool(re.search(
+        r"(?i)\b(?:find|fetch|look\s+up|search\s+for|give|show|provide|"
+        r"quote|transcribe|recite|reproduce|print|copy|retrieve)\b"
+        r".{0,85}\b(?:lyrics?|words\s+to\s+(?:the\s+)?song)\b",text))
     published_full_lyrics=bool(re.search(
-        r"(?i)\b(?:full|complete|all\s+the)\s+(?:song\s+)?lyrics?"
-        r"\s+(?:of|to|for)\b",text))
+        r"(?i)\b(?:research|find|provide|show|give|fetch|retrieve)\b"
+        r".{0,35}\b(?:full|complete|published|existing)\s+"
+        r"(?:song\s+)?lyrics?\b",text))
+    quote_song_verse=bool(re.search(
+        r"(?i)\b(?:quote|recite|transcribe|reproduce|copy)\b"
+        r".{0,60}\b(?:verse|chorus)\b",text))
     negated_lyric_retrieval=bool(re.search(
-        r"(?i)\b(?:do\s+not|don't|never|avoid|without|skip)\s+"
-        r"(?:any\s+)?(?:look\s*up|search\s+for|find|fetch|retrieve|"
-        r"quote|reproduce|provide|show|print|transcribe|copy)\b"
-        r".{0,80}\b(?:lyrics?|words\s+to\s+(?:the\s+)?song)\b",text))
-    lyrics_lookup=(bool(_LYRICS_LOOKUP.search(text)) and lyric_text_demand
-                   and not negated_lyric_retrieval
-                   and not (creative_revision and not explicit_lookup_verb)
-                   and not (musical_analysis and not
-                            (explicit_lookup_verb or published_full_lyrics)))'''
+        r"(?i)\b(?:do\s+not|don't|never|avoid|without|skip|no|not)\b"
+        r".{0,65}\b(?:look\s*up|search|find|fetch|retrieve|quote|"
+        r"reproduce|provide|show|print|transcribe|copy)\b"
+        r".{0,90}\b(?:lyrics?|song|recording|verse|chorus)\b",text))
+    creative_revision=bool(re.search(
+        r"(?i)\b(?:revise|rewrite|remix|adapt|transform|rework|"
+        r"polish|edit|change|improve|continue|remaster)\b"
+        r".{0,200}\b(?:song|lyrics?|verses?|chorus|bridge|hook)\b",text))
+    analysis_not_lyric_retrieval=bool(re.search(
+        r"(?i)\b(?:research|compare|explain|describe|analy[sz]e|understand)\b"
+        r".{0,140}\b(?:structure|songwriting|rhythm|flow|meter|rhyme|"
+        r"form|genres?|patterns?|subdivisions?|bars?|history|arrangements?)\b",text))
+    lyrics_lookup=bool(
+        (affirmative_lyrics_request or published_full_lyrics or quote_song_verse)
+        and not negated_lyric_retrieval
+        and not (creative_revision and not published_full_lyrics)
+        and not (analysis_not_lyric_retrieval and not published_full_lyrics))'''
 OLD_WEATHER='''    weather_intent=bool(_WEATHER_TERMS.search(text) and not weather_negated)'''
-NEW_WEATHER=r'''    # User-described weather words are not a live-data request.
-    # Require an explicit meteorological operation; a fictional rain scene,
-    # song title or a negated forecast instruction must stay in normal chat.
+NEW_WEATHER=r'''    # Fictional rain and negated weather are not meteorological queries.
     explicit_weather_data=bool(re.search(
-        r"(?i)\b(?:weather|forecast|temperature|humidity|barometric|"
-        r"precipitation|wind\s+speed|chance\s+of\s+(?:rain|snow)|"
-        r"will\s+it\s+(?:rain|snow)|(?:is|will)\s+it\s+(?:raining|snowing)|"
-        r"what(?:'s| is)\s+the\s+(?:rain|snow))\b",text))
-    fiction_or_song=bool(re.search(
-        r"(?i)\b(?:fictional|pretend|story|scene|original\s+song|"
-        r"lyrics?|lullaby|poem|verse|chorus|song\s+title)\b",text))
-    weather_used_as_source=bool(re.search(
-        r"(?i)\b(?:use|using|based\s+on|include)\b.{0,55}"
-        r"\b(?:weather\s+forecast|current\s+weather|live\s+weather|"
-        r"actual\s+forecast|today's\s+forecast)\b",text))
-    explicit_weather_negation=bool(re.search(
-        r"(?i)\b(?:not|no|without|don't|do\s+not|never)\b.{0,30}"
-        r"\b(?:weather|forecast|live\s+data|location\s+request)\b",text))
-    weather_intent=bool(explicit_weather_data and not weather_negated
-                        and not (explicit_weather_negation and not weather_used_as_source)
-                        and not (fiction_or_song and not weather_used_as_source))'''
+        r"(?i)\b(?:what(?:'s|\s+is)\s+(?:the\s+)?"
+        r"(?:weather|forecast|temperature|humidity|wind|precipitation)|"
+        r"(?:is|will)\s+it\s+(?:rain|raining|snow|snowing)|"
+        r"will\s+it\s+(?:rain|snow)|chance\s+of\s+(?:rain|snow)|"
+        r"current\s+(?:weather|temperature|forecast)|"
+        r"weather\s+in\s+\S+|forecast\s+(?:in|for|at)\s+\S+)\b",text)
+        or re.search(
+        r"(?i)\b(?:check|give|show|tell\s+me|look\s+up|using?|use)\b"
+        r".{0,65}\b(?:weather|forecast|temperature|"
+        r"humidity|chance\s+of\s+(?:rain|snow))\b",text))
+    weather_intent=bool(explicit_weather_data and not weather_negated)'''
 OLD_WEATHER2='''    if _WEATHER_TERMS.search(text) and not weather_negated and not programming.get("codingTask"):'''
+OLD_FRESHNESS='''    freshness = bool(_FRESHNESS.search(text))'''
+NEW_FRESHNESS=r'''    # The word 'today' inside creative instructions is not freshness intent.
+    creative_narrative=bool(re.search(
+        r"(?i)\b(?:write|compose|rewrite|revise|remix|remaster|create|"
+        r"fictional|lullaby|story|poem|lyrics?|verses?)\b",text))
+    freshness=bool(_FRESHNESS.search(text) and not
+                   (creative_narrative and not explicit_web))'''
 NEW_WEATHER2='''    if weather_intent and not programming.get("codingTask"):'''
 def sha(x):return hashlib.sha256(x).hexdigest()
 def one(text,old,new,name):
@@ -143,6 +131,7 @@ def build(raw):
     s=one(s,OLD_LYRIC,NEW_LYRIC,"lyrics intent")
     s=one(s,OLD_WEATHER,NEW_WEATHER,"weather intent")
     s=one(s,OLD_WEATHER2,NEW_WEATHER2,"weather fallback")
+    s=one(s,OLD_FRESHNESS,NEW_FRESHNESS,"narrative freshness")
     compile(s,FILE,"exec")
     return s.encode("utf-8")
 def test(raw):
@@ -179,6 +168,13 @@ def test(raw):
       "is_simple_checkin":lambda s:False,
       "ONLINE_CONTRACT":"contract",
     }
+    # Exercise the genuine deployed regex definitions, not reduced mocks.
+    for key in ("_EXPLICIT_WEB","_LYRICS_LOOKUP","_WEATHER_TERMS",
+                "_TIME_TERMS","_FRESHNESS","_LOCATION_REQUIRED"):
+        nodes=[a for a in tree.body if isinstance(a,ast.Assign)
+               and any(isinstance(t,ast.Name) and t.id==key for t in a.targets)]
+        if len(nodes)!=1:raise RuntimeError("Missing live grammar "+key)
+        exec(compile(ast.Module(body=nodes,type_ignores=[]),FILE,"exec"),ns)
     exec(compile(minimal,FILE,"exec"),ns)
     fn=ns["classify_online_request"]
     cases=[
@@ -203,16 +199,23 @@ def test(raw):
       ("Without a new web search, summarize the eclipse evidence you previously cited.",False,"none",None),
       ("Don't do another web lookup; summarize the two expansion classes.",False,"none",None),
       ("Skip searching again and use the previous sources.",False,"none",None),
-      ("For a pretend story, a robin stands in rain holding a small amber sign. This is fiction, not a forecast or a location request.",False,"none",None),
-      ("Write a complete ORIGINAL song titled 'Rain Glass Lantern' with a fictional station scene, not a forecast.",False,"none",None),
-      ("Remember my original fictional lullaby line: a paper moon hums through the rain. No forecast.",False,"none",None),
-      ("These original fictional song lines are mine and mention rain. Simply acknowledge.",False,"none",None),
-      ("Research twelve-bar blues AAB lyric verse structure with public sources. Do not quote published lyrics.",True,"search",None),
-      ("Revise the entire song, preserving the original chorus hook and complete revised lyrics.",False,"none",None),
-      ("Write an original song using the weather forecast for Topeka, Kansas.",True,"weather",None),
       ("Research public sources about blues form. Do not fetch any published song lyrics.",True,"search",None),
       ("Don't look up published song lyrics; just explain an AAB verse.",False,"none",None),
       ("Please look it up online: the history of hip-hop genres.",True,"search",None),
+      ("These are my original fictional verses. Rain hits the station clock. Just acknowledge them, no new lyrics yet.",False,"none",None),
+      ("These lines are mine, not from a recording. Simply acknowledge them; don't produce lyrics yet.",False,"none",None),
+      ("Write an ORIGINAL song titled Rain Glass Lantern. This is fiction, not a weather question.",False,"none",None),
+      ("Revise the entire song, keep the chorus, return the COMPLETE revised lyrics.",False,"none",None),
+      ("Remaster my fictional song and keep the hook, return the complete song.",False,"none",None),
+      ("Research twelve-bar blues AAB verse structure and compare it to pop chorus sections. Cite a source; don't quote published lyrics.",True,"search",None),
+      ("Research how synthesizers and sequencers shaped early electronic pop, without reproducing lyrics from recordings.",True,"search",None),
+      ("In a toy chat project list 3 pending tasks: fix Stop, improve lyric formatting and change logo.",False,"none",None),
+      ("I am discussing the remix, not requesting another song or a web search. Explain the verses. No new lyrics.",False,"none",None),
+      ("Without a new web search, explain why not every new moon creates an eclipse.",False,"none",None),
+      ("No weather lookup: a robin stands in rain holding an amber sign in my fictional story.",False,"none",None),
+      ("Is it snowing outside in Topeka, Kansas?",True,"weather",None),
+      ("Give the published lyrics to Example Song by Fictional Artist.",True,"search","lyrics-verification"),
+      ("What is the current temperature in Topeka, Kansas?",True,"weather",None),
     ]
     for prompt,requested,kind,mode in cases:
         result=fn(prompt,[],{},None)
