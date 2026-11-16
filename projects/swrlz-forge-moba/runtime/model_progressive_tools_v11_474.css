@@ -1,0 +1,142 @@
+/* SE474_PROGRESSIVE_MODEL_TOOLS_STYLES_START */
+/* Four levels, one native editor: family rail -> tool flyout ->
+   top specifics -> contextual inspector. Never mask the canvas hit target. */
+html #modelAtelierPanel[data-se474-progressive=true] .atelier-body{
+ position:relative!important;isolation:isolate;
+}
+html #modelAtelierPanel[data-se474-progressive=true] #modelAtelierToolRail{
+ position:relative!important;overflow:visible!important;z-index:90;
+}
+html #modelAtelierPanel[data-se474-progressive=true] #se474ToolFlyout[hidden],
+html #modelAtelierPanel[data-se474-progressive=true] #se474SpecificModes[hidden]{
+ display:none!important;
+}
+html #modelAtelierPanel[data-se474-progressive=true] #se474ToolFlyout{
+ position:absolute!important;box-sizing:border-box;z-index:95;
+ top:3px;bottom:auto;right:calc(100% + 5px);
+ width:clamp(150px,19vw,238px);max-height:calc(100% - 8px);
+ display:flex;flex-direction:column;align-items:stretch;gap:5px;
+ overflow-y:auto;overscroll-behavior:contain;touch-action:pan-y;
+ padding:6px;border:1px solid #668a9b;border-radius:10px;
+ background:#16293beF;box-shadow:0 7px 24px #0009;
+}
+html #modelAtelierPanel[data-se474-progressive=true] #se474ToolFlyout .se474-flyout-title{
+ position:sticky;top:-6px;display:flex;gap:5px;align-items:center;justify-content:space-between;
+ z-index:1;background:#203b4d;color:#e1f7fc;
+ border-radius:6px;padding:4px 6px;font:700 12px/1.3 system-ui;
+}
+html #modelAtelierPanel[data-se474-progressive=true] #se474ToolFlyout button{
+ box-sizing:border-box;flex:0 0 auto;width:100%;min-height:42px;
+ padding:7px 8px;border:1px solid #547d92;border-radius:7px;
+ background:#283e53;color:#f4fbff;text-align:left;
+ font:650 12px/1.3 system-ui;white-space:normal;touch-action:manipulation;
+}
+html #modelAtelierPanel[data-se474-progressive=true] #se474ToolFlyout .se474-flyout-title button{
+ width:35px;min-height:35px;padding:3px;text-align:center;font-size:20px;
+}
+html #modelAtelierPanel[data-se474-progressive=true] #se474ToolFlyout button[aria-pressed=true]{
+ background:#1a6573;border-color:#8de8e6;
+}
+html #modelAtelierPanel[data-se474-progressive=true] #se474SpecificModes{
+ position:absolute!important;z-index:80;top:5px;
+ left:calc(var(--se320-left,0px) + 6px);
+ right:calc(var(--se320-rail,78px) + var(--se320-right,0px) + 6px);
+ box-sizing:border-box;min-width:0;min-height:47px;max-height:58px;
+ display:flex;align-items:center;flex-flow:row nowrap;gap:5px;
+ overflow-x:auto;overflow-y:hidden;touch-action:pan-x;
+ scrollbar-width:thin;overscroll-behavior-x:contain;
+ padding:4px 7px;border:1px solid #7194a8;border-radius:9px;
+ background:#152e40f5;box-shadow:0 4px 12px #0008;
+}
+html #modelAtelierPanel[data-se474-progressive=true] #se474SpecificModes .se474-top-label{
+ flex:0 0 auto;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+ color:#a7e4df;font:750 11px system-ui;padding:0 5px;
+}
+html #modelAtelierPanel[data-se474-progressive=true] #se474SpecificModes button{
+ box-sizing:border-box;flex:0 0 auto;min-height:38px;min-width:60px;
+ white-space:nowrap;padding:6px 11px;border:1px solid #5c8098;
+ border-radius:7px;background:#294259;color:#eefaff;
+ font:650 12px system-ui;touch-action:manipulation;
+}
+html #modelAtelierPanel[data-se474-progressive=true] #se474SpecificModes button[aria-pressed=true]{
+ background:#176979;border-color:#9ceadd;color:#fff;
+}
+html #modelAtelierPanel[data-se474-progressive=true] #se474ToolFeedback{
+ flex:0 0 auto;max-width:240px;font:11px/1.25 system-ui;
+ color:#c9e9f4;white-space:normal;
+}
+html #modelAtelierPanel[data-se474-progressive=true] :is(#se474ToolFlyout,#se474SpecificModes) button:focus-visible{
+ outline:2px solid #abfbef;outline-offset:2px;
+}
+/* The prior secondary mode ribbon and advanced Face flyout are not additional
+   navigation layers in progressive mode; their source controls still exist. */
+html #modelAtelierPanel[data-se474-progressive=true] #seAtelierModes,
+html #modelAtelierPanel[data-se474-progressive=true] #se452FaceOperations,
+html #modelAtelierPanel[data-se474-progressive=true] #se452FaceModifiers{
+ display:none!important;
+}
+/* Family/tool selection never consumes a right settings column. Only a
+   selected specific mode can expose that original native inspector. */
+html #modelAtelierPanel[data-se474-progressive=true][data-se474-settings-open=false][data-se251-layout=desktop] .atelier-body{
+ --se320-right:0px!important;
+ grid-template-columns:var(--se320-left,0px) minmax(0,1fr) var(--se320-rail,78px) 0px!important;
+}
+html #modelAtelierPanel[data-se474-progressive=true][data-se474-settings-open=false] .atelier-body>.atelier-inspector,
+html #modelAtelierPanel[data-se474-progressive=true][data-se474-settings-open=false] .atelier-body>#se251-split-model-right{
+ display:none!important;
+}
+/* Show settings from the existing context and real topology/ring controls;
+   no duplicate input state, fake operations, or new geometry owner. */
+html #modelAtelierPanel[data-se474-progressive=true][data-se474-settings-open=true] .atelier-inspector{
+ display:flex!important;flex-direction:column!important;min-width:0!important;
+ overflow-y:auto!important;overscroll-behavior:contain;
+}
+html #modelAtelierPanel[data-se474-progressive=true][data-se474-settings-open=true] .atelier-inspector>#seAtelierModes,
+html #modelAtelierPanel[data-se474-progressive=true][data-se474-settings-open=true] .atelier-inspector>#se430SelectionContext,
+html #modelAtelierPanel[data-se474-progressive=true][data-se474-settings-open=true] .atelier-inspector>.se320-selection-tools{
+ display:none!important;
+}
+html #modelAtelierPanel[data-se474-progressive=true][data-se474-settings-open=true][data-se474-specific-type=vertex] #modelAtelierTopologyWorkshop{
+ display:none!important;
+}
+html #modelAtelierPanel[data-se474-progressive=true][data-se474-settings-open=true][data-se474-specific-type=vertex] #se466RingControls:not([hidden]){
+ display:block!important;min-width:0!important;
+}
+html #modelAtelierPanel[data-se474-progressive=true][data-se474-settings-open=true][data-se474-specific-type=vertex] #atelierContextWorkbench{
+ display:none!important;
+}
+html #modelAtelierPanel[data-se474-progressive=true][data-se474-settings-open=true][data-se474-specific-type=manual] #modelAtelierTopologyWorkshop,
+html #modelAtelierPanel[data-se474-progressive=true][data-se474-settings-open=true][data-se474-specific-type=inset] #modelAtelierTopologyWorkshop,
+html #modelAtelierPanel[data-se474-progressive=true][data-se474-settings-open=true][data-se474-specific-type=extrude] #modelAtelierTopologyWorkshop{
+ display:block!important;flex:0 0 auto!important;min-width:0;
+}
+html #modelAtelierPanel[data-se474-progressive=true][data-se474-settings-open=true]:is([data-se474-specific-type=manual],[data-se474-specific-type=inset],[data-se474-specific-type=extrude]) #modelAtelierTopologyWorkshop>label:has(#modelAtelierWorkshopOperation){
+ display:none!important;
+}
+html #modelAtelierPanel[data-se474-progressive=true][data-se474-settings-open=true]:is([data-se474-specific-type=manual],[data-se474-specific-type=inset],[data-se474-specific-type=extrude]) #atelierContextWorkbench{
+ display:none!important;
+}
+html #modelAtelierPanel[data-se474-progressive=true][data-se474-settings-open=true]:is([data-se474-specific-type=manual],[data-se474-specific-type=inset],[data-se474-specific-type=extrude]) #se466RingControls{
+ display:none!important;
+}
+@media(max-width:699px),(pointer:coarse){
+ html #modelAtelierPanel[data-se474-progressive=true] #se474ToolFlyout{
+  right:4px;left:auto;top:auto;bottom:calc(100% + 4px);
+  width:min(230px,calc(100vw - 80px));max-height:min(52dvh,380px);
+ }
+ html #modelAtelierPanel[data-se474-progressive=true] #se474SpecificModes{
+  left:5px;right:5px;top:4px;min-height:45px;
+ }
+ html #modelAtelierPanel[data-se474-progressive=true][data-se474-settings-open=false][data-se251-layout=compact] .atelier-body{
+  grid-template-rows:minmax(140px,1fr) 54px 0px!important;
+ }
+ html #modelAtelierPanel[data-se474-progressive=true][data-se474-settings-open=true][data-se251-layout=compact] .atelier-body{
+  grid-template-rows:minmax(160px,1fr) 54px minmax(0,34dvh)!important;
+ }
+}
+@media(prefers-reduced-motion:reduce){
+ html #modelAtelierPanel[data-se474-progressive=true] :is(#se474ToolFlyout,#se474SpecificModes){
+  transition:none!important;
+ }
+}
+/* SE474_PROGRESSIVE_MODEL_TOOLS_STYLES_END */
