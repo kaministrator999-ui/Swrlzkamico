@@ -30,18 +30,18 @@ def apply(html):
  # Keep Quest's virtual-mouse silhouette target bounded and leave desktop exactness intact.
  html=once(html,
    "if(!triangle&&e.pointerType==='touch'&&['vertex','edge'].includes(atelierComponentMode)){",
-   "if(!triangle&&(e.pointerType==='touch'||/OculusBrowser|Quest/i.test(navigator.userAgent))&&['vertex','edge'].includes(atelierComponentMode)){")
+   "if(!triangle&&(e.pointerType==='touch'||(typeof navigator!=='undefined'&&/OculusBrowser|Quest/i.test(navigator.userAgent)))&&['vertex','edge'].includes(atelierComponentMode)){")
  html=once(html,
    "const tol=e.pointerType==='touch'?31:22;",
-   "const tol=e.pointerType==='touch'?31:/OculusBrowser|Quest/i.test(navigator.userAgent)?28:22;")
+   "const tol=e.pointerType==='touch'?31:(typeof navigator!=='undefined'&&/OculusBrowser|Quest/i.test(navigator.userAgent))?28:22;")
  html=once(html,
    "if(Math.hypot(e.clientX-d.startX,e.clientY-d.startY)>5)d.moved=true;",
-   "if(Math.hypot(e.clientX-d.startX,e.clientY-d.startY)>(/OculusBrowser|Quest/i.test(navigator.userAgent)?11:5))d.moved=true;")
+   "if(Math.hypot(e.clientX-d.startX,e.clientY-d.startY)>((typeof navigator!=='undefined'&&/OculusBrowser|Quest/i.test(navigator.userAgent))?11:5))d.moved=true;")
  # Screen-space-aware point target that scales with zoom and viewport height.
  html=once(html,
    "raycaster.params.Points.threshold=.034;",
    """const se467Rect=renderer.domElement.getBoundingClientRect();
-  const se467Radius=e.pointerType==='touch'?19:/OculusBrowser|Quest/i.test(navigator.userAgent)?17:11;
+  const se467Radius=e.pointerType==='touch'?19:(typeof navigator!=='undefined'&&/OculusBrowser|Quest/i.test(navigator.userAgent))?17:11;
   const se467Depth=camera.position.distanceTo(atelierSculptOverlay.userData.vertexPoints.getWorldPosition(new THREE.Vector3()));
   const se467World=2*se467Depth*Math.tan(THREE.MathUtils.degToRad(camera.fov||44)/2)*se467Radius/Math.max(180,se467Rect.height);
   raycaster.params.Points.threshold=Math.min(.26,Math.max(.034,se467World));""")
