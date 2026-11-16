@@ -1,0 +1,15 @@
+{
+  "schema": "swrlz-knowledge-followup-v1",
+  "requestId": "web-mwivbqa4-2622861027-2618226703",
+  "modelId": "700m",
+  "eventType": "KNOWLEDGE_ACQUISITION_FOLLOWUP_3",
+  "sourceRef": "f149dd857e3d9219f5cae7da0286b5dbfec85c42",
+  "persistedAtUnixMs": 1794814703533,
+  "diagnostic": {
+    "schema": "swrlz-knowledge-followup-v1",
+    "parentRequestId": "web-mwivbqa4-2622861027-2618226703",
+    "turnIndex": 3,
+    "userText": "Retry the song but improved",
+    "capturedAtUnixMs": 1794814703531
+  }
+}
