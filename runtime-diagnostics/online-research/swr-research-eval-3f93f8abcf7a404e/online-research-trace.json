@@ -1,0 +1,359 @@
+{
+  "schema": "swrlz-github-online-research-trace-v1",
+  "requestId": "swr-research-eval-3f93f8abcf7a404e",
+  "modelId": "700m",
+  "eventType": "ONLINE_RESEARCH_TRACE",
+  "sourceRef": "f149dd857e3d9219f5cae7da0286b5dbfec85c42",
+  "persistedAtUnixMs": 1794801188639,
+  "diagnostic": {
+    "schema": "swrlz-online-research-log-v1",
+    "research": {
+      "contract": "swrlz-online-camera-v1",
+      "observabilityRevision": "v181-song-metadata-clean-form-integrity",
+      "kind": "search",
+      "status": "NO_RESULTS",
+      "reason": "existing-lyrics-retrieval",
+      "provider": "bounded-web-search-chain-v1",
+      "resultCount": 0,
+      "widgetKinds": [],
+      "sourceCount": 0,
+      "locationRequired": false,
+      "usedExplicitClientLocation": false,
+      "elapsedMs": 709,
+      "lyricsSourceAttemptCount": 0,
+      "lyricsFetchDebug": [],
+      "blockedLyricsSourceFamilies": [],
+      "musicStructureDebug": null,
+      "candidateAdmissionDebug": [
+        {
+          "query": "Research how traditional 12-bar blues AAB lyric verses compare to a common modern pop verse, pre-chorus and chorus arrangement. Give a clear explanation of line repetition, musical bars, and what each section does. Cite public music-education source links. Explain that these are common patterns, not mandatory rules. Do not reproduce lyrics from published songs.",
+          "title": "Research - Wikipedia",
+          "url": "https://en.wikipedia.org/wiki/Research",
+          "source": "en.wikipedia.org",
+          "rank": 1,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "research"
+          ],
+          "coreTerms": [
+            "research",
+            "how",
+            "traditional",
+            "12-bar",
+            "blues",
+            "aab",
+            "compare",
+            "common",
+            "modern",
+            "pop",
+            "pre-chorus",
+            "chorus"
+          ],
+          "snippetPreview": "Research, in its simplest terms, is an intentional search for knowledge. John W. Creswell states that \"research is a process of steps …"
+        },
+        {
+          "query": "Research how traditional 12-bar blues AAB lyric verses compare to a common modern pop verse, pre-chorus and chorus arrangement. Give a clear explanation of line repetition, musical bars, and what each section does. Cite public music-education source links. Explain that these are common patterns, not mandatory rules. Do not reproduce lyrics from published songs.",
+          "title": "ResearchGate | Find and share research",
+          "url": "https://www.researchgate.net/",
+          "source": "www.researchgate.net",
+          "rank": 2,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "research"
+          ],
+          "coreTerms": [
+            "research",
+            "how",
+            "traditional",
+            "12-bar",
+            "blues",
+            "aab",
+            "compare",
+            "common",
+            "modern",
+            "pop",
+            "pre-chorus",
+            "chorus"
+          ],
+          "snippetPreview": "Access 135+ million publications and connect with 20+ million researchers. Join for free and gain visibility by uploading your research."
+        },
+        {
+          "query": "Research how traditional 12-bar blues AAB lyric verses compare to a common modern pop verse, pre-chorus and chorus arrangement. Give a clear explanation of line repetition, musical bars, and what each section does. Cite public music-education source links. Explain that these are common patterns, not mandatory rules. Do not reproduce lyrics from published songs.",
+          "title": "RESEARCH Definition & Meaning - Merriam-Webster",
+          "url": "https://www.merriam-webster.com/dictionary/research",
+          "source": "www.merriam-webster.com",
+          "rank": 3,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "research"
+          ],
+          "coreTerms": [
+            "research",
+            "how",
+            "traditional",
+            "12-bar",
+            "blues",
+            "aab",
+            "compare",
+            "common",
+            "modern",
+            "pop",
+            "pre-chorus",
+            "chorus"
+          ],
+          "snippetPreview": "Nov 9, 2026 · The meaning of RESEARCH is studious inquiry or examination; especially : investigation or experimentation aimed at …"
+        },
+        {
+          "query": "Research how traditional 12-bar blues AAB lyric verses compare to a common modern pop verse, pre-chorus and chorus arrangement. Give a clear explanation of line repetition, musical bars, and what each section does. Cite public music-education source links. Explain that these are common patterns, not mandatory rules. Do not reproduce lyrics from published songs.",
+          "title": "Google Scholar",
+          "url": "https://www.scholar.google.com/",
+          "source": "www.scholar.google.com",
+          "rank": 4,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "line"
+          ],
+          "coreTerms": [
+            "research",
+            "how",
+            "traditional",
+            "12-bar",
+            "blues",
+            "aab",
+            "compare",
+            "common",
+            "modern",
+            "pop",
+            "pre-chorus",
+            "chorus"
+          ],
+          "snippetPreview": "Google Scholar provides a simple way to broadly search for scholarly literature. Search across a wide variety of disciplines and …"
+        },
+        {
+          "query": "Research how traditional 12-bar blues AAB lyric verses compare to a common modern pop verse, pre-chorus and chorus arrangement. Give a clear explanation of line repetition, musical bars, and what each section does. Cite public music-education source links. Explain that these are common patterns, not mandatory rules. Do not reproduce lyrics from published songs.",
+          "title": "Research",
+          "url": "https://research.nih.gov/",
+          "source": "research.nih.gov",
+          "rank": 5,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "research"
+          ],
+          "coreTerms": [
+            "research",
+            "how",
+            "traditional",
+            "12-bar",
+            "blues",
+            "aab",
+            "compare",
+            "common",
+            "modern",
+            "pop",
+            "pre-chorus",
+            "chorus"
+          ],
+          "snippetPreview": "Research priorities, publications and resources Navigate NIH's scientific strategy, access the world's largest biomedical literature …"
+        },
+        {
+          "query": "Research how traditional 12-bar blues AAB lyric verses compare to a common modern pop verse, pre-chorus and chorus arrangement. Give a clear explanation of line repetition, musical bars, and what each section does. Cite public music-education source links. Explain that these are common patterns, not mandatory rules. Do not reproduce lyrics from published songs.",
+          "title": "Research | SPJ",
+          "url": "https://spj.science.org/journal/research",
+          "source": "spj.science.org",
+          "rank": 6,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "research"
+          ],
+          "coreTerms": [
+            "research",
+            "how",
+            "traditional",
+            "12-bar",
+            "blues",
+            "aab",
+            "compare",
+            "common",
+            "modern",
+            "pop",
+            "pre-chorus",
+            "chorus"
+          ],
+          "snippetPreview": "3 days ago · The Open Access journal Research, published in association with CAST, publishes innovative, wide-ranging research in …"
+        },
+        {
+          "query": "Research how traditional 12-bar blues AAB lyric verses compare to a common modern pop verse, pre-chorus and chorus arrangement. Give a clear explanation of line repetition, musical bars, and what each section does. Cite public music-education source links. Explain that these are common patterns, not mandatory rules. Do not reproduce lyrics from published songs.",
+          "title": "Academia.edu - Find Research Papers, Topics, Researchers",
+          "url": "https://www.academia.edu/",
+          "source": "www.academia.edu",
+          "rank": 7,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "research"
+          ],
+          "coreTerms": [
+            "research",
+            "how",
+            "traditional",
+            "12-bar",
+            "blues",
+            "aab",
+            "compare",
+            "common",
+            "modern",
+            "pop",
+            "pre-chorus",
+            "chorus"
+          ],
+          "snippetPreview": "Academia.edu is the platform to share, find, and explore 66 Million research papers. Join us to accelerate your research needs & …"
+        },
+        {
+          "query": "Research how traditional 12-bar blues AAB lyric verses compare to a common modern pop verse, pre-chorus and chorus arrangement. Give a clear explanation of line repetition, musical bars, and what each section does. Cite public music-education source links. Explain that these are common patterns, not mandatory rules. Do not reproduce lyrics from published songs.",
+          "title": "Search | ResearchGate",
+          "url": "https://www.researchgate.net/search/publications",
+          "source": "www.researchgate.net",
+          "rank": 8,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "research"
+          ],
+          "coreTerms": [
+            "research",
+            "how",
+            "traditional",
+            "12-bar",
+            "blues",
+            "aab",
+            "compare",
+            "common",
+            "modern",
+            "pop",
+            "pre-chorus",
+            "chorus"
+          ],
+          "snippetPreview": "Find the research you need | With 160+ million publication pages, 1+ million questions, and 25+ million researchers, this is where …"
+        }
+      ],
+      "songIdentity": {},
+      "songDiscoveryPlan": [],
+      "lyricsRescueSearchDebug": [],
+      "lyricsMaxPageAttempts": 3,
+      "lyricsFallbackExhausted": true,
+      "rawPromptStored": false
+    },
+    "trace": [
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794801187929,
+        "phase": "RESEARCH_STARTED",
+        "activity": "Online research started",
+        "provider": "bounded-web-search-chain-v1",
+        "site": "",
+        "url": ""
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794801187930,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794801188120,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "activity": "No usable results from provider",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "httpStatus": 202,
+        "resultCount": 0
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794801188120,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794801188257,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "activity": "No usable results from provider",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "httpStatus": 202,
+        "resultCount": 0
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794801188257,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794801188637,
+        "phase": "SEARCH_PROVIDER_RESULTS",
+        "activity": "Search results found",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "httpStatus": 200,
+        "resultCount": 8
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794801188637,
+        "phase": "SEARCH_PROVIDER_SELECTED",
+        "activity": "Using bing-html",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "resultCount": 8
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794801188638,
+        "phase": "RESEARCH_COMPLETE",
+        "activity": "Online research complete",
+        "provider": "bounded-web-search-chain-v1",
+        "site": "",
+        "url": "",
+        "resultCount": 0
+      }
+    ],
+    "sourceSites": [],
+    "widgetKinds": [],
+    "requestedModelId": "700m",
+    "selectedModelId": "700m",
+    "rawPromptStored": false,
+    "historyStored": false,
+    "preciseLocationStored": false
+  }
+}
