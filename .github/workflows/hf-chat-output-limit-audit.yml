@@ -57,3 +57,20 @@ jobs:
                 ensure_ascii=False),flush=True)
           PY
 # 2026-11-15: Re-run read-only live investigation for user-observed OUTPUTTOKENLIMIT on lyric generation.
+
+      - name: Inspect bounded lyric and Station finalization seam without mutation
+        run: |
+          python - <<'PY'
+          from huggingface_hub import HfApi,hf_hub_download
+          from pathlib import Path
+          space="kamiloki/Swyrlz"; rev=HfApi().repo_info(space,repo_type="space").sha
+          print("LYRIC_AUDIT_REV",rev,flush=True)
+          for path,ranges in {
+              "lfm2_700m_engine.py":[(1260,1515),(1885,1905)],
+              "station.py":[(1744,1760),(1808,1845),(2080,2104)],
+          }.items():
+              lines=Path(hf_hub_download(space,path,revision=rev,repo_type="space")).read_text().splitlines()
+              for a,b in ranges:
+                  print("LYRIC_AUDIT_SECTION",path,a,b,flush=True)
+                  for n in range(a,min(b,len(lines))+1):print(f"{n}: {lines[n-1]}",flush=True)
+          PY
