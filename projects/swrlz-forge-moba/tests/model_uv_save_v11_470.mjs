@@ -10,7 +10,7 @@ const required=[
  "if(!se336SlideState().enabled)se336SlideToggle();",
  "window.SWYRL_ENGINE_ASSET_LIBRARY?.loadAccountAsset?.('modeler',id)",
  "window.SWYRL_ENGINE_WORKSPACES?.modelerActive?.()",
- "[['Save to account','save']]",
+ "saved.textContent='Save to account'",
  'const se470Working=new Map();',
  'remote?.id||null,remote?.revision||0',
  "if(result.durable!==true||!result.project?.id||",
