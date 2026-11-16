@@ -1,0 +1,77 @@
+name: §C small HTML assembler independent mobile repeatability
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/chat-small-html-assembler-repeat.yml'
+permissions: {contents: read}
+concurrency:
+  group: swrlz-chat-guest-eval
+  cancel-in-progress: false
+jobs:
+  repeatability:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 21
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - run: |
+          python -m pip install playwright==1.56.0
+          python -m playwright install --with-deps chromium
+      - run: python -m py_compile scripts/eval_chat_guest_suite.py scripts/test_guest_html_first_turn.py
+      - name: Two independent mobile guest HTML pages with click verification
+        shell: bash
+        env:
+          SWRLZ_EVAL_BASE: https://kamiloki-swyrlz.hf.space
+          SWRLZ_EVAL_MODEL: 700m
+        run: |
+          set -uo pipefail
+          fails=0
+          for sample in 1 2; do
+            rm -rf reports/chat-guest-eval
+            echo "=== ASSEMBLER_REPEATED_SAMPLE $sample ==="
+            if python -u - <<'PY'
+          import asyncio,sys
+          import scripts.eval_chat_guest_suite as ev
+          tests=[c for c in ev.CASES['2'] if c['id']=='html-button-ui']
+          if len(tests)!=1:raise RuntimeError('Fixture missing')
+          tests[0]['turns']=tests[0]['turns'][:1]
+          ev.CASES['2']=tests
+          sys.exit(asyncio.run(ev.main('live','2')))
+          PY
+            then model=0;else model=$?;fi
+            browser=1
+            if [[ "$model" -eq 0 ]]; then
+              if python -u -m scripts.test_guest_html_first_turn;then browser=0;fi
+            fi
+            mkdir -p "reports/assembler-repeat/sample-$sample"
+            if [[ -d reports/chat-guest-eval ]];then cp -a reports/chat-guest-eval/. "reports/assembler-repeat/sample-$sample/";fi
+            if [[ -f reports/chat-guest-eval/report.json ]];then
+              SAMPLE_INDEX="$sample" python - <<'PY'
+          import json,os
+          p='reports/chat-guest-eval/report.json'
+          j=json.load(open(p))
+          t=[t for c in j['results'] for t in c['turns']]
+          mark=t[0]['response'].lstrip().startswith('```html file=index.html\n<!doctype html>') if t else False
+          print('ASSEMBLER_REPEAT_RESULT',json.dumps({
+              'sample':os.environ['SAMPLE_INDEX'],
+              'response_completed':bool(t),
+              'assembled_source_marker':mark,
+              'total_ms':t[0].get('total_ms') if t else None,
+              'chars':t[0].get('chars') if t else None
+          }),flush=True)
+          PY
+            fi
+            echo "ASSEMBLER_REPEAT_OUTCOME sample=$sample model=$model browser=$browser"
+            if [[ "$model" -ne 0 || "$browser" -ne 0 ]];then fails=$((fails+1));fi
+          done
+          if [[ "$fails" -gt 0 ]];then exit 1;fi
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: small-html-assembler-repeat-${{ github.run_id }}
+          path: reports/assembler-repeat/
+          retention-days: 21
+          if-no-files-found: ignore
