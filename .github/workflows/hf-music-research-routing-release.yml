@@ -54,7 +54,7 @@ jobs:
               time.sleep(8)
           else:raise RuntimeError('Model not ready for safe live acceptance')
           PY
-      - name: Source-backed blues theory research: never existing-lyrics verification
+      - name: 'Source-backed blues research (not lyric extraction)'
         id: research
         shell: bash
         env:
@@ -73,7 +73,7 @@ jobs:
           result=json.loads((ev.OUT/'report.json').read_text())
           turn=result['results'][0]['turns'][0]
           print('MUSIC_RESEARCH_ROUTE_RESULT',json.dumps({'status':turn['evaluation']['status'],
-             'sources':turn['source_link_count'],'ms':turn['total_ms'],'phase':turn.get('phases')},flush=True))
+             'sources':turn['source_link_count'],'ms':turn['total_ms'],'phase':turn.get('phases')}),flush=True)
           txt=turn['response'].lower()
           assert 'couldn\'t verify the requested lyric text' not in txt
           assert 'search results for the lyrics' not in txt
@@ -85,7 +85,7 @@ jobs:
           mkdir -p reports/music-routing-acceptance/research
           cp -a reports/chat-research-lyrics-conversation/. reports/music-routing-acceptance/research/ || true
           echo "MUSIC_THEORY_ACCEPTANCE_EXIT=$ok"
-      - name: Original synth-pop song with Rain title: never weather lookup
+      - name: 'Original synth-pop song (not a weather lookup)'
         id: song
         if: steps.research.outputs.exit == '0'
         shell: bash
@@ -102,7 +102,7 @@ jobs:
           ev.CASES['songwriting']=[case]
           asyncio.run(ev.main('songwriting'))
           turn=json.loads((ev.OUT/'report.json').read_text())['results'][0]['turns'][0]
-          print('ORIGINAL_SONG_ROUTE_RESULT',json.dumps({'status':turn['evaluation']['status'],'ms':turn['total_ms']},flush=True))
+          print('ORIGINAL_SONG_ROUTE_RESULT',json.dumps({'status':turn['evaluation']['status'],'ms':turn['total_ms']}),flush=True)
           assert 'i need a city/region' not in turn['response'].lower(), 'Still routed to weather'
           assert 'search results for the lyrics' not in turn['response'].lower(), 'Still routed to lyric lookup'
           assert turn['evaluation']['status']=='PASS_EVIDENCE', 'Original song incomplete'
