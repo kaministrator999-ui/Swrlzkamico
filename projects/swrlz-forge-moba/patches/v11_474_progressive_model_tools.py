@@ -22,7 +22,8 @@ def apply(html):
     assert 'SE474_PROGRESSIVE_MODEL_TOOLS_STYLES_START' in css
     html=once(html,'/* SE473_MODEL_TOOL_RAIL_FOLD_END */',
                   '/* SE473_MODEL_TOOL_RAIL_FOLD_END */\n'+js)
-    html=once(html,'</head>','<style id="se474ProgressiveModelTools">\n'+css+'\n</style>\n</head>')
+    assert '</head>' in html,('v11.474 missing document head')
+    html=html.replace('</head>','<style id="se474ProgressiveModelTools">\n'+css+'\n</style>\n</head>',1)
     for before,after in [
       ('SWYRL_ENGINE_DEPLOY_MARKER: V11_473_FOLDING_WORKSPACE',MARKER),
       ('ENGINE · MAKER v11.473','ENGINE · MAKER v11.474'),
