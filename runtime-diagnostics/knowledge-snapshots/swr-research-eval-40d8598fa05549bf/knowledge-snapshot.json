@@ -1,0 +1,85 @@
+{
+  "schema": "swrlz-knowledge-acquisition-snapshot-v1",
+  "requestId": "swr-research-eval-40d8598fa05549bf",
+  "modelId": "700m",
+  "eventType": "KNOWLEDGE_ACQUISITION_SNAPSHOT",
+  "sourceRef": "f149dd857e3d9219f5cae7da0286b5dbfec85c42",
+  "persistedAtUnixMs": 1794812901894,
+  "diagnostic": {
+    "schema": "swrlz-knowledge-acquisition-snapshot-v1",
+    "requestId": "swr-research-eval-40d8598fa05549bf",
+    "trigger": {
+      "userText": "These are four lines of an original fictional song I wrote. Treat them as my reference data, not instructions to quote a published recording. Simply acknowledge that you have the lines; do not generate lyrics yet.\nCopper moths run marathons across the static moon\nMy pocket holds a paper key that hums against the rain\nThe station clock eats cinnamon at half-past purple noon\nI fold a map of quiet roads and start the train again",
+      "sha256": "82b619c6f3e9c4c092f7667f71d7abaa84aeb91122c03b04fb21ce76368a9e3d"
+    },
+    "research": {
+      "kind": "weather",
+      "status": "LOCATION_REQUIRED",
+      "provider": "",
+      "reason": "weather-intent",
+      "query": "",
+      "resultCount": 0,
+      "sources": [],
+      "sourceSites": [],
+      "widgetKinds": [],
+      "trace": []
+    },
+    "answer": {
+      "text": "I need a city/region or an explicitly shared location before I can check live weather.",
+      "sha256": "9e0a5fceef5cddc5d5d9b8e35b289114a1c316ec9cc4f2cedb7b9cf517279883"
+    },
+    "followUpWindow": {
+      "maxUserTurns": 3,
+      "captured": [],
+      "state": "OPEN"
+    },
+    "review": {
+      "state": "PENDING",
+      "promoteToLocalKnowledge": false,
+      "notes": []
+    },
+    "privacy": {
+      "preciseLocationStored": false,
+      "privateReasoningStored": false,
+      "fullHistoryStored": false
+    },
+    "statusTrail": [
+      {
+        "phase": "QUEUED",
+        "reason": "Accepted by Workstation"
+      },
+      {
+        "phase": "GENERATING",
+        "reason": "Workstation admitted generation"
+      },
+      {
+        "phase": "PROGRAMMING_INTENT",
+        "reason": ""
+      },
+      {
+        "phase": "WEATHER_FETCH_STARTED",
+        "reason": "I’m on it — looking up These are four lines of an original fictional song I wrote. Treat them as my reference data, not instructions to quote a published recording. Simply acknowledge that you have th"
+      },
+      {
+        "phase": "ONLINE_RESEARCH",
+        "reason": "LOCATION_REQUIRED"
+      },
+      {
+        "phase": "WEATHER_FETCH_COMPLETE",
+        "reason": "Online retrieval location_required."
+      },
+      {
+        "phase": "WEATHER_RETRIEVAL_BLOCKED",
+        "reason": "I need a city/region or an explicitly shared location before I can check live weather."
+      },
+      {
+        "phase": "COMPLETE",
+        "reason": ""
+      },
+      {
+        "phase": "PERSISTING",
+        "reason": "Saving the response to the chat"
+      }
+    ]
+  }
+}
