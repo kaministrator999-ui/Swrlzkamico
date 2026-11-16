@@ -131,7 +131,6 @@ def publish_guarded() -> dict:
     """Authorized, optimistic-concurrency release to the existing Space only."""
     import io
     import os
-    from huggingface_hub import HfApi, hf_hub_download, CommitOperationAdd
 
     if os.environ.get("SWRLZ_RESPONSE_QUALITY_RELEASE_APPROVED") != "1":
         raise PermissionError("CANONICAL_RELEASE_APPROVAL_REQUIRED")
@@ -139,6 +138,7 @@ def publish_guarded() -> dict:
     expected_revision = os.environ.get("SWRLZ_EXPECTED_SPACE_REVISION", "")
     if not token or not re.fullmatch(r"[0-9a-f]{40}", expected_revision):
         raise PermissionError("RELEASE_TOKEN_AND_PINNED_SPACE_REVISION_REQUIRED")
+    from huggingface_hub import HfApi, hf_hub_download, CommitOperationAdd
     api = HfApi(token=token)
     current = str(api.repo_info(SPACE, repo_type="space").sha)
     if current != expected_revision:
