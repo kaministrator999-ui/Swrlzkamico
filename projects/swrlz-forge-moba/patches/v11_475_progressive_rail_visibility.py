@@ -63,6 +63,7 @@ def apply(html):
         'Selected main tool-family button now reflects the progressive navigation state; old Meshes highlight is cleared when Sculpt or another family is selected.',
         'Top specific-mode bar repositions inside the viewport beneath the existing transform toolbar once a tool is selected, without overlapping canvas controls.',
         'Mobile desktop-site and compact layouts both use actual toolbar geometry rather than coarse-pointer detection to place flyouts.',
+        'Restore native v11.466 Ring and v11.467 Quest pointer installers through scoped public installer bridges; existing geometry and controller logic remain private and unchanged.',
         'Original operation selection, vertex center, Undo, ring, native mesh editing, transform bar, UV and VR controls remain unchanged.',
         'Automated release and browser checks do not replace physical Moto and Quest acceptance testing.'
       ])
