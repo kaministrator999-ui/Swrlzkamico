@@ -9,6 +9,7 @@ from unittest.mock import patch
 from api.adaptive_public_research_v1 import (
     should_research_public_explanation,
     plan_public_research,facet_coverage,adaptive_enrich,encyclopedia_topic,
+    wikipedia_exact_public_title,
     MAX_SEARCH_PASSES,
 )
 from api.research_evidence_envelope_v1 import build_envelope
@@ -118,6 +119,48 @@ class AdaptiveResearchTests(unittest.TestCase):
         self.assertEqual(revised["onlineContext"]["resultCount"],3)
         self.assertIn("eye safety",revised["onlineContext"]["adaptiveResearch"]
                       ["facetsCoveredByRetrievedText"])
+
+    def test_dynamic_exact_public_subject_uses_real_titled_page_data(self):
+        import json
+        seen=[]
+        def fetched(url):
+            seen.append(url)
+            return {"status":200,"finalUrl":url,
+                    "extract":json.dumps({"query":{"pages":[{
+                        "title":"Eclipse",
+                        "extract":"An eclipse is an astronomical event that occurs when an astronomical object is temporarily obscured by passing into the shadow of another body."
+                    }]}})}
+        rows=wikipedia_exact_public_title("eclipse",fetched)
+        self.assertEqual(len(rows),1)
+        self.assertEqual(rows[0]["title"],"Wikipedia: Eclipse")
+        self.assertEqual(rows[0]["url"],"https://en.wikipedia.org/wiki/eclipse")
+        self.assertIn("astronomical event",rows[0]["snippet"])
+        self.assertEqual(len(seen),1)
+        self.assertIn("action=query",seen[0])
+        self.assertNotIn("secret",str(rows))
+
+    def test_dynamic_exact_title_rejects_offsite_and_wrong_subject(self):
+        import json
+        def fetch_mismatch(url):
+            return {"status":200,"finalUrl":url,
+                    "extract":json.dumps({"query":{"pages":[{
+                        "title":"A Princess of Mars",
+                        "extract":"A space novel with many characters and locations on the planet Mars."
+                    }]}})}
+        self.assertEqual(wikipedia_exact_public_title("Eclipse",fetch_mismatch),[])
+        def redirect(url):
+            return {"status":200,"finalUrl":"https://attacker.example/w/api.php",
+                    "extract":"{}"}
+        self.assertEqual(wikipedia_exact_public_title("Eclipse",redirect),[])
+        self.assertEqual(wikipedia_exact_public_title(
+            "private://user password",lambda url:None),[])
+        def disambig(url):
+            return {"status":200,"finalUrl":url,
+                    "extract":json.dumps({"query":{"pages":[{
+                        "title":"Eclipse",
+                        "extract":"Eclipse may refer to many unrelated topics, including albums and films."
+                    }]}})}
+        self.assertEqual(wikipedia_exact_public_title("Eclipse",disambig),[])
 
     def test_short_public_subject_recovers_after_empty_provider(self):
         self.assertEqual(
