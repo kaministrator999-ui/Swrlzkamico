@@ -9,7 +9,7 @@ parser.add_argument('--request',action='store_true')
 a=parser.parse_args()
 m=json.loads((ROOT/'source-manifest.json').read_text('utf8'))
 assert m['name']=='§wyrl§ Engine v11.470'
-assert m['finalArtifact']=='swyrl_engine_v11_469.html'
+assert m['finalArtifact']=='swyrl_engine_v11_470.html'
 assert len(m['patches'])==447 and m['patches'][-1]=='patches/v11_470_uv_model_save.py'
 assert isinstance(m['finalBytes'],int) and isinstance(m['finalSha256'],str)
 for name in ['model_ring_kernel_v11_466.js','model_ring_bridge_v11_466.js','model_ring_ui_v11_466.js','model_quest_browser_input_v11_467.js','studio_standalone_assets_v11_468.js','model_uv_distortion_math_v11_469.js','model_uv_shape_fit_v11_469.js']:
@@ -35,7 +35,7 @@ for token in [
  'modelAtelierWorkshopExtrudeScale','setRingAnchor','selectRing',
  'modelAtelierWorkshopPreview','modelAtelierWorkshopApply']:
  assert token in html,token
-assert html.count(" source.engine='§wyrl§ Engine · Maker v11.470';source.version=11.469;")==5
+assert html.count(" source.engine='§wyrl§ Engine · Maker v11.470';source.version=11.470;")==5
 subprocess.run([sys.executable,str(ROOT/'scripts/check_inline_js_syntax_v11_266.py'),str(out/'index.html')],check=True)
 subprocess.run(['node',str(ROOT/'tests/studio_asset_isolation_v11_468.mjs'),str(out/'index.html')],check=True)
 subprocess.run(['node',str(ROOT/'tests/model_quest_browser_input_v11_467.mjs'),str(out/'index.html')],check=True)
