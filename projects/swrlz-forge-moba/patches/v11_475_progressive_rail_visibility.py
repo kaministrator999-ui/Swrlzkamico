@@ -15,6 +15,16 @@ def apply(html):
     css=(ROOT/'runtime/model_progressive_rail_fix_v11_475.css').read_text('utf8')
     assert 'SE475_PROGRESSIVE_RAIL_VISIBILITY_START' in js
     assert 'SE475_PROGRESSIVE_RAIL_VISIBILITY_STYLES_START' in css
+    # v11.466 declared the ring UI inside ModelAtelier's private closure, but
+    # atelierAdaptiveInstall (a separate native UI scope) called its bare name.
+    # Export ONLY this original installer; keep workshop and topology private.
+    html=once(html,'/* SE466_RING_UI_END */',
+      'window.SWYRL_ENGINE_RING_UI_INSTALL_475=se466RingUIInstall;\n/* SE466_RING_UI_END */')
+    html=once(html,'se430BeginnerInstall(panel);se466RingUIInstall(panel);',
+      'se430BeginnerInstall(panel);'+
+      'if(typeof window.SWYRL_ENGINE_RING_UI_INSTALL_475!=="function")'+
+      'throw Error("Native ring UI installer unavailable");'+
+      'window.SWYRL_ENGINE_RING_UI_INSTALL_475(panel);')
     html=once(html,'/* SE474_PROGRESSIVE_MODEL_TOOLS_END */',
       '/* SE474_PROGRESSIVE_MODEL_TOOLS_END */\n'+js)
     assert '</head>' in html
