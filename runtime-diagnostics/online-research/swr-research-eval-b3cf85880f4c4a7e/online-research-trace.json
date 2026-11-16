@@ -1,0 +1,379 @@
+{
+  "schema": "swrlz-github-online-research-trace-v1",
+  "requestId": "swr-research-eval-b3cf85880f4c4a7e",
+  "modelId": "700m",
+  "eventType": "ONLINE_RESEARCH_TRACE",
+  "sourceRef": "f149dd857e3d9219f5cae7da0286b5dbfec85c42",
+  "persistedAtUnixMs": 1794797927475,
+  "diagnostic": {
+    "schema": "swrlz-online-research-log-v1",
+    "research": {
+      "contract": "swrlz-online-camera-v1",
+      "observabilityRevision": "v181-song-metadata-clean-form-integrity",
+      "kind": "search",
+      "status": "NO_RESULTS",
+      "reason": "existing-lyrics-retrieval",
+      "provider": "bounded-web-search-chain-v1",
+      "resultCount": 0,
+      "widgetKinds": [],
+      "sourceCount": 0,
+      "locationRequired": false,
+      "usedExplicitClientLocation": false,
+      "elapsedMs": 942,
+      "lyricsSourceAttemptCount": 0,
+      "lyricsFetchDebug": [],
+      "blockedLyricsSourceFamilies": [],
+      "musicStructureDebug": null,
+      "candidateAdmissionDebug": [
+        {
+          "query": "Research and briefly compare boom-bap versus trap rhythm as backgrounds for rap lyric flow. Mention backbeat, subdivisions, hi-hat patterns, where a hook can sit, and that flow patterns vary by song. Cite at least one public music-education source link. Do not invent a rigid universal song structure or quote existing lyrics.",
+          "title": "Research - Wikipedia",
+          "url": "https://en.wikipedia.org/wiki/Research",
+          "source": "en.wikipedia.org",
+          "rank": 1,
+          "allowed": true,
+          "reason": "SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "research",
+            "that"
+          ],
+          "coreTerms": [
+            "research",
+            "briefly",
+            "compare",
+            "boom-bap",
+            "versus",
+            "trap",
+            "rhythm",
+            "backgrounds",
+            "rap",
+            "flow",
+            "mention",
+            "backbeat"
+          ],
+          "snippetPreview": "Research, in its simplest terms, is an intentional search for knowledge. John W. Creswell states that \"research is a process of steps …"
+        },
+        {
+          "query": "Research and briefly compare boom-bap versus trap rhythm as backgrounds for rap lyric flow. Mention backbeat, subdivisions, hi-hat patterns, where a hook can sit, and that flow patterns vary by song. Cite at least one public music-education source link. Do not invent a rigid universal song structure or quote existing lyrics.",
+          "title": "ResearchGate | Find and share research",
+          "url": "https://www.researchgate.net/",
+          "source": "www.researchgate.net",
+          "rank": 2,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "research"
+          ],
+          "coreTerms": [
+            "research",
+            "briefly",
+            "compare",
+            "boom-bap",
+            "versus",
+            "trap",
+            "rhythm",
+            "backgrounds",
+            "rap",
+            "flow",
+            "mention",
+            "backbeat"
+          ],
+          "snippetPreview": "Access 135+ million publications and connect with 20+ million researchers. Join for free and gain visibility by uploading your research."
+        },
+        {
+          "query": "Research and briefly compare boom-bap versus trap rhythm as backgrounds for rap lyric flow. Mention backbeat, subdivisions, hi-hat patterns, where a hook can sit, and that flow patterns vary by song. Cite at least one public music-education source link. Do not invent a rigid universal song structure or quote existing lyrics.",
+          "title": "RESEARCH Definition & Meaning - Merriam-Webster",
+          "url": "https://www.merriam-webster.com/dictionary/research",
+          "source": "www.merriam-webster.com",
+          "rank": 3,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "research"
+          ],
+          "coreTerms": [
+            "research",
+            "briefly",
+            "compare",
+            "boom-bap",
+            "versus",
+            "trap",
+            "rhythm",
+            "backgrounds",
+            "rap",
+            "flow",
+            "mention",
+            "backbeat"
+          ],
+          "snippetPreview": "Nov 9, 2026 · The meaning of RESEARCH is studious inquiry or examination; especially : investigation or experimentation aimed at …"
+        },
+        {
+          "query": "Research and briefly compare boom-bap versus trap rhythm as backgrounds for rap lyric flow. Mention backbeat, subdivisions, hi-hat patterns, where a hook can sit, and that flow patterns vary by song. Cite at least one public music-education source link. Do not invent a rigid universal song structure or quote existing lyrics.",
+          "title": "Google Scholar",
+          "url": "https://www.scholar.google.com/",
+          "source": "www.scholar.google.com",
+          "rank": 4,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [],
+          "coreTerms": [
+            "research",
+            "briefly",
+            "compare",
+            "boom-bap",
+            "versus",
+            "trap",
+            "rhythm",
+            "backgrounds",
+            "rap",
+            "flow",
+            "mention",
+            "backbeat"
+          ],
+          "snippetPreview": "Google Scholar provides a simple way to broadly search for scholarly literature. Search across a wide variety of disciplines and …"
+        },
+        {
+          "query": "Research and briefly compare boom-bap versus trap rhythm as backgrounds for rap lyric flow. Mention backbeat, subdivisions, hi-hat patterns, where a hook can sit, and that flow patterns vary by song. Cite at least one public music-education source link. Do not invent a rigid universal song structure or quote existing lyrics.",
+          "title": "Research",
+          "url": "https://research.nih.gov/",
+          "source": "research.nih.gov",
+          "rank": 5,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "research"
+          ],
+          "coreTerms": [
+            "research",
+            "briefly",
+            "compare",
+            "boom-bap",
+            "versus",
+            "trap",
+            "rhythm",
+            "backgrounds",
+            "rap",
+            "flow",
+            "mention",
+            "backbeat"
+          ],
+          "snippetPreview": "Research priorities, publications and resources Navigate NIH's scientific strategy, access the world's largest biomedical literature …"
+        },
+        {
+          "query": "Research and briefly compare boom-bap versus trap rhythm as backgrounds for rap lyric flow. Mention backbeat, subdivisions, hi-hat patterns, where a hook can sit, and that flow patterns vary by song. Cite at least one public music-education source link. Do not invent a rigid universal song structure or quote existing lyrics.",
+          "title": "Research | SPJ",
+          "url": "https://spj.science.org/journal/research",
+          "source": "spj.science.org",
+          "rank": 6,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "research"
+          ],
+          "coreTerms": [
+            "research",
+            "briefly",
+            "compare",
+            "boom-bap",
+            "versus",
+            "trap",
+            "rhythm",
+            "backgrounds",
+            "rap",
+            "flow",
+            "mention",
+            "backbeat"
+          ],
+          "snippetPreview": "3 days ago · The Open Access journal Research, published in association with CAST, publishes innovative, wide-ranging research in …"
+        },
+        {
+          "query": "Research and briefly compare boom-bap versus trap rhythm as backgrounds for rap lyric flow. Mention backbeat, subdivisions, hi-hat patterns, where a hook can sit, and that flow patterns vary by song. Cite at least one public music-education source link. Do not invent a rigid universal song structure or quote existing lyrics.",
+          "title": "Academia.edu - Find Research Papers, Topics, Researchers",
+          "url": "https://www.academia.edu/",
+          "source": "www.academia.edu",
+          "rank": 7,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "research"
+          ],
+          "coreTerms": [
+            "research",
+            "briefly",
+            "compare",
+            "boom-bap",
+            "versus",
+            "trap",
+            "rhythm",
+            "backgrounds",
+            "rap",
+            "flow",
+            "mention",
+            "backbeat"
+          ],
+          "snippetPreview": "Academia.edu is the platform to share, find, and explore 66 Million research papers. Join us to accelerate your research needs & …"
+        },
+        {
+          "query": "Research and briefly compare boom-bap versus trap rhythm as backgrounds for rap lyric flow. Mention backbeat, subdivisions, hi-hat patterns, where a hook can sit, and that flow patterns vary by song. Cite at least one public music-education source link. Do not invent a rigid universal song structure or quote existing lyrics.",
+          "title": "Search | ResearchGate",
+          "url": "https://www.researchgate.net/search/publications",
+          "source": "www.researchgate.net",
+          "rank": 8,
+          "allowed": true,
+          "reason": "SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "research",
+            "where"
+          ],
+          "coreTerms": [
+            "research",
+            "briefly",
+            "compare",
+            "boom-bap",
+            "versus",
+            "trap",
+            "rhythm",
+            "backgrounds",
+            "rap",
+            "flow",
+            "mention",
+            "backbeat"
+          ],
+          "snippetPreview": "Find the research you need | With 160+ million publication pages, 1+ million questions, and 25+ million researchers, this is where …"
+        }
+      ],
+      "songIdentity": {},
+      "songDiscoveryPlan": [],
+      "lyricsRescueSearchDebug": [],
+      "lyricsMaxPageAttempts": 3,
+      "lyricsFallbackExhausted": true,
+      "rawPromptStored": false
+    },
+    "trace": [
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794797926532,
+        "phase": "RESEARCH_STARTED",
+        "activity": "Online research started",
+        "provider": "bounded-web-search-chain-v1",
+        "site": "",
+        "url": ""
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794797926532,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794797926682,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "activity": "No usable results from provider",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "httpStatus": 202,
+        "resultCount": 0
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794797926682,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794797926829,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "activity": "No usable results from provider",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "httpStatus": 202,
+        "resultCount": 0
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794797926829,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794797927272,
+        "phase": "SEARCH_PROVIDER_RESULTS",
+        "activity": "Search results found",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "httpStatus": 200,
+        "resultCount": 8
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794797927273,
+        "phase": "SEARCH_PROVIDER_SELECTED",
+        "activity": "Using bing-html",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "resultCount": 8
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794797927275,
+        "phase": "PAGE_FETCH_STARTED",
+        "activity": "Visiting result page",
+        "provider": "web-page",
+        "site": "en.wikipedia.org",
+        "url": "https://en.wikipedia.org/wiki/Research"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794797927467,
+        "phase": "PAGE_FETCH_COMPLETE",
+        "activity": "Page fetched",
+        "provider": "web-page",
+        "site": "en.wikipedia.org",
+        "url": "https://en.wikipedia.org/wiki/Research",
+        "httpStatus": 200,
+        "responseBytes": 630569
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794797927472,
+        "phase": "RESEARCH_COMPLETE",
+        "activity": "Online research complete",
+        "provider": "bounded-web-search-chain-v1",
+        "site": "",
+        "url": "",
+        "resultCount": 0
+      }
+    ],
+    "sourceSites": [],
+    "widgetKinds": [],
+    "requestedModelId": "700m",
+    "selectedModelId": "700m",
+    "rawPromptStored": false,
+    "historyStored": false,
+    "preciseLocationStored": false
+  }
+}
