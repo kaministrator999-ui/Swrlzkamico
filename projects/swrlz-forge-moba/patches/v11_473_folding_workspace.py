@@ -95,24 +95,15 @@ def apply(html):
   state[what][flag]=!state[what][flag];
   sync();
  },true);
- node.addEventListener('keydown',e=>{""",
-      'capture tap before native resize completion')
-    html=once(html,
-      """ node.addEventListener('keydown',e=>{
-  const dirKey=e.key==='ArrowRight'?1:e.key==='ArrowLeft'?-1:0;
-  if(!dirKey)return;e.preventDefault();
-  state[what][side]=Math.max(145,Math.min(475,state[what][side]+dirKey*10*dir));sync();save();""",
-      """ node.addEventListener('keydown',e=>{
+ node.addEventListener('keydown',e=>{
   const flag=side==='left'?'collapsed':'rightCollapsed';
   if(e.key==='Enter'||e.key===' '){
    e.preventDefault();state[what][flag]=!state[what][flag];
    sync();save();window.dispatchEvent(new Event('resize'));return;
   }
-  const dirKey=e.key==='ArrowRight'?1:e.key==='ArrowLeft'?-1:0;
-  if(!dirKey)return;e.preventDefault();
-  state[what][flag]=false;
-  state[what][side]=Math.max(145,Math.min(475,state[what][side]+dirKey*10*dir));sync();save();""",
-      'splitter accessible keyboard toggle')
+  if(e.key==='ArrowRight'||e.key==='ArrowLeft')state[what][flag]=false;""",
+      'capture tap and keyboard fold before native resize completion')
+
     html=once(html,
       """||rail.querySelector('button');button?.click();""",
       """||rail.querySelector('button:not(#se473RailFold)');button?.click();""",
