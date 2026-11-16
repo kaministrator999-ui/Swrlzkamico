@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.466
+title: §wyrl§ Engine v11.474
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,11 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+## §E v11.474 · Progressive mobile modeling tools (2026-11-16)
+
+The native Model Studio now follows tool family (permanent right rail) → tool (left slide-out) → specific mode (top horizontal strip) → context-only parameters (far-right inspector). Ring Outline and Ring Fill reuse existing v11.466 native connected-edge vertex selection; Inset/Extrude and region mode reuse native workshop selection and Preview/Apply/Cancel, preserving Undo. The inspector no longer opens merely from selecting a family or tool. Settings can be hidden without changing the active operation. The old Face flyout is consolidated, not duplicated. See [v11.474 progressive tool navigation](docs/MODEL_PROGRESSIVE_TOOLS_V11_474.md). Physical Moto/Quest acceptance remains separate from source verification.
+
+
 ## §E v11.466 · Ring and arc modeling (2026-11-15)
 
 Native Model Studio now has a candidate ring/arc modeling workflow: graph-radius outline or fill vertex selection with adjustable arc and orientation, selected component move/scale/tilt and proportional falloff, connected edge refinement, and bounded open-boundary ring extrusion. Face Extrude extends signed distance controls and supports outward cap scale, offset and tilt through the existing Preview/Apply/Cancel and Undo. The source is SHA-verified but mobile/VR owner acceptance is separate; complex inward collision, arbitrary quad loop-cut/dissolve and full VR controller parity remain unimplemented. See [ring and arc modeling technical note](docs/MODEL_RING_ARC_V11_466.md).
