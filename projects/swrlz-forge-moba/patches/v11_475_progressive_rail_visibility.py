@@ -25,6 +25,15 @@ def apply(html):
       'if(typeof window.SWYRL_ENGINE_RING_UI_INSTALL_475!=="function")'+
       'throw Error("Native ring UI installer unavailable");'+
       'window.SWYRL_ENGINE_RING_UI_INSTALL_475(panel);')
+    # v11.467 repeated the same wrong-scope caller for Quest pointer setup.
+    # Preserve its original closure and expose one installer with native state.
+    html=once(html,'/* SE467_QUEST_BROWSER_INPUT_END */',
+      'window.SWYRL_ENGINE_QUEST_INSTALL_475=se467QuestInstall;\n/* SE467_QUEST_BROWSER_INPUT_END */')
+    html=once(html,'window.SWYRL_ENGINE_RING_UI_INSTALL_475(panel);se467QuestInstall(panel);',
+      'window.SWYRL_ENGINE_RING_UI_INSTALL_475(panel);'+
+      'if(typeof window.SWYRL_ENGINE_QUEST_INSTALL_475!=="function")'+
+      'throw Error("Native Quest input installer unavailable");'+
+      'window.SWYRL_ENGINE_QUEST_INSTALL_475(panel);')
     html=once(html,'/* SE474_PROGRESSIVE_MODEL_TOOLS_END */',
       '/* SE474_PROGRESSIVE_MODEL_TOOLS_END */\n'+js)
     assert '</head>' in html
