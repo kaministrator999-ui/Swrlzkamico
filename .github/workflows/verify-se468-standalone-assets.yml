@@ -27,4 +27,5 @@ jobs:
           node --check projects/swrlz-forge-moba/runtime/studio_standalone_assets_v11_468.js
           python projects/swrlz-forge-moba/scripts/check_inline_js_syntax_v11_266.py /tmp/se468-build/candidate.html
           node projects/swrlz-forge-moba/tests/studio_project_routing_v11_320.cjs
+          node projects/swrlz-forge-moba/tests/studio_asset_isolation_v11_468.mjs /tmp/se468-build/candidate.html
           node projects/swrlz-forge-moba/tests/model_quest_browser_input_v11_467.mjs /tmp/se468-build/candidate.html
