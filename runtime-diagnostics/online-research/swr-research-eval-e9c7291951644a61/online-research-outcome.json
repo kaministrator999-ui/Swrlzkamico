@@ -1,0 +1,932 @@
+{
+  "schema": "swrlz-github-online-research-outcome-v2",
+  "requestId": "swr-research-eval-e9c7291951644a61",
+  "modelId": "700m",
+  "eventType": "ONLINE_RESEARCH_OUTCOME",
+  "sourceRef": "f149dd857e3d9219f5cae7da0286b5dbfec85c42",
+  "persistedAtUnixMs": 1794811135991,
+  "diagnostic": {
+    "schema": "swrlz-online-research-outcome-v2",
+    "terminalState": "COMPLETE",
+    "research": {
+      "contract": "swrlz-online-camera-v1",
+      "observabilityRevision": "v181-song-metadata-clean-form-integrity",
+      "kind": "search",
+      "status": "NO_RESULTS",
+      "reason": "existing-lyrics-retrieval",
+      "provider": "bounded-web-search-chain-v1",
+      "resultCount": 0,
+      "widgetKinds": [],
+      "sourceCount": 0,
+      "locationRequired": false,
+      "usedExplicitClientLocation": false,
+      "elapsedMs": 2228,
+      "lyricsSourceAttemptCount": 3,
+      "lyricsFetchDebug": [],
+      "blockedLyricsSourceFamilies": [],
+      "musicStructureDebug": null,
+      "candidateAdmissionDebug": [
+        {
+          "query": "a real recording",
+          "title": "Real Sports App - Scores, Stats, Polls & Predictions",
+          "url": "https://www.realapp.com/",
+          "source": "www.realapp.com",
+          "rank": 1,
+          "allowed": true,
+          "reason": "NON_LYRICS_PASS",
+          "neededHits": 0,
+          "matchedTerms": [],
+          "coreTerms": [],
+          "snippetPreview": "Real makes sport data accessible, social, and fun."
+        },
+        {
+          "query": "a real recording",
+          "title": "REAL Definition & Meaning - Merriam-Webster",
+          "url": "https://www.merriam-webster.com/dictionary/real",
+          "source": "www.merriam-webster.com",
+          "rank": 2,
+          "allowed": true,
+          "reason": "NON_LYRICS_PASS",
+          "neededHits": 0,
+          "matchedTerms": [],
+          "coreTerms": [],
+          "snippetPreview": "3 days ago · The meaning of REAL is having objective independent existence. How to use real in a sentence."
+        },
+        {
+          "query": "a real recording",
+          "title": "Realtor.com® | Homes for Sale, Apartments & Houses for Rent",
+          "url": "https://www.realtor.com/?msockid=06f3c7bfbf4a60842bf4dfacbed861db",
+          "source": "www.realtor.com",
+          "rank": 3,
+          "allowed": true,
+          "reason": "NON_LYRICS_PASS",
+          "neededHits": 0,
+          "matchedTerms": [],
+          "coreTerms": [],
+          "snippetPreview": "#1 real estate site REALTOR® agents recommend* Let's find a home that's perfect for you"
+        },
+        {
+          "query": "a real recording",
+          "title": "REAL | English meaning - Cambridge Dictionary",
+          "url": "https://dictionary.cambridge.org/dictionary/english/real",
+          "source": "dictionary.cambridge.org",
+          "rank": 4,
+          "allowed": true,
+          "reason": "NON_LYRICS_PASS",
+          "neededHits": 0,
+          "matchedTerms": [],
+          "coreTerms": [],
+          "snippetPreview": "REAL definition: 1. existing in fact and not imaginary: 2. the value of earnings, etc. after the effect of rising…. Learn more."
+        },
+        {
+          "query": "a real recording",
+          "title": "Real Estate, Property & Homes for Sale - realestate.com.au",
+          "url": "https://www.realestate.com.au/buy/",
+          "source": "www.realestate.com.au",
+          "rank": 5,
+          "allowed": true,
+          "reason": "NON_LYRICS_PASS",
+          "neededHits": 0,
+          "matchedTerms": [],
+          "coreTerms": [],
+          "snippetPreview": "Explore your home loan options Compare loans Real estate for sale Houses Apartments and units Popular searches"
+        },
+        {
+          "query": "a real recording",
+          "title": "Real Sports",
+          "url": "https://realsports.io/",
+          "source": "realsports.io",
+          "rank": 6,
+          "allowed": true,
+          "reason": "NON_LYRICS_PASS",
+          "neededHits": 0,
+          "matchedTerms": [],
+          "coreTerms": [],
+          "snippetPreview": "Real Sports Please use realapp.com to access the web app"
+        },
+        {
+          "query": "a real recording",
+          "title": "Real Madrid CF | Official Website",
+          "url": "https://www.realmadrid.com/en-US",
+          "source": "www.realmadrid.com",
+          "rank": 7,
+          "allowed": true,
+          "reason": "NON_LYRICS_PASS",
+          "neededHits": 0,
+          "matchedTerms": [],
+          "coreTerms": [],
+          "snippetPreview": "Welcome to the official Real Madrid CF website. Discover all the latest news, matches, players, tickets, official store and much more …"
+        },
+        {
+          "query": "a real recording",
+          "title": "Download Real Executor for Windows - Official Site",
+          "url": "https://projectreal.gg/en/download/",
+          "source": "projectreal.gg",
+          "rank": 8,
+          "allowed": true,
+          "reason": "NON_LYRICS_PASS",
+          "neededHits": 0,
+          "matchedTerms": [],
+          "coreTerms": [],
+          "snippetPreview": "Download Real Executor for Windows from the official Project Real website. Start free, avoid fake download pages, and follow the …"
+        }
+      ],
+      "songIdentity": {},
+      "songDiscoveryPlan": [],
+      "lyricsRescueSearchDebug": [],
+      "lyricsMaxPageAttempts": 3,
+      "lyricsFallbackExhausted": true,
+      "rawPromptStored": false
+    },
+    "trace": [
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794811133759,
+        "phase": "RESEARCH_STARTED",
+        "activity": "Online research started",
+        "provider": "bounded-web-search-chain-v1",
+        "site": "",
+        "url": ""
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794811133760,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794811133893,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "activity": "No usable results from provider",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "httpStatus": 202,
+        "resultCount": 0
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794811133893,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794811134027,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "activity": "No usable results from provider",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "httpStatus": 202,
+        "resultCount": 0
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794811134027,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794811134494,
+        "phase": "SEARCH_PROVIDER_RESULTS",
+        "activity": "Search results found",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "httpStatus": 200,
+        "resultCount": 8
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794811134494,
+        "phase": "SEARCH_PROVIDER_SELECTED",
+        "activity": "Using bing-html",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "resultCount": 8
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794811134496,
+        "phase": "PAGE_FETCH_STARTED",
+        "activity": "Visiting result page",
+        "provider": "web-page",
+        "site": "www.realapp.com",
+        "url": "https://www.realapp.com/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794811134752,
+        "phase": "PAGE_FETCH_COMPLETE",
+        "activity": "Page fetched",
+        "provider": "web-page",
+        "site": "www.realapp.com",
+        "url": "https://www.realapp.com/",
+        "httpStatus": 200,
+        "responseBytes": 8283
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794811134754,
+        "phase": "PAGE_FETCH_STARTED",
+        "activity": "Visiting result page",
+        "provider": "web-page",
+        "site": "www.merriam-webster.com",
+        "url": "https://www.merriam-webster.com/dictionary/real"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794811134792,
+        "phase": "PAGE_FETCH_ERROR",
+        "activity": "Page fetch failed",
+        "provider": "web-page",
+        "site": "www.merriam-webster.com",
+        "url": "https://www.merriam-webster.com/dictionary/real",
+        "errorType": "HTTPError"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794811134794,
+        "phase": "PAGE_FETCH_STARTED",
+        "activity": "Visiting result page",
+        "provider": "web-page",
+        "site": "www.realtor.com",
+        "url": "https://www.realtor.com/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794811134875,
+        "phase": "PAGE_FETCH_ERROR",
+        "activity": "Page fetch failed",
+        "provider": "web-page",
+        "site": "www.realtor.com",
+        "url": "https://www.realtor.com/",
+        "errorType": "HTTPError"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794811134877,
+        "phase": "PAGE_FETCH_STARTED",
+        "activity": "Visiting result page",
+        "provider": "web-page",
+        "site": "dictionary.cambridge.org",
+        "url": "https://dictionary.cambridge.org/dictionary/english/real"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794811135213,
+        "phase": "PAGE_FETCH_COMPLETE",
+        "activity": "Page fetched",
+        "provider": "web-page",
+        "site": "dictionary.cambridge.org",
+        "url": "https://dictionary.cambridge.org/dictionary/english/real",
+        "httpStatus": 200,
+        "responseBytes": 442075
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794811135215,
+        "phase": "PAGE_FETCH_STARTED",
+        "activity": "Visiting result page",
+        "provider": "web-page",
+        "site": "www.realestate.com.au",
+        "url": "https://www.realestate.com.au/buy/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794811135513,
+        "phase": "PAGE_FETCH_ERROR",
+        "activity": "Page fetch failed",
+        "provider": "web-page",
+        "site": "www.realestate.com.au",
+        "url": "https://www.realestate.com.au/buy/",
+        "errorType": "HTTPError"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794811135516,
+        "phase": "PAGE_FETCH_STARTED",
+        "activity": "Visiting result page",
+        "provider": "web-page",
+        "site": "realsports.io",
+        "url": "https://realsports.io/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794811135642,
+        "phase": "PAGE_FETCH_COMPLETE",
+        "activity": "Page fetched",
+        "provider": "web-page",
+        "site": "realsports.io",
+        "url": "https://realsports.io/",
+        "httpStatus": 200,
+        "responseBytes": 913
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794811135643,
+        "phase": "PAGE_FETCH_STARTED",
+        "activity": "Visiting result page",
+        "provider": "web-page",
+        "site": "www.realmadrid.com",
+        "url": "https://www.realmadrid.com/en-US"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794811135865,
+        "phase": "PAGE_FETCH_ERROR",
+        "activity": "Page fetch failed",
+        "provider": "web-page",
+        "site": "www.realmadrid.com",
+        "url": "https://www.realmadrid.com/en-US",
+        "errorType": "ValueError"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794811135867,
+        "phase": "PAGE_FETCH_STARTED",
+        "activity": "Visiting result page",
+        "provider": "web-page",
+        "site": "projectreal.gg",
+        "url": "https://projectreal.gg/en/download/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794811135986,
+        "phase": "PAGE_FETCH_COMPLETE",
+        "activity": "Page fetched",
+        "provider": "web-page",
+        "site": "projectreal.gg",
+        "url": "https://projectreal.gg/en/download/",
+        "httpStatus": 200,
+        "responseBytes": 50549
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794811135986,
+        "phase": "RESEARCH_COMPLETE",
+        "activity": "Online research complete",
+        "provider": "bounded-web-search-chain-v1",
+        "site": "",
+        "url": "",
+        "resultCount": 8
+      }
+    ],
+    "sources": [],
+    "sourceSites": [],
+    "widgets": [],
+    "widgetKinds": [],
+    "statusTrail": [
+      {
+        "phase": "QUEUED",
+        "reason": "Accepted by Workstation",
+        "atUnixMs": 1794811133748
+      },
+      {
+        "phase": "GENERATING",
+        "reason": "Workstation admitted generation",
+        "atUnixMs": 1794811133753
+      },
+      {
+        "seq": 1,
+        "phase": "PROGRAMMING_INTENT",
+        "reason": "",
+        "atUnixMs": 1794811133756
+      },
+      {
+        "seq": 2,
+        "phase": "SEARCH_STARTED",
+        "reason": "I’m on it — looking up a real recording…",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH"
+        ],
+        "atUnixMs": 1794811133758
+      },
+      {
+        "seq": 3,
+        "phase": "RESEARCH_STARTED",
+        "reason": "Online research started",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "",
+        "url": "",
+        "provider": "bounded-web-search-chain-v1",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794811133759
+      },
+      {
+        "seq": 4,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "provider": "duckduckgo-html",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794811133760
+      },
+      {
+        "seq": 5,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "reason": "No usable results from provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "provider": "duckduckgo-html",
+        "httpStatus": 202,
+        "resultCount": 0,
+        "atUnixMs": 1794811133893
+      },
+      {
+        "seq": 6,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "provider": "duckduckgo-lite",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794811133893
+      },
+      {
+        "seq": 7,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "reason": "No usable results from provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "provider": "duckduckgo-lite",
+        "httpStatus": 202,
+        "resultCount": 0,
+        "atUnixMs": 1794811134027
+      },
+      {
+        "seq": 8,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "provider": "bing-html",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794811134027
+      },
+      {
+        "seq": 9,
+        "phase": "SEARCH_PROVIDER_RESULTS",
+        "reason": "Search results found",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "provider": "bing-html",
+        "httpStatus": 200,
+        "resultCount": 8,
+        "atUnixMs": 1794811134494
+      },
+      {
+        "seq": 10,
+        "phase": "SEARCH_PROVIDER_SELECTED",
+        "reason": "Using bing-html",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "provider": "bing-html",
+        "httpStatus": null,
+        "resultCount": 8,
+        "atUnixMs": 1794811134494
+      },
+      {
+        "seq": 11,
+        "phase": "PAGE_FETCH_STARTED",
+        "reason": "Visiting result page",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.realapp.com",
+        "url": "https://www.realapp.com/",
+        "provider": "web-page",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794811134496
+      },
+      {
+        "seq": 12,
+        "phase": "PAGE_FETCH_COMPLETE",
+        "reason": "Page fetched",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.realapp.com",
+        "url": "https://www.realapp.com/",
+        "provider": "web-page",
+        "httpStatus": 200,
+        "resultCount": null,
+        "atUnixMs": 1794811134752
+      },
+      {
+        "seq": 13,
+        "phase": "PAGE_FETCH_STARTED",
+        "reason": "Visiting result page",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.merriam-webster.com",
+        "url": "https://www.merriam-webster.com/dictionary/real",
+        "provider": "web-page",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794811134754
+      },
+      {
+        "seq": 14,
+        "phase": "PAGE_FETCH_ERROR",
+        "reason": "Page fetch failed",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.merriam-webster.com",
+        "url": "https://www.merriam-webster.com/dictionary/real",
+        "provider": "web-page",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794811134792
+      },
+      {
+        "seq": 15,
+        "phase": "PAGE_FETCH_STARTED",
+        "reason": "Visiting result page",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.realtor.com",
+        "url": "https://www.realtor.com/",
+        "provider": "web-page",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794811134795
+      },
+      {
+        "seq": 16,
+        "phase": "PAGE_FETCH_ERROR",
+        "reason": "Page fetch failed",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.realtor.com",
+        "url": "https://www.realtor.com/",
+        "provider": "web-page",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794811134875
+      },
+      {
+        "seq": 17,
+        "phase": "PAGE_FETCH_STARTED",
+        "reason": "Visiting result page",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "dictionary.cambridge.org",
+        "url": "https://dictionary.cambridge.org/dictionary/english/real",
+        "provider": "web-page",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794811134878
+      },
+      {
+        "seq": 18,
+        "phase": "PAGE_FETCH_COMPLETE",
+        "reason": "Page fetched",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "dictionary.cambridge.org",
+        "url": "https://dictionary.cambridge.org/dictionary/english/real",
+        "provider": "web-page",
+        "httpStatus": 200,
+        "resultCount": null,
+        "atUnixMs": 1794811135213
+      },
+      {
+        "seq": 19,
+        "phase": "PAGE_FETCH_STARTED",
+        "reason": "Visiting result page",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.realestate.com.au",
+        "url": "https://www.realestate.com.au/buy/",
+        "provider": "web-page",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794811135215
+      },
+      {
+        "seq": 20,
+        "phase": "PAGE_FETCH_ERROR",
+        "reason": "Page fetch failed",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.realestate.com.au",
+        "url": "https://www.realestate.com.au/buy/",
+        "provider": "web-page",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794811135513
+      },
+      {
+        "seq": 21,
+        "phase": "PAGE_FETCH_STARTED",
+        "reason": "Visiting result page",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "realsports.io",
+        "url": "https://realsports.io/",
+        "provider": "web-page",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794811135516
+      },
+      {
+        "seq": 22,
+        "phase": "PAGE_FETCH_COMPLETE",
+        "reason": "Page fetched",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "realsports.io",
+        "url": "https://realsports.io/",
+        "provider": "web-page",
+        "httpStatus": 200,
+        "resultCount": null,
+        "atUnixMs": 1794811135642
+      },
+      {
+        "seq": 23,
+        "phase": "PAGE_FETCH_STARTED",
+        "reason": "Visiting result page",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.realmadrid.com",
+        "url": "https://www.realmadrid.com/en-US",
+        "provider": "web-page",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794811135643
+      },
+      {
+        "seq": 24,
+        "phase": "PAGE_FETCH_ERROR",
+        "reason": "Page fetch failed",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.realmadrid.com",
+        "url": "https://www.realmadrid.com/en-US",
+        "provider": "web-page",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794811135865
+      },
+      {
+        "seq": 25,
+        "phase": "PAGE_FETCH_STARTED",
+        "reason": "Visiting result page",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "projectreal.gg",
+        "url": "https://projectreal.gg/en/download/",
+        "provider": "web-page",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794811135867
+      },
+      {
+        "seq": 26,
+        "phase": "PAGE_FETCH_COMPLETE",
+        "reason": "Page fetched",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "projectreal.gg",
+        "url": "https://projectreal.gg/en/download/",
+        "provider": "web-page",
+        "httpStatus": 200,
+        "resultCount": null,
+        "atUnixMs": 1794811135986
+      },
+      {
+        "seq": 27,
+        "phase": "RESEARCH_COMPLETE",
+        "reason": "Online research complete",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "",
+        "url": "",
+        "provider": "bounded-web-search-chain-v1",
+        "httpStatus": null,
+        "resultCount": 8,
+        "atUnixMs": 1794811135987
+      },
+      {
+        "seq": 28,
+        "phase": "ONLINE_RESEARCH",
+        "reason": "NO_RESULTS",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH"
+        ],
+        "atUnixMs": 1794811135988
+      },
+      {
+        "seq": 29,
+        "phase": "SEARCH_COMPLETE",
+        "reason": "Online retrieval no_results.",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH"
+        ],
+        "atUnixMs": 1794811135988
+      },
+      {
+        "seq": 30,
+        "phase": "LYRICS_VERIFICATION_BLOCKED",
+        "reason": "I found search results for the lyrics, but I couldn't verify the requested lyric text from fetched evidence, so I won't reconstruct it from memory.",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "LYRICS",
+          "GROUNDING"
+        ],
+        "atUnixMs": 1794811135988
+      },
+      {
+        "seq": 32,
+        "phase": "COMPLETE",
+        "reason": "",
+        "atUnixMs": 1794811135988
+      },
+      {
+        "phase": "PERSISTING",
+        "reason": "Saving the response to the chat",
+        "atUnixMs": 1794811135989
+      }
+    ],
+    "responseCognition": {},
+    "programmingIntent": {
+      "schema": "swrlz-programming-intent-v1",
+      "codingTask": false,
+      "projectContext": "none",
+      "changeClass": "none",
+      "artifactContinuation": false,
+      "artifactMutationRequested": false,
+      "artifactTargetId": "",
+      "artifactTargetMessageId": "",
+      "baseRevision": 0,
+      "baseSourceHash": "",
+      "newProject": false,
+      "source": "brain-router"
+    },
+    "candidateValidation": {},
+    "candidateAttempts": [],
+    "generationTelemetry": {},
+    "engineCompletionTelemetry": {
+      "totalLatencyMs": null,
+      "loadLatencyMs": null,
+      "firstDeltaLatencyMs": null
+    },
+    "contextBudget": {},
+    "resourcePlan": {},
+    "responseResourceUsage": {
+      "schema": "swrlz-response-resource-usage-v1",
+      "scope": "shared-cgroup-v2",
+      "source": "cgroup-v2",
+      "isolatedModelAttribution": false,
+      "wallTimeMs": 2235,
+      "capacity": {
+        "cpuLimitCores": 16.0,
+        "cpuLimitState": "measured",
+        "memoryLimitBytes": 104000000000,
+        "memoryLimitState": "measured"
+      },
+      "observed": {
+        "cgroupCpuUsageUsecDelta": 571633,
+        "averageCgroupCpuCores": 0.256,
+        "memoryStartBytes": 12506746880,
+        "memoryEndBytes": 12507467776,
+        "memoryEndMinusStartBytes": 720896,
+        "memoryPeakSampledBytes": 12507570176,
+        "memoryPeakAboveStartBytes": 823296,
+        "memorySampleCount": 4,
+        "memorySamplingIntervalMs": 1000
+      },
+      "attribution": "Shared container readings include concurrent work; they are not exclusive CPU/RAM use by this model.",
+      "routeId": "700m",
+      "configuredEngineThreadBudget": null,
+      "outcome": "COMPLETE"
+    },
+    "finalResponse": "I found search results for the lyrics, but I couldn't verify the requested lyric text from fetched evidence, so I won't reconstruct it from memory.",
+    "finalResponseSha256": "b6fd72ce42d1ea9b8b6e2e4097ee293e0bec3153c5772663f955ff48cdad536a",
+    "requestedModelId": "700m",
+    "selectedModelId": "700m",
+    "stationTiming": {
+      "acceptedAtUnixMs": 1794811133748,
+      "startedAtUnixMs": 1794811133753,
+      "completedAtUnixMs": 1794811135989,
+      "queueWaitMs": 5,
+      "stationRunMs": 2236,
+      "endToEndMs": 2241
+    },
+    "rawPromptStored": false,
+    "historyStored": false,
+    "preciseLocationStored": false,
+    "privateReasoningStored": false
+  }
+}
