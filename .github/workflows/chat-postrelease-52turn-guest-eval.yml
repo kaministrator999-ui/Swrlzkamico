@@ -3,6 +3,7 @@ on:
   workflow_run:
     workflows:
       - Guarded §C music research and original lyric routing release
+      - Guarded §C shared response-quality release
     types: [completed]
 permissions: {contents: read}
 concurrency:

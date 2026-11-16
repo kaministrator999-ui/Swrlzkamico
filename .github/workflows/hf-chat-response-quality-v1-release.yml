@@ -1,0 +1,87 @@
+name: Guarded §C shared response-quality release
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.deploy/HF_CHAT_RESPONSE_QUALITY_REQUEST.txt'
+permissions: {contents: read}
+concurrency:
+  group: swrlz-hf-space-deployment
+  cancel-in-progress: false
+jobs:
+  publish:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false, fetch-depth: 0}
+      - name: Authorize explicit main-branch source-pinned request
+        id: request
+        shell: bash
+        run: |
+          set -euo pipefail
+          request=.deploy/HF_CHAT_RESPONSE_QUALITY_REQUEST.txt
+          test -f "$request"
+          get() { sed -n "s/^$1=//p" "$request" | tail -n 1; }
+          test "$(get TARGET)" = "kamiloki/Swyrlz"
+          test "$(get APPROVED)" = "1"
+          test "$(get CHANGE_SCOPE)" = "response-quality-profile-v1"
+          source_ref="$(get SOURCE_REF)"
+          revision="$(get EXPECTED_SPACE_REVISION)"
+          nonce="$(get REQUEST_NONCE)"
+          [[ "$source_ref" =~ ^[a-f0-9]{40}$ ]]
+          [[ "$revision" =~ ^[a-f0-9]{40}$ ]]
+          [[ "$nonce" =~ ^[a-z0-9-]{12,96}$ ]]
+          git merge-base --is-ancestor "$source_ref" HEAD
+          echo "source=$source_ref" >> "$GITHUB_OUTPUT"
+          echo "revision=$revision" >> "$GITHUB_OUTPUT"
+          echo "SCOPE_AUTHORIZED: response quality only; source=$source_ref"
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          ref: ${{ steps.request.outputs.source }}
+          path: reviewed
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - name: Verify reviewed patcher and offline regressions
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd reviewed
+          python -m py_compile scripts/hf_chat_response_quality_v1.py
+          python -m unittest discover -s tests -p 'test_hf_chat_response_quality_v1.py' -v
+      - name: Install Hub client for exact current-source modification
+        run: python -m pip install --quiet 'huggingface_hub>=0.34,<2'
+      - name: Reinspect live Space at the source revision
+        shell: bash
+        env:
+          SWRLZ_EXPECTED_SPACE_REVISION: ${{ steps.request.outputs.revision }}
+        run: |
+          set -euo pipefail
+          cd reviewed
+          python -u scripts/hf_chat_response_quality_v1.py inspect
+          python - <<'PY'
+          import json,os
+          from pathlib import Path
+          manifest=json.loads(Path("reports/chat-response-quality-v1/manifest.json").read_text())
+          assert manifest["verified"] and not manifest["published"]
+          assert manifest["revision"]==os.environ["SWRLZ_EXPECTED_SPACE_REVISION"]
+          print("PINNED_LIVE_SOURCE_VERIFIED",manifest["revision"])
+          PY
+      - name: Publish exact one-file change with expected revision and rollback guard
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          SWRLZ_RESPONSE_QUALITY_RELEASE_APPROVED: '1'
+          SWRLZ_EXPECTED_SPACE_REVISION: ${{ steps.request.outputs.revision }}
+        run: |
+          set -euo pipefail
+          cd reviewed
+          python -u scripts/hf_chat_response_quality_v1.py publish
+      - name: Preserve exact original bytes and final publication receipt
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: swrlz-response-quality-release-${{ github.run_id }}
+          path: reviewed/reports/chat-response-quality-v1/
+          retention-days: 21
+          if-no-files-found: warn
