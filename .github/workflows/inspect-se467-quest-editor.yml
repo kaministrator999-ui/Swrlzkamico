@@ -66,5 +66,5 @@ jobs:
           PY
           python projects/swrlz-forge-moba/scripts/check_inline_js_syntax_v11_266.py /tmp/se467-quest-inspect/candidate.html
           node projects/swrlz-forge-moba/tests/model_component_selection_v11_430.mjs /tmp/se467-quest-inspect/candidate.html
-          node projects/swrlz-forge-moba/tests/model_touch_layout_v11_461.mjs /tmp/se467-quest-inspect/candidate.html
+          node projects/swrlz-forge-moba/tests/model_quest_browser_input_v11_467.mjs /tmp/se467-quest-inspect/candidate.html
           node projects/swrlz-forge-moba/tests/studio_project_routing_v11_320.cjs
