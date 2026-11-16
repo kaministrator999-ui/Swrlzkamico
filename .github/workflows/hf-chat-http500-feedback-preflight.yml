@@ -43,6 +43,23 @@ jobs:
           assert classify("Can you remix those lyrics?",reference_available=True)["mode"]=="remix"
           print("EXACT_LIVE_CLASSIFIER_REGRESSION_PASS",flush=True)
           PY
+      - name: Validate official Hugging Face deployment routing
+        run: |
+          python -m pip install -q pyyaml
+          python - <<'PY'
+          from pathlib import Path
+          import yaml
+          manual=Path(".github/workflows/manual-hf-space.yml").read_text()
+          request=Path(".github/workflows/hf-space-request.yml").read_text()
+          jobs=yaml.safe_load(manual)["jobs"]
+          assert "hotfix_http500_feedback" in jobs
+          assert "hotfix_output_budget" in jobs
+          assert "hotfix_music_transform" in jobs
+          assert "http500-music-feedback-v1" in request
+          assert "mode=hotfix-http500-feedback" in request
+          assert "python -u scripts/hf_chat_http500_feedback_v1.py publish" in manual
+          print("HTTP500_GOVERNED_RELEASE_ROUTE_PASS")
+          PY
       - uses: actions/upload-artifact@v4
         with:
           name: swrlz-before-http500-feedback-${{ github.run_id }}
