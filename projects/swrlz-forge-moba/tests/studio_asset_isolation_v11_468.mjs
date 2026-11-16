@@ -11,7 +11,7 @@ const required=[
  'scratch=structuredClone(data);preferScratch=true;',
  "if(!window.SWYRL_ENGINE_WORKSPACES?.loadStandaloneModel?.(structuredClone(record.data)))",
  'if(!window.SWYRL_ENGINE_PARTICLES?.import?.(structuredClone(record.data)))',
- "if(!connected||!api()?.save)throw Error('Connect your Google account",
+ "if(cloud&&(!connected||!api()?.save))throw Error('Connect your Google account",
  "window.SWYRL_ENGINE_ACCOUNT_ASSETS=Object.freeze({",
  "window.dispatchEvent(new CustomEvent('swrlz:account-assets'",
  "const dock=type==='modeler'?document.querySelector('#modelAtelierPanel .atelier-inspector')",
