@@ -1,0 +1,52 @@
+name: Repair §C mounted-ASGI ZeroGPU boot (revision guarded)
+on:
+  push:
+    branches: [main]
+    paths: [".deploy/CHAT_BOOT_REPAIR_REQUEST_20261116.json"]
+permissions:
+  contents: read
+concurrency:
+  group: swrlz-hf-space-deployment
+  cancel-in-progress: false
+jobs:
+  repair:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Verify owner-approved exact-target request
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          q=json.loads(Path('.deploy/CHAT_BOOT_REPAIR_REQUEST_20261116.json').read_text())
+          assert q=={'target':'kamiloki/Swyrlz','approved':True,'expectedSpaceSha':'37209db8fc5b1ff16fc1ee15d5f18d5f25b6ab51','operation':'remove-invalid-manual-zerogpu-startup-scan'}
+          print('SECHAT_OWNER_REQUEST_VERIFIED',flush=True)
+          PY
+      - name: Validate exact patch syntax before access
+        run: python -m py_compile scripts/repair_chat_asgi_zerogpu_boot_20261116.py
+      - name: Apply one pinned app.py patch, no hardware or data mutations
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          SWRLZ_CHAT_REPAIR_APPROVED: 'yes'
+        run: |
+          python -m pip install --quiet 'huggingface_hub>=0.34,<2'
+          python scripts/repair_chat_asgi_zerogpu_boot_20261116.py
+      - name: Observe startup state after source patch (read only)
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          python - <<'PY'
+          import json,os,time
+          from huggingface_hub import HfApi
+          api=HfApi(token=os.environ['HF_TOKEN'])
+          for i in range(7):
+              info=api.space_info('kamiloki/Swyrlz')
+              status=str(getattr(getattr(info,'runtime',None),'stage',None))
+              print('SECHAT_POSTDEPLOY='+json.dumps({'revision':info.sha,'stage':status,'check':i+1},sort_keys=True),flush=True)
+              if 'RUNNING' in status and 'START' not in status and 'BUILD' not in status:break
+              if i<6:time.sleep(12)
+          PY
