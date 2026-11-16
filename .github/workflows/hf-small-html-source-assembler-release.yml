@@ -1,0 +1,163 @@
+name: Guarded §C source-assembled small HTML with API and browser acceptance
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/hf-small-html-source-assembler-release.yml'
+permissions: {contents: read}
+concurrency:
+  group: swrlz-chat-guest-eval
+  cancel-in-progress: false
+jobs:
+  release:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 42
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - name: Install HF client and isolated Chromium
+        run: |
+          python -m pip install 'huggingface_hub>=0.34,<2' playwright==1.56.0
+          python -m playwright install --with-deps chromium
+      - name: Validate runtime patch and test code
+        run: |
+          python -m py_compile scripts/hf_small_html_source_assembler_v1.py
+          python -m py_compile scripts/eval_chat_guest_suite.py scripts/eval_chat_seeded_html.py
+          python -m py_compile scripts/test_guest_html_first_turn.py scripts/test_guest_html_functionality.py
+      - name: Validate current source, preserve entire coder and static contracts
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: python -u scripts/hf_small_html_source_assembler_v1.py preflight
+      - uses: actions/upload-artifact@v4
+        with:
+          name: short-html-assembler-source-rollback-${{ github.run_id }}
+          path: reports/small-html-source-assembler/
+          retention-days: 90
+          if-no-files-found: error
+      - name: Deploy one-file source-assembled HTML fast path
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          SWRLZ_SMALL_ASSEMBLER_APPROVED: '1'
+        run: python -u scripts/hf_small_html_source_assembler_v1.py publish
+      - name: Confirm Qwen resident readiness after HF update
+        run: |
+          python - <<'PY'
+          import urllib.request,json,time
+          url='https://kamiloki-swyrlz.hf.space/api/hf/qwen35-ready'
+          for i in range(30):
+              try:
+                  with urllib.request.urlopen(url,timeout=12) as r:s=json.load(r)
+                  if s.get('ready') is True and i>=3:
+                      print('ASSEMBLER_RESIDENT_MODEL_READY',s.get('model'),'poll',i,flush=True)
+                      break
+              except Exception as exc:print('MODEL_NOT_READY',i,type(exc).__name__,flush=True)
+              time.sleep(8)
+          else:raise RuntimeError('Qwen resident not ready for acceptance')
+          PY
+      - name: Generate new HTML through anonymous API only
+        id: api
+        shell: bash
+        env:
+          SWRLZ_EVAL_BASE: https://kamiloki-swyrlz.hf.space
+          SWRLZ_EVAL_MODEL: 700m
+        run: |
+          set -uo pipefail
+          if python -u - <<'PY'
+          import asyncio,sys
+          import scripts.eval_chat_guest_suite as e
+          cases=[c for c in e.CASES['2'] if c['id']=='html-button-ui']
+          if len(cases)!=1:raise RuntimeError('Missing test fixture')
+          cases[0]['lane']='api';cases[0]['turns']=cases[0]['turns'][:1]
+          e.CASES['2']=cases
+          sys.exit(asyncio.run(e.main('live','2')))
+          PY
+          then status=0;else status=$?;fi
+          echo "exit=$status" >> "$GITHUB_OUTPUT"
+      - name: Execute actual generated API-page button
+        id: api_browser
+        if: steps.api.outputs.exit == '0'
+        shell: bash
+        run: |
+          set -uo pipefail
+          if python -u -m scripts.test_guest_html_first_turn;then status=0;else status=$?;fi
+          echo "exit=$status" >> "$GITHUB_OUTPUT"
+      - name: Preserve API page before starting browser UI
+        if: always()
+        shell: bash
+        run: |
+          mkdir -p reports/short-html-acceptance/api
+          if [[ -d reports/chat-guest-eval ]]; then
+            cp -a reports/chat-guest-eval/. reports/short-html-acceptance/api/
+          fi
+      - name: Generate same HTML in real anonymous mobile Chat UI
+        id: ui
+        if: steps.api.outputs.exit == '0' && steps.api_browser.outputs.exit == '0'
+        shell: bash
+        env:
+          SWRLZ_EVAL_BASE: https://kamiloki-swyrlz.hf.space
+          SWRLZ_EVAL_MODEL: 700m
+        run: |
+          set -uo pipefail
+          rm -rf reports/chat-guest-eval
+          if python -u - <<'PY'
+          import asyncio,sys
+          import scripts.eval_chat_guest_suite as e
+          cases=[c for c in e.CASES['2'] if c['id']=='html-button-ui']
+          if len(cases)!=1:raise RuntimeError('HTML fixture missing')
+          cases[0]['lane']='ui';cases[0]['turns']=cases[0]['turns'][:1]
+          e.CASES['2']=cases
+          sys.exit(asyncio.run(e.main('live','2')))
+          PY
+          then status=0;else status=$?;fi
+          echo "exit=$status" >> "$GITHUB_OUTPUT"
+      - name: Run the real generated UI page button in isolated Chromium
+        id: ui_browser
+        if: steps.ui.outputs.exit == '0'
+        shell: bash
+        run: |
+          set -uo pipefail
+          if python -u -m scripts.test_guest_html_first_turn;then status=0;else status=$?;fi
+          echo "exit=$status" >> "$GITHUB_OUTPUT"
+      - name: Preserve UI test and execution receipts
+        if: always()
+        shell: bash
+        run: |
+          mkdir -p reports/short-html-acceptance/ui
+          if [[ -d reports/chat-guest-eval ]]; then
+            cp -a reports/chat-guest-eval/. reports/short-html-acceptance/ui/
+          fi
+      - name: Verify original source-edit path is still functional
+        id: seeded
+        if: steps.ui_browser.outputs.exit == '0'
+        shell: bash
+        env:
+          SWRLZ_EVAL_BASE: https://kamiloki-swyrlz.hf.space
+          SWRLZ_EVAL_MODEL: 700m
+          SWRLZ_SEEDED_TIMEOUT_SECONDS: '165'
+        run: |
+          set -uo pipefail
+          if python -u -m scripts.eval_chat_seeded_html;then status=0;else status=$?;fi
+          echo "exit=$status" >> "$GITHUB_OUTPUT"
+      - name: Archive anonymous API UI and source-revision evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: short-html-assembler-guest-results-${{ github.run_id }}
+          path: |
+            reports/short-html-acceptance/
+            reports/chat-seeded-html/
+          retention-days: 21
+          if-no-files-found: ignore
+      - name: Restore old coder on any failed or missing acceptance
+        if: steps.api.outputs.exit != '0' || steps.api_browser.outputs.exit != '0' || steps.ui.outputs.exit != '0' || steps.ui_browser.outputs.exit != '0' || steps.seeded.outputs.exit != '0'
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          SWRLZ_SMALL_ASSEMBLER_APPROVED: '1'
+        run: python -u scripts/hf_small_html_source_assembler_v1.py rollback
+      - name: Require production end-to-end acceptance
+        if: steps.api.outputs.exit != '0' || steps.api_browser.outputs.exit != '0' || steps.ui.outputs.exit != '0' || steps.ui_browser.outputs.exit != '0' || steps.seeded.outputs.exit != '0'
+        run: |
+          echo "::warning::Short HTML assembler failed source, mobile UI or browser acceptance. Inspect artifacts and rollback receipt."
+          exit 1
