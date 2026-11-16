@@ -194,7 +194,10 @@ def _draft(generate: Callable[[dict[str, Any]], Iterable[dict[str, Any]]],
         elif kind in _TERMINAL:
             tail = event
             break
-        elif kind in _PASS_THROUGH:
+        elif kind and kind != "CANDIDATE_VALIDATION":
+            # Preserve source citations, widget/action receipts, route metadata,
+            # and any newer non-text event types. Only draft-specific quality
+            # results are withheld until the accepted answer is known.
             yield event
     yield {"_draftText": "".join(text_parts),
            "_draftTerminal": tail or {"type": "FAILED", "phase": "FAILED",
