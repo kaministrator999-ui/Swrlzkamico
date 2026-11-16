@@ -39,23 +39,14 @@ jobs:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
           SWRLZ_MUSIC_ROUTING_APPROVED: '1'
         run: python -u scripts/hf_music_research_intent_routing_v1.py publish
-      - name: Check serving worker after Space restart
+      - name: Confirm exact approved source revision is RUNNING before QA
+        id: revision
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: |
-          python - <<'PY'
-          import urllib.request,time,json
-          url='https://kamiloki-swyrlz.hf.space/api/hf/qwen35-ready'
-          for n in range(35):
-              try:
-                  with urllib.request.urlopen(url,timeout=15) as r: data=json.load(r)
-                  if data.get('ready') is True and n>=3:
-                      print('MUSIC_ROUTING_SERVER_READY',n,flush=True)
-                      break
-              except Exception as exc: print('MUSIC_RESTART_WAIT',n,type(exc).__name__,flush=True)
-              time.sleep(8)
-          else:raise RuntimeError('Model not ready for safe live acceptance')
-          PY
-      - name: Allow completed Space image and worker replacement to settle
-        run: sleep 75
+          python -m py_compile scripts/hf_wait_exact_serving_revision.py
+          SWRLZ_REVISION_GATE_SELFTEST=1 python -u scripts/hf_wait_exact_serving_revision.py
+          python -u scripts/hf_wait_exact_serving_revision.py --manifest reports/swrlz-music-router-v1/manifest.json --limit-seconds 900 --poll-seconds 12
       - name: 'Source-backed blues research (not lyric extraction)'
         id: research
         shell: bash
@@ -125,13 +116,13 @@ jobs:
           retention-days: 21
           if-no-files-found: ignore
       - name: Roll back exact source if either live acceptance fails
-        if: steps.research.outputs.exit != '0' || steps.song.outputs.exit != '0'
+        if: ${{ always() && (steps.research.outputs.exit != '0' || steps.song.outputs.exit != '0' || steps.revision.outcome != 'success') }}
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
           SWRLZ_MUSIC_ROUTING_APPROVED: '1'
         run: python -u scripts/hf_music_research_intent_routing_v1.py rollback
       - name: Require both actual research and original song results
-        if: steps.research.outputs.exit != '0' || steps.song.outputs.exit != '0'
+        if: ${{ always() && (steps.research.outputs.exit != '0' || steps.song.outputs.exit != '0' || steps.revision.outcome != 'success') }}
         run: |
           echo "::warning::One or more model acceptances failed; verify rollback before further changes."
           exit 1
