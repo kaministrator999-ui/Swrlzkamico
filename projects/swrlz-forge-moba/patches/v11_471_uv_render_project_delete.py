@@ -15,9 +15,9 @@ def apply(html):
       'function se336RemovePaint()',
       'function se184ProjectCard(record,source)',
       'function se184SyncDefaultBoxes()',
-      'function se175Db()',
-      'function se175RefreshLocal()',
-      'function se170Refresh()',
+      'async function se175Db()',
+      'async function se175RefreshLocal()',
+      'async function se170Refresh()',
       'SE469_UV_SHAPE_FIT_START',
       'function se470SavedCloudProjects(rows)'
     ]
