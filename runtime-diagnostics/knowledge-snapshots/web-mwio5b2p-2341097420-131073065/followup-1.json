@@ -1,0 +1,15 @@
+{
+  "schema": "swrlz-knowledge-followup-v1",
+  "requestId": "web-mwio5b2p-2341097420-131073065",
+  "modelId": "700m",
+  "eventType": "KNOWLEDGE_ACQUISITION_FOLLOWUP_1",
+  "sourceRef": "f149dd857e3d9219f5cae7da0286b5dbfec85c42",
+  "persistedAtUnixMs": 1794797631848,
+  "diagnostic": {
+    "schema": "swrlz-knowledge-followup-v1",
+    "parentRequestId": "web-mwio5b2p-2341097420-131073065",
+    "turnIndex": 1,
+    "userText": "Now can you do a remix like version of that just all me singing",
+    "capturedAtUnixMs": 1794797631847
+  }
+}
