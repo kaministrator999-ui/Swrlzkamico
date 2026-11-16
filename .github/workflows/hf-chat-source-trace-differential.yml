@@ -1,0 +1,53 @@
+name: Read-only §C public research source trace differential
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/hf-chat-source-trace-differential.yml"]
+permissions: {contents: read}
+jobs:
+  compare:
+    runs-on: ubuntu-latest
+    timeout-minutes: 19
+    steps:
+      - name: Send two independent guest research requests without mutation
+        run: |
+          python -u - <<'PY'
+          import http.cookiejar,json,time,urllib.request,urllib.parse,uuid
+          base="https://kamiloki-swyrlz.hf.space"
+          prompts=["Research: Eclipse. What is an eclipse?",
+                   "Research: what are the moons of Mars? List their names."]
+          for prompt in prompts:
+            opener=urllib.request.build_opener(
+                urllib.request.HTTPCookieProcessor(http.cookiejar.CookieJar()))
+            rid=str(uuid.uuid4())
+            packet={"modelId":"700m","prompt":prompt,
+                    "threadId":"swrlz-readonly-source-"+str(uuid.uuid4()),
+                    "requestId":rid,"profileId":"LALM","profile":"","userProfile":"",
+                    "timeZone":"UTC"}
+            req=urllib.request.Request(base+"/api/lalm_station/send",
+                data=json.dumps(packet).encode(),method="POST",
+                headers={"Content-Type":"application/json"})
+            with opener.open(req,timeout=45) as response:
+              assert response.status==202
+            phases=[];traces=[];final="";parts=[];start=time.monotonic()
+            streamurl=base+"/api/lalm_station/stream?"+urllib.parse.urlencode({"requestId":rid})
+            with opener.open(streamurl,timeout=370) as response:
+              for raw in response:
+                if time.monotonic()-start>355:break
+                try:e=json.loads(raw)
+                except Exception:continue
+                kind=e.get("type")
+                if kind=="STATUS":
+                  phases.append({"phase":e.get("phase"),"reason":e.get("reason")})
+                elif kind=="ONLINE_TRACE":
+                  t=e.get("trace") or {}
+                  traces.append({"phase":t.get("phase"),"site":t.get("site")})
+                elif kind=="DELTA":parts.append(str(e.get("text") or ""))
+                elif kind in ("COMPLETE","COMPLETED","FAILED","CANCELLED"):
+                  final=kind;break
+            print("SWRLZ_RESEARCH_DIFFERENTIAL "+json.dumps({
+                "prompt":prompt,"terminal":final,"chars":sum(len(x) for x in parts),
+                "elapsed":round(time.monotonic()-start,1),
+                "phases":phases[:32],"traces":traces[:14],
+                "answerPrefix":"".join(parts)[:160]}),flush=True)
+          PY
