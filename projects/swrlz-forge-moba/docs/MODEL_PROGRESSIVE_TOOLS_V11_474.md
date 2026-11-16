@@ -14,7 +14,7 @@ The previous fixed category-to-inspector behavior and separate Face flyout no lo
 ## Real operations and boundaries
 
 - **Vertex / Single:** native vertex component mode; no inspector required.
-- **Vertex / Ring or Ring Fill:** requires one selected real vertex as the center. Existing v11.466 graph-distance ring selection, angular arc and radius controls are reused; the far-right settings panel preserves those original handlers. No claim is made that arbitrary freehand closed rings can be flood-filled.
+- **Vertex / Ring or Ring Fill:** the controller does not reenter an already active Vertex component mode, because the native setter clears selected vertex IDs even on a same-mode call. An already selected ring center must be preserved. Requires one selected real vertex as the center. Existing v11.466 graph-distance ring selection, angular arc and radius controls are reused; the far-right settings panel preserves those original handlers. No claim is made that arbitrary freehand closed rings can be flood-filled.
 - **Inset / Extrude / Face:** native face mode with selected operation; the inspector displays actual amount, Preview, Apply and Cancel controls.
 - **Inset / Extrude / Region:** expands the currently selected coplanar face through the existing workshop selection API where available; it does not generate geometry until an original preview is applied.
 - **Manual mesh modeling:** existing native tool operation picker is represented as top horizontal modes; exact operation parameters remain native.
