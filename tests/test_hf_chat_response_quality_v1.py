@@ -52,6 +52,13 @@ class SharedQualityPolicyTests(unittest.TestCase):
                 with self.assertRaises(ValueError):
                     patch_engine(stale)
 
+    def test_publish_is_inert_without_canonical_approval(self):
+        from unittest.mock import patch
+        from scripts.hf_chat_response_quality_v1 import publish_guarded
+        with patch.dict("os.environ", {"SWRLZ_RESPONSE_QUALITY_RELEASE_APPROVED": "0"}, clear=True):
+            with self.assertRaisesRegex(PermissionError, "APPROVAL_REQUIRED"):
+                publish_guarded()
+
     def test_no_private_history_or_tool_state_in_static_contract(self):
         self.assertNotIn("password",CONTRACT.lower())
         self.assertNotIn("user_id",CONTRACT.lower())
