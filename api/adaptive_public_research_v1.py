@@ -244,6 +244,7 @@ def adaptive_enrich(
         # subject through the existing safe bounded encyclopedia fetcher.
         # No hardcoded game/astronomy facts, no private context, and still
         # only one additional logical research round.
+        overview_topic=""
         if not _relevant_titles(second) and callable(fetch_page):
             topic=encyclopedia_topic(plan)
             if topic:
@@ -252,6 +253,7 @@ def adaptive_enrich(
                     wiki=wikipedia_public_fallback(topic,fetch_page)
                     if wiki:
                         second={"evidence":wiki}
+                        overview_topic=topic
                         attempted.append("encyclopedia subject: "+topic)
                 except Exception:
                     pass
@@ -263,7 +265,11 @@ def adaptive_enrich(
         for card in combined["evidence"]:
             if card.get("excerpt") and not card.get("snippet"):
                 card["snippet"]=card["excerpt"]
-        bounded=bounded_evidence(combined,query=question,
+        # A precise subject article can be relevant even when it doesn't
+        # repeat every word of the original multi-clause question. Score the
+        # confirmed encyclopedia subject against its title/text; otherwise
+        # the legacy two-word overlap filter would throw the source away.
+        bounded=bounded_evidence(combined,query=overview_topic or question,
                                  max_items=10,max_chars=6500)
         if bounded.get("resultCount",0)>0:
             bounded.update({
