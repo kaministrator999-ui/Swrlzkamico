@@ -45,6 +45,11 @@ def safe_status(snapshot,thread_id):
         "preview_chars":len(str(gen.get("previewText") or "")),
         "accepted_chars":len(str(gen.get("text") or "")),
         "candidate_attempts":len(gen.get("candidateAttempts") or []),
+        "parser_stopped_stream":any(x.get("parserStoppedStream") is True
+                                    for x in gen.get("candidateAttempts") or [] if isinstance(x,dict)),
+        "native_finish_reasons":[str(x.get("finishReason"))
+                                 for x in (gen.get("candidateAttempts") or [])[-3:]
+                                 if isinstance(x,dict)],
         "validation_status":(gen.get("candidateValidation") or {}).get("status"),
         "response_budget":((gen.get("contextBudget") or {}).get("reservedOutputTokens")),
     }
