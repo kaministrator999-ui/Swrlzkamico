@@ -14,6 +14,7 @@ The v11.474 click capture intentionally prevented old category-handler side effe
 - **Exclusive active state:** Set `aria-pressed` and family-state attributes on each native category button from the one progressive tool controller. One family is active at a time, and inherited stale highlights are cleared.
 - **Top modes within viewport:** Position `#se474SpecificModes` using the real scene bounds, below the existing native transform strip when visible. It still appears only once a tool has been chosen from the flyout.
 - **Idempotent repair:** Observe category/flyout state and relevant resizes without polling model geometry or duplicating tool logic. Preserve the native inspector, Ring Fill, Sculpt, Inset, Extrude, project, UV, VR, Undo and category-rail fold behavior.
+- **Ring UI scope correction:** Browser runtime tests exposed a pre-existing v11.466 ReferenceError: the ring installer was declared inside ModelAtelier but referenced by the global adaptive-panel installer. A single narrow window bridge now invokes the original function, which still owns its native settings, radius and selection actions. No parallel ring editor is introduced.
 
 ## Verification
 
