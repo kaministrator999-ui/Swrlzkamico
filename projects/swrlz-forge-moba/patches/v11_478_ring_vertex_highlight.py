@@ -28,11 +28,6 @@ def apply(html):
       '''  const selectedKeys=new Set(result.vertexIds.map(i=>
     p.topologyMesh.positions.slice(i*3,i*3+3)
      .map(v=>Math.round(Math.fround(v)*100000)).join(',')));''')
-    # Gizmotransforms use component slot -> topology representative, not the
-    # raw slot interpreted as a geometry position index.
-    html=once(html,
-      '    const key=topology.keys[id];',
-      '    const vertex=topology.vertices[id],key=topology.keys[vertex];')
     # Highlight every selected slot (no sampling/192-item selection cap).
     # Unselected points alone retain the usual large-mesh downsampling.
     html=once(html,
