@@ -68,7 +68,7 @@ def _swrlz_operation_is_noncode(prompt):
 # swrlz-standalone-followup-prefill-v1: explain -> compact standalone function.
 PREFILL_OLD = '''    if source_change_mode or not programming.get("codingTask") or history:
         return False'''
-PREFILL_NEW = '''    if source_change_mode or not programming.get("codingTask"):
+PREFILL_NEW = r'''    if source_change_mode or not programming.get("codingTask"):
         return False
     # A fresh tiny function after one explanation is not a project edit.
     # Accept only one bounded user/assistant exchange with no prior source.
@@ -89,10 +89,10 @@ PREFILL_NEW = '''    if source_change_mode or not programming.get("codingTask"):
                      r"source\s+file|error\s+trace|patch|deployment|refactor)\b",
                      previous):
             return False'''
-SIGNATURE_OLD = '''    if not re.search(r"\b(?:function|method|short|simple|small|snippet|hello world|example)\b",
+SIGNATURE_OLD = r'''    if not re.search(r"\b(?:function|method|short|simple|small|snippet|hello world|example)\b",
                      cleaned,re.I):
         return False'''
-SIGNATURE_NEW = '''    if not (re.search(r"\b(?:function|method|short|simple|small|snippet|hello world|example)\b",
+SIGNATURE_NEW = r'''    if not (re.search(r"\b(?:function|method|short|simple|small|snippet|hello world|example)\b",
                       cleaned,re.I)
             or re.search(r"\b[A-Za-z_]\w{0,32}\(\s*[A-Za-z_]\w{0,32}"
                          r"(?:\s*,\s*[A-Za-z_]\w{0,32}){0,3}\s*\)",cleaned)):
