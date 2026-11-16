@@ -30,7 +30,7 @@ request.update({
  'target':'kamiloki/swrlz-forge-moba',
  'releaseVersion':'v11.470',
  'deployMarker':'SWYRL_ENGINE_DEPLOY_MARKER: V11_470_UV_MODEL_SAVE',
- 'reason':'Transform-aware UV distortion heatmap and non-destructive shape-fit, with opt-in preview/apply/cancel/reset and native Undo. Existing mesh geometry and source painted PNG preserved. Device/VR acceptance remains owner tested.',
+ 'reason':'UV imported texture placement repaired; native Model Studio Save to account uses revisioned standalone model assets, avoids duplicate My Projects entries, and preserves local draft recovery. Physical Moto/Quest acceptance remains pending.',
  'sourceCommit':subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),
  'sourceIntegritySha256':manifest['finalSha256']
 })
