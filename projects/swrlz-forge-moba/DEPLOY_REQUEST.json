@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT (owner-approved)",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.474",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_474_PROGRESSIVE_MODEL_TOOLS",
-  "reason": "Final corrected §E v11.474 progressive mobile toolbar: right tool-family rail, left tool flyout, horizontal specific modes, contextual inspector; preserve selected vertex center when switching to Ring Outline/Fill without re-entering Vertex mode. Inset/Extrude and source-safe preview/Undo retained. Exact 451-patch artifact measured and verified. Requires physical Moto/Quest owner acceptance.",
-  "sourceCommit": "8722713c76c06742ccfe83b5b7452b4d0eeb7a3e",
-  "sourceIntegritySha256": "d1d8a174989501a8a8b8b46faa22f38a1522b1399ca9b4e9abadd672504492d2"
+  "releaseVersion": "v11.475",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_475_PROGRESSIVE_RAIL_VISIBILITY",
+  "reason": "Fix user-reported mobile progressive tool selection: exclusive Sculpt/Mesh family highlighting, visible left flyout outside clipped scrolling rail, and top Vertex/Ring/Ring Fill modes below transform bar. Restore native Ring and Quest input installers via scope-safe bridges. Browser touch-profile tests passed for desktop-site and compact mobile layouts with no page errors. Physical Moto and Quest acceptance remains pending.",
+  "sourceCommit": "994619d7d66298d4555dbaaf2daf8382114dcb4a",
+  "sourceIntegritySha256": "ab953d703acc30952f77ab7a28cdd6d40558ea076487052f886f19c558fda0d8"
 }
