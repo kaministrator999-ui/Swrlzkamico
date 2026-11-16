@@ -9,7 +9,7 @@
  function selectionIsActive(source,id){
   if(source==='local')return getProjectId()===id;
   if(source==='cloud'){
-   const ref=cloudRefs?.get(getProjectId())||se371CloudLinks?.get(getProjectId());
+   const ref=cloudRefs.get(getProjectId());
    return ref?.id===id;
   }
   return false;
@@ -80,8 +80,6 @@
     se184CloudPreviews.delete(record.id);
     for(const [localId,link] of cloudRefs)
      if(link?.id===record.id)cloudRefs.delete(localId);
-    for(const [localId,link] of se371CloudLinks)
-     if(link?.id===record.id)se371CloudLinks.delete(localId);
     window.dispatchEvent(new CustomEvent('swrlz:account-project-deleted',
      {detail:{id:record.id}}));
     await se170Refresh();
