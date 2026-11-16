@@ -1,0 +1,33 @@
+name: §C Qwen HTTP500 and remix-feedback regression preflight
+on:
+  push:
+    paths:
+      - "scripts/hf_chat_http500_feedback_v1.py"
+      - "scripts/qwen_http500_recovery_v1.py"
+      - "tests/test_qwen_http500_feedback_v1.py"
+      - ".github/workflows/hf-chat-http500-feedback-preflight.yml"
+      - ".github/workflows/manual-hf-space.yml"
+      - ".github/workflows/hf-space-request.yml"
+permissions: {contents: read}
+jobs:
+  preflight:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Prove critique classification and bounded native retry
+        run: |
+          python -m unittest discover -s tests -p 'test_qwen_http500_feedback_v1.py' -v
+          python -m unittest discover -s tests -p 'test_music_transform_quality_v1.py' -v
+          python -m unittest discover -s tests -p 'test_stop_transport_v1.py' -v
+          python -m py_compile scripts/hf_chat_http500_feedback_v1.py scripts/qwen_http500_recovery_v1.py
+      - name: Verify candidate AST against current live Hugging Face engine
+        run: |
+          python -m pip install -q 'huggingface_hub>=0.34,<2'
+          python -u scripts/hf_chat_http500_feedback_v1.py snapshot
+      - uses: actions/upload-artifact@v4
+        with:
+          name: swrlz-before-http500-feedback-${{ github.run_id }}
+          path: reports/swrlz-http500-feedback-v1/
+          retention-days: 30
+          if-no-files-found: error
