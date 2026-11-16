@@ -1,0 +1,325 @@
+{
+  "schema": "swrlz-github-online-research-trace-v1",
+  "requestId": "swr-research-eval-2a780540f3f242ee",
+  "modelId": "700m",
+  "eventType": "ONLINE_RESEARCH_TRACE",
+  "sourceRef": "f149dd857e3d9219f5cae7da0286b5dbfec85c42",
+  "persistedAtUnixMs": 1794849385190,
+  "diagnostic": {
+    "schema": "swrlz-online-research-log-v1",
+    "research": {
+      "contract": "swrlz-online-camera-v1",
+      "observabilityRevision": "v181-song-metadata-clean-form-integrity",
+      "kind": "search",
+      "status": "NO_RESULTS",
+      "reason": "existing-lyrics-retrieval",
+      "provider": "bounded-web-search-chain-v1",
+      "resultCount": 0,
+      "widgetKinds": [],
+      "sourceCount": 0,
+      "locationRequired": false,
+      "usedExplicitClientLocation": false,
+      "elapsedMs": 504,
+      "lyricsSourceAttemptCount": 0,
+      "lyricsFetchDebug": [],
+      "blockedLyricsSourceFamilies": [],
+      "musicStructureDebug": null,
+      "candidateAdmissionDebug": [
+        {
+          "query": "Research and briefly compare boom-bap versus trap rhythm as backgrounds for rap lyric flow. Mention backbeat, subdivisions, hi-hat patterns, where a hook can sit, and that flow patterns vary by song. Cite at least one public music-education source link. Do not invent a rigid universal song structure or quote existing lyrics.",
+          "title": "Previous Research | IT Security Office | Virginia Tech",
+          "url": "https://security.vt.edu/about/security-lab/previous-research/",
+          "source": "security.vt.edu",
+          "rank": 1,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "research"
+          ],
+          "coreTerms": [
+            "research",
+            "briefly",
+            "compare",
+            "boom-bap",
+            "versus",
+            "trap",
+            "rhythm",
+            "backgrounds",
+            "rap",
+            "flow",
+            "mention",
+            "backbeat"
+          ],
+          "snippetPreview": "In an effort to solve this problem, researchers have explored different methods of visualizing network security threats. There is little …"
+        },
+        {
+          "query": "Research and briefly compare boom-bap versus trap rhythm as backgrounds for rap lyric flow. Mention backbeat, subdivisions, hi-hat patterns, where a hook can sit, and that flow patterns vary by song. Cite at least one public music-education source link. Do not invent a rigid universal song structure or quote existing lyrics.",
+          "title": "Current Research | IT Security Office | Virginia Tech",
+          "url": "https://security.vt.edu/about/security-lab/current-research/",
+          "source": "security.vt.edu",
+          "rank": 2,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "research"
+          ],
+          "coreTerms": [
+            "research",
+            "briefly",
+            "compare",
+            "boom-bap",
+            "versus",
+            "trap",
+            "rhythm",
+            "backgrounds",
+            "rap",
+            "flow",
+            "mention",
+            "backbeat"
+          ],
+          "snippetPreview": "Our research in network security visualizations strives to improve the perspective of concerned users and network security …"
+        },
+        {
+          "query": "Research and briefly compare boom-bap versus trap rhythm as backgrounds for rap lyric flow. Mention backbeat, subdivisions, hi-hat patterns, where a hook can sit, and that flow patterns vary by song. Cite at least one public music-education source link. Do not invent a rigid universal song structure or quote existing lyrics.",
+          "title": "IT Security Lab | IT Security Office | Virginia Tech",
+          "url": "https://security.vt.edu/about/security-lab/",
+          "source": "security.vt.edu",
+          "rank": 3,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "research"
+          ],
+          "coreTerms": [
+            "research",
+            "briefly",
+            "compare",
+            "boom-bap",
+            "versus",
+            "trap",
+            "rhythm",
+            "backgrounds",
+            "rap",
+            "flow",
+            "mention",
+            "backbeat"
+          ],
+          "snippetPreview": "The Virginia Tech Information Technology Security Laboratory (ITSL) focuses on education and research in computer and network …"
+        },
+        {
+          "query": "Research and briefly compare boom-bap versus trap rhythm as backgrounds for rap lyric flow. Mention backbeat, subdivisions, hi-hat patterns, where a hook can sit, and that flow patterns vary by song. Cite at least one public music-education source link. Do not invent a rigid universal song structure or quote existing lyrics.",
+          "title": "How to join the IT Security Lab - Virginia Tech",
+          "url": "https://security.vt.edu/about/security-lab/join-itsl/",
+          "source": "security.vt.edu",
+          "rank": 4,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "research"
+          ],
+          "coreTerms": [
+            "research",
+            "briefly",
+            "compare",
+            "boom-bap",
+            "versus",
+            "trap",
+            "rhythm",
+            "backgrounds",
+            "rap",
+            "flow",
+            "mention",
+            "backbeat"
+          ],
+          "snippetPreview": "Current and past research projects include: The lab has the ability to conduct research with undergraduate and graduate students. If …"
+        },
+        {
+          "query": "Research and briefly compare boom-bap versus trap rhythm as backgrounds for rap lyric flow. Mention backbeat, subdivisions, hi-hat patterns, where a hook can sit, and that flow patterns vary by song. Cite at least one public music-education source link. Do not invent a rigid universal song structure or quote existing lyrics.",
+          "title": "Dissertations & Thesis | IT Security Office | Virginia Tech",
+          "url": "https://security.vt.edu/about/security-lab/dissertations/",
+          "source": "security.vt.edu",
+          "rank": 5,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [],
+          "coreTerms": [
+            "research",
+            "briefly",
+            "compare",
+            "boom-bap",
+            "versus",
+            "trap",
+            "rhythm",
+            "backgrounds",
+            "rap",
+            "flow",
+            "mention",
+            "backbeat"
+          ],
+          "snippetPreview": ""
+        },
+        {
+          "query": "Research and briefly compare boom-bap versus trap rhythm as backgrounds for rap lyric flow. Mention backbeat, subdivisions, hi-hat patterns, where a hook can sit, and that flow patterns vary by song. Cite at least one public music-education source link. Do not invent a rigid universal song structure or quote existing lyrics.",
+          "title": "| IT Security Office | Virginia Tech",
+          "url": "https://security.vt.edu/about/security-lab/sidebar/",
+          "source": "security.vt.edu",
+          "rank": 6,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [],
+          "coreTerms": [
+            "research",
+            "briefly",
+            "compare",
+            "boom-bap",
+            "versus",
+            "trap",
+            "rhythm",
+            "backgrounds",
+            "rap",
+            "flow",
+            "mention",
+            "backbeat"
+          ],
+          "snippetPreview": ""
+        },
+        {
+          "query": "Research and briefly compare boom-bap versus trap rhythm as backgrounds for rap lyric flow. Mention backbeat, subdivisions, hi-hat patterns, where a hook can sit, and that flow patterns vary by song. Cite at least one public music-education source link. Do not invent a rigid universal song structure or quote existing lyrics.",
+          "title": "Publications | IT Security Office | Virginia Tech",
+          "url": "https://security.vt.edu/about/security-lab/publications/",
+          "source": "security.vt.edu",
+          "rank": 7,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [],
+          "coreTerms": [
+            "research",
+            "briefly",
+            "compare",
+            "boom-bap",
+            "versus",
+            "trap",
+            "rhythm",
+            "backgrounds",
+            "rap",
+            "flow",
+            "mention",
+            "backbeat"
+          ],
+          "snippetPreview": "Mar 26, 2019 · Proceedings of the IEEE Symposium on 3D User Interfaces (3DUI '14)"
+        }
+      ],
+      "songIdentity": {},
+      "songDiscoveryPlan": [],
+      "lyricsRescueSearchDebug": [],
+      "lyricsMaxPageAttempts": 3,
+      "lyricsFallbackExhausted": true,
+      "rawPromptStored": false
+    },
+    "trace": [
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794849384685,
+        "phase": "RESEARCH_STARTED",
+        "activity": "Online research started",
+        "provider": "bounded-web-search-chain-v1",
+        "site": "",
+        "url": ""
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794849384691,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794849384830,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "activity": "No usable results from provider",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "httpStatus": 202,
+        "resultCount": 0
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794849384830,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794849384958,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "activity": "No usable results from provider",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "httpStatus": 202,
+        "resultCount": 0
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794849384958,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794849385187,
+        "phase": "SEARCH_PROVIDER_RESULTS",
+        "activity": "Search results found",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "httpStatus": 200,
+        "resultCount": 7
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794849385187,
+        "phase": "SEARCH_PROVIDER_SELECTED",
+        "activity": "Using bing-html",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "resultCount": 7
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794849385187,
+        "phase": "RESEARCH_COMPLETE",
+        "activity": "Online research complete",
+        "provider": "bounded-web-search-chain-v1",
+        "site": "",
+        "url": "",
+        "resultCount": 0
+      }
+    ],
+    "sourceSites": [],
+    "widgetKinds": [],
+    "requestedModelId": "700m",
+    "selectedModelId": "700m",
+    "rawPromptStored": false,
+    "historyStored": false,
+    "preciseLocationStored": false
+  }
+}
