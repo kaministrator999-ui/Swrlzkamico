@@ -1,0 +1,32 @@
+name: Read-only §C outer route research bypass audit
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/hf-chat-outer-research-route-audit.yml"]
+permissions: {contents: read}
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - run: python -m pip install --quiet "huggingface_hub>=0.34,<2"
+      - name: Inspect exact live outer response function and fallback source scopes
+        run: |
+          python - <<'PY'
+          from huggingface_hub import HfApi,hf_hub_download
+          from pathlib import Path
+          import json,ast
+          repo="kamiloki/Swyrlz";rev=HfApi().repo_info(repo,repo_type="space").sha
+          print("SWRLZ_OUTER_ROUTE_REV",rev,flush=True)
+          files={
+              "lfm2_700m_engine.py":[(735,794),(1900,2118)],
+              "station.py":[(1724,1770)]
+          }
+          for f,ranges in files.items():
+              lines=Path(hf_hub_download(repo,f,repo_type="space",revision=rev)).read_text().splitlines()
+              for lo,hi in ranges:
+                  print("SWRLZ_OUTER_ROUTE_SECTION "+json.dumps({
+                      "path":f,"start":lo,
+                      "lines":[f"{i+1}:{lines[i]}" for i in range(lo-1,min(hi,len(lines)))]
+                  },ensure_ascii=False),flush=True)
+          PY
