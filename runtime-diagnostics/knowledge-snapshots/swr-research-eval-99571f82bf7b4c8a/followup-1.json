@@ -1,0 +1,15 @@
+{
+  "schema": "swrlz-knowledge-followup-v1",
+  "requestId": "swr-research-eval-99571f82bf7b4c8a",
+  "modelId": "700m",
+  "eventType": "KNOWLEDGE_ACQUISITION_FOLLOWUP_1",
+  "sourceRef": "f149dd857e3d9219f5cae7da0286b5dbfec85c42",
+  "persistedAtUnixMs": 1794849785542,
+  "diagnostic": {
+    "schema": "swrlz-knowledge-followup-v1",
+    "parentRequestId": "swr-research-eval-99571f82bf7b4c8a",
+    "turnIndex": 1,
+    "userText": "Without a new web lookup, explain whether a synth-pop song must always use an electronic drum machine. Answer based on instrument roles, not a made-up universal rule.",
+    "capturedAtUnixMs": 1794849785541
+  }
+}
