@@ -11,7 +11,7 @@ const required=[
  'const b=safeBounds();',
  "if(!open&&isOpen())se473RememberWindow();",
  "se473RememberWindow();",
- 'const tap=e.type===\'pointerup\'&&!start.moved&&layout()===\'desktop\';',
+ 'start.moved||layout()!=='desktop'',
  "state[what][flag]=!state[what][flag]",
  'Math.hypot(e.clientX-start.x,e.clientY-start.y)<9',
  "e.key==='Enter'||e.key===' '",
@@ -34,9 +34,10 @@ assert(uv.includes('localStorage.setItem(se473UVWindowKey'),'UV position should 
 const idx=html.indexOf('function dragResize(node,what,side,dir){');
 const drag=html.slice(idx,html.indexOf('function addSeparator(parent,what,side,dir)',idx));
 assert(drag.includes('if(!start.moved&&Math.hypot'),'Drag/tap threshold protects resizing');
-assert(drag.includes("if(tap)state[what][flag]=!state[what][flag]"));
+assert(drag.includes('state[what][flag]=!state[what][flag]'));
 assert(drag.includes("const next=start.width+(e.clientX-start.x)*dir"),'Original resize remains');
-assert(drag.includes('save();window.dispatchEvent'),'Last width and fold state should survive');
+assert(drag.includes('save();window.dispatchEvent'),'Existing native pointerup saves widths and fold state');
+assert(drag.includes('},true);'),'Tap is captured before native pointerup clears state');
 const foldStart=html.indexOf('/* SE473_MODEL_TOOL_RAIL_FOLD_START */');
 const foldEnd=html.indexOf('/* SE473_MODEL_TOOL_RAIL_FOLD_END */',foldStart);
 const fold=html.slice(foldStart,foldEnd);
