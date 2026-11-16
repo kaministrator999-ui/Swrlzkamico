@@ -1,0 +1,41 @@
+name: Measure §E v11.474 progressive modeling release
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/measure-engine-v11-474.yml"
+      - "projects/swrlz-forge-moba/patches/v11_474_progressive_model_tools.py"
+      - "projects/swrlz-forge-moba/runtime/model_progressive_tools_v11_474.*"
+      - "projects/swrlz-forge-moba/source-manifest.json"
+      - "projects/swrlz-forge-moba/scripts/prepare_v11_474_release.py"
+      - "projects/swrlz-forge-moba/scripts/verify_v11_474_release.py"
+      - "projects/swrlz-forge-moba/tests/model_progressive_tools_v11_474.mjs"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: se474-source-measure
+  cancel-in-progress: true
+
+jobs:
+  source:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Build, measure, and verify v11.474 exact artifact
+        run: python projects/swrlz-forge-moba/scripts/prepare_v11_474_release.py
+      - name: Save verified source receipt
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: se474-source-receipt
+          path: projects/swrlz-forge-moba/source-manifest.json
