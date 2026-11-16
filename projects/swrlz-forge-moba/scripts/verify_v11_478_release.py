@@ -1,0 +1,71 @@
+#!/usr/bin/env python3
+"""Verify exact §E v11.478 source, tool hierarchy and native vertex editing."""
+import argparse,hashlib,json,subprocess,sys
+from pathlib import Path
+ROOT=Path(__file__).resolve().parents[1]
+arg=argparse.ArgumentParser()
+arg.add_argument('--output',required=True)
+arg.add_argument('--request',action='store_true')
+args=arg.parse_args()
+m=json.loads((ROOT/'source-manifest.json').read_text('utf8'))
+assert m['name']=='§wyrl§ Engine v11.478'
+assert m['finalArtifact']=='swyrl_engine_v11_478.html'
+assert len(m['patches'])==455 and m['patches'][-1]=='patches/v11_478_ring_vertex_highlight.py'
+assert isinstance(m['finalBytes'],int) and isinstance(m['finalSha256'],str)
+for file in ('model_vertex_entry_v11_477.js','model_progressive_hierarchy_v11_477.js','model_ring_vertex_highlight_v11_478.js',
+             'model_progressive_rail_fix_v11_475.js','model_progressive_tools_v11_474.js',
+             'model_ring_kernel_v11_466.js','model_ring_ui_v11_466.js'):
+ subprocess.run(['node','--check',str(ROOT/'runtime'/file)],check=True)
+for file in ('model_progressive_hierarchy_v11_477.mjs','model_ring_vertex_highlight_v11_478.mjs',
+             'model_progressive_rail_fix_v11_475.mjs',
+             'model_progressive_tools_v11_474.mjs',
+             'model_ring_kernel_v11_466.mjs'):
+ subprocess.run(['node',str(ROOT/'tests'/file)],check=True)
+out=Path(args.output).resolve()
+subprocess.run([sys.executable,str(ROOT/'build_space.py'),'--output',str(out)],check=True)
+source=(out/'index.html').read_bytes()
+assert source==(out/'modeler.html').read_bytes()
+assert len(source)==m['finalBytes']
+assert hashlib.sha256(source).hexdigest()==m['finalSha256']
+html=source.decode('utf8')
+for token in (
+ "window.SWRLZ_FORGE_BUILD={version:'v11.478'",
+ '<title>§wyrl§ Engine · Maker v11.478</title>',
+ 'SWYRL_ENGINE_DEPLOY_MARKER: V11_478_RING_VERTEX_HIGHLIGHT',
+ 'SE477_VERTEX_ENTRY_START','SE477_SELECTION_HIERARCHY_STYLES_START',
+ 'SE478_RING_VERTEX_HIGHLIGHT_START','se478SelectedVertices',
+ 'window.SWYRL_ENGINE_RING_HIGHLIGHT_478=Object.freeze(',
+ 'function renderShapes(){','function selectShape(shape){',
+ 'id=\'se477SelectionShapes\'',
+ "state.selectionType=operation?'vertex':''",
+ "['ring','Vertex ring']","['fill','Filled vertex ring']",
+ 'window.SWYRL_ENGINE_VERTEX_ENTRY_477=Object.freeze(',
+ 'window.SWYRL_ENGINE_PROGRESSIVE_TOOLS_474=Object.freeze(',
+ 'SE476_ENGINE_ACCOUNT_START_START','id="se476StartupGate"',
+ 'SE475_PROGRESSIVE_RAIL_VISIBILITY_START','SE474_PROGRESSIVE_MODEL_TOOLS_START',
+ 'SE466_RING_UI_START','SE466_RING_BRIDGE_START',
+ 'SE430_MODEL_WORKSHOP_BRIDGE_START','se474SpecificModes','se474ToolFlyout'
+):assert token in html,token
+assert html.count(" source.engine='§wyrl§ Engine · Maker v11.478';source.version=11.477;")==5
+subprocess.run([sys.executable,str(ROOT/'scripts/check_inline_js_syntax_v11_266.py'),
+ str(out/'index.html')],check=True)
+receipt=json.loads((out/'SOURCE.json').read_text('utf8'))
+for key,value in (
+ ('sourceVersion',m['name']),('finalBytes',len(source)),
+ ('finalSha256',m['finalSha256']),('patches',m['patches'])
+):assert receipt[key]==value,key
+assert len(receipt['assets'])==77
+for file,expected in receipt['assets'].items():
+ raw=(out/file).read_bytes()
+ assert len(raw)==expected['bytes']
+ assert hashlib.sha256(raw).hexdigest()==expected['sha256'],file
+if args.request:
+ request=json.loads((ROOT/'DEPLOY_REQUEST.json').read_text('utf8'))
+ assert request['releaseVersion']=='v11.478'
+ assert request['deployMarker']=='SWYRL_ENGINE_DEPLOY_MARKER: V11_478_RING_VERTEX_HIGHLIGHT'
+ assert request['target']=='kamiloki/swrlz-forge-moba'
+ assert request['sourceIntegritySha256']==m['finalSha256']
+ assert request['sourceCommit']
+print(json.dumps({'status':'SOURCE_VERIFIED','version':'v11.478',
+ 'bytes':len(source),'sha256':m['finalSha256'],'patches':455,
+ 'assets':77,'physicalMobileTested':False,'physicalVRTested':False}),flush=True)
