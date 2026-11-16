@@ -167,6 +167,33 @@ def quality_review(text: str, *, allow_aab: bool = False) -> dict:
             "reasons":list(dict.fromkeys(faults)),"sectionCount":len(sections),
             "verseCount":len(verse_bodies),"lyricLineCount":len(all_lines)}
 
+
+def music_feedback_followup(prompt: str, history=None) -> bool:
+    """Criticism of a generated song is discussion, not a lyrics retrieval."""
+    text=" ".join(str(prompt or "").split()).casefold()
+    if not text:return False
+    # Explicit positive new lookup wins. Bare references to the word 'lyrics'
+    # in a correction do not trigger research.
+    if re.search(r"\\b(?:search|look\\s+up|find|fetch|retrieve|research|verify)\\b"
+                 r".{0,55}\\b(?:lyrics?|words\\s+to\\s+the\\s+song)\\b",text):
+        if not re.search(r"\\b(?:don't|do\\s+not|instead\\s+of|without|stop)\\b"
+                         r".{0,28}\\b(?:search|look\\s+up|find|fetch|retrieve|research)\\b",text):
+            return False
+    critique=bool(re.search(
+        r"\\b(?:wrong|mistakes?|issues?|problems?|duplicat(?:ed|e|ion)|repeat(?:ed|ing)|"
+        r"doesn't\\s+match|didn't\\s+match|critique|feedback|you\\s+(?:missed|repeated|got)|"
+        r"not\\s+what\\s+i\\s+meant|what\\s+i\\s+(?:said|saw|noticed)|"
+        r"i\\s+was\\s+saying)\\b",text))
+    song=bool(re.search(r"\\b(?:remix|parody|remaster|song|rap|lyrics?|verses?|"
+                        r"your\\s+version|your\\s+(?:reply|response)|you\\s+wrote)\\b",text))
+    context=bool(any(
+        isinstance(item,dict) and item.get("role")=="assistant" and
+        re.search(r"\\b(?:remix|parody|remaster|verse|chorus|song|rap)\\b",
+                  str(item.get("content") or item.get("text") or ""),re.I)
+        for item in list(history or [])[-5:]
+    ))
+    return critique and (song or context)
+
 def repair_directive(reasons: list[str], mode: str) -> str:
     return (
         "SONG QUALITY REWRITE ("+str(mode).upper()+"): The draft failed: "+
