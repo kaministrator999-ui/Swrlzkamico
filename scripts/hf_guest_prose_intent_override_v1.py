@@ -96,7 +96,6 @@ def candidate(original):
     compile(source,FILE,"exec")
     return source.encode("utf-8")
 
-)
 
 def tests(content):
     source=content.decode()
