@@ -1,10 +1,10 @@
 {
   "schema": "swrlz-forge-source-v2",
-  "name": "§wyrl§ Engine v11.476",
+  "name": "§wyrl§ Engine v11.477",
   "baseArtifact": "swrlz_forge_v4.html",
   "baseBytes": 99591,
   "baseSha256": "a8299fe89fbb98d15c6091751b7a66931a66efec8eec5cb464e1286f21895856",
-  "finalArtifact": "swyrl_engine_v11_476.html",
+  "finalArtifact": "swyrl_engine_v11_477.html",
   "encoding": "gzip+base64-chunks",
   "chunks": [
     "payload/part-01.txt",
@@ -467,8 +467,9 @@
     "patches/v11_473_folding_workspace.py",
     "patches/v11_474_progressive_model_tools.py",
     "patches/v11_475_progressive_rail_visibility.py",
-    "patches/v11_476_account_first_workspace.py"
+    "patches/v11_476_account_first_workspace.py",
+    "patches/v11_477_selection_hierarchy.py"
   ],
-  "finalBytes": 10391275,
-  "finalSha256": "0985fb17a559b345c7881ec30d7d1b421da36f031a53abfdcf6abfa4242ae5ec"
+  "finalBytes": null,
+  "finalSha256": null
 }
