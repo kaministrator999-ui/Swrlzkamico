@@ -175,12 +175,18 @@ def adaptive_enrich(
     """
     if (not enabled or not isinstance(payload,dict)
             or not isinstance(route,dict)
-            or route.get("phase")!="RESEARCH_READY"
+            or route.get("phase") not in ("RESEARCH_READY","RESEARCH_UNAVAILABLE")
             or not callable(public_researcher)
             or os.environ.get("SWRLZ_ADAPTIVE_PUBLIC_RESEARCH_ENABLED","1")
                   .strip().lower() in ("0","false","off")):
         return payload,route
+    initial_phase=route.get("phase")
     evidence=payload.get("onlineContext")
+    if initial_phase=="RESEARCH_UNAVAILABLE" and not isinstance(evidence,dict):
+        # There was no first-pass evidence; still allow ONE bounded follow-up
+        # search for separately named subtopics. We do not fabricate sources.
+        evidence={"contractId":"swrlz-selective-evidence-v1",
+                  "evidence":[],"resultCount":0}
     if not isinstance(evidence,dict) or evidence.get("contractId")!="swrlz-selective-evidence-v1":
         return payload,route
     if evidence.get("verifiedContext"):
@@ -241,10 +247,22 @@ def adaptive_enrich(
         "coverageSemantics":"retrieved_text_relevance_only_not_verified_facts",
     }
     # Avoid mutation of user-owned initial payload.
+    if not int(evidence.get("resultCount") or 0):
+        # The second source search failed too. Preserve the first route's
+        # honest RESEARCH_UNAVAILABLE status, do not claim research readiness.
+        return payload,route
     out=dict(payload)
-    updated=dict(evidence);updated["adaptiveResearch"]=info
+    updated=dict(evidence)
+    if initial_phase=="RESEARCH_UNAVAILABLE":
+        updated["coverage"]="references_unverified"
+        updated["researchQuestion"]=question
+        updated["reason"]="adaptive_facet_recovery"
+    updated["adaptiveResearch"]=info
     out["onlineContext"]=updated
     response=dict(route)
+    if initial_phase=="RESEARCH_UNAVAILABLE":
+        response["phase"]="RESEARCH_READY"
+        response["reason"]="adaptive_facet_recovery"
     response["adaptiveResearch"]=info
     response["sourceCount"]=updated.get("resultCount",response.get("sourceCount",0))
     return out,response
