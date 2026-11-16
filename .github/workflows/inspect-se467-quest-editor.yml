@@ -1,0 +1,20 @@
+name: Inspect §E Quest browser editor source
+on:
+  push:
+    branches: [fix/se467-quest-browser-editor]
+    paths: ['.github/workflows/inspect-se467-quest-editor.yml','projects/swrlz-forge-moba/source-manifest.json','projects/swrlz-forge-moba/DEPLOY_REQUEST.json','projects/swrlz-forge-moba/patches/v11_467_quest_browser_editor.py','projects/swrlz-forge-moba/runtime/model_quest_browser_input_v11_467.js','projects/swrlz-forge-moba/runtime/model_quest_browser_input_v11_467.css']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify sealed engine release
+        run: python projects/swrlz-forge-moba/scripts/verify_v11_467_release.py --output /tmp/se467-quest-inspect --request
+      - name: Verify native editor regression tests
+        run: |
+          node projects/swrlz-forge-moba/tests/model_quest_browser_input_v11_467.mjs /tmp/se467-quest-inspect/index.html
+          node projects/swrlz-forge-moba/tests/model_component_selection_v11_430.mjs /tmp/se467-quest-inspect/index.html
+          node projects/swrlz-forge-moba/tests/studio_project_routing_v11_320.cjs

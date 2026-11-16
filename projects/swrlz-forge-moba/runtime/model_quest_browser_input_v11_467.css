@@ -1,0 +1,22 @@
+/* SE467_QUEST_BROWSER_STYLES_START */
+html #modelAtelierPanel[data-se320-ui] .atelier-inspector{
+ overflow-y:auto!important;overflow-x:hidden!important;
+ overscroll-behavior:contain!important;
+ touch-action:pan-y!important;
+ scrollbar-width:auto!important;
+}
+html #modelAtelierPanel[data-se320-ui] .atelier-inspector :is(#se466RingControls,#se466FaceExtrude){
+ flex:none;min-width:0;max-width:100%;
+}
+html #modelAtelierPanel[data-se320-ui] #se466RingControls:not([hidden]),
+html #modelAtelierPanel[data-se320-ui] #se466FaceExtrude:not([hidden]){
+ display:block!important;
+}
+html #modelAtelierPanel[data-se320-ui] #se467VertexQuickMode{
+ display:block;width:100%;margin:5px 0 9px;
+ font-size:12px;line-height:1.4;padding:8px;
+ border:1px solid #89bfd1;border-radius:7px;
+}
+html #modelAtelierPanel[data-se320-ui] .se465-inspector-narrow-hint{display:none!important}
+html #modelAtelierPanel[data-se320-ui] .atelier-inspector [hidden]{display:none!important}
+/* SE467_QUEST_BROWSER_STYLES_END */
