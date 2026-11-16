@@ -1,5 +1,17 @@
 # §C HTML coding reliability — verified engineering handoff (2026-11-15)
 
+## Accepted production improvement — later update, November 15 local time
+
+The original failure/rollback analysis below remains an accurate historical record, **not the current production disposition**. A newer, tightly scoped production fix passed complete acceptance.
+
+- **Release:** `scripts/hf_small_html_source_assembler_v1.py`, published to the existing Hugging Face Space at revision `2281c964f39e27d4e1397b92148f2987bf2e3b55`. [Guarded release run 43781409876](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/43781409876) **PASSED**, with the rollback step skipped.
+- **Mechanism:** For an explicitly small, new, standalone HTML page only, §C generates a bounded, SHA-checked body edit against an existing complete minimal HTML shell. Host source-assembly restores the full file; normal structural validation and safety checks remain mandatory. If a patch cannot be validated, the existing full-generation path takes over. Larger projects, imported sources, subsequent conversation edits, and non-HTML work retain the original path.
+- **Live release gates:** Anonymous API generation + actual Chromium button click, anonymous mobile Chat generation + actual Chromium button click, and independent imported-source Reset-button revision + Change/Reset/Change interaction all **PASSED**. The API release sample took 127.6s and the mobile release sample 69.4s, indicating that the fallback route still occurs in some cases.
+- **Independent repeatability:** [Mobile repeat run 43782208202](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/43782208202) **PASSED** twice. Both runs used the assembled HTML marker and generated functional pages in **37.5s** and **40.6s**. The earlier warmed UI baseline was **121.6s**, equivalent to approximately 68% lower latency for these two samples; do not infer a global guarantee.
+- **Regression scope:** 15 preflight source/eligibility tests passed. `scripts/test_guest_html_first_turn.py` executes the generated page inside a network-isolated Chromium context, testing real DOM modification. The existing imported-source revision test separately passed with a working Reset button.
+- **Remaining validation:** End-to-end new-page-then-Reset revision in the **same** anonymous thread should be treated separately from the imported-source regression. [Two-turn workflow](https://github.com/kaministrator999-ui/Swrlzkamico/actions/workflows/chat-html-two-turn-final-acceptance.yml) tracks that case. Full §C coding reliability across larger HTML, CSS, JS, app generation and regressions remains out of scope of this limited release.
+
+
 ## Current production disposition
 
 No experimental HTML speed, prompt compression, targeted feature-patch, or
