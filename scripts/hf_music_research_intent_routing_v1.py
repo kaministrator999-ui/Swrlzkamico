@@ -55,7 +55,13 @@ NEW_LYRIC=r'''    # Lyric *analysis* and revision of a just-created/user-authore
     published_full_lyrics=bool(re.search(
         r"(?i)\b(?:full|complete|all\s+the)\s+(?:song\s+)?lyrics?"
         r"\s+(?:of|to|for)\b",text))
+    negated_lyric_retrieval=bool(re.search(
+        r"(?i)\b(?:do\s+not|don't|never|avoid|without|skip)\s+"
+        r"(?:any\s+)?(?:look\s*up|search\s+for|find|fetch|retrieve|"
+        r"quote|reproduce|provide|show|print|transcribe|copy)\b"
+        r".{0,80}\b(?:lyrics?|words\s+to\s+(?:the\s+)?song)\b",text))
     lyrics_lookup=(bool(_LYRICS_LOOKUP.search(text)) and lyric_text_demand
+                   and not negated_lyric_retrieval
                    and not (creative_revision and not explicit_lookup_verb)
                    and not (musical_analysis and not
                             (explicit_lookup_verb or published_full_lyrics)))'''
@@ -142,6 +148,7 @@ def test(raw):
       ("Don't do another web lookup; summarize the two expansion classes.",False,"none",None),
       ("Skip searching again and use the previous sources.",False,"none",None),
       ("Research public sources about blues form. Do not fetch any published song lyrics.",True,"search",None),
+      ("Don't look up published song lyrics; just explain an AAB verse.",False,"none",None),
       ("Please look it up online: the history of hip-hop genres.",True,"search",None),
     ]
     for prompt,requested,kind,mode in cases:
