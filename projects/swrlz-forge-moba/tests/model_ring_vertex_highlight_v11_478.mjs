@@ -13,6 +13,10 @@ for(const token of ["['Extrude','Inset']","['ring','fill']","preview?.active&&!o
 assert(heightCss.includes('#se478RingHeightSlider[hidden]'));
 const patch=fs.readFileSync(new URL('../patches/v11_478_ring_vertex_highlight.py',import.meta.url),'utf8');
 new vm.Script(source);
+for(const token of ['previousOverlayBuild=atelierComponentOverlayBuild',
+ 'atelierComponentOverlay.add(point)','point.userData.se478SelectedVertices=true',
+ "shape==='ring'?0xffe369:0xffa56a",'preview.operation===\'ringTransform\''])
+ assert(source.includes(token),'Missing selected-point overlay: '+token);
 for(const token of [
  'previousChoose=atelierComponentChoose','atelierComponentChoose=function(slot)',
  "state.shape==='ring'?'outline':state.shape==='fill'?'fill':null",
