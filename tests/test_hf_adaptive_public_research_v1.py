@@ -166,6 +166,10 @@ class AdaptiveResearchTests(unittest.TestCase):
         self.assertEqual(
             encyclopedia_topic(plan_public_research(QUESTION)),
             "eclipse")
+        self.assertEqual(
+            encyclopedia_topic(plan_public_research(
+                "Explain the moons of Mars, including Phobos, Deimos, and orbital characteristics."
+            )), "moons of Mars")
         from unittest.mock import patch
         wiki_source={
             "title":"Wikipedia: Eclipse",
