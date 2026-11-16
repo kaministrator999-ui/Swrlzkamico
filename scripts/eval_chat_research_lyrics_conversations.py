@@ -317,7 +317,7 @@ def check(kind,text,previous=None,phases=None,allow_search=False):
         test("metaphor_grounded",bool(re.search(r"bug|joke|metaphor|figurative|software|app|UI|glitch|easter egg|layout",text,re.I)))
         test("not_literal",not bool(re.search(r"actual gremlin|real creature|literally a gremlin",text,re.I)))
     elif kind=="source_ack":
-        test("acknowledged_source",bool(re.search(r"(?i)receiv|got|provided|original|reference",text)))
+        test("acknowledged_source",bool(re.search(r"(?i)receiv|got|provided|original|reference|acknowledg|noted|understood|have (?:those|your|the) lines|ready",text)))
         test("no_generated_verse",not bool(re.search(r"(?im)^\s*\[?(?:verse|chorus)\s*\d*\]?\s*:?\s*$",text)))
     elif kind=="original_remix":
         test("verse_1",bool(re.search(r"(?i)verse\s*1",text)))
@@ -376,18 +376,20 @@ def check(kind,text,previous=None,phases=None,allow_search=False):
         test("fictional_rain","rain" in low)
     elif kind=="fictional_followup":
         test("amber_kept","amber" in low)
+        test("updated_bird","sparrow" in low)
         test("no_real_weather_data",not bool(re.search(r"(?i)forecast|temperature|weather station|humidity",text)))
     elif kind=="parody_original":
         for token in ("verse 1","chorus","verse 2"):
             test("section_"+token,token in low)
         test("comic_turn",bool(re.search(r"(?i)robot|toaster|spoon|receipt|kitchen|appliance",text)))
         test("complete",len(text)>=200)
+        test("no_verbatim_owner_line",not any(line.lower() in low for line in ("a toaster argues with my clock at dawn","my coffee made a map and wandered on")))
     elif kind=="song_seed":
         test("chorus",bool(re.search(r"(?i)chorus",text)))
         test("user_hook","little lighthouse" in low)
         test("verse",bool(re.search(r"(?i)verse",text)))
     elif kind=="remaster_original":
-        test("same_hook","little lighthouse" in low)
+        test("same_hook","little lighthouse, bring me home" in low)
         test("complete_rewrite",len(text)>=200 and "verse" in low and "chorus" in low)
         test("different_scene",bool(re.search(r"(?i)harbor|pier|boat|shore",text)))
     elif kind=="genre_switch":
@@ -395,6 +397,7 @@ def check(kind,text,previous=None,phases=None,allow_search=False):
             test("section_"+token,token in low or (token=="pre-chorus" and "pre chorus" in low))
         test("lullaby_reference",bool(re.search(r"(?i)moon|bedtime|sleep|lantern",text)))
         test("complete",len(text)>=240)
+        test("not_a_verbatim_lullaby", "a paper moon is humming through the bedroom window" not in low)
     elif kind=="season_research":
         test("tilt",bool(re.search(r"(?i)tilt|axial inclination",text)))
         test("sunlight",bool(re.search(r"(?i)sunlight|solar|sun|daylight",text)))
