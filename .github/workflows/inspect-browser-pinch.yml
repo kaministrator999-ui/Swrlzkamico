@@ -2,7 +2,7 @@ name: Inspect browser pinch gesture ownership
 on:
   push:
     branches: [fix/se467-browser-pinch-reset]
-    paths: [.github/workflows/inspect-browser-pinch.yml]
+    paths: [.github/workflows/inspect-browser-pinch.yml, projects/swrlz-forge-moba/patches/v11_467_browser_pinch_release.py]
   workflow_dispatch:
 jobs:
   inspect:
