@@ -1,0 +1,6 @@
+{
+  "target": "kamiloki/Swyrlz",
+  "approved": true,
+  "expectedSpaceSha": "37209db8fc5b1ff16fc1ee15d5f18d5f25b6ab51",
+  "operation": "remove-invalid-manual-zerogpu-startup-scan"
+}
