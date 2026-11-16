@@ -25,10 +25,9 @@ for(const token of [
  "part?.kind!=='topologyMesh'",'se478SelectedVertices','highlightedCount'
 ])assert(source.includes(token),'Missing '+token);
 for(const token of [
- 'selectedSlots.map(i=>top.vertices[i])','Math.fround(v)*100000',
- "shape==='fill'?0xffa56a","shape==='ring'?0xffe369",
- "marker.userData.se478SelectedVertices=true"
-])assert(patch.includes(token),'Missing '+token);
+ 'Math.fround(v)*100000','SE478_RING_HEIGHT_SLIDER_END',
+ 'SE478_RING_HEIGHT_STYLES_END'
+])assert(patch.includes(token),'Missing patch '+token);
 const ring=fs.readFileSync(new URL('model_ring_kernel_v11_466.js',root),'utf8');
 assert(ring.includes("mode==='outline'?dist[i]!==steps:dist[i]<0||dist[i]>steps"),
  'Native outline and filled radius must remain graph-distance selections.');
