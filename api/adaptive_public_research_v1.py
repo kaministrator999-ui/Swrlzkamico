@@ -125,7 +125,7 @@ def _relevant_titles(evidence: Any) -> list[dict[str,Any]]:
     cards=evidence.get("evidence",[])
     return [c for c in cards if isinstance(c,dict) and
             str(c.get("title") or "").strip() and
-            str(c.get("excerpt") or c.get("snippet") or "").strip()
+            str(c.get("excerpt") or c.get("snippet") or c.get("extract") or "").strip()
             and _URL.match(str(c.get("url") or ""))][:12]
 
 
