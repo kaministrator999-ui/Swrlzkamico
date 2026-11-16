@@ -1,0 +1,626 @@
+{
+  "schema": "swrlz-github-online-research-outcome-v2",
+  "requestId": "swr-research-eval-7310b752d9324dcf",
+  "modelId": "700m",
+  "eventType": "ONLINE_RESEARCH_OUTCOME",
+  "sourceRef": "f149dd857e3d9219f5cae7da0286b5dbfec85c42",
+  "persistedAtUnixMs": 1794852054093,
+  "diagnostic": {
+    "schema": "swrlz-online-research-outcome-v2",
+    "terminalState": "COMPLETE",
+    "research": {
+      "contract": "swrlz-online-camera-v1",
+      "observabilityRevision": "v181-song-metadata-clean-form-integrity",
+      "kind": "search",
+      "status": "NO_RESULTS",
+      "reason": "existing-lyrics-retrieval",
+      "provider": "bounded-web-search-chain-v1",
+      "resultCount": 0,
+      "widgetKinds": [],
+      "sourceCount": 0,
+      "locationRequired": false,
+      "usedExplicitClientLocation": false,
+      "elapsedMs": 644,
+      "lyricsSourceAttemptCount": 0,
+      "lyricsFetchDebug": [],
+      "blockedLyricsSourceFamilies": [],
+      "musicStructureDebug": null,
+      "candidateAdmissionDebug": [
+        {
+          "query": "I'm critiquing the joke, not requesting another song. Explain where the comic escalation occurs and what a human would still need to judge about the timing. No search and no new lyrics.",
+          "title": "Í - Wikipedia",
+          "url": "https://en.wikipedia.org/wiki/%C3%8D",
+          "source": "en.wikipedia.org",
+          "rank": 1,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [],
+          "coreTerms": [
+            "critiquing",
+            "joke",
+            "not",
+            "requesting",
+            "another",
+            "explain",
+            "where",
+            "comic",
+            "escalation",
+            "occurs",
+            "human",
+            "would"
+          ],
+          "snippetPreview": "Í (minuscule: í), known as I-acute, is a Latin-script character composed of the letter I and an acute accent. It is found in the Faroese, …"
+        },
+        {
+          "query": "I'm critiquing the joke, not requesting another song. Explain where the comic escalation occurs and what a human would still need to judge about the timing. No search and no new lyrics.",
+          "title": "Ï - Wikipedia",
+          "url": "https://en.wikipedia.org/wiki/%C3%8F",
+          "source": "en.wikipedia.org",
+          "rank": 2,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [],
+          "coreTerms": [
+            "critiquing",
+            "joke",
+            "not",
+            "requesting",
+            "another",
+            "explain",
+            "where",
+            "comic",
+            "escalation",
+            "occurs",
+            "human",
+            "would"
+          ],
+          "snippetPreview": "Ï (minuscule: ï) is a Latin-script character. It is composed by the letter I and two dots above, which can be considered a diaeresis. [1] …"
+        },
+        {
+          "query": "I'm critiquing the joke, not requesting another song. Explain where the comic escalation occurs and what a human would still need to judge about the timing. No search and no new lyrics.",
+          "title": "Phonics for Kids The / i / Sound Phonics in English - YouTube",
+          "url": "https://www.youtube.com/watch?v=Q3U_s31l_Wk",
+          "source": "www.youtube.com",
+          "rank": 3,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [],
+          "coreTerms": [
+            "critiquing",
+            "joke",
+            "not",
+            "requesting",
+            "another",
+            "explain",
+            "where",
+            "comic",
+            "escalation",
+            "occurs",
+            "human",
+            "would"
+          ],
+          "snippetPreview": "May 4, 2023 · Little ones will discover how to pronounce one of the sounds of the letter i through a fun song and numerous examples …"
+        },
+        {
+          "query": "I'm critiquing the joke, not requesting another song. Explain where the comic escalation occurs and what a human would still need to judge about the timing. No search and no new lyrics.",
+          "title": "Letter I | Sing and Learn the Letters of the Alphabet - YouTube",
+          "url": "https://www.youtube.com/watch?v=ZRXi7Hwfziw",
+          "source": "www.youtube.com",
+          "rank": 4,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [],
+          "coreTerms": [
+            "critiquing",
+            "joke",
+            "not",
+            "requesting",
+            "another",
+            "explain",
+            "where",
+            "comic",
+            "escalation",
+            "occurs",
+            "human",
+            "would"
+          ],
+          "snippetPreview": "Mar 15, 2018 · This super-catchy and clear alphabet song also lets children hear the letter I sound and see each letter at the …"
+        },
+        {
+          "query": "I'm critiquing the joke, not requesting another song. Explain where the comic escalation occurs and what a human would still need to judge about the timing. No search and no new lyrics.",
+          "title": "I Definition & Meaning - Merriam-Webster",
+          "url": "https://www.merriam-webster.com/dictionary/i",
+          "source": "www.merriam-webster.com",
+          "rank": 5,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [],
+          "coreTerms": [
+            "critiquing",
+            "joke",
+            "not",
+            "requesting",
+            "another",
+            "explain",
+            "where",
+            "comic",
+            "escalation",
+            "occurs",
+            "human",
+            "would"
+          ],
+          "snippetPreview": "Aug 25, 2026 · The meaning of I is the 9th letter of the English alphabet. How to use i in a sentence. Words Starting With <span …"
+        },
+        {
+          "query": "I'm critiquing the joke, not requesting another song. Explain where the comic escalation occurs and what a human would still need to judge about the timing. No search and no new lyrics.",
+          "title": "I - definition of I by The Free Dictionary",
+          "url": "https://www.thefreedictionary.com/I",
+          "source": "www.thefreedictionary.com",
+          "rank": 6,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "not"
+          ],
+          "coreTerms": [
+            "critiquing",
+            "joke",
+            "not",
+            "requesting",
+            "another",
+            "explain",
+            "where",
+            "comic",
+            "escalation",
+            "occurs",
+            "human",
+            "would"
+          ],
+          "snippetPreview": "Usage Note: Traditional grammar requires the nominative form of the pronoun following the verb be: It is I (not me), That must be …"
+        },
+        {
+          "query": "I'm critiquing the joke, not requesting another song. Explain where the comic escalation occurs and what a human would still need to judge about the timing. No search and no new lyrics.",
+          "title": "Type I with Accent Mark Í, Ì , Î, Ĩ, Ï, Ī or í, ì, î, ĩ, ï, ī",
+          "url": "https://ilifehacks.com/i-with-accent/",
+          "source": "ilifehacks.com",
+          "rank": 7,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [],
+          "coreTerms": [
+            "critiquing",
+            "joke",
+            "not",
+            "requesting",
+            "another",
+            "explain",
+            "where",
+            "comic",
+            "escalation",
+            "occurs",
+            "human",
+            "would"
+          ],
+          "snippetPreview": "Sep 9, 2026 · In this post, we will explore the different “I accent mark” and provide comprehensive instructions on how to type “I …"
+        },
+        {
+          "query": "I'm critiquing the joke, not requesting another song. Explain where the comic escalation occurs and what a human would still need to judge about the timing. No search and no new lyrics.",
+          "title": "I - - definition of i - by The Free Dictionary",
+          "url": "https://www.thefreedictionary.com/i-",
+          "source": "www.thefreedictionary.com",
+          "rank": 8,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [],
+          "coreTerms": [
+            "critiquing",
+            "joke",
+            "not",
+            "requesting",
+            "another",
+            "explain",
+            "where",
+            "comic",
+            "escalation",
+            "occurs",
+            "human",
+            "would"
+          ],
+          "snippetPreview": "I's Is, i's is. 1. the ninth letter of the English alphabet, a vowel. 2. any spoken sound represented by this letter. i. pron. nom. I, poss. …"
+        }
+      ],
+      "songIdentity": {},
+      "songDiscoveryPlan": [],
+      "lyricsRescueSearchDebug": [],
+      "lyricsMaxPageAttempts": 3,
+      "lyricsFallbackExhausted": true,
+      "rawPromptStored": false
+    },
+    "trace": [
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794852053445,
+        "phase": "RESEARCH_STARTED",
+        "activity": "Online research started",
+        "provider": "bounded-web-search-chain-v1",
+        "site": "",
+        "url": ""
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794852053446,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794852053587,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "activity": "No usable results from provider",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "httpStatus": 202,
+        "resultCount": 0
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794852053587,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794852053808,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "activity": "No usable results from provider",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "httpStatus": 202,
+        "resultCount": 0
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794852053809,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794852054088,
+        "phase": "SEARCH_PROVIDER_RESULTS",
+        "activity": "Search results found",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "httpStatus": 200,
+        "resultCount": 8
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794852054088,
+        "phase": "SEARCH_PROVIDER_SELECTED",
+        "activity": "Using bing-html",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "resultCount": 8
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794852054089,
+        "phase": "RESEARCH_COMPLETE",
+        "activity": "Online research complete",
+        "provider": "bounded-web-search-chain-v1",
+        "site": "",
+        "url": "",
+        "resultCount": 0
+      }
+    ],
+    "sources": [],
+    "sourceSites": [],
+    "widgets": [],
+    "widgetKinds": [],
+    "statusTrail": [
+      {
+        "phase": "QUEUED",
+        "reason": "Accepted by Workstation",
+        "atUnixMs": 1794852053409
+      },
+      {
+        "phase": "GENERATING",
+        "reason": "Workstation admitted generation",
+        "atUnixMs": 1794852053438
+      },
+      {
+        "seq": 1,
+        "phase": "PROGRAMMING_INTENT",
+        "reason": "",
+        "atUnixMs": 1794852053442
+      },
+      {
+        "seq": 2,
+        "phase": "SEARCH_STARTED",
+        "reason": "I’m on it — looking up I'm critiquing the joke, not requesting another song. Explain where the comic escalation occurs and what a human would still need to judge about the timing. No search and no new",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH"
+        ],
+        "atUnixMs": 1794852053443
+      },
+      {
+        "seq": 3,
+        "phase": "RESEARCH_STARTED",
+        "reason": "Online research started",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "",
+        "url": "",
+        "provider": "bounded-web-search-chain-v1",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794852053445
+      },
+      {
+        "seq": 4,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "provider": "duckduckgo-html",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794852053446
+      },
+      {
+        "seq": 5,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "reason": "No usable results from provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "provider": "duckduckgo-html",
+        "httpStatus": 202,
+        "resultCount": 0,
+        "atUnixMs": 1794852053587
+      },
+      {
+        "seq": 6,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "provider": "duckduckgo-lite",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794852053587
+      },
+      {
+        "seq": 7,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "reason": "No usable results from provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "provider": "duckduckgo-lite",
+        "httpStatus": 202,
+        "resultCount": 0,
+        "atUnixMs": 1794852053809
+      },
+      {
+        "seq": 8,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "provider": "bing-html",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794852053809
+      },
+      {
+        "seq": 9,
+        "phase": "SEARCH_PROVIDER_RESULTS",
+        "reason": "Search results found",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "provider": "bing-html",
+        "httpStatus": 200,
+        "resultCount": 8,
+        "atUnixMs": 1794852054088
+      },
+      {
+        "seq": 10,
+        "phase": "SEARCH_PROVIDER_SELECTED",
+        "reason": "Using bing-html",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "provider": "bing-html",
+        "httpStatus": null,
+        "resultCount": 8,
+        "atUnixMs": 1794852054088
+      },
+      {
+        "seq": 11,
+        "phase": "RESEARCH_COMPLETE",
+        "reason": "Online research complete",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "",
+        "url": "",
+        "provider": "bounded-web-search-chain-v1",
+        "httpStatus": null,
+        "resultCount": 0,
+        "atUnixMs": 1794852054089
+      },
+      {
+        "seq": 12,
+        "phase": "ONLINE_RESEARCH",
+        "reason": "NO_RESULTS",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH"
+        ],
+        "atUnixMs": 1794852054090
+      },
+      {
+        "seq": 13,
+        "phase": "SEARCH_COMPLETE",
+        "reason": "Online retrieval no_results.",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH"
+        ],
+        "atUnixMs": 1794852054091
+      },
+      {
+        "seq": 14,
+        "phase": "LYRICS_VERIFICATION_BLOCKED",
+        "reason": "I found search results for the lyrics, but I couldn't verify the requested lyric text from fetched evidence, so I won't reconstruct it from memory.",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "LYRICS",
+          "GROUNDING"
+        ],
+        "atUnixMs": 1794852054091
+      },
+      {
+        "seq": 16,
+        "phase": "COMPLETE",
+        "reason": "",
+        "atUnixMs": 1794852054091
+      },
+      {
+        "phase": "PERSISTING",
+        "reason": "Saving the response to the chat",
+        "atUnixMs": 1794852054091
+      }
+    ],
+    "responseCognition": {},
+    "programmingIntent": {
+      "schema": "swrlz-programming-intent-v1",
+      "codingTask": false,
+      "projectContext": "none",
+      "changeClass": "none",
+      "artifactContinuation": false,
+      "artifactMutationRequested": false,
+      "artifactTargetId": "",
+      "artifactTargetMessageId": "",
+      "baseRevision": 0,
+      "baseSourceHash": "",
+      "newProject": false,
+      "source": "brain-router"
+    },
+    "candidateValidation": {},
+    "candidateAttempts": [],
+    "generationTelemetry": {},
+    "engineCompletionTelemetry": {
+      "totalLatencyMs": null,
+      "loadLatencyMs": null,
+      "firstDeltaLatencyMs": null
+    },
+    "contextBudget": {},
+    "resourcePlan": {},
+    "responseResourceUsage": {
+      "schema": "swrlz-response-resource-usage-v1",
+      "scope": "shared-cgroup-v2",
+      "source": "cgroup-v2",
+      "isolatedModelAttribution": false,
+      "wallTimeMs": 652,
+      "capacity": {
+        "cpuLimitCores": 16.0,
+        "cpuLimitState": "measured",
+        "memoryLimitBytes": 104000000000,
+        "memoryLimitState": "measured"
+      },
+      "observed": {
+        "cgroupCpuUsageUsecDelta": 212162,
+        "averageCgroupCpuCores": 0.325,
+        "memoryStartBytes": 11545870336,
+        "memoryEndBytes": 11550539776,
+        "memoryEndMinusStartBytes": 4669440,
+        "memoryPeakSampledBytes": 11550539776,
+        "memoryPeakAboveStartBytes": 4669440,
+        "memorySampleCount": 2,
+        "memorySamplingIntervalMs": 1000
+      },
+      "attribution": "Shared container readings include concurrent work; they are not exclusive CPU/RAM use by this model.",
+      "routeId": "700m",
+      "configuredEngineThreadBudget": null,
+      "outcome": "COMPLETE"
+    },
+    "finalResponse": "I found search results for the lyrics, but I couldn't verify the requested lyric text from fetched evidence, so I won't reconstruct it from memory.",
+    "finalResponseSha256": "b6fd72ce42d1ea9b8b6e2e4097ee293e0bec3153c5772663f955ff48cdad536a",
+    "requestedModelId": "700m",
+    "selectedModelId": "700m",
+    "stationTiming": {
+      "acceptedAtUnixMs": 1794852053409,
+      "startedAtUnixMs": 1794852053438,
+      "completedAtUnixMs": 1794852054091,
+      "queueWaitMs": 29,
+      "stationRunMs": 653,
+      "endToEndMs": 682
+    },
+    "rawPromptStored": false,
+    "historyStored": false,
+    "preciseLocationStored": false,
+    "privateReasoningStored": false
+  }
+}
