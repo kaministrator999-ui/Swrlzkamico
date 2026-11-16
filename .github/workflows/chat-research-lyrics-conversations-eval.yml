@@ -1,0 +1,53 @@
+name: §C broad guest QA — public research, lyric flow and ordinary conversation
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/chat-research-lyrics-conversations-eval.yml'
+  workflow_dispatch: {}
+permissions: {contents: read}
+concurrency:
+  group: swrlz-chat-guest-eval
+  cancel-in-progress: false
+jobs:
+  evaluate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 42
+    strategy:
+      fail-fast: false
+      max-parallel: 1
+      matrix:
+        batch: [research, songwriting, conversation]
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - name: Install isolated Chromium only (no login)
+        run: |
+          python -m pip install playwright==1.56.0
+          python -m playwright install --with-deps chromium
+      - name: Compile evaluation source and prior guest harness
+        run: |
+          python -m py_compile scripts/eval_chat_research_lyrics_conversations.py
+          python -m py_compile scripts/eval_chat_guest_suite.py
+      - name: Run synthetic multi-turn §C guest tests — ${{ matrix.batch }}
+        env:
+          SWRLZ_EVAL_BASE: https://kamiloki-swyrlz.hf.space
+          SWRLZ_EVAL_MODEL: 700m
+          SWRLZ_RESEARCH_LYRICS_TURN_TIMEOUT: '215'
+        run: python -u -m scripts.eval_chat_research_lyrics_conversations --batch ${{ matrix.batch }}
+      - name: Preserve full synthetic answers and per-turn checks
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: swrlz-broad-guest-qa-${{ matrix.batch }}-${{ github.run_id }}
+          path: reports/chat-research-lyrics-conversation/
+          retention-days: 21
+          if-no-files-found: error
+      - name: Publish honest batch outcomes
+        if: always()
+        run: |
+          if [[ -f reports/chat-research-lyrics-conversation/summary.md ]]; then
+            cat reports/chat-research-lyrics-conversation/summary.md >> "$GITHUB_STEP_SUMMARY"
+          fi
