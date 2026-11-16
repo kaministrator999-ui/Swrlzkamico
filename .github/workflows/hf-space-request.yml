@@ -42,6 +42,7 @@ jobs:
               noncode-output-limit-recovery-v1) mode=hotfix-output-budget ;;
               music-transform-quality-v1) mode=hotfix-music-transform ;;
               http500-music-feedback-v1) mode=hotfix-http500-feedback ;;
+              tool-capability-recovery-v1) mode=hotfix-tool-recovery ;;
               *) echo "::error::Unknown scoped Space release mode."; exit 1 ;;
             esac
           fi

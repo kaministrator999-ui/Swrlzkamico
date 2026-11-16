@@ -12,7 +12,7 @@ on:
         description: "Validate package without publishing, or explicitly deploy"
         required: true
         type: choice
-        options: [inspect, benchmark, validate, deploy, hotfix-output-budget, hotfix-music-transform, hotfix-http500-feedback]
+        options: [inspect, benchmark, validate, deploy, hotfix-output-budget, hotfix-music-transform, hotfix-http500-feedback, hotfix-tool-recovery]
         default: validate
       approved:
         description: "Confirm replacement ONLY of existing kamiloki/Swyrlz after snapshot"
@@ -44,6 +44,52 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  hotfix_tool_recovery:
+    if: ${{ inputs.mode == 'hotfix-tool-recovery' && inputs.approved == 'yes' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 28
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.source_ref }}
+          fetch-depth: 1
+      - name: Enforce immutable reviewed §C-only source
+        shell: bash
+        run: |
+          set -euo pipefail
+          ref="${{ inputs.source_ref }}"
+          [[ "$ref" =~ ^[0-9a-f]{40}$ ]]
+          test "$(git rev-parse HEAD)" = "$ref"
+          test -f api/tool_capability_recovery_v1.py
+          test -f scripts/hf_chat_tool_recovery_release_v1.py
+          test -f tests/test_tool_capability_recovery_v1.py
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.11"}
+      - name: Verify tool routing, follow-ups, provenance and cancellation
+        run: |
+          set -euo pipefail
+          python -m unittest discover -s tests -p 'test_tool_capability_recovery_v1.py' -v
+          python -m unittest discover -s tests -p 'test_stop_transport_v1.py' -v
+          python -m py_compile api/tool_capability_recovery_v1.py scripts/hf_chat_tool_recovery_release_v1.py
+      - name: Install existing Hugging Face SDK and snapshot immutable live source
+        run: |
+          set -euo pipefail
+          python -m pip install --quiet 'huggingface_hub>=0.34,<2'
+          python -u scripts/hf_chat_tool_recovery_release_v1.py snapshot
+      - uses: actions/upload-artifact@v4
+        with:
+          name: swrlz-before-tool-capability-recovery-exact-space-source
+          path: reports/swrlz-tool-capability-recovery-v1/
+          retention-days: 30
+          if-no-files-found: error
+      - name: Publish exact-live capability guard through existing HF release lane
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          SWRLZ_TOOL_RECOVERY_DEPLOY_APPROVED: "1"
+        run: |
+          set -euo pipefail
+          python -u scripts/hf_chat_tool_recovery_release_v1.py publish
+
   hotfix_output_budget:
     if: ${{ inputs.mode == 'hotfix-output-budget' && inputs.approved == 'yes' }}
     runs-on: ubuntu-latest
@@ -162,7 +208,7 @@ jobs:
         run: python -u scripts/hf_chat_http500_feedback_v1.py publish
 
   prepare:
-    if: ${{ inputs.mode != 'hotfix-output-budget' && inputs.mode != 'hotfix-music-transform' && inputs.mode != 'hotfix-http500-feedback' }}
+    if: ${{ inputs.mode != 'hotfix-output-budget' && inputs.mode != 'hotfix-music-transform' && inputs.mode != 'hotfix-http500-feedback' && inputs.mode != 'hotfix-tool-recovery' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
