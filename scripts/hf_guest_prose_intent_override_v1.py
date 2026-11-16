@@ -47,7 +47,17 @@ def _swrlz_operation_is_noncode(prompt):
         r".{0,140}\b(?:debugging checks?|checks?|things to inspect|"
         r"diagnostic|causes?|explanation|advice|tips?|steps?)\b",
         text))
-    return bool((music and operation) or advice)
+    # Explaining message flow, restating a list, or changing one listed task
+    # is not permission to generate a source file for the chat project.
+    factual_direction=bool(re.search(
+        r"(?i)\b(?:state|say|give|explain|what(?:'s| is)|which)\b.{0,170}"
+        r"\b(?:client|server|request|response|direction|flow)\b",
+        text))
+    task_listing=bool(re.search(
+        r"(?i)\b(?:list|state|show|give|revise|replace|change|update)\b"
+        r".{0,120}\b(?:pending tasks?|tasks?|item\s*[1-9]|numbered list|entry)\b",
+        text))
+    return bool((music and operation) or advice or factual_direction or task_listing)
 
 
 '''
@@ -120,6 +130,10 @@ def tests(content):
        ("Update the debugging checks to include overlapping elements and pointer events",True),
        ("Write a full original country song with a chorus",True),
        ("Explain three debugging checks for a mobile web button",True),
+       ("In a toy web app a CLIENT sends a JSON request to a SERVER API. State its direction.",True),
+       ("Now the server has produced its reply. What is the response direction?",True),
+       ("For a hypothetical chat project list exactly three pending tasks.",True),
+       ("Revise ONLY task 3; leave tasks 1 and 2 pending.",True),
        ("Write JavaScript code to fix pointer events",False),
        ("Build an HTML lyric editor with JavaScript",False),
        ("Deploy a song generator app to the repository",False),
@@ -128,7 +142,7 @@ def tests(content):
             raise AssertionError("Operation route mismatch: "+repr(prompt))
     if text.count("NONCODE_OPERATION_OVERRIDE")!=1:
         raise AssertionError("Non-code precedence missing from generator")
-    print("PROSE_OVERRIDE_STATIC_ACCEPTED 18",flush=True)
+    print("PROSE_OVERRIDE_STATIC_ACCEPTED 22",flush=True)
 
 def preflight(api):
     rev=api.repo_info(SPACE,repo_type="space").sha
