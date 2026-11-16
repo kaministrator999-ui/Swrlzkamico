@@ -31,7 +31,7 @@ const required=[
 for(const token of required)assert(html.includes(token),'Missing full-resolution contract: '+token);
 assert(html.includes('image\\/'), 'Native image URI should use an escaped slash in the regex');
 const legacy=html.indexOf('async function se336ImportPaint(file)');
-const override=html.indexOf('se336ImportPaint=async function(file){',legacy+1);
+const override=html.indexOf('se336ImportPaint=async function(file){',html.indexOf('SE472_NATIVE_TEXTURE_RESOLUTION_START'));
 assert(override>legacy,'New import must override the old 512 to 192 pixel loop');
 const fragment=html.slice(override,html.indexOf('const se472PriorRemovePaint=',override));
 assert(!fragment.includes('canvas.toDataURL('),'Original import may not re-encode source via canvas');
