@@ -1,0 +1,15 @@
+{
+  "schema": "swrlz-knowledge-followup-v1",
+  "requestId": "swr-research-eval-642bf218cc8649e8",
+  "modelId": "700m",
+  "eventType": "KNOWLEDGE_ACQUISITION_FOLLOWUP_1",
+  "sourceRef": "f149dd857e3d9219f5cae7da0286b5dbfec85c42",
+  "persistedAtUnixMs": 1794806723054,
+  "diagnostic": {
+    "schema": "swrlz-knowledge-followup-v1",
+    "parentRequestId": "swr-research-eval-642bf218cc8649e8",
+    "turnIndex": 1,
+    "userText": "Correction: delivery is now in 8 minutes. Prioritize three tasks for Rae. Do not invent a manager, helper, extra cook or someone arriving.",
+    "capturedAtUnixMs": 1794806723053
+  }
+}
