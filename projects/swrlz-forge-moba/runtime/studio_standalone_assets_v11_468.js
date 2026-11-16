@@ -6,7 +6,7 @@
  const LABEL={modeler:'Model',particles:'Particle'};
  const MAX=8*1024*1024;
  const cloudRefs=new Map(),localCache=new Map();
- let busy=false,connected=false,cloudRows=[],userKey='',autoRestoredKey='';
+ let busy=false,connected=false,cloudRows=[],userKey='',autoRestoredKey='',lastStudio=null;
  const api=()=>window.SWYRL_ENGINE_ACCOUNT_ASSETS;
  const mode=()=>window.SWYRL_ENGINE_STUDIOS?.active?.()==='particles'?'particles':
   window.SWYRL_ENGINE_WORKSPACES?.modelerActive?.()?'modeler':null;
@@ -74,6 +74,7 @@
   const type=mode(),bar=document.getElementById('se468AssetBar');
   if(!bar)return;
   bar.hidden=!type;
+  if(type!==lastStudio){lastStudio=type;if(type&&connected)queueMicrotask(()=>void listCloud().catch(e=>status(e.message,true)));}
   if(!type)return;
   const dock=type==='modeler'?document.querySelector('#modelAtelierPanel .atelier-inspector'):document.getElementById('se223Panel');
   if(dock&&bar.parentElement!==dock)dock.prepend(bar);
