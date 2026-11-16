@@ -1,0 +1,43 @@
+name: Inspect §E Quest browser editor source
+on:
+  push:
+    branches: [fix/se467-quest-browser-editor]
+    paths: [.github/workflows/inspect-se467-quest-editor.yml]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify baseline and inspect real event handlers
+        run: |
+          python projects/swrlz-forge-moba/scripts/verify_v11_466_release.py --output /tmp/se467-quest-inspect
+          python - <<'PY'
+          from pathlib import Path
+          s=Path('/tmp/se467-quest-inspect/index.html').read_text()
+          markers=[
+            'function atelierComponentPointerDown','function atelierComponentPointerMove','function atelierComponentPointerUp',
+            'function atelierComponentPick','function atelierSculptVertexPick','function atelierMeshGizmoDown',
+            'function atelierCameraPointerDown','function atelierCameraPointerUp','function atelierCameraPointerCancel',
+            'function pointerDown(e){','/* SE431_MODEL_GIZMO_ACCESS_END */',
+            'async function saveCloud','function saveCloud','cloud.save','cloud.list',
+            'se371CloudLinks','function atelierComponentRayPick','function atelierComponentHit',
+          ]
+          for needle in markers:
+            positions=[]
+            start=0
+            while True:
+              at=s.find(needle,start)
+              if at<0:break
+              positions.append(at);start=at+1
+              if len(positions)==5:break
+            print('===',needle,'positions',positions,flush=True)
+            for at in positions[-2:]:
+              print(s[max(0,at-350):at+2500],flush=True)
+          print('=== DOCK SELECTORS',flush=True)
+          for needle in ['.atelier-inspector','.atelier-scroll','.atelier-right','.se461','id="modelAtelierPanel"']:
+            positions=[i for i in range(len(s)) if False]
+            at=s.find(needle);print(needle,at,s[max(0,at-130):at+1000] if at>=0 else '',flush=True)
+          PY
