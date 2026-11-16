@@ -47,7 +47,7 @@ jobs:
           node --check projects/swrlz-forge-moba/runtime/model_quest_browser_input_v11_467.js
           python - <<'PY'
           from pathlib import Path
-          import importlib.util
+          import importlib.util,hashlib
           root=Path('projects/swrlz-forge-moba')
           spec=importlib.util.spec_from_file_location('candidate',root/'patches/v11_467_quest_browser_editor.py')
           module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
@@ -61,5 +61,10 @@ jobs:
           assert 'se466FaceExtrude' in updated
           Path('/tmp/se467-quest-inspect/candidate.html').write_text(updated)
           print('SE467_CANDIDATE_APPLIED',len(updated),flush=True)
+          print('SE467_FINAL_BYTES',len(updated.encode('utf8')),flush=True)
+          print('SE467_FINAL_SHA256',hashlib.sha256(updated.encode('utf8')).hexdigest(),flush=True)
           PY
           python projects/swrlz-forge-moba/scripts/check_inline_js_syntax_v11_266.py /tmp/se467-quest-inspect/candidate.html
+          node projects/swrlz-forge-moba/tests/model_component_selection_v11_430.mjs /tmp/se467-quest-inspect/candidate.html
+          node projects/swrlz-forge-moba/tests/model_touch_layout_v11_461.mjs /tmp/se467-quest-inspect/candidate.html
+          node projects/swrlz-forge-moba/tests/studio_project_routing_v11_320.cjs
