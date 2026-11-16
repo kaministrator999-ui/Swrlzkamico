@@ -1,0 +1,15 @@
+{
+  "schema": "swrlz-knowledge-followup-v1",
+  "requestId": "swr-research-eval-8ed4aa43666b47af",
+  "modelId": "700m",
+  "eventType": "KNOWLEDGE_ACQUISITION_FOLLOWUP_1",
+  "sourceRef": "f149dd857e3d9219f5cae7da0286b5dbfec85c42",
+  "persistedAtUnixMs": 1794812612179,
+  "diagnostic": {
+    "schema": "swrlz-knowledge-followup-v1",
+    "parentRequestId": "swr-research-eval-8ed4aa43666b47af",
+    "turnIndex": 1,
+    "userText": "Change the bird to a sparrow but keep the amber sign. Don't check the weather; this is still a fictional scene.",
+    "capturedAtUnixMs": 1794812612179
+  }
+}
