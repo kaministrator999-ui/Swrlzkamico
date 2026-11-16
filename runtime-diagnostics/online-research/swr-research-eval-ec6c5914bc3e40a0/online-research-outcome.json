@@ -1,0 +1,882 @@
+{
+  "schema": "swrlz-github-online-research-outcome-v2",
+  "requestId": "swr-research-eval-ec6c5914bc3e40a0",
+  "modelId": "coder",
+  "eventType": "ONLINE_RESEARCH_OUTCOME",
+  "sourceRef": "f149dd857e3d9219f5cae7da0286b5dbfec85c42",
+  "persistedAtUnixMs": 1794809036207,
+  "diagnostic": {
+    "schema": "swrlz-online-research-outcome-v2",
+    "terminalState": "COMPLETE",
+    "research": {
+      "contract": "swrlz-online-camera-v1",
+      "observabilityRevision": "v181-song-metadata-clean-form-integrity",
+      "kind": "search",
+      "status": "NO_RESULTS",
+      "reason": "explicit-web-intent",
+      "provider": "bounded-web-search-chain-v1",
+      "resultCount": 0,
+      "widgetKinds": [],
+      "sourceCount": 0,
+      "locationRequired": false,
+      "usedExplicitClientLocation": false,
+      "elapsedMs": 549,
+      "lyricsSourceAttemptCount": 0,
+      "lyricsFetchDebug": [],
+      "blockedLyricsSourceFamilies": [],
+      "musicStructureDebug": null,
+      "candidateAdmissionDebug": [
+        {
+          "query": "I am only discussing your remix, not requesting another song or a web search. Explain how you checked that Verse 2 has different events from Verse 1, and what would still require a human to judge its flow. Do not generate new lyrics.",
+          "title": "AM and PM : What Do They Mean? - timeanddate.com",
+          "url": "https://www.timeanddate.com/time/am-and-pm.html",
+          "source": "www.timeanddate.com",
+          "rank": 1,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "from"
+          ],
+          "coreTerms": [
+            "only",
+            "discussing",
+            "your",
+            "remix",
+            "not",
+            "requesting",
+            "another",
+            "web",
+            "search",
+            "explain",
+            "how",
+            "you"
+          ],
+          "snippetPreview": "AM means before noon. This is the 12-hour period from midnight to noon. PM means after noon. It covers the 12 hours from noon to …"
+        },
+        {
+          "query": "I am only discussing your remix, not requesting another song or a web search. Explain how you checked that Verse 2 has different events from Verse 1, and what would still require a human to judge its flow. Do not generate new lyrics.",
+          "title": "AM Definition & Meaning - Merriam-Webster",
+          "url": "https://www.merriam-webster.com/dictionary/am",
+          "source": "www.merriam-webster.com",
+          "rank": 2,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "web"
+          ],
+          "coreTerms": [
+            "only",
+            "discussing",
+            "your",
+            "remix",
+            "not",
+            "requesting",
+            "another",
+            "web",
+            "search",
+            "explain",
+            "how",
+            "you"
+          ],
+          "snippetPreview": "The meaning of AM is present tense first-person singular of be."
+        },
+        {
+          "query": "I am only discussing your remix, not requesting another song or a web search. Explain how you checked that Verse 2 has different events from Verse 1, and what would still require a human to judge its flow. Do not generate new lyrics.",
+          "title": "AM - Wikipedia",
+          "url": "https://en.m.wikipedia.org/wiki/AM",
+          "source": "en.m.wikipedia.org",
+          "rank": 3,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [],
+          "coreTerms": [
+            "only",
+            "discussing",
+            "your",
+            "remix",
+            "not",
+            "requesting",
+            "another",
+            "web",
+            "search",
+            "explain",
+            "how",
+            "you"
+          ],
+          "snippetPreview": "Allied Mastercomputer (also called \"Adaptive Manipulator\" or \"Aggressive Menace\"), or AM, the antagonist in the short story and …"
+        },
+        {
+          "query": "I am only discussing your remix, not requesting another song or a web search. Explain how you checked that Verse 2 has different events from Verse 1, and what would still require a human to judge its flow. Do not generate new lyrics.",
+          "title": "Amazon.com. Spend less. Smile more.",
+          "url": "https://www.amazon.com/s",
+          "source": "www.amazon.com",
+          "rank": 4,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [],
+          "coreTerms": [
+            "only",
+            "discussing",
+            "your",
+            "remix",
+            "not",
+            "requesting",
+            "another",
+            "web",
+            "search",
+            "explain",
+            "how",
+            "you"
+          ],
+          "snippetPreview": "Free shipping on millions of items. Get the best of Shopping and Entertainment with Prime. Enjoy low prices and great deals on the …"
+        },
+        {
+          "query": "I am only discussing your remix, not requesting another song or a web search. Explain how you checked that Verse 2 has different events from Verse 1, and what would still require a human to judge its flow. Do not generate new lyrics.",
+          "title": "12 -hour clock - Wikipedia",
+          "url": "https://en.m.wikipedia.org/wiki/12-hour_clock",
+          "source": "en.m.wikipedia.org",
+          "rank": 5,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [],
+          "coreTerms": [
+            "only",
+            "discussing",
+            "your",
+            "remix",
+            "not",
+            "requesting",
+            "another",
+            "web",
+            "search",
+            "explain",
+            "how",
+            "you"
+          ],
+          "snippetPreview": "Originally there were two cycles: one cycle which could be tracked by the position of the Sun (day), followed by one cycle which …"
+        },
+        {
+          "query": "I am only discussing your remix, not requesting another song or a web search. Explain how you checked that Verse 2 has different events from Verse 1, and what would still require a human to judge its flow. Do not generate new lyrics.",
+          "title": "Word Family - am | Phonics Song for Kids | Jack Hartmann",
+          "url": "https://m.youtube.com/watch?v=yKrmuy7XVUk",
+          "source": "m.youtube.com",
+          "rank": 6,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "that"
+          ],
+          "coreTerms": [
+            "only",
+            "discussing",
+            "your",
+            "remix",
+            "not",
+            "requesting",
+            "another",
+            "web",
+            "search",
+            "explain",
+            "how",
+            "you"
+          ],
+          "snippetPreview": "Jul 7, 2017 · Learn about the am word family. Word families are groups of words that have a common pattern. Word families, …"
+        },
+        {
+          "query": "I am only discussing your remix, not requesting another song or a web search. Explain how you checked that Verse 2 has different events from Verse 1, and what would still require a human to judge its flow. Do not generate new lyrics.",
+          "title": "What Do “ A.M .” And “P.M.” Stand For? - Dictionary.com",
+          "url": "https://www.dictionary.com/articles/what-do-am-and-pm-stand-for",
+          "source": "www.dictionary.com",
+          "rank": 7,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "you"
+          ],
+          "coreTerms": [
+            "only",
+            "discussing",
+            "your",
+            "remix",
+            "not",
+            "requesting",
+            "another",
+            "web",
+            "search",
+            "explain",
+            "how",
+            "you"
+          ],
+          "snippetPreview": "Oct 3, 2019 · Do you capitalize a.m. and p.m.? In formal writing, it is best to lowercase both a.m. and p.m. and retain the periods (as …"
+        },
+        {
+          "query": "I am only discussing your remix, not requesting another song or a web search. Explain how you checked that Verse 2 has different events from Verse 1, and what would still require a human to judge its flow. Do not generate new lyrics.",
+          "title": "Word Family “ am ” | Turn & Learn ABCs | Preschool Learning",
+          "url": "https://m.youtube.com/watch?v=HAzxr5ZTqrY",
+          "source": "m.youtube.com",
+          "rank": 8,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [],
+          "coreTerms": [
+            "only",
+            "discussing",
+            "your",
+            "remix",
+            "not",
+            "requesting",
+            "another",
+            "web",
+            "search",
+            "explain",
+            "how",
+            "you"
+          ],
+          "snippetPreview": "Dec 18, 2018 · For example, the words “scam”, “slam”, “cram”, “”, and “dam” all share the same -am sound and letter combination, …"
+        }
+      ],
+      "songIdentity": {},
+      "songDiscoveryPlan": [],
+      "lyricsRescueSearchDebug": [],
+      "lyricsMaxPageAttempts": 0,
+      "lyricsFallbackExhausted": false,
+      "rawPromptStored": false
+    },
+    "trace": [
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794808898440,
+        "phase": "RESEARCH_STARTED",
+        "activity": "Online research started",
+        "provider": "bounded-web-search-chain-v1",
+        "site": "",
+        "url": ""
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794808898441,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794808898584,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "activity": "No usable results from provider",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "httpStatus": 202,
+        "resultCount": 0
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794808898585,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794808898720,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "activity": "No usable results from provider",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "httpStatus": 202,
+        "resultCount": 0
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794808898721,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794808898988,
+        "phase": "SEARCH_PROVIDER_RESULTS",
+        "activity": "Search results found",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "httpStatus": 200,
+        "resultCount": 8
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794808898988,
+        "phase": "SEARCH_PROVIDER_SELECTED",
+        "activity": "Using bing-html",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "resultCount": 8
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794808898989,
+        "phase": "RESEARCH_COMPLETE",
+        "activity": "Online research complete",
+        "provider": "bounded-web-search-chain-v1",
+        "site": "",
+        "url": "",
+        "resultCount": 0
+      }
+    ],
+    "sources": [],
+    "sourceSites": [],
+    "widgets": [],
+    "widgetKinds": [],
+    "statusTrail": [
+      {
+        "phase": "QUEUED",
+        "reason": "Accepted by Workstation",
+        "atUnixMs": 1794808898428
+      },
+      {
+        "phase": "GENERATING",
+        "reason": "Workstation admitted generation",
+        "atUnixMs": 1794808898436
+      },
+      {
+        "seq": 1,
+        "phase": "PROGRAMMING_INTENT",
+        "reason": "",
+        "atUnixMs": 1794808898439
+      },
+      {
+        "seq": 2,
+        "phase": "CODER_AUTO_ROUTE",
+        "reason": "programming-intent",
+        "categories": [
+          "MODEL_ROUTE"
+        ],
+        "provider": "coder",
+        "atUnixMs": 1794808898439
+      },
+      {
+        "seq": 3,
+        "phase": "SEARCH_STARTED",
+        "reason": "I’m on it — looking up I am only discussing your remix, not requesting another song or a web search. Explain how you checked that Verse 2 has different events from Verse 1, and what would still requir",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH"
+        ],
+        "atUnixMs": 1794808898439
+      },
+      {
+        "seq": 4,
+        "phase": "RESEARCH_STARTED",
+        "reason": "Online research started",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "",
+        "url": "",
+        "provider": "bounded-web-search-chain-v1",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794808898440
+      },
+      {
+        "seq": 5,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "provider": "duckduckgo-html",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794808898441
+      },
+      {
+        "seq": 6,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "reason": "No usable results from provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "provider": "duckduckgo-html",
+        "httpStatus": 202,
+        "resultCount": 0,
+        "atUnixMs": 1794808898585
+      },
+      {
+        "seq": 7,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "provider": "duckduckgo-lite",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794808898585
+      },
+      {
+        "seq": 8,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "reason": "No usable results from provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "provider": "duckduckgo-lite",
+        "httpStatus": 202,
+        "resultCount": 0,
+        "atUnixMs": 1794808898721
+      },
+      {
+        "seq": 9,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "provider": "bing-html",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794808898721
+      },
+      {
+        "seq": 10,
+        "phase": "SEARCH_PROVIDER_RESULTS",
+        "reason": "Search results found",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "provider": "bing-html",
+        "httpStatus": 200,
+        "resultCount": 8,
+        "atUnixMs": 1794808898988
+      },
+      {
+        "seq": 11,
+        "phase": "SEARCH_PROVIDER_SELECTED",
+        "reason": "Using bing-html",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "provider": "bing-html",
+        "httpStatus": null,
+        "resultCount": 8,
+        "atUnixMs": 1794808898988
+      },
+      {
+        "seq": 12,
+        "phase": "RESEARCH_COMPLETE",
+        "reason": "Online research complete",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "",
+        "url": "",
+        "provider": "bounded-web-search-chain-v1",
+        "httpStatus": null,
+        "resultCount": 0,
+        "atUnixMs": 1794808898989
+      },
+      {
+        "seq": 13,
+        "phase": "ONLINE_RESEARCH",
+        "reason": "NO_RESULTS",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH"
+        ],
+        "atUnixMs": 1794808898989
+      },
+      {
+        "seq": 14,
+        "phase": "SEARCH_COMPLETE",
+        "reason": "Online retrieval no_results.",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH"
+        ],
+        "atUnixMs": 1794808898990
+      },
+      {
+        "seq": 15,
+        "phase": "DIAGNOSTIC_READY",
+        "reason": "",
+        "atUnixMs": 1794808898990
+      },
+      {
+        "seq": 16,
+        "phase": "RESPONSE_COGNITION",
+        "reason": "",
+        "atUnixMs": 1794808898992
+      },
+      {
+        "seq": 17,
+        "phase": "PROGRAMMING_INTENT",
+        "reason": "",
+        "atUnixMs": 1794808898992
+      },
+      {
+        "seq": 18,
+        "phase": "LOADING",
+        "reason": "",
+        "categories": [],
+        "atUnixMs": 1794808898993
+      },
+      {
+        "seq": 19,
+        "phase": "PROFILE_CONTEXT_READY",
+        "reason": "swrlz-qwen35-profile-v5",
+        "categories": [],
+        "atUnixMs": 1794808899019
+      },
+      {
+        "seq": 20,
+        "phase": "CODER_PREFILL_PROFILE",
+        "reason": "swrlz-coder-prefill-v6-standard",
+        "categories": [],
+        "atUnixMs": 1794808899019
+      },
+      {
+        "seq": 21,
+        "phase": "CONTEXT_BUDGETED",
+        "reason": "",
+        "atUnixMs": 1794808899019
+      },
+      {
+        "seq": 22,
+        "phase": "GENERATING",
+        "reason": "",
+        "categories": [],
+        "atUnixMs": 1794808899019
+      },
+      {
+        "seq": 23,
+        "phase": "RESOURCE_ALLOCATED",
+        "reason": "Workstation inference budget active",
+        "atUnixMs": 1794808899019
+      },
+      {
+        "seq": 757,
+        "phase": "CANDIDATE_ATTEMPT",
+        "reason": "attempt=1",
+        "atUnixMs": 1794809036205
+      },
+      {
+        "seq": 758,
+        "phase": "CANDIDATE_NOT_APPLICABLE",
+        "reason": "",
+        "atUnixMs": 1794809036205
+      },
+      {
+        "seq": 759,
+        "phase": "GENERATION_TELEMETRY",
+        "reason": "",
+        "atUnixMs": 1794809036205
+      },
+      {
+        "seq": 760,
+        "phase": "COMPLETE",
+        "reason": "",
+        "atUnixMs": 1794809036205
+      },
+      {
+        "phase": "PERSISTING",
+        "reason": "Saving the response to the chat",
+        "atUnixMs": 1794809036206
+      }
+    ],
+    "responseCognition": {
+      "schema": "swrlz-response-cognition-v1",
+      "relation": "standalone",
+      "operation": "explain",
+      "historyAvailable": true,
+      "historyTurns": 4,
+      "anchorUserIndex": 2,
+      "anchorAssistantIndex": 3,
+      "explicitReference": true,
+      "questionLike": false,
+      "detailMode": "normal",
+      "requestedCount": null,
+      "outputOnly": false,
+      "preserveConstraint": false,
+      "programming": true,
+      "deliverable": "none",
+      "sourcePreference": "public"
+    },
+    "programmingIntent": {
+      "schema": "swrlz-programming-intent-v1",
+      "codingTask": true,
+      "projectContext": "none",
+      "changeClass": "explain",
+      "artifactContinuation": false,
+      "artifactMutationRequested": false,
+      "artifactTargetId": "",
+      "artifactTargetMessageId": "",
+      "artifactEditSource": "",
+      "baseRevision": 0,
+      "baseSourceHash": "",
+      "newProject": false,
+      "pinnedCodeArtifactCount": 0,
+      "intentContract": {
+        "schema": "swrlz-programming-intent-contract-v3",
+        "originalRequest": "I am only discussing your remix, not requesting another song or a web search. Explain how you checked that Verse 2 has different events from Verse 1, and what would still require a human to judge its flow. Do not generate new lyrics.",
+        "must": [
+          "Implementation completeness: return complete usable code implementing the requested behavior; explanatory comments may describe implemented behavior.",
+          "Explain how you checked that Verse 2 has different events from Verse 1, and what would still require a human to judge its flow."
+        ],
+        "mustNot": [
+          "Implementation completeness: do not substitute pseudocode, TODO/FIXME stubs or commented placeholders for implementation unless explicitly requested.",
+          "Do not generate new lyrics."
+        ],
+        "preserve": [],
+        "languageContract": {
+          "schema": "swrlz-language-contract-v1",
+          "explicit": false,
+          "requestedLanguages": [],
+          "requiredLanguages": [],
+          "allowedCompanionLanguages": [],
+          "allowedLanguages": [],
+          "artifactType": "code",
+          "substitutionAllowed": null
+        },
+        "literalUiText": [],
+        "acceptanceEvidence": [
+          "technical-validity: returned candidate must be complete and syntactically/build valid when applicable",
+          "intent-validity: original requirements and preservation constraints must be rechecked after every repair",
+          "api-validity: required wrapper/name/signature must remain present unless explicitly changed"
+        ],
+        "completionRule": "done only when complete-source, technical validity, and intent validity all pass",
+        "implementationPolicy": "complete-source"
+      },
+      "repairDirection": "",
+      "canonicalCarry": false,
+      "failureEvidence": null,
+      "failureHistory": [],
+      "repairConstraints": {
+        "schema": "swrlz-repair-constraints-v1",
+        "dependencyPolicy": "evidence-bounded",
+        "unavailableDependencies": [],
+        "forbiddenDependencies": [],
+        "currentReceiptDependencies": [],
+        "addedDependencies": [],
+        "carriedUnavailableDependencies": [],
+        "releasedDependencies": [],
+        "constraintCount": 0
+      },
+      "behaviorLedger": {
+        "schema": "swrlz-behavior-ledger-v1",
+        "suiteKey": "",
+        "currentPassingCases": [],
+        "currentFailingCases": [],
+        "previousPassingCases": [],
+        "previousFailingCases": [],
+        "knownPassingCases": [],
+        "preservePassingCases": [],
+        "resolvedCases": [],
+        "regressedCases": [],
+        "newlyPassingCases": [],
+        "currentScore": null,
+        "bestKnownScore": null,
+        "currentTestedArtifact": null,
+        "bestKnownArtifact": null,
+        "rebaseRecommended": false
+      },
+      "behaviorRepairBase": {
+        "mode": "latest-failing-source",
+        "sourceFingerprint": null,
+        "artifactId": "",
+        "revision": 0,
+        "sourceHash": ""
+      },
+      "behaviorRepairBaseSource": "",
+      "needsFailureEvidence": false,
+      "evidenceRequest": "",
+      "repairLifecycleState": "CANDIDATE_GENERATION",
+      "source": "brain-router"
+    },
+    "candidateValidation": {
+      "status": "NOT_APPLICABLE",
+      "reasons": [],
+      "finishReason": "stop",
+      "generationComplete": true
+    },
+    "candidateAttempts": [
+      {
+        "schema": "swrlz-candidate-attempt-v1",
+        "attempt": 1,
+        "trigger": "initial-streaming",
+        "durationMs": 137184.838,
+        "firstTokenLatencyMs": 73013.607,
+        "deltaChunks": 733,
+        "finishReason": "stop",
+        "requestedMaxTokens": 4096,
+        "usage": {},
+        "candidateFingerprint": "285efdfc47d84bff",
+        "changedFromPreviousAttempt": null,
+        "changedFromRepairTarget": null,
+        "validationStatus": "NOT_APPLICABLE",
+        "validationReasons": [],
+        "accepted": false
+      }
+    ],
+    "generationTelemetry": {
+      "schema": "swrlz-programming-generation-telemetry-v1",
+      "attemptCount": 1,
+      "regenerationCount": 0,
+      "firstCandidateRejected": false,
+      "finalAcceptedAttempt": null,
+      "finalCandidateStatus": "NOT_APPLICABLE",
+      "guardedTurn": false,
+      "repairTurn": false,
+      "strictLanguage": false,
+      "modelLoadLatencyMs": 26.274,
+      "visibleFirstDeltaLatencyMs": 73040.063,
+      "engineTotalLatencyMs": 137212.08,
+      "totalCandidateGenerationMs": 137184.838,
+      "attempts": [
+        {
+          "schema": "swrlz-candidate-attempt-v1",
+          "attempt": 1,
+          "trigger": "initial-streaming",
+          "durationMs": 137184.838,
+          "firstTokenLatencyMs": 73013.607,
+          "deltaChunks": 733,
+          "finishReason": "stop",
+          "requestedMaxTokens": 4096,
+          "usage": {},
+          "candidateFingerprint": "285efdfc47d84bff",
+          "changedFromPreviousAttempt": null,
+          "changedFromRepairTarget": null,
+          "validationStatus": "NOT_APPLICABLE",
+          "validationReasons": [],
+          "accepted": false
+        }
+      ]
+    },
+    "engineCompletionTelemetry": {
+      "totalLatencyMs": 137212.08,
+      "loadLatencyMs": 26.274,
+      "firstDeltaLatencyMs": 73040.063
+    },
+    "contextBudget": {
+      "contextWindowTokens": 16384,
+      "inputBudgetTokens": 12160,
+      "estimatedInputTokens": 5061,
+      "reservedOutputTokens": 4096,
+      "historyMessagesDropped": 0,
+      "historyMessagesKept": 4,
+      "repairTurn": false,
+      "repairContext": {},
+      "tokenBreakdown": {
+        "system": 4498,
+        "history": 507,
+        "currentPrompt": 56,
+        "total": 5061
+      }
+    },
+    "resourcePlan": {
+      "cpuCapacity": 16,
+      "decodeThreads": 18,
+      "batchThreads": 18,
+      "maxResponseTokens": 4096
+    },
+    "responseResourceUsage": {
+      "schema": "swrlz-response-resource-usage-v1",
+      "scope": "shared-cgroup-v2",
+      "source": "cgroup-v2",
+      "isolatedModelAttribution": false,
+      "wallTimeMs": 137769,
+      "capacity": {
+        "cpuLimitCores": 16.0,
+        "cpuLimitState": "measured",
+        "memoryLimitBytes": 104000000000,
+        "memoryLimitState": "measured"
+      },
+      "observed": {
+        "cgroupCpuUsageUsecDelta": 2154490800,
+        "averageCgroupCpuCores": 15.638,
+        "memoryStartBytes": 8413773824,
+        "memoryEndBytes": 8803966976,
+        "memoryEndMinusStartBytes": 390193152,
+        "memoryPeakSampledBytes": 8804950016,
+        "memoryPeakAboveStartBytes": 391176192,
+        "memorySampleCount": 139,
+        "memorySamplingIntervalMs": 1000
+      },
+      "attribution": "Shared container readings include concurrent work; they are not exclusive CPU/RAM use by this model.",
+      "routeId": "700m",
+      "configuredEngineThreadBudget": {
+        "cpuCapacity": 16,
+        "decodeThreads": 18,
+        "batchThreads": 18,
+        "maxResponseTokens": 4096
+      },
+      "outcome": "COMPLETE"
+    },
+    "finalResponse": "Here is the breakdown of the remix analysis, focusing on the structural differences between the verses and the subjective elements that remain for human judgment.\n\n### 1. Verification of Distinct Events (Verse 1 vs. Verse 2)\n\nTo ensure the two verses tell different stories, I analyzed the **semantic content** and **imagery** of each section:\n\n*   **Verse 1 (The Departure & Transformation):**\n    *   **Core Action:** Dissolution and unlocking. The moth \"dissolves,\" and a key \"unlocks.\"\n    *   **Setting/Atmosphere:** The transition from the \"purple noon\" to ash implies a magical or destructive change occurring *at* the station.\n    *   **Key Imagery:** Static haze, ash, unlocking, ash upon a spoon.\n    *   **Narrative Arc:** This verse establishes the *departure* from the known world (the old station) and the immediate magical consequence of leaving (cinnamon turning to ash).\n\n*   **Verse 2 (The Journey & Environment):**\n    *   **Core Action:** Observation and transaction. The rain \"floats\" (defying gravity), and a ticket booth \"sells\" light-based tickets.\n    *   **Setting/Atmosphere:** A surreal, neon-lit environment where physics is altered (floating spheres).\n    *   **Key Imagery:** Floating rain, neon ghosts, light-made tickets, night travel.\n    *   **Narrative Arc:** This verse describes the *experience* of the journey itself—the surreal nature of the new road and the method of travel (light tickets) rather than the act of leaving.\n\n**Conclusion:** The events are distinct because Verse 1 focuses on the **transition and loss of the old world** (moth dissolving, ash), while Verse 2 focuses on the **surreal mechanics of the new world** (floating rain, light tickets). They do not share overlapping plot points or imagery.\n\n### 2. Elements Requiring Human Judgment for Flow\n\nWhile the structural rhyme scheme (AABB) and meter are mathematically consistent, the following aspects rely on human perception to judge the \"flow\" or emotional resonance:\n\n*   **Emotional Pacing:** Does the shift from the melancholy of Verse 1 (dissolving, ash) to the surreal wonder of Verse 2 (neon ghosts, floating rain) feel like a natural progression, or does it feel jarring?\n*   **Imagery Density:** The jump from \"ash upon the spoon\" to \"neon ghosts\" is a significant tonal shift. A human reader must decide if this contrast enhances the story or disrupts the mood.\n*   **Rhythmic Nuance:** While the syllable counts are balanced, the stress patterns (where the emphasis falls on words like \"dissolves\" vs. \"floats\") create a specific cadence. A human ear determines if the rhythm feels singable or if it stumbles on the complex vocabulary (e.g., \"devours,\" \"surreal\").\n*   **Narrative Cohesion:** The bridge introduces a decision (\"No more maps\"), and the human judge must verify if the transition from the surreal journey in Verse 2 to this decision feels earned and logical within the song's internal logic.\n\nIn summary, the code/logic of the song ensures distinct events, but the *artistic* flow depends on how a human perceives the emotional weight and rhythmic texture of these specific word choices.",
+    "finalResponseSha256": "60cfb5edd4dfde471a4aa18dc4afbcc062004060682af4de8615c6b653b56080",
+    "requestedModelId": "700m",
+    "selectedModelId": "coder",
+    "stationTiming": {
+      "acceptedAtUnixMs": 1794808898428,
+      "startedAtUnixMs": 1794808898436,
+      "completedAtUnixMs": 1794809036206,
+      "queueWaitMs": 8,
+      "stationRunMs": 137770,
+      "endToEndMs": 137778
+    },
+    "rawPromptStored": false,
+    "historyStored": false,
+    "preciseLocationStored": false,
+    "privateReasoningStored": false
+  }
+}
