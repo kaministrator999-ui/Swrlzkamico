@@ -167,8 +167,14 @@ def encyclopedia_topic(plan: dict[str,Any]) -> str:
     subject=re.sub(r"\b(?:how|why|what|does|do|did|work|works|"
                    r"happen|happens|overview|explain|describe|about)\b",
                    " ",subject,flags=re.I)
-    words=[]
-    for word in subject.split():
+    # Preserve relational phrases such as "moons of Mars" (a live-tested
+    # encyclopedia title). Only normalize singular/plural forms for a single
+    # generic subject word, where there is no larger title to disambiguate.
+    words=[word for word in subject.split()]
+    while words and words[0].lower() in ("the","a","an"):
+        words.pop(0)
+    if len(words)==1:
+        word=words[0]
         low=word.lower()
         if low.endswith("sses"):
             word=word[:-2]
@@ -176,11 +182,8 @@ def encyclopedia_topic(plan: dict[str,Any]) -> str:
             word=word[:-1]
         elif low.endswith("s") and not low.endswith(("ss","ics")):
             word=word[:-1]
-        words.append(word)
-    topic=" ".join(words)
-    if not topic:
-        return ""
-    return _normalized(topic,75)
+        words=[word]
+    return _normalized(" ".join(words),75)
 
 
 def wikipedia_exact_public_title(topic: str, fetch_page: Any) -> list[dict[str,str]]:
