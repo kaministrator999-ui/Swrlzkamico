@@ -87,7 +87,8 @@
   note('Syncing saved project names…');
   try{
    const api=accountAPI();
-   const data=api?.ready?.()?await api.list():{local:[],cloud:[]};
+   // Local library is available even if the Chat origin is offline.
+   const data=api?.list?await api.list():{local:[],cloud:[]};
    if(token!==epoch)return;
    rows=[...(Array.isArray(data.local)?data.local:[]).filter(x=>x?.id).map(x=>({...x,source:'local'})),
      ...(account==='connected'&&Array.isArray(data.cloud)?data.cloud:[]).filter(x=>x?.id).map(x=>({...x,source:'cloud'}))];
@@ -97,9 +98,10 @@
   }finally{listing=false;}
  }
  function afterLoad(entry){
+  const previous=session?.source===entry?.source&&session?.id===entry?.id?{...session}:null;
   if(entry?.source&&entry.id)markLoaded(entry.source,entry.id);
-  if(entry?.source===session?.source&&entry.id===session?.id&&session?.studio){
-   const studio=session.studio,cam=session.camera;
+  if(previous?.studio){
+   const studio=previous.studio,cam=previous.camera;
    if(['game','modeler','particles','materials'].includes(studio)){
     queueMicrotask(()=>{window.SWYRL_ENGINE_STUDIOS?.change?.(studio);
      if(studio==='modeler'&&cam)restoreCamera(cam,0);});
@@ -120,7 +122,7 @@
    if(entry){
     note('Opening '+(entry.source==='cloud'?'Google':'on-device')+' project…');
     const api=accountAPI();
-    if(!api?.ready?.())throw Error('Project loader is not connected.');
+    if(!api||entry.source==='cloud'&&!api.ready?.())throw Error('Project loader is not connected.');
     const ok=entry.source==='cloud'?await api.loadCloud(entry.id):await api.loadLocal(entry.id);
     if(ok!==true)throw Error('Native project loader did not confirm success.');
     afterLoad(entry);
