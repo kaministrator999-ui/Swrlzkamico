@@ -56,7 +56,8 @@ def apply(html):
     <p class="se476-signal-code">§C:// CONNECTION_UNAVAILABLE</p>
     <h2 class="se476-signal-title" data-glitch="SIGNAL LOST">SIGNAL LOST</h2>
     <p class="se476-signal-detail">The Chat Space cannot be reached right now. Your saved on-device projects are still available, and none have been deleted.</p>
-    <button id="se476RetryConnection" type="button">↻ Reconnect to §C</button>
+    <div class="se476-offline-actions"><button id="se476RetryConnection" type="button">↻ Reconnect to §C</button><button id="se476OfflineContinue" type="button">Continue in §E offline</button></div>
+    <p class="se476-offline-footnote">§C:// CONNECTION INTERRUPTED · YOUR LOCAL WORKSPACE IS SAFE</p>
   </section>
   <div class="se476-group" aria-label="Account sign in">
    <strong class="se476-section-title">Account</strong>
