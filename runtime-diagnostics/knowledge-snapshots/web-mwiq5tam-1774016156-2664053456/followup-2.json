@@ -1,0 +1,15 @@
+{
+  "schema": "swrlz-knowledge-followup-v1",
+  "requestId": "web-mwiq5tam-1774016156-2664053456",
+  "modelId": "700m",
+  "eventType": "KNOWLEDGE_ACQUISITION_FOLLOWUP_2",
+  "sourceRef": "f149dd857e3d9219f5cae7da0286b5dbfec85c42",
+  "persistedAtUnixMs": 1794803864004,
+  "diagnostic": {
+    "schema": "swrlz-knowledge-followup-v1",
+    "parentRequestId": "web-mwiq5tam-1774016156-2664053456",
+    "turnIndex": 2,
+    "userText": "I was just trying to tell you this is the issues with your remix version of the song",
+    "capturedAtUnixMs": 1794803864000
+  }
+}
