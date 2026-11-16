@@ -24,7 +24,9 @@ PATCH='''    programming=payload.get("programmingIntent") if isinstance(payload.
                    "reason":"Explicit explanation-only output contract took precedence over caller metadata."}
     if source_change_mode:'''
 
-def digest(x):return hashlib.sha256(x).hexdigest(HELPER=r'''# swrlz-current-operation-noncode-v2: current requested operation outranks stale coding hints.
+def digest(x):return hashlib.sha256(x).hexdigest()
+
+HELPER=r'''# swrlz-current-operation-noncode-v2: current requested operation outranks stale coding hints.
 def _swrlz_operation_is_noncode(prompt):
     text=" ".join(str(prompt or "").split())[:4000]
     code_ask=bool(re.search(
