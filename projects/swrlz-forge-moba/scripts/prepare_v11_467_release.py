@@ -5,7 +5,7 @@ from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
 p=ROOT/'source-manifest.json'
 m=json.loads(p.read_text('utf8'))
-new='patches/v11_467_ring_arc_modeling.py'
+new='patches/v11_467_vr_grip_release.py'
 assert (ROOT/new).is_file()
 assert m['name']=='§wyrl§ Engine v11.467' and len(m['patches'])==444
 assert m['patches'][-1]=='patches/v11_467_vr_grip_release.py'
