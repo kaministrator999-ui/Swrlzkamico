@@ -21,6 +21,9 @@
   state.feedback.textContent=message||'';
  }
  function nativeMode(mode){
+  // Native setComponentMode clears component IDs, even when mode is unchanged.
+  // Ring selections must not lose their selected center during mode changes.
+  if(inspected()?.selection?.mode===mode)return true;
   const api=workshop();
   const result=api?.setComponentMode?.(mode);
   if(result?.ok===false)feedback(result.reason||result.error||'Cannot change component selection.');
