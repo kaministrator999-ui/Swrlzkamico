@@ -18,6 +18,11 @@ SPACE="kamiloki/Swyrlz"
 ENGINE="lfm2_700m_engine.py"
 STRUCTURE="music_structure.py"
 HELPER="music_transform_quality.py"
+ONLINE="online_tools.py"
+STATION="station.py"
+NATIVE="qwen35_single_runtime.py"
+UI="chat/§wyrlz/index.html"
+STOP="stop_transport.py"
 BACKUP=Path("reports/swrlz-music-transform-v1")
 
 def sha(data: bytes) -> str:
@@ -143,6 +148,99 @@ def patch_engine(source: str) -> str:
             longform_result=complete_longform('''
     source=once(source,branch,replacement,"transform quality generation branch")
     ast.parse(source,filename=ENGINE)
+    return source
+
+def patch_online(source: str) -> str:
+    if "swrlz-music-followup-feedback-v1" in source:
+        raise ValueError("Already installed")
+    line=next((x for x in source.splitlines()
+               if x.startswith("from music_structure import ")),None)
+    if line is None:raise ValueError("Missing verified music routing import")
+    source=once(source,line,line+"\\nfrom music_transform_quality import music_feedback_followup",
+                "feedback import")
+    marker='    lyrics_creative=creative_music_transform_request(text)'
+    injected='''    lyrics_creative=creative_music_transform_request(text)
+    # swrlz-music-followup-feedback-v1: current-turn critique beats prior
+    # lyric lookup. Explicit affirmative new research is still routed normally.
+    if not programming.get("codingTask") and music_feedback_followup(text,history):
+        return {"contract":ONLINE_CONTRACT,"requested":False,
+                "kind":"none","reason":"music-quality-feedback",
+                "query":"","locationText":"","clientLocation":None,
+                "locationRequired":False,"programming":False}'''
+    source=once(source,marker,injected,"feedback lookup guard")
+    ast.parse(source,filename=ONLINE)
+    return source
+
+def patch_native(source: str) -> str:
+    source=once(source,'from huggingface_hub import hf_hub_download',
+         'from huggingface_hub import hf_hub_download\\nfrom stop_transport import completion_response, generation_cancelled',
+         "native stop import")
+    source=once(source,
+         'with _post("/v1/chat/completions", payload, timeout=900) as response:',
+         'with completion_response(payload,SERVER_PORT,_post,timeout=900) as response:',
+         "native interruptible loopback socket")
+    source=once(source,
+         '                    for raw in response:\\n                        if not raw.startswith(b"data:"):',
+         '                    for raw in response:\\n                        if generation_cancelled():\\n                            return\\n                        if not raw.startswith(b"data:"):',
+         "native stream stop gate")
+    source=once(source,
+         '            finally:\\n                self.reset_token_cache()',
+         '''            except Exception:
+                if not generation_cancelled():
+                    raise
+                # A verified user Stop interrupted the local socket; no
+                # unrelated backend error is swallowed.
+                return
+            finally:
+                self.reset_token_cache()''',
+         "native cancel exception handling")
+    ast.parse(source,filename=NATIVE)
+    return source
+
+def patch_station(source: str) -> str:
+    source=once(source,
+         '    payload["_cancelCheck"]=_cancel_from_worker\\n    try:',
+         '    payload["_cancelCheck"]=_cancel_from_worker\\n    from stop_transport import bind_generation_cancel, release_generation_cancel\\n    bind_generation_cancel(request_id,_cancel_from_worker)\\n    try:',
+         "station generation bind")
+    source=once(source,
+         '    finally:\\n        # Early cancellation, response replacement, and CAS failures also',
+         '    finally:\\n        release_generation_cancel(request_id)\\n        # Early cancellation, response replacement, and CAS failures also',
+         "station generation release")
+    source=once(source,
+         '    _invalidate_forge(_forge_contexts.get(key))\\n    return {"ok":True,"requestId":rid,"state":"CANCEL_REQUESTED"}',
+         '''    _invalidate_forge(_forge_contexts.get(key))
+    # The account/session request ID above was authenticated. Interrupt only
+    # that request's registered loopback Qwen stream (including prefill).
+    from stop_transport import cancel_active_request
+    native_interrupt=cancel_active_request(rid)
+    return {"ok":True,"requestId":rid,"state":"CANCEL_REQUESTED",
+            "nativeInterruptRequested":bool(native_interrupt)}''',
+         "Station native Stop endpoint")
+    ast.parse(source,filename=STATION)
+    return source
+
+def patch_ui(source: str) -> str:
+    source=once(source,
+         'stopButton.addEventListener("pointerdown",()=>{swrlzStopPointerArmed=true;},{passive:true});',
+         '''stopButton.addEventListener("pointerdown",event=>{
+        // swrlz-mobile-stop-gesture-v1: send Stop on actual finger-down,
+        // not after a potentially cancelled/re-targeted synthetic tap click.
+        swrlzStopPointerArmed=true;
+        if(event.isPrimary&&event.button===0)stopButton.click();
+      },{passive:true});''',
+         "mobile stop pointerdown")
+    source=once(source,
+         '        stationCancellation=cancellation;\\n        if(stationSubmission?.requestId===rid)stationSubmission.cancelRequested=true;',
+         '''        stationCancellation=cancellation;
+        if(stationGeneration?.requestId===rid){
+          stationGeneration.status=[...(stationGeneration.status||[]),
+            {phase:"STOPPING",reason:"Stop requested; interrupting the current model response"}];
+          renderStationGeneration();
+        }
+        if(stationSubmission?.requestId===rid)stationSubmission.cancelRequested=true;''',
+         "immediate Stop visual receipt")
+    if 'swrlz-mobile-stop-gesture-v1' not in source:
+        raise ValueError("Mobile pointer fix missing")
     return source
 
 def candidate(live: dict[str,bytes]) -> dict[str,bytes]:
