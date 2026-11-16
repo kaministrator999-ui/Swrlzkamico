@@ -17,7 +17,7 @@ def apply(html):
       'function se184SyncDefaultBoxes()',
       'async function se175Db()',
       'async function se175RefreshLocal()',
-      'async function se170Refresh()',
+      'se170Refresh',
       'SE469_UV_SHAPE_FIT_START',
       'function se470SavedCloudProjects(rows)'
     ]
