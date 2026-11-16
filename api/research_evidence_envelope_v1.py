@@ -149,6 +149,22 @@ def build_envelope(payload: Any, *, max_json_chars: int = 6800) -> dict[str, Any
             ),
         },
     }
+    adaptive=bundle.get("adaptiveResearch")
+    if isinstance(adaptive,dict) and adaptive.get("schema")=="swrlz-adaptive-public-research-v1":
+        def _facets(key):
+            entries=adaptive.get(key)
+            if not isinstance(entries,list):
+                return []
+            return [_plain(x,90) for x in entries[:3]]
+        packet["research_process"] = {
+            "role":"trusted_server_research_coverage_status",
+            "passesAttempted":min(2,max(1,int(adaptive.get("passesAttempted") or 1))),
+            "facetsRequested":_facets("facetsRequested"),
+            "topicallyMatchedFacets":_facets("facetsCoveredByRetrievedText"),
+            "unresolvedEvidenceFacets":_facets("facetsNeedingVerification"),
+            "coverageMeaning":"Text overlap indicates topical relevance, not factual validation.",
+            "responseGuidance":"Explain missing coverage honestly; avoid extrapolating beyond sources.",
+        }
     if checked and isinstance(verified, dict):
         packet["checked_findings"] = {
             "role": "server_checked_narrow_facts",
