@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT (owner-approved)",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.473",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_473_FOLDING_WORKSPACE",
-  "reason": "Allow UV popup screen-wide dragging and saved position, tap existing side dock resize grips to collapse/restore saved widths, and fold vertical tool rail upward with a persisted top handle. Existing viewport input and model edits unchanged. Requires Moto/Quest owner acceptance.",
-  "sourceCommit": "b7424dee276affa753597370cc1d80bfbd9645ed",
-  "sourceIntegritySha256": "b5a6690b7432da84c9a71dbf22545ecdbf809c8028476be90fcb6fb929fc6673"
+  "releaseVersion": "v11.474",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_474_PROGRESSIVE_MODEL_TOOLS",
+  "reason": "Implement progressive Model Studio tool navigation: main right family rail, left tool flyout, contextual horizontal modes, and far-right settings inspector only after selecting a specific operation. Native Vertex Single/Ring/Ring Fill and Inset/Extrude Face/Region commands, preview and Undo preserved. Requires physical Moto/Quest acceptance.",
+  "sourceCommit": "c3a0dbe15d56c05ee4f5d1f6283a73c6088505d2",
+  "sourceIntegritySha256": "2e897eb339e2e1753186bb4a29c13c44002bc77a443507e0bd8b45fb8d3f3af3"
 }
