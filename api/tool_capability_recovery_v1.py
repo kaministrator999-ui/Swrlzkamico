@@ -62,13 +62,18 @@ def accepted_offer(payload: dict[str, Any]) -> bool:
 
 
 def _prior_user_task(items: list[dict[str, Any]]) -> str:
-    for item in reversed(items):
-        if str(item.get("role") or "").lower() != "user":
-            continue
-        value = _text(item)
-        if value and _MUSIC.search(value) and not _AFFIRM.fullmatch(value):
-            return value[:360]
-    return ""
+    candidates = [_text(item) for item in reversed(items)
+                  if str(item.get("role") or "").lower() == "user"
+                  and _text(item) and not _AFFIRM.fullmatch(_text(item))]
+    # The newest critique constrains a rewrite, but the song identity may be
+    # several turns older. Recover both rather than dropping one.
+    recent = next((v for v in candidates if _MUSIC.search(v)), "")
+    subject = next((v for v in candidates if _TITLE.search(v)), "")
+    parts = [recent[:320]] if recent else []
+    if subject and subject != recent:
+        parts.append("Earlier referenced song: " + subject[:230])
+    return "\n".join(parts)
+
 
 
 def prepare(payload: dict[str, Any]) -> dict[str, Any]:
