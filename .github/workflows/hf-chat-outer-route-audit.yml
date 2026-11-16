@@ -1,0 +1,37 @@
+name: Read-only §C outer research route acceptance audit
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/hf-chat-outer-route-audit.yml"]
+permissions: {contents: read}
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - run: python -m pip install --quiet "huggingface_hub>=0.34,<2"
+      - name: Inspect exact top-level engine dispatch and historical verification wrappers
+        run: |
+          python - <<'PY'
+          from huggingface_hub import HfApi,hf_hub_download
+          from pathlib import Path
+          import json,hashlib,ast
+          space="kamiloki/Swyrlz";rev=HfApi().repo_info(space,repo_type="space").sha
+          print("SWRLZ_OUTER_AUDIT_REV",rev,flush=True)
+          paths={
+            "lfm2_700m_engine.py":[(1780,2150),(728,795),(955,1007)],
+            "api/factual_claim_guard_v1.py":[(1,110)],
+            "api/research_context_v2.py":[(1,100)],
+          }
+          for path,ranges in paths.items():
+            try:
+              content=Path(hf_hub_download(space,path,repo_type="space",revision=rev)).read_text()
+            except Exception as e:
+              print("SWRLZ_OUTER_AUDIT_MISSING",path,str(e)[:130],flush=True)
+              continue
+            lines=content.splitlines()
+            print("SWRLZ_OUTER_AUDIT_FILE",json.dumps({"path":path,"lines":len(lines),"sha256":hashlib.sha256(content.encode()).hexdigest()}),flush=True)
+            for lo,hi in ranges:
+              selected=[str(i+1)+":"+lines[i][:320] for i in range(lo-1,min(hi,len(lines)))]
+              print("SWRLZ_OUTER_AUDIT_SECTION",json.dumps({"path":path,"lo":lo,"lines":selected},ensure_ascii=False),flush=True)
+          PY
