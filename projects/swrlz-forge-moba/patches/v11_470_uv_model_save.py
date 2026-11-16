@@ -42,13 +42,14 @@ def apply(html):
         """function se336SlideNudge(direction) {
   if(!se336SlideState().available)return;
   if(!se336SlideState().enabled)se336SlideToggle();""",'UV nudge activation')
-    html=once(html,
-        """  for (const button of root.querySelectorAll('button'))
-    button.disabled = !target || (button.id === 'se336UVRemove' && !target.part.uvPaintPNG);""",
-        """  for (const button of root.querySelectorAll('.se336-uv-actions button'))
-    button.disabled = !target || (button.id === 'se336UVRemove' && !target.part.uvPaintPNG);
-  // The nested UV Preview and Shape-fit own their own Apply/Cancel disabled state.""",
-        'UV status buttons')
+    uv_start=html.index('function se336UpdateUI()')
+    uv_end=html.index('function se336InstallUI()',uv_start)
+    uv_block=html[uv_start:uv_end]
+    if "root.querySelectorAll('button')" in uv_block:
+        uv_block=uv_block.replace("root.querySelectorAll('button')",
+                                  "root.querySelectorAll('.se336-uv-actions button')",1)
+        html=html[:uv_start]+uv_block+html[uv_end:]
+    # Later historical patches can already scope these controls; preserve them.
     html=once(html,
         """      part.uvPaintPNG = png;
       signalEdited();
