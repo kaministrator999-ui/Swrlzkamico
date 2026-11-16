@@ -1,5 +1,5 @@
 TARGET=kamiloki/Swyrlz
 APPROVED=1
-CHANGE_SCOPE=tool-capability-recovery-v1
-SOURCE_REF=3135bacd085a5359e4ba397ea89b45436d6084b1
-REQUEST_NONCE=tool-capability-recovery-20261116-source-3135bacd-r1
+CHANGE_SCOPE=noncode-repetition-guard-v1
+SOURCE_REF=b2b21a51909df8b84c56bbda90fb4c18e98bdc42
+REQUEST_NONCE=noncode-repetition-20261116-b2b21a51
