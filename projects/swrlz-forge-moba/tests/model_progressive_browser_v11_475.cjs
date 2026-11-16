@@ -30,7 +30,7 @@ async function run(){
     isMobile:true,hasTouch:true,deviceScaleFactor:2
    });
    const errors=[];
-   page.on('pageerror',e=>errors.push(String(e)));
+   page.on('pageerror',e=>errors.push(e.stack||String(e)));
    try{
     await page.goto(host+'/modeler.html',{waitUntil:'domcontentloaded',timeout:45000});
     await page.waitForSelector('#modelAtelierToolRail',{state:'attached',timeout:25000});
@@ -96,6 +96,24 @@ async function run(){
     }));
     assert.equal(selected.state.mode,'fill');
     assert.equal(selected.settings,'true');
+    const ringRuntime=await page.evaluate(()=>{
+     const entries=[...document.scripts].map((node,index)=>({
+      index,code:node.textContent||''
+     })).filter(e=>e.code.includes('se466RingUIInstall'));
+     return {
+      ringPanel:!!document.getElementById('se466RingControls'),
+      native:!!window.SWYRL_ENGINE_MODEL_WORKSHOP?.selectRing,
+      fnType:typeof se466RingUIInstall,
+      scripts:entries.map(e=>{
+       const a=e.code.indexOf('function se466RingUIInstall');
+       const b=e.code.indexOf('se430BeginnerInstall(panel);se466RingUIInstall(panel);');
+       return {index:e.index,length:e.code.length,functionOffset:a,callOffset:b,
+        beforeFunction:a>=0?e.code.slice(a-210,a+130):null,
+        beforeCall:b>=0?e.code.slice(b-180,b+100):null};
+      })
+     };
+    });
+    console.log('SE475_RING_SCOPE_'+cfg.name+' '+JSON.stringify(ringRuntime));
     assert(errors.length===0,'Browser page errors '+JSON.stringify(errors.slice(0,4)));
     console.log('SE475_BROWSER_PASS_'+cfg.name);
    }finally{await page.close();}
