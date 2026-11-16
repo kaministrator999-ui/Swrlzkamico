@@ -3,7 +3,7 @@ from __future__ import annotations
 import unittest
 from scripts.music_transform_quality_v1 import (
     quality_review, transformation_contract, transformation_directive,
-    repair_directive,
+    repair_directive, music_feedback_followup,
 )
 
 def verse(label,lines):
@@ -75,6 +75,17 @@ class MusicTransformTests(unittest.TestCase):
         faults=quality_review(song)["reasons"]
         self.assertIn("assistant-preface-in-song",faults)
         self.assertIn("assistant-outro-in-song",faults)
+
+    def test_feedback_followup_is_not_lyrics_lookup(self):
+        h=[{"role":"assistant","content":"[Verse 1]\\nA sample original rap\\n[Chorus]"}]
+        self.assertTrue(music_feedback_followup(
+            "I was saying that's what I seen wrong with your remix version",h))
+        self.assertTrue(music_feedback_followup(
+            "Your remix repeated the verses; that was the issue",[]))
+        self.assertFalse(music_feedback_followup(
+            "Please look up the lyrics to the song again",h))
+        self.assertTrue(music_feedback_followup(
+            "Don't look up the lyrics, the problems were in your remix",h))
 
     def test_repair_is_directed_at_actual_faults(self):
         self.assertIn("duplicated-nonchorus-verse",
