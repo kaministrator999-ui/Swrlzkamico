@@ -222,7 +222,7 @@ def guest_turn(prompt,*,expected_research:bool,expected_terms=()):
                                     "RESEARCH_SOURCE_CHECKED") for p in phases),
             "researchUnavailable":"RESEARCH_UNAVAILABLE" in phases,
             "phases":phases[-32:],
-            "termMatches":{term:bool(re.search(r"\\b"+re.escape(term)+r"\\b",
+            "termMatches":{term:bool(re.search(r"\b"+re.escape(term)+r"\b",
                                              answer,re.I)) for term in expected_terms},
             "prefix":answer[:180]}
     print("SWRLZ_ADAPTIVE_RESEARCH_LIVE_CASE "+json.dumps(report),flush=True)
