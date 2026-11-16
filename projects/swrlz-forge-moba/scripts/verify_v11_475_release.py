@@ -14,13 +14,13 @@ a.add_argument('--request',action='store_true')
 args=a.parse_args()
 m=json.loads((ROOT/'source-manifest.json').read_text('utf8'))
 assert m['name']=='§wyrl§ Engine v11.475'
-assert m['finalArtifact']=='swyrl_engine_v11_474.html'
-assert len(m['patches'])==452 and m['patches'][-1]=='patches/v11_474_progressive_model_tools.py'
+assert m['finalArtifact']=='swyrl_engine_v11_475.html'
+assert len(m['patches'])==452 and m['patches'][-1]=='patches/v11_475_progressive_rail_visibility.py'
 assert isinstance(m['finalBytes'],int) and isinstance(m['finalSha256'],str)
-for f in ('model_progressive_tools_v11_474.js','model_ring_kernel_v11_466.js',
+for f in ('model_progressive_rail_fix_v11_475.js','model_progressive_tools_v11_474.js','model_ring_kernel_v11_466.js',
           'model_ring_ui_v11_466.js','model_tool_rail_fold_v11_473.js'):
  subprocess.run(['node','--check',str(ROOT/'runtime'/f)],check=True)
-for f in ('model_progressive_tools_v11_474.mjs','model_ring_kernel_v11_466.mjs',
+for f in ('model_progressive_rail_fix_v11_475.mjs','model_progressive_tools_v11_474.mjs','model_ring_kernel_v11_466.mjs',
           'model_tool_rail_fold_v11_473.mjs'):
  subprocess.run(['node',str(ROOT/'tests'/f)],check=True)
 out=Path(args.output).resolve()
@@ -43,7 +43,7 @@ for token in (
  'se474SpecificModes','se474ToolFlyout','data-se474-settings-open=false',
  'modelAtelierWorkshopOperation','setRingAnchor','selectRing'):
  assert token in html,token
-assert html.count(" source.engine='§wyrl§ Engine · Maker v11.475';source.version=11.474;")==5
+assert html.count(" source.engine='§wyrl§ Engine · Maker v11.475';source.version=11.475;")==5
 subprocess.run([sys.executable,str(ROOT/'scripts/check_inline_js_syntax_v11_266.py'),str(out/'index.html')],check=True)
 receipt=json.loads((out/'SOURCE.json').read_text('utf8'))
 for key,value in (
@@ -58,7 +58,7 @@ for filename,expected in receipt['assets'].items():
 if args.request:
  req=json.loads((ROOT/'DEPLOY_REQUEST.json').read_text('utf8'))
  assert req['releaseVersion']=='v11.475'
- assert req['deployMarker']=='SWYRL_ENGINE_DEPLOY_MARKER: V11_474_PROGRESSIVE_MODEL_TOOLS'
+ assert req['deployMarker']=='SWYRL_ENGINE_DEPLOY_MARKER: V11_475_PROGRESSIVE_RAIL_VISIBILITY'
  assert req['target']=='kamiloki/swrlz-forge-moba'
  assert req['sourceIntegritySha256']==m['finalSha256']
  assert req['sourceCommit']
