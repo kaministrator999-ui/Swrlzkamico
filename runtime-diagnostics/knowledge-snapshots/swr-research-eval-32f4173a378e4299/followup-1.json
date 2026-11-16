@@ -1,0 +1,15 @@
+{
+  "schema": "swrlz-knowledge-followup-v1",
+  "requestId": "swr-research-eval-32f4173a378e4299",
+  "modelId": "700m",
+  "eventType": "KNOWLEDGE_ACQUISITION_FOLLOWUP_1",
+  "sourceRef": "f149dd857e3d9219f5cae7da0286b5dbfec85c42",
+  "persistedAtUnixMs": 1794854838697,
+  "diagnostic": {
+    "schema": "swrlz-knowledge-followup-v1",
+    "parentRequestId": "swr-research-eval-32f4173a378e4299",
+    "turnIndex": 1,
+    "userText": "Now, without doing another web lookup, give just the two classes introduced in Lord of Destruction and explain how you know they were expansion additions. Do not change the earlier list.",
+    "capturedAtUnixMs": 1794854838697
+  }
+}
