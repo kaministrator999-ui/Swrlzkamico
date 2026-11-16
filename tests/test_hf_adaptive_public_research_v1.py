@@ -154,7 +154,7 @@ class AdaptiveResearchTests(unittest.TestCase):
         packet=build_envelope(updated)
         self.assertEqual(packet["research_process"]["passesAttempted"],2)
         self.assertEqual(packet["research_process"]["unresolvedEvidenceFacets"],[])
-        self.assertIn("not a claim-verification",packet["research_process"]["coverageMeaning"])
+        self.assertIn("not factual validation",packet["research_process"]["coverageMeaning"])
         self.assertNotIn("secret personal context",str(packet))
         self.assertEqual(packet["research_results"]["claim_status"],
                          "retrieved_not_automatically_verified")
