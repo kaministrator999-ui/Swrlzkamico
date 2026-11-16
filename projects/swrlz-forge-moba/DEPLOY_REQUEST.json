@@ -5,6 +5,6 @@
   "releaseVersion": "v11.470",
   "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_470_UV_MODEL_SAVE",
   "reason": "UV imported texture placement repaired; native Model Studio Save to account uses revisioned standalone model assets, avoids duplicate My Projects entries, and preserves local draft recovery. Physical Moto/Quest acceptance remains pending.",
-  "sourceCommit": "4a020ce984e716135a8178bfd10b14be70484b35",
-  "sourceIntegritySha256": "8dfcaa85fc1d92ccfc7befce6e0eef8b2dfe4aa0729c8f75d7176aaa56e4ce88"
+  "sourceCommit": "079b2282573e8cdc940b4da21d5d3428ea3e1d29",
+  "sourceIntegritySha256": "187aa8215a763b9d75d5be41507e44ceea35ef45cfc86bed1de0c0423ab962ec"
 }

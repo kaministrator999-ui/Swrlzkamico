@@ -463,6 +463,6 @@
     "patches/v11_469_uv_shape_fit.py",
     "patches/v11_470_uv_model_save.py"
   ],
-  "finalBytes": 10283235,
-  "finalSha256": "8dfcaa85fc1d92ccfc7befce6e0eef8b2dfe4aa0729c8f75d7176aaa56e4ce88"
+  "finalBytes": 10285154,
+  "finalSha256": "187aa8215a763b9d75d5be41507e44ceea35ef45cfc86bed1de0c0423ab962ec"
 }
