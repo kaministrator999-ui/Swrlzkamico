@@ -1,0 +1,460 @@
+{
+  "schema": "swrlz-github-online-research-trace-v1",
+  "requestId": "swr-research-eval-cd09262cc6d143ba",
+  "modelId": "700m",
+  "eventType": "ONLINE_RESEARCH_TRACE",
+  "sourceRef": "f149dd857e3d9219f5cae7da0286b5dbfec85c42",
+  "persistedAtUnixMs": 1794853232506,
+  "diagnostic": {
+    "schema": "swrlz-online-research-log-v1",
+    "research": {
+      "contract": "swrlz-online-camera-v1",
+      "observabilityRevision": "v181-song-metadata-clean-form-integrity",
+      "kind": "search",
+      "status": "NO_RESULTS",
+      "reason": "existing-lyrics-retrieval",
+      "provider": "bounded-web-search-chain-v1",
+      "resultCount": 0,
+      "widgetKinds": [],
+      "sourceCount": 0,
+      "locationRequired": false,
+      "usedExplicitClientLocation": false,
+      "elapsedMs": 783,
+      "lyricsSourceAttemptCount": 1,
+      "lyricsFetchDebug": [
+        {
+          "attempt": 1,
+          "origin": "research-evidence",
+          "requestedUrl": "https://dictionary.cambridge.org/dictionary/english/hypothetical",
+          "finalUrl": "https://dictionary.cambridge.org/dictionary/english/hypothetical",
+          "searchResultTitle": "HYPOTHETICAL | English meaning - Cambridge Dictionary",
+          "fetchedPageTitle": "HYPOTHETICAL | English meaning - Cambridge Dictionary",
+          "fetchStatus": null,
+          "fetchedContent": {
+            "chars": 13113,
+            "sha256": "822d0509dc8841538c71e1a6d5236fa502fb4e452f8d3e9bb269d0c8ccfc7522",
+            "anchorIndex": 46,
+            "anchorLine": "1) ? '/autocomplete/amp?dataset=' + stateSearch.dataset + '&q=' + stateSearch.term : 'https://'\">",
+            "sectionMarkers": [],
+            "performerMarkers": [],
+            "preview": "1) ? '/autocomplete/amp?dataset=' + stateSearch.dataset + '&q=' + stateSearch.term : 'https://'\">\n0 && stateHdr.searchDesk ? 'pa pdd chac-sb tc-bd bw hbr-20 hbss lpt-25' : 'hdn'\">\n{{word}}\n{{#beta}}\nBeta {{/beta}}\n{{#preferredDictionaries}}\n{{^selected}}\n{{name}}\n{{/selected}}\n{{/preferredDictionaries}}\nMeaning of hypothetical in English\nhypothetical\nadjective\nuk",
+            "previewChars": 365,
+            "previewLimit": 600
+          },
+          "extractorOutput": {
+            "chars": 0,
+            "sha256": "",
+            "preview": "",
+            "previewChars": 0,
+            "previewLimit": 600
+          },
+          "extractorDiagnostics": {
+            "requestedScope": "full-lyrics",
+            "rawChars": 13113,
+            "rawLineCount": 976,
+            "anchorIndex": 46,
+            "anchorLine": "1) ? '/autocomplete/amp?dataset=' + stateSearch.dataset + '&q=' + stateSearch.term : 'https://'\">",
+            "scopedLineCount": 360,
+            "scopedNonEmptyLineCount": 183,
+            "contentLineCount": 139,
+            "musicalSectionCueCount": 0,
+            "performerCueCount": 0,
+            "blankSeparatedChunkCount": 177,
+            "acceptedBlockCount": 1,
+            "blockLineCounts": [
+              2
+            ],
+            "continuousRunEligible": false,
+            "terminalBoundaryKind": "PAGE_NOISE_BOUNDARY",
+            "terminalBoundaryLine": "Blog",
+            "decision": "REJECTED",
+            "reason": "INSUFFICIENT_FULL_LYRIC_STRUCTURE",
+            "resultChars": 0,
+            "resultLineCount": 0
+          },
+          "sourceIdentityVerified": false,
+          "sourceIdentityScore": 0,
+          "snippetOverlapCount": 0,
+          "snippetInformativeTokenCount": 0,
+          "snippetSequenceSpan": 0,
+          "musicalSectionCount": 0,
+          "performerCueCount": 0,
+          "outcome": "REJECTED",
+          "rejectionReason": "NO_STRUCTURED_LYRIC_BODY"
+        }
+      ],
+      "blockedLyricsSourceFamilies": [],
+      "musicStructureDebug": null,
+      "candidateAdmissionDebug": [
+        {
+          "query": "For a hypothetical chat project list exactly these three pending tasks: fix the Stop button, improve lyric formatting, and change the logo. Do not claim any task is completed.",
+          "title": "HYPOTHETICAL Definition & Meaning - Merriam-Webster",
+          "url": "https://www.merriam-webster.com/dictionary/hypothetical",
+          "source": "www.merriam-webster.com",
+          "rank": 1,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "hypothetical"
+          ],
+          "coreTerms": [
+            "hypothetical",
+            "chat",
+            "project",
+            "list",
+            "exactly",
+            "these",
+            "three",
+            "pending",
+            "tasks",
+            "fix",
+            "stop",
+            "button"
+          ],
+          "snippetPreview": "Nov 9, 2026 · The meaning of HYPOTHETICAL is involving or being based on a suggested idea or theory : being or involving a …"
+        },
+        {
+          "query": "For a hypothetical chat project list exactly these three pending tasks: fix the Stop button, improve lyric formatting, and change the logo. Do not claim any task is completed.",
+          "title": "HYPOTHETICAL | English meaning - Cambridge Dictionary",
+          "url": "https://dictionary.cambridge.org/dictionary/english/hypothetical",
+          "source": "dictionary.cambridge.org",
+          "rank": 2,
+          "allowed": true,
+          "reason": "SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "hypothetical",
+            "not"
+          ],
+          "coreTerms": [
+            "hypothetical",
+            "chat",
+            "project",
+            "list",
+            "exactly",
+            "these",
+            "three",
+            "pending",
+            "tasks",
+            "fix",
+            "stop",
+            "button"
+          ],
+          "snippetPreview": "HYPOTHETICAL definition: 1. imagined or suggested but not necessarily real or true: 2. imagined or suggested but not…. Learn more."
+        },
+        {
+          "query": "For a hypothetical chat project list exactly these three pending tasks: fix the Stop button, improve lyric formatting, and change the logo. Do not claim any task is completed.",
+          "title": "HYPOTHETICAL Definition & Meaning | Dictionary.com",
+          "url": "https://www.dictionary.com/browse/hypothetical",
+          "source": "www.dictionary.com",
+          "rank": 3,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "hypothetical"
+          ],
+          "coreTerms": [
+            "hypothetical",
+            "chat",
+            "project",
+            "list",
+            "exactly",
+            "these",
+            "three",
+            "pending",
+            "tasks",
+            "fix",
+            "stop",
+            "button"
+          ],
+          "snippetPreview": "HYPOTHETICAL definition: assumed or entertained as a theoretical possibility, invented example, premise for argument’s sake, etc.; …"
+        },
+        {
+          "query": "For a hypothetical chat project list exactly these three pending tasks: fix the Stop button, improve lyric formatting, and change the logo. Do not claim any task is completed.",
+          "title": "Hypothetical - definition of hypothetical by The Free Dictionary",
+          "url": "https://www.thefreedictionary.com/hypothetical",
+          "source": "www.thefreedictionary.com",
+          "rank": 4,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "hypothetical"
+          ],
+          "coreTerms": [
+            "hypothetical",
+            "chat",
+            "project",
+            "list",
+            "exactly",
+            "these",
+            "three",
+            "pending",
+            "tasks",
+            "fix",
+            "stop",
+            "button"
+          ],
+          "snippetPreview": "Of, relating to, or based on a hypothesis: a hypothetical situation. 2. Conditional; contingent: the hypothetical meaning of a clause …"
+        },
+        {
+          "query": "For a hypothetical chat project list exactly these three pending tasks: fix the Stop button, improve lyric formatting, and change the logo. Do not claim any task is completed.",
+          "title": "Hypothetical - Definition, Meaning & Synonyms | Vocabulary.com",
+          "url": "https://www.vocabulary.com/dictionary/hypothetical",
+          "source": "www.vocabulary.com",
+          "rank": 5,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "hypothetical"
+          ],
+          "coreTerms": [
+            "hypothetical",
+            "chat",
+            "project",
+            "list",
+            "exactly",
+            "these",
+            "three",
+            "pending",
+            "tasks",
+            "fix",
+            "stop",
+            "button"
+          ],
+          "snippetPreview": "Everyone who has ever taken a science class knows the word \"hypothesis,\" which means an idea, or a guess, that you are going to …"
+        },
+        {
+          "query": "For a hypothetical chat project list exactly these three pending tasks: fix the Stop button, improve lyric formatting, and change the logo. Do not claim any task is completed.",
+          "title": "HYPOTHETICAL definition | Cambridge English Dictionary",
+          "url": "https://dictionary.cambridge.org/us/dictionary/english/hypothetical",
+          "source": "dictionary.cambridge.org",
+          "rank": 6,
+          "allowed": true,
+          "reason": "SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "hypothetical",
+            "not"
+          ],
+          "coreTerms": [
+            "hypothetical",
+            "chat",
+            "project",
+            "list",
+            "exactly",
+            "these",
+            "three",
+            "pending",
+            "tasks",
+            "fix",
+            "stop",
+            "button"
+          ],
+          "snippetPreview": "HYPOTHETICAL meaning: 1. imagined or suggested but not necessarily real or true: 2. imagined or suggested but not…. Learn more."
+        },
+        {
+          "query": "For a hypothetical chat project list exactly these three pending tasks: fix the Stop button, improve lyric formatting, and change the logo. Do not claim any task is completed.",
+          "title": "HYPOTHETICAL Synonyms: 89 Similar and Opposite Words - Merriam-Webster",
+          "url": "https://www.merriam-webster.com/thesaurus/hypothetical",
+          "source": "www.merriam-webster.com",
+          "rank": 7,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "hypothetical"
+          ],
+          "coreTerms": [
+            "hypothetical",
+            "chat",
+            "project",
+            "list",
+            "exactly",
+            "these",
+            "three",
+            "pending",
+            "tasks",
+            "fix",
+            "stop",
+            "button"
+          ],
+          "snippetPreview": "1 day ago · Synonyms for HYPOTHETICAL: theoretical, speculative, conjectural, suppositional, academic, alleged, proposed, …"
+        },
+        {
+          "query": "For a hypothetical chat project list exactly these three pending tasks: fix the Stop button, improve lyric formatting, and change the logo. Do not claim any task is completed.",
+          "title": "hypothetical - Wiktionary, the free dictionary",
+          "url": "https://en.wiktionary.org/wiki/hypothetical",
+          "source": "en.wiktionary.org",
+          "rank": 8,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "hypothetical"
+          ],
+          "coreTerms": [
+            "hypothetical",
+            "chat",
+            "project",
+            "list",
+            "exactly",
+            "these",
+            "three",
+            "pending",
+            "tasks",
+            "fix",
+            "stop",
+            "button"
+          ],
+          "snippetPreview": "Oct 28, 2026 · Adjective hypothetical (comparative more hypothetical, superlative most hypothetical) Based upon a hypothesis; …"
+        }
+      ],
+      "songIdentity": {},
+      "songDiscoveryPlan": [],
+      "lyricsRescueSearchDebug": [],
+      "lyricsMaxPageAttempts": 3,
+      "lyricsFallbackExhausted": true,
+      "rawPromptStored": false
+    },
+    "trace": [
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794853231722,
+        "phase": "RESEARCH_STARTED",
+        "activity": "Online research started",
+        "provider": "bounded-web-search-chain-v1",
+        "site": "",
+        "url": ""
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794853231723,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794853231862,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "activity": "No usable results from provider",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "httpStatus": 202,
+        "resultCount": 0
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794853231862,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794853231998,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "activity": "No usable results from provider",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "httpStatus": 202,
+        "resultCount": 0
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794853231998,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794853232326,
+        "phase": "SEARCH_PROVIDER_RESULTS",
+        "activity": "Search results found",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "httpStatus": 200,
+        "resultCount": 8
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794853232326,
+        "phase": "SEARCH_PROVIDER_SELECTED",
+        "activity": "Using bing-html",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "resultCount": 8
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794853232328,
+        "phase": "PAGE_FETCH_STARTED",
+        "activity": "Visiting result page",
+        "provider": "web-page",
+        "site": "dictionary.cambridge.org",
+        "url": "https://dictionary.cambridge.org/dictionary/english/hypothetical"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794853232490,
+        "phase": "PAGE_FETCH_COMPLETE",
+        "activity": "Page fetched",
+        "provider": "web-page",
+        "site": "dictionary.cambridge.org",
+        "url": "https://dictionary.cambridge.org/dictionary/english/hypothetical",
+        "httpStatus": 200,
+        "responseBytes": 292581
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794853232495,
+        "phase": "RESEARCH_COMPLETE",
+        "activity": "Online research complete",
+        "provider": "bounded-web-search-chain-v1",
+        "site": "",
+        "url": "",
+        "resultCount": 1
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "phase": "LYRICS_SOURCE_VERIFICATION",
+        "provider": "lyrics-verifier",
+        "site": "dictionary.cambridge.org",
+        "url": "https://dictionary.cambridge.org/dictionary/english/hypothetical",
+        "activity": "Checking fetched lyrics candidate",
+        "atUnixMs": 1794853232495
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "phase": "LYRICS_SOURCE_REJECTED",
+        "provider": "lyrics-verifier",
+        "site": "dictionary.cambridge.org",
+        "url": "https://dictionary.cambridge.org/dictionary/english/hypothetical",
+        "activity": "Lyrics candidate did not satisfy verification",
+        "atUnixMs": 1794853232503
+      }
+    ],
+    "sourceSites": [],
+    "widgetKinds": [],
+    "requestedModelId": "700m",
+    "selectedModelId": "700m",
+    "rawPromptStored": false,
+    "historyStored": false,
+    "preciseLocationStored": false
+  }
+}
