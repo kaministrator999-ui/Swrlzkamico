@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT (owner-approved)",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.469",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_469_UV_SHAPE_FIT",
-  "reason": "Transform-aware UV distortion heatmap and non-destructive shape-fit, with opt-in preview/apply/cancel/reset and native Undo. Existing mesh geometry and source painted PNG preserved. Device/VR acceptance remains owner tested.",
-  "sourceCommit": "a1b3ca66d346eabdc91ee014011585ab3bea59f8",
-  "sourceIntegritySha256": "d3f298e449bd98307471e37c500be4623d81cbf78cd91e248c2c094c03d3a920"
+  "releaseVersion": "v11.470",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_470_UV_MODEL_SAVE",
+  "reason": "UV imported texture placement repaired; native Model Studio Save to account uses revisioned standalone model assets, avoids duplicate My Projects entries, and preserves local draft recovery. Physical Moto/Quest acceptance remains pending.",
+  "sourceCommit": "4a020ce984e716135a8178bfd10b14be70484b35",
+  "sourceIntegritySha256": "8dfcaa85fc1d92ccfc7befce6e0eef8b2dfe4aa0729c8f75d7176aaa56e4ce88"
 }
