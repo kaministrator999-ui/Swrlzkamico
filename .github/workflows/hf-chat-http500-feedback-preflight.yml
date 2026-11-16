@@ -26,6 +26,23 @@ jobs:
         run: |
           python -m pip install -q 'huggingface_hub>=0.34,<2'
           python -u scripts/hf_chat_http500_feedback_v1.py snapshot
+      - name: Exercise patched LIVE classifier and reject unintended generation
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          from scripts import hf_chat_http500_feedback_v1 as patch
+          original=(patch.BACKUP/patch.MUSIC).read_text()
+          corrected=patch.patch_music(original)
+          namespace={}
+          exec(compile(corrected,"<deployed-music-logic>","exec"),namespace)
+          classify=namespace["transformation_contract"]
+          text="I was just trying to tell you this is the issues with your remix version of the song"
+          assert classify(text,reference_available=True) is None
+          assert classify("Your remix repeated the first verse.",reference_available=True) is None
+          assert classify("Please fix your remix verses.",reference_available=True)["mode"]=="remix"
+          assert classify("Can you remix those lyrics?",reference_available=True)["mode"]=="remix"
+          print("EXACT_LIVE_CLASSIFIER_REGRESSION_PASS",flush=True)
+          PY
       - uses: actions/upload-artifact@v4
         with:
           name: swrlz-before-http500-feedback-${{ github.run_id }}
