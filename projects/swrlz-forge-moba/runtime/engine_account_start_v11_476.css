@@ -42,4 +42,79 @@
  #se476StartupCard .se476-actions{flex-direction:column}
  #se476StartupCard .se476-actions button{flex:initial;width:100%}
 }
+
+/* Animated, no-dependency outage page; honors low-power and reduced motion. */
+#se476SignalLost[hidden]{display:none!important}
+#se476SignalLost{
+ position:relative;isolation:isolate;overflow:hidden;
+ margin:12px 0 16px;border:1px solid #3b9ba9;border-radius:14px;
+ background:radial-gradient(circle at 50% 27%,#24506c 0%,#121b34 36%,#0e1024 78%);
+ text-align:center;padding:20px 17px 17px;box-shadow:inset 0 0 38px #00e4fc13,0 0 24px #34c6c51c;
+}
+#se476SignalLost:before{
+ content:'';pointer-events:none;position:absolute;inset:0;z-index:0;
+ background:repeating-linear-gradient(0deg,#0000 0px,#0000 4px,#0a0d1a4c 5px,#0a0d1a4c 6px),
+ repeating-linear-gradient(90deg,#00ced00b 0px,#00ced00b 1px,transparent 1px,transparent 52px);
+ animation:se476Scanlines 11s linear infinite;
+}
+#se476SignalLost>*{position:relative;z-index:1}
+#se476StartupCard #se476SignalLost h2{margin:4px 0 7px;font-size:clamp(26px,7vw,38px);
+ font-weight:900;letter-spacing:.1em;line-height:1.08;color:#f2fbff;text-shadow:0 0 19px #37e9ed66;
+}
+#se476StartupCard #se476SignalLost p{margin:8px auto}
+#se476StartupCard .se476-signal-code{
+ font:700 10px/1.4 ui-monospace,SFMono-Regular,Consolas,monospace;
+ letter-spacing:.12em;color:#73efda;
+}
+#se476StartupCard .se476-signal-detail{max-width:410px;color:#cadceb;font-size:12px;line-height:1.55}
+#se476StartupCard #se476RetryConnection{
+ background:#19475d;border-color:#75ecdd;color:#eafffc;
+ min-height:45px;margin-top:7px;box-shadow:0 0 20px #07cfd333;
+}
+#se476StartupCard #se476RetryConnection:active{transform:translateY(1px)}
+#se476StartupCard #se476RetryConnection:focus-visible{outline-color:#9dffef}
+.se476-signal-art{
+ position:relative;width:155px;height:116px;margin:0 auto 7px;display:grid;place-items:center;
+}
+.se476-signal-rings,.se476-signal-rings:before,.se476-signal-rings:after{
+ position:absolute;content:'';border:2px solid #3be3e6a0;border-radius:50%;inset:10px 28px;
+ box-shadow:0 0 19px #00d2d744;transform:rotate(-18deg) skew(-8deg);
+}
+.se476-signal-rings{animation:se476Pulse 3s ease-in-out infinite}
+.se476-signal-rings:before{inset:-8px -12px;border-style:dashed;border-color:#c77efd9c;animation:se476Ring 9s linear infinite}
+.se476-signal-rings:after{inset:18px 22px;border-style:dotted;border-color:#75f7dcaf;animation:se476Ring 7s linear infinite reverse}
+.se476-signal-glyph{
+ display:block;position:relative;font:900 42px/1 ui-monospace,monospace;letter-spacing:-.12em;
+ color:#e7ffff;text-shadow:0 0 20px #28e8ec;font-style:italic;
+ animation:se476Jitter 4.5s steps(1,end) infinite;
+}
+.se476-signal-glyph:before,.se476-signal-glyph:after,
+.se476-signal-title:before,.se476-signal-title:after{
+ content:attr(data-glitch);position:absolute;inset:0;pointer-events:none;
+ opacity:.6;overflow:hidden;
+}
+.se476-signal-glyph:before,.se476-signal-title:before{
+ transform:translate(2px,-1px);color:#f063c8;
+ clip-path:inset(10% 0 56% 0);animation:se476Glitch 3.1s steps(1,end) infinite;
+}
+.se476-signal-glyph:after,.se476-signal-title:after{
+ transform:translate(-2px,1px);color:#22f3e1;
+ clip-path:inset(59% 0 8% 0);animation:se476Glitch 3.4s steps(1,end) infinite reverse;
+}
+.se476-signal-title{position:relative}
+.se476-signal-static{
+ position:absolute;width:6px;height:6px;top:17%;left:75%;
+ background:#aef7e5;border-radius:50%;
+ box-shadow:-74px 31px #30dce7,34px 61px #ba8cff,-22px 87px #db58ff,9px -4px #ffffff;
+ animation:se476Jitter 5s steps(1,end) infinite;
+}
+@keyframes se476Scanlines{50%{background-position:0 35px,10px 0}100%{background-position:0 75px,0 0}}
+@keyframes se476Glitch{0%,92%,100%{transform:translate(0);opacity:0}93%,94%{transform:translate(3px,-2px);opacity:.9}95%,97%{transform:translate(-2px,2px);opacity:.65}}
+@keyframes se476Pulse{50%{filter:drop-shadow(0 0 11px #24dfe9);opacity:.65;transform:scale(.93) rotate(-14deg)}}
+@keyframes se476Ring{to{transform:rotate(360deg)}}
+@keyframes se476Jitter{0%,96%,100%{transform:translate(0)}97%{transform:translate(-2px,1px)}98%{transform:translate(2px,-1px)}}
+@media(prefers-reduced-motion:reduce){
+ #se476SignalLost *,#se476SignalLost:before,#se476SignalLost *:before,#se476SignalLost *:after{animation:none!important}
+}
+
 /* SE476_ACCOUNT_START_STYLES_END */
