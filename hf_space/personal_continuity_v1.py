@@ -11,8 +11,9 @@ from datetime import datetime, timezone
 
 MAX_CONTEXT = 900
 MAX_SIGNAL_TEXT = 240
-MAX_NATIVE_THREADS = 50
-MAX_NATIVE_MESSAGES = 900
+MAX_NATIVE_THREADS = 80
+MAX_NATIVE_MESSAGES = 1000
+MAX_MESSAGES_PER_THREAD = 80
 MAX_SIGNALS_PER_IMPORT = 6
 MAX_SELECTED = 4
 _WORD = re.compile(r"[a-z0-9][a-z0-9_-]{2,39}", re.I)
@@ -101,13 +102,13 @@ def _classify(text):
     return slot, scope
 
 
-def signal(message, source, thread_id):
+def signal(message, source, thread_id, allow_temporary=False):
     """Extract only explicit user interaction directions with provenance."""
     if not isinstance(message, dict) or str(message.get("role") or "").lower() != "user":
         return None
     raw = str(message.get("text") or "")
     text = _safe_text(raw)
-    if not text or _QUOTED.search(text) or _TEMPORARY.search(text):
+    if not text or _QUOTED.search(text) or (not allow_temporary and _TEMPORARY.search(text)):
         return None
     if not (_EXPLICIT.search(text[:280]) or _REVOKE.search(text[:280])):
         return None
@@ -149,7 +150,7 @@ def _native_messages(threads, active_thread_id):
         msgs = thread.get("messages") or []
         if not isinstance(msgs, list):
             continue
-        for message in reversed(msgs[-remaining:]):
+        for message in reversed(msgs[-min(remaining, MAX_MESSAGES_PER_THREAD):]):
             if remaining <= 0:
                 return
             remaining -= 1
@@ -170,9 +171,20 @@ def compose(prompt, native_threads, imported_docs=(), active_thread_id=""):
     """
     query = terms(prompt)
     domain = _active_domain(str(prompt or ""))
+    if len(query) < 2 and not domain:
+        return ""
     # Even one-turn instructions (not stored as durable preferences) override
     # older preferences in their slot on the current generation.
-    current = signal({"role":"user","text":prompt}, "current", active_thread_id)
+    current = signal({"role":"user","text":prompt}, "current", active_thread_id,
+                     allow_temporary=True)
+    if current is None and re.search(
+        r"(?i)\b(?:give me|keep (?:it|your|the)|make (?:it|your|the)|"
+        r"(?:please )?(?:answer|respond|write|explain) (?:in|with|as)|"
+        r"(?:be|stay) (?:more|less|very))\b", str(prompt or "")):
+        # Imperative current-turn style constraints supersede historical style.
+        slot, scope = _classify(str(prompt or ""))
+        if slot:
+            current = {"slot":slot, "scope":scope}
     suppress = {(current["slot"], current["scope"])} if current else set()
     if current and current["scope"] != "global":
         suppress.add((current["slot"], "global"))
@@ -218,7 +230,7 @@ def compose(prompt, native_threads, imported_docs=(), active_thread_id=""):
     scoped_slots = {item["slot"] for item in retained if item["scope"] != "global"}
     retained = [item for item in retained if not
                 (item["scope"] == "global" and item["slot"] in scoped_slots)]
-    retained.sort(key=lambda item:(_stamp(item.get("at")), item["scope"] != "global"), reverse=True)
+    retained.sort(key=lambda item:(item["scope"] == domain, _stamp(item.get("at"))), reverse=True)
     # Prefer decisive recent instructions; older unrelated ones are not
     # automatically injected into every generic greeting.
     results = []
