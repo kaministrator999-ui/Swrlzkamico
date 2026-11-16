@@ -1,0 +1,50 @@
+/* SE478_RING_HEIGHT_STYLES_START */
+html #modelAtelierPanel.se187-modeler-page .atelier-body>#se478RingHeightSlider{
+ position:absolute!important;
+ z-index:185!important;
+ left:50%!important;
+ bottom:50px!important;
+ transform:translateX(-50%)!important;
+ width:min(360px,calc(100% - 20px))!important;
+ max-width:calc(100% - 20px)!important;
+ box-sizing:border-box!important;
+ padding:8px 10px!important;
+ background:#142a3bed!important;
+ border:1px solid #86a6ba!important;
+ box-shadow:0 5px 16px #0008!important;
+ border-radius:10px!important;
+ color:#edfaff!important;
+ pointer-events:auto!important;
+ touch-action:auto!important;
+}
+html #modelAtelierPanel .atelier-body>#se478RingHeightSlider[hidden]{display:none!important}
+html #se478RingHeightSlider .se478-height-header,
+html #se478RingHeightSlider .se478-height-row,
+html #se478RingHeightSlider .se478-height-actions{
+ display:flex!important;align-items:center!important;gap:8px!important;flex-wrap:wrap!important;
+}
+html #se478RingHeightSlider .se478-height-header{justify-content:space-between!important;margin-bottom:5px!important}
+html #se478RingHeightSlider .se478-height-header strong{font:750 13px system-ui!important}
+html #se478RingHeightSlider .se478-height-count{font:600 10px system-ui!important;color:#bce9e5!important}
+html #se478RingHeightSlider .se478-height-row label{font:600 11px system-ui!important}
+html #se478RingHeightSlider #se478HeightRange{
+ flex:1 1 120px!important;min-width:90px!important;max-width:none!important;
+ height:30px!important;accent-color:#7de6db!important;touch-action:pan-x!important;
+}
+html #se478RingHeightSlider #se478HeightValue{
+ min-width:44px!important;text-align:right!important;font:700 12px ui-monospace,monospace!important;
+}
+html #se478RingHeightSlider .se478-height-actions{margin-top:5px!important}
+html #se478RingHeightSlider .se478-height-actions button{
+ min-height:34px!important;padding:5px 9px!important;border-radius:6px!important;
+ border:1px solid #739caf!important;background:#244c61!important;
+ color:white!important;font:650 11px system-ui!important;touch-action:manipulation!important;
+}
+html #se478RingHeightSlider .se478-height-actions button:disabled{opacity:.45!important}
+html #se478RingHeightSlider .se478-height-actions small{font:10px system-ui!important;color:#a7c7d4!important}
+@media(max-height:410px){
+ html #modelAtelierPanel.se187-modeler-page .atelier-body>#se478RingHeightSlider{
+  bottom:8px!important;padding:5px 8px!important;
+ }
+}
+/* SE478_RING_HEIGHT_STYLES_END */
