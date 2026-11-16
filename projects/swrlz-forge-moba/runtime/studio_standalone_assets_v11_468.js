@@ -6,7 +6,7 @@
  const LABEL={modeler:'Model',particles:'Particle'};
  const MAX=8*1024*1024;
  const cloudRefs=new Map(),localCache=new Map();
- let busy=false,connected=false,cloudRows=[],userKey='',lastAutoKey='';
+ let busy=false,connected=false,cloudRows=[],userKey='',lastAutoKey='',autoRestoredKey='';
  const api=()=>window.SWYRL_ENGINE_ACCOUNT_ASSETS;
  const mode=()=>window.SWYRL_ENGINE_STUDIOS?.active?.()==='particles'?'particles':
   window.SWYRL_ENGINE_WORKSPACES?.modelerActive?.()?'modeler':null;
@@ -107,6 +107,29 @@
     type:x.name.includes('[Model]')?'modeler':x.name.includes('[Particle]')?'particles':null}))
    .filter(x=>x.type);
   refresh();
+  // Restore only into an empty standalone draft, never overwrite edits or
+  // load a game project. Account metadata does not carry editable geometry.
+  const type=mode(),autoKey=userKey+':'+type;
+  if(type&&autoRestoredKey!==autoKey&&!busy){
+   autoRestoredKey=autoKey;
+   const blank=type==='modeler'
+    ?window.SWYRL_ENGINE_WORKSPACES?.usingScratch?.()&&
+      window.SWYRL_ENGINE_WORKSPACES.scratchModel()?.parts?.length===0
+    :window.SWYRL_ENGINE_PARTICLES?.export?.()?.emitters?.length===0;
+   const latest=cloudRows.find(x=>x.type===type);
+   if(blank&&latest){
+    try{
+     const result=await api().load(latest.id);
+     if(!(result.bytes instanceof ArrayBuffer)||result.bytes.byteLength>MAX)throw Error('Invalid asset download.');
+     const record=decode(JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(result.bytes)),type);
+     // Recheck: never overwrite work created while the download was pending.
+     const stillBlank=type==='modeler'
+      ?window.SWYRL_ENGINE_WORKSPACES?.usingScratch?.()&&window.SWYRL_ENGINE_WORKSPACES.scratchModel()?.parts?.length===0
+      :window.SWYRL_ENGINE_PARTICLES?.export?.()?.emitters?.length===0;
+     if(stillBlank)load(type,record);
+    }catch(error){status('Account auto-restore unavailable: '+error.message,true);}
+   }
+  }
  }
  async function save(type,cloud){
   if(busy)return;
