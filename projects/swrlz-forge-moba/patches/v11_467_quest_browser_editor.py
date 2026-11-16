@@ -49,8 +49,8 @@ def apply(html):
  html=regex_once(html,
    r"(function pointerDown\(e\)\{\s*)(if\(atelierComponentPointerDown\(e\)\))",
    r"\1if(!se467ViewportPointerAllowed(e))return;\n    \2")
- html=once(html,
-   "if(!hit||!modelRoot)return;\n     const pos=point(e);",
+ html=regex_once(html,
+   r"if\(!hit\|\|!modelRoot\)return;\s*const pos=point\(e\);",
    "if(!hit||!modelRoot||!se467ViewportPointerAllowed(e))return;\n     const pos=point(e);")
  js=(ROOT/'runtime/model_quest_browser_input_v11_467.js').read_text('utf8')
  html=once(html,'/* SE466_RING_UI_END */',js+'\n/* SE466_RING_UI_END */')
