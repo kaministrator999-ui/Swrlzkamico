@@ -156,7 +156,7 @@ def patch_online(source: str) -> str:
     line=next((x for x in source.splitlines()
                if x.startswith("from music_structure import ")),None)
     if line is None:raise ValueError("Missing verified music routing import")
-    source=once(source,line,line+"\\nfrom music_transform_quality import music_feedback_followup",
+    source=once(source,line,line+"\nfrom music_transform_quality import music_feedback_followup",
                 "feedback import")
     marker='    lyrics_creative=creative_music_transform_request(text)'
     injected='''    lyrics_creative=creative_music_transform_request(text)
@@ -173,18 +173,18 @@ def patch_online(source: str) -> str:
 
 def patch_native(source: str) -> str:
     source=once(source,'from huggingface_hub import hf_hub_download',
-         'from huggingface_hub import hf_hub_download\\nfrom stop_transport import completion_response, generation_cancelled',
+         'from huggingface_hub import hf_hub_download\nfrom stop_transport import completion_response, generation_cancelled',
          "native stop import")
     source=once(source,
          'with _post("/v1/chat/completions", payload, timeout=900) as response:',
          'with completion_response(payload,SERVER_PORT,_post,timeout=900) as response:',
          "native interruptible loopback socket")
     source=once(source,
-         '                    for raw in response:\\n                        if not raw.startswith(b"data:"):',
-         '                    for raw in response:\\n                        if generation_cancelled():\\n                            return\\n                        if not raw.startswith(b"data:"):',
+         '                    for raw in response:\n                        if not raw.startswith(b"data:"):',
+         '                    for raw in response:\n                        if generation_cancelled():\n                            return\n                        if not raw.startswith(b"data:"):',
          "native stream stop gate")
     source=once(source,
-         '            finally:\\n                self.reset_token_cache()',
+         '            finally:\n                self.reset_token_cache()',
          '''            except Exception:
                 if not generation_cancelled():
                     raise
@@ -199,15 +199,15 @@ def patch_native(source: str) -> str:
 
 def patch_station(source: str) -> str:
     source=once(source,
-         '    payload["_cancelCheck"]=_cancel_from_worker\\n    try:',
-         '    payload["_cancelCheck"]=_cancel_from_worker\\n    from stop_transport import bind_generation_cancel, release_generation_cancel\\n    bind_generation_cancel(request_id,_cancel_from_worker)\\n    try:',
+         '    payload["_cancelCheck"]=_cancel_from_worker\n    try:',
+         '    payload["_cancelCheck"]=_cancel_from_worker\n    from stop_transport import bind_generation_cancel, release_generation_cancel\n    bind_generation_cancel(request_id,_cancel_from_worker)\n    try:',
          "station generation bind")
     source=once(source,
-         '    finally:\\n        # Early cancellation, response replacement, and CAS failures also',
-         '    finally:\\n        release_generation_cancel(request_id)\\n        # Early cancellation, response replacement, and CAS failures also',
+         '    finally:\n        # Early cancellation, response replacement, and CAS failures also',
+         '    finally:\n        release_generation_cancel(request_id)\n        # Early cancellation, response replacement, and CAS failures also',
          "station generation release")
     source=once(source,
-         '    _invalidate_forge(_forge_contexts.get(key))\\n    return {"ok":True,"requestId":rid,"state":"CANCEL_REQUESTED"}',
+         '    _invalidate_forge(_forge_contexts.get(key))\n    return {"ok":True,"requestId":rid,"state":"CANCEL_REQUESTED"}',
          '''    _invalidate_forge(_forge_contexts.get(key))
     # The account/session request ID above was authenticated. Interrupt only
     # that request's registered loopback Qwen stream (including prefill).
@@ -230,7 +230,7 @@ def patch_ui(source: str) -> str:
       },{passive:true});''',
          "mobile stop pointerdown")
     source=once(source,
-         '        stationCancellation=cancellation;\\n        if(stationSubmission?.requestId===rid)stationSubmission.cancelRequested=true;',
+         '        stationCancellation=cancellation;\n        if(stationSubmission?.requestId===rid)stationSubmission.cancelRequested=true;',
          '''        stationCancellation=cancellation;
         if(stationGeneration?.requestId===rid){
           stationGeneration.status=[...(stationGeneration.status||[]),
@@ -245,12 +245,20 @@ def patch_ui(source: str) -> str:
 
 def candidate(live: dict[str,bytes]) -> dict[str,bytes]:
     helper=Path(__file__).with_name("music_transform_quality_v1.py").read_bytes()
+    stopper=Path(__file__).with_name("stop_transport_v1.py").read_bytes()
     ast.parse(helper,filename=HELPER)
-    return {
+    ast.parse(stopper,filename=STOP)
+    edits={
         ENGINE:patch_engine(live[ENGINE].decode("utf-8")).encode("utf-8"),
         STRUCTURE:patch_structure(live[STRUCTURE].decode("utf-8")).encode("utf-8"),
+        ONLINE:patch_online(live[ONLINE].decode("utf-8")).encode("utf-8"),
+        STATION:patch_station(live[STATION].decode("utf-8")).encode("utf-8"),
+        NATIVE:patch_native(live[NATIVE].decode("utf-8")).encode("utf-8"),
+        UI:patch_ui(live[UI].decode("utf-8")).encode("utf-8"),
         HELPER:helper,
+        STOP:stopper,
     }
+    return edits
 
 def snapshot():
     from huggingface_hub import HfApi,hf_hub_download
@@ -259,11 +267,11 @@ def snapshot():
     if not re.fullmatch(r"[0-9a-f]{40}",str(rev or "")):
         raise ValueError("Live Space sha unavailable")
     before={}
-    for f in (ENGINE,STRUCTURE):
+    for f in (ENGINE,STRUCTURE,ONLINE,STATION,NATIVE,UI):
         before[f]=Path(hf_hub_download(SPACE,f,repo_type="space",revision=rev)).read_bytes()
     # Avoid silently replacing a helper from another release line.
     info=api.list_repo_files(SPACE,repo_type="space",revision=rev)
-    if HELPER in info:
+    if HELPER in info or STOP in info:
         raise ValueError("Existing helper already deployed; reconcile instead of overwriting")
     modified=candidate(before)
     BACKUP.mkdir(parents=True,exist_ok=True)
@@ -288,7 +296,7 @@ def publish():
     if api.repo_info(SPACE,repo_type="space").sha!=rev:
         raise RuntimeError("SPACE_REVISION_MOVED: no deployment from stale snapshot")
     originals={}
-    for name in (ENGINE,STRUCTURE):
+    for name in (ENGINE,STRUCTURE,ONLINE,STATION,NATIVE,UI):
         data=(BACKUP/name).read_bytes()
         if sha(data)!=record["before"][name]:
             raise RuntimeError("Snapshot hash mismatch "+name)
@@ -315,6 +323,7 @@ def publish():
             operations=[CommitOperationAdd(path_in_repo=f,path_or_fileobj=io.BytesIO(data))
                         for f,data in originals.items()]
             operations.append(CommitOperationDelete(path_in_repo=HELPER))
+            operations.append(CommitOperationDelete(path_in_repo=STOP))
             api.create_commit(repo_id=SPACE,repo_type="space",operations=operations,
                               parent_commit=newrev,
                               commit_message="rollback(§C): restore exact music files after verification failure")
