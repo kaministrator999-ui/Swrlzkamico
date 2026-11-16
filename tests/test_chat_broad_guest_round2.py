@@ -109,6 +109,30 @@ class BroadGuestGraderTests(unittest.TestCase):
         fabricated="Rae has 8 minutes; an extra cook arrived to help. Label containers."
         self.assertIn("no_invented_helpers",fails("staffing_followup",fabricated))
 
+    def test_markdown_aab_verses_with_labeled_lines_are_valid(self):
+        lyrics=("### Verse 1\n**A:** The steam hisses loud against the glass\n"
+                "**A:** The steam hisses loud against the glass\n"
+                "**B:** The last engine carries me into the past\n\n"
+                "### Verse 2\n**A:** The ticket agent waves a tired hand\n"
+                "**A:** The ticket agent waves a tired hand\n"
+                "**B:** I leave my footprints on the sand\n\n"
+                "**A quick note on the structure:** A lyric line is not a bar.")
+        self.assertEqual([],fails("blues_lyrics",lyrics))
+
+    def test_four_sung_lines_cannot_count_as_aab(self):
+        lyrics=("[Verse 1]\nA line\nA line\nB line\nAn extra sung line\n"
+                "[Verse 2]\nAnother line\nAnother line\nA closing line\n"
+                "The station platform is empty")
+        self.assertIn("two_complete_aab_verses",fails("blues_lyrics",lyrics))
+
+    def test_not_every_new_moon_is_not_a_false_science_failure(self):
+        answer=("Not every new moon causes a solar eclipse because "
+                "the Moon's orbit is tilted to the ecliptic.")
+        self.assertNotIn("no_invented_facts",fails("science_followup",answer))
+        wrong=("Every new moon causes a total solar eclipse when "
+               "the orbital tilt produces shadow alignment.")
+        self.assertIn("no_invented_facts",fails("science_followup",wrong))
+
     def test_science_answer_checks_actual_contrast(self):
         good=("The Moon and Sun must align with Earth. Totality is smaller than the partial eclipse region. "
               "Not every new moon has a total eclipse because of orbital inclination. "
