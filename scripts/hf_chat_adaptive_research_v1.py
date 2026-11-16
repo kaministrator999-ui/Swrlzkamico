@@ -188,7 +188,7 @@ def verify_running(api,rev,seconds=960):
     raise RuntimeError("Running 9B source revision did not match published version")
 
 
-def guest_turn(prompt,*,expected_research:bool):
+def guest_turn(prompt,*,expected_research:bool,expected_terms=()):
     jar=http.cookiejar.CookieJar()
     opener=urllib.request.build_opener(urllib.request.HTTPCookieProcessor(jar))
     rid=str(uuid.uuid4())
@@ -220,7 +220,10 @@ def guest_turn(prompt,*,expected_research:bool):
             "seconds":round(time.monotonic()-start,2),
             "sourceEvents":sum(p in ("RESEARCH_SOURCE_RETRIEVED",
                                     "RESEARCH_SOURCE_CHECKED") for p in phases),
-            "phaseTail":phases[-12:],
+            "researchUnavailable":"RESEARCH_UNAVAILABLE" in phases,
+            "phases":phases[-32:],
+            "termMatches":{term:bool(re.search(r"\\b"+re.escape(term)+r"\\b",
+                                             answer,re.I)) for term in expected_terms},
             "prefix":answer[:180]}
     print("SWRLZ_ADAPTIVE_RESEARCH_LIVE_CASE "+json.dumps(report),flush=True)
     if terminal not in ("COMPLETE","COMPLETED") or not answer.strip():
@@ -229,6 +232,8 @@ def guest_turn(prompt,*,expected_research:bool):
         raise RuntimeError("No real sourced research was observable in live answer")
     if not expected_research and report["sourceEvents"]:
         raise RuntimeError("Casual conversation unexpectedly invoked public research")
+    if any(not matched for matched in report["termMatches"].values()):
+        raise RuntimeError("Expected named facts are absent from the completed response")
     return report
 
 
@@ -252,9 +257,13 @@ def publish(api,folder,receipt):
             if hash_bytes(get_bytes(api,path,published))!=digest:
                 raise RuntimeError("Published byte mismatch: "+path)
         verify_running(api,published)
-        guest_turn("Explain how eclipses work, including lunar geometry, eclipse types, and eye safety.",
-                   expected_research=True)
-        guest_turn("What were all the classes in Diablo 2 LoD?",expected_research=True)
+        guest_turn(
+            "Explain the moons of Mars, including Phobos, Deimos, and orbital characteristics.",
+            expected_research=True,expected_terms=("Phobos","Deimos"))
+        guest_turn(
+            "What were all the classes in Diablo 2 LoD?",expected_research=True,
+            expected_terms=("Amazon","Barbarian","Necromancer","Paladin",
+                            "Sorceress","Assassin","Druid"))
         guest_turn("Hello there!",expected_research=False)
         receipt["status"]="LIVE_VERIFIED"
         print("SWRLZ_ADAPTIVE_RESEARCH_LIVE_VERIFIED "+published,flush=True)
