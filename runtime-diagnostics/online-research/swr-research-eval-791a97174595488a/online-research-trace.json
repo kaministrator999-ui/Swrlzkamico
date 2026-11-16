@@ -1,0 +1,351 @@
+{
+  "schema": "swrlz-github-online-research-trace-v1",
+  "requestId": "swr-research-eval-791a97174595488a",
+  "modelId": "coder",
+  "eventType": "ONLINE_RESEARCH_TRACE",
+  "sourceRef": "f149dd857e3d9219f5cae7da0286b5dbfec85c42",
+  "persistedAtUnixMs": 1794851634737,
+  "diagnostic": {
+    "schema": "swrlz-online-research-log-v1",
+    "research": {
+      "contract": "swrlz-online-camera-v1",
+      "observabilityRevision": "v181-song-metadata-clean-form-integrity",
+      "kind": "search",
+      "status": "NO_RESULTS",
+      "reason": "explicit-web-intent",
+      "provider": "bounded-web-search-chain-v1",
+      "resultCount": 0,
+      "widgetKinds": [],
+      "sourceCount": 0,
+      "locationRequired": false,
+      "usedExplicitClientLocation": false,
+      "elapsedMs": 598,
+      "lyricsSourceAttemptCount": 0,
+      "lyricsFetchDebug": [],
+      "blockedLyricsSourceFamilies": [],
+      "musicStructureDebug": null,
+      "candidateAdmissionDebug": [
+        {
+          "query": "I am only discussing your remix, not requesting another song or a web search. Explain how you checked that Verse 2 has different events from Verse 1, and what would still require a human to judge its flow. Do not generate new lyrics.",
+          "title": "AM and PM : What Do They Mean? - timeanddate.com",
+          "url": "https://www.timeanddate.com/time/am-and-pm.html",
+          "source": "www.timeanddate.com",
+          "rank": 1,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "from"
+          ],
+          "coreTerms": [
+            "only",
+            "discussing",
+            "your",
+            "remix",
+            "not",
+            "requesting",
+            "another",
+            "web",
+            "search",
+            "explain",
+            "how",
+            "you"
+          ],
+          "snippetPreview": "AM means before noon. This is the 12-hour period from midnight to noon. PM means after noon. It covers the 12 hours from noon to …"
+        },
+        {
+          "query": "I am only discussing your remix, not requesting another song or a web search. Explain how you checked that Verse 2 has different events from Verse 1, and what would still require a human to judge its flow. Do not generate new lyrics.",
+          "title": "What Do AM and PM Actually Mean? The Latin Origins Behind the 12 …",
+          "url": "https://www.sciencetimes.com/articles/62884/20261113/what-do-am-pm-actually-mean-latin-origins-behind-12-hour-clock.htm",
+          "source": "www.sciencetimes.com",
+          "rank": 2,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "how"
+          ],
+          "coreTerms": [
+            "only",
+            "discussing",
+            "your",
+            "remix",
+            "not",
+            "requesting",
+            "another",
+            "web",
+            "search",
+            "explain",
+            "how",
+            "you"
+          ],
+          "snippetPreview": "3 days ago · Learn what AM and PM mean, their Latin origins, how the 12-hour clock works, and why noon and midnight can cause …"
+        },
+        {
+          "query": "I am only discussing your remix, not requesting another song or a web search. Explain how you checked that Verse 2 has different events from Verse 1, and what would still require a human to judge its flow. Do not generate new lyrics.",
+          "title": "Amazon.com. Spend less. Smile more.",
+          "url": "https://www.amzn.com/",
+          "source": "www.amzn.com",
+          "rank": 3,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [],
+          "coreTerms": [
+            "only",
+            "discussing",
+            "your",
+            "remix",
+            "not",
+            "requesting",
+            "another",
+            "web",
+            "search",
+            "explain",
+            "how",
+            "you"
+          ],
+          "snippetPreview": "Free shipping on millions of items. Get the best of Shopping and Entertainment with Prime. Enjoy low prices and great deals on the …"
+        },
+        {
+          "query": "I am only discussing your remix, not requesting another song or a web search. Explain how you checked that Verse 2 has different events from Verse 1, and what would still require a human to judge its flow. Do not generate new lyrics.",
+          "title": "AM - Wikipedia",
+          "url": "https://en.wikipedia.org/wiki/AM",
+          "source": "en.wikipedia.org",
+          "rank": 4,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [],
+          "coreTerms": [
+            "only",
+            "discussing",
+            "your",
+            "remix",
+            "not",
+            "requesting",
+            "another",
+            "web",
+            "search",
+            "explain",
+            "how",
+            "you"
+          ],
+          "snippetPreview": "Allied Mastercomputer (also called \"Adaptive Manipulator\" or \"Aggressive Menace\"), or AM, the antagonist in the short story and …"
+        },
+        {
+          "query": "I am only discussing your remix, not requesting another song or a web search. Explain how you checked that Verse 2 has different events from Verse 1, and what would still require a human to judge its flow. Do not generate new lyrics.",
+          "title": "AM Definition & Meaning - Merriam-Webster",
+          "url": "https://www.merriam-webster.com/dictionary/am",
+          "source": "www.merriam-webster.com",
+          "rank": 5,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "web"
+          ],
+          "coreTerms": [
+            "only",
+            "discussing",
+            "your",
+            "remix",
+            "not",
+            "requesting",
+            "another",
+            "web",
+            "search",
+            "explain",
+            "how",
+            "you"
+          ],
+          "snippetPreview": "The meaning of AM is present tense first-person singular of be."
+        },
+        {
+          "query": "I am only discussing your remix, not requesting another song or a web search. Explain how you checked that Verse 2 has different events from Verse 1, and what would still require a human to judge its flow. Do not generate new lyrics.",
+          "title": "12 -hour clock - Wikipedia",
+          "url": "https://en.wikipedia.org/wiki/12-hour_clock",
+          "source": "en.wikipedia.org",
+          "rank": 6,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [],
+          "coreTerms": [
+            "only",
+            "discussing",
+            "your",
+            "remix",
+            "not",
+            "requesting",
+            "another",
+            "web",
+            "search",
+            "explain",
+            "how",
+            "you"
+          ],
+          "snippetPreview": "Originally there were two cycles: one cycle which could be tracked by the position of the Sun (day), followed by one cycle which …"
+        },
+        {
+          "query": "I am only discussing your remix, not requesting another song or a web search. Explain how you checked that Verse 2 has different events from Verse 1, and what would still require a human to judge its flow. Do not generate new lyrics.",
+          "title": "AM | English meaning - Cambridge Dictionary",
+          "url": "https://dictionary.cambridge.org/dictionary/english/am",
+          "source": "dictionary.cambridge.org",
+          "rank": 7,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [],
+          "coreTerms": [
+            "only",
+            "discussing",
+            "your",
+            "remix",
+            "not",
+            "requesting",
+            "another",
+            "web",
+            "search",
+            "explain",
+            "how",
+            "you"
+          ],
+          "snippetPreview": "AM definition: 1. I form of be: 2. used when referring to a time between twelve o'clock at night and twelve…. Learn more."
+        },
+        {
+          "query": "I am only discussing your remix, not requesting another song or a web search. Explain how you checked that Verse 2 has different events from Verse 1, and what would still require a human to judge its flow. Do not generate new lyrics.",
+          "title": "AM and PM - What They Mean and When the Day Changes",
+          "url": "https://www.onlinedigitalclock.com/am-and-pm/",
+          "source": "www.onlinedigitalclock.com",
+          "rank": 8,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "from"
+          ],
+          "coreTerms": [
+            "only",
+            "discussing",
+            "your",
+            "remix",
+            "not",
+            "requesting",
+            "another",
+            "web",
+            "search",
+            "explain",
+            "how",
+            "you"
+          ],
+          "snippetPreview": "Sep 30, 2026 · AM runs from midnight to noon and PM runs from noon to midnight. Learn what the letters stand for and why 12 AM …"
+        }
+      ],
+      "songIdentity": {},
+      "songDiscoveryPlan": [],
+      "lyricsRescueSearchDebug": [],
+      "lyricsMaxPageAttempts": 0,
+      "lyricsFallbackExhausted": false,
+      "rawPromptStored": false
+    },
+    "trace": [
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794851634139,
+        "phase": "RESEARCH_STARTED",
+        "activity": "Online research started",
+        "provider": "bounded-web-search-chain-v1",
+        "site": "",
+        "url": ""
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794851634139,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794851634283,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "activity": "No usable results from provider",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "httpStatus": 202,
+        "resultCount": 0
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794851634283,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794851634409,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "activity": "No usable results from provider",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "httpStatus": 202,
+        "resultCount": 0
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794851634409,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794851634735,
+        "phase": "SEARCH_PROVIDER_RESULTS",
+        "activity": "Search results found",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "httpStatus": 200,
+        "resultCount": 8
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794851634735,
+        "phase": "SEARCH_PROVIDER_SELECTED",
+        "activity": "Using bing-html",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "resultCount": 8
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794851634736,
+        "phase": "RESEARCH_COMPLETE",
+        "activity": "Online research complete",
+        "provider": "bounded-web-search-chain-v1",
+        "site": "",
+        "url": "",
+        "resultCount": 0
+      }
+    ],
+    "sourceSites": [],
+    "widgetKinds": [],
+    "requestedModelId": "700m",
+    "selectedModelId": "coder",
+    "rawPromptStored": false,
+    "historyStored": false,
+    "preciseLocationStored": false
+  }
+}
