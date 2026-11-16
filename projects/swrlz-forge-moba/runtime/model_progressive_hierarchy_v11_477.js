@@ -78,6 +78,10 @@ function chooseTool(name,kind){
  state.panel.dataset.se477SelectionType=state.selectionType||'none';
  state.panel.dataset.se477SelectionShape=state.shape||'none';
  state.panel.dataset.se477Operation=operation?'true':'false';
+ // The flyout otherwise overlays the second horizontal mode strip on phones.
+ // Collapse it after choosing an operation; the same family button reopens it
+ // without changing the active operation or viewport selection.
+ state.flyoutOpen=false;
  setOpen(false);renderFlyout();renderTop();
  if(operation){
   const r=window.SWYRL_ENGINE_VERTEX_ENTRY_477?.activate?.();
