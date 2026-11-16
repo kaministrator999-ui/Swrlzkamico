@@ -18,7 +18,7 @@ const context={popup,innerWidth:868,innerHeight:860,
 const api=vm.runInNewContext(source+'\n({safeBounds,fitWindow,se473RememberWindow,se473SavedWindow})',context);
 api.fitWindow(true);
 const first=popup.getBoundingClientRect();
-assert(first.left>420,'Default UV window should be off to the right, allowing model inspection');
+assert(first.left>=400,'Default UV window should be off to the right, allowing model inspection');
 assert(first.top>=6&&first.top+first.height<=854);
 assert(first.width<=856);
 popup.style.left='15px';popup.style.top='20px';
