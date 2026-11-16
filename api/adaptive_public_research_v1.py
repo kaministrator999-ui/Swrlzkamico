@@ -62,7 +62,10 @@ def should_research_public_explanation(question: Any) -> bool:
     if re.search(r"^\s*(?:how are you|what is up|what's up)\b",prompt,re.I):
         return False
     tokens=_terms(prompt)
-    return len(tokens) >= 2
+    return (len(tokens)>=2 or bool(tokens and
+            (re.search(r"\b(?:II|III|IV|[2-9])\b",prompt)
+             or (len(next(iter(tokens),""))>=9 and
+                 re.match(r"^\s*(?:explain|tell me about|describe)",prompt,re.I)))))
 
 
 def _facet_candidates(question: str) -> list[str]:
@@ -207,6 +210,12 @@ def adaptive_enrich(
             pass_count+=1
             # Prefer existing first-party sources, then newly found cards.
             combined=_merge_sources(evidence,second)
+            # The legacy bounded_evidence filter expects 'snippet', while
+            # previously selected sources use 'excerpt'. Normalize both here
+            # so a second pass never accidentally discards original evidence.
+            for card in combined["evidence"]:
+                if card.get("excerpt") and not card.get("snippet"):
+                    card["snippet"]=card["excerpt"]
             bounded=bounded_evidence(combined,query=question,
                                      max_items=10,max_chars=6500)
             if bounded.get("resultCount",0)>0:
