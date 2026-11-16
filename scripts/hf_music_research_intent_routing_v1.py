@@ -36,7 +36,7 @@ NEW_LYRIC='''    # Lyric *analysis* and revision of a just-created/user-authored
         r"\b(?:lyrics?|words\s+to\s+(?:the\s+)?song)\b"
         r"|\b(?:full|complete|all\s+the)\s+(?:song\s+)?lyrics?"
         r"\s+(?:of|to|for)\b"
-        r"|\blyrics?\s+(?:of|to|for)\s+(?:the\s+)?(?:song|track|[\\"'])",
+        r"|\blyrics?\s+(?:of|to|for)\s+(?:the\s+)?(?:song|track)\b",
         text))
     explicit_lookup_verb=bool(re.search(
         r"(?i)\b(?:find|fetch|retrieve|look\s+up|search\s+for|quote|"
