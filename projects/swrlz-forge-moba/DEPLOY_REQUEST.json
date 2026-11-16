@@ -4,7 +4,7 @@
   "target": "kamiloki/swrlz-forge-moba",
   "releaseVersion": "v11.474",
   "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_474_PROGRESSIVE_MODEL_TOOLS",
-  "reason": "Implement progressive Model Studio tool navigation: main right family rail, left tool flyout, contextual horizontal modes, and far-right settings inspector only after selecting a specific operation. Native Vertex Single/Ring/Ring Fill and Inset/Extrude Face/Region commands, preview and Undo preserved. Requires physical Moto/Quest acceptance.",
-  "sourceCommit": "c3a0dbe15d56c05ee4f5d1f6283a73c6088505d2",
-  "sourceIntegritySha256": "2e897eb339e2e1753186bb4a29c13c44002bc77a443507e0bd8b45fb8d3f3af3"
+  "reason": "Final corrected §E v11.474 progressive mobile toolbar: right tool-family rail, left tool flyout, horizontal specific modes, contextual inspector; preserve selected vertex center when switching to Ring Outline/Fill without re-entering Vertex mode. Inset/Extrude and source-safe preview/Undo retained. Exact 451-patch artifact measured and verified. Requires physical Moto/Quest owner acceptance.",
+  "sourceCommit": "8722713c76c06742ccfe83b5b7452b4d0eeb7a3e",
+  "sourceIntegritySha256": "d1d8a174989501a8a8b8b46faa22f38a1522b1399ca9b4e9abadd672504492d2"
 }
