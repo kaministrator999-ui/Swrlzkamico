@@ -7,7 +7,7 @@ const height=fs.readFileSync(new URL('model_ring_height_v11_478.js',root),'utf8'
 const heightCss=fs.readFileSync(new URL('model_ring_height_v11_478.css',root),'utf8');
 new vm.Script(height);
 for(const token of ["['Extrude','Inset']","['ring','fill']","preview?.active&&!owned",
- "preview?.operation", "native?.preview?.('ringTransform'", "workshop()?.apply?.()",
+ "preview.operation", "native?.preview?.('ringTransform'", "workshop()?.apply?.()",
  "workshop()?.cancel?.()", "ui.hidden=!choice||conflict", "window.SWYRL_ENGINE_RING_HEIGHT_478"])
  assert(height.includes(token),'Missing height control: '+token);
 assert(heightCss.includes('#se478RingHeightSlider[hidden]'));
