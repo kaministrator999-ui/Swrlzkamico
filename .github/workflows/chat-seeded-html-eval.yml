@@ -1,0 +1,37 @@
+name: §C seeded HTML feature-revision test (no initial generation)
+on:
+  push:
+    branches: [main]
+    paths:
+      - scripts/eval_chat_seeded_html.py
+      - .github/workflows/chat-seeded-html-eval.yml
+permissions: {contents: read}
+concurrency:
+  group: swrlz-chat-guest-eval
+  cancel-in-progress: false
+jobs:
+  seeded_revision:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 19
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - run: |
+          python -m pip install playwright==1.56.0
+          python -m playwright install --with-deps chromium
+      - run: python -m py_compile scripts/eval_chat_seeded_html.py scripts/eval_chat_guest_suite.py scripts/test_guest_html_functionality.py
+      - name: Import synthetic existing HTML, request ONLY revision, verify Change and Reset
+        env:
+          SWRLZ_EVAL_BASE: https://kamiloki-swyrlz.hf.space
+          SWRLZ_EVAL_MODEL: 700m
+          SWRLZ_SEEDED_TIMEOUT_SECONDS: '165'
+        run: python -u -m scripts.eval_chat_seeded_html
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: seeded-html-source-revision-${{ github.run_id }}
+          path: reports/chat-seeded-html/
+          retention-days: 14
+          if-no-files-found: ignore
