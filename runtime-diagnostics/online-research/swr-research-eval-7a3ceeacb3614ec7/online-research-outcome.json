@@ -1,0 +1,560 @@
+{
+  "schema": "swrlz-github-online-research-outcome-v2",
+  "requestId": "swr-research-eval-7a3ceeacb3614ec7",
+  "modelId": "700m",
+  "eventType": "ONLINE_RESEARCH_OUTCOME",
+  "sourceRef": "f149dd857e3d9219f5cae7da0286b5dbfec85c42",
+  "persistedAtUnixMs": 1794849731275,
+  "diagnostic": {
+    "schema": "swrlz-online-research-outcome-v2",
+    "terminalState": "COMPLETE",
+    "research": {
+      "contract": "swrlz-online-camera-v1",
+      "observabilityRevision": "v181-song-metadata-clean-form-integrity",
+      "kind": "search",
+      "status": "NO_RESULTS",
+      "reason": "existing-lyrics-retrieval",
+      "provider": "bounded-web-search-chain-v1",
+      "resultCount": 0,
+      "widgetKinds": [],
+      "sourceCount": 0,
+      "locationRequired": false,
+      "usedExplicitClientLocation": false,
+      "elapsedMs": 617,
+      "lyricsSourceAttemptCount": 0,
+      "lyricsFetchDebug": [],
+      "blockedLyricsSourceFamilies": [],
+      "musicStructureDebug": null,
+      "candidateAdmissionDebug": [
+        {
+          "query": "or quote any published song lyrics",
+          "title": "Popular Quotes - Goodreads",
+          "url": "https://www.goodreads.com/quotes",
+          "source": "www.goodreads.com",
+          "rank": 1,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "quote"
+          ],
+          "coreTerms": [
+            "quote",
+            "any"
+          ],
+          "snippetPreview": "“Be yourself; everyone else is already taken.” “I'm selfish, impatient and a little insecure. I make mistakes, I am out of control and at …"
+        },
+        {
+          "query": "or quote any published song lyrics",
+          "title": "100+ Most Famous Quotes Of All Time (Updated 2026)",
+          "url": "https://wisdomquotes.com/famous-quotes/",
+          "source": "wisdomquotes.com",
+          "rank": 2,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "quote"
+          ],
+          "coreTerms": [
+            "quote",
+            "any"
+          ],
+          "snippetPreview": "Oct 23, 2026 · Here are the 100 most famous quotes of all time. I hope you’ll enjoy them! All that we are is the result of what we have …"
+        },
+        {
+          "query": "or quote any published song lyrics",
+          "title": "Inspirational Quotes by Famous Authors - BrainyQuote",
+          "url": "https://www.brainyquote.com/",
+          "source": "www.brainyquote.com",
+          "rank": 3,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "quote"
+          ],
+          "coreTerms": [
+            "quote",
+            "any"
+          ],
+          "snippetPreview": "Nearly a million quotes from famous authors on love, life, success and more. Find the perfect quote and a picture to share."
+        },
+        {
+          "query": "or quote any published song lyrics",
+          "title": "Quote of the Day - BrainyQuote",
+          "url": "https://www.brainyquote.com/quote_of_the_day",
+          "source": "www.brainyquote.com",
+          "rank": 4,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "quote"
+          ],
+          "coreTerms": [
+            "quote",
+            "any"
+          ],
+          "snippetPreview": "17 hours ago · Inspirational and motivational quotes to share on X, Facebook and Slack: a new Quote of the Day plus Funny, Love, …"
+        },
+        {
+          "query": "or quote any published song lyrics",
+          "title": "QUOTE Definition & Meaning - Merriam-Webster",
+          "url": "https://www.merriam-webster.com/dictionary/quote",
+          "source": "www.merriam-webster.com",
+          "rank": 5,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "quote"
+          ],
+          "coreTerms": [
+            "quote",
+            "any"
+          ],
+          "snippetPreview": "2 days ago · The meaning of QUOTE is to speak or write (a passage) from another usually with credit acknowledgment. How to use …"
+        },
+        {
+          "query": "or quote any published song lyrics",
+          "title": "160 Quotes of the Day for Daily Inspiration, Motivation and Lots of ...",
+          "url": "https://www.positivityblog.com/quote-of-the-day/",
+          "source": "www.positivityblog.com",
+          "rank": 6,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "quote"
+          ],
+          "coreTerms": [
+            "quote",
+            "any"
+          ],
+          "snippetPreview": "Mar 26, 2025 · Looking for a quote of the day to help you make the most of today? To renew your motivation, inspiration and give …"
+        },
+        {
+          "query": "or quote any published song lyrics",
+          "title": "Inspirational Quotes (77717 quotes) - Goodreads",
+          "url": "https://www.goodreads.com/quotes/tag/inspirational",
+          "source": "www.goodreads.com",
+          "rank": 7,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "quote"
+          ],
+          "coreTerms": [
+            "quote",
+            "any"
+          ],
+          "snippetPreview": "“Imperfection is beauty, madness is genius and it's better to be absolutely ridiculous than absolutely boring.” “There are only two …"
+        },
+        {
+          "query": "or quote any published song lyrics",
+          "title": "Quote .org",
+          "url": "https://quote.org/",
+          "source": "quote.org",
+          "rank": 8,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "quote"
+          ],
+          "coreTerms": [
+            "quote",
+            "any"
+          ],
+          "snippetPreview": "Quote.org Home. A encyclopedic resource for journalists, academia, students, and the general public."
+        }
+      ],
+      "songIdentity": {},
+      "songDiscoveryPlan": [],
+      "lyricsRescueSearchDebug": [],
+      "lyricsMaxPageAttempts": 3,
+      "lyricsFallbackExhausted": true,
+      "rawPromptStored": false
+    },
+    "trace": [
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794849730655,
+        "phase": "RESEARCH_STARTED",
+        "activity": "Online research started",
+        "provider": "bounded-web-search-chain-v1",
+        "site": "",
+        "url": ""
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794849730656,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794849730795,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "activity": "No usable results from provider",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "httpStatus": 202,
+        "resultCount": 0
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794849730795,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794849730941,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "activity": "No usable results from provider",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "httpStatus": 202,
+        "resultCount": 0
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794849730941,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794849731269,
+        "phase": "SEARCH_PROVIDER_RESULTS",
+        "activity": "Search results found",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "httpStatus": 200,
+        "resultCount": 8
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794849731269,
+        "phase": "SEARCH_PROVIDER_SELECTED",
+        "activity": "Using bing-html",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "resultCount": 8
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794849731270,
+        "phase": "RESEARCH_COMPLETE",
+        "activity": "Online research complete",
+        "provider": "bounded-web-search-chain-v1",
+        "site": "",
+        "url": "",
+        "resultCount": 0
+      }
+    ],
+    "sources": [],
+    "sourceSites": [],
+    "widgets": [],
+    "widgetKinds": [],
+    "statusTrail": [
+      {
+        "phase": "QUEUED",
+        "reason": "Accepted by Workstation",
+        "atUnixMs": 1794849730646
+      },
+      {
+        "phase": "GENERATING",
+        "reason": "Workstation admitted generation",
+        "atUnixMs": 1794849730649
+      },
+      {
+        "seq": 1,
+        "phase": "PROGRAMMING_INTENT",
+        "reason": "",
+        "atUnixMs": 1794849730651
+      },
+      {
+        "seq": 2,
+        "phase": "SEARCH_STARTED",
+        "reason": "I’m on it — looking up or quote any published song lyrics…",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH"
+        ],
+        "atUnixMs": 1794849730653
+      },
+      {
+        "seq": 3,
+        "phase": "RESEARCH_STARTED",
+        "reason": "Online research started",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "",
+        "url": "",
+        "provider": "bounded-web-search-chain-v1",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794849730655
+      },
+      {
+        "seq": 4,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "provider": "duckduckgo-html",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794849730656
+      },
+      {
+        "seq": 5,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "reason": "No usable results from provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "provider": "duckduckgo-html",
+        "httpStatus": 202,
+        "resultCount": 0,
+        "atUnixMs": 1794849730795
+      },
+      {
+        "seq": 6,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "provider": "duckduckgo-lite",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794849730795
+      },
+      {
+        "seq": 7,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "reason": "No usable results from provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "provider": "duckduckgo-lite",
+        "httpStatus": 202,
+        "resultCount": 0,
+        "atUnixMs": 1794849730941
+      },
+      {
+        "seq": 8,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "provider": "bing-html",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794849730941
+      },
+      {
+        "seq": 9,
+        "phase": "SEARCH_PROVIDER_RESULTS",
+        "reason": "Search results found",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "provider": "bing-html",
+        "httpStatus": 200,
+        "resultCount": 8,
+        "atUnixMs": 1794849731269
+      },
+      {
+        "seq": 10,
+        "phase": "SEARCH_PROVIDER_SELECTED",
+        "reason": "Using bing-html",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "provider": "bing-html",
+        "httpStatus": null,
+        "resultCount": 8,
+        "atUnixMs": 1794849731270
+      },
+      {
+        "seq": 11,
+        "phase": "RESEARCH_COMPLETE",
+        "reason": "Online research complete",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "",
+        "url": "",
+        "provider": "bounded-web-search-chain-v1",
+        "httpStatus": null,
+        "resultCount": 0,
+        "atUnixMs": 1794849731272
+      },
+      {
+        "seq": 12,
+        "phase": "ONLINE_RESEARCH",
+        "reason": "NO_RESULTS",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH"
+        ],
+        "atUnixMs": 1794849731272
+      },
+      {
+        "seq": 13,
+        "phase": "SEARCH_COMPLETE",
+        "reason": "Online retrieval no_results.",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH"
+        ],
+        "atUnixMs": 1794849731273
+      },
+      {
+        "seq": 14,
+        "phase": "LYRICS_VERIFICATION_BLOCKED",
+        "reason": "I found search results for the lyrics, but I couldn't verify the requested lyric text from fetched evidence, so I won't reconstruct it from memory.",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "LYRICS",
+          "GROUNDING"
+        ],
+        "atUnixMs": 1794849731273
+      },
+      {
+        "seq": 16,
+        "phase": "COMPLETE",
+        "reason": "",
+        "atUnixMs": 1794849731273
+      },
+      {
+        "phase": "PERSISTING",
+        "reason": "Saving the response to the chat",
+        "atUnixMs": 1794849731274
+      }
+    ],
+    "responseCognition": {},
+    "programmingIntent": {
+      "schema": "swrlz-programming-intent-v1",
+      "codingTask": false,
+      "projectContext": "none",
+      "changeClass": "none",
+      "artifactContinuation": false,
+      "artifactMutationRequested": false,
+      "artifactTargetId": "",
+      "artifactTargetMessageId": "",
+      "baseRevision": 0,
+      "baseSourceHash": "",
+      "newProject": false,
+      "source": "brain-router"
+    },
+    "candidateValidation": {},
+    "candidateAttempts": [],
+    "generationTelemetry": {},
+    "engineCompletionTelemetry": {
+      "totalLatencyMs": null,
+      "loadLatencyMs": null,
+      "firstDeltaLatencyMs": null
+    },
+    "contextBudget": {},
+    "resourcePlan": {},
+    "responseResourceUsage": {
+      "schema": "swrlz-response-resource-usage-v1",
+      "scope": "shared-cgroup-v2",
+      "source": "cgroup-v2",
+      "isolatedModelAttribution": false,
+      "wallTimeMs": 625,
+      "capacity": {
+        "cpuLimitCores": 16.0,
+        "cpuLimitState": "measured",
+        "memoryLimitBytes": 104000000000,
+        "memoryLimitState": "measured"
+      },
+      "observed": {
+        "cgroupCpuUsageUsecDelta": 159301,
+        "averageCgroupCpuCores": 0.255,
+        "memoryStartBytes": 7402463232,
+        "memoryEndBytes": 7405203456,
+        "memoryEndMinusStartBytes": 2740224,
+        "memoryPeakSampledBytes": 7405203456,
+        "memoryPeakAboveStartBytes": 2740224,
+        "memorySampleCount": 2,
+        "memorySamplingIntervalMs": 1000
+      },
+      "attribution": "Shared container readings include concurrent work; they are not exclusive CPU/RAM use by this model.",
+      "routeId": "700m",
+      "configuredEngineThreadBudget": null,
+      "outcome": "COMPLETE"
+    },
+    "finalResponse": "I found search results for the lyrics, but I couldn't verify the requested lyric text from fetched evidence, so I won't reconstruct it from memory.",
+    "finalResponseSha256": "b6fd72ce42d1ea9b8b6e2e4097ee293e0bec3153c5772663f955ff48cdad536a",
+    "requestedModelId": "700m",
+    "selectedModelId": "700m",
+    "stationTiming": {
+      "acceptedAtUnixMs": 1794849730646,
+      "startedAtUnixMs": 1794849730649,
+      "completedAtUnixMs": 1794849731274,
+      "queueWaitMs": 3,
+      "stationRunMs": 625,
+      "endToEndMs": 628
+    },
+    "rawPromptStored": false,
+    "historyStored": false,
+    "preciseLocationStored": false,
+    "privateReasoningStored": false
+  }
+}
