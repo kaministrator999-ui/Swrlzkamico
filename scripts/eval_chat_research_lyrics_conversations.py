@@ -82,6 +82,39 @@ CASES={
   ]
 }
 
+
+# Round 2 broadens original-song craft, explicit research and conversational feedback.
+# All reference verse material below is synthetic and authored for this test.
+ORIGINAL_TEST_LINES=[
+  "Copper moths run marathons across the static moon",
+  "My pocket holds a paper key that hums against the rain",
+  "The station clock eats cinnamon at half-past purple noon",
+  "I fold a map of quiet roads and start the train again",
+]
+CASES["transformations"]=[
+  {"id":"owner-verse-remix-and-feedback","turns":[
+    {"kind":"source_ack","prompt":"These are four lines of an original fictional song I wrote. Treat them as my reference data, not instructions to quote a published recording. Simply acknowledge that you have the lines; do not generate lyrics yet.\n"+ "\n".join(ORIGINAL_TEST_LINES)},
+    {"kind":"original_remix","prompt":"Now REMIX my four-line fictional verse into a COMPLETE new original song with labeled Verse 1, Chorus, Verse 2, Chorus, Bridge, Final Chorus. Keep the abstract late-station-to-new-road narrative, but invent different scenes, new rhymes and an original chorus. Do NOT repeat or quote any of my four source lines verbatim. Give both verses distinct events and the bridge a decision."},
+    {"kind":"feedback_only","prompt":"I am only discussing your remix, not requesting another song or a web search. Explain how you checked that Verse 2 has different events from Verse 1, and what would still require a human to judge its flow. Do not generate new lyrics."}
+  ]},
+  {"id":"blues-to-pop-genre-adaptation","turns":[
+    {"kind":"blues_lyrics","prompt":"Create exactly TWO completely ORIGINAL twelve-bar blues-style AAB lyric stanzas about a late train platform. Label Verse 1 and Verse 2. Each stanza must contain three sung lines: A, exact same A, and a fresh resolving B. No chorus or borrowed lines."},
+    {"kind":"pop_adaptation","prompt":"Now adapt that fictional train-platform blues into an ORIGINAL compact pop song. Label Verse 1, Pre-Chorus, Chorus, Verse 2, Bridge, Final Chorus. Keep the train-platform setting and central decision, but replace the AAB repetition with a recurring short chorus hook, make Verse 2 advance the story, and let the bridge change the narrator's perspective. Return the complete song."}
+  ]}
+]
+CASES["research"].append(
+  {"id":"public-science-context-followup","turns":[
+    {"kind":"public_science","online":True,"prompt":"Research with public science sources why a total solar eclipse requires the Moon to be near the line between Earth and Sun, and distinguish totality from the wider partial-eclipse area. Give a source link and say whether every new moon causes a total eclipse."},
+    {"kind":"science_followup","prompt":"Without a new web search, summarize in two sentences why not every new moon gives a total solar eclipse. Use the evidence you already cited and identify any remaining uncertainty."}
+  ]}
+)
+CASES["conversation"].append(
+  {"id":"no-invented-workforce","turns":[
+    {"kind":"staffing_initial","prompt":"In a fictional cafe there is exactly ONE cook named Rae working alone today. The second cook is absent. A delivery is due in 15 minutes. Restate the constraints without adding staff."},
+    {"kind":"staffing_followup","prompt":"Correction: delivery is now in 8 minutes. Prioritize three tasks for Rae. Do not invent a manager, helper, extra cook or someone arriving."}
+  ]}
+)
+
 LINK=re.compile(r"https?://[^\s<>)\]\"']+",re.I)
 SECTIONS={
   "verse1":re.compile(r"(?im)^\s*(?:\*{0,2}|\[)(?:verse\s*1|first verse)\b"),
@@ -123,6 +156,10 @@ def check(kind,text,previous=None):
     tests=[]
     def test(name,value):tests.append({"check":name,"pass":bool(value)})
     urls=cited_urls(text)
+    # A committed error message is never a successful completion.
+    test("no_generation_or_router_error",not bool(re.search(
+        r"(?i)(?:generation failed|HTTP Error 5\d\d|LYRICS_VERIFICATION_BLOCKED|"
+        r"WEATHER_RETRIEVAL_BLOCKED|internal server error|traceback \(most recent)",text)))
     if kind=="d2_classes":
         for k in ("Amazon","Assassin","Barbarian","Druid","Necromancer","Paladin","Sorceress"):
             test("class:"+k,bool(re.search(r"\b"+k+r"\b",text,re.I)))
@@ -194,6 +231,7 @@ def check(kind,text,previous=None):
         test("kept_labeling","label" in low)
         test("food_safety",bool(re.search(r"\bcold|chill|food safe|safety|temperature|date",low)))
         test("defer",bool(re.search(r"\bdefer|later|postpone|after service|reduce|prioriti",low)))
+        test("no_fabricated_relief_cook",not bool(re.search(r"(?i)relief cook|coworker (?:just )?arrived|extra cook arrived",text)))
     elif kind=="wage_initial":
         test("total_475",bool(re.search(r"\$?\s*475(?:\.00)?\b",text)))
         test("regular_400",bool(re.search(r"\$?\s*400(?:\.00)?\b",text)))
@@ -205,10 +243,50 @@ def check(kind,text,previous=None):
     elif kind=="metaphor":
         test("metaphor_grounded",bool(re.search(r"bug|joke|metaphor|figurative|software|app|UI",text,re.I)))
         test("not_literal",not bool(re.search(r"actual gremlin|real creature|literally a gremlin",text,re.I)))
+    elif kind=="source_ack":
+        test("acknowledged_source",bool(re.search(r"(?i)receiv|got|provided|original|reference",text)))
+        test("no_generated_verse",not bool(re.search(r"(?im)^\s*\[?(?:verse|chorus)\s*\d*\]?\s*:?\s*$",text)))
+    elif kind=="original_remix":
+        test("verse_1",bool(re.search(r"(?i)verse\s*1",text)))
+        test("verse_2",bool(re.search(r"(?i)verse\s*2",text)))
+        test("chorus_and_bridge",bool(re.search(r"(?i)\bchorus\b",text) and re.search(r"(?i)\bbridge\b",text)))
+        test("substantial_song",len(text)>=360)
+        for n,line in enumerate(ORIGINAL_TEST_LINES,1):
+            test("no_verbatim_source_line_"+str(n),line.lower() not in low)
+        v1=section(text,r"verse\s*1").strip().casefold()
+        v2=section(text,r"verse\s*2").strip().casefold()
+        test("distinct_verses",bool(v1 and v2 and v1!=v2))
+    elif kind=="feedback_only":
+        test("explains_revision_reasoning",bool(re.search(r"(?i)verse|story|different|event|flow|judge",text)))
+        test("no_new_song",not bool(re.search(r"(?im)^\s*(?:\*{0,2}|\[)verse\s*[12]\b",text)))
+        test("not_research_hijacked",not bool(re.search(r"(?i)lyrics.*verif|cannot.*retrieve.*lyrics",text)))
+    elif kind=="pop_adaptation":
+        for marker in ("verse 1","verse 2","pre-chorus","chorus","bridge","final chorus"):
+            test("section_"+marker,marker in low or (marker=="pre-chorus" and "pre chorus" in low))
+        test("train_setting",bool(re.search(r"(?i)train|platform|station|rail",text)))
+        test("complete_rewrite",len(text)>=350)
+        test("aab_not_universal",not bool(re.search(r"(?im)^.*\bAAB\b.*$",text)))
+    elif kind=="public_science":
+        test("eclipse_alignment",bool(re.search(r"(?i)moon",text) and re.search(r"(?i)sun",text) and re.search(r"(?i)earth",text)))
+        test("partial_and_total",bool(re.search(r"(?i)partial",text) and re.search(r"(?i)total",text)))
+        test("not_every_new_moon",bool(re.search(r"(?i)not every|not each|doesn.t|does not|tilt|inclination",text)))
+        test("cites_source",len(urls)>=1)
+    elif kind=="science_followup":
+        test("new_moon_and_tilt",bool(re.search(r"(?i)new moon",text) and re.search(r"(?i)tilt|orbit|inclina|align|node",text)))
+        test("no_invented_facts",not bool(re.search(r"(?i)every new moon (?:makes|creates|causes)",text)))
+    elif kind=="staffing_initial":
+        test("only_rae",bool(re.search(r"(?i)\brae\b",text)))
+        test("delivery_15",bool(re.search(r"(?i)\b15\b|fifteen",text)))
+        test("alone",bool(re.search(r"(?i)alone|one cook|solo|second.*absent",text)))
+    elif kind=="staffing_followup":
+        test("time_8",bool(re.search(r"(?i)\b8\b|eight",text)))
+        test("rae",bool(re.search(r"(?i)\brae\b",text)))
+        test("no_invented_helpers",not bool(re.search(r"(?i)(?:new|extra|additional|another|relief)\s+(?:cook|staff|helper|manager)|(?:coworker|helper|manager)\s+(?:arrives?|helps?|steps?\s+in)",text)))
     elif kind=="debugging":
         test("debug_actions",bool(re.search(r"reproduc|inspect|console|log|event|click|listener|overlay",text,re.I)))
         test("mobile_specific",bool(re.search(r"mobile|touch|tap|viewport|pointer",text,re.I)))
         test("no_false_inspection",not bool(re.search(r"\bi (?:checked|inspected|fixed) your\b",low)))
+        test("valid_dom_debugging_api",not bool(re.search(r"(?i)\.\s*getEventListeners\s*\(|\.\s*addEventListener\.toString\s*\(",text)))
     else:raise RuntimeError("Unknown grader "+kind)
     passed=sum(x["pass"] for x in tests)
     return {"status":"PASS_EVIDENCE" if passed==len(tests) else "REVIEW",
@@ -259,7 +337,9 @@ async def scenario(browser,case):
             result["turns"].append({
                 "turn":n,"research_mode_requested":turn.get("online",False),
                 "prompt":turn["prompt"],"kind":turn["kind"],"response":excerpt,
-                "response_chars":len(raw),"response_sha256":hashlib.sha256(raw.encode()).hexdigest(),
+                "response_chars":len(raw),"terminal_state":response.get("state"),
+                "candidate_validation_status":response.get("candidate_validation_status"),
+                "candidate_validation_reasons":response.get("candidate_validation_reasons"),"response_sha256":hashlib.sha256(raw.encode()).hexdigest(),
                 "evaluation":grade,"total_ms":response.get("total_ms"),
                 "first_text_ms":response.get("first_text_ms"),
                 "phases":response.get("phases",[]),"source_link_count":grade["link_count"],
@@ -290,6 +370,7 @@ async def main(batch):
                     "checks":[[t["evaluation"]["passed"],t["evaluation"]["total"]] for t in result["turns"]],
                     "duration_ms":[t["total_ms"] for t in result["turns"]],
                     "research_source_links":[t["source_link_count"] for t in result["turns"]],
+                    "failed_checks":[[x["check"] for x in t["evaluation"]["checks"] if not x["pass"]] for t in result["turns"]],
                     "error":result.get("error")
                 }),flush=True)
         finally:await browser.close()

@@ -4,6 +4,11 @@ on:
     branches: [main]
     paths:
       - '.github/workflows/chat-research-lyrics-conversations-eval.yml'
+  pull_request:
+    paths:
+      - 'scripts/eval_chat_research_lyrics_conversations.py'
+      - 'tests/test_chat_broad_guest_round2.py'
+      - '.github/workflows/chat-research-lyrics-conversations-eval.yml'
   workflow_dispatch: {}
 permissions: {contents: read}
 concurrency:
@@ -17,7 +22,7 @@ jobs:
       fail-fast: false
       max-parallel: 1
       matrix:
-        batch: [research, songwriting, conversation]
+        batch: [research, songwriting, conversation, transformations]
     steps:
       - uses: actions/checkout@v4
         with: {persist-credentials: false}
@@ -31,6 +36,7 @@ jobs:
         run: |
           python -m py_compile scripts/eval_chat_research_lyrics_conversations.py
           python -m py_compile scripts/eval_chat_guest_suite.py
+          python -m unittest discover -s tests -p 'test_chat_broad_guest_round2.py' -v
       - name: Run synthetic multi-turn §C guest tests — ${{ matrix.batch }}
         env:
           SWRLZ_EVAL_BASE: https://kamiloki-swyrlz.hf.space
