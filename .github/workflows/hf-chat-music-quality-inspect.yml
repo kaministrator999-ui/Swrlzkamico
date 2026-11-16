@@ -47,3 +47,33 @@ jobs:
               for n in range(start,min(end,len(lines))+1):
                 print("MUSIC_SRC",file,n,lines[n-1][:400],flush=True)
           PY
+
+      - name: Read live stop, streaming and follow-up routing seams
+        shell: bash
+        run: |
+          python - <<'PY'
+          from huggingface_hub import HfApi,hf_hub_download
+          from pathlib import Path
+          import re,json
+          space="kamiloki/Swyrlz";rev=HfApi().repo_info(space,repo_type="space").sha
+          print("FOLLOWUP_STOP_REV",rev,flush=True)
+          targets={
+            "station.py":(r"cancelRequested|cancel_check|cancel_requested|/cancel|/stop|requestId|_swrlz_auto_code_chain|event_source|yield json.dumps|SSE",[(680,810),(1290,1335),(1350,1425),(1495,1545),(1720,1770),(2430,2530)]),
+            "chat/§wyrlz/index.html":(r"stopButton|stopGeneration|stationCancel|cancelGeneration|stationSubmission|AbortController|abort\(|/cancel|/stop|function .*stop|stop-button",[]),
+            "online_tools.py":(r"def research_decision|def web_decision|creative_music_transform_request|lyrics_lookup|lyrics_creative|_LYRICS_LOOKUP|_EXPLICIT_WEB|user_history|followup|should_web",[(1260,1438)]),
+            "lfm2_700m_engine.py":(r"def generate_events\(|_response_mode\(|creative_music_reference_projection|original_rap_violations|SYSTEM|cancel_check|reference_structure",[(770,824),(1885,1915)]),
+          }
+          for file,(pattern,sections) in targets.items():
+            try: lines=Path(hf_hub_download(space,file,repo_type="space",revision=rev)).read_text().splitlines()
+            except Exception as e: print("STOP_SOURCE_UNAVAILABLE",file,type(e).__name__,flush=True);continue
+            hits=[(n+1,txt[:155]) for n,txt in enumerate(lines) if re.search(pattern,txt,re.I)]
+            print("STOP_SOURCE_MAP",json.dumps({"file":file,"totalLines":len(lines),"hits":hits[:130]},ensure_ascii=False),flush=True)
+            if file=="chat/§wyrlz/index.html":
+              picks=[n for n,t in hits if n>1500]
+              for n in picks[:28]:sections.append((max(1,n-8),min(len(lines),n+12)))
+            for a,b in sections:
+              if a>len(lines):continue
+              print("STOP_SOURCE_SECTION",file,a,b,flush=True)
+              for n in range(a,min(len(lines),b)+1):
+                print("STOP_SRC",file,n,lines[n-1][:400],flush=True)
+          PY
