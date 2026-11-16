@@ -1,0 +1,15 @@
+{
+  "schema": "swrlz-knowledge-followup-v1",
+  "requestId": "web-mwio81qz-2418369586-4284230782",
+  "modelId": "700m",
+  "eventType": "KNOWLEDGE_ACQUISITION_FOLLOWUP_1",
+  "sourceRef": "f149dd857e3d9219f5cae7da0286b5dbfec85c42",
+  "persistedAtUnixMs": 1794800341384,
+  "diagnostic": {
+    "schema": "swrlz-knowledge-followup-v1",
+    "parentRequestId": "web-mwio81qz-2418369586-4284230782",
+    "turnIndex": 1,
+    "userText": "Do another rap song that's like the song you looked up by tech n9ne",
+    "capturedAtUnixMs": 1794800341380
+  }
+}
