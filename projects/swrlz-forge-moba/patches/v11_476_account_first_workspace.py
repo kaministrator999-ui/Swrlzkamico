@@ -39,6 +39,17 @@ def apply(html):
     gate="""<section id="se476StartupGate" aria-label="§wyrl§ Engine account and project startup">
  <div id="se476StartupCard">
   <h1>§wyrl§ Engine</h1><p class="se476-lead">Connect your Google account, synchronize your projects, and restore your workspace before entering the editor.</p>
+  <section id="se476SignalLost" class="se476-signal-lost" role="region" aria-label="§C connection unavailable" hidden>
+    <div class="se476-signal-art" aria-hidden="true">
+      <div class="se476-signal-rings"></div>
+      <span class="se476-signal-glyph" data-glitch="§C">§C</span>
+      <span class="se476-signal-static"></span>
+    </div>
+    <p class="se476-signal-code">§C:// CONNECTION_TIMEOUT · ERROR 503</p>
+    <h2 class="se476-signal-title" data-glitch="SIGNAL LOST">SIGNAL LOST</h2>
+    <p class="se476-signal-detail">The Chat Space cannot be reached right now. Your saved on-device projects are still available, and none have been deleted.</p>
+    <button id="se476RetryConnection" type="button">↻ Reconnect to §C</button>
+  </section>
   <div class="se476-group" aria-label="Account sign in">
    <strong class="se476-section-title">Account</strong>
    <span id="se476AccountLabel">Checking Google account…</span>
@@ -57,9 +68,14 @@ def apply(html):
   <div id="se476StartupStatus" role="status" aria-live="polite">Checking existing account session…</div>
  </div>
 </section>"""
-    match=re.search(r'<body(?:\s[^>]*)?>',html,flags=re.I)
+    head_end=html.index('</head>')+len('</head>')
+    match=re.search(r'<body(?:\s[^>]*)?>',html[head_end:],flags=re.I)
+    if match:
+        absolute=head_end+match.end()
+    else:
+        absolute=-1
     assert match,('se476 original body tag not found')
-    html=html[:match.end()]+'\n'+gate+html[match.end():]
+    html=html[:absolute]+'\n'+gate+html[absolute:]
     for before,after in [
       ('SWYRL_ENGINE_DEPLOY_MARKER: V11_475_PROGRESSIVE_RAIL_VISIBILITY',MARKER),
       ('ENGINE · MAKER v11.475','ENGINE · MAKER v11.476'),
