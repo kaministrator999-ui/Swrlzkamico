@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT (owner-approved)",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.477",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_477_VERTEX_SELECTION_HIERARCHY",
-  "reason": "Owner-requested operation-first §E mobile modeler: right main family → left Extrude/Inset operation flyout (auto-collapses) → top Vertex/Edge/Face selection type → second horizontal Single Vertex/Vertex Ring/Filled Vertex Ring selection shape. Entering Vertex mode displays native mesh vertex points, autoselects the lone mesh or supports selecting a specific mesh by touch. Native topology constraints and UV/Undo preserved. Source 454-patch SHA256 and Chromium mobile+desktop-site tests passed. Physical Moto/Quest and real user project acceptance still pending.",
-  "sourceCommit": "49b44937e27650e2258e56ad6e8f836aa1ee3384",
-  "sourceIntegritySha256": "0a0c417d8271a01dd8684e71751df8f037b65d14bfeb962348f13c88486e7910"
+  "releaseVersion": "v11.478",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_478_RING_VERTEX_HIGHLIGHT",
+  "reason": "Owner-requested §E Model Studio: Extrude and Inset Vertex Ring highlights the complete connected outline, Filled Vertex Ring highlights the center and full connected radius, and either selection opens a responsive height slider with native live preview, Apply/Cancel and Undo. Source 455-patch SHA256 verified; mobile desktop-site and narrow touch Chromium regressions passed. Physical Moto/Quest acceptance remains pending.",
+  "sourceCommit": "b2cc356441ef4a48129caf969164db9bb745a9f1",
+  "sourceIntegritySha256": "615b158829f1c0d4c4f37f0bf29b34db302896d4d2d9d34fd3f6038a1ade6057"
 }
