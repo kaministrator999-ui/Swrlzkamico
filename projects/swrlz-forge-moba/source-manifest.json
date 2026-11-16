@@ -471,6 +471,6 @@
     "patches/v11_477_selection_hierarchy.py",
     "patches/v11_478_ring_vertex_highlight.py"
   ],
-  "finalBytes": null,
-  "finalSha256": null
+  "finalBytes": 10421325,
+  "finalSha256": "615b158829f1c0d4c4f37f0bf29b34db302896d4d2d9d34fd3f6038a1ade6057"
 }
