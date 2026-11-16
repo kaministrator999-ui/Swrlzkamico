@@ -1,0 +1,14 @@
+name: Verify sealed §E v11.468 independent studio assets
+on:
+  push:
+    branches: [feat/se468-standalone-studio-assets]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify sealed v11.468 release and native isolation tests
+        run: python projects/swrlz-forge-moba/scripts/verify_v11_468_release.py --output /tmp/se468-build --request
