@@ -11,13 +11,13 @@ manifest_file=ROOT/'source-manifest.json'
 request_file=ROOT/'DEPLOY_REQUEST.json'
 manifest=json.loads(manifest_file.read_text('utf8'))
 assert manifest['name']=='§wyrl§ Engine v11.471'
-assert manifest['finalArtifact']=='swyrl_engine_v11_470.html'
+assert manifest['finalArtifact']=='swyrl_engine_v11_471.html'
 assert len(manifest['patches'])==448
 assert manifest['patches'][-1]=='patches/v11_471_uv_render_project_delete.py'
 manifest['finalBytes']=None
 manifest['finalSha256']=None
 manifest_file.write_text(json.dumps(manifest,ensure_ascii=False,indent=2)+'\n','utf8')
-output=ROOT/'_release_v11_470_candidate'
+output=ROOT/'_release_v11_471_candidate'
 subprocess.run([sys.executable,str(ROOT/'build_space.py'),'--output',str(output)],check=True)
 data=(output/'index.html').read_bytes()
 assert data==(output/'modeler.html').read_bytes()
@@ -35,7 +35,7 @@ request.update({
  'sourceIntegritySha256':manifest['finalSha256']
 })
 request_file.write_text(json.dumps(request,ensure_ascii=False,indent=2)+'\n','utf8')
-subprocess.run([sys.executable,str(ROOT/'scripts/verify_v11_470_release.py'),
- '--output',str(ROOT/'_release_v11_470_verified'),'--request'],check=True)
+subprocess.run([sys.executable,str(ROOT/'scripts/verify_v11_471_release.py'),
+ '--output',str(ROOT/'_release_v11_471_verified'),'--request'],check=True)
 print(json.dumps({'status':'SEALED','version':'v11.471','bytes':len(data),
  'sha256':manifest['finalSha256'],'patches':448}),flush=True)
