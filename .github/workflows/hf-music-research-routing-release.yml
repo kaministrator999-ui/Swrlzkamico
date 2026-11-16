@@ -1,0 +1,133 @@
+name: Guarded §C music research and original lyric routing release
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/hf-music-research-routing-release.yml'
+permissions: {contents: read}
+concurrency:
+  group: swrlz-chat-guest-eval
+  cancel-in-progress: false
+jobs:
+  release:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 38
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - run: |
+          python -m pip install 'huggingface_hub>=0.34,<2' playwright==1.56.0
+          python -m playwright install --with-deps chromium
+      - run: |
+          python -m py_compile scripts/hf_music_research_intent_routing_v1.py
+          python -m py_compile scripts/eval_chat_research_lyrics_conversations.py
+      - name: Pin live source and prove 14 route fixtures
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: python -u scripts/hf_music_research_intent_routing_v1.py preflight
+      - name: Preserve exact previous Space source and checksums
+        uses: actions/upload-artifact@v4
+        with:
+          name: music-research-route-source-backup-${{ github.run_id }}
+          path: reports/swrlz-music-router-v1/
+          retention-days: 90
+          if-no-files-found: error
+      - name: Publish one-file research / music operation disambiguation
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          SWRLZ_MUSIC_ROUTING_APPROVED: '1'
+        run: python -u scripts/hf_music_research_intent_routing_v1.py publish
+      - name: Check serving worker after Space restart
+        run: |
+          python - <<'PY'
+          import urllib.request,time,json
+          url='https://kamiloki-swyrlz.hf.space/api/hf/qwen35-ready'
+          for n in range(35):
+              try:
+                  with urllib.request.urlopen(url,timeout=15) as r: data=json.load(r)
+                  if data.get('ready') is True and n>=3:
+                      print('MUSIC_ROUTING_SERVER_READY',n,flush=True)
+                      break
+              except Exception as exc: print('MUSIC_RESTART_WAIT',n,type(exc).__name__,flush=True)
+              time.sleep(8)
+          else:raise RuntimeError('Model not ready for safe live acceptance')
+          PY
+      - name: Source-backed blues theory research: never existing-lyrics verification
+        id: research
+        shell: bash
+        env:
+          SWRLZ_EVAL_BASE: https://kamiloki-swyrlz.hf.space
+          SWRLZ_EVAL_MODEL: 700m
+        run: |
+          set -uo pipefail
+          if python -u - <<'PY'
+          import asyncio,sys,json
+          from pathlib import Path
+          from scripts import eval_chat_research_lyrics_conversations as ev
+          case=next(x for x in ev.CASES['research'] if x['id']=='blues-and-pop-song-form')
+          case={**case,'turns':case['turns'][:1]}
+          ev.CASES['research']=[case]
+          asyncio.run(ev.main('research'))
+          result=json.loads((ev.OUT/'report.json').read_text())
+          turn=result['results'][0]['turns'][0]
+          print('MUSIC_RESEARCH_ROUTE_RESULT',json.dumps({'status':turn['evaluation']['status'],
+             'sources':turn['source_link_count'],'ms':turn['total_ms'],'phase':turn.get('phases')},flush=True))
+          txt=turn['response'].lower()
+          assert 'couldn\'t verify the requested lyric text' not in txt
+          assert 'search results for the lyrics' not in txt
+          assert 'weather' not in txt[:160]
+          assert turn['evaluation']['status']=='PASS_EVIDENCE', 'No complete research response or source citations'
+          PY
+          then ok=0;else ok=$?;fi
+          echo "exit=$ok" >> "$GITHUB_OUTPUT"
+          mkdir -p reports/music-routing-acceptance/research
+          cp -a reports/chat-research-lyrics-conversation/. reports/music-routing-acceptance/research/ || true
+          echo "MUSIC_THEORY_ACCEPTANCE_EXIT=$ok"
+      - name: Original synth-pop song with Rain title: never weather lookup
+        id: song
+        if: steps.research.outputs.exit == '0'
+        shell: bash
+        env:
+          SWRLZ_EVAL_BASE: https://kamiloki-swyrlz.hf.space
+          SWRLZ_EVAL_MODEL: 700m
+        run: |
+          set -uo pipefail
+          if python -u - <<'PY'
+          import asyncio,json
+          from scripts import eval_chat_research_lyrics_conversations as ev
+          case=next(x for x in ev.CASES['songwriting'] if x['id']=='synth-pop-dynamic-form')
+          case={**case,'turns':case['turns'][:1]}
+          ev.CASES['songwriting']=[case]
+          asyncio.run(ev.main('songwriting'))
+          turn=json.loads((ev.OUT/'report.json').read_text())['results'][0]['turns'][0]
+          print('ORIGINAL_SONG_ROUTE_RESULT',json.dumps({'status':turn['evaluation']['status'],'ms':turn['total_ms']},flush=True))
+          assert 'i need a city/region' not in turn['response'].lower(), 'Still routed to weather'
+          assert 'search results for the lyrics' not in turn['response'].lower(), 'Still routed to lyric lookup'
+          assert turn['evaluation']['status']=='PASS_EVIDENCE', 'Original song incomplete'
+          PY
+          then ok=0;else ok=$?;fi
+          echo "exit=$ok" >> "$GITHUB_OUTPUT"
+          mkdir -p reports/music-routing-acceptance/song
+          cp -a reports/chat-research-lyrics-conversation/. reports/music-routing-acceptance/song/ || true
+          echo "ORIGINAL_SONG_ACCEPTANCE_EXIT=$ok"
+      - name: Preserve all anonymous response transcripts and source receipts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: music-routing-live-acceptance-${{ github.run_id }}
+          path: reports/music-routing-acceptance/
+          retention-days: 21
+          if-no-files-found: ignore
+      - name: Roll back exact source if either live acceptance fails
+        if: steps.research.outputs.exit != '0' || steps.song.outputs.exit != '0'
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          SWRLZ_MUSIC_ROUTING_APPROVED: '1'
+        run: python -u scripts/hf_music_research_intent_routing_v1.py rollback
+      - name: Require both actual research and original song results
+        if: steps.research.outputs.exit != '0' || steps.song.outputs.exit != '0'
+        run: |
+          echo "::warning::One or more model acceptances failed; verify rollback before further changes."
+          exit 1
