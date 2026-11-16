@@ -153,7 +153,7 @@ jobs:
           SWRLZ_MUSIC_ROUTING_APPROVED: '1'
         run: python -u scripts/hf_music_research_intent_routing_v1.py rollback
       - name: Require both actual research and original song results
-        if: ${{ always() && (steps.research.outputs.exit != '0' || steps.song.outputs.exit != '0' || steps.revision.outcome != 'success') }}
+        if: ${{ always() && (steps.research.outputs.exit != '0' || steps.song.outputs.exit != '0' || steps.authored.outputs.exit != '0' || steps.revision.outcome != 'success') }}
         run: |
           echo "::warning::One or more model acceptances failed; verify rollback before further changes."
           exit 1
