@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT (owner-approved)",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.475",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_475_PROGRESSIVE_RAIL_VISIBILITY",
-  "reason": "Fix user-reported mobile progressive tool selection: exclusive Sculpt/Mesh family highlighting, visible left flyout outside clipped scrolling rail, and top Vertex/Ring/Ring Fill modes below transform bar. Restore native Ring and Quest input installers via scope-safe bridges. Browser touch-profile tests passed for desktop-site and compact mobile layouts with no page errors. Physical Moto and Quest acceptance remains pending.",
-  "sourceCommit": "994619d7d66298d4555dbaaf2daf8382114dcb4a",
-  "sourceIntegritySha256": "ab953d703acc30952f77ab7a28cdd6d40558ea076487052f886f19c558fda0d8"
+  "releaseVersion": "v11.476",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_476_ACCOUNT_FIRST_WORKSPACE",
+  "reason": "Ship Google-first sign-in/start screen, native saved-account/on-device project picker, selected automatic project or last saved project/studio/model camera restoration, and a full-screen animated §C Page Down/SIGNAL LOST view with Reconnect and offline local-editor exit. Preserve Google token isolation, native revision guards, modeling, VR, and local data. Browser phone and desktop-site checks succeeded with reduced-motion and release-notes click-interception regression.",
+  "sourceCommit": "4afeee71653d5301e816d7cd035128b4fceb4b1a",
+  "sourceIntegritySha256": "0985fb17a559b345c7881ec30d7d1b421da36f031a53abfdcf6abfa4242ae5ec"
 }
