@@ -19,8 +19,8 @@ jobs:
           repo="kamiloki/Swyrlz";rev=HfApi().repo_info(repo,repo_type="space").sha
           print("SWRLZ_OUTER_ROUTE_REV",rev,flush=True)
           files={
-              "model_router.py":[(810,1025)],
-              "station.py":[(2490,2540)]
+              "model_router.py":[(1015,1105)],
+              "station.py":[(1605,1655)]
           }
           for f,ranges in files.items():
               lines=Path(hf_hub_download(repo,f,repo_type="space",revision=rev)).read_text().splitlines()
