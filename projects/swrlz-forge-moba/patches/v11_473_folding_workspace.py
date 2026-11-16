@@ -85,19 +85,18 @@ def apply(html):
   const w=state[what][side];
   const next=start.width+(e.clientX-start.x)*dir;""",
       'tap versus drag threshold')
+    # Capture phase runs before the original pointerup listener clears start.
+    # Preserve its existing commit/save/release path rather than replacing it.
     html=once(html,
-      """ const end=()=>{if(start){start=null;save();window.dispatchEvent(new Event('resize'))}};
- node.addEventListener('pointerup',end);node.addEventListener('pointercancel',end);""",
-      """ const end=e=>{
-  if(!start||e?.pointerId!==start.pointer)return;
-  const tap=e.type==='pointerup'&&!start.moved&&layout()==='desktop';
+      """ node.addEventListener('keydown',e=>{""",
+      """ node.addEventListener('pointerup',e=>{
+  if(!start||start.pointer!==e.pointerId||start.moved||layout()!=='desktop')return;
   const flag=side==='left'?'collapsed':'rightCollapsed';
-  if(tap)state[what][flag]=!state[what][flag];
-  try{node.releasePointerCapture?.(start.pointer);}catch(_){}
-  start=null;sync();save();window.dispatchEvent(new Event('resize'));
- };
- node.addEventListener('pointerup',end);node.addEventListener('pointercancel',end);""",
-      'persist collapse and last dock width')
+  state[what][flag]=!state[what][flag];
+  sync();
+ },true);
+ node.addEventListener('keydown',e=>{""",
+      'capture tap before native resize completion')
     html=once(html,
       """ node.addEventListener('keydown',e=>{
   const dirKey=e.key==='ArrowRight'?1:e.key==='ArrowLeft'?-1:0;
