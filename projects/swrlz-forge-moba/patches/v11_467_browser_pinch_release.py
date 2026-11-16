@@ -1,29 +1,18 @@
-"""§E browser-mode two-pointer camera release guard (candidate, not released)."""
-def one(s, old, new):
-    n=s.count(old)
-    assert n==1,(old[:100],n)
-    return s.replace(old,new,1)
+"""§E browser two-pointer camera release guard, applied to assembled HTML."""
+import re
+
+def replace_once(html, pattern, replacement):
+    updated,n=re.subn(pattern,lambda _:replacement,html,count=1,flags=re.MULTILINE)
+    assert n==1,(pattern[:90],n)
+    return updated
 
 def apply(html):
-    # A completed pinch must not become a fresh one-controller orbit.
-    html=one(html,
-      """  if(atelierCameraTouches.size===1){
-   const [id,pt]=atelierCameraTouches.entries().next().value;
-   if(atelierCameraConsumedTouches.has(id)){
-    atelierCameraConsumedTouches.delete(id);
-    pressed={x:pt.x,y:pt.y,yaw:orbit.yaw,pitch:orbit.pitch,moved:true};
-   }
-  }""",
-      """  // Keep remaining pointers consumed until their own release.
-  // Never synthesize a new pressed/orbit gesture from a finished pinch.
-  if(atelierCameraTouches.size===1)pressed=null;""")
-    # Cancel must not call the ordinary release transition and accidentally
-    # re-arm another pointer; clear camera ownership for the interrupted gesture.
-    html=one(html,
-      """function atelierCameraPointerCancel(e){
- atelierCameraPointerUp(e);
- pressed=null;
-}""",
+    # Never re-arm orbit for the pointer remaining after pinch.
+    html=replace_once(html,
+      r"if\s*\(atelierCameraTouches\.size===1\)\s*\{\s*const\s*\[id,pt\]=atelierCameraTouches\.entries\(\)\.next\(\)\.value;\s*if\s*\(atelierCameraConsumedTouches\.has\(id\)\)\s*\{\s*atelierCameraConsumedTouches\.delete\(id\);\s*pressed=\{x:pt\.x,y:pt\.y,yaw:orbit\.yaw,pitch:orbit\.pitch,moved:true\};\s*\}\s*\}",
+      "// Keep the remaining pointer consumed until its own release.\n  if(atelierCameraTouches.size===1)pressed=null;")
+    html=replace_once(html,
+      r"function atelierCameraPointerCancel\(e\)\s*\{\s*atelierCameraPointerUp\(e\);\s*pressed=null;\s*\}",
       """function atelierCameraPointerCancel(e){
  const tracked=atelierCameraTouches.has(e.pointerId);
  atelierCameraTouches.delete(e.pointerId);
