@@ -1,0 +1,15 @@
+{
+  "schema": "swrlz-knowledge-followup-v1",
+  "requestId": "web-mwirvnde-2411588704-2139802859",
+  "modelId": "700m",
+  "eventType": "KNOWLEDGE_ACQUISITION_FOLLOWUP_2",
+  "sourceRef": "f149dd857e3d9219f5cae7da0286b5dbfec85c42",
+  "persistedAtUnixMs": 1794804505944,
+  "diagnostic": {
+    "schema": "swrlz-knowledge-followup-v1",
+    "parentRequestId": "web-mwirvnde-2411588704-2139802859",
+    "turnIndex": 2,
+    "userText": "Do you understand the issues in your song that I listed about the song you remixed",
+    "capturedAtUnixMs": 1794804505943
+  }
+}
