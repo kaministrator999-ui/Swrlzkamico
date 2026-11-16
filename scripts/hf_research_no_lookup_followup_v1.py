@@ -79,7 +79,7 @@ def static_tests(raw):
                 {"role":"assistant","text":cited}]]
     examples=[
         ("Now without doing another web lookup, give just the two expansion classes.",histories[0],True),
-        ("Don't search again. Explain the answer above.",histories[0],False),
+        ("Don't search again. Explain the answer above.",histories[0],True),
         ("Do not browse. Explain the answer above.",histories[0],True),
         ("Which two expansion classes were added?",histories[0],False),
         ("Look up fresh sources again.",histories[0],False),
