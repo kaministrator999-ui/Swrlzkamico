@@ -1,0 +1,20 @@
+/* SE472_NATIVE_TEXTURE_RESOLUTION_STYLES_START */
+#modelAtelierUVLayout #se472TextureResolution{
+ display:grid;gap:7px;margin:9px 0;padding:9px;
+ background:#18313d;border:1px solid #638891;border-radius:8px;
+ min-width:0;color:#e8fbff;
+}
+#modelAtelierUVLayout #se472TextureResolution strong{font-size:13px}
+#modelAtelierUVLayout #se472TextureResolution label{font-size:12px;font-weight:600}
+#modelAtelierUVLayout #se472TextureResolution select{
+ max-width:100%;width:100%;min-height:44px;color:#f4ffff;
+ background:#234a5a;border:1px solid #79b7bd;border-radius:8px;
+ padding:8px;font-size:13px;
+}
+#modelAtelierUVLayout #se472TextureResolution p{
+ margin:0;font-size:11px;line-height:1.45;
+ color:#c4e7ed;overflow-wrap:anywhere;
+}
+#modelAtelierUVLayout #se472TextureResolution select:disabled{opacity:.45}
+#modelAtelierUVLayout #se472TextureResolution select:focus-visible{outline:2px solid #71f8f2;outline-offset:2px}
+/* SE472_NATIVE_TEXTURE_RESOLUTION_STYLES_END */
