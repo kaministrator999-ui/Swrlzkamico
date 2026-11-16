@@ -1,9 +1,5 @@
 name: §C broad guest QA — public research, lyric flow and ordinary conversation
 on:
-  push:
-    branches: [main]
-    paths:
-      - '.github/workflows/chat-research-lyrics-conversations-eval.yml'
   pull_request:
     paths:
       - 'scripts/eval_chat_research_lyrics_conversations.py'
@@ -13,10 +9,24 @@ on:
   workflow_dispatch: {}
 permissions: {contents: read}
 concurrency:
-  group: swrlz-chat-guest-eval
+  group: swrlz-chat-manual-guest-eval-${{ github.ref }}
   cancel-in-progress: false
 jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - name: Run deterministic grader and scenario validation (no live requests)
+        run: |
+          python -m pip install --quiet playwright==1.56.0
+          python -m py_compile scripts/eval_chat_research_lyrics_conversations.py scripts/eval_chat_guest_suite.py
+          python -m unittest discover -s tests -p 'test_chat_broad_guest_round2.py' -v
   evaluate:
+    if: github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-24.04
     timeout-minutes: 65
     strategy:
