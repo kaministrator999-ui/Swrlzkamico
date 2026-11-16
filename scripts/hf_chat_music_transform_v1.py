@@ -115,9 +115,18 @@ def patch_engine(source: str) -> str:
             lyric_mode=music_transform_contract["mode"]
             draft,timing=buffered_chat_completion(model,messages,response_tokens,temperature)
             candidate_text=original_rap_delivery(draft)
-            candidate_check=quality_review(
-                candidate_text,
-                allow_aab=bool(re.search(r"(?i)\\b(?:aab|12[- ]bar blues)\\b",prompt)))
+            def review_song_transform(rendered,raw):
+                check=quality_review(
+                    rendered,
+                    allow_aab=bool(re.search(r"(?i)\b(?:aab|12[- ]bar blues)\b",prompt)))
+                if reference_structure:
+                    borrowed=original_rap_violations(raw,rendered,history,reference_structure)
+                    if borrowed:
+                        check["status"]="REJECT"
+                        check["reasons"]=list(dict.fromkeys(
+                            list(check.get("reasons") or [])+borrowed))
+                return check
+            candidate_check=review_song_transform(candidate_text,draft)
             first_fp=_candidate_fingerprint(candidate_text)
             candidate_attempts.append(candidate_attempt_receipt(
                 1,"music-transform-"+lyric_mode,timing,candidate_check,first_fp))
@@ -130,9 +139,7 @@ def patch_engine(source: str) -> str:
                 repaired,retry_timing=buffered_chat_completion(
                     model,retry_messages,response_tokens,min(0.52,temperature+0.07))
                 candidate_text=original_rap_delivery(repaired)
-                candidate_check=quality_review(
-                    candidate_text,
-                    allow_aab=bool(re.search(r"(?i)\\b(?:aab|12[- ]bar blues)\\b",prompt)))
+                candidate_check=review_song_transform(candidate_text,repaired)
                 candidate_attempts.append(candidate_attempt_receipt(
                     2,"music-transform-repair",retry_timing,candidate_check,
                     _candidate_fingerprint(candidate_text),
