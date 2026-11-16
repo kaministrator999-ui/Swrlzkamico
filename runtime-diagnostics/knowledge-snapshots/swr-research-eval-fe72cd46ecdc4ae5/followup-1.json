@@ -1,0 +1,15 @@
+{
+  "schema": "swrlz-knowledge-followup-v1",
+  "requestId": "swr-research-eval-fe72cd46ecdc4ae5",
+  "modelId": "700m",
+  "eventType": "KNOWLEDGE_ACQUISITION_FOLLOWUP_1",
+  "sourceRef": "f149dd857e3d9219f5cae7da0286b5dbfec85c42",
+  "persistedAtUnixMs": 1794855745234,
+  "diagnostic": {
+    "schema": "swrlz-knowledge-followup-v1",
+    "parentRequestId": "swr-research-eval-fe72cd46ecdc4ae5",
+    "turnIndex": 1,
+    "userText": "Use only the research above, without a new search: why do the northern and southern hemispheres have opposite seasons? Keep it concise and don't invent a source.",
+    "capturedAtUnixMs": 1794855745234
+  }
+}
