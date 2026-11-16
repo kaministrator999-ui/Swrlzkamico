@@ -14,7 +14,7 @@ jobs:
           python projects/swrlz-forge-moba/scripts/verify_v11_466_release.py --output /tmp/se467-browser-inspect
           python - <<'PY'
           from pathlib import Path
-          p=Path('/tmp/se467-browser-inspect/swyrl_engine_v11_466.html')
+          p=Path('/tmp/se467-browser-inspect/index.html')
           s=p.read_text()
           for needle in ('function atelierCameraPointerDown','function atelierCameraPointerMove','function atelierCameraPointerUp','function pointerDown(e)','function pointerMove(e)','function pointerUp(e)'):
             i=s.find(needle)
