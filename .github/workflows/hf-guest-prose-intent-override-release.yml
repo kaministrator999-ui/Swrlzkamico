@@ -7,7 +7,7 @@ on:
       - 'scripts/hf_guest_prose_intent_override_v1.py'
 permissions: {contents: read}
 concurrency:
-  group: swrlz-chat-guest-eval
+  group: swrlz-hf-space-deployment
   cancel-in-progress: false
 jobs:
   release:
