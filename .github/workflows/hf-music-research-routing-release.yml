@@ -24,7 +24,7 @@ jobs:
       - run: |
           python -m py_compile scripts/hf_music_research_intent_routing_v1.py
           python -m py_compile scripts/eval_chat_research_lyrics_conversations.py
-      - name: Pin live source and prove 14 route fixtures
+      - name: Pin live source and prove 24 route fixtures
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: python -u scripts/hf_music_research_intent_routing_v1.py preflight
@@ -138,6 +138,38 @@ jobs:
           cp -a reports/chat-research-lyrics-conversation/. reports/music-routing-acceptance/authored/ || true
           echo "AUTHORED_REFERENCE_ACCEPTANCE_EXIT=$ok"
 
+      - name: 'Explicit no-new-search eclipse follow-up stays within cited conversation'
+        id: no_lookup
+        if: steps.authored.outputs.exit == '0'
+        shell: bash
+        env:
+          SWRLZ_EVAL_BASE: https://kamiloki-swyrlz.hf.space
+          SWRLZ_EVAL_MODEL: 700m
+        run: |
+          set -uo pipefail
+          if python -u - <<'PY'
+          import asyncio,json
+          from scripts import eval_chat_research_lyrics_conversations as ev
+          case=next(c for c in ev.CASES['research'] if c['id']=='public-science-context-followup')
+          ev.CASES['research']=[case]
+          asyncio.run(ev.main('research'))
+          result=json.loads((ev.OUT/'report.json').read_text())['results'][0]
+          turns=result['turns']
+          print('CITED_NO_LOOKUP_ECLIPSE_ACCEPTANCE',json.dumps({
+            'outcome':result['outcome'],
+            'turns':len(turns),
+            'phases':[t.get('phases') for t in turns],
+            'source_counts':[t.get('source_link_count') for t in turns]}),flush=True)
+          assert result['outcome']=='PASS_EVIDENCE', 'Cited eclipse follow-up not complete'
+          assert len(turns)==2 and turns[0]['source_link_count']>=1
+          assert 'SEARCH_STARTED' not in turns[1].get('phases',[]), 'Explicit no-new-search instruction was ignored'
+          PY
+          then ok=0;else ok=$?;fi
+          echo "exit=$ok" >> "$GITHUB_OUTPUT"
+          mkdir -p reports/music-routing-acceptance/no-lookup
+          cp -a reports/chat-research-lyrics-conversation/. reports/music-routing-acceptance/no-lookup/ || true
+          echo "NO_NEW_LOOKUP_ACCEPTANCE_EXIT=$ok"
+
       - name: Preserve all anonymous response transcripts and source receipts
         if: always()
         uses: actions/upload-artifact@v4
@@ -146,14 +178,14 @@ jobs:
           path: reports/music-routing-acceptance/
           retention-days: 21
           if-no-files-found: ignore
-      - name: Roll back exact source if either live acceptance fails
-        if: ${{ always() && (steps.research.outputs.exit != '0' || steps.song.outputs.exit != '0' || steps.authored.outputs.exit != '0' || steps.revision.outcome != 'success') }}
+      - name: Roll back exact source if any live acceptance fails
+        if: ${{ always() && (steps.research.outputs.exit != '0' || steps.song.outputs.exit != '0' || steps.authored.outputs.exit != '0' || steps.no_lookup.outputs.exit != '0' || steps.revision.outcome != 'success') }}
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
           SWRLZ_MUSIC_ROUTING_APPROVED: '1'
         run: python -u scripts/hf_music_research_intent_routing_v1.py rollback
-      - name: Require both actual research and original song results
-        if: ${{ always() && (steps.research.outputs.exit != '0' || steps.song.outputs.exit != '0' || steps.authored.outputs.exit != '0' || steps.revision.outcome != 'success') }}
+      - name: Require source-backed research, song edits, authored data and no-search followup
+        if: ${{ always() && (steps.research.outputs.exit != '0' || steps.song.outputs.exit != '0' || steps.authored.outputs.exit != '0' || steps.no_lookup.outputs.exit != '0' || steps.revision.outcome != 'success') }}
         run: |
           echo "::warning::One or more model acceptances failed; verify rollback before further changes."
           exit 1
