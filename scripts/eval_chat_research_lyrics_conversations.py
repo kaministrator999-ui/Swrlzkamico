@@ -151,7 +151,7 @@ def aab_count(text):
             if normalized:lyric.append(normalized)
         if len(lyric)==3 and lyric[0]==lyric[1] and lyric[2]!=lyric[0]:hits+=1
     return hits
-def check(kind,text,previous=None):
+def check(kind,text,previous=None,phases=None,allow_search=False):
     low=text.lower()
     tests=[]
     def test(name,value):tests.append({"check":name,"pass":bool(value)})
@@ -160,6 +160,18 @@ def check(kind,text,previous=None):
     test("no_generation_or_router_error",not bool(re.search(
         r"(?i)(?:generation failed|HTTP Error 5\d\d|LYRICS_VERIFICATION_BLOCKED|"
         r"WEATHER_RETRIEVAL_BLOCKED|internal server error|traceback \(most recent)",text)))
+    # Every scenario in this suite asks for ORIGINAL lyrics or public research
+    # about a subject, never external copyrighted lyric reproduction.
+    test("no_lyrics_lookup_hijack",not bool(re.search(
+        r"(?i)I found search results for the lyrics|couldn.t verify the requested lyric text|LYRICS_VERIFICATION_BLOCKED",text)))
+    test("no_weather_lookup_hijack",not bool(re.search(
+        r"(?i)I need a city/region|location before I can check live weather|WEATHER_RETRIEVAL_BLOCKED",text)))
+    test("no_local_inference_failure",not bool(re.search(
+        r"(?i)Local Qwen inference failed|please try again|upstream inference error|model overloaded",text)))
+    if phases is not None and not allow_search:
+        network_phases={"SEARCH_STARTED","SEARCH_PROVIDER_VISIT","WEATHER_FETCH_COMPLETE",
+                        "LYRICS_VERIFICATION_BLOCKED","WEATHER_RETRIEVAL_BLOCKED"}
+        test("no_unrequested_web_tool",not any(p in network_phases for p in phases))
     if kind=="d2_classes":
         for k in ("Amazon","Assassin","Barbarian","Druid","Necromancer","Paladin","Sorceress"):
             test("class:"+k,bool(re.search(r"\b"+k+r"\b",text,re.I)))
@@ -241,7 +253,7 @@ def check(kind,text,previous=None):
         test("regular_480",bool(re.search(r"\$?\s*480(?:\.00)?\b",text)))
         test("overtime_90",bool(re.search(r"\$?\s*90(?:\.00)?\b",text)))
     elif kind=="metaphor":
-        test("metaphor_grounded",bool(re.search(r"bug|joke|metaphor|figurative|software|app|UI",text,re.I)))
+        test("metaphor_grounded",bool(re.search(r"bug|joke|metaphor|figurative|software|app|UI|glitch|easter egg|layout",text,re.I)))
         test("not_literal",not bool(re.search(r"actual gremlin|real creature|literally a gremlin",text,re.I)))
     elif kind=="source_ack":
         test("acknowledged_source",bool(re.search(r"(?i)receiv|got|provided|original|reference",text)))
@@ -256,16 +268,100 @@ def check(kind,text,previous=None):
         v1=section(text,r"verse\s*1").strip().casefold()
         v2=section(text,r"verse\s*2").strip().casefold()
         test("distinct_verses",bool(v1 and v2 and v1!=v2))
+        source_bigrams=set()
+        for line in ORIGINAL_TEST_LINES:
+            words=re.findall(r"[a-z]+",line.casefold())
+            source_bigrams.update(" ".join(words[i:i+2]) for i in range(len(words)-1))
+        output_words=re.findall(r"[a-z]+",text.casefold())
+        output_bigrams=set(" ".join(output_words[i:i+2]) for i in range(len(output_words)-1))
+        # Two incidental shared word pairs are tolerable; recycling several
+        # distinctive scene fragments is not a fresh interpretation.
+        reused=[b for b in source_bigrams & output_bigrams if
+                not b.startswith(("the ","and ","a ","my ","of ","to ","in ","at "))]
+        test("limited_recycled_source_imagery",len(reused)<3)
     elif kind=="feedback_only":
         test("explains_revision_reasoning",bool(re.search(r"(?i)verse|story|different|event|flow|judge",text)))
         test("no_new_song",not bool(re.search(r"(?im)^\s*(?:\*{0,2}|\[)verse\s*[12]\b",text)))
         test("not_research_hijacked",not bool(re.search(r"(?i)lyrics.*verif|cannot.*retrieve.*lyrics",text)))
+    elif kind=="weather_safe_song":
+        for token in ("verse 1","chorus","verse 2","bridge"):
+            test("section_"+token,token in low)
+        test("requested_title","rain glass lantern" in low)
+        test("substantial_original_song",len(text)>=240)
+    elif kind=="weather_safe_rewrite":
+        test("title_kept","rain glass lantern" in low)
+        test("bridge_changed",bool(re.search(r"(?i)bridge",text) and re.search(r"(?i)home|return|family",text)))
+        test("complete_song",len(text)>=240 and "verse 1" in low and "verse 2" in low)
+    elif kind=="folk_story":
+        test("requested_title","paper compass" in low)
+        for token in ("verse 1","verse 2","chorus","bridge"):
+            test("section_"+token,token in low)
+        test("story",bool(re.search(r"(?i)compass|map",text) and re.search(r"(?i)father|daughter",text)))
+    elif kind=="folk_rewrite":
+        test("new_relation",bool(re.search(r"(?i)brother",text)))
+        test("kept_theme",bool(re.search(r"(?i)compass|map",text)))
+        test("full_rewrite",len(text)>=280 and "bridge" in low and "chorus" in low)
+    elif kind=="list_initial":
+        for color in ("cobalt","maroon","ivory","olive"):
+            test("listed_"+color,color in low)
+        test("no_scarlet","scarlet" not in low)
+    elif kind=="list_revision":
+        for color in ("cobalt","ivory","olive"):
+            test("retained_"+color,color in low)
+        test("maroon_removed","maroon" not in low)
+        test("only_three",len(re.findall(r"(?m)^\s*(?:[-*]|\d+[.)])\s+",text))<=3)
+    elif kind=="fictional_ack":
+        test("fictional_robin","robin" in low)
+        test("fictional_rain","rain" in low)
+    elif kind=="fictional_followup":
+        test("amber_kept","amber" in low)
+        test("no_real_weather_data",not bool(re.search(r"(?i)forecast|temperature|weather station|humidity",text)))
+    elif kind=="parody_original":
+        for token in ("verse 1","chorus","verse 2"):
+            test("section_"+token,token in low)
+        test("comic_turn",bool(re.search(r"(?i)robot|toaster|spoon|receipt|kitchen|appliance",text)))
+        test("complete",len(text)>=200)
+    elif kind=="song_seed":
+        test("chorus",bool(re.search(r"(?i)chorus",text)))
+        test("user_hook","little lighthouse" in low)
+        test("verse",bool(re.search(r"(?i)verse",text)))
+    elif kind=="remaster_original":
+        test("same_hook","little lighthouse" in low)
+        test("complete_rewrite",len(text)>=200 and "verse" in low and "chorus" in low)
+        test("different_scene",bool(re.search(r"(?i)harbor|pier|boat|shore",text)))
+    elif kind=="genre_switch":
+        for token in ("verse 1","verse 2","pre-chorus","chorus","bridge"):
+            test("section_"+token,token in low or (token=="pre-chorus" and "pre chorus" in low))
+        test("lullaby_reference",bool(re.search(r"(?i)moon|bedtime|sleep|lantern",text)))
+        test("complete",len(text)>=240)
+    elif kind=="season_research":
+        test("tilt",bool(re.search(r"(?i)tilt|axial inclination",text)))
+        test("sunlight",bool(re.search(r"(?i)sunlight|solar|sun|daylight",text)))
+        test("cites_source",len(urls)>=1)
+        test("not_distance_cause",bool(re.search(r"(?i)not.*distanc|tilt.*(?:instead|rather)",text)))
+    elif kind=="season_followup":
+        test("tilt_kept",bool(re.search(r"(?i)tilt|axial",text)))
+        test("north_south_opposite",bool(re.search(r"(?i)opposite|northern|southern|hemispher",text)))
+    elif kind=="music_history_research":
+        test("synth",bool(re.search(r"(?i)synthesiz|synth",text)))
+        test("sequencer",bool(re.search(r"(?i)sequenc|oscillator|analog|electronic",text)))
+        test("citation",len(urls)>=1)
+    elif kind=="music_history_followup":
+        test("electronic_context",bool(re.search(r"(?i)synth|sequenc|oscillator|electronic",text)))
+        test("acknowledge_limits",bool(re.search(r"(?i)context|depends|vary|not always|not every|instrument",text)))
     elif kind=="pop_adaptation":
         for marker in ("verse 1","verse 2","pre-chorus","chorus","bridge","final chorus"):
             test("section_"+marker,marker in low or (marker=="pre-chorus" and "pre chorus" in low))
         test("train_setting",bool(re.search(r"(?i)train|platform|station|rail",text)))
         test("complete_rewrite",len(text)>=350)
         test("aab_not_universal",not bool(re.search(r"(?im)^.*\bAAB\b.*$",text)))
+        def repeated_verse_lines(body):
+            normalized=[re.sub(r"^(?:[AB]:\s*)","",re.sub(r"\W+"," ",line.casefold()).strip())
+                        for line in body.splitlines() if line.strip()]
+            return any(len(a)>10 and a==b for a,b in zip(normalized,normalized[1:]))
+        test("no_blues_aab_copied_into_pop_verses",
+             not any(repeated_verse_lines(section(text,r"verse\s*"+str(n)))
+                     for n in (1,2)))
     elif kind=="public_science":
         test("eclipse_alignment",bool(re.search(r"(?i)moon",text) and re.search(r"(?i)sun",text) and re.search(r"(?i)earth",text)))
         test("partial_and_total",bool(re.search(r"(?i)partial",text) and re.search(r"(?i)total",text)))
@@ -332,7 +428,8 @@ async def scenario(browser,case):
         for n,turn in enumerate(case["turns"],1):
             response=await ask(context,thread_id,turn["prompt"],turn.get("online",False))
             raw=response.pop("text")
-            grade=check(turn["kind"],raw,previous)
+            grade=check(turn["kind"],raw,previous,
+                        phases=response.get("phases",[]),allow_search=turn.get("online",False))
             excerpt=base.redact(raw,14000)
             result["turns"].append({
                 "turn":n,"research_mode_requested":turn.get("online",False),
@@ -400,6 +497,13 @@ async def main(batch):
     # REVIEW and BLOCKED are evidence to investigate; preserve all batches
     # while allowing the next category to run. The workflow summary exposes
     # acceptance status, but the workflow itself is diagnostic, not a release.
+    # Keep the default diagnostic mode for exploratory history. Strict mode
+    # makes new CI an actual acceptance gate: a green workflow can no longer
+    # be misread as all model replies passing.
+    if os.getenv("SWRLZ_BROAD_STRICT")=="1" and (
+        data["summary"]["review_scenarios"] or data["summary"]["blocked_scenarios"]):
+        print("SWRLZ_BROAD_ACCEPTANCE_FAILURE",json.dumps(data["summary"]),flush=True)
+        return 1
     return 0
 if __name__=="__main__":
     parser=argparse.ArgumentParser()
