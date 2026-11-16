@@ -19,7 +19,7 @@ jobs:
           repo="kamiloki/Swyrlz";rev=HfApi().repo_info(repo,repo_type="space").sha
           print("SWRLZ_OUTER_ROUTE_REV",rev,flush=True)
           files={
-              "lfm2_700m_engine.py":[(735,794),(1900,2118)],
+              "lfm2_700m_engine.py":[(2108,2168)],
               "station.py":[(1724,1770)]
           }
           for f,ranges in files.items():
