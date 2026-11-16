@@ -43,6 +43,8 @@ with mock.patch.object(memory.account_chat_store,"_config",return_value={"dummy"
         time.sleep(.01)
     assert memory.status(ALICE)["state"]=="ready",memory.status(ALICE)
     assert memory._STATE[ALICE]["docs"][0]["continuitySignals"],"missing user-authored archive signals"
+    assert memory._STATE[ALICE]["continuityIndex"],"missing compact imported preference index"
+    assert len(memory._STATE[ALICE]["continuityIndex"]) <= len(memory._STATE[ALICE]["docs"][0]["continuitySignals"])
     contextual=memory.interaction_context(ALICE,"Can you write rap lyrics?",[])
     assert "technically intricate rap music" in contextual,contextual
     evidence=memory.retrieve(ALICE,"Do you remember my dragon rap wordplay music?")
