@@ -58,14 +58,14 @@ def main():
     offered=(bool(re.search(r"would you like.{0,140}(?:rewrite|revise|redo|rework|remix)",last))
              or bool(re.search(r"i can.{0,100}(?:rewrite|revise|redo|rework|remix)",last)))
     log("critique",length=len(prior),offeredRewrite=offered,
-        hasUnwantedVerse=bool(re.search(r"(?m)^\\s*\\[?verse 1\\]?",prior,re.I)),
+        hasUnwantedVerse=bool(re.search(r"(?m)^\s*\[?verse 1\]?",prior,re.I)),
         elapsedMs=meta["elapsedMs"])
     if not offered:
         raise AssertionError("Follow-up offer was not actually made; cannot test acceptance")
     answer,receipt=send_and_wait(session,thread,"Yes please")
     low=answer.casefold()
-    has_verse=bool(re.search(r"\\bverse\\s*1\\b",low))
-    has_hook=bool(re.search(r"\\b(?:chorus|hook)\\b",low))
+    has_verse=bool(re.search(r"\bverse\s*1\b",low))
+    has_hook=bool(re.search(r"\b(?:chorus|hook)\b",low))
     denied_tool=bool(re.search(
         r"(?:i can(?:not|'t)|i don't|i do not).{0,90}(?:browse|search|access the web)",low))
     asked_for_source=bool(re.search(r"(?:give|provide|paste).{0,60}(?:original hook|lyrics)",low))
