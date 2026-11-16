@@ -304,6 +304,100 @@ function se184RenderCloudProjects(rows){""",
     se170Message(visible.length+' saved project'+(visible.length===1?'':'s')+' · Choose Load to open one.');""",
         'account gallery count')
 
+    # An account save must continue updating that exact record after a page
+    # reload. Attach an immutable draft ID to the model scratch document and
+    # keep a minimal local revision link, scoped to the authenticated account.
+    html=once(html,
+        " const se470Working=new Map();",
+        """ const se470Working=new Map();
+ const se470LinkKey='swrlz.engine.assets.model-account-link.v1';
+ function se470DraftIdentity(type,source){
+  if(type!=='modeler'||!source)return null;
+  if(typeof source.se470DraftId!=='string'||!/^[a-zA-Z0-9_-]{1,128}$/.test(source.se470DraftId)){
+   source.se470DraftId=crypto.randomUUID();
+   window.SWYRL_ENGINE_WORKSPACES?.draftEdited?.();
+  }
+  return source.se470DraftId;
+ }
+ function se470Recover(type,source){
+  if(type!=='modeler'||!source||!connected)return null;
+  const draftId=se470DraftIdentity(type,source);
+  try{
+   const saved=JSON.parse(localStorage.getItem(se470LinkKey)||'null');
+   if(saved?.userKey!==userKey||saved?.draftId!==draftId||
+      typeof saved?.id!=='string'||!/^[a-zA-Z0-9_-]{1,128}$/.test(saved.id)||
+      !/^[a-zA-Z0-9_-]{1,128}$/.test(saved?.remote?.id||'')||
+      !Number.isInteger(saved.remote.revision)||saved.remote.revision<1)return null;
+   return {source,id:saved.id,remote:saved.remote};
+  }catch{return null;}
+ }
+ function se470Remember(type,record,remote){
+  if(type!=='modeler'||!connected)return;
+  const source=se470Source(type),draftId=se470DraftIdentity(type,source);
+  if(!draftId)return;
+  try{localStorage.setItem(se470LinkKey,JSON.stringify({draftId,userKey,
+   id:record.id,remote}));}catch(error){console.warn('§E asset link persistence',error);}
+ }""",
+        'persistent model draft identity')
+    html=once(html,
+        """  const data=type==='modeler'?modelData():particleData();
+  const name=clean(data.name||data.title||LABEL[type]+' asset');
+  const source=se470Source(type),old=se470Working.get(type);
+  const id=old&&(type==='particles'||old.source===source)?old.id:crypto.randomUUID();
+  if(!old||old.id!==id)se470Working.set(type,{source,id,remote:null});""",
+        """  const source=se470Source(type);
+  se470DraftIdentity(type,source);
+  const data=type==='modeler'?modelData():particleData();
+  const name=clean(data.name||data.title||LABEL[type]+' asset');
+  const old=se470Working.get(type)||se470Recover(type,source);
+  const reuse=old&&(type==='particles'||old.source===source);
+  const id=reuse?old.id:crypto.randomUUID();
+  if(!reuse)se470Working.set(type,{source,id,remote:null});
+  else if(!se470Working.has(type))se470Working.set(type,old);""",
+        'restore cloud identity on repeat save')
+    html=once(html,
+        """ function se470MarkLoaded(type,record,remote=null){
+  se470Working.set(type,{source:se470Source(type),id:record.id,remote});
+ }""",
+        """ function se470MarkLoaded(type,record,remote=null){
+  se470Working.set(type,{source:se470Source(type),id:record.id,remote});
+  if(type==='modeler')try{localStorage.removeItem(se470LinkKey);}catch{}
+ }""",
+        'clear stale link on explicit new load')
+    html=once(html,
+        """    se470Working.set(type,{source:se470Source(type),id:record.id,remote:link});
+    status('Saved '+record.name+' to your account""",
+        """    se470Working.set(type,{source:se470Source(type),id:record.id,remote:link});
+    se470Remember(type,record,link);
+    status('Saved '+record.name+' to your account""",
+        'persist manual cloud save revision')
+    html=once(html,
+        """   se470Working.set(type,{source:se470Source(type),id:record.id,
+    remote:Number.isInteger(revision)&&revision>=1?{id,revision}:null});
+   status('Loaded '+record.name+' from account.""",
+        """   const remote=Number.isInteger(revision)&&revision>=1?{id,revision}:null;
+   se470Working.set(type,{source:se470Source(type),id:record.id,remote});
+   if(remote)se470Remember(type,record,remote);
+   status('Loaded '+record.name+' from account.""",
+        'remember account load across refresh')
+    html=once(html,
+        """    se470Working.set(type,{source:se470Source(type),id:record.id,
+     remote:Number.isInteger(remote?.revision)&&remote.revision>=1?
+      {id:value.slice(6),revision:remote.revision}:null});""",
+        """    const link=Number.isInteger(remote?.revision)&&remote.revision>=1?
+      {id:value.slice(6),revision:remote.revision}:null;
+    se470Working.set(type,{source:se470Source(type),id:record.id,remote:link});
+    if(link)se470Remember(type,record,link);""",
+        'remember asset picker load revision')
+    html=once(html,
+        """  window.addEventListener('swrlz:model-blank',()=>{se470Working.delete('modeler');refresh();});""",
+        """  window.addEventListener('swrlz:model-blank',()=>{
+   se470Working.delete('modeler');
+   try{localStorage.removeItem(se470LinkKey);}catch{}
+   refresh();
+  });""",
+        'new model clears previous account identity')
+
     html=once(html,
         'SWYRL_ENGINE_DEPLOY_MARKER: V11_469_UV_SHAPE_FIT',MARKER,'version marker')
     for old,new in [
