@@ -11,7 +11,7 @@ const required=[
  'const b=safeBounds();',
  "if(!open&&isOpen())se473RememberWindow();",
  "se473RememberWindow();",
- 'start.moved||layout()!=='desktop'',
+ "start.moved||layout()!=='desktop'",
  "state[what][flag]=!state[what][flag]",
  'Math.hypot(e.clientX-start.x,e.clientY-start.y)<9',
  "e.key==='Enter'||e.key===' '",
