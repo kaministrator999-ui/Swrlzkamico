@@ -134,6 +134,7 @@ def test(raw):
     for prompt,requested,kind,mode in cases:
         result=fn(prompt,[],{},None)
         if bool(result["requested"])!=requested or result["kind"]!=kind or result.get("contentMode")!=mode:
+            print("CLASSIFIER_ROUTING_DIAGNOSTIC", "prompt="+repr(prompt), "result="+repr(result), "source_lines="+repr([line.strip() for line in (ast.get_source_segment(source,node) or "").splitlines() if any(word in line for word in ("explicit_web","lyrics_lookup","weather_intent","research_command"))]),flush=True)
             raise AssertionError("Misroute "+repr(prompt)+" -> "+repr(result))
     print("MUSIC_OPERATION_ROUTING_REGRESSIONS_PASS",len(cases),flush=True)
 
