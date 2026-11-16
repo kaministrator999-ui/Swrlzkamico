@@ -1,0 +1,38 @@
+name: §C canonical HTML artifact create/revise and Chromium acceptance
+on:
+  push:
+    branches: [main]
+    paths:
+      - scripts/eval_chat_html_artifact_revision.py
+      - .github/workflows/chat-html-artifact-revision-eval.yml
+permissions: {contents: read}
+concurrency:
+  group: swrlz-chat-guest-eval
+  cancel-in-progress: false
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - run: |
+          python -m pip install playwright==1.56.0
+          python -m playwright install --with-deps chromium
+      - run: |
+          python -m py_compile scripts/eval_chat_html_artifact_revision.py
+          python -m py_compile scripts/eval_chat_guest_suite.py scripts/test_guest_html_functionality.py
+      - name: Verify full HTML create and same-artifact revision 2
+        env:
+          SWRLZ_EVAL_BASE: https://kamiloki-swyrlz.hf.space
+          SWRLZ_EVAL_MODEL: 700m
+        run: python -u -m scripts.eval_chat_html_artifact_revision
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: html-code-artifact-revision-evidence-${{ github.run_id }}
+          path: reports/html-two-turn-artifact/
+          retention-days: 21
+          if-no-files-found: ignore
