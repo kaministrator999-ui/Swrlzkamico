@@ -1,0 +1,50 @@
+name: Measure §E v11.478 complete ring and filled-ring vertex highlights
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/measure-engine-v11-478.yml"
+      - "projects/swrlz-forge-moba/patches/v11_478_ring_vertex_highlight.py"
+      - "projects/swrlz-forge-moba/runtime/model_ring_vertex_highlight_v11_478.js"
+      - "projects/swrlz-forge-moba/scripts/prepare_v11_478_release.py"
+      - "projects/swrlz-forge-moba/scripts/verify_v11_478_release.py"
+      - "projects/swrlz-forge-moba/tests/model_ring_vertex_highlight_v11_478.mjs"
+      - "projects/swrlz-forge-moba/tests/model_ring_vertex_highlight_browser_v11_478.cjs"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: se478-ring-vertex-source-measure
+  cancel-in-progress: true
+
+jobs:
+  ring-vertex-selection:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Build, calculate SHA256 and verify 455 native-source patches
+        run: python projects/swrlz-forge-moba/scripts/prepare_v11_478_release.py
+      - name: Install Chromium touch browser
+        run: |
+          npm install --no-save playwright@1.56.1
+          npx playwright install --with-deps --only-shell chromium
+      - name: Test ring and fill selection, complete point overlays and center changes
+        run: node projects/swrlz-forge-moba/tests/model_ring_vertex_highlight_browser_v11_478.cjs projects/swrlz-forge-moba/_release_v11_478_candidate
+      - name: Preserve exact source receipt and viewport screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: se478-ring-highlight-receipt
+          path: |
+            projects/swrlz-forge-moba/source-manifest.json
+            projects/swrlz-forge-moba/_release_v11_478_candidate/se478-vertex-*.png
