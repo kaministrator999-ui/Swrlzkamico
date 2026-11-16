@@ -8,7 +8,9 @@ on:
     types: [completed]
 permissions: {contents: read}
 concurrency:
-  group: swrlz-chat-postrelease-guest-eval
+  # Share the lock with HF source publishers so a Space revision cannot
+  # change during a lengthy anonymous browser acceptance matrix.
+  group: swrlz-chat-hf-music-route-release
   cancel-in-progress: false
 jobs:
   acceptance:
