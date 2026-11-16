@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.476
+title: §wyrl§ Engine v11.477
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,11 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+## §E v11.477 · Selectable vertices and operation-first modeling (2026-11-16)
+
+Sculpt/Topology now present actual operations such as Extrude and Inset in the right-side flyout. Choosing an operation defaults to native Vertex/Single selection and reveals mesh points; the first horizontal bar under transforms chooses Vertex/Edge/Face, and the second offers Single Vertex/Vertex Ring/Filled Vertex Ring (or the corresponding Face/Edge types). Original topology, Preview/Apply/Undo, UV maps and model data are retained. Vertex Ring/Fill requires editable topology and a selected center, while standard Face Inset/Extrude requires selected faces. See [v11.477 native vertex selection hierarchy](docs/NATIVE_VERTEX_SELECTION_HIERARCHY_V11_477.md). Physical Moto/Quest acceptance follows automated touch testing.
+
+
 ## §E v11.476 · Google-first workspace and Page Down (2026-11-16)
 
 The editor now displays a Google sign-in and native project picker before exposing the workspace. A checked automatic project takes precedence; otherwise the last successfully loaded saved project and studio are restored, with Model Studio camera state where available. If §C is unavailable, a full-screen animated SIGNAL LOST page offers reconnect or local/offline editing, preserving local project data. See [the v11.476 design and acceptance gates](docs/ACCOUNT_START_AND_PAGE_DOWN_V11_476.md). Real Google, mobile and VR user-device tests remain distinct from browser/source verification.
