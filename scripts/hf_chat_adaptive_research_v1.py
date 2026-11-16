@@ -203,7 +203,7 @@ def guest_turn(prompt,*,expected_research:bool,expected_terms=()):
     with opener.open(request,timeout=45) as response:
         if response.status!=202:raise RuntimeError("Guest request was not accepted")
     stream_url=BASE+"/api/lalm_station/stream?"+urllib.parse.urlencode({"requestId":rid})
-    start=time.monotonic();pieces=[];phases=[];terminal=""
+    start=time.monotonic();pieces=[];phases=[];reason_details=[];terminal=""
     with opener.open(urllib.request.Request(stream_url,headers=HEADERS),timeout=360) as stream:
         for row in stream:
             if time.monotonic()-start>340:
@@ -211,7 +211,12 @@ def guest_turn(prompt,*,expected_research:bool,expected_terms=()):
             try:event=json.loads(row)
             except (TypeError,ValueError):continue
             typ=event.get("type")
-            if typ=="STATUS":phases.append(str(event.get("phase") or ""))
+            if typ=="STATUS":
+                phase=str(event.get("phase") or "")
+                phases.append(phase)
+                if (phase.startswith("RESEARCH") or phase.startswith("ADAPTIVE")
+                        or phase.startswith("FACTUAL_VERIFICATION")):
+                    reason_details.append({"phase":phase,"reason":str(event.get("reason") or "")[:170]})
             elif typ=="DELTA":pieces.append(str(event.get("text") or ""))
             elif typ in ("COMPLETE","COMPLETED","FAILED","CANCELLED"):
                 terminal=typ;break
@@ -221,7 +226,7 @@ def guest_turn(prompt,*,expected_research:bool,expected_terms=()):
             "sourceEvents":sum(p in ("RESEARCH_SOURCE_RETRIEVED",
                                     "RESEARCH_SOURCE_CHECKED") for p in phases),
             "researchUnavailable":"RESEARCH_UNAVAILABLE" in phases,
-            "phases":phases[-32:],
+            "phases":phases[:40],"researchStatusDetails":reason_details[:20],
             "termMatches":{term:bool(re.search(r"\b"+re.escape(term)+r"\b",
                                              answer,re.I)) for term in expected_terms},
             "prefix":answer[:180]}
