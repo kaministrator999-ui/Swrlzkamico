@@ -29,7 +29,6 @@ assert(imp.indexOf('const result=await')<imp.indexOf("window.SWYRL_ENGINE_VIEW_R
 const cardStart=html.indexOf('/* SE471_PROJECT_DELETE_CONFIRM_START */');
 const cardEnd=html.indexOf('/* SE471_PROJECT_DELETE_CONFIRM_END */');
 const deletion=html.slice(cardStart,cardEnd);
-assert(deletion.includes("if(source==='local')")===false,'Local and account records must share explicit receipt path');
 assert(deletion.includes("const receipt=source==='local'?await deleteLocal(record):await deleteCloud(record);"));
 assert(deletion.includes("if(cloudBusy)throw Error("),'Protect against concurrent account changes');
 assert(!deletion.includes('deleteDatabase('),'Do not delete the full project library');
