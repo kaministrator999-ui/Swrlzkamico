@@ -468,6 +468,6 @@
     "patches/v11_474_progressive_model_tools.py",
     "patches/v11_475_progressive_rail_visibility.py"
   ],
-  "finalBytes": null,
-  "finalSha256": null
+  "finalBytes": 10361718,
+  "finalSha256": "ab953d703acc30952f77ab7a28cdd6d40558ea076487052f886f19c558fda0d8"
 }
