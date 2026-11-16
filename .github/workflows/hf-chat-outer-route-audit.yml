@@ -19,7 +19,7 @@ jobs:
           space="kamiloki/Swyrlz";rev=HfApi().repo_info(space,repo_type="space").sha
           print("SWRLZ_OUTER_AUDIT_REV",rev,flush=True)
           paths={
-            "lfm2_700m_engine.py":[(1780,2150),(728,795),(955,1007)],
+            "lfm2_700m_engine.py":[(2110,2160),(728,790)],
             "api/factual_claim_guard_v1.py":[(1,110)],
             "api/research_context_v2.py":[(1,100)],
           }
