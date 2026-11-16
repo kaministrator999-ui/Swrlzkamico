@@ -1,0 +1,640 @@
+{
+  "schema": "swrlz-github-online-research-outcome-v2",
+  "requestId": "swr-research-eval-da53bf30c1a2499c",
+  "modelId": "700m",
+  "eventType": "ONLINE_RESEARCH_OUTCOME",
+  "sourceRef": "f149dd857e3d9219f5cae7da0286b5dbfec85c42",
+  "persistedAtUnixMs": 1794813358088,
+  "diagnostic": {
+    "schema": "swrlz-online-research-outcome-v2",
+    "terminalState": "COMPLETE",
+    "research": {
+      "contract": "swrlz-online-camera-v1",
+      "observabilityRevision": "v181-song-metadata-clean-form-integrity",
+      "kind": "search",
+      "status": "NO_RESULTS",
+      "reason": "existing-lyrics-retrieval",
+      "provider": "bounded-web-search-chain-v1",
+      "resultCount": 0,
+      "widgetKinds": [],
+      "sourceCount": 0,
+      "locationRequired": false,
+      "usedExplicitClientLocation": false,
+      "elapsedMs": 648,
+      "lyricsSourceAttemptCount": 0,
+      "lyricsFetchDebug": [],
+      "blockedLyricsSourceFamilies": [],
+      "musicStructureDebug": null,
+      "candidateAdmissionDebug": [
+        {
+          "query": "These two fictional original lines are my own, not from a recording. Simply acknowledge receipt, and don't produce lyrics yet: A toaster argues with my clock at dawn My coffee made a map and wandered on",
+          "title": "THESE | English meaning - Cambridge Dictionary",
+          "url": "https://dictionary.cambridge.org/dictionary/english/these",
+          "source": "dictionary.cambridge.org",
+          "rank": 1,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "these"
+          ],
+          "coreTerms": [
+            "these",
+            "two",
+            "fictional",
+            "lines",
+            "own",
+            "not",
+            "from",
+            "recording",
+            "simply",
+            "acknowledge",
+            "receipt",
+            "don"
+          ],
+          "snippetPreview": "This, that, these and those are demonstratives. We use this, that, these and those to point to people and things. This and that are …"
+        },
+        {
+          "query": "These two fictional original lines are my own, not from a recording. Simply acknowledge receipt, and don't produce lyrics yet: A toaster argues with my clock at dawn My coffee made a map and wandered on",
+          "title": "THESE Definition & Meaning - Merriam-Webster",
+          "url": "https://www.merriam-webster.com/dictionary/these",
+          "source": "www.merriam-webster.com",
+          "rank": 2,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "these"
+          ],
+          "coreTerms": [
+            "these",
+            "two",
+            "fictional",
+            "lines",
+            "own",
+            "not",
+            "from",
+            "recording",
+            "simply",
+            "acknowledge",
+            "receipt",
+            "don"
+          ],
+          "snippetPreview": "1 day ago · The meaning of THESE is plural of this."
+        },
+        {
+          "query": "These two fictional original lines are my own, not from a recording. Simply acknowledge receipt, and don't produce lyrics yet: A toaster argues with my clock at dawn My coffee made a map and wandered on",
+          "title": "THESE Definition & Meaning | Dictionary .com",
+          "url": "https://www.dictionary.com/browse/these",
+          "source": "www.dictionary.com",
+          "rank": 3,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "these"
+          ],
+          "coreTerms": [
+            "these",
+            "two",
+            "fictional",
+            "lines",
+            "own",
+            "not",
+            "from",
+            "recording",
+            "simply",
+            "acknowledge",
+            "receipt",
+            "don"
+          ],
+          "snippetPreview": "THESE definition: plural of this. See examples of these used in a sentence."
+        },
+        {
+          "query": "These two fictional original lines are my own, not from a recording. Simply acknowledge receipt, and don't produce lyrics yet: A toaster argues with my clock at dawn My coffee made a map and wandered on",
+          "title": "THESE | definition in the Cambridge English Dictionary",
+          "url": "https://dictionary.cambridge.org/us/dictionary/english/these",
+          "source": "dictionary.cambridge.org",
+          "rank": 4,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "these"
+          ],
+          "coreTerms": [
+            "these",
+            "two",
+            "fictional",
+            "lines",
+            "own",
+            "not",
+            "from",
+            "recording",
+            "simply",
+            "acknowledge",
+            "receipt",
+            "don"
+          ],
+          "snippetPreview": "This, that, these and those are demonstratives. We use this, that, these and those to point to people and things. This and that are …"
+        },
+        {
+          "query": "These two fictional original lines are my own, not from a recording. Simply acknowledge receipt, and don't produce lyrics yet: A toaster argues with my clock at dawn My coffee made a map and wandered on",
+          "title": "These - definition of these by The Free Dictionary",
+          "url": "https://www.thefreedictionary.com/these",
+          "source": "www.thefreedictionary.com",
+          "rank": 5,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "these"
+          ],
+          "coreTerms": [
+            "these",
+            "two",
+            "fictional",
+            "lines",
+            "own",
+            "not",
+            "from",
+            "recording",
+            "simply",
+            "acknowledge",
+            "receipt",
+            "don"
+          ],
+          "snippetPreview": "This and these are used in different ways when you are referring to people, things, situations, events, or periods of time. They can …"
+        },
+        {
+          "query": "These two fictional original lines are my own, not from a recording. Simply acknowledge receipt, and don't produce lyrics yet: A toaster argues with my clock at dawn My coffee made a map and wandered on",
+          "title": "Demonstratives in English Grammar – This, That, These , Those",
+          "url": "https://vocaberry.com/grammar/demonstratives-this-that-these-those/",
+          "source": "vocaberry.com",
+          "rank": 6,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "these"
+          ],
+          "coreTerms": [
+            "these",
+            "two",
+            "fictional",
+            "lines",
+            "own",
+            "not",
+            "from",
+            "recording",
+            "simply",
+            "acknowledge",
+            "receipt",
+            "don"
+          ],
+          "snippetPreview": "This, that, these, and those are demonstratives used to point to specific people, things, or ideas. They help show how many things …"
+        },
+        {
+          "query": "These two fictional original lines are my own, not from a recording. Simply acknowledge receipt, and don't produce lyrics yet: A toaster argues with my clock at dawn My coffee made a map and wandered on",
+          "title": "These or Theese: Which Spelling Is Correct? - engglory.com",
+          "url": "https://engglory.com/these-or-theese/",
+          "source": "engglory.com",
+          "rank": 7,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "these"
+          ],
+          "coreTerms": [
+            "these",
+            "two",
+            "fictional",
+            "lines",
+            "own",
+            "not",
+            "from",
+            "recording",
+            "simply",
+            "acknowledge",
+            "receipt",
+            "don"
+          ],
+          "snippetPreview": "May 2, 2026 · However, the correct spelling is simple— these is the only accepted form, while theese is always incorrect. This word …"
+        },
+        {
+          "query": "These two fictional original lines are my own, not from a recording. Simply acknowledge receipt, and don't produce lyrics yet: A toaster argues with my clock at dawn My coffee made a map and wandered on",
+          "title": "These - Wikipedia",
+          "url": "https://en.wikipedia.org/wiki/These",
+          "source": "en.wikipedia.org",
+          "rank": 8,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "these"
+          ],
+          "coreTerms": [
+            "these",
+            "two",
+            "fictional",
+            "lines",
+            "own",
+            "not",
+            "from",
+            "recording",
+            "simply",
+            "acknowledge",
+            "receipt",
+            "don"
+          ],
+          "snippetPreview": "Look up these in Wiktionary, the free dictionary. This disambiguation page lists articles associated with the title These. If an internal …"
+        }
+      ],
+      "songIdentity": {},
+      "songDiscoveryPlan": [],
+      "lyricsRescueSearchDebug": [],
+      "lyricsMaxPageAttempts": 3,
+      "lyricsFallbackExhausted": true,
+      "rawPromptStored": false
+    },
+    "trace": [
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794813357437,
+        "phase": "RESEARCH_STARTED",
+        "activity": "Online research started",
+        "provider": "bounded-web-search-chain-v1",
+        "site": "",
+        "url": ""
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794813357437,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794813357574,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "activity": "No usable results from provider",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "httpStatus": 202,
+        "resultCount": 0
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794813357574,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794813357710,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "activity": "No usable results from provider",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "httpStatus": 202,
+        "resultCount": 0
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794813357710,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794813358083,
+        "phase": "SEARCH_PROVIDER_RESULTS",
+        "activity": "Search results found",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "httpStatus": 200,
+        "resultCount": 8
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794813358083,
+        "phase": "SEARCH_PROVIDER_SELECTED",
+        "activity": "Using bing-html",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "resultCount": 8
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794813358084,
+        "phase": "RESEARCH_COMPLETE",
+        "activity": "Online research complete",
+        "provider": "bounded-web-search-chain-v1",
+        "site": "",
+        "url": "",
+        "resultCount": 0
+      }
+    ],
+    "sources": [],
+    "sourceSites": [],
+    "widgets": [],
+    "widgetKinds": [],
+    "statusTrail": [
+      {
+        "phase": "QUEUED",
+        "reason": "Accepted by Workstation",
+        "atUnixMs": 1794813357423
+      },
+      {
+        "phase": "GENERATING",
+        "reason": "Workstation admitted generation",
+        "atUnixMs": 1794813357428
+      },
+      {
+        "seq": 1,
+        "phase": "PROGRAMMING_INTENT",
+        "reason": "",
+        "atUnixMs": 1794813357430
+      },
+      {
+        "seq": 2,
+        "phase": "SEARCH_STARTED",
+        "reason": "I’m on it — looking up These two fictional original lines are my own, not from a recording. Simply acknowledge receipt, and don't produce lyrics yet: A toaster argues with my clock at dawn My coffee m",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH"
+        ],
+        "atUnixMs": 1794813357435
+      },
+      {
+        "seq": 3,
+        "phase": "RESEARCH_STARTED",
+        "reason": "Online research started",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "",
+        "url": "",
+        "provider": "bounded-web-search-chain-v1",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794813357437
+      },
+      {
+        "seq": 4,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "provider": "duckduckgo-html",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794813357438
+      },
+      {
+        "seq": 5,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "reason": "No usable results from provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "provider": "duckduckgo-html",
+        "httpStatus": 202,
+        "resultCount": 0,
+        "atUnixMs": 1794813357574
+      },
+      {
+        "seq": 6,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "provider": "duckduckgo-lite",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794813357574
+      },
+      {
+        "seq": 7,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "reason": "No usable results from provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "provider": "duckduckgo-lite",
+        "httpStatus": 202,
+        "resultCount": 0,
+        "atUnixMs": 1794813357710
+      },
+      {
+        "seq": 8,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "provider": "bing-html",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794813357710
+      },
+      {
+        "seq": 9,
+        "phase": "SEARCH_PROVIDER_RESULTS",
+        "reason": "Search results found",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "provider": "bing-html",
+        "httpStatus": 200,
+        "resultCount": 8,
+        "atUnixMs": 1794813358083
+      },
+      {
+        "seq": 10,
+        "phase": "SEARCH_PROVIDER_SELECTED",
+        "reason": "Using bing-html",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "provider": "bing-html",
+        "httpStatus": null,
+        "resultCount": 8,
+        "atUnixMs": 1794813358083
+      },
+      {
+        "seq": 11,
+        "phase": "RESEARCH_COMPLETE",
+        "reason": "Online research complete",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "",
+        "url": "",
+        "provider": "bounded-web-search-chain-v1",
+        "httpStatus": null,
+        "resultCount": 0,
+        "atUnixMs": 1794813358084
+      },
+      {
+        "seq": 12,
+        "phase": "ONLINE_RESEARCH",
+        "reason": "NO_RESULTS",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH"
+        ],
+        "atUnixMs": 1794813358086
+      },
+      {
+        "seq": 13,
+        "phase": "SEARCH_COMPLETE",
+        "reason": "Online retrieval no_results.",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH"
+        ],
+        "atUnixMs": 1794813358087
+      },
+      {
+        "seq": 14,
+        "phase": "LYRICS_VERIFICATION_BLOCKED",
+        "reason": "I found search results for the lyrics, but I couldn't verify the requested lyric text from fetched evidence, so I won't reconstruct it from memory.",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "LYRICS",
+          "GROUNDING"
+        ],
+        "atUnixMs": 1794813358087
+      },
+      {
+        "seq": 16,
+        "phase": "COMPLETE",
+        "reason": "",
+        "atUnixMs": 1794813358087
+      },
+      {
+        "phase": "PERSISTING",
+        "reason": "Saving the response to the chat",
+        "atUnixMs": 1794813358087
+      }
+    ],
+    "responseCognition": {},
+    "programmingIntent": {
+      "schema": "swrlz-programming-intent-v1",
+      "codingTask": false,
+      "projectContext": "none",
+      "changeClass": "none",
+      "artifactContinuation": false,
+      "artifactMutationRequested": false,
+      "artifactTargetId": "",
+      "artifactTargetMessageId": "",
+      "baseRevision": 0,
+      "baseSourceHash": "",
+      "newProject": false,
+      "source": "brain-router"
+    },
+    "candidateValidation": {},
+    "candidateAttempts": [],
+    "generationTelemetry": {},
+    "engineCompletionTelemetry": {
+      "totalLatencyMs": null,
+      "loadLatencyMs": null,
+      "firstDeltaLatencyMs": null
+    },
+    "contextBudget": {},
+    "resourcePlan": {},
+    "responseResourceUsage": {
+      "schema": "swrlz-response-resource-usage-v1",
+      "scope": "shared-cgroup-v2",
+      "source": "cgroup-v2",
+      "isolatedModelAttribution": false,
+      "wallTimeMs": 659,
+      "capacity": {
+        "cpuLimitCores": 16.0,
+        "cpuLimitState": "measured",
+        "memoryLimitBytes": 104000000000,
+        "memoryLimitState": "measured"
+      },
+      "observed": {
+        "cgroupCpuUsageUsecDelta": 152276,
+        "averageCgroupCpuCores": 0.231,
+        "memoryStartBytes": 14403997696,
+        "memoryEndBytes": 14404718592,
+        "memoryEndMinusStartBytes": 720896,
+        "memoryPeakSampledBytes": 14404718592,
+        "memoryPeakAboveStartBytes": 720896,
+        "memorySampleCount": 2,
+        "memorySamplingIntervalMs": 1000
+      },
+      "attribution": "Shared container readings include concurrent work; they are not exclusive CPU/RAM use by this model.",
+      "routeId": "700m",
+      "configuredEngineThreadBudget": null,
+      "outcome": "COMPLETE"
+    },
+    "finalResponse": "I found search results for the lyrics, but I couldn't verify the requested lyric text from fetched evidence, so I won't reconstruct it from memory.",
+    "finalResponseSha256": "b6fd72ce42d1ea9b8b6e2e4097ee293e0bec3153c5772663f955ff48cdad536a",
+    "requestedModelId": "700m",
+    "selectedModelId": "700m",
+    "stationTiming": {
+      "acceptedAtUnixMs": 1794813357423,
+      "startedAtUnixMs": 1794813357428,
+      "completedAtUnixMs": 1794813358087,
+      "queueWaitMs": 5,
+      "stationRunMs": 659,
+      "endToEndMs": 664
+    },
+    "rawPromptStored": false,
+    "historyStored": false,
+    "preciseLocationStored": false,
+    "privateReasoningStored": false
+  }
+}
