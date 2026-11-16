@@ -1,0 +1,30 @@
+name: Preflight §C small HTML source assembler
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/hf_small_html_source_assembler_v1.py'
+      - '.github/workflows/hf-small-html-source-assembler-preflight.yml'
+permissions: {contents: read}
+jobs:
+  preflight:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - run: python -m pip install --quiet 'huggingface_hub>=0.34,<2'
+      - run: python -m py_compile scripts/hf_small_html_source_assembler_v1.py
+      - name: Validate exact current coder and all narrow-scope fixtures
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: python -u scripts/hf_small_html_source_assembler_v1.py preflight
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: small-html-assembly-preflight-${{ github.run_id }}
+          path: reports/small-html-source-assembler/
+          retention-days: 21
+          if-no-files-found: ignore
