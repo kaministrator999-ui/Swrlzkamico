@@ -77,3 +77,28 @@ jobs:
               for n in range(a,min(len(lines),b)+1):
                 print("STOP_SRC",file,n,lines[n-1][:400],flush=True)
           PY
+
+      - name: Read exact stop endpoint and 9B local completion transport
+        shell: bash
+        run: |
+          python - <<'PY'
+          from huggingface_hub import HfApi,hf_hub_download
+          from pathlib import Path
+          import json
+          space="kamiloki/Swyrlz";api=HfApi();rev=api.repo_info(space,repo_type="space").sha
+          files=set(api.list_repo_files(space,repo_type="space",revision=rev))
+          print("STOP_NATIVE_REV",rev,flush=True)
+          print("STOP_NATIVE_FILES",json.dumps(sorted(f for f in files if any(n in f for n in ("qwen", "runtime", "station"))))[:4000],flush=True)
+          for name,regions in {
+            "station.py":[(2238,2260),(1360,1405),(1760,1794)],
+            "chat/§wyrlz/index.html":[(4950,5005)],
+            "hf_chat_qwen35_9b_runtime.py":[(1,53),(189,232)],
+            "qwen35_runtime.py":[(1,65),(170,245)],
+          }.items():
+            if name not in files:continue
+            lines=Path(hf_hub_download(space,name,repo_type="space",revision=rev)).read_text().splitlines()
+            for start,end in regions:
+              print("STOP_NATIVE_SECTION",name,start,end,flush=True)
+              for n in range(start,min(end,len(lines))+1):
+                print("STOP_NATIVE",name,n,lines[n-1][:500],flush=True)
+          PY
