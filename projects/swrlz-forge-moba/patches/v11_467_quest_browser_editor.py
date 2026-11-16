@@ -47,8 +47,8 @@ def apply(html):
   raycaster.params.Points.threshold=Math.min(.26,Math.max(.034,se467World));""")
  # Do not let a retained pointer capture click through a dialog on the canvas.
  html=regex_once(html,
-   r"(function pointerDown\(e\)\{\s*e=atelierDesktopVirtual\(e\);)",
-   r"\1\n    if(!se467ViewportPointerAllowed(e))return;")
+   r"(function pointerDown\(e\)\{\s*)(if\(atelierComponentPointerDown\(e\)\))",
+   r"\1if(!se467ViewportPointerAllowed(e))return;\n    \2")
  html=once(html,
    "if(!hit||!modelRoot)return;\n     const pos=point(e);",
    "if(!hit||!modelRoot||!se467ViewportPointerAllowed(e))return;\n     const pos=point(e);")
