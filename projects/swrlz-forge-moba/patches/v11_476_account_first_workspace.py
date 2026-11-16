@@ -45,7 +45,7 @@ def apply(html):
       <span class="se476-signal-glyph" data-glitch="§C">§C</span>
       <span class="se476-signal-static"></span>
     </div>
-    <p class="se476-signal-code">§C:// CONNECTION_TIMEOUT · ERROR 503</p>
+    <p class="se476-signal-code">§C:// CONNECTION_UNAVAILABLE</p>
     <h2 class="se476-signal-title" data-glitch="SIGNAL LOST">SIGNAL LOST</h2>
     <p class="se476-signal-detail">The Chat Space cannot be reached right now. Your saved on-device projects are still available, and none have been deleted.</p>
     <button id="se476RetryConnection" type="button">↻ Reconnect to §C</button>
