@@ -1,0 +1,38 @@
+name: §C HTTP500 follow-up forensic preflight
+on:
+  push:
+    paths: [".github/workflows/hf-chat-http500-followup-inspect.yml"]
+permissions: {contents: read}
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: Read immutable live sources and runtime without mutation
+        run: |
+          python -m pip install -q 'huggingface_hub>=0.34,<2'
+          python - <<'PY'
+          from huggingface_hub import HfApi,hf_hub_download
+          from pathlib import Path
+          import re,json
+          space="kamiloki/Swyrlz";api=HfApi()
+          rev=api.repo_info(space,repo_type="space").sha
+          runtime=api.get_space_runtime(space)
+          print("HTTP500_SOURCE_REV",rev,"stage",runtime.stage,"served",(runtime.raw or {}).get("sha"),flush=True)
+          paths={
+          "qwen35_single_runtime.py":[(220,280),(145,160)],
+          "stop_transport.py":[(1,115)],
+          "station.py":[(1355,1420),(1495,1520),(2050,2138),(2240,2263)],
+          "lfm2_700m_engine.py":[(748,800),(1220,1282),(1815,1950)],
+          "online_tools.py":[(1277,1312)],
+          "music_transform_quality.py":[(145,230)]}
+          for f,sections in paths.items():
+            try:lines=Path(hf_hub_download(space,f,repo_type="space",revision=rev)).read_text().splitlines()
+            except Exception as exc:
+              print("HTTP500_MISSING",f,type(exc).__name__,flush=True);continue
+            print("HTTP500_FILE",f,len(lines),flush=True)
+            for start,end in sections:
+              print("HTTP500_RANGE",f,start,end,flush=True)
+              for i in range(start,min(end,len(lines))+1):
+                print("HTTP500_LINE",f,i,lines[i-1][:300],flush=True)
+          PY

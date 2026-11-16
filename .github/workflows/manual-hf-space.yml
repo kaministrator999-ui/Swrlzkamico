@@ -12,7 +12,7 @@ on:
         description: "Validate package without publishing, or explicitly deploy"
         required: true
         type: choice
-        options: [inspect, benchmark, validate, deploy, hotfix-output-budget, hotfix-music-transform]
+        options: [inspect, benchmark, validate, deploy, hotfix-output-budget, hotfix-music-transform, hotfix-http500-feedback]
         default: validate
       approved:
         description: "Confirm replacement ONLY of existing kamiloki/Swyrlz after snapshot"
@@ -121,8 +121,48 @@ jobs:
           SWRLZ_MUSIC_TRANSFORM_APPROVED: "1"
         run: python -u scripts/hf_chat_music_transform_v1.py publish
 
+  hotfix_http500_feedback:
+    if: ${{ inputs.mode == 'hotfix-http500-feedback' && inputs.approved == 'yes' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.source_ref }}
+          fetch-depth: 1
+      - name: Validate approved immutable §C HTTP500 source
+        shell: bash
+        run: |
+          set -euo pipefail
+          ref="${{ inputs.source_ref }}"
+          [[ "$ref" =~ ^[0-9a-f]{40}$ ]]
+          test "$(git rev-parse HEAD)" = "$ref"
+          test -f scripts/hf_chat_http500_feedback_v1.py
+          test -f tests/test_qwen_http500_feedback_v1.py
+      - name: Assert corrected feedback routing and scoped native retry
+        run: |
+          python -m unittest discover -s tests -p 'test_qwen_http500_feedback_v1.py' -v
+          python -m unittest discover -s tests -p 'test_music_transform_quality_v1.py' -v
+          python -m unittest discover -s tests -p 'test_stop_transport_v1.py' -v
+          python -m py_compile scripts/hf_chat_http500_feedback_v1.py
+      - name: Read, patch, and snapshot exact running Space source
+        run: |
+          python -m pip install -q 'huggingface_hub>=0.34,<2'
+          python -u scripts/hf_chat_http500_feedback_v1.py snapshot
+      - uses: actions/upload-artifact@v4
+        with:
+          name: swrlz-before-http500-music-feedback
+          path: reports/swrlz-http500-feedback-v1/
+          retention-days: 30
+          if-no-files-found: error
+      - name: Publish exact-live CAS repair and verify every file
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          SWRLZ_HTTP500_FEEDBACK_APPROVED: "1"
+        run: python -u scripts/hf_chat_http500_feedback_v1.py publish
+
   prepare:
-    if: ${{ inputs.mode != 'hotfix-output-budget' && inputs.mode != 'hotfix-music-transform' }}
+    if: ${{ inputs.mode != 'hotfix-output-budget' && inputs.mode != 'hotfix-music-transform' && inputs.mode != 'hotfix-http500-feedback' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

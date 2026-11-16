@@ -1,0 +1,68 @@
+name: §C Qwen HTTP500 and remix-feedback regression preflight
+on:
+  push:
+    paths:
+      - "scripts/hf_chat_http500_feedback_v1.py"
+      - "scripts/music_transform_quality_v1.py"
+      - "scripts/qwen_http500_recovery_v1.py"
+      - "tests/test_qwen_http500_feedback_v1.py"
+      - ".github/workflows/hf-chat-http500-feedback-preflight.yml"
+      - ".github/workflows/manual-hf-space.yml"
+      - ".github/workflows/hf-space-request.yml"
+permissions: {contents: read}
+jobs:
+  preflight:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Prove critique classification and bounded native retry
+        run: |
+          python -m unittest discover -s tests -p 'test_qwen_http500_feedback_v1.py' -v
+          python -m unittest discover -s tests -p 'test_music_transform_quality_v1.py' -v
+          python -m unittest discover -s tests -p 'test_stop_transport_v1.py' -v
+          python -m py_compile scripts/hf_chat_http500_feedback_v1.py scripts/qwen_http500_recovery_v1.py
+      - name: Verify candidate AST against current live Hugging Face engine
+        run: |
+          python -m pip install -q 'huggingface_hub>=0.34,<2'
+          python -u scripts/hf_chat_http500_feedback_v1.py snapshot
+      - name: Exercise patched LIVE classifier and reject unintended generation
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          from scripts import hf_chat_http500_feedback_v1 as patch
+          original=(patch.BACKUP/patch.MUSIC).read_text()
+          corrected=patch.patch_music(original)
+          namespace={}
+          exec(compile(corrected,"<deployed-music-logic>","exec"),namespace)
+          classify=namespace["transformation_contract"]
+          text="I was just trying to tell you this is the issues with your remix version of the song"
+          assert classify(text,reference_available=True) is None
+          assert classify("Your remix repeated the first verse.",reference_available=True) is None
+          assert classify("Please fix your remix verses.",reference_available=True)["mode"]=="remix"
+          assert classify("Can you remix those lyrics?",reference_available=True)["mode"]=="remix"
+          print("EXACT_LIVE_CLASSIFIER_REGRESSION_PASS",flush=True)
+          PY
+      - name: Validate official Hugging Face deployment routing
+        run: |
+          python -m pip install -q pyyaml
+          python - <<'PY'
+          from pathlib import Path
+          import yaml
+          manual=Path(".github/workflows/manual-hf-space.yml").read_text()
+          request=Path(".github/workflows/hf-space-request.yml").read_text()
+          jobs=yaml.safe_load(manual)["jobs"]
+          assert "hotfix_http500_feedback" in jobs
+          assert "hotfix_output_budget" in jobs
+          assert "hotfix_music_transform" in jobs
+          assert "http500-music-feedback-v1" in request
+          assert "mode=hotfix-http500-feedback" in request
+          assert "python -u scripts/hf_chat_http500_feedback_v1.py publish" in manual
+          print("HTTP500_GOVERNED_RELEASE_ROUTE_PASS")
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: swrlz-before-http500-feedback-${{ github.run_id }}
+          path: reports/swrlz-http500-feedback-v1/
+          retention-days: 30
+          if-no-files-found: error
