@@ -144,6 +144,32 @@ def archive_signals(messages, thread_id):
     return result
 
 
+def latest_imported_signals(docs):
+    """Compile latest per-slot/scope signals at index build time.
+
+    Bounded by the fixed number of dimensions, not by the number of imported
+    threads. Keep the newest *revoke* marker as well to suppress older values.
+    """
+    winner = {}
+    for doc in docs or ():
+        if not isinstance(doc, dict):
+            continue
+        for item in doc.get("continuitySignals") or ():
+            if (not isinstance(item, dict)
+                    or item.get("source") != "chatgpt-import"
+                    or item.get("slot") not in dict(_SLOTS)
+                    or item.get("scope") not in ("global", "coding", "creative")
+                    or item.get("kind") not in ("preference", "revoke")):
+                continue
+            key = (item["slot"], item["scope"])
+            prior = winner.get(key)
+            rank = (_stamp(item.get("at")), str(item.get("threadId") or ""),
+                    str(item.get("messageId") or ""))
+            if prior is None or rank > prior[0]:
+                winner[key] = (rank, item)
+    return [entry[1] for entry in sorted(winner.values(), key=lambda x:x[0], reverse=True)]
+
+
 def _native_messages(threads, active_thread_id):
     selected = sorted(
         (t for t in (threads or []) if isinstance(t, dict)
