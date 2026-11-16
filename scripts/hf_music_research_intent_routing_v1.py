@@ -11,14 +11,14 @@ from huggingface_hub import HfApi,hf_hub_download,CommitOperationAdd
 SPACE="kamiloki/Swyrlz";FILE="online_tools.py";ROOT=Path("reports/swrlz-music-router-v1")
 MARK="swrlz-research-music-operation-disambiguation-v1"
 OLD_WEB='''    explicit_web = bool(_EXPLICIT_WEB.search(text))'''
-NEW_WEB='''    # swrlz-research-music-operation-disambiguation-v1: actual research commands
+NEW_WEB=r'''    # swrlz-research-music-operation-disambiguation-v1: actual research commands
     # initiate a public-source search, but descriptions of past research do not.
     research_command=bool(re.search(
         r"(?i)^\s*(?:(?:please|could you|can you)\s+)?"
         r"(?:research|look into|investigate)\b",text))
     explicit_web = bool(_EXPLICIT_WEB.search(text) or research_command)'''
 OLD_LYRIC='''    lyrics_lookup=bool(_LYRICS_LOOKUP.search(text)) and not (lyrics_creative and not explicit_web)'''
-NEW_LYRIC='''    # Lyric *analysis* and revision of a just-created/user-authored song are
+NEW_LYRIC=r'''    # Lyric *analysis* and revision of a just-created/user-authored song are
     # not requests to retrieve an external song's published lyric text.
     musical_analysis=bool(re.search(
         r"(?i)\b(?:research|compare|explain|describe|analy[sz]e|understand|"
@@ -50,7 +50,7 @@ NEW_LYRIC='''    # Lyric *analysis* and revision of a just-created/user-authored
                    and not (musical_analysis and not
                             (explicit_lookup_verb or published_full_lyrics)))'''
 OLD_WEATHER='''    weather_intent=bool(_WEATHER_TERMS.search(text) and not weather_negated)'''
-NEW_WEATHER='''    # Rain/snow in user-supplied lyric lines, fiction or song titles is NOT
+NEW_WEATHER=r'''    # Rain/snow in user-supplied lyric lines, fiction or song titles is NOT
     # a weather lookup. Require an actual live meteorological question/request.
     explicit_weather_data=bool(re.search(
         r"(?i)\b(?:weather|forecast|temperature|humidity|barometric|"
