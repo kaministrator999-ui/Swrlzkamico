@@ -25,7 +25,8 @@ def apply(html):
     ui=(ROOT/'runtime/model_uv_shape_fit_v11_469.js').read_text('utf8')
     css=(ROOT/'runtime/model_uv_shape_fit_v11_469.css').read_text('utf8')
     html=once(html,'  function ensurePanel(){',math+'\n'+ui+'\n  function ensurePanel(){')
-    assert html.index('</head>') < html.index('<body'), 'missing document head'\n    html=html.replace('</head>','<style id="se469UVShapeFitStyles">\n'+css+'\n</style>\n</head>',1)
+    assert html.index('</head>') < html.index('<body'), 'missing document head'
+    html=html.replace('</head>','<style id="se469UVShapeFitStyles">\n'+css+'\n</style>\n</head>',1)
     for old,new in (
         ('SWYRL_ENGINE_DEPLOY_MARKER: V11_468_STANDALONE_STUDIO_ASSETS',MARKER),
         ('ENGINE · MAKER v11.468','ENGINE · MAKER v11.469'),
