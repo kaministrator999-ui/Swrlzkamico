@@ -28,7 +28,7 @@ def digest(x):return hashlib.sha256(x).hexdigest(HELPER=r'''# swrlz-current-oper
 def _swrlz_operation_is_noncode(prompt):
     text=" ".join(str(prompt or "").split())[:4000]
     code_ask=bool(re.search(
-        r"(?i)\b(?:write|generate|provide|return|show|create|make)\b.{0,65}"
+        r"(?i)\b(?:write|generate|provide|return|show|create|make|build)\b.{0,65}"
         r"\b(?:code|source file|html|css|javascript|typescript|python|script|function|"
         r"app|program|component|webpage|website|api|patch)\b"
         r"|\b(?:implement|compile|commit|deploy|push|fix|patch|edit|modify|update)\b"
