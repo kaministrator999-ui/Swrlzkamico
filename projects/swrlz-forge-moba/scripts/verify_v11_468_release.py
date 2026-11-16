@@ -32,7 +32,7 @@ for token in [
  'modelAtelierWorkshopExtrudeScale','setRingAnchor','selectRing',
  'modelAtelierWorkshopPreview','modelAtelierWorkshopApply']:
  assert token in html,token
-assert html.count(" source.engine='§wyrl§ Engine · Maker v11.468';source.version=11.467;")==5
+assert html.count(" source.engine='§wyrl§ Engine · Maker v11.468';source.version=11.468;")==5
 subprocess.run([sys.executable,str(ROOT/'scripts/check_inline_js_syntax_v11_266.py'),str(out/'index.html')],check=True)
 subprocess.run(['node',str(ROOT/'tests/studio_asset_isolation_v11_468.mjs'),str(out/'index.html')],check=True)
 subprocess.run(['node',str(ROOT/'tests/model_quest_browser_input_v11_467.mjs'),str(out/'index.html')],check=True)
