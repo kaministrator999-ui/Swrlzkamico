@@ -37,6 +37,36 @@ _LYRIC = re.compile(r"^(?:\s*\x60{3}[^\n]*\n|\s*\x60{3}\s*$)",re.I)
 _PREFACE = re.compile(r"^(?:sure[,! ]|alright[,! ]|here(?:'s| is)\s+(?:a|the|your)\b|"
                       r"hope\s+you\s+like|feel\s+free\s+to|let(?:'s| us)\b)",re.I)
 
+# swrlz-song-feedback-intent-guard-v1: a noun is not a command.
+# "My remix has issues" is feedback. "Please remix my song" requests work.
+def _new_creative_command(prompt: str) -> bool:
+    text=" ".join(str(prompt or "").split()).strip()
+    direct=re.search(
+        r"(?i)^\s*(?:(?:hey|so|now|please)\b[\s,]*)*"
+        r"(?:(?:can|could|would|will)\s+(?:you|we)\s+(?:please\s+)?"
+        r"|(?:let's|let us|go ahead and|try to)\s+)?"
+        r"(?:remix|re[- ]?mix|remaster|parody|rewrite|rework|reimagine|"
+        r"adapt|flip|make|create|write|compose|craft|produce|generate|"
+        r"redo|revise|fix|improve|change|turn|blend|give|do|arrange)\b",text)
+    if direct:
+        return True
+    desired=re.search(
+        r"(?i)\b(?:i(?:'d| would)\s+like|i\s+(?:want|need)|"
+        r"we\s+(?:want|need))\s+(?:(?:you|us)\s+to\s+)?"
+        r"(?:(?:make|write|create|compose|remix|remaster|parody|rewrite|"
+        r"adapt|reimagine|redo|fix|improve|try)\b|(?:a|an)\s+"
+        r"(?:(?:new|original|different|better)\s+)?"
+        r"(?:remix|parody|remaster|mash[ -]?up|cover|adaptation)\b)",text)
+    if desired:
+        return True
+    # A correction may contain an explicit request after describing problems.
+    if re.search(r"(?i)\b(?:please|can\s+you|could\s+you|would\s+you)"
+                 r"\s+(?:fix|redo|rewrite|remix|remaster|rework|"
+                 r"revise|improve|make|create)\b",text):
+        return True
+    return False
+
+
 def transformation_contract(prompt: str, *, reference_available: bool = False) -> dict | None:
     """Parse an explicit lyrical operation; avoid hijacking lookup or explanation."""
     text=" ".join(str(prompt or "").split()).strip()
@@ -50,6 +80,8 @@ def transformation_contract(prompt: str, *, reference_available: bool = False) -
     if not match:
         return None
     kind,hit=match
+    if not _new_creative_command(text):
+        return None
     # Music terms are required except when the current thread has a documented
     # song reference and an explicitly creative transform verb.
     if not _SONG_CUE.search(text) and not reference_available:
