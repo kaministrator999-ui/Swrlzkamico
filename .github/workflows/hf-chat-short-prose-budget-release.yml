@@ -1,0 +1,135 @@
+name: "Guarded §C brief explanation latency release"
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".deploy/HF_CHAT_SHORT_PROSE_REQUEST.txt"
+permissions: {contents: read}
+concurrency:
+  group: swrlz-hf-space-deployment
+  cancel-in-progress: false
+jobs:
+  release:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 27
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false, fetch-depth: 0}
+      - name: Validate owner-approved source pinned request
+        id: request
+        shell: bash
+        run: |
+          set -euo pipefail
+          request=.deploy/HF_CHAT_SHORT_PROSE_REQUEST.txt
+          test -f "$request"
+          get() { sed -n "s/^$1=//p" "$request" | tail -n 1; }
+          test "$(get TARGET)" = "kamiloki/Swyrlz"
+          test "$(get APPROVED)" = "1"
+          test "$(get SCOPE)" = "explicit-brief-prose-output-cap-v1"
+          source="$(get SOURCE_REF)"
+          revision="$(get EXPECTED_SPACE_REVISION)"
+          nonce="$(get NONCE)"
+          [[ "$source" =~ ^[0-9a-f]{40}$ ]]
+          [[ "$revision" =~ ^[0-9a-f]{40}$ ]]
+          [[ "$nonce" =~ ^[a-z0-9-]{16,96}$ ]]
+          git merge-base --is-ancestor "$source" HEAD
+          echo "source=$source" >> "$GITHUB_OUTPUT"
+          echo "revision=$revision" >> "$GITHUB_OUTPUT"
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          ref: ${{ steps.request.outputs.source }}
+          path: reviewed
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - name: Install limited source and guest browser dependencies
+        run: |
+          python -m pip install --quiet 'huggingface_hub>=0.34,<2' playwright==1.56.0
+          python -m playwright install --with-deps chromium
+      - name: Verify exact live source and candidate unchanged
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          SWRLZ_EXPECTED_SPACE_REVISION: ${{ steps.request.outputs.revision }}
+        run: |
+          set -euo pipefail
+          cd reviewed
+          python -m py_compile scripts/hf_chat_short_prose_budget_v1.py
+          python -u scripts/hf_chat_short_prose_budget_v1.py inspect
+      - uses: actions/upload-artifact@v4
+        with:
+          name: sc-short-prose-original-${{ github.run_id }}
+          path: reviewed/reports/short-explanation-budget-v1/
+          retention-days: 45
+          if-no-files-found: error
+      - name: Publish only the exact approved LFM source
+        id: publish
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          SWRLZ_SHORT_PROSE_APPROVED: '1'
+          SWRLZ_EXPECTED_SPACE_REVISION: ${{ steps.request.outputs.revision }}
+        run: |
+          set -euo pipefail
+          cd reviewed
+          python -u scripts/hf_chat_short_prose_budget_v1.py publish
+      - name: Verify serving Space and Qwen readiness
+        id: ready
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          set -euo pipefail
+          cd reviewed
+          python - <<'PY'
+          import json,time,os,urllib.request
+          from pathlib import Path
+          from huggingface_hub import HfApi
+          api=HfApi(token=os.environ.get('HF_TOKEN'))
+          expected=json.loads(Path('reports/short-explanation-budget-v1/manifest.json').read_text())['publishedRevision']
+          for i in range(27):
+              info=api.space_info('kamiloki/Swyrlz')
+              if info.sha!=expected:raise RuntimeError('NEWER_SPACE_REVISION')
+              runtime=getattr(info,'runtime',None)
+              stage=str(getattr(runtime,'stage',''))
+              try:
+                  with urllib.request.urlopen('https://kamiloki-swyrlz.hf.space/api/hf/qwen35-ready',timeout=10) as r:
+                      ready=json.load(r).get('ready') is True
+              except Exception:ready=False
+              print('SHORT_PROSE_LIVE_READINESS',json.dumps({'step':i+1,'stage':stage,'modelReady':ready}),flush=True)
+              if ready and 'RUNNING' in stage and 'STARTING' not in stage:break
+              if i==26:raise RuntimeError('MODEL_NOT_READY')
+              time.sleep(10)
+          PY
+      - name: Live guest short explanation acceptance
+        id: guest
+        env:
+          SWRLZ_EVAL_BASE: https://kamiloki-swyrlz.hf.space
+          SWRLZ_EVAL_MODEL: 700m
+        run: |
+          set -euo pipefail
+          cd reviewed
+          python - <<'PY'
+          import asyncio,sys
+          import scripts.eval_chat_guest_suite as ev
+          cases=[x for x in ev.CASES['1'] if x['id']=='explain-then-code']
+          assert len(cases)==1
+          ev.CASES['1']=[{**cases[0],'turns':cases[0]['turns'][:1]}]
+          sys.exit(asyncio.run(ev.main('live','1')))
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: sc-short-prose-guest-results-${{ github.run_id }}
+          path: reviewed/reports/chat-guest-eval/
+          retention-days: 14
+          if-no-files-found: ignore
+      - name: Roll back only our own published revision if live acceptance failed
+        if: ${{ always() && steps.publish.outcome == 'success' && (steps.ready.outcome != 'success' || steps.guest.outcome != 'success') }}
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          SWRLZ_SHORT_PROSE_APPROVED: '1'
+        run: |
+          set -euo pipefail
+          cd reviewed
+          python -u scripts/hf_chat_short_prose_budget_v1.py rollback
+      - name: Fail closed on missing acceptance evidence
+        if: ${{ always() && steps.publish.outcome == 'success' && (steps.ready.outcome != 'success' || steps.guest.outcome != 'success') }}
+        run: exit 1
