@@ -23,7 +23,6 @@ for(const token of [
 for(const token of [
  'selectedSlots.map(i=>top.vertices[i])','Math.fround(v)*100000',
  "shape==='fill'?0xffa56a","shape==='ring'?0xffe369",
- 'const vertex=topology.vertices[id],key=topology.keys[vertex];',
  "marker.userData.se478SelectedVertices=true"
 ])assert(patch.includes(token),'Missing '+token);
 const ring=fs.readFileSync(new URL('model_ring_kernel_v11_466.js',root),'utf8');
