@@ -1,0 +1,119 @@
+{
+  "schema": "swrlz-knowledge-acquisition-snapshot-v1",
+  "requestId": "swr-research-eval-69266a68ab484a8c",
+  "modelId": "700m",
+  "eventType": "KNOWLEDGE_ACQUISITION_SNAPSHOT",
+  "sourceRef": "f149dd857e3d9219f5cae7da0286b5dbfec85c42",
+  "persistedAtUnixMs": 1794811132577,
+  "diagnostic": {
+    "schema": "swrlz-knowledge-acquisition-snapshot-v1",
+    "requestId": "swr-research-eval-69266a68ab484a8c",
+    "trigger": {
+      "userText": "Write a complete ORIGINAL song titled 'Rain Glass Lantern' with Verse 1, Chorus, Verse 2, Chorus, Bridge and Final Chorus. In the fictional story a lantern shines through rainy glass. This is creative writing, not a weather question. Make both verses have different events and the bridge a turning point.",
+      "sha256": "bbc532e4fedb08610faca6a9159a9c3c6be484f22680dddb7d719db99f2860b1"
+    },
+    "research": {
+      "kind": "weather",
+      "status": "ERROR",
+      "provider": "",
+      "reason": "weather-intent",
+      "query": "",
+      "resultCount": 0,
+      "sources": [],
+      "sourceSites": [],
+      "widgetKinds": [],
+      "trace": [
+        {
+          "phase": "WEATHER_GEOCODE_VISIT",
+          "provider": "Open-Meteo",
+          "activity": "Resolving weather location",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "WEATHER_GEOCODE_COMPLETE",
+          "provider": "Open-Meteo",
+          "activity": "Weather provider response received",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "WEATHER_LOCATION_NOT_FOUND",
+          "provider": "Open-Meteo",
+          "activity": "Weather location could not be resolved",
+          "status": null,
+          "elapsedMs": null
+        }
+      ]
+    },
+    "answer": {
+      "text": "I reached the live weather service, but I couldn't resolve that place. Try a city with state/province or country, for example “Leavenworth, Kansas”.",
+      "sha256": "0db78561b46d457dcb5261136742dd994bf82834b33f1115222b630daa6be9f6"
+    },
+    "followUpWindow": {
+      "maxUserTurns": 3,
+      "captured": [],
+      "state": "OPEN"
+    },
+    "review": {
+      "state": "PENDING",
+      "promoteToLocalKnowledge": false,
+      "notes": []
+    },
+    "privacy": {
+      "preciseLocationStored": false,
+      "privateReasoningStored": false,
+      "fullHistoryStored": false
+    },
+    "statusTrail": [
+      {
+        "phase": "QUEUED",
+        "reason": "Accepted by Workstation"
+      },
+      {
+        "phase": "GENERATING",
+        "reason": "Workstation admitted generation"
+      },
+      {
+        "phase": "PROGRAMMING_INTENT",
+        "reason": ""
+      },
+      {
+        "phase": "WEATHER_FETCH_STARTED",
+        "reason": "I’m on it — looking up Write a complete ORIGINAL song titled 'Rain Glass Lantern' with Verse 1, Chorus, Verse 2, Chorus, Bridge and Final Chorus. In the fictional story a lantern shines through rainy "
+      },
+      {
+        "phase": "WEATHER_GEOCODE_VISIT",
+        "reason": "Resolving weather location"
+      },
+      {
+        "phase": "WEATHER_GEOCODE_COMPLETE",
+        "reason": "Weather provider response received"
+      },
+      {
+        "phase": "WEATHER_LOCATION_NOT_FOUND",
+        "reason": "Weather location could not be resolved"
+      },
+      {
+        "phase": "ONLINE_RESEARCH",
+        "reason": "ERROR"
+      },
+      {
+        "phase": "WEATHER_FETCH_COMPLETE",
+        "reason": "Online retrieval error."
+      },
+      {
+        "phase": "WEATHER_RETRIEVAL_BLOCKED",
+        "reason": "I reached the live weather service, but I couldn't resolve that place. Try a city with state/province or country, for example “Leavenworth, Kansas”."
+      },
+      {
+        "phase": "COMPLETE",
+        "reason": ""
+      },
+      {
+        "phase": "PERSISTING",
+        "reason": "Saving the response to the chat"
+      }
+    ]
+  }
+}
