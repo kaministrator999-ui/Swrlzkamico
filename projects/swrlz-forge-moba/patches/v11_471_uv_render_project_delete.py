@@ -23,37 +23,8 @@ def apply(html):
     ]
     for token in required:
         if token not in html:raise AssertionError(('missing inherited feature',token))
-    # Keep native material display separate from optional latitude-aware UV shaping.\n    # Fix the symptom in the actual owner material rather than the UV preview.
-    # The new material map already exists in native v11.336; the user's
-    # screenshot shows View · Solid, which intentionally hides authored paint.
-    start=html.index('async function se336ImportPaint(file)')
-    end=html.index('function se336RemovePaint()',start)
-    part=html[start:end]
-    part=once(part,
-      """      signalEdited();
-      select(id);
-      se336SlideNotify();
-      se356UVPreviewSchedule();
-      status('Painted PNG applied""",
-      """      signalEdited();
-      select(id);
-      se336SlideNotify();
-      se356UVPreviewSchedule();
-      // Imported artwork is only visible in the authored Material viewport.
-      // Keep explicit modeling mode changes reversible and unrelated to Undo.
-      const viewChanged=window.SWYRL_ENGINE_VIEW_READABILITY_455?.choose?.('shaded') ??
-        window.SWYRL_ENGINE_MODEL_VIEW?.setMode?.('shaded');
-      const shown=()=>modelRoot?.children?.find(m=>m.isMesh&&m.userData?.atelierId===id);
-      if(part.uvPaintPNG&&!shown()?.material?.map)renderParts();
-      const bound=!!shown()?.material?.map;
-      if(viewChanged===false||!bound)
-       status('Texture image imported, but the material viewport is not showing its map. Select View → Material or refresh the model display.',true);
-      else status('Painted PNG applied""",
-      'material viewport after import')
-    html=html[:start]+part+html[end:]
-    # Preserve native viewport mode selector semantics, but auto-select Material
-    # for the specific import event, not when merely showing a UV guide.
-
+    # UI registration uses stable native function wrappers rather than editing
+    # the historically modified import implementation by string replacement.
     latitude=(ROOT/'runtime/uv_latitude_math_v11_471.js').read_text('utf8')
     fine=(ROOT/'runtime/uv_fine_fit_v11_471.js').read_text('utf8')
     html=once(html,'  function ensurePanel(){',
