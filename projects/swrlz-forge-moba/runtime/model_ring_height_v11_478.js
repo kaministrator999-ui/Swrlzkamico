@@ -43,7 +43,9 @@
   const note=document.createElement('small');
   note.textContent='Live vertex-height preview · local Y · one Undo step';
   actions.append(applyButton,cancelButton,note);
-  ui.append(head,row,actions);body.append(ui);
+  // Portal to the modeler panel, not the isolated grid: phone inspector
+  // must never intercept input for the active height slider.
+  ui.append(head,row,actions);panel.append(ui);
   // UI interactions must never select objects behind the floating control.
   for(const type of ['pointerdown','pointerup','click']){
    ui.addEventListener(type,event=>event.stopPropagation());
