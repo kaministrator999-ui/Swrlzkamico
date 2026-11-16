@@ -19,11 +19,11 @@ def apply(html):
       'function se175RefreshLocal()',
       'function se170Refresh()',
       'SE469_UV_SHAPE_FIT_START',
-      'SE470_UV_MODEL_SAVE_PASS' if False else 'function se470SavedCloudProjects(rows)'
+      'function se470SavedCloudProjects(rows)'
     ]
     for token in required:
         if token not in html:raise AssertionError(('missing inherited feature',token))
-    # Fix the symptom in the actual owner material rather than the UV preview.
+    # Keep native material display separate from optional latitude-aware UV shaping.\n    # Fix the symptom in the actual owner material rather than the UV preview.
     # The new material map already exists in native v11.336; the user's
     # screenshot shows View · Solid, which intentionally hides authored paint.
     start=html.index('async function se336ImportPaint(file)')
@@ -54,6 +54,10 @@ def apply(html):
     # Preserve native viewport mode selector semantics, but auto-select Material
     # for the specific import event, not when merely showing a UV guide.
 
+    latitude=(ROOT/'runtime/uv_latitude_math_v11_471.js').read_text('utf8')
+    fine=(ROOT/'runtime/uv_fine_fit_v11_471.js').read_text('utf8')
+    html=once(html,'  function ensurePanel(){',
+        latitude+'\n'+fine+'\n  function ensurePanel(){','shape-aware UV controls')
     js=(ROOT/'runtime/project_delete_confirm_v11_471.js').read_text('utf8')
     css=(ROOT/'runtime/project_delete_confirm_v11_471.css').read_text('utf8')
     for needle in ('SE471_PROJECT_DELETE_CONFIRM_START','function deleteLocal(record)',
@@ -88,7 +92,7 @@ def apply(html):
       title='Painted UV map visible on import and project deletion confirmation',
       changes=[
        'Successful UV PNG import switches from Solid modeling display to authored Material display and checks for an actual bound mesh texture map.',
-       'UV preview continues to use the original UV coordinates and paint data; mesh geometry and saved image are not edited by display-mode changes.',
+       'Latitude-aware correction adjusts spherical UV sampling by the flattened meridian geometry, with optional independent U/V fine tuning; all controls preserve geometry positions and painted PNG bytes.',
        'My Projects cards add Delete actions for saved local and account projects, with a native Cancel/Delete confirmation dialog and explicit data location.',
        'On-device deletion atomically removes IndexedDB project and metadata rows only after rechecking the project identity, and never the active project.',
        'Account deletion requests verify the current revision and require an authenticated Chat bridge acknowledgement before showing success. Unsupported account delete reports a failure rather than silently removing a card.',
