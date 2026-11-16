@@ -1,0 +1,34 @@
+name: "§C ZeroGPU Gradio launch bridge read-only preflight"
+on:
+  pull_request:
+    paths:
+      - "scripts/hf_chat_zerogpu_launch_bridge_v1.py"
+      - ".github/workflows/hf-chat-zerogpu-launch-bridge-preflight.yml"
+      - ".github/workflows/hf-chat-zerogpu-launch-bridge-release.yml"
+permissions:
+  contents: read
+jobs:
+  preflight:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - name: Compile guarded source patcher
+        run: python -m py_compile scripts/hf_chat_zerogpu_launch_bridge_v1.py
+      - name: Install Hub client
+        run: python -m pip install --quiet 'huggingface_hub>=0.34,<2'
+      - name: Inspect exact Hugging Face source and compile candidate without publishing
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: python -u scripts/hf_chat_zerogpu_launch_bridge_v1.py inspect
+      - name: Preserve original bytes, candidate and integrity manifest
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: swrlz-zerogpu-launch-bridge-preflight-${{ github.run_id }}
+          path: reports/chat-zerogpu-launch-bridge-v1/
+          retention-days: 7
+          if-no-files-found: warn

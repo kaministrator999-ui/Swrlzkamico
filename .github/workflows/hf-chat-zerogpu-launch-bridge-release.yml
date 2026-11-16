@@ -1,0 +1,132 @@
+name: "Guarded §C ZeroGPU Gradio launch bridge release"
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".deploy/HF_CHAT_ZEROGPU_BRIDGE_REQUEST.txt"
+permissions:
+  contents: read
+concurrency:
+  group: swrlz-hf-space-deployment
+  cancel-in-progress: false
+jobs:
+  release:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false, fetch-depth: 0}
+      - name: Verify approved pinned source request
+        id: approval
+        shell: bash
+        run: |
+          set -euo pipefail
+          request=.deploy/HF_CHAT_ZEROGPU_BRIDGE_REQUEST.txt
+          test -f "$request"
+          get() { sed -n "s/^$1=//p" "$request" | tail -n 1; }
+          test "$(get TARGET)" = "kamiloki/Swyrlz"
+          test "$(get APPROVED)" = "1"
+          test "$(get CHANGE_SCOPE)" = "zerogpu-gradio-launch-bridge-v1"
+          source_ref="$(get SOURCE_REF)"
+          space_rev="$(get EXPECTED_SPACE_REVISION)"
+          nonce="$(get REQUEST_NONCE)"
+          [[ "$source_ref" =~ ^[0-9a-f]{40}$ ]]
+          [[ "$space_rev" =~ ^[0-9a-f]{40}$ ]]
+          [[ "$nonce" =~ ^[a-z0-9-]{12,96}$ ]]
+          git merge-base --is-ancestor "$source_ref" HEAD
+          echo "source=$source_ref" >> "$GITHUB_OUTPUT"
+          echo "revision=$space_rev" >> "$GITHUB_OUTPUT"
+          echo "SWRLZ_ZEROGPU_APPROVED_SCOPE=app.py-only"
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          ref: ${{ steps.approval.outputs.source }}
+          path: reviewed
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - name: Compile and install immutable patch client
+        run: |
+          set -euo pipefail
+          python -m py_compile reviewed/scripts/hf_chat_zerogpu_launch_bridge_v1.py
+          python -m pip install --quiet 'huggingface_hub>=0.34,<2'
+      - name: Snapshot exact original source and validate reversible bridge
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          SWRLZ_EXPECTED_SPACE_REVISION: ${{ steps.approval.outputs.revision }}
+        run: |
+          set -euo pipefail
+          cd reviewed
+          python -u scripts/hf_chat_zerogpu_launch_bridge_v1.py inspect
+      - name: Preserve original Space bytes before publication
+        uses: actions/upload-artifact@v4
+        with:
+          name: swrlz-zerogpu-bridge-original-${{ github.run_id }}
+          path: reviewed/reports/chat-zerogpu-launch-bridge-v1/
+          retention-days: 90
+          if-no-files-found: error
+      - name: Publish one exact-revision reversible app.py change
+        id: published
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          SWRLZ_ZEROGPU_BRIDGE_APPROVED: '1'
+          SWRLZ_EXPECTED_SPACE_REVISION: ${{ steps.approval.outputs.revision }}
+        run: |
+          set -euo pipefail
+          cd reviewed
+          python -u scripts/hf_chat_zerogpu_launch_bridge_v1.py publish
+      - name: Validate live running Space and real model readiness
+        id: live
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          set -euo pipefail
+          cd reviewed
+          python - <<'PY'
+          import json,os,time,urllib.request,urllib.error
+          from pathlib import Path
+          from huggingface_hub import HfApi
+          manifest=json.loads(Path('reports/chat-zerogpu-launch-bridge-v1/manifest.json').read_text())
+          expected=manifest['publishedRevision']
+          api=HfApi(token=os.environ['HF_TOKEN'])
+          root='https://kamiloki-swyrlz.hf.space/'
+          ready_url=root+'api/hf/qwen35-ready'
+          for i in range(42):
+              info=api.space_info('kamiloki/Swyrlz')
+              if info.sha!=expected:raise RuntimeError('SPACE_REVISION_CHANGED_DURING_BOOT')
+              state=str(getattr(getattr(info,'runtime',None),'stage',None))
+              def probe(url):
+                  try:
+                      with urllib.request.urlopen(url, timeout=9) as response:
+                          return response.status,response.read(1200).decode('utf8','replace')
+                  except urllib.error.HTTPError as ex:return ex.code,''
+                  except Exception:return 0,''
+              code,_=probe(root)
+              rcode,body=probe(ready_url)
+              try: ready=json.loads(body).get('ready') is True
+              except (ValueError,AttributeError):ready=False
+              print('SWRLZ_ZEROGPU_BRIDGE_RUNTIME',json.dumps({
+                  'attempt':i+1,'stage':state,'rootHTTP':code,'readyHTTP':rcode,'modelReady':ready
+              }),flush=True)
+              if state in ('RUNNING','SpaceStage.RUNNING') and code==200 and rcode==200 and ready:
+                  print('SWRLZ_ZEROGPU_BRIDGE_RUNTIME_ACCEPTED',expected,flush=True)
+                  break
+              if i==41:raise RuntimeError('STARTUP_OR_MODEL_READINESS_NOT_CONFIRMED')
+              time.sleep(12)
+          PY
+      - name: Restore exact original app.py if runtime acceptance failed
+        if: ${{ always() && steps.published.outcome == 'success' && steps.live.outcome != 'success' }}
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          SWRLZ_ZEROGPU_BRIDGE_APPROVED: '1'
+        run: |
+          set -euo pipefail
+          cd reviewed
+          python -u scripts/hf_chat_zerogpu_launch_bridge_v1.py rollback
+      - name: Upload published integrity manifest and startup probe results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: swrlz-zerogpu-bridge-release-${{ github.run_id }}
+          path: reviewed/reports/chat-zerogpu-launch-bridge-v1/
+          retention-days: 30
+          if-no-files-found: warn
