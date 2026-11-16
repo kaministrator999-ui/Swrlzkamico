@@ -1,0 +1,187 @@
+name: §C adaptive two-pass public research preflight
+on:
+  push:
+    branches: [fix/chat-adaptive-research-coverage-v1]
+    paths:
+      - "api/adaptive_public_research_v1.py"
+      - "api/research_evidence_envelope_v1.py"
+      - "scripts/hf_chat_adaptive_research_v1.py"
+      - "tests/test_hf_adaptive_public_research_v1.py"
+      - ".github/workflows/hf-chat-adaptive-public-research-preflight.yml"
+permissions: {contents: read}
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 16
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.11"}
+      - name: Install existing Hugging Face SDK
+        run: python -m pip install --quiet "huggingface_hub>=0.34,<2"
+      - name: Test generalized source coverage and privacy
+        run: |
+          set -euo pipefail
+          python -m unittest discover -s tests -p 'test_hf_adaptive_public_research_v1.py' -v
+          python -m unittest discover -s tests -p 'test_hf_tagged_research_evidence_v1.py' -v
+          python -m unittest discover -s tests -p 'test_hf_generic_public_source_fallback_v1.py' -v
+          python -m py_compile api/adaptive_public_research_v1.py scripts/hf_chat_adaptive_research_v1.py
+      - name: Stage exact active HF source and verify Python grammar
+        run: |
+          set -euo pipefail
+          python -u scripts/hf_chat_adaptive_research_v1.py --out swrlz-adaptive-research-rollback
+      - name: Verify new source wrapper against real existing selective retrieval
+        run: |
+          python - <<'PY'
+          import ast,importlib.util,json,sys,types
+          from pathlib import Path
+          from huggingface_hub import HfApi,hf_hub_download
+          root=Path("swrlz-adaptive-research-rollback/candidate")
+          source=(root/"api/selective_retrieval.py").read_text()
+          ast.parse(source)
+          # The original historical helper stays authoritative and is
+          # inspected directly at the same immutable HF revision.
+          rev=HfApi().repo_info("kamiloki/Swyrlz",repo_type="space").sha
+          path=hf_hub_download("kamiloki/Swyrlz","api/research_context_v2.py",
+                               repo_type="space",revision=rev)
+          historic=types.ModuleType("api.research_context_v2")
+          historic.__file__=path
+          exec(compile(Path(path).read_text(),path,"exec"),historic.__dict__)
+          sys.modules["api.research_context_v2"]=historic
+          spec=importlib.util.spec_from_file_location("api.selective_retrieval",
+                                                    root/"api/selective_retrieval.py")
+          selective=importlib.util.module_from_spec(spec)
+          sys.modules[spec.name]=selective
+          spec.loader.exec_module(selective)
+          assertion={
+              "publicExplanation":selective.choose_retrieval(
+                  "Explain how eclipses work, including lunar geometry, eclipse types and eye safety.").action,
+              "casual":selective.choose_retrieval("Hello there").action,
+              "private":selective.choose_retrieval("Explain our private repo history").action,
+          }
+          print("SWRLZ_ADAPTIVE_INTEGRATED_ROUTING "+json.dumps(assertion),flush=True)
+          assert assertion=={"publicExplanation":"retrieve",
+                             "casual":"direct","private":"direct"},assertion
+          prompt="Explain how eclipses work, including lunar geometry, eclipse types, and eye safety."
+          called=[]
+          def public_provider(request):
+              called.append(request)
+              if len(called)==1:
+                  return {"evidence":[{
+                      "title":"NASA eclipse lunar geometry",
+                      "url":"https://science.nasa.gov/eclipses/geometry/",
+                      "snippet":"Lunar geometry determines how the Earth, Moon, and Sun align for eclipses."
+                  }]}
+              return {"evidence":[
+                  {"title":"NASA eclipse types",
+                   "url":"https://science.nasa.gov/eclipses/types/",
+                   "snippet":"Eclipse types include total, partial, and annular eclipses."},
+                  {"title":"NASA eclipse eye safety",
+                   "url":"https://science.nasa.gov/eclipses/safety/",
+                   "snippet":"Eye safety is essential when viewing a solar eclipse."},
+              ]}
+          out,receipt=selective.enrich_payload(
+              {"prompt":prompt},public_provider,fetch_page=None,enabled=True)
+          metadata=(out.get("onlineContext") or {}).get("adaptiveResearch") or {}
+          packet=(out.get("onlineContext") or {}).get("evidence") or []
+          print("SWRLZ_ADAPTIVE_INTEGRATED_SEARCH "+json.dumps({
+              "phase":receipt.get("phase"),"researchCalls":len(called),
+              "extraQueries":called[-1].get("researchQueries"),
+              "passCount":metadata.get("passesAttempted"),
+              "unresolved":metadata.get("facetsNeedingVerification"),
+              "sourceTitles":[x.get("title") for x in packet]
+          }),flush=True)
+          assert receipt["phase"]=="RESEARCH_READY",receipt
+          assert len(called)==2,called
+          assert metadata["passesAttempted"]==2,metadata
+          assert not metadata["facetsNeedingVerification"],metadata
+          assert len(packet)>=3,packet
+          PY
+      - name: Confirm actual encyclopedia citations survive the live source relevance filter
+        run: |
+          python - <<'PY'
+          import importlib.util,json,sys
+          from huggingface_hub import HfApi,hf_hub_download
+          from api.adaptive_public_research_v1 import encyclopedia_topic,plan_public_research,wikipedia_exact_public_title
+          from api.generic_public_source_fallback_v1 import wikipedia_public_fallback
+          space="kamiloki/Swyrlz"
+          rev=HfApi().repo_info(space,repo_type="space").sha
+          path=hf_hub_download(space,"api/online_research.py",repo_type="space",revision=rev)
+          spec=importlib.util.spec_from_file_location("swrlz_adaptive_public_safe_fetch",path)
+          module=importlib.util.module_from_spec(spec)
+          sys.modules[spec.name]=module
+          spec.loader.exec_module(module)
+          question="Explain how eclipses work, including lunar geometry, eclipse types, and eye safety."
+          topic=encyclopedia_topic(plan_public_research(question))
+          exact=wikipedia_exact_public_title(topic,module._page_fetch)
+          sources=wikipedia_public_fallback(topic,module._page_fetch)
+          print("SWRLZ_ADAPTIVE_REAL_EXACT_TITLE "+json.dumps({
+              "topic":topic,"exactSources":[x.get("title") for x in exact]}),flush=True)
+          assert exact and exact[0]["url"].startswith("https://en.wikipedia.org/wiki/"),exact
+          report={"topic":topic,"sourceCount":len(sources),
+                  "titles":[x.get("title") for x in sources],
+                  "urls":[x.get("url") for x in sources]}
+          print("SWRLZ_ADAPTIVE_REAL_OVERVIEW_SOURCE "+json.dumps(report),flush=True)
+          assert topic=="eclipse",report
+          assert any("eclipse" in x.get("title","").lower() for x in sources),report
+          # Test the entire second-pass recovery against the exact legacy
+          # source relevance filter, not only Wikipedia discovery.
+          from api.adaptive_public_research_v1 import adaptive_enrich
+          from pathlib import Path
+          import types
+          historic_path=hf_hub_download(space,"api/research_context_v2.py",
+                                       repo_type="space",revision=rev)
+          historic=types.ModuleType("api.research_context_v2")
+          exec(compile(Path(historic_path).read_text(),historic_path,"exec"),
+               historic.__dict__)
+          sys.modules["api.research_context_v2"]=historic
+          staging=Path("swrlz-adaptive-research-rollback/candidate/api/selective_retrieval.py")
+          spec2=importlib.util.spec_from_file_location("api.selective_retrieval",staging)
+          selective=importlib.util.module_from_spec(spec2)
+          sys.modules[spec2.name]=selective
+          spec2.loader.exec_module(selective)
+          out,receipt=adaptive_enrich(
+              {"prompt":question},
+              {"phase":"RESEARCH_UNAVAILABLE","reason":"no_relevant_evidence"},
+              lambda _:{"evidence":[]},
+              bounded_evidence=selective.bounded_evidence,
+              fetch_page=module._page_fetch)
+          cards=(out.get("onlineContext") or {}).get("evidence") or []
+          report2={"phase":receipt.get("phase"),"count":len(cards),
+                   "titles":[x.get("title") for x in cards]}
+          print("SWRLZ_ADAPTIVE_REAL_FULL_RECOVERY "+json.dumps(report2),flush=True)
+          assert receipt.get("phase")=="RESEARCH_READY",report2
+          assert len(cards)>=1,report2
+          # Additional independent multi-part public question; the same
+          # logic must find a real article without any hardcoded answer.
+          mars="Explain the moons of Mars, including Phobos, Deimos, and orbital characteristics."
+          mars_topic=encyclopedia_topic(plan_public_research(mars))
+          mars_out,mars_route=adaptive_enrich(
+              {"prompt":mars},{"phase":"RESEARCH_UNAVAILABLE",
+                               "reason":"no_relevant_evidence"},
+              lambda _:{"evidence":[]},
+              bounded_evidence=selective.bounded_evidence,
+              fetch_page=module._page_fetch)
+          mars_cards=(mars_out.get("onlineContext") or {}).get("evidence") or []
+          print("SWRLZ_ADAPTIVE_REAL_MARS_RECOVERY "+json.dumps({
+              "topic":mars_topic,"phase":mars_route.get("phase"),
+              "sourceCount":len(mars_cards),
+              "titles":[c.get("title") for c in mars_cards],
+              "hasNamedMoons":any(
+                  "Phobos" in str(c.get("excerpt") or "") and
+                  "Deimos" in str(c.get("excerpt") or "") for c in mars_cards)
+          }),flush=True)
+          assert mars_topic=="moons of Mars"
+          assert mars_route.get("phase")=="RESEARCH_READY",mars_route
+          assert mars_cards
+          assert any("Phobos" in str(c.get("excerpt") or "")
+                     and "Deimos" in str(c.get("excerpt") or "")
+                     for c in mars_cards)
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: swrlz-adaptive-research-staged-source
+          path: swrlz-adaptive-research-rollback/
+          retention-days: 7
+          if-no-files-found: warn
