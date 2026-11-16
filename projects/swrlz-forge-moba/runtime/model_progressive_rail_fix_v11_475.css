@@ -1,0 +1,71 @@
+/* SE475_PROGRESSIVE_RAIL_VISIBILITY_STYLES_START */
+/* The original category rail scrolls and clips its contents. The native
+   v11.474 tool flyout is now a DIRECT .atelier-body child, positioned within
+   the work area beside the chosen category, not inside that scroll container. */
+html #modelAtelierPanel.se187-modeler-page[data-se475-mounted=true] .atelier-body>#se474ToolFlyout{
+ position:absolute!important;z-index:190!important;
+ left:var(--se475-flyout-x,5px)!important;top:var(--se475-flyout-y,5px)!important;
+ right:auto!important;bottom:auto!important;
+ width:var(--se475-flyout-width,212px)!important;
+ max-width:calc(100% - 10px)!important;max-height:min(430px,calc(100% - 10px))!important;
+ display:flex!important;flex-flow:column nowrap!important;align-items:stretch!important;
+ overflow-x:hidden!important;overflow-y:auto!important;overscroll-behavior:contain;
+ touch-action:pan-y!important;pointer-events:auto!important;
+}
+html #modelAtelierPanel.se187-modeler-page[data-se475-mounted=true] .atelier-body>#se474ToolFlyout[hidden]{
+ display:none!important;
+}
+html #modelAtelierPanel.se187-modeler-page[data-se475-mounted=true] .atelier-body>#se474ToolFlyout button{
+ flex:0 0 auto!important;width:100%!important;max-width:100%!important;
+ min-height:44px!important;padding:8px 10px!important;
+ border:1px solid #688aa5!important;border-radius:7px!important;
+ font:700 12px/1.3 system-ui!important;color:#eefcff!important;
+ background:#283f55!important;text-align:left!important;
+}
+html #modelAtelierPanel.se187-modeler-page[data-se475-mounted=true] .atelier-body>#se474ToolFlyout button[aria-pressed=true]{
+ background:#206b7b!important;border-color:#90e6da!important;
+ box-shadow:inset 3px 0 #90e6da!important;
+}
+html #modelAtelierPanel.se187-modeler-page[data-se475-mounted=true] .atelier-body>#se474ToolFlyout .se474-flyout-title button{
+ flex:0 0 40px!important;width:40px!important;min-height:40px!important;
+ padding:4px!important;text-align:center!important;font-size:19px!important;
+}
+/* The progressive controller, not the old context default, owns family
+   highlighting. Selecting Sculpt should never leave Meshes visibly selected. */
+html #modelAtelierPanel.se187-modeler-page[data-se475-mounted=true][data-se320-ui] #modelAtelierToolRail>button[data-se475-family-state=selected]{
+ background:#176875!important;color:#f0ffff!important;
+ border-color:#8df5df!important;box-shadow:inset 3px 0 #a8ffe6!important;
+}
+html #modelAtelierPanel.se187-modeler-page[data-se475-mounted=true][data-se320-ui] #modelAtelierToolRail>button[data-se475-family-state=idle]{
+ background:#2c203d!important;border-color:#7e5b9f!important;
+ box-shadow:none!important;
+}
+/* The top specific-mode bar stays inside the model viewport, below any
+   existing transform strip. Its placement follows the real viewport bounds. */
+html #modelAtelierPanel.se187-modeler-page[data-se475-mounted=true] .atelier-body>#se474SpecificModes{
+ position:absolute!important;z-index:175!important;
+ top:var(--se475-modes-y,55px)!important;
+ left:var(--se475-modes-x,6px)!important;
+ right:auto!important;bottom:auto!important;
+ width:var(--se475-modes-width,calc(100% - 16px))!important;
+ max-width:calc(100% - 10px)!important;
+ min-height:47px!important;max-height:57px!important;
+ flex-flow:row nowrap!important;overflow-x:auto!important;overflow-y:hidden!important;
+ touch-action:pan-x!important;overscroll-behavior-x:contain;
+ pointer-events:auto!important;
+}
+html #modelAtelierPanel.se187-modeler-page[data-se475-mounted=true] .atelier-body>#se474SpecificModes[hidden]{
+ display:none!important;
+}
+html #modelAtelierPanel[data-se475-mounted=true] :is(#se474ToolFlyout,#se474SpecificModes) button:focus-visible{
+ outline:2px solid #a3fff0!important;outline-offset:1px!important;
+}
+@media(max-width:699px),(pointer:coarse){
+ html #modelAtelierPanel.se187-modeler-page[data-se475-mounted=true] .atelier-body>#se474ToolFlyout{
+  /* Actual compact versus desktop-site layout is chosen by JS, not pointer
+     type; coarse pointers can still have a tall vertical right tool rail. */
+  right:auto!important;bottom:auto!important;top:var(--se475-flyout-y,5px)!important;
+  left:var(--se475-flyout-x,5px)!important;max-height:min(430px,calc(100% - 10px))!important;
+ }
+}
+/* SE475_PROGRESSIVE_RAIL_VISIBILITY_STYLES_END */
