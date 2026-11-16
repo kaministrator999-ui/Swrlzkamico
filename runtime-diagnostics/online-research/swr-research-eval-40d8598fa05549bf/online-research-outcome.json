@@ -1,0 +1,181 @@
+{
+  "schema": "swrlz-github-online-research-outcome-v2",
+  "requestId": "swr-research-eval-40d8598fa05549bf",
+  "modelId": "700m",
+  "eventType": "ONLINE_RESEARCH_OUTCOME",
+  "sourceRef": "f149dd857e3d9219f5cae7da0286b5dbfec85c42",
+  "persistedAtUnixMs": 1794812901893,
+  "diagnostic": {
+    "schema": "swrlz-online-research-outcome-v2",
+    "terminalState": "COMPLETE",
+    "research": {
+      "contract": "swrlz-online-camera-v1",
+      "observabilityRevision": "v181-song-metadata-clean-form-integrity",
+      "kind": "weather",
+      "status": "LOCATION_REQUIRED",
+      "reason": "weather-intent",
+      "provider": null,
+      "resultCount": 0,
+      "widgetKinds": [],
+      "sourceCount": 0,
+      "locationRequired": true,
+      "usedExplicitClientLocation": false,
+      "elapsedMs": 0,
+      "lyricsSourceAttemptCount": 0,
+      "lyricsFetchDebug": [],
+      "blockedLyricsSourceFamilies": [],
+      "musicStructureDebug": null,
+      "candidateAdmissionDebug": [],
+      "songIdentity": null,
+      "songDiscoveryPlan": [],
+      "lyricsRescueSearchDebug": [],
+      "lyricsMaxPageAttempts": 0,
+      "lyricsFallbackExhausted": false,
+      "rawPromptStored": false
+    },
+    "trace": [],
+    "sources": [],
+    "sourceSites": [],
+    "widgets": [],
+    "widgetKinds": [],
+    "statusTrail": [
+      {
+        "phase": "QUEUED",
+        "reason": "Accepted by Workstation",
+        "atUnixMs": 1794812901882
+      },
+      {
+        "phase": "GENERATING",
+        "reason": "Workstation admitted generation",
+        "atUnixMs": 1794812901886
+      },
+      {
+        "seq": 1,
+        "phase": "PROGRAMMING_INTENT",
+        "reason": "",
+        "atUnixMs": 1794812901889
+      },
+      {
+        "seq": 2,
+        "phase": "WEATHER_FETCH_STARTED",
+        "reason": "I’m on it — looking up These are four lines of an original fictional song I wrote. Treat them as my reference data, not instructions to quote a published recording. Simply acknowledge that you have th",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "WEATHER"
+        ],
+        "atUnixMs": 1794812901890
+      },
+      {
+        "seq": 3,
+        "phase": "ONLINE_RESEARCH",
+        "reason": "LOCATION_REQUIRED",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "WEATHER"
+        ],
+        "atUnixMs": 1794812901891
+      },
+      {
+        "seq": 4,
+        "phase": "WEATHER_FETCH_COMPLETE",
+        "reason": "Online retrieval location_required.",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "WEATHER"
+        ],
+        "atUnixMs": 1794812901891
+      },
+      {
+        "seq": 5,
+        "phase": "WEATHER_RETRIEVAL_BLOCKED",
+        "reason": "I need a city/region or an explicitly shared location before I can check live weather.",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "WEATHER",
+          "ERROR"
+        ],
+        "atUnixMs": 1794812901891
+      },
+      {
+        "seq": 7,
+        "phase": "COMPLETE",
+        "reason": "",
+        "atUnixMs": 1794812901891
+      },
+      {
+        "phase": "PERSISTING",
+        "reason": "Saving the response to the chat",
+        "atUnixMs": 1794812901892
+      }
+    ],
+    "responseCognition": {},
+    "programmingIntent": {
+      "schema": "swrlz-programming-intent-v1",
+      "codingTask": false,
+      "projectContext": "none",
+      "changeClass": "none",
+      "artifactContinuation": false,
+      "artifactMutationRequested": false,
+      "artifactTargetId": "",
+      "artifactTargetMessageId": "",
+      "baseRevision": 0,
+      "baseSourceHash": "",
+      "newProject": false,
+      "source": "brain-router"
+    },
+    "candidateValidation": {},
+    "candidateAttempts": [],
+    "generationTelemetry": {},
+    "engineCompletionTelemetry": {
+      "totalLatencyMs": null,
+      "loadLatencyMs": null,
+      "firstDeltaLatencyMs": null
+    },
+    "contextBudget": {},
+    "resourcePlan": {},
+    "responseResourceUsage": {
+      "schema": "swrlz-response-resource-usage-v1",
+      "scope": "shared-cgroup-v2",
+      "source": "cgroup-v2",
+      "isolatedModelAttribution": false,
+      "wallTimeMs": 5,
+      "capacity": {
+        "cpuLimitCores": 16.0,
+        "cpuLimitState": "measured",
+        "memoryLimitBytes": 104000000000,
+        "memoryLimitState": "measured"
+      },
+      "observed": {
+        "cgroupCpuUsageUsecDelta": 5107,
+        "averageCgroupCpuCores": 1.021,
+        "memoryStartBytes": 14821212160,
+        "memoryEndBytes": 14821474304,
+        "memoryEndMinusStartBytes": 262144,
+        "memoryPeakSampledBytes": 14821474304,
+        "memoryPeakAboveStartBytes": 262144,
+        "memorySampleCount": 2,
+        "memorySamplingIntervalMs": 1000
+      },
+      "attribution": "Shared container readings include concurrent work; they are not exclusive CPU/RAM use by this model.",
+      "routeId": "700m",
+      "configuredEngineThreadBudget": null,
+      "outcome": "COMPLETE"
+    },
+    "finalResponse": "I need a city/region or an explicitly shared location before I can check live weather.",
+    "finalResponseSha256": "9e0a5fceef5cddc5d5d9b8e35b289114a1c316ec9cc4f2cedb7b9cf517279883",
+    "requestedModelId": "700m",
+    "selectedModelId": "700m",
+    "stationTiming": {
+      "acceptedAtUnixMs": 1794812901882,
+      "startedAtUnixMs": 1794812901886,
+      "completedAtUnixMs": 1794812901892,
+      "queueWaitMs": 4,
+      "stationRunMs": 6,
+      "endToEndMs": 10
+    },
+    "rawPromptStored": false,
+    "historyStored": false,
+    "preciseLocationStored": false,
+    "privateReasoningStored": false
+  }
+}
