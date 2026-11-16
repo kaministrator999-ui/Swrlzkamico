@@ -7,6 +7,8 @@ on:
       - ".github/workflows/measure-engine-v11-478.yml"
       - "projects/swrlz-forge-moba/patches/v11_478_ring_vertex_highlight.py"
       - "projects/swrlz-forge-moba/runtime/model_ring_vertex_highlight_v11_478.js"
+      - "projects/swrlz-forge-moba/runtime/model_ring_height_v11_478.js"
+      - "projects/swrlz-forge-moba/runtime/model_ring_height_v11_478.css"
       - "projects/swrlz-forge-moba/scripts/prepare_v11_478_release.py"
       - "projects/swrlz-forge-moba/scripts/verify_v11_478_release.py"
       - "projects/swrlz-forge-moba/tests/model_ring_vertex_highlight_v11_478.mjs"
@@ -38,7 +40,7 @@ jobs:
         run: |
           npm install --no-save playwright@1.56.1
           npx playwright install --with-deps --only-shell chromium
-      - name: Test ring and fill selection, complete point overlays and center changes
+      - name: Test Extrude/Inset ring and fill selection, full point overlays, native height preview and Apply/Cancel
         run: node projects/swrlz-forge-moba/tests/model_ring_vertex_highlight_browser_v11_478.cjs projects/swrlz-forge-moba/_release_v11_478_candidate
       - name: Preserve exact source receipt and viewport screenshots
         if: always()
