@@ -1,0 +1,43 @@
+name: "§C live intent source snapshot (read-only)"
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/hf-live-intent-source-snapshot.yml"
+      - "scripts/hf_live_intent_qa_v2.py"
+      - "tests/test_hf_live_intent_qa_v2.py"
+permissions:
+  contents: read
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Snapshot exact live HF source for source-pinned QA (read-only)
+        run: |
+          pip install 'huggingface_hub>=0.29,<2'
+          python - <<'PY'
+          from huggingface_hub import HfApi,hf_hub_download
+          from pathlib import Path
+          import json,hashlib
+          space='kamiloki/Swyrlz'
+          api=HfApi()
+          rev=api.repo_info(repo_id=space,repo_type='space').sha
+          files=('online_tools.py','qwen_coder_engine.py','lfm2_700m_engine.py','music_structure.py')
+          output=Path('source-snapshot')
+          output.mkdir(exist_ok=True)
+          manifest={'revision':rev,'files':{}}
+          for f in files:
+              b=Path(hf_hub_download(space,f,revision=rev,repo_type='space')).read_bytes()
+              (output/f).write_bytes(b)
+              manifest['files'][f]={'sha256':hashlib.sha256(b).hexdigest(),'bytes':len(b)}
+          (output/'manifest.json').write_text(json.dumps(manifest,indent=2)+'\n')
+          print('READONLY_HF_INTENT_SOURCE_SNAPSHOT',json.dumps(manifest),flush=True)
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: sc-source-snapshot
+          path: source-snapshot/
+          retention-days: 3
