@@ -1,0 +1,85 @@
+{
+  "schema": "swrlz-knowledge-acquisition-snapshot-v1",
+  "requestId": "swr-research-eval-2852cc1271ee480b",
+  "modelId": "700m",
+  "eventType": "KNOWLEDGE_ACQUISITION_SNAPSHOT",
+  "sourceRef": "f149dd857e3d9219f5cae7da0286b5dbfec85c42",
+  "persistedAtUnixMs": 1794852252087,
+  "diagnostic": {
+    "schema": "swrlz-knowledge-acquisition-snapshot-v1",
+    "requestId": "swr-research-eval-2852cc1271ee480b",
+    "trigger": {
+      "userText": "Remember this original fictional lullaby line I just wrote: 'A paper moon is humming through the bedroom window.' Acknowledge it briefly; no web and no forecast.",
+      "sha256": "3e9549c068d812237b6af55abab62f2a6eb40fcade522ab2523fee27ca7f9057"
+    },
+    "research": {
+      "kind": "weather",
+      "status": "LOCATION_REQUIRED",
+      "provider": "",
+      "reason": "weather-intent",
+      "query": "",
+      "resultCount": 0,
+      "sources": [],
+      "sourceSites": [],
+      "widgetKinds": [],
+      "trace": []
+    },
+    "answer": {
+      "text": "I need a city/region or an explicitly shared location before I can check live weather.",
+      "sha256": "9e0a5fceef5cddc5d5d9b8e35b289114a1c316ec9cc4f2cedb7b9cf517279883"
+    },
+    "followUpWindow": {
+      "maxUserTurns": 3,
+      "captured": [],
+      "state": "OPEN"
+    },
+    "review": {
+      "state": "PENDING",
+      "promoteToLocalKnowledge": false,
+      "notes": []
+    },
+    "privacy": {
+      "preciseLocationStored": false,
+      "privateReasoningStored": false,
+      "fullHistoryStored": false
+    },
+    "statusTrail": [
+      {
+        "phase": "QUEUED",
+        "reason": "Accepted by Workstation"
+      },
+      {
+        "phase": "GENERATING",
+        "reason": "Workstation admitted generation"
+      },
+      {
+        "phase": "PROGRAMMING_INTENT",
+        "reason": ""
+      },
+      {
+        "phase": "WEATHER_FETCH_STARTED",
+        "reason": "I’m on it — looking up Remember this original fictional lullaby line I just wrote: 'A paper moon is humming through the bedroom window.' Acknowledge it briefly; no web and no forecast.…"
+      },
+      {
+        "phase": "ONLINE_RESEARCH",
+        "reason": "LOCATION_REQUIRED"
+      },
+      {
+        "phase": "WEATHER_FETCH_COMPLETE",
+        "reason": "Online retrieval location_required."
+      },
+      {
+        "phase": "WEATHER_RETRIEVAL_BLOCKED",
+        "reason": "I need a city/region or an explicitly shared location before I can check live weather."
+      },
+      {
+        "phase": "COMPLETE",
+        "reason": ""
+      },
+      {
+        "phase": "PERSISTING",
+        "reason": "Saving the response to the chat"
+      }
+    ]
+  }
+}
