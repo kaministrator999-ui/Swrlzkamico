@@ -1,0 +1,803 @@
+{
+  "schema": "swrlz-github-online-research-outcome-v2",
+  "requestId": "swr-research-eval-295b2ab31f864f15",
+  "modelId": "700m",
+  "eventType": "ONLINE_RESEARCH_OUTCOME",
+  "sourceRef": "f149dd857e3d9219f5cae7da0286b5dbfec85c42",
+  "persistedAtUnixMs": 1794848418597,
+  "diagnostic": {
+    "schema": "swrlz-online-research-outcome-v2",
+    "terminalState": "COMPLETE",
+    "research": {
+      "contract": "swrlz-online-camera-v1",
+      "observabilityRevision": "v181-song-metadata-clean-form-integrity",
+      "kind": "search",
+      "status": "NO_RESULTS",
+      "reason": "existing-lyrics-retrieval",
+      "provider": "bounded-web-search-chain-v1",
+      "resultCount": 0,
+      "widgetKinds": [],
+      "sourceCount": 0,
+      "locationRequired": false,
+      "usedExplicitClientLocation": false,
+      "elapsedMs": 1388,
+      "lyricsSourceAttemptCount": 1,
+      "lyricsFetchDebug": [
+        {
+          "attempt": 1,
+          "origin": "research-evidence",
+          "requestedUrl": "https://vocaberry.com/grammar/demonstratives-this-that-these-those/",
+          "finalUrl": "https://vocaberry.com/grammar/demonstratives-this-that-these-those/",
+          "searchResultTitle": "Demonstratives in English Grammar – This, That, These , Those",
+          "fetchedPageTitle": "Demonstratives in English Grammar – This, That, These, Those",
+          "fetchStatus": null,
+          "fetchedContent": {
+            "chars": 6784,
+            "sha256": "ba6cbf4aefe4a15c573afa7c2e119fb03ed632e095415238ad253b38d0ffcd9a",
+            "anchorIndex": null,
+            "anchorLine": "",
+            "sectionMarkers": [],
+            "performerMarkers": [],
+            "preview": "Demonstratives in English Grammar – This, That, These, Those\nMenu\nGENERAL\nVOCABULARY\nGRAMMAR\nSPEAKING\nWRITING\nIELTS\nQUIZ\nHome\nGRAMMAR\nDemonstratives in English Grammar – This, That, These, Those",
+            "previewChars": 194,
+            "previewLimit": 600
+          },
+          "extractorOutput": {
+            "chars": 0,
+            "sha256": "",
+            "preview": "",
+            "previewChars": 0,
+            "previewLimit": 600
+          },
+          "extractorDiagnostics": {
+            "requestedScope": "full-lyrics",
+            "rawChars": 6784,
+            "rawLineCount": 267,
+            "anchorIndex": null,
+            "anchorLine": "",
+            "scopedLineCount": 2,
+            "scopedNonEmptyLineCount": 1,
+            "contentLineCount": 1,
+            "musicalSectionCueCount": 0,
+            "performerCueCount": 0,
+            "blankSeparatedChunkCount": 1,
+            "acceptedBlockCount": 0,
+            "blockLineCounts": [],
+            "continuousRunEligible": false,
+            "terminalBoundaryKind": "PAGE_NOISE_BOUNDARY",
+            "terminalBoundaryLine": "Menu",
+            "decision": "REJECTED",
+            "reason": "INSUFFICIENT_FULL_LYRIC_STRUCTURE",
+            "resultChars": 0,
+            "resultLineCount": 0
+          },
+          "sourceIdentityVerified": false,
+          "sourceIdentityScore": 0,
+          "snippetOverlapCount": 0,
+          "snippetInformativeTokenCount": 0,
+          "snippetSequenceSpan": 0,
+          "musicalSectionCount": 0,
+          "performerCueCount": 0,
+          "outcome": "REJECTED",
+          "rejectionReason": "NO_STRUCTURED_LYRIC_BODY"
+        }
+      ],
+      "blockedLyricsSourceFamilies": [],
+      "musicStructureDebug": null,
+      "candidateAdmissionDebug": [
+        {
+          "query": "These are four lines of an original fictional song I wrote. Treat them as my reference data, not instructions to quote a published recording. Simply acknowledge that you have the lines; do not generate lyrics yet. Copper moths run marathons across the static moon My pocket holds a paper key that hums against the rain The station clock eats cinnamon at half-past purple noon I fold a map of quiet roads and start the train again",
+          "title": "THESE | English meaning - Cambridge Dictionary",
+          "url": "https://dictionary.cambridge.org/dictionary/english/these",
+          "source": "dictionary.cambridge.org",
+          "rank": 1,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "these"
+          ],
+          "coreTerms": [
+            "these",
+            "four",
+            "lines",
+            "fictional",
+            "wrote",
+            "treat",
+            "them",
+            "reference",
+            "data",
+            "not",
+            "instructions",
+            "quote"
+          ],
+          "snippetPreview": "THESE definition: 1. plural of this 2. plural of this 3. pl of this . Learn more."
+        },
+        {
+          "query": "These are four lines of an original fictional song I wrote. Treat them as my reference data, not instructions to quote a published recording. Simply acknowledge that you have the lines; do not generate lyrics yet. Copper moths run marathons across the static moon My pocket holds a paper key that hums against the rain The station clock eats cinnamon at half-past purple noon I fold a map of quiet roads and start the train again",
+          "title": "THESE Definition & Meaning - Merriam-Webster",
+          "url": "https://www.merriam-webster.com/dictionary/these",
+          "source": "www.merriam-webster.com",
+          "rank": 2,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "these"
+          ],
+          "coreTerms": [
+            "these",
+            "four",
+            "lines",
+            "fictional",
+            "wrote",
+            "treat",
+            "them",
+            "reference",
+            "data",
+            "not",
+            "instructions",
+            "quote"
+          ],
+          "snippetPreview": "1 day ago · The meaning of THESE is plural of this."
+        },
+        {
+          "query": "These are four lines of an original fictional song I wrote. Treat them as my reference data, not instructions to quote a published recording. Simply acknowledge that you have the lines; do not generate lyrics yet. Copper moths run marathons across the static moon My pocket holds a paper key that hums against the rain The station clock eats cinnamon at half-past purple noon I fold a map of quiet roads and start the train again",
+          "title": "THESE Definition & Meaning | Dictionary .com",
+          "url": "https://www.dictionary.com/browse/these",
+          "source": "www.dictionary.com",
+          "rank": 3,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "these"
+          ],
+          "coreTerms": [
+            "these",
+            "four",
+            "lines",
+            "fictional",
+            "wrote",
+            "treat",
+            "them",
+            "reference",
+            "data",
+            "not",
+            "instructions",
+            "quote"
+          ],
+          "snippetPreview": "THESE definition: plural of this. See examples of these used in a sentence."
+        },
+        {
+          "query": "These are four lines of an original fictional song I wrote. Treat them as my reference data, not instructions to quote a published recording. Simply acknowledge that you have the lines; do not generate lyrics yet. Copper moths run marathons across the static moon My pocket holds a paper key that hums against the rain The station clock eats cinnamon at half-past purple noon I fold a map of quiet roads and start the train again",
+          "title": "THESE | definition in the Cambridge English Dictionary",
+          "url": "https://dictionary.cambridge.org/us/dictionary/english/these",
+          "source": "dictionary.cambridge.org",
+          "rank": 4,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "these"
+          ],
+          "coreTerms": [
+            "these",
+            "four",
+            "lines",
+            "fictional",
+            "wrote",
+            "treat",
+            "them",
+            "reference",
+            "data",
+            "not",
+            "instructions",
+            "quote"
+          ],
+          "snippetPreview": "THESE meaning: 1. plural of this 2. plural of this 3. pl of this . Learn more."
+        },
+        {
+          "query": "These are four lines of an original fictional song I wrote. Treat them as my reference data, not instructions to quote a published recording. Simply acknowledge that you have the lines; do not generate lyrics yet. Copper moths run marathons across the static moon My pocket holds a paper key that hums against the rain The station clock eats cinnamon at half-past purple noon I fold a map of quiet roads and start the train again",
+          "title": "These - definition of these by The Free Dictionary",
+          "url": "https://www.thefreedictionary.com/these",
+          "source": "www.thefreedictionary.com",
+          "rank": 5,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "these"
+          ],
+          "coreTerms": [
+            "these",
+            "four",
+            "lines",
+            "fictional",
+            "wrote",
+            "treat",
+            "them",
+            "reference",
+            "data",
+            "not",
+            "instructions",
+            "quote"
+          ],
+          "snippetPreview": "Define these. these synonyms, these pronunciation, these translation, English dictionary definition of these. pron. & adj. Plural of this. …"
+        },
+        {
+          "query": "These are four lines of an original fictional song I wrote. Treat them as my reference data, not instructions to quote a published recording. Simply acknowledge that you have the lines; do not generate lyrics yet. Copper moths run marathons across the static moon My pocket holds a paper key that hums against the rain The station clock eats cinnamon at half-past purple noon I fold a map of quiet roads and start the train again",
+          "title": "Demonstratives in English Grammar – This, That, These , Those",
+          "url": "https://vocaberry.com/grammar/demonstratives-this-that-these-those/",
+          "source": "vocaberry.com",
+          "rank": 6,
+          "allowed": true,
+          "reason": "SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "these",
+            "that"
+          ],
+          "coreTerms": [
+            "these",
+            "four",
+            "lines",
+            "fictional",
+            "wrote",
+            "treat",
+            "them",
+            "reference",
+            "data",
+            "not",
+            "instructions",
+            "quote"
+          ],
+          "snippetPreview": "Demonstratives point to people or things in context. In English, they include this, that, these, those, and act as pronouns or determiners."
+        },
+        {
+          "query": "These are four lines of an original fictional song I wrote. Treat them as my reference data, not instructions to quote a published recording. Simply acknowledge that you have the lines; do not generate lyrics yet. Copper moths run marathons across the static moon My pocket holds a paper key that hums against the rain The station clock eats cinnamon at half-past purple noon I fold a map of quiet roads and start the train again",
+          "title": "These - Wikipedia",
+          "url": "https://en.m.wikipedia.org/wiki/These",
+          "source": "en.m.wikipedia.org",
+          "rank": 7,
+          "allowed": true,
+          "reason": "SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "these",
+            "you"
+          ],
+          "coreTerms": [
+            "these",
+            "four",
+            "lines",
+            "fictional",
+            "wrote",
+            "treat",
+            "them",
+            "reference",
+            "data",
+            "not",
+            "instructions",
+            "quote"
+          ],
+          "snippetPreview": "This disambiguation page lists articles associated with the title These. If an internal link incorrectly led you here, you may wish to …"
+        },
+        {
+          "query": "These are four lines of an original fictional song I wrote. Treat them as my reference data, not instructions to quote a published recording. Simply acknowledge that you have the lines; do not generate lyrics yet. Copper moths run marathons across the static moon My pocket holds a paper key that hums against the rain The station clock eats cinnamon at half-past purple noon I fold a map of quiet roads and start the train again",
+          "title": "these - Wiktionary, the free dictionary",
+          "url": "https://en.m.wiktionary.org/wiki/these",
+          "source": "en.m.wiktionary.org",
+          "rank": 8,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "these"
+          ],
+          "coreTerms": [
+            "these",
+            "four",
+            "lines",
+            "fictional",
+            "wrote",
+            "treat",
+            "them",
+            "reference",
+            "data",
+            "not",
+            "instructions",
+            "quote"
+          ],
+          "snippetPreview": "Oct 20, 2026 · These pretzels are making me thirsty. 2019 September 20, “MDF vs HDF: Understanding Differences and Best Uses …"
+        }
+      ],
+      "songIdentity": {},
+      "songDiscoveryPlan": [],
+      "lyricsRescueSearchDebug": [],
+      "lyricsMaxPageAttempts": 3,
+      "lyricsFallbackExhausted": true,
+      "rawPromptStored": false
+    },
+    "trace": [
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794848417205,
+        "phase": "RESEARCH_STARTED",
+        "activity": "Online research started",
+        "provider": "bounded-web-search-chain-v1",
+        "site": "",
+        "url": ""
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794848417206,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794848417357,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "activity": "No usable results from provider",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "httpStatus": 202,
+        "resultCount": 0
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794848417357,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794848417503,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "activity": "No usable results from provider",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "httpStatus": 202,
+        "resultCount": 0
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794848417503,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794848417843,
+        "phase": "SEARCH_PROVIDER_RESULTS",
+        "activity": "Search results found",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "httpStatus": 200,
+        "resultCount": 8
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794848417843,
+        "phase": "SEARCH_PROVIDER_SELECTED",
+        "activity": "Using bing-html",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "resultCount": 8
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794848417846,
+        "phase": "PAGE_FETCH_STARTED",
+        "activity": "Visiting result page",
+        "provider": "web-page",
+        "site": "vocaberry.com",
+        "url": "https://vocaberry.com/grammar/demonstratives-this-that-these-those/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794848418581,
+        "phase": "PAGE_FETCH_COMPLETE",
+        "activity": "Page fetched",
+        "provider": "web-page",
+        "site": "vocaberry.com",
+        "url": "https://vocaberry.com/grammar/demonstratives-this-that-these-those/",
+        "httpStatus": 200,
+        "responseBytes": 222936
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1794848418588,
+        "phase": "RESEARCH_COMPLETE",
+        "activity": "Online research complete",
+        "provider": "bounded-web-search-chain-v1",
+        "site": "",
+        "url": "",
+        "resultCount": 1
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "phase": "LYRICS_SOURCE_VERIFICATION",
+        "provider": "lyrics-verifier",
+        "site": "vocaberry.com",
+        "url": "https://vocaberry.com/grammar/demonstratives-this-that-these-those/",
+        "activity": "Checking fetched lyrics candidate",
+        "atUnixMs": 1794848418588
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "phase": "LYRICS_SOURCE_REJECTED",
+        "provider": "lyrics-verifier",
+        "site": "vocaberry.com",
+        "url": "https://vocaberry.com/grammar/demonstratives-this-that-these-those/",
+        "activity": "Lyrics candidate did not satisfy verification",
+        "atUnixMs": 1794848418591
+      }
+    ],
+    "sources": [],
+    "sourceSites": [],
+    "widgets": [],
+    "widgetKinds": [],
+    "statusTrail": [
+      {
+        "phase": "QUEUED",
+        "reason": "Accepted by Workstation",
+        "atUnixMs": 1794848417187
+      },
+      {
+        "phase": "GENERATING",
+        "reason": "Workstation admitted generation",
+        "atUnixMs": 1794848417194
+      },
+      {
+        "seq": 1,
+        "phase": "PROGRAMMING_INTENT",
+        "reason": "",
+        "atUnixMs": 1794848417199
+      },
+      {
+        "seq": 2,
+        "phase": "SEARCH_STARTED",
+        "reason": "I’m on it — looking up These are four lines of an original fictional song I wrote. Treat them as my reference data, not instructions to quote a published recording. Simply acknowledge that you have th",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH"
+        ],
+        "atUnixMs": 1794848417203
+      },
+      {
+        "seq": 3,
+        "phase": "RESEARCH_STARTED",
+        "reason": "Online research started",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "",
+        "url": "",
+        "provider": "bounded-web-search-chain-v1",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794848417205
+      },
+      {
+        "seq": 4,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "provider": "duckduckgo-html",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794848417206
+      },
+      {
+        "seq": 5,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "reason": "No usable results from provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "provider": "duckduckgo-html",
+        "httpStatus": 202,
+        "resultCount": 0,
+        "atUnixMs": 1794848417357
+      },
+      {
+        "seq": 6,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "provider": "duckduckgo-lite",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794848417357
+      },
+      {
+        "seq": 7,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "reason": "No usable results from provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "provider": "duckduckgo-lite",
+        "httpStatus": 202,
+        "resultCount": 0,
+        "atUnixMs": 1794848417503
+      },
+      {
+        "seq": 8,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "provider": "bing-html",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794848417503
+      },
+      {
+        "seq": 9,
+        "phase": "SEARCH_PROVIDER_RESULTS",
+        "reason": "Search results found",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "provider": "bing-html",
+        "httpStatus": 200,
+        "resultCount": 8,
+        "atUnixMs": 1794848417843
+      },
+      {
+        "seq": 10,
+        "phase": "SEARCH_PROVIDER_SELECTED",
+        "reason": "Using bing-html",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "provider": "bing-html",
+        "httpStatus": null,
+        "resultCount": 8,
+        "atUnixMs": 1794848417843
+      },
+      {
+        "seq": 11,
+        "phase": "PAGE_FETCH_STARTED",
+        "reason": "Visiting result page",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "vocaberry.com",
+        "url": "https://vocaberry.com/grammar/demonstratives-this-that-these-those/",
+        "provider": "web-page",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794848417846
+      },
+      {
+        "seq": 12,
+        "phase": "PAGE_FETCH_COMPLETE",
+        "reason": "Page fetched",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "vocaberry.com",
+        "url": "https://vocaberry.com/grammar/demonstratives-this-that-these-those/",
+        "provider": "web-page",
+        "httpStatus": 200,
+        "resultCount": null,
+        "atUnixMs": 1794848418587
+      },
+      {
+        "seq": 13,
+        "phase": "RESEARCH_COMPLETE",
+        "reason": "Online research complete",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "",
+        "url": "",
+        "provider": "bounded-web-search-chain-v1",
+        "httpStatus": null,
+        "resultCount": 1,
+        "atUnixMs": 1794848418591
+      },
+      {
+        "seq": 14,
+        "phase": "LYRICS_SOURCE_VERIFICATION",
+        "reason": "Checking fetched lyrics candidate",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "vocaberry.com",
+        "url": "https://vocaberry.com/grammar/demonstratives-this-that-these-those/",
+        "provider": "lyrics-verifier",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794848418591
+      },
+      {
+        "seq": 15,
+        "phase": "LYRICS_SOURCE_REJECTED",
+        "reason": "Lyrics candidate did not satisfy verification",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "vocaberry.com",
+        "url": "https://vocaberry.com/grammar/demonstratives-this-that-these-those/",
+        "provider": "lyrics-verifier",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1794848418593
+      },
+      {
+        "seq": 16,
+        "phase": "ONLINE_RESEARCH",
+        "reason": "NO_RESULTS",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH"
+        ],
+        "atUnixMs": 1794848418594
+      },
+      {
+        "seq": 17,
+        "phase": "SEARCH_COMPLETE",
+        "reason": "Online retrieval no_results.",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH"
+        ],
+        "atUnixMs": 1794848418595
+      },
+      {
+        "seq": 18,
+        "phase": "LYRICS_VERIFICATION_BLOCKED",
+        "reason": "I found search results for the lyrics, but I couldn't verify the requested lyric text from fetched evidence, so I won't reconstruct it from memory.",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "LYRICS",
+          "GROUNDING"
+        ],
+        "atUnixMs": 1794848418595
+      },
+      {
+        "seq": 20,
+        "phase": "COMPLETE",
+        "reason": "",
+        "atUnixMs": 1794848418595
+      },
+      {
+        "phase": "PERSISTING",
+        "reason": "Saving the response to the chat",
+        "atUnixMs": 1794848418596
+      }
+    ],
+    "responseCognition": {},
+    "programmingIntent": {
+      "schema": "swrlz-programming-intent-v1",
+      "codingTask": false,
+      "projectContext": "none",
+      "changeClass": "none",
+      "artifactContinuation": false,
+      "artifactMutationRequested": false,
+      "artifactTargetId": "",
+      "artifactTargetMessageId": "",
+      "baseRevision": 0,
+      "baseSourceHash": "",
+      "newProject": false,
+      "source": "brain-router"
+    },
+    "candidateValidation": {},
+    "candidateAttempts": [],
+    "generationTelemetry": {},
+    "engineCompletionTelemetry": {
+      "totalLatencyMs": null,
+      "loadLatencyMs": null,
+      "firstDeltaLatencyMs": null
+    },
+    "contextBudget": {},
+    "resourcePlan": {},
+    "responseResourceUsage": {
+      "schema": "swrlz-response-resource-usage-v1",
+      "scope": "shared-cgroup-v2",
+      "source": "cgroup-v2",
+      "isolatedModelAttribution": false,
+      "wallTimeMs": 1401,
+      "capacity": {
+        "cpuLimitCores": 16.0,
+        "cpuLimitState": "measured",
+        "memoryLimitBytes": 104000000000,
+        "memoryLimitState": "measured"
+      },
+      "observed": {
+        "cgroupCpuUsageUsecDelta": 311678,
+        "averageCgroupCpuCores": 0.222,
+        "memoryStartBytes": 6992523264,
+        "memoryEndBytes": 6991843328,
+        "memoryEndMinusStartBytes": -679936,
+        "memoryPeakSampledBytes": 6992523264,
+        "memoryPeakAboveStartBytes": 0,
+        "memorySampleCount": 3,
+        "memorySamplingIntervalMs": 1000
+      },
+      "attribution": "Shared container readings include concurrent work; they are not exclusive CPU/RAM use by this model.",
+      "routeId": "700m",
+      "configuredEngineThreadBudget": null,
+      "outcome": "COMPLETE"
+    },
+    "finalResponse": "I found search results for the lyrics, but I couldn't verify the requested lyric text from fetched evidence, so I won't reconstruct it from memory.",
+    "finalResponseSha256": "b6fd72ce42d1ea9b8b6e2e4097ee293e0bec3153c5772663f955ff48cdad536a",
+    "requestedModelId": "700m",
+    "selectedModelId": "700m",
+    "stationTiming": {
+      "acceptedAtUnixMs": 1794848417187,
+      "startedAtUnixMs": 1794848417194,
+      "completedAtUnixMs": 1794848418596,
+      "queueWaitMs": 7,
+      "stationRunMs": 1402,
+      "endToEndMs": 1409
+    },
+    "rawPromptStored": false,
+    "historyStored": false,
+    "preciseLocationStored": false,
+    "privateReasoningStored": false
+  }
+}
