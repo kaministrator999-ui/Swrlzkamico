@@ -464,6 +464,6 @@
     "patches/v11_470_uv_model_save.py",
     "patches/v11_471_uv_render_project_delete.py"
   ],
-  "finalBytes": null,
-  "finalSha256": null
+  "finalBytes": 10305182,
+  "finalSha256": "5ab937f7eb31462f4eb6ae969f24ec9fec77346e0ab92ef4829ac58b7dc5ef94"
 }
