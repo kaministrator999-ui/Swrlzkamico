@@ -56,6 +56,9 @@ const server=http.createServer((req,res)=>{
     assert(outage.reducedMotion,'Should honor device reduced-motion preference');
     console.log('SE476_PAGE_DOWN_'+p.name+' '+JSON.stringify(outage));
     await page.screenshot({path:path.join(root,'se476-page-down-'+p.name+'.png')});
+    await page.waitForFunction(()=>!document.getElementById('seReleaseNotesDialog')?.open,{timeout:5000});
+    const notesClosed=await page.evaluate(()=>!document.getElementById('seReleaseNotesDialog')?.open);
+    assert(notesClosed,'Native release notes must not intercept first-paint account or Page Down actions');
     await page.locator('#se476OfflineContinue').click({timeout:20000});
     await page.waitForFunction(()=>document.getElementById('se476StartupGate')?.hidden===true,{timeout:12000});
     const after=await page.evaluate(()=>window.SWYRL_ENGINE_STARTUP_476.inspect());
