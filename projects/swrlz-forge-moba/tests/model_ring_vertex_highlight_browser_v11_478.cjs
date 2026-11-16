@@ -131,6 +131,38 @@ const server=http.createServer((req,res)=>{
     const moved=await page.evaluate(()=>window.SWYRL_ENGINE_RING_HIGHLIGHT_478.inspect());
     assert(moved.selectedSlots.includes(1),'New fill center must appear in selected group');
     assert.equal(moved.highlightedCount,moved.selectedCount,'New center must refresh every highlight');
+    await page.waitForSelector('#se478RingHeightSlider',{state:'visible',timeout:5000});
+    const beforeLift=await page.evaluate(()=>window.SWYRL_ENGINE_MODEL_WORKSHOP.inspect());
+    await page.locator('#se478HeightRange').evaluate(el=>{
+      el.value='0.45';el.dispatchEvent(new Event('input',{bubbles:true}));
+    });
+    await page.waitForFunction(()=>window.SWYRL_ENGINE_RING_HEIGHT_478?.inspect()?.previewOwned,{timeout:15000});
+    const previewLift=await page.evaluate(()=>({
+      slide:window.SWYRL_ENGINE_RING_HEIGHT_478.inspect(),
+      workshop:window.SWYRL_ENGINE_MODEL_WORKSHOP.inspect(),
+      overlay:window.SWYRL_ENGINE_RING_HIGHLIGHT_478.inspect()
+    }));
+    assert.equal(previewLift.slide.offset,.45);
+    assert.equal(previewLift.workshop.preview.operation,'ringTransform');
+    assert(previewLift.overlay.highlightedCount===previewLift.overlay.selectedCount,
+      'All selected vertices remain highlighted during live height preview');
+    await page.locator('#se478RingHeightSlider button').filter({hasText:'Cancel'}).click();
+    const canceled=await page.evaluate(()=>window.SWYRL_ENGINE_MODEL_WORKSHOP.inspect());
+    assert.equal(canceled.preview.active,false,'Cancel must restore original mesh');
+    assert.deepEqual(canceled.selection.ids,beforeLift.selection.ids,
+      'Cancel must not lose selected vertices');
+    await page.locator('#se478HeightRange').evaluate(el=>{
+      el.value='0.22';el.dispatchEvent(new Event('input',{bubbles:true}));
+    });
+    await page.waitForFunction(()=>window.SWYRL_ENGINE_RING_HEIGHT_478?.inspect()?.previewOwned,{timeout:15000});
+    await page.locator('#se478RingHeightSlider button').filter({hasText:'Apply height'}).click();
+    const applied=await page.evaluate(()=>({
+      workshop:window.SWYRL_ENGINE_MODEL_WORKSHOP.inspect(),
+      height:window.SWYRL_ENGINE_RING_HEIGHT_478.inspect()
+    }));
+    assert.equal(applied.workshop.preview.active,false,'Apply must commit the native preview');
+    assert.equal(applied.height.offset,0,'Slider resets after commit');
+    assert(applied.workshop.selection.ids.length>0,'Native selected vertices should survive Apply');
     await page.locator('#se474SpecificModes button[data-se474-value="face"]').click({timeout:12000});
     const face=await page.evaluate(()=>({
      state:window.SWYRL_ENGINE_PROGRESSIVE_TOOLS_474.inspect(),
@@ -149,6 +181,14 @@ const server=http.createServer((req,res)=>{
     assert.equal(inset.state.tool,'Inset');
     assert.equal(inset.state.selectionType,'vertex');
     assert(inset.entry.pointCount>0&&inset.entry.visiblePointOverlay);
+    await page.locator('#se477SelectionShapes button[data-se474-value="fill"]').click({timeout:12000});
+    const insetSelect=await page.evaluate(()=>window.SWYRL_ENGINE_RING_HIGHLIGHT_478.selectCenter(1));
+    assert(insetSelect?.ok,'Inset can select full circle of connected vertices');
+    await page.waitForSelector('#se478RingHeightSlider',{state:'visible',timeout:5000});
+    const insetSlider=await page.evaluate(()=>window.SWYRL_ENGINE_RING_HEIGHT_478.inspect());
+    assert.equal(insetSlider.operation,'Inset');
+    assert.equal(insetSlider.shape,'fill');
+    assert(insetSlider.selectedCount>0);
     assert(errors.length===0,'Unexpected script errors '+JSON.stringify(errors.slice(0,4)));
     console.log('SE478_BROWSER_PASS_'+cfg.name);
    }finally{await page.close();}
