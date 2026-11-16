@@ -462,6 +462,6 @@
     "patches/v11_468_standalone_studio_assets.py",
     "patches/v11_469_uv_shape_fit.py"
   ],
-  "finalBytes": null,
-  "finalSha256": null
+  "finalBytes": 10278346,
+  "finalSha256": "d3f298e449bd98307471e37c500be4623d81cbf78cd91e248c2c094c03d3a920"
 }
