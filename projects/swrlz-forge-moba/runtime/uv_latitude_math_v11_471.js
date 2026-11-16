@@ -2,7 +2,7 @@
 // Latitude-aware UV spacing for a sphere flattened along its local Y axis.
 // A blend of 0 preserves the artist's original sphere UVs; 1 distributes
 // texture latitude according to the deformed spheroid's meridian arc length.
-const se471Latitude=Math.freeze((()=>{
+const se471Latitude=Object.freeze((()=>{
  const N=256;
  function lookup(scale){
   const a=Math.hypot(scale[0],scale[2])/Math.SQRT2;
