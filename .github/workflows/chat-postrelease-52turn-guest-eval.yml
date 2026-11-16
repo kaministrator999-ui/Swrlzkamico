@@ -5,12 +5,13 @@ on:
       - Guarded §C music research and original lyric routing release
       - Guarded §C shared response-quality release
       - Guarded §C non-code intent precision release
+      - Guarded §C ZeroGPU Gradio launch bridge release
     types: [completed]
 permissions: {contents: read}
 concurrency:
   # Share the lock with HF source publishers so a Space revision cannot
   # change during a lengthy anonymous browser acceptance matrix.
-  group: swrlz-chat-hf-music-route-release
+  group: swrlz-hf-space-deployment
   cancel-in-progress: false
 jobs:
   acceptance:
