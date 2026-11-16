@@ -32,7 +32,7 @@ class SharedQualityPolicyTests(unittest.TestCase):
         changed=patch_engine(BASE)
         ast.parse(changed)
         self.assertIn(CONTRACT_NAME,changed)
-        self.assertIn(CONTRACT,changed)
+        self.assertIn(repr(CONTRACT),changed)
         test_shared_profile(BASE,changed)
         # The old helper and generator, rather than an invented replacement,
         # remain exact original source except for the two quality insertions.
