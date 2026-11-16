@@ -8,7 +8,7 @@ const expected=[
  "window.SWYRL_ENGINE_VIEW_READABILITY_455?.choose?.('shaded')",
  "window.SWYRL_ENGINE_MODEL_VIEW?.setMode?.('shaded')",
  "const bound=!!selectedMesh()?.material?.map;",
- "if(part.uvPaintPNG&&!shown()?.material?.map)renderParts();",
+ "if(current.uvPaintPNG&&!selectedMesh()?.material?.map)renderParts();",
  "const tx=db.transaction(['projects','metadata'],'readwrite')",
  "data.delete(id);meta.delete(id)",
  "record.updatedAt&&saved.updatedAt!==record.updatedAt",
