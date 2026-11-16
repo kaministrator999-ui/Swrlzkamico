@@ -1,5 +1,5 @@
 """Synthetic cross-thread adaptation test. Never includes real imported conversations."""
-from personal_continuity_v1 import compose, archive_signals, signal, MAX_CONTEXT
+from personal_continuity_v1 import compose, archive_signals, signal, MAX_CONTEXT, latest_imported_signals
 
 
 def msg(text, at, role="user"):
@@ -42,6 +42,14 @@ def run():
     assert signal(msg("I prefer long answers.", 2000000000), "chatgpt-import", "a") is None
     assert "RELATED NATIVE" not in compose("Improve code and tests",[
         thread("future",[msg("We improved code and tests.",2000000000)],2000000000)],[])
+    # Large imports are compressed once into one newest signal per topic.
+    older_import = archive_signals([msg("I prefer short answers when you respond.",1700000000)],"old")
+    newer_import = archive_signals([msg("I prefer detailed answers when you respond.",1750000000)],"new")
+    large_docs = [{"continuitySignals":older_import} for _ in range(1800)]
+    large_docs.append({"continuitySignals":newer_import})
+    compact = latest_imported_signals(large_docs)
+    assert len(compact) == 1 and "detailed answers" in compact[0]["text"],compact
+    assert "short answers" not in compose("Please explain our project",[],[{"continuitySignals":compact}])
     # A preference about lyrics must never silently govern code reviews.
     scoped = [
         msg("I prefer short answers when writing rap lyrics.", 1750000100),
