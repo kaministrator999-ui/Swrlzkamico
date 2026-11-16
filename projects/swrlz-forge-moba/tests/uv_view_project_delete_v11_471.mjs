@@ -7,7 +7,7 @@ const expected=[
  'SE471_PROJECT_DELETE_STYLES_START',
  "window.SWYRL_ENGINE_VIEW_READABILITY_455?.choose?.('shaded')",
  "window.SWYRL_ENGINE_MODEL_VIEW?.setMode?.('shaded')",
- "const bound=!!shown()?.material?.map;",
+ "const bound=!!selectedMesh()?.material?.map;",
  "if(part.uvPaintPNG&&!shown()?.material?.map)renderParts();",
  "const tx=db.transaction(['projects','metadata'],'readwrite')",
  "data.delete(id);meta.delete(id)",
@@ -21,12 +21,11 @@ const expected=[
  "new CustomEvent('swrlz:account-project-deleted'"
 ];
 for(const token of expected)assert(html.includes(token),'Missing UV or project delete contract '+token);
-const imp=html.slice(html.indexOf('async function se336ImportPaint(file)'),
- html.indexOf('function se336RemovePaint()',html.indexOf('async function se336ImportPaint(file)')));
-const set=imp.indexOf('part.uvPaintPNG = png;');
-const view=imp.indexOf("window.SWYRL_ENGINE_VIEW_READABILITY_455?.choose?.('shaded')");
-assert(set!==-1&&view>set,'Material view change must follow a successful import');
-assert(imp.indexOf('if (!valid) throw Error')<view,'Texture must validate before view is switched');
+const imp=html.slice(html.indexOf('/* SE471_UV_IMPORT_DISPLAY_START */'),
+ html.indexOf('/* SE471_UV_IMPORT_DISPLAY_END */'));
+assert(imp.includes('const result=await se471UVImportBase.apply(this,arguments);'));
+assert(imp.includes('current.uvPaintPNG===before'),'Do not switch view if import failed');
+assert(imp.indexOf('const result=await')<imp.indexOf("window.SWYRL_ENGINE_VIEW_READABILITY_455?.choose?.('shaded')"),'Material view change must follow a successful native import');
 const cardStart=html.indexOf('/* SE471_PROJECT_DELETE_CONFIRM_START */');
 const cardEnd=html.indexOf('/* SE471_PROJECT_DELETE_CONFIRM_END */');
 const deletion=html.slice(cardStart,cardEnd);
