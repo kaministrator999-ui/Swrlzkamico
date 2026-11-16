@@ -57,8 +57,7 @@ NEW_WEATHER=r'''    # Rain/snow in user-supplied lyric lines, fiction or song ti
         r"precipitation|wind\s+speed|chance\s+of\s+(?:rain|snow)|"
         r"will\s+it\s+(?:rain|snow)|(?:is|will)\s+it\s+(?:raining|snowing)|"
         r"what(?:'s| is)\s+the\s+(?:rain|snow))\b",text))
-    weather_intent=bool(_WEATHER_TERMS.search(text) and not weather_negated
-                        and explicit_weather_data)'''
+    weather_intent=bool(explicit_weather_data and not weather_negated)'''
 OLD_WEATHER2='''    if _WEATHER_TERMS.search(text) and not weather_negated and not programming.get("codingTask"):'''
 NEW_WEATHER2='''    if weather_intent and not programming.get("codingTask"):'''
 def sha(x):return hashlib.sha256(x).hexdigest()
