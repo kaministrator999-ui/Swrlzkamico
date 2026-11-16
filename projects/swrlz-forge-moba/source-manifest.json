@@ -467,6 +467,6 @@
     "patches/v11_473_folding_workspace.py",
     "patches/v11_474_progressive_model_tools.py"
   ],
-  "finalBytes": 10349408,
-  "finalSha256": "2e897eb339e2e1753186bb4a29c13c44002bc77a443507e0bd8b45fb8d3f3af3"
+  "finalBytes": 10349620,
+  "finalSha256": "d1d8a174989501a8a8b8b46faa22f38a1522b1399ca9b4e9abadd672504492d2"
 }
