@@ -27,6 +27,14 @@ def apply(html):
     html=once(html,
        "cloudRefs.set(getProjectId(),result.project);setStatus('Loaded '+summaryName(result.project.name)+' · revision '+result.project.revision+'.');",
        "cloudRefs.set(getProjectId(),result.project);setStatus('Loaded '+summaryName(result.project.name)+' · revision '+result.project.revision+'.');window.SWYRL_ENGINE_STARTUP_476?.markLoaded?.('cloud',result.project.id);")
+    # Emit only a verified boolean account state; no identity or Google token
+    # crosses from the Chat origin. This is after the existing account verifier.
+    html=once(html,"revoke('Account changed.');se176AccountState(payload);",
+      "revoke('Account changed.');se176AccountState(payload);"+
+      "window.dispatchEvent(new CustomEvent('swrlz:account-assets',{detail:{authenticated:payload?.authenticated===true&&!!payload?.user}}));")
+    html=once(html,"cloudRefs.clear();se176AccountState({authenticated:false});se170Invalidate();",
+      "cloudRefs.clear();se176AccountState({authenticated:false});se170Invalidate();"+
+      "window.dispatchEvent(new CustomEvent('swrlz:account-assets',{detail:{authenticated:false}}));")
     # Native camera binding is intentionally scoped to ModelAtelier.
     html=once(html,'/* SE430_MODEL_STUDIO_CAMERA_END */',
        '/* SE430_MODEL_STUDIO_CAMERA_END */\n'+camera)
