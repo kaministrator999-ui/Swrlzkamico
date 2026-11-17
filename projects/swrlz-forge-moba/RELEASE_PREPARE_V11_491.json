@@ -1,0 +1,9 @@
+{
+  "schema": "swrlz-forge-release-prepare-v1",
+  "requestedBy": "ChatGPT (owner-approved)",
+  "releaseVersion": "v11.491",
+  "scope": "My Projects Update Model cloud-read failed-fetch recovery, selected JSON retry, confirmed-save status and ZIP input diagnostics",
+  "expectedPrevious": "v11.490",
+  "sourcePatch": "patches/v11_491_cloud_model_update_recovery.py",
+  "requires": "Unit test cloud.load-only retries; 468-patch build, source provenance, SHA receipt, native delivery packaging, public HTML and JS MIME check. Owner acceptance on Android."
+}
