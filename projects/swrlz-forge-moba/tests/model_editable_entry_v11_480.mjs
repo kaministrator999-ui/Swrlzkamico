@@ -8,6 +8,8 @@ const patch=fs.readFileSync(new URL('../patches/v11_480_visible_make_editable.py
 new vm.Script(source);
 for(const tok of [
  "const workshop=()=>window.SWYRL_ENGINE_MODEL_WORKSHOP",
+ "const previousInstall=se430BeginnerInstall",
+ "function watchRoot()",
  "const progressive=()=>window.SWYRL_ENGINE_PROGRESSIVE_TOOLS_474?.inspect?.()",
  "['Extrude','Inset'].includes(state.tool)",
  "part?.kind==='topologyMesh'",
