@@ -15,6 +15,8 @@ const ctx=vm.createContext({window:{
  queueMicrotask:()=>{},console});
 vm.runInContext(ring,ctx);
 const api=ctx.window.SWYRL_ENGINE_GEOMETRIC_RING_482;
+assert(vm.runInContext('se482GeometricRing===window.SWYRL_ENGINE_GEOMETRIC_RING_482',ctx),
+ 'Native ring picker must receive the returned controller rather than undefined');
 assert(api?.choose&&api?.selectCenter&&api?.sampleSlots);
 const xyz=[],edges=[];
 const push=(radius,count,y)=>{
