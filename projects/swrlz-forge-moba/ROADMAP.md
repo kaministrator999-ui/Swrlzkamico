@@ -1,3 +1,7 @@
+## §E v11.483 · The Sorting Hat editable native starter (2026-11-17)
+
+Projects → Starter Models includes **The Sorting Hat**, a 49-part native topology-mesh sculpt based on the owner's sketch and multi-angle cloth-hat reference research. The continuous bent crown, warped two-sided brim, eye folds, speaking mouth, fabric band, side creases, repair patches and stitches remain individually editable in the existing Model Studio; no separate viewer is added. Native project path: `scenes/model-atelier-sorting-hat.swyrl.json`. The source scene has 7,874 vertices and 13,238 triangles. Versioned authoring, exact integrity checks, existing save/cloning, camera, model tools, and other starter routes are preserved. Physical Moto/Quest acceptance remains owner testing.
+
 ## §E v11.477 · Selectable vertices and operation-first modeling (2026-11-16)
 
 Sculpt/Topology now present actual operations such as Extrude and Inset in the right-side flyout. Choosing an operation defaults to native Vertex/Single selection and reveals mesh points; the first horizontal bar under transforms chooses Vertex/Edge/Face, and the second offers Single Vertex/Vertex Ring/Filled Vertex Ring (or the corresponding Face/Edge types). Original topology, Preview/Apply/Undo, UV maps and model data are retained. Vertex Ring/Fill requires editable topology and a selected center, while standard Face Inset/Extrude requires selected faces. See [v11.477 native vertex selection hierarchy](docs/NATIVE_VERTEX_SELECTION_HIERARCHY_V11_477.md). Physical Moto/Quest acceptance follows automated touch testing.
