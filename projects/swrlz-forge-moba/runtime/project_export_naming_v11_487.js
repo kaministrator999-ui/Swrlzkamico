@@ -66,3 +66,41 @@ function se487DownloadModelUpdate(name,payload,source,record){
  }else throw Error('This saved project has no editable Model Studio asset');
  se486Rev.download(se487SafeExportName(name),output);
 }
+
+async function se487FetchCardProject(record,source){
+ const id=String(record?.id||'');
+ if(!bounded(id,160))throw Error('Invalid saved project identity');
+ if(source==='local'){
+  const row=await se175Read(id);
+  if(!row||row.id!==id||!row.data?.project||!Array.isArray(row.data.scene?.actors))
+   throw Error('Local project file is unavailable');
+  if(row.data.project.instanceId&&row.data.project.instanceId!==id)
+   throw Error('Local project identity does not match its saved file');
+  return {payload:structuredClone(row.data),record:row};
+ }
+ if(source==='cloud'){
+  if(!ready)throw Error('Connect your account to export a saved project');
+  const reply=await rpc('cloud.load',{projectId:id});
+  if(reply.project?.id!==id||
+     (Number.isInteger(record.revision)&&reply.project.revision!==record.revision))
+   throw Error('Account project changed. Refresh My Projects first.');
+  if(!(reply.bytes instanceof ArrayBuffer)||reply.bytes.byteLength>MAX_RAW)
+   throw Error('Saved project data unavailable or too large');
+  const payload=JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(reply.bytes));
+  if(!payload?.project||!payload.editor||!Array.isArray(payload.scene?.actors))
+   throw Error('Saved account project does not contain a valid native document');
+  return {payload,record};
+ }
+ throw Error('Unknown project source');
+}
+function se487AskNativeModelName(){
+ const scratch=window.SWYRL_ENGINE_WORKSPACES?.usingScratch?.()===true;
+ const title=String(currentProject?.projectName||currentProject?.name||'').trim();
+ const candidate=scratch?String(window.SWYRL_ENGINE_WORKSPACES?.scratchModel?.()?.name||'').trim():title;
+ const initial=/^(untitled(?:\\s+(?:model|project))?|prism jester|model atelier)$/i.test(candidate)?'':candidate;
+ const entered=window.prompt('Name the model to save',initial.slice(0,100));
+ if(entered===null)return null;
+ const clean=entered.trim();
+ if(!clean||clean.length>100)throw Error('Choose a name between 1 and 100 characters');
+ return clean;
+}
