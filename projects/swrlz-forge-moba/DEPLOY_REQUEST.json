@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT (owner-approved)",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.490",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_490_MODEL_RIG_WORKSPACE",
-  "reason": "Repair skinned cloth animation attachment and restore Model Studio camera, view, selection, tool, panel and animation state per saved project. The revised privately supplied Sorting Hat pose is not committed to GitHub. Owner mobile and Quest acceptance remains required.",
-  "sourceCommit": "6390ec09bf61628ebed715896b1ea9605ee07020",
-  "sourceIntegritySha256": "81fe9103fb38038597c52e9cba847dd721c24f3e5b87d1a46f495d64de67adae"
+  "releaseVersion": "v11.491",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_491_CLOUD_MODEL_UPDATE_RECOVERY",
+  "reason": "Repair My Projects failed-fetch handling for authenticated cloud reads. Keep selected file on safe retries, never replay ambiguous saves, distinguish confirmed save from failed list refresh and guide ZIP extraction. Preserve original saved project and revision lineage.",
+  "sourceCommit": "c389f4b60ed7450c8fd2b72f644feadd35d1bec6",
+  "sourceIntegritySha256": "01e04e537538da05b896de35504cca2d1821ffe3441e19adb31ef5be7bfa4cd9"
 }
