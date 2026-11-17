@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT (owner-approved)",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.489",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_489_CLOTH_RIG_PROJECT_UPDATE",
-  "reason": "Add eleven-joint weighted cloth rig playback and editable clips to native Model Studio, and Update Model on selected My Projects account and local project cards with strict identity checks, optimistic cloud save, rollback history and no duplicate project. The owner-authored rigged model file is distributed privately through the conversation, not committed to GitHub. Source and regression tests required; owner Moto/Quest acceptance follows.",
-  "sourceCommit": "8093f632dd8047d6f72b7436d1cf6b21631e3656",
-  "sourceIntegritySha256": "a540931f9f72407e09250dcf94baead8c928cbc0610ae20dceac4aa34a4e2ed6"
+  "releaseVersion": "v11.490",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_490_MODEL_RIG_WORKSPACE",
+  "reason": "Repair skinned cloth animation attachment and restore Model Studio camera, view, selection, tool, panel and animation state per saved project. The revised privately supplied Sorting Hat pose is not committed to GitHub. Owner mobile and Quest acceptance remains required.",
+  "sourceCommit": "6390ec09bf61628ebed715896b1ea9605ee07020",
+  "sourceIntegritySha256": "81fe9103fb38038597c52e9cba847dd721c24f3e5b87d1a46f495d64de67adae"
 }
