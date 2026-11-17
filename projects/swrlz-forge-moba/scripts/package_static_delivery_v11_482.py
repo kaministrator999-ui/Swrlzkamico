@@ -40,7 +40,7 @@ def split_html(original):
     restored = served.replace(TAG, prefix+module+b'\n</script>', 1)
     if restored != original:
         raise ValueError("Static delivery fails lossless round-trip")
-    if b'<title>§wyrl§ Engine · Maker v11.482</title>' not in served:
+    if '<title>§wyrl§ Engine · Maker v11.482</title>'.encode('utf8') not in served:
         raise ValueError("Static document lost its verified version")
     for title, raw in (("HTML", served), ("JavaScript module", module)):
         if len(raw) >= MAX_FILE:
