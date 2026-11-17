@@ -1,0 +1,50 @@
+name: Seal §E v11.483 Sorting Hat starter
+on:
+  push:
+    branches: [main]
+    paths:
+      - "projects/swrlz-forge-moba/RELEASE_PREPARE_V11_483.json"
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: engine-v11-483-sorting-hat-seal
+  cancel-in-progress: false
+jobs:
+  seal:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - name: Checkout canonical §E source
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Rebuild all patches, validate authored Sorting Hat and seal exact source
+        run: python projects/swrlz-forge-moba/scripts/prepare_v11_483_release.py
+      - name: Commit only verified source hash and manifest
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add projects/swrlz-forge-moba/source-manifest.json
+          git diff --cached --quiet && { echo "No new seal produced"; exit 1; }
+          git commit -m "seal(§E v11.483): verified Sorting Hat native starter source"
+          git fetch origin main
+          git rebase origin/main
+          git push origin HEAD:main
+      - name: Preserve sealing receipt
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: engine-v11-483-sorting-hat-integrity
+          path: |
+            projects/swrlz-forge-moba/source-manifest.json
+          if-no-files-found: error
