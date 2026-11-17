@@ -1,0 +1,52 @@
+name: §E v11.496 focused mini-studio integration check
+on:
+  push:
+    branches: [main]
+    paths:
+      - "projects/swrlz-forge-moba/runtime/model_mini_studios_v11_496.js"
+      - "projects/swrlz-forge-moba/runtime/model_mini_studios_v11_496.css"
+      - "projects/swrlz-forge-moba/patches/v11_496_model_mini_studios.py"
+      - ".github/workflows/check-engine-mini-studios-v11-496.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  focused-mini-studios:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate mini-studio JavaScript and patch syntax
+        run: |
+          node --check projects/swrlz-forge-moba/runtime/model_mini_studios_v11_496.js
+          python -m py_compile projects/swrlz-forge-moba/patches/v11_496_model_mini_studios.py
+      - name: Reassemble guarded candidate and print exact integrity
+        run: |
+          python - <<'PY'
+          import base64,gzip,hashlib,json,sys,subprocess
+          from pathlib import Path
+          root=Path('projects/swrlz-forge-moba').resolve()
+          import importlib.util
+          sys.path.insert(0,str(root))
+          import build_space
+          manifest=json.loads((root/'source-manifest.json').read_text('utf8'))
+          chunks=''.join((root/p).read_text('utf8').strip() for p in manifest['chunks'])
+          html=gzip.decompress(base64.b64decode(chunks)).decode('utf8')
+          names=manifest['patches'][:]
+          candidate='patches/v11_496_model_mini_studios.py'
+          if candidate not in names:names.append(candidate)
+          for path in names:
+              html=build_space.load_patch(root/path)(html)
+          for token in ('SWYRL_ENGINE_DEPLOY_MARKER: V11_496_MODEL_MINI_STUDIOS',
+                        'SWYRL_ENGINE_MINI_STUDIOS_496',
+                        'studioMode:window.SWYRL_ENGINE_MINI_STUDIOS_496',
+                        'id="se496ModeTabs"','se496Rest0','se496CreateRig'):
+              if token not in html:raise AssertionError(token)
+          data=html.encode('utf8')
+          print('SE496_CANDIDATE_BYTES',len(data),flush=True)
+          print('SE496_CANDIDATE_SHA256',hashlib.sha256(data).hexdigest(),flush=True)
+          dest=Path('/tmp/se496-candidate.html')
+          dest.write_bytes(data)
+          subprocess.run([sys.executable,str(root/'scripts/check_inline_js_syntax_v11_266.py'),str(dest)],check=True)
+          print('SE496_CANDIDATE_VALIDATED',flush=True)
+          PY
