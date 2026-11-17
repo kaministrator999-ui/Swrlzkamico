@@ -21,7 +21,7 @@ function se494UpdateSteps(card,status,button){
  });
  const caption=document.createElement('small');caption.textContent='Actual stages · transfer time depends on account connection';
  panel.append(title,sub,meter,list,caption);
- card.append(panel);
+ document.body.append(panel);
  card.classList.add('se494-busy');
  function message(value){
   const elapsed=((performance.now()-start)/1000).toFixed(1);
