@@ -20,7 +20,8 @@ def apply(html):
  html=once(html,
   'Convert this mesh to editable topology before selecting a rim.',
   'This mesh needs editable topology for ring selection. Use the contextual Make mesh editable control; protected textured models explain why conversion is unavailable.')
- html=once(html,'</head>','<style id="se480EditableEntryStyles">\n'+css+'\n</style>\n</head>')
+ assert '</head>' in html
+ html=html.replace('</head>','<style id="se480EditableEntryStyles">\n'+css+'\n</style>\n</head>',1)
  for old,new in (
   ('SWYRL_ENGINE_DEPLOY_MARKER: V11_479_RIM_VISIBLE_SIDE',MARKER),
   ('ENGINE · MAKER v11.479','ENGINE · MAKER v11.480'),
