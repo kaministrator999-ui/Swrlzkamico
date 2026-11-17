@@ -49,6 +49,26 @@ se220RigValidate=function(rig){
  return rig?.schema==='swyrl-cloth-skin-v1'
    ?se489ClothRigValidate(rig):se489PriorRigValidate(rig);
 };
+/* Exact authored per-vertex weights take priority on the original topology.
+   If a user changes vertex count, gracefully fall back to procedural envelopes. */
+function se489AuthoredSkinWeights(part,index,rig,point){
+ const data=part?.skinning;
+ const positions=part?.topologyMesh?.positions;
+ const count=Array.isArray(positions)?positions.length/3:0;
+ if(data?.schema!=='swyrl-explicit-skin-v1'||
+    !Number.isInteger(count)||count<=0||
+    data.indices?.length!==count*4||data.weights?.length!==count*4||
+    index<0||index>=count)return se489ClothSkinWeights(point,rig);
+ const at=index*4,indices=[],weights=[];let total=0;
+ for(let j=0;j<4;j++){
+  const bone=data.indices[at+j],w=data.weights[at+j];
+  if(!Number.isInteger(bone)||bone<0||bone>=rig.bones.length||
+     !Number.isFinite(w)||w<0)return se489ClothSkinWeights(point,rig);
+  indices.push(bone);weights.push(w);total+=w;
+ }
+ if(total<=1e-9)return se489ClothSkinWeights(point,rig);
+ return {indices,weights:weights.map(w=>w/total)};
+}
 function se489ClothSkinWeights(pt,rig){
  const source=[['root',1]],idIndex=Object.fromEntries(rig.bones.map((b,i)=>[b.id,i]));
  const smooth=t=>{t=Math.max(0,Math.min(1,t));return t*t*(3-2*t);};
