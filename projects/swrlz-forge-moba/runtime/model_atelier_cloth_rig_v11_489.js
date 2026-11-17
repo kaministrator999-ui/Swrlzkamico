@@ -155,7 +155,7 @@ se220RigRefresh=function(...args){
  return result;
 };
 window.SWYRL_ENGINE_CLOTH_RIG_489=Object.freeze({
- validate:se489ClothRigValidate,weights:se489ClothSkinWeights,
+ validate:se489ClothRigValidate,validateHand:se489PriorRigValidate,weights:se489ClothSkinWeights,
  selectClip:se489SelectClip,status:()=>({active:se489IsClothRig(),
   clip:se220Rig()?.activeClip||null,bones:se220Rig()?.bones?.length||0,
   keyframes:se220Rig()?.timeline?.length||0})
