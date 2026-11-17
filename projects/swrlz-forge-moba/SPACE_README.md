@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.485
+title: §wyrl§ Engine v11.486
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,10 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.486 · Rolling project history and in-place updates (2026-11-17)
+
+Every explicit Save Project now retains a bounded history of eight versions, including the current save; idle autosaves do not consume revision slots. Account history is compressed into each existing authenticated project record (not a duplicate project listing), while on-device saves keep a separate bounded recovery history. Account-size limits can shorten retention for unusually large projects rather than corrupting the project or silently dropping the current save. The project context adds Revision History, Export Model Update and Update This Project with strict local/account identity and stale-revision checks; Model and Particle standalone assets use their existing account identity and gain the same controls in their native asset bar. Restoring an older version creates a new save instead of overwriting the selected history entry. Starter templates and the native editor save/clone flow are unchanged. See `patches/v11_486_project_revisions.py`, `tests/project_revisions_v11_486.cjs` and the governed release verifier. Owner Moto/Quest interaction is a separate acceptance step.
 
 ## §E v11.485 · Sorting Hat reconstructed as one UV-painted cloth sculpt (2026-11-17)
 
