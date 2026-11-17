@@ -4,7 +4,7 @@ on:
   push:
     branches: [main]
     paths:
-      - ".github/workflows/measure-engine-v11-480.yml"
+      - ".github/workflows/measure-engine-v11-481.yml"
       - "projects/swrlz-forge-moba/patches/v11_481_textured_editable_copy.py"
       - "projects/swrlz-forge-moba/runtime/model_textured_editable_copy_v11_481.js"
       - "projects/swrlz-forge-moba/scripts/prepare_v11_481_release.py"
@@ -39,7 +39,7 @@ jobs:
           npm install --no-save playwright@1.56.1
           npx playwright install --with-deps --only-shell chromium
       - name: Test real UV-painted mesh, preserved seam coordinates, native ring editing and original-model recovery
-        run: node projects/swrlz-forge-moba/tests/model_editable_entry_browser_v11_481.cjs projects/swrlz-forge-moba/_release_v11_481_candidate
+        run: node projects/swrlz-forge-moba/tests/model_textured_editable_copy_browser_v11_481.cjs projects/swrlz-forge-moba/_release_v11_481_candidate
       - name: Seal verified source SHA and bytes to main
         if: success() && github.ref == 'refs/heads/main'
         run: |
