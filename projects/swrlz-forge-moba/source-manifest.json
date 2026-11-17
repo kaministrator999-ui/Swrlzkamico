@@ -1,10 +1,10 @@
 {
   "schema": "swrlz-forge-source-v2",
-  "name": "§wyrl§ Engine v11.487",
+  "name": "§wyrl§ Engine v11.488",
   "baseArtifact": "swrlz_forge_v4.html",
   "baseBytes": 99591,
   "baseSha256": "a8299fe89fbb98d15c6091751b7a66931a66efec8eec5cb464e1286f21895856",
-  "finalArtifact": "swyrl_engine_v11_487.html",
+  "finalArtifact": "swyrl_engine_v11_488.html",
   "encoding": "gzip+base64-chunks",
   "chunks": [
     "payload/part-01.txt",
@@ -478,8 +478,9 @@
     "patches/v11_484_ring_detail_transforms.py",
     "patches/v11_485_one_cloth_sorting_hat.py",
     "patches/v11_486_project_revisions.py",
-    "patches/v11_487_model_project_exports.py"
+    "patches/v11_487_model_project_exports.py",
+    "patches/v11_488_account_project_naming.py"
   ],
-  "finalBytes": 10567584,
-  "finalSha256": "aa82629c7039dbfdc647cd716fafd240b60e4673f6c4874671d04b0176f1c10e"
+  "finalBytes": 10573855,
+  "finalSha256": "ef0d15ca45c7b6bee8dd1cb0011cd45bcf784fa3e9e67ba7e795558c8fe6f0a4"
 }
