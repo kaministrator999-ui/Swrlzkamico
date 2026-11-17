@@ -4,8 +4,8 @@
   "target": "kamiloki/swrlz-forge-moba",
   "releaseVersion": "v11.485",
   "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_485_ONE_CLOTH_SORTING_HAT",
-  "reason": "Asset-only hotfix to the one-mesh Sorting Hat after owner's Moto screenshot: smooth the pointed triangular kink into a rounded, downward-curled fabric tip. GitHub workflow 44031806306 verified exactly the eight outer tip rings and exterior cap changed, while all other positions, the face, brim, mesh topology, UV coordinates, UV PNG and 462-patch engine source remain byte-identical. Updated native hat scene is now included in the sealed v11.485 package; all original modeler regression tests passed. Physical Moto/Quest acceptance pending.",
-  "sourceCommit": "aa0b5114b76cad39b3165cc1cb8537d321fce933",
+  "reason": "Owner-specified front/back references for an upright neutral Sorting Hat tip. Replace the previously bent/wrapped flap with a tall, straight-up pointed taper within the ONE editable 3D hat surface. Rigging/posing can bend the tip later. GitHub job 44034961802 passed shape checks for monotonic vertical axis, small horizontal drift, progressive radius and sealed apex. Exact mesh, UV and face/brim invariance verified; unchanged 462-patch source and 78 asset release also passed. Preserve saved projects and all other starters.",
+  "sourceCommit": "c9fabbb79a8f76edc2a3024f69b33e205bc99bab",
   "sourceIntegritySha256": "f481b75ad06496a50a5c3bc17d8168d2e7c6dc4b8efb95f432a6b12f12d56208",
-  "modelAssetSha256": "a215800c68734b942c777af3a041f5981c00b8b97d234f1ddfee189d8db16a8c"
+  "modelAssetSha256": "7ae4fd2f66cbc101925c8a93b593b00286819f2f27b075e47b783817fb20102e"
 }
