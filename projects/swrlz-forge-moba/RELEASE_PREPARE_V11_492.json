@@ -1,0 +1,10 @@
+{
+  "schema": "swrlz-forge-release-prepare-v1",
+  "requestedBy": "ChatGPT (owner-approved)",
+  "releaseVersion": "v11.492",
+  "scope": "Select compressed ZIP updates directly in My Projects Update Model without manual extraction; same saved project and rigorous mesh identity/revision checks.",
+  "expectedPrevious": "v11.491",
+  "sourcePatch": "patches/v11_492_zip_model_updates.py",
+  "requires": "Node ZIP extractor tests including deflate, CRC, ambiguous entries and path safety; previous cloud-read retry; 469-patch source build, SHA seal, HF static delivery, public MIME checks. Owner Android/Quest acceptance after release.",
+  "notes": "ZIP decompression stays in-browser; no automatic cloud write before selected project identity/revision checks and user confirmation."
+}
