@@ -270,7 +270,7 @@ const server=http.createServer((req,res)=>{
     });
     console.log('SE484_INSPECTOR_DETAIL_'+cfg.name+' '+JSON.stringify(detailUI));
     assert(detailUI.c.visible,'Ring detail controls must actually be visible');
-    assert(detailUI.box.width>160,'Mobile detail controls need touch-readable width');
+    assert(detailUI.box.w>160,'Mobile detail controls need touch-readable width');
     await page.evaluate(()=>{
       document.querySelector('[data-se483="inner"]').value='2';
       document.querySelector('[data-se483="spacing"]').value='even';
