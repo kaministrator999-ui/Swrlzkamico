@@ -1,0 +1,21 @@
+/* §E v11.494 — truthful, large touch-legible progress for native model updates. */
+.se494-model-progress{box-sizing:border-box;position:fixed;z-index:2147483100;right:max(12px,env(safe-area-inset-right));bottom:calc(18px + env(safe-area-inset-bottom));width:min(470px,calc(100vw - 24px));max-height:min(77dvh,650px);overflow:auto;background:#101d30;color:#eef8ff;border:1px solid #8cd0ed;border-radius:16px;padding:16px 18px;box-shadow:0 18px 65px #000c;font:13px/1.4 system-ui,sans-serif}
+.se494-model-progress strong{display:block;font-size:15px;line-height:1.3;margin-bottom:8px;color:#e6fbff}
+.se494-current-step{font-size:13px;min-height:34px;color:#a7e5ff;overflow-wrap:anywhere}
+.se494-indeterminate{height:7px;border-radius:12px;background:#253951;overflow:hidden;position:relative;margin:8px 0 14px}
+.se494-indeterminate span{display:block;width:37%;height:100%;border-radius:12px;background:#7fe5db;animation:se494-shuttle 1.6s ease-in-out infinite}
+.se494-indeterminate.se494-meter-done span{width:100%;animation:none;background:#79d8bd}
+.se494-model-progress.se494-failed{border-color:#f0a7ae}
+.se494-model-progress.se494-failed .se494-indeterminate span{animation:none;width:100%;background:#e9a0ae}
+@keyframes se494-shuttle{0%{transform:translateX(-110%)}50%{transform:translateX(120%)}100%{transform:translateX(290%)}}
+.se494-model-progress ol{padding:0;margin:0;display:grid;grid-template-columns:1fr 1fr;gap:7px 10px;list-style:none}
+.se494-model-progress li{position:relative;padding:7px 7px 7px 24px;border-radius:8px;background:#14283e;color:#8092aa;border:1px solid #26374f;min-height:22px}
+.se494-model-progress li:before{position:absolute;left:8px;top:8px;content:'○';color:#667d91;font-size:14px}
+.se494-model-progress li.se494-active{background:#22405b;color:#dff9ff;border-color:#7dd6ef}
+.se494-model-progress li.se494-active:before{content:'◉';color:#8bedeb}
+.se494-model-progress li.se494-complete{background:#183a39;color:#b9eadb;border-color:#46766d}
+.se494-model-progress li.se494-complete:before{content:'✓';color:#99edb8}
+.se494-model-progress small{display:block;margin-top:10px;color:#a3b4ca}
+.se494-model-progress button{margin-top:12px;min-height:38px;border-radius:9px;background:#283b56;color:#f8fcff;border:1px solid #7690ae;padding:6px 18px;cursor:pointer}
+.se184-project-card.se494-busy{outline:2px solid #69d6e2;outline-offset:1px}
+@media(prefers-reduced-motion:reduce){.se494-indeterminate span{animation:none!important;width:100%}}
