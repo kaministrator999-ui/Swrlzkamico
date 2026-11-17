@@ -31,13 +31,13 @@ def apply(html):
  html=html[:matches[0].start()]+"const ordinary=new Set(["+allowed+"]);"+html[matches[0].end():]
  # v11.480 existing button is reused: no competing converter or modal.
  html=once(html,
-  "   const already=part?.kind==='topologyMesh';",
-  "   const already=part?.kind==='topologyMesh'||!!part?.se481WorkId;")
+  "  const already=part?.kind==='topologyMesh';",
+  "  const already=part?.kind==='topologyMesh'||!!part?.se481WorkId;")
  html=once(html,
-  "   const converting=!!native?.convert?.available&&!native?.preview?.active;",
-  """   const textured=window.SWYRL_ENGINE_TEXTURED_TOPOLOGY_481?.inspect?.();
-   const preparing=!!textured?.available&&!native?.preview?.active;
-   const converting=(!!native?.convert?.available||preparing)&&!native?.preview?.active;""")
+  "  const converting=!!native?.convert?.available&&!native?.preview?.active;",
+  """  const textured=window.SWYRL_ENGINE_TEXTURED_TOPOLOGY_481?.inspect?.();
+  const preparing=!!textured?.available&&!native?.preview?.active;
+  const converting=(!!native?.convert?.available||preparing)&&!native?.preview?.active;""")
  html=once(html,
   """  else if(converting)message=
    /bake.*vertex edit/i.test(native.convert.reason||'')?""",
@@ -47,12 +47,12 @@ def apply(html):
    /bake.*vertex edit/i.test(native.convert.reason||'')?""")
  html=once(html,
   """  else message=native?.convert?.reason||
-     'The selected model cannot be converted by the current native topology tool.';""",
+    'The selected model cannot be converted by the current native topology tool.';""",
   """  else message=(textured?.hasPaint&&textured.reason)||native?.convert?.reason||
-     'The selected model cannot be converted by the current native topology tool.';""")
+    'The selected model cannot be converted by the current native topology tool.';""")
  html=once(html,
-  "   write(button,/bake.*vertex edit/i.test(native?.convert?.reason||'')?'Bake edits & make editable':'Make mesh editable');",
-  "   write(button,preparing?'Make textured editable copy':/bake.*vertex edit/i.test(native?.convert?.reason||'')?'Bake edits & make editable':'Make mesh editable');")
+  "  write(button,/bake.*vertex edit/i.test(native?.convert?.reason||'')?'Bake edits & make editable':'Make mesh editable');",
+  "  write(button,preparing?'Make textured editable copy':/bake.*vertex edit/i.test(native?.convert?.reason||'')?'Bake edits & make editable':'Make mesh editable');")
  html=once(html,
   """ function convert(){
   const api=workshop(),s=api?.inspect?.();""",
