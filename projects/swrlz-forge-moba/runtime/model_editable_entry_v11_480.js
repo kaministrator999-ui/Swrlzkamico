@@ -23,6 +23,11 @@
   const bottom=Math.max(sr.top, ...lower);
   const offset=Math.max(7,Math.min(sr.height-68,bottom-sr.top+7));
   card.style.setProperty('--se480-y',Math.round(offset)+'px');
+  // On a narrow phone, the selection bars can consume most of the scene.
+  // Keep the button reachable inside the remaining space instead of clipping
+  // the bottom of the contextual card outside the actual viewport.
+  card.style.setProperty('--se480-max-height',
+   Math.max(60,Math.floor(sr.height-offset-6))+'px');
  }
  function refresh(){
   if(!panel?.isConnected||!card?.isConnected)return;
