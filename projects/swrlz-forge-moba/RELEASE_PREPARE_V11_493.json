@@ -1,0 +1,10 @@
+{
+  "schema": "swrlz-forge-release-prepare-v1",
+  "requestedBy": "ChatGPT (owner-approved)",
+  "releaseVersion": "v11.493",
+  "scope": "Repair Android ZIP update signature recognition and expose precise cloud project Open failures without changing user's saved project revisions",
+  "expectedPrevious": "v11.492",
+  "sourcePatch": "patches/v11_493_project_load_diagnostics.py",
+  "requires": "Node parse ZIP signature and cloud load retry tests, 470 patch assembly, source SHA seal, static browser verification, HF deployment and HTTP/MIME check. Owner must verify saved Sorting Hat revision 6 opening on Android.",
+  "notes": "Do not overwrite or roll back owner's cloud record from this release."
+}
