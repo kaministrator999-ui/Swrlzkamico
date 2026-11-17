@@ -23,19 +23,19 @@ TAU = 2 * math.pi
 ANGULAR = 96
 # Each ring has a duplicated UV vertex along the hidden back meridian. Despite
 # the UV seam, every component is connected through a *single* mesh surface.
-# Tip -> crown: a continuous fabric hook, not the abrupt folded triangle
-# seen on the first mobile render. Radii broaden gradually while the center
-# traces a gentle rightward droop: the very end is below the upper crest.
-# Keep eight rings so the single-mesh topology / UV indices remain identical.
+# Neutral/unposed Sorting Hat. The single fabric crown tapers UP on a
+# nearly vertical centerline, as in the owner's front/back reference pictures.
+# No hook, overhanging triangular flap, or pre-baked pose: subsequent rigging
+# may animate the tip freely. Preserve all eight rings, indices and UV layout.
 TIP = [
-    (2.735, .022, .955, -.270),  # softly rounded hanging end
-    (2.790, .063, .920, -.268),
-    (2.880, .112, .855, -.256),
-    (2.987, .164, .775, -.238),
-    (3.075, .225, .680, -.218),
-    (3.095, .288, .555, -.192),  # rounded upper bend
-    (3.020, .355, .440, -.168),
-    (2.925, .418, .345, -.156),  # flows into the existing crown
+    (4.075, .013, .300, -.155),  # narrow closed upward-pointing apex
+    (3.980, .047, .297, -.155),
+    (3.845, .091, .293, -.156),
+    (3.685, .148, .290, -.156),
+    (3.510, .214, .288, -.156),
+    (3.310, .283, .288, -.155),
+    (3.105, .350, .289, -.154),
+    (2.930, .416, .292, -.153),  # smooth shoulder-to-crown transition
 ]
 BODY = [
     (.22,.875,.00,.00), (.43,.895,-.005,.005),
@@ -91,7 +91,10 @@ def outer_point(y,theta,profile):
     displacement+=.058*g(y,2.15,.58)*math.sin(theta*3.2+y*5.7)
     displacement+=.035*g(y,.53,.26)*math.sin(theta*2.1+1.2)
     r=max(.008,radius+displacement)
-    yy=y+.015*math.sin(theta*3.1+y*4.8)+.009*math.sin(theta*7-y*6)
+    # Dampen angular cloth puckering at the apex, avoiding a star-shaped
+    # closing point; the face/brim below the tip are completely untouched.
+    tip_roundoff=clamp(radius/.24) if y>2.82 else 1.
+    yy=y+tip_roundoff*(.015*math.sin(theta*3.1+y*4.8)+.009*math.sin(theta*7-y*6))
     return (cx+r*xnorm,yy,cz+.93*r*sn)
 
 def brim_point(theta,r,under=False):
