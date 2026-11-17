@@ -9,7 +9,7 @@ permissions:
   contents: write
   actions: write
 concurrency:
-  group: engine-v11-489-rig-workspace
+  group: engine-v11-490-rig-workspace
   cancel-in-progress: false
 jobs:
   verify-seal-deploy:
@@ -27,7 +27,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "20"
-      - name: Verify account names and assemble exact source
+      - name: Verify cloth skin and resume workspace source
         run: python projects/swrlz-forge-moba/scripts/prepare_v11_490_release.py
       - name: Commit real source hash and trigger governed HF release separately
         env:
@@ -48,7 +48,7 @@ jobs:
           root=Path('projects/swrlz-forge-moba')
           m=json.loads((root/'source-manifest.json').read_text('utf8'))
           assert m['name']=='§wyrl§ Engine v11.490'
-          assert m['patches'][-1]=='patches/v11_490_cloth_rig_project_update.py'
+          assert m['patches'][-1]=='patches/v11_490_model_rig_workspace.py'
           assert len(m['finalSha256'])==64
           request={
             'schema':'swrlz-forge-deploy-request-v1',
