@@ -1,0 +1,52 @@
+name: §E v11.497 sculpted one-mesh Sorting Hat acceptance
+on:
+  push:
+    branches: [main]
+    paths:
+      - "projects/swrlz-forge-moba/runtime/sorting_hat_sculpted_v11_497.js"
+      - "projects/swrlz-forge-moba/patches/v11_497_sculpted_sorting_hat.py"
+      - "projects/swrlz-forge-moba/tests/sorting_hat_sculpted_v11_497.cjs"
+      - ".github/workflows/check-engine-sculpted-hat-v11-497.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  single-mesh-acceptance:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate source JavaScript and run topology regression
+        run: |
+          node --check projects/swrlz-forge-moba/runtime/sorting_hat_sculpted_v11_497.js
+          python -m py_compile projects/swrlz-forge-moba/patches/v11_497_sculpted_sorting_hat.py
+          node projects/swrlz-forge-moba/tests/sorting_hat_sculpted_v11_497.cjs
+      - name: Reassemble full engine with v11.496 and v11.497 candidate
+        run: |
+          python - <<'PY'
+          import json,base64,gzip,hashlib,sys,subprocess
+          from pathlib import Path
+          root=Path("projects/swrlz-forge-moba").resolve()
+          sys.path.insert(0,str(root))
+          import build_space
+          manifest=json.loads((root/"source-manifest.json").read_text("utf8"))
+          chunks="".join((root/name).read_text("utf8").strip() for name in manifest["chunks"])
+          html=gzip.decompress(base64.b64decode(chunks)).decode("utf8")
+          paths=list(manifest["patches"])
+          for extra in ["patches/v11_496_model_mini_studios.py","patches/v11_497_sculpted_sorting_hat.py"]:
+              if extra not in paths:paths.append(extra)
+          for rel in paths:html=build_space.load_patch(root/rel)(html)
+          for token in ["SWYRL_ENGINE_SORTING_HAT_SCULPTED_497",
+                        "data-project-template=\"sorting-hat-sculpted\"",
+                        "SE497_SCULPTED_SORTING_HAT_END",
+                        "SWYRL_ENGINE_MINI_STUDIOS_496",
+                        "window.SWRLZ_FORGE_BUILD={version:'v11.497'"]:
+              assert token in html,token
+          output=Path("/tmp/se497-engine-candidate.html")
+          raw=html.encode("utf8")
+          output.write_bytes(raw)
+          print("SE497_CANDIDATE_BYTES",len(raw),flush=True)
+          print("SE497_CANDIDATE_SHA256",hashlib.sha256(raw).hexdigest(),flush=True)
+          subprocess.run([sys.executable,str(root/"scripts/check_inline_js_syntax_v11_266.py"),str(output)],check=True)
+          print("SE497_FULL_ENGINE_PASS",len(paths),flush=True)
+          PY
