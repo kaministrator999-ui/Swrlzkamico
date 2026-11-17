@@ -42,6 +42,13 @@ assert.ok(center.weights[0]>.8,'brow bone should dominate at brow center');
 const outside=ctx.se220RigWeights([10,10,10],rig);
 assert.equal(outside.indices[0],0);
 assert.ok(outside.weights[0]===1);
+const authored=ctx.se489AuthoredSkinWeights({
+  topologyMesh:{positions:[0,0,0,0,1,0]},
+  skinning:{schema:'swyrl-explicit-skin-v1',indices:[0,2,0,0,0,3,0,0],
+    weights:[.15,.85,0,0,.2,.8,0,0]}
+},0,rig,[0,1.8,.5]);
+assert.equal(authored.indices[1],2,'author-supplied brow influence survives skin bind');
+assert.ok(authored.weights[1]>.84);
 ctx.se489SelectClip('talk');
 assert.equal(rig.activeClip,'talk');
 assert.equal(rig.timeline[1].pose.mouth[0],.3);
@@ -89,6 +96,10 @@ imported.project.modelAtelier.rigging=structuredClone(rig);
  assert.equal(requested.name,'The Sorting Hat');
  assert.equal(committed.project.modelAtelier.rigging.bones.length,4);
  assert.equal(committed.se486History.entries[0].number,3);
+ const portable={schema:'swyrl-model-atelier-v1',model:imported.project.modelAtelier};
+ const portableResult=await update.updateSelectedModel(rec,'cloud',
+  {size:100,text:async()=>JSON.stringify(portable)});
+ assert.match(portableResult,/revision 4/,'selected card can use model-only rig export');
  assert.equal(confirmCalls,1);
  const wrong=structuredClone(imported);wrong.project.canonicalId='not-sorting-hat';
  await assert.rejects(()=>update.updateSelectedModel(rec,'cloud',
