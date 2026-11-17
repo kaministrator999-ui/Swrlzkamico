@@ -6,6 +6,6 @@
   "expectedPrevious": "v11.485",
   "sourcePatch": "patches/v11_486_project_revisions.py",
   "requires": "full source seal, syntax, codec tests, manifest digest, static delivery and separate deploy request",
-  "retry": 2,
-  "retryReason": "Corrected executable regression test newline syntax"
+  "retry": 3,
+  "retryReason": "Use compiled saveCloud function boundaries, preserve cloud RPC and account revision checks"
 }
