@@ -5,5 +5,7 @@
   "scope": "Fix Prism Jester hardcoded model JSON/OBJ export names; add selected-project native and update package downloads within My Projects, preserving same-project identity and revisions",
   "expectedPrevious": "v11.486",
   "sourcePatch": "patches/v11_487_model_project_exports.py",
-  "requires": "model-export and My Projects selected-record regression, full 464-patch source seal, checksum, static browser delivery, deployment"
+  "requires": "model-export and My Projects selected-record regression, full 464-patch source seal, checksum, static browser delivery, deployment",
+  "retry": 2,
+  "retryReason": "Fixed OBJ object name normalization to match regression expectation"
 }
