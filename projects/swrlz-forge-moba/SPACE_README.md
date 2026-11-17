@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.483
+title: §wyrl§ Engine v11.485
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,11 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.485 · Sorting Hat reconstructed as one UV-painted cloth sculpt (2026-11-17)
+
+Owner's Moto screenshot review of v11.483 identified 49 disjoint hat parts: externally added brows, a rectangular mouth slit and dark eye shapes. In the replacement the complete crown, bent tip, wavy brim, underside and interior are modeled as **one native connected topology mesh**. Eyes are depressions in the cloth, never holes or separate geometry. Brows and lips are raised/displaced vertices of that same mesh. The nose is a soft vertex-level extrusion and the mouth is a recessed fold, not a cutout. All warm aged cloth shading, eye/mouth shadow gradients, weave grain, seam and patch accents are baked into the sole part's editable native `uvPaintPNG`, mapped by one continuous UV coordinate chart. `authoring/sorting_hat_single_surface_v11_485.py` regenerates the asset deterministically; the tested scene is `scenes/model-atelier-sorting-hat.swyrl.json`. The earlier 49-part assembly remains as `scenes/model-atelier-sorting-hat-v11-483-assembly.swyrl.json` for comparison/recovery. Save/clone, native model tools, original ring controls, and other starter projects are unchanged. Geometry, UV and browser packaging are source-verified; physical Moto/Quest visual acceptance is separate.
+
 
 ## §E v11.483 · The Sorting Hat editable native starter (2026-11-17)
 
