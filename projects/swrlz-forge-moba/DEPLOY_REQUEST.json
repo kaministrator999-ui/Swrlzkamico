@@ -2,10 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT (owner-approved)",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.485",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_485_ONE_CLOTH_SORTING_HAT",
-  "reason": "Owner mobile screenshots showed an opening running down the back of The Sorting Hat and slightly harsh upper crown. Asset-only rebuild seals the entire UV meridian with 162 real non-degenerate closing triangles: zero exposed mesh edges, two incident oppositely wound faces on every edge, closed Euler characteristic 2, no new model objects, and smoothly blended upper folds. Existing 1-part mesh, 768px painted PNG, UV chart, editing/save behavior, upright apex and source-manifest digest are preserved. GitHub run 44036502754 passed closed-manifold topology, asset checks, full 462-patch §E build and browser delivery packaging. User physical visual verification is still pending.",
-  "sourceCommit": "4855c823006b44f687f70508624fca41b3bc4c92",
-  "sourceIntegritySha256": "f481b75ad06496a50a5c3bc17d8168d2e7c6dc4b8efb95f432a6b12f12d56208",
-  "modelAssetSha256": "48be633a41b45950cf65e584c7fcfff775c3ac7a36eba744a23dbc7d389947fb"
+  "releaseVersion": "v11.486",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_486_PROJECT_REVISIONS",
+  "reason": "Owner requested per-project eight-slot rolling revisions, an in-place model update export/import workflow for existing user projects, and the same account identity across cloud and standalone Model/Particle saves. Prune old snapshots under quota, preserve existing starter cloning and validate optimistic revision conflicts. Source tests and governed release checks are required; owner Moto/Quest acceptance follows.",
+  "sourceCommit": "e651ecf561a7f4064e5fc63b9cd28789564d9418",
+  "sourceIntegritySha256": "6f78a435984a428b7bd933c9d0c668ed2727e4c5755f425bfcd893ef472ec0e8"
 }
