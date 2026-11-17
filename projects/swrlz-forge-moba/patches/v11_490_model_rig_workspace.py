@@ -21,7 +21,7 @@ def apply(html):
  # Add a narrow, validated project-specific layout adapter to the v11.251
  # dock controller; the original model, materials and resize handlers remain.
  html=once(html,
-  "window.SWYRL_ENGINE_SHARED_WORKSTATIONS_251=Object.freeze({\\n mode,setMode:mode,",
+  "window.SWYRL_ENGINE_SHARED_WORKSTATIONS_251=Object.freeze({\n mode,setMode:mode,",
   """window.SWYRL_ENGINE_SHARED_WORKSTATIONS_251=Object.freeze({
  modelDock:()=>({mode:state.mode,...state.model}),
  setModelDock:next=>{
