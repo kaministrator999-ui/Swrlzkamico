@@ -36,7 +36,7 @@ async function se486AssetUpdate(){
   if(await save(type,!!remote)!==true)throw Error('Updated editor, but the save was not confirmed');
   status('Updated '+record.name+' in place · new revision saved.');
  }catch(error){
-  try{load(type,record)}catch{}
+  try{load(type,record);se470Working.set(type,{source:se470Source(type),id:working.id,remote:remote||null})}catch{}
   throw error;
  }
 }
@@ -63,7 +63,7 @@ async function se486AssetHistory(){
    se470Working.set(type,{source:se470Source(type),id:working.id,remote:remote||null});
    if(await save(type,cloud)!==true)throw Error('Restored editor, but saving the new revision failed');
    status('Restored revision '+item.number+' as a new revision of '+record.name+'.');
-  }catch(error){try{load(type,record)}catch{}throw error}
+  }catch(error){try{load(type,record);se470Working.set(type,{source:se470Source(type),id:working.id,remote:remote||null})}catch{}throw error}
  });
 }
 function se486AssetAction(label,fn){
