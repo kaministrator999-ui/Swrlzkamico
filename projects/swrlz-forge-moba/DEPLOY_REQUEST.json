@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT (owner-approved)",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.479",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_479_RIM_VISIBLE_SIDE",
-  "reason": "Owner-requested §E Model Studio: Ring and Filled Ring interpret touched vertex as rim by default; Set Ring Center toggle preserves explicit centered selection. Native selected vertex highlighting remains complete. Material + Vertices View control with Visible Side Only uses depth occlusion in display, group selection and box/lasso to prevent selecting the opposite mesh surface. Both mobile desktop-site and narrow-touch Chromium suites passed, including actual cube Top camera selected 4 top vertices and 0 bottom vertices, full 456-patch integrity validation, no geometry or UV source changes. Physical Moto/Quest acceptance pending.",
-  "sourceCommit": "7366c6c8cde260a397237fe60aafd0c0f8e06659",
-  "sourceIntegritySha256": "1ca7cf251a2e4569ecb3e76e35f6918f15d00a75befe006f02cc1b99f4550f0f"
+  "releaseVersion": "v11.480",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_480_EDITABLE_ENTRY",
+  "reason": "Owner screenshot demonstrated unavailable Make editable control during progressive Extrude/Inset Vertex Ring on a textured UFO. v11.480 adds an always-contextual native safeguarded Make mesh editable CTA beneath tool selection bars, with exact protected-source reasons when unavailable; normal primitives require UV regeneration confirmation, use the existing native conversion transaction, return to Vertex mode, retain Ring/Fill selection, and preserve native Undo. The action yields to tool flyouts and fits compact phone viewport. 457-patch source SHA256 and both mobile desktop-site/narrow-touch Chromium conversion and blocked-source tests passed. Protected authored textures are not silently converted. Physical Moto/Quest acceptance remains pending.",
+  "sourceCommit": "d0107fe0dc9032e5738fa6c14eb1f28937a4a8d3",
+  "sourceIntegritySha256": "eeb2866e5c84d27dc7bb64204f88502bc1841bb3f19fdfb024574bc8fdadc50b"
 }
