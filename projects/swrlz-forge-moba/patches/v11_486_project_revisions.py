@@ -40,13 +40,18 @@ def apply(html):
  if(typeof markSaved==='function')markSaved();""",
         "manual-save-only local project history")
 
-    # Account history travels with the same project ID and gets an
-    # optimistic expected-revision check against the current remote document.
-    html=once(html,
-        """   try{revoke('Saving project.');const projectId=getProjectId(),native=window.SWYRL_ENGINE_AGENT.inspectScene(),text=JSON.stringify(native),bytes=new TextEncoder().encode(text);
-     if(bytes.byteLength>MAX_RAW)throw Error('This project exceeds the 96 MiB account limit. Use local Save Project to keep the complete file.');
-     const previous=cloudRefs.get(projectId);setStatus('Saving complete native project to your account…');""",
-        """   try{
+    # Replace only the compiled native account save body, preserving its public
+    # function name, CAS RPC and the already-installed se371 wrapper.
+    # Earlier patches may have reformatted the original body, so anchor on
+    # adjacent function declarations rather than historical indentation.
+    save_start=html.index(" async function saveCloud(){")
+    save_end=html.index(" async function listCloud(){",save_start)
+    previous_save=html[save_start:save_end]
+    for required in ("cloud.save", "cloudRefs.set(", "MAX_RAW", "cloudBusy"):
+        assert required in previous_save,("cloud save contract changed",required)
+    save_replacement=""" async function saveCloud(){
+   if(cloudBusy)return;cloudBusy=true;
+   try{
      revoke('Saving project.');
      const projectId=getProjectId(),previous=cloudRefs.get(projectId);
      let native=window.SWYRL_ENGINE_AGENT.inspectScene();
@@ -59,12 +64,29 @@ def apply(html):
        const old=JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(remote.bytes));
        if(old.project?.instanceId&&old.project.instanceId!==projectId)
          throw Error('Account project identity differs from the active project.');
-       native=(await window.SWYRL_ENGINE_REVISIONS_486.prepare(old,native,previous.revision,MAX_RAW)).payload;
-     }else native.se486History={schema:window.SWYRL_ENGINE_REVISIONS_486.SCHEMA,limit:8,entries:[]};
+       native=(await window.SWYRL_ENGINE_REVISIONS_486.prepare(
+        old,native,previous.revision,MAX_RAW)).payload;
+     }else{
+       native.se486History={schema:window.SWYRL_ENGINE_REVISIONS_486.SCHEMA,limit:8,entries:[]};
+     }
      const bytes=new TextEncoder().encode(JSON.stringify(native));
-     if(bytes.byteLength>MAX_RAW)throw Error('This project exceeds the 96 MiB account limit. Use local Save Project to keep the complete file.');
-     setStatus('Saving complete native project to your account…');""",
-        "existing account project append-only bounded history")
+     if(bytes.byteLength>MAX_RAW)
+       throw Error('This project exceeds the 96 MiB account limit. Local copy remains available.');
+     setStatus('Saving native project and revision history to your account…');
+     const result=await rpc('cloud.save',{bytes:bytes.buffer,
+       name:summaryName(currentProject.name)||'§E project',
+       ...(previous?{projectId:previous.id,expectedRevision:previous.revision}:{expectedRevision:0})},
+       [bytes.buffer]);
+     const stored=result.project;
+     if(!stored?.id||!Number.isInteger(stored.revision)||result.durable!==true)
+       throw Error('Cloud save was not confirmed. Keep your local project.');
+     cloudRefs.set(projectId,stored);
+     setStatus('Saved to your account · revision '+stored.revision+'.');
+   }catch(error){setStatus('Account save failed: '+error.message,true);}
+   finally{cloudBusy=false;}
+ }
+"""
+    html=html[:save_start]+save_replacement+html[save_end:]
 
     # Native project commands live beside established buttons; this is the
     # same signed-in host closure as se371 and its asset-safe save routes.
