@@ -233,8 +233,11 @@ const se483RingDetailKernel=(()=>{
    const cuts=new Map();
    sorted.forEach((item,i)=>{if(chosen.has(i))for(const e of item.edges)cuts.set(e,[.5]);});
    const result=splitEdges(d,cuts);
-   if(result.ok)result.stats={...result.stats,operation:'ring-density',
-    ringBefore:count,ringTarget:target,addedPositions:want};
+   if(result.ok){
+    result.selectedVertices=[...new Set([...ids,...result.selectedVertices])];
+    result.stats={...result.stats,operation:'ring-density',
+     ringBefore:count,ringTarget:target,addedPositions:want};
+   }
    return result;
   }
   // Conservative inverse of a single midpoint-edge insertion. Do not
@@ -244,6 +247,8 @@ const se483RingDetailKernel=(()=>{
  function reduceSafeMidpoints(d,ids,target,count,origin,ax,rad,band){
   if(target<count-8)return BAD('Reduce ring density by at most 8 safe inserted vertices per operation.');
   let out=clone(d),collapsed=0;
+  const layer=ids.reduce((sum,id)=>sum+P(d,id)[ax[2]],0)/ids.length;
+  const layerTolerance=Math.max(.012,rad*.08);
   // Each exact midpoint from the earlier ring-density split appears in four
   // triangles. Its neighbors contain the original edge endpoints and two
   // opposing face vertices. Rebuild only when winding and UVs validate.
@@ -302,7 +307,8 @@ const se483RingDetailKernel=(()=>{
   // collapse leaves the complete original geometry unchanged.
   for(let k=0;k<Math.min(count-target,8);k++){
    const ring=Array.from({length:out.positions.length/3},(_,i)=>i)
-    .filter(id=>Math.abs(planeDistance(P(out,id),origin,ax)-rad)<band);
+    .filter(id=>Math.abs(planeDistance(P(out,id),origin,ax)-rad)<band&&
+     Math.abs(P(out,id)[ax[2]]-layer)<layerTolerance);
    let changed=false;
    for(const id of ring){
     const candidate=collapse(out,id);
@@ -311,7 +317,10 @@ const se483RingDetailKernel=(()=>{
    if(!changed)break;
   }
   if(!collapsed)return BAD('No safe, unmodified midpoint detail can be reduced here. Use Undo or select a regular inserted ring.');
-  return {ok:true,data:out,selectedVertices:[],
+  const remaining=Array.from({length:out.positions.length/3},(_,i)=>i)
+   .filter(id=>Math.abs(planeDistance(P(out,id),origin,ax)-rad)<band&&
+    Math.abs(P(out,id)[ax[2]]-layer)<layerTolerance);
+  return {ok:true,data:out,selectedVertices:remaining,
    stats:{operation:'ring-density-reduce',ringBefore:count,
     ringTarget:target,reducedVertices:collapsed}};
  }
