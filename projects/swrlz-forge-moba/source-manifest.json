@@ -490,6 +490,6 @@
     "patches/v11_496_model_mini_studios.py",
     "patches/v11_497_sculpted_sorting_hat.py"
   ],
-  "finalBytes": 10658369,
-  "finalSha256": "77369e384240b4daeb469bde4c09d3ecc9a22677751769537a4e0fad8a6041d2"
+  "finalBytes": 10656562,
+  "finalSha256": "dfce78243615ee410b7c092ba2bf81c661b05c94c9dd2d5c3247ec7a960f32bc"
 }
