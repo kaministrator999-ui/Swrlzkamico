@@ -30,6 +30,15 @@ def apply(html):
     html=once(html,"  function refreshList(){",
       cloth+"\n  function refreshList(){",
       "native Model Atelier cloth rig")
+    # Reuse existing GPU skinning, but prefer the supplied per-vertex 4-weight
+    # bind on the unchanged original single mesh. Spatial envelopes remain the
+    # fallback after topology edits and for other cloth projects.
+    html=once(html,
+      "const inf=se220RigWeights([vertex.x,vertex.y,vertex.z],rig);",
+      """const inf=rig.schema==='swyrl-cloth-skin-v1'
+       ?se489AuthoredSkinWeights(part,i,rig,[vertex.x,vertex.y,vertex.z])
+       :se220RigWeights([vertex.x,vertex.y,vertex.z],rig);""",
+      "authored cloth skinning on native GPU SkinnedMesh")
     # Existing My Projects wrapper is already bound to each selected card;
     # add Update Model only to that selected document, never the viewport.
     html=once(html,"function se184SyncDefaultBoxes(){",
@@ -67,7 +76,7 @@ def apply(html):
       title="Animated cloth rig and same-project model updating",
       changes=[
         "A new native cloth-skin skeleton schema supports up to 48 hierarchical bones, smooth four-influence vertex weights, and multiple named editable animation clips in the existing Model Studio Rig · Pose · Animate panel.",
-        "The owner-supplied one-mesh Sorting Hat now has a separate exportable rigged JSON file with eleven cloth joints and five clips: idle, talking, laughing, scowling, tip flourish. Original mesh, UV coordinates, material and painted image remain unchanged.",
+        "The owner-supplied one-mesh Sorting Hat now has a separate exportable rigged JSON file with eleven cloth joints and five clips: idle, talking, cackling, scowling, and tip bow. Original mesh, UV coordinates, material and painted image remain unchanged.",
         "My Projects now has Update Model on each account/on-device project card. It accepts version-bound model packages or a native project export with matching model part identity; the active scene is never switched.",
         "Cloud updates use the existing account project's ID, expected revision, atomic server compare-and-swap, and rolling eight-slot history. Original scene, editor and other project data remain intact.",
         "Local card updates similarly keep identity and create revision history; project cards never create separate imported copies.",
