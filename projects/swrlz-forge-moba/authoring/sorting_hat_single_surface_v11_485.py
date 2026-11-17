@@ -21,8 +21,12 @@ SOURCE = ROOT / "scenes/model-atelier-sorting-hat-v11-483-assembly.swyrl.json"
 TARGET = ROOT / "scenes/model-atelier-sorting-hat.swyrl.json"
 TAU = 2 * math.pi
 ANGULAR = 96
-# Each ring has a duplicated UV vertex along the hidden back meridian. Despite
-# the UV seam, every component is connected through a *single* mesh surface.
+# A narrow, nonzero rear bridge keeps UV edges separate while sealing actual
+# geometry, avoiding degenerate seam triangles and preserving painted UVs.
+REAR_SEAM_HALF_ANGLE = (TAU / ANGULAR) * .08
+# Each ring has a narrow UV seam along the rear meridian; real stitched
+# closing faces bridge both seam boundaries. Topology is fully watertight,
+# not just a connected sheet with open boundary edges.
 # Neutral/unposed Sorting Hat. The single fabric crown tapers UP on a
 # nearly vertical centerline, as in the owner's front/back reference pictures.
 # No hook, overhanging triangular flap, or pre-baked pose: subsequent rigging
@@ -69,7 +73,11 @@ def outer_point(y,theta,profile):
     wrinkle=(.038*math.sin(3*theta+3.4*y)
             +.023*math.sin(8*theta-6*y)
             +.011*math.sin(15*theta+2*y))
-    displacement=radius*wrinkle
+    # Upper folds fade into the erect crown rather than creating a squared-off
+    # shoulder below the tip; the speaking face below y=2.55 is untouched.
+    t=clamp((y-2.55)/.40)
+    upper_soft=1-.45*t*t*(3-2*t)
+    displacement=radius*wrinkle*upper_soft
     for sign in (-1,1):
         cxeye=sign*.355
         # Eye = INWARD cloth depression. Never cut geometry / use black holes.
@@ -88,13 +96,15 @@ def outer_point(y,theta,profile):
     displacement+=.066*g(x,0,.57)*g(y,mouth_y+.104,.067)*front
     displacement+=.062*g(x,0,.51)*g(y,mouth_y-.120,.074)*front
     # Crown shoulder fabric compression and long natural irregular folds.
-    displacement+=.058*g(y,2.15,.58)*math.sin(theta*3.2+y*5.7)
-    displacement+=.035*g(y,.53,.26)*math.sin(theta*2.1+1.2)
+    # INTEGER angular frequencies make opposing rear meridians meet. The old
+    # 3.2/2.1 frequencies disagreed after a full revolution and split the back.
+    displacement+=.058*g(y,2.15,.58)*upper_soft*math.sin(3*theta+y*5.7)
+    displacement+=.035*g(y,.53,.26)*math.sin(2*theta+1.2)
     r=max(.008,radius+displacement)
     # Dampen angular cloth puckering at the apex, avoiding a star-shaped
     # closing point; the face/brim below the tip are completely untouched.
     tip_roundoff=clamp(radius/.24) if y>2.82 else 1.
-    yy=y+tip_roundoff*(.015*math.sin(theta*3.1+y*4.8)+.009*math.sin(theta*7-y*6))
+    yy=y+tip_roundoff*(.015*math.sin(3*theta+y*4.8)+.009*math.sin(7*theta-y*6))
     return (cx+r*xnorm,yy,cz+.93*r*sn)
 
 def brim_point(theta,r,under=False):
@@ -159,23 +169,30 @@ def build_mesh():
         elif kind=="brim-under":v=.15-.075*clamp((1.61-a)/.84)
         else:v=.075-.068*clamp((a-.30)/2.5)
         for j in range(ANGULAR+1):
+            # Keep existing UV chart and 97 samples per row; only the two
+            # back boundary vertices are nudged inward angularly to make a
+            # narrow non-degenerate sealing strip behind the hat.
             theta=-math.pi/2+TAU*j/ANGULAR
+            if j==0:theta+=REAR_SEAM_HALF_ANGLE
+            elif j==ANGULAR:theta-=REAR_SEAM_HALF_ANGLE
             vert(point(row,theta),j/ANGULAR,v)
     stride=ANGULAR+1
     for i in range(len(rows)-1):
-        for j in range(ANGULAR):
-            a=i*stride+j;b=(i+1)*stride+j
-            # Consistent outside (normal points outward for crown,
-            # up across brim top, down beneath brim, inward in lining).
-            m["indices"].extend((a,a+1,b,a+1,b+1,b))
-    # Surface caps only at the pointed external tip and internal tip.
+        for j in range(stride):
+            k=(j+1)%stride
+            a=i*stride+j;an=i*stride+k
+            b=(i+1)*stride+j;bn=(i+1)*stride+k
+            # The last bridge j=ANGULAR -> j=0 is REAL cloth geometry.
+            # It closes the back of the crown, brim, lining and both caps.
+            m["indices"].extend((a,an,b,an,bn,b))
     outer_c=vert((TIP[0][2],TIP[0][0],TIP[0][3]),.5,.978)
     last=len(rows)-1
     internal_c=vert((.55,2.85,-.22),.5,.005)
-    for j in range(ANGULAR):
-        m["indices"].extend((outer_c,j+1,j))
-        a=last*stride+j
-        m["indices"].extend((internal_c,a,a+1))
+    for j in range(stride):
+        k=(j+1)%stride
+        m["indices"].extend((outer_c,k,j))
+        a=last*stride+j;b=last*stride+k
+        m["indices"].extend((internal_c,a,b))
     assert len(m["positions"])//3 < 9000
     assert len(m["indices"])//3 < 16000
     return m,rows
@@ -269,7 +286,7 @@ def make():
     model["reference"]=(
         "One original editable connected cloth mesh. Eyes are dents, NOT holes; "
         "eyebrows, nose and talking-mouth recess are sculpted into the same surface, "
-        "with UV-painted shadows and wrinkles. Bent tip, double-sided wavy brim, "
+        "with UV-painted shadows and wrinkles. Upright tip and watertight rear seam, double-sided wavy brim, "
         "lining and rear repair cloth are all regions of this sole mesh. "
         "Source: owner-supplied Sorting Hat sketch and multi-view fabric study. "
         "The v11.483 49-object assembly remains backed up in Git history/scene."
