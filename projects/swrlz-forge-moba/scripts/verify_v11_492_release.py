@@ -9,7 +9,7 @@ arg.add_argument('--request',action='store_true')
 args=arg.parse_args()
 m=json.loads((ROOT/'source-manifest.json').read_text('utf8'))
 assert m['name']=='§wyrl§ Engine v11.492'
-assert m['finalArtifact']=='swyrl_engine_v11_491.html'
+assert m['finalArtifact']=='swyrl_engine_v11_492.html'
 assert len(m['patches'])==469 and m['patches'][-2:]==['patches/v11_491_cloud_model_update_recovery.py','patches/v11_492_zip_model_updates.py']
 assert isinstance(m['finalBytes'],int) and isinstance(m['finalSha256'],str)
 for file in ('sorting_hat_starter_v11_483.js','model_ring_detail_kernel_v11_483.js','model_ring_detail_studio_v11_483.js','model_vertex_entry_v11_477.js','model_progressive_hierarchy_v11_477.js','model_ring_vertex_highlight_v11_478.js','model_ring_height_v11_478.js','model_ring_rim_visibility_v11_479.js','model_editable_entry_v11_480.js','model_textured_editable_copy_v11_481.js','model_geometric_ring_v11_482.js','model_ring_height_layout_v11_482.js',
