@@ -1,0 +1,21 @@
+{
+  "schema": "swrlz-forge-asset-repair-v1",
+  "requestedBy": "ChatGPT (owner-approved)",
+  "target": "kamiloki/swrlz-forge-moba",
+  "releaseVersion": "v11.485",
+  "asset": "scenes/model-atelier-sorting-hat.swyrl.json",
+  "source": "authoring/sorting_hat_single_surface_v11_485.py",
+  "reason": "Owner screenshots showed an open slit on the back and a slight upper-crown kink despite a previous connected-mesh test. Seal the rear UV meridian with real two-manifold faces and align periodic cloth folds; soften the cone shoulder without bending the upright apex. Preserve single native object, UV paint and all unrelated assets.",
+  "acceptance": [
+    "zero exposed boundary edges",
+    "each topology edge incident to exactly two opposing oriented faces",
+    "no zero-area closing triangles",
+    "connected closed manifold Euler characteristic 2",
+    "no new mesh objects or faces detached from main cloth",
+    "native UV coordinates and PNG unchanged",
+    "top point remains straight upward",
+    "all face and brim changes bounded",
+    "full 462 patch source integrity and static browser package unchanged"
+  ],
+  "physicalAcceptance": "owner to visually inspect on Moto"
+}
