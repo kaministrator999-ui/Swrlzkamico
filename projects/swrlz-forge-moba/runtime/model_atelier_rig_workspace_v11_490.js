@@ -26,6 +26,7 @@ const se490Workspace=(()=>{
    rig:rigged()?{clip:se220Rig().activeClip,time:se220Time}:null,
    railCollapsed:window.SWYRL_ENGINE_TOOL_RAIL_473?.state?.()?.collapsed===true,
    rightCollapsed:panel.dataset.se251RightCollapsed==='true',
+   dock:window.SWYRL_ENGINE_SHARED_WORKSTATIONS_251?.modelDock?.()||null,
    rigPanelOpen:!!se220R('Studio')?.open,
    inspectorScroll:panel.querySelector('.atelier-inspector')?.scrollTop||0};
  }
@@ -57,7 +58,9 @@ const se490Workspace=(()=>{
    if(saved.selectedPart&&partById(saved.selectedPart))select(saved.selectedPart);
    const rail=window.SWYRL_ENGINE_TOOL_RAIL_473;
    if(typeof saved.railCollapsed==='boolean'&&rail?.state?.()?.collapsed!==saved.railCollapsed)rail?.toggle?.();
-   if(typeof saved.rightCollapsed==='boolean'&&
+   const docks=window.SWYRL_ENGINE_SHARED_WORKSTATIONS_251;
+   if(saved.dock&&docks?.setModelDock)docks.setModelDock(saved.dock);
+   else if(typeof saved.rightCollapsed==='boolean'&&
     (panel.dataset.se251RightCollapsed==='true')!==saved.rightCollapsed)
     panel.querySelector('.se251-external-collapse')?.click();
    const bones=se220R('Studio');if(bones&&typeof saved.rigPanelOpen==='boolean')bones.open=saved.rigPanelOpen;
