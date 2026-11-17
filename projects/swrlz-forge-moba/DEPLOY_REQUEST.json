@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT (owner-approved)",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.491",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_491_CLOUD_MODEL_UPDATE_RECOVERY",
-  "reason": "Repair My Projects failed-fetch handling for authenticated cloud reads. Keep selected file on safe retries, never replay ambiguous saves, distinguish confirmed save from failed list refresh and guide ZIP extraction. Preserve original saved project and revision lineage.",
-  "sourceCommit": "c389f4b60ed7450c8fd2b72f644feadd35d1bec6",
-  "sourceIntegritySha256": "01e04e537538da05b896de35504cca2d1821ffe3441e19adb31ef5be7bfa4cd9"
+  "releaseVersion": "v11.492",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_492_ZIP_MODEL_UPDATES",
+  "reason": "Accept direct ZIP model updates on the selected My Projects card using a memory-bounded CRC-verified browser extractor. Preserve exact mesh identity, source project ID, revision checks, and safe cloud fetch retry. Never transmit ZIP blobs or change unrelated project state.",
+  "sourceCommit": "4649d214f0ea1adfed41c25ac80e1828e786e8a2",
+  "sourceIntegritySha256": "ea213277ba7e390139f7bf43e7f29bd60c18197370e36bdd671511473d74a3da"
 }
