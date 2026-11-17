@@ -130,6 +130,11 @@ const se483RingDetailKernel=(()=>{
   result.ringRadii=radii;
   result.ringCenter=origin;
   result.ringPlane=plane;
+  result.outerRadius=outer;
+  const tolerance=Math.max(.00008,outer*.001);
+  const eligible=[...new Set([...ids,...result.selectedVertices])];
+  result.ringMembers=radii.map(rad=>eligible.filter(id=>
+   Math.abs(planeDistance(P(result.data,id),origin,ax)-rad)<=tolerance));
   result.stats={...result.stats,operation:'internal-rings',internalRings:requested,
    radii:[...radii],spacing};
   return result;
@@ -303,7 +308,8 @@ const se483RingDetailKernel=(()=>{
    // Gradual twist: center rotates the most; outer ring retains the base
    // rotation. No new vertices are needed for pure transforms.
    const radiusRatio=Math.min(1,distance(id)/maxRad),additional=twist*(1-radiusRatio);
-   const spun=rotate(relative.map(x=>x*scale),[tilt[0],tilt[1]+additional,tilt[2]]);
+   const spin=[...tilt];spin[ax[2]]+=additional;
+   const spun=rotate(relative.map(x=>x*scale),spin);
    const target=spun.map((x,k)=>pivot[k]+x+offset[k]);
    const blend=dist[id]===0?1:Math.pow(1-dist[id]/(falloff+1),2)*
     (3-2*(1-dist[id]/(falloff+1)));
