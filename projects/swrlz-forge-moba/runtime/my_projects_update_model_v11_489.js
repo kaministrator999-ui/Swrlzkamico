@@ -41,7 +41,7 @@
     if(!window.SWYRL_ENGINE_CLOTH_RIG_489?.validate(rig)||
        !ids.has(rig.targetPartId))return false;
    }else if(rig.schema==='swyrl-hand-skin-v1'){
-    if(typeof se220RigValidate!=='function'||!se220RigValidate(rig))return false;
+    if(!window.SWYRL_ENGINE_CLOTH_RIG_489?.validateHand?.(rig))return false;
    }else return false;
   }
   return true;
