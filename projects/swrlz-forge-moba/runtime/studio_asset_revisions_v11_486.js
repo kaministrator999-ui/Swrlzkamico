@@ -32,6 +32,7 @@ async function se486AssetUpdate(){
  const changed={...record,data:structuredClone(doc.data)};
  try{
   load(type,changed);
+  se470Working.set(type,{source:se470Source(type),id:working.id,remote:remote||null});
   if(await save(type,!!remote)!==true)throw Error('Updated editor, but the save was not confirmed');
   status('Updated '+record.name+' in place · new revision saved.');
  }catch(error){
@@ -59,6 +60,7 @@ async function se486AssetHistory(){
   if(restored.id!==working.id)throw Error('Revision belongs to a different asset');
   try{
    load(type,restored);
+   se470Working.set(type,{source:se470Source(type),id:working.id,remote:remote||null});
    if(await save(type,cloud)!==true)throw Error('Restored editor, but saving the new revision failed');
    status('Restored revision '+item.number+' as a new revision of '+record.name+'.');
   }catch(error){try{load(type,record)}catch{}throw error}
