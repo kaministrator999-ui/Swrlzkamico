@@ -34,11 +34,35 @@ function se487SafeExportName(name){
   .replace(/[\\/:*?"<>|\x00-\x1f]+/g,'-').replace(/\s+/g,'-').replace(/-+/g,'-')
   .replace(/^[-.]+|[-.]+$/g,'').slice(0,90)||'Untitled-project';
 }
-function se487DownloadProject(name,document,isAsset){
+function se487DownloadProject(name,payload,isAsset){
  const slug=se487SafeExportName(name);
- const blob=new Blob([JSON.stringify(document,null,2)+'\n'],{type:'application/json'});
+ const blob=new Blob([JSON.stringify(payload,null,2)+'\n'],{type:'application/json'});
  const url=URL.createObjectURL(blob),a=document.createElement('a');
  a.href=url;a.download=slug+(isAsset?'.swyrl-asset.json':'.swyrl.json');
  document.body.append(a);a.click();a.remove();
  setTimeout(()=>URL.revokeObjectURL(url),1500);
+}
+
+function se487DownloadModelUpdate(name,payload,source,record){
+ const raw=payload?.project?.modelAtelier;
+ const asset=payload?.assetRecord;
+ let output;
+ if(asset?.schema==='swrlz-asset-record-v1'&&asset.type==='modeler'&&
+    raw?.schema==='swyrl-model-atelier-v1'&&Array.isArray(raw.parts)){
+  output={schema:'se-asset-update-v1',exportedAt:new Date().toISOString(),
+   target:{type:'modeler',id:asset.id,
+    accountId:source==='cloud'?record.id:null,
+    baseRevision:source==='cloud'?record.revision:null},
+   data:structuredClone(raw)};
+ }else if(raw?.schema==='swyrl-model-atelier-v1'&&Array.isArray(raw.parts)){
+  const projectId=payload.project.instanceId;
+  if(typeof projectId!=='string'||!projectId)throw Error('Project lacks a saved update identity');
+  const linked=se371VersionedLink(record?.cloudRef);
+  output={schema:'se-model-project-update-v1',exportedAt:new Date().toISOString(),
+   target:{projectId,
+    accountId:source==='cloud'?record.id:linked?.id||null,
+    baseRevision:source==='cloud'?record.revision:linked?.revision||null},
+   model:structuredClone(raw)};
+ }else throw Error('This saved project has no editable Model Studio asset');
+ se486Rev.download(se487SafeExportName(name),output);
 }
