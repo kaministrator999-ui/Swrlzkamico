@@ -126,5 +126,5 @@ if args.request:
  assert request['sourceIntegritySha256']==m['finalSha256']
  assert request['sourceCommit']
 print(json.dumps({'status':'SOURCE_VERIFIED','version':'v11.496',
- 'bytes':len(source),'sha256':m['finalSha256'],'patches':472,
+ 'bytes':len(source),'sha256':m['finalSha256'],'patches':473,
  'assets':78,'physicalMobileTested':False,'physicalVRTested':False}),flush=True)
