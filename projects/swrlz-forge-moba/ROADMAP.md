@@ -1,3 +1,7 @@
+## §E v11.496 · Unified model mini-studios (2026-11-17)
+
+Model Studio now uses one persistent native viewport with Model, Rigging and Animation interfaces. Modeling retains all existing topology/sculpt/UV tools; Rigging reuses real SkinnedMesh animation and adds simple skeleton/child bone/rest transform/automatic influence authoring; Animation surfaces named clips, joint poses, scrubber, keyframes and playback. Workspace mode persists with the project; no new renderer, project duplication, or implicit mesh replacement. Detailed brush weight painting is future work; Moto/Quest acceptance is separate from source validation.
+
 ## §E v11.489 · Single-cloth rig + in-place My Projects model updates (2026-11-17)
 
 The current native Model Studio extends the existing v11.220 GPU skinning system with a validated `swyrl-cloth-skin-v1` armature schema, smooth four-influence envelopes, and multiple editable keyframed clips. The owner's Sorting Hat is distributed separately as `The-Sorting-Hat-Rigged.swyrl.json` (not committed publicly). Its model remains a single cloth surface with original topology and UV-painted texture and has an eleven-bone rig with five animations: idle, talking, laughing, scowling and tip flourish. Open a rigged model, use **Rig · Pose · Animate → Animation clip**, then Play or edit joints and keys.
