@@ -1,0 +1,61 @@
+name: Measure §E v11.479 rim-first selection and material visible-side occlusion
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/measure-engine-v11-478.yml"
+      - "projects/swrlz-forge-moba/patches/v11_479_rim_visible_side.py"
+      - "projects/swrlz-forge-moba/runtime/model_ring_rim_visibility_v11_479.js"
+      - "projects/swrlz-forge-moba/runtime/model_ring_rim_visibility_v11_479.css"
+      - "projects/swrlz-forge-moba/scripts/prepare_v11_479_release.py"
+      - "projects/swrlz-forge-moba/scripts/verify_v11_479_release.py"
+      - "projects/swrlz-forge-moba/tests/model_ring_rim_visible_side_v11_479.mjs"
+      - "projects/swrlz-forge-moba/tests/model_ring_rim_visible_side_browser_v11_479.cjs"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: se479-rim-visible-source-measure
+  cancel-in-progress: true
+
+jobs:
+  rim-visible-selection:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Build, calculate SHA256 and verify 456 native-source patches
+        run: python projects/swrlz-forge-moba/scripts/prepare_v11_479_release.py
+      - name: Install Chromium touch browser
+        run: |
+          npm install --no-save playwright@1.56.1
+          npx playwright install --with-deps --only-shell chromium
+      - name: Test rim-first tapped vertex, center toggle, material+vertices and visible-only selection
+        run: node projects/swrlz-forge-moba/tests/model_ring_rim_visible_side_browser_v11_479.cjs projects/swrlz-forge-moba/_release_v11_479_candidate
+      - name: Seal verified source SHA and bytes to main
+        if: success() && github.ref == 'refs/heads/main'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add projects/swrlz-forge-moba/source-manifest.json
+          if ! git diff --cached --quiet; then
+            git commit -m "§E v11.479: seal rim-first and front-only source checksum"
+            git push origin HEAD:main
+          fi
+      - name: Preserve exact source receipt and viewport screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: se479-rim-visibility-receipt
+          path: |
+            projects/swrlz-forge-moba/source-manifest.json
+            projects/swrlz-forge-moba/_release_v11_479_candidate/se478-vertex-*.png
