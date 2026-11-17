@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT (owner-approved)",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.480",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_480_EDITABLE_ENTRY",
-  "reason": "Owner screenshot demonstrated unavailable Make editable control during progressive Extrude/Inset Vertex Ring on a textured UFO. v11.480 adds an always-contextual native safeguarded Make mesh editable CTA beneath tool selection bars, with exact protected-source reasons when unavailable; normal primitives require UV regeneration confirmation, use the existing native conversion transaction, return to Vertex mode, retain Ring/Fill selection, and preserve native Undo. The action yields to tool flyouts and fits compact phone viewport. 457-patch source SHA256 and both mobile desktop-site/narrow-touch Chromium conversion and blocked-source tests passed. Protected authored textures are not silently converted. Physical Moto/Quest acceptance remains pending.",
-  "sourceCommit": "d0107fe0dc9032e5738fa6c14eb1f28937a4a8d3",
-  "sourceIntegritySha256": "eeb2866e5c84d27dc7bb64204f88502bc1841bb3f19fdfb024574bc8fdadc50b"
+  "releaseVersion": "v11.481",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_481_TEXTURED_EDITABLE_COPY",
+  "reason": "Owner-approved §E textured model editing: preserve original authored UV atlas, texture PNG, UV slide/repeat and material while preparing a separate native editable topology working copy. Original remains in saved project and Source/Editable switch toggles it without geometry overlap. Component ring and height operations include all UV seam-duplicate physical vertices. Guard unsupported, rigged, multi-material, or over-budget geometry rather than flattening source. Verified 458-patch source SHA256 and both desktop-site and narrow-touch Chromium tests using a real painted and UV-shifted mesh: zero UV/position differences over 864 triangle corners, identical paint and UV correction, highlighted selected Ring Fill vertices, preview/cancel, source restoration. Physical Moto/Quest owner acceptance pending.",
+  "sourceCommit": "419615cc16cd6ad16d6149deca467364e524ed4b",
+  "sourceIntegritySha256": "c63d2667f7472ab69cd5cc4d497fab545aab86957aa8f1c9608e2babd5f8e5cb"
 }
