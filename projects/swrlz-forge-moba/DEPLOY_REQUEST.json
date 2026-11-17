@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT (owner-approved)",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.483",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_483_SORTING_HAT_STARTER",
-  "reason": "Create The Sorting Hat as a native editable §E Model Studio starter. Fully triangulated asymmetrical cloth crown, flared brim with underside, sculpted cloth eyes, mouth, nose and cheek folds, rolled band, rear patches and stitches; 49 editable topology meshes / 7874 vertices / 13238 triangles. Model loads through existing Projects → Starter Models and Model Studio, uses original geometry guided by the owner's reference photo and external multi-angle research. Exact 460-patch build and source integrity sealing completed successfully in GitHub Actions run 44024025334. Existing starters and unrelated projects preserved; Quest 2 and Moto physical acceptance remain owner-led.",
-  "sourceCommit": "3f61f4c18c9cb3084428af846cdd00440d732c4b",
-  "sourceIntegritySha256": "b874a02e72169d7238d5430a7020cdc43d791daed0493a4ad6e7a243249ffaa0"
+  "releaseVersion": "v11.484",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_484_RING_DETAIL_AND_TRANSFORMS",
+  "reason": "Owner-approved §E Model Studio: Ring vertex count up/down via real connected UV-preserving edges, 1–8 optional concentric internal ring subdivisions in Filled Ring, independent selection of newly inserted rings, group Position XYZ, Rotation XYZ, Scale, selection/circle/custom pivot, edge falloff and graduated ring twist; all through native preview/Apply/Cancel/Undo. Preserves existing UFO painted UV atlas, original source/working copy, and Sorting Hat native starter v11.483. 461-patch source sealed and verified. Real painted mesh tests pass mobile desktop-site and 412px narrow-touch Chromium: created 2 internal connected rings (+64 vertices), selected 16 highlighted ring vertices, transformed them +0.16 local Y with 7-degree Y rotation; Cancel returned every vertex and UV delta zero; Apply committed one native Undo checkpoint and selection persisted after transform. Focused topology tests verified ring density 8→12→8 and geometry guards. Maintain HF regular Git blob HTML delivery. Physical Moto/Quest owner acceptance pending.",
+  "sourceCommit": "07a4146a8fb9d3b853c5cb697176d2bab7e5599c",
+  "sourceIntegritySha256": "4e1982668be155c01a8a8ddce72a5a515809f2af8aef69fc5a7897a42a01c11e"
 }
