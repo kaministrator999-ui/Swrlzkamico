@@ -5,5 +5,7 @@
   "scope": "Prompt for names before first account project/model/particle saves; Name Model in active studio without new IDs; preserve v11.487 selected card export, v11.486 eight-slot revisions",
   "expectedPrevious": "v11.487",
   "sourcePatch": "patches/v11_488_account_project_naming.py",
-  "requires": "v11.488 naming regression, full 465-patch source seal, exact sha256, browser-renderable static delivery, owner Moto/Quest acceptance"
+  "requires": "v11.488 naming regression, full 465-patch source seal, exact sha256, browser-renderable static delivery, owner Moto/Quest acceptance",
+  "retry": 2,
+  "retryReason": "Rebased native Save Project naming branch on the compiled expression instead of source whitespace"
 }
