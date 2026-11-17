@@ -3,7 +3,7 @@
   "requestedBy": "ChatGPT (owner-approved)",
   "asset": "scenes/model-atelier-sorting-hat.swyrl.json",
   "baseVersion": "v11.485",
-  "reason": "Fix abrupt jagged pointed tab on Sorting Hat tip observed in the 2026-11-17 mobile screenshot; replace with a smooth downward drooping curl using the same single mesh.",
+  "reason": "Owner supplied front and rear reference images and explicitly requested a straight-UP pointed Sorting Hat crown at neutral/rest pose. Remove baked downward hook. One continuous sculpt and original facial expression, material, UV and brim remain unmodified. Pose will be handled separately by engine rig/pose tools.",
   "constraints": [
     "do not add mesh objects",
     "do not modify face, brim or lining geometry",
@@ -13,6 +13,16 @@
     "validate before deployment"
   ],
   "source": "authoring/sorting_hat_single_surface_v11_485.py",
-  "retry": "Preserve the original per-ring UV coordinates exactly; the first run correctly rejected altered UVs, and authoring geometry now retains the painted UV mapping.",
-  "generatorCommit": "15ede6507d1a24bbecb0dd2c68dcb9d9ec531ada"
+  "retry": "New shape request: straight upright neutral point, not the previous curved end.",
+  "generatorCommit": "117be9b1c373c96a627f8d320ba11cc7f9571d7d",
+  "reference": "2026-11-17 owner comparison: straight upright tip on front/back Sorting Hat figurine, not a pre-bent or drooping flap.",
+  "checks": [
+    "tip apex tallest with descending rings",
+    "near-vertical crown centerline",
+    "smoothly decreasing radius toward apex",
+    "no sharp cap puckering",
+    "only tip vertices and cap changed",
+    "UV coordinates/paint/face/brim intact",
+    "single mesh and native engine integrity"
+  ]
 }
