@@ -29,11 +29,11 @@ jobs:
         with:
           python-version: "3.11"
       - name: Package the engine for HF
-        run: python projects/swrlz-forge-moba/scripts/verify_v11_487_release.py --output dist/swrlz-forge-moba --request
+        run: python projects/swrlz-forge-moba/scripts/verify_v11_488_release.py --output dist/swrlz-forge-moba --request
       - name: Prepare browser-renderable static files under 10MB each
         run: |
-          python projects/swrlz-forge-moba/scripts/package_static_delivery_v11_487.py --output dist/swrlz-forge-moba
-          node --check dist/swrlz-forge-moba/swrlz-engine-v11.487.js
+          python projects/swrlz-forge-moba/scripts/package_static_delivery_v11_488.py --output dist/swrlz-forge-moba
+          node --check dist/swrlz-forge-moba/swrlz-engine-v11.488.js
       - name: Upload to the existing static HF Space
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
@@ -65,7 +65,7 @@ jobs:
           from urllib.request import Request, urlopen
           host="https://kamiloki-swrlz-forge-moba.static.hf.space/"
           for route,want in (("", "text/html"), ("modeler.html", "text/html"),
-                             ("swrlz-engine-v11.487.js", "javascript")):
+                             ("swrlz-engine-v11.488.js", "javascript")):
               last=None
               for attempt in range(8):
                   try:
@@ -83,5 +83,5 @@ jobs:
                       last=e
                       if attempt<7: time.sleep(6)
               if last is not None: raise SystemExit(f"Browser-delivery check failed: {route or '/'}: {last}")
-          print("SE487_PUBLIC_BROWSER_DELIVERY_OK",flush=True)
+          print("SE488_PUBLIC_BROWSER_DELIVERY_OK",flush=True)
           PY
