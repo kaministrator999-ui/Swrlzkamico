@@ -13,7 +13,7 @@ def apply(html):
  style=(ROOT/'runtime/model_update_account_workflow_v11_494.css').read_text('utf8')
  assert 'se494TrustedLoadCache' in helpers
  assert '</head>' in html
- html=html.replace('</head>','<style id="se494-model-update">'+style+'</style>\\n</head>',1)
+ html=html.replace('</head>','<style id="se494-model-update">'+style+'</style>\n</head>',1)
  # Install in the established authenticated host, outside the nested card IIFE.
  html=once(html,
   'const se184CloudPreviews=new Map();',
