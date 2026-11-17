@@ -43,6 +43,7 @@ const outside=ctx.se220RigWeights([10,10,10],rig);
 assert.equal(outside.indices[0],0);
 assert.ok(outside.weights[0]===1);
 const authored=ctx.se489AuthoredSkinWeights({
+  id:'sorting-hat-one-sculpt',
   topologyMesh:{positions:[0,0,0,0,1,0]},
   skinning:{schema:'swyrl-explicit-skin-v1',indices:[0,2,0,0,0,3,0,0],
     weights:[.15,.85,0,0,.2,.8,0,0]}
