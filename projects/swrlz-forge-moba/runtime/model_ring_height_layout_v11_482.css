@@ -1,0 +1,103 @@
+/* SE482_RING_HEIGHT_LAYOUT_STYLES_START */
+html body #modelAtelierPanel.se187-modeler-page >section#se478RingHeightSlider:not([hidden]),
+html #modelAtelierPanel.se187-modeler-page >section#se478RingHeightSlider:not([hidden]){
+ position:fixed!important;
+ z-index:2150!important;
+ top:var(--se482-ring-top,470px)!important;
+ left:var(--se482-ring-left,28px)!important;
+ right:auto!important;
+ bottom:auto!important;
+ transform:none!important;
+ width:min(285px,calc(100vw - 24px))!important;
+ min-width:0!important;
+ max-width:calc(100vw - 24px)!important;
+ min-height:0!important;
+ max-height:min(265px,45vh)!important;
+ padding:10px!important;
+ overflow:auto!important;
+ display:flex!important;
+ flex-direction:column!important;
+ gap:6px!important;
+ background:#102b3af7!important;
+ border:1px solid #91d9d2!important;
+ border-radius:10px!important;
+ box-shadow:0 8px 24px #000a!important;
+ touch-action:pan-y!important;
+ box-sizing:border-box!important;
+}
+html #se478RingHeightSlider .se478-height-header{
+ display:flex!important;flex-wrap:wrap!important;gap:7px!important;
+ justify-content:space-between!important;align-items:center!important;
+ min-height:32px!important;
+ padding:3px 5px!important;
+ margin:0!important;
+ background:#234653!important;
+ border-radius:6px!important;
+ touch-action:none!important;
+ cursor:grab!important;
+}
+html #se478RingHeightSlider .se478-height-header:active{cursor:grabbing!important}
+html #se478RingHeightSlider #se482HeightGrip{
+ font:700 11px/1.4 system-ui!important;color:#bdebe5!important;white-space:nowrap!important;
+}
+html #se478RingHeightSlider .se478-height-header strong{
+ font:750 14px/1.3 system-ui!important;color:white!important;
+}
+html #se478RingHeightSlider .se478-height-count{
+ flex-basis:100%!important;white-space:normal!important;
+ font:600 11px/1.4 system-ui!important;color:#d1f4ef!important;
+}
+html #se478RingHeightSlider .se478-height-row{
+ display:grid!important;grid-template-columns:auto minmax(80px,1fr) auto!important;
+ gap:7px!important;align-items:center!important;
+}
+html #se478RingHeightSlider .se478-height-row label{
+ white-space:nowrap!important;font:600 11px/1.3 system-ui!important;
+}
+html #se478RingHeightSlider #se478HeightRange{
+ width:100%!important;min-width:80px!important;height:35px!important;
+ margin:0!important;
+}
+html #se478RingHeightSlider #se478HeightValue{min-width:47px!important;font:750 12px ui-monospace,monospace!important}
+html #se478RingHeightSlider .se478-height-actions{
+ display:grid!important;grid-template-columns:1fr 1fr!important;
+ gap:7px!important;margin:0!important;align-items:center!important;
+}
+html #se478RingHeightSlider .se478-height-actions button{
+ min-height:42px!important;font:700 12px/1.2 system-ui!important;
+ padding:9px 6px!important;white-space:normal!important;
+}
+html #se478RingHeightSlider .se478-height-actions small{
+ grid-column:1/-1!important;font:10px/1.4 system-ui!important;
+}
+/* Native sculpt operation selection determines inspector content. Vertex
+   mode must not be covered by obsolete face-only help or modifiers. */
+html #modelAtelierPanel[data-se477-operation=true][data-se477-selection-type=vertex] #se445ShapeQuick,
+html #modelAtelierPanel[data-se477-operation=true][data-se477-selection-type=vertex] #se451FaceWorkflow,
+html #modelAtelierPanel[data-se477-operation=true][data-se477-selection-type=vertex] #se466FaceExtrude,
+html #modelAtelierPanel[data-se477-operation=true][data-se477-selection-type=vertex] #modelAtelierTopologyWorkshop,
+html #modelAtelierPanel[data-se477-operation=true][data-se477-selection-type=edge] #se445ShapeQuick,
+html #modelAtelierPanel[data-se477-operation=true][data-se477-selection-type=edge] #se451FaceWorkflow{
+ display:none!important;
+}
+html #modelAtelierPanel[data-se477-operation=true][data-se477-selection-type=vertex] #se466RingControls:not([hidden]){
+ display:block!important;
+ margin-top:4px!important;
+}
+html #modelAtelierPanel[data-se477-operation=true][data-se477-selection-type=vertex] #se466RingControls .se466-row[hidden]{
+ display:none!important;
+}
+html #modelAtelierPanel #se482CircleControl{
+ display:grid!important;grid-template-columns:auto 1fr auto!important;gap:6px!important;
+ align-items:center!important;max-width:100%!important;min-width:0!important;
+ padding:8px!important;border:1px solid #446c77!important;
+ border-radius:8px!important;background:#163640!important;
+}
+html #modelAtelierPanel #se482CircleControl[hidden]{display:none!important}
+html #modelAtelierPanel #se482CircleControl label{font:650 11px system-ui!important;color:#d3f3f3!important}
+html #modelAtelierPanel #se482BandRange{width:100%!important;min-width:40px!important;accent-color:#7be1da!important}
+html #modelAtelierPanel #se482BandValue{font:700 11px ui-monospace,monospace!important;color:#fff!important}
+html #modelAtelierPanel #se482CircleControl small{
+ grid-column:1/-1!important;font:10px/1.4 system-ui!important;color:#b7d8d8!important;
+}
+/* SE482_RING_HEIGHT_LAYOUT_STYLES_END */
