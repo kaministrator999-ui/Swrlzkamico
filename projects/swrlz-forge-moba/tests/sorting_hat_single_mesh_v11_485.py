@@ -39,6 +39,30 @@ while todo:
   for adjacent in graph[todo.pop()]:
     if adjacent not in seen:seen.add(adjacent);todo.append(adjacent)
 assert len(seen)==len(used)==v,("The original hat, face and brim must be connected as one surface",len(seen),len(used),v)
+# Regression: the photographed first render had a sharp, pinched tip.
+# The revised single mesh finishes as a downward-curled, smoothly expanding
+# cloth end, with no extra tip object, hole or regenerated face geometry.
+stride=97
+tip_centers=[]
+tip_radii=[]
+for ring in range(8):
+    coords=[xyz[3*(ring*stride+j):3*(ring*stride+j)+3] for j in range(96)]
+    cx=sum(p[0] for p in coords)/len(coords)
+    cy=sum(p[1] for p in coords)/len(coords)
+    cz=sum(p[2] for p in coords)/len(coords)
+    tip_centers.append((cx,cy,cz))
+    tip_radii.append((max(p[0] for p in coords)-min(p[0] for p in coords))/2)
+assert tip_centers[0][1] < tip_centers[5][1]-.27,tip_centers
+assert tip_centers[0][0] > tip_centers[5][0]+.33,tip_centers
+assert all(tip_centers[i][0] > tip_centers[i+1][0] for i in range(7)),tip_centers
+assert all(tip_radii[i] < tip_radii[i+1] for i in range(7)),tip_radii
+assert max(math.dist(tip_centers[i],tip_centers[i+1]) for i in range(7))<.19
+tip_cap=xyz[-6:-3]  # exterior cap before interior lining's cap
+assert math.dist(tip_cap,tip_centers[0])<.035,(tip_cap,tip_centers[0])
+# Ring-to-crown junction is smooth, and the interior remains sealed.
+next_coords=[xyz[3*(8*stride+j):3*(8*stride+j)+3] for j in range(96)]
+next_center=[sum(p[k] for p in next_coords)/96 for k in range(3)]
+assert math.dist(tip_centers[-1],next_center)<.14
 assert "dents" in m["reference"].lower() and "brows" in m["reference"].lower()
 assert not any(k in p for k in ("eyeObjects","mouthObject","faceOverlay"))
 data=p["uvPaintPNG"]
