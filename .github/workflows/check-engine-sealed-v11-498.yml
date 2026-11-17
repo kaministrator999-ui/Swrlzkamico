@@ -1,0 +1,28 @@
+name: §E v11.498 sealed hat proportion release
+on:
+  push:
+    branches: [main]
+    paths:
+      - "projects/swrlz-forge-moba/source-manifest.json"
+      - "projects/swrlz-forge-moba/scripts/verify_v11_498_release.py"
+      - "projects/swrlz-forge-moba/scripts/package_static_delivery_v11_498.py"
+      - ".github/workflows/check-engine-sealed-v11-498.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  sealed:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify geometry, exact engine HTML and static browser module
+        run: |
+          python projects/swrlz-forge-moba/scripts/verify_v11_498_release.py --output /tmp/se498-sealed
+          python projects/swrlz-forge-moba/scripts/package_static_delivery_v11_498.py --output /tmp/se498-sealed
+          node --check /tmp/se498-sealed/swrlz-engine-v11.498.js
+      - name: Store verified integrity receipt
+        uses: actions/upload-artifact@v4
+        with:
+          name: se498-integrity-receipt
+          path: /tmp/se498-sealed/SOURCE.json
