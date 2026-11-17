@@ -6,6 +6,6 @@
   "expectedPrevious": "v11.486",
   "sourcePatch": "patches/v11_487_model_project_exports.py",
   "requires": "model-export and My Projects selected-record regression, full 464-patch source seal, checksum, static browser delivery, deployment",
-  "retry": 2,
-  "retryReason": "Fixed OBJ object name normalization to match regression expectation"
+  "retry": 3,
+  "retryReason": "Corrected source patch to replace stable exporter filename literals rather than legacy formatting"
 }
