@@ -53,8 +53,10 @@ def apply(html):
 .atelier-rig-studio .se489-clip-selector select{width:100%;min-height:36px;background:#20344b;color:#ebf6ff;border:1px solid #8baac4;border-radius:6px}
 .atelier-rig-studio .atelier-rig-actions[hidden]{display:none!important}
 """
-    html=once(html,"</head>",'<style id="se489ClothRig">'+css+'</style>\n</head>',
-      "cloth rig UI")
+    # The generated HTML contains a second literal </head> inside a
+    # scripted template; style only the first actual document head.
+    if "</head>" not in html:raise AssertionError("Missing HTML document head")
+    html=html.replace("</head>",'<style id="se489ClothRig">'+css+'</style>\n</head>',1)
     for old,new,tag in (
       ("SWYRL_ENGINE_DEPLOY_MARKER: V11_488_ACCOUNT_PROJECT_NAMING",MARKER,"marker"),
       ("ENGINE · MAKER v11.488","ENGINE · MAKER v11.489","header"),
