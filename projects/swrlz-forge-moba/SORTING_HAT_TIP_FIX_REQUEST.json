@@ -12,5 +12,7 @@
     "preserve engine source manifest",
     "validate before deployment"
   ],
-  "source": "authoring/sorting_hat_single_surface_v11_485.py"
+  "source": "authoring/sorting_hat_single_surface_v11_485.py",
+  "retry": "Preserve the original per-ring UV coordinates exactly; the first run correctly rejected altered UVs, and authoring geometry now retains the painted UV mapping.",
+  "generatorCommit": "15ede6507d1a24bbecb0dd2c68dcb9d9ec531ada"
 }
