@@ -1,0 +1,33 @@
+name: Diagnose §E static Space browser delivery headers
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/verify-static-space-headers.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  inspect-headers:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - name: Check HEAD, normal GET and Range GET on actual public Space
+        run: |
+          set -eu
+          HOST="https://kamiloki-swrlz-forge-moba.static.hf.space"
+          for ROUTE in "/" "/modeler.html" "/swrlz-engine-v11.482.js"; do
+            echo "--- ROUTE ${ROUTE}"
+            for MODE in HEAD GET RANGE; do
+              echo "--- METHOD ${MODE}"
+              case "${MODE}" in
+                HEAD) curl -sS -L -I --max-time 30 -D /tmp/hf-head -o /dev/null "${HOST}${ROUTE}";;
+                GET) curl -sS -L --max-time 40 -D /tmp/hf-head -o /dev/null "${HOST}${ROUTE}";;
+                RANGE) curl -sS -L -H 'Range: bytes=0-0' --max-time 30 -D /tmp/hf-head -o /dev/null "${HOST}${ROUTE}";;
+              esac
+              grep -iE '^HTTP/|^content-type:|^content-disposition:|^content-length:|^content-range:|^location:|^x-' /tmp/hf-head | tail -18 || true
+            done
+          done
