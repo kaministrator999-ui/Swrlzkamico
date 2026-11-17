@@ -4,7 +4,7 @@ on:
   push:
     branches: [main]
     paths:
-      - ".github/workflows/measure-engine-v11-478.yml"
+      - ".github/workflows/measure-engine-v11-479.yml"
       - "projects/swrlz-forge-moba/patches/v11_479_rim_visible_side.py"
       - "projects/swrlz-forge-moba/runtime/model_ring_rim_visibility_v11_479.js"
       - "projects/swrlz-forge-moba/runtime/model_ring_rim_visibility_v11_479.css"
@@ -58,4 +58,4 @@ jobs:
           name: se479-rim-visibility-receipt
           path: |
             projects/swrlz-forge-moba/source-manifest.json
-            projects/swrlz-forge-moba/_release_v11_479_candidate/se478-vertex-*.png
+            projects/swrlz-forge-moba/_release_v11_479_candidate/se479-rim-*.png
