@@ -191,6 +191,11 @@ const se483RingDetailKernel=(()=>{
   const eligible=[...new Set([...ids,...result.selectedVertices])];
   result.ringMembers=radii.map(rad=>eligible.filter(id=>
    Math.abs(planeDistance(P(result.data,id),origin,ax)-rad)<=tolerance));
+  const rimTol=Math.max(.0015,outer*.05);
+  result.outerMembers=ids.filter(id=>
+   Math.abs(planeDistance(P(d,id),origin,ax)-outer)<rimTol);
+  if(result.ringMembers.some(r=>r.length<3))
+   return BAD('This mesh cannot form every requested connected internal ring. Use fewer rings or refine the filled area first.');
   result.stats={...result.stats,operation:'internal-rings',internalRings:requested,
    radii:[...radii],spacing};
   return result;
