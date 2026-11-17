@@ -27,10 +27,16 @@ def apply(html):
 
     # Existing Save Project clones starters before cloud sync. Ask for the
     # account name BEFORE changing/loading that native project, not after.
-    html=once(html,
-      """  if(!se371HasSavedIdentity())await se371Clone(se371NewName(se371ProjectName()));
-  else await se371SaveLocal();""",
-      """  if(!se371HasSavedIdentity()){
+    # The native function has accrued other patches: locate this precise
+    # branch semantically within se371Save, without depending on indentation.
+    import re
+    start=html.find("async function se371Save(){")
+    if start<0:raise AssertionError("native se371Save function is unavailable")
+    section=html[start:start+1800]
+    pattern=(r"if\s*\(\s*!se371HasSavedIdentity\(\)\s*\)\s*"
+             r"await\s+se371Clone\(\s*se371NewName\(\s*se371ProjectName\(\)\s*\)\s*\)\s*;"
+             r"\s*else\s+await\s+se371SaveLocal\(\)\s*;")
+    change="""if(!se371HasSavedIdentity()){
     const proposal=ready&&se176AccountConnected
       ?se488AskProjectName(se488NeedsProjectName()?'':se371ProjectName())
       :se371NewName(se371ProjectName());
@@ -43,8 +49,11 @@ def apply(html):
       se175StampProject(getProjectId(),name,se371SourceId());
     }
     await se371SaveLocal();
-  }""",
-      "first account save prompts before native clone and local save")
+  }"""
+    revised,count=re.subn(pattern,change,section,count=1)
+    if count!=1:
+        raise AssertionError(("v11.488 native save branch moved",section[:950]))
+    html=html[:start]+revised+html[start+len(section):]
 
     # The Chat account button and VR cloud actions can invoke saveCloud
     # directly, bypassing the normal project toolbar. All of them must use
