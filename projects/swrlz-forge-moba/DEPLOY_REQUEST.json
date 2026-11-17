@@ -2,10 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT (owner-approved)",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.482",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_482_GEOMETRIC_RING_HEIGHT",
-  "reason": "Owner-requested §E Model Studio fixes on textured UFO: Ring and Ring Fill choose actual object-local geometric circles instead of topological edge-step diamonds, still respecting camera-visible side/UV seam vertex selection and explicit Set Ring Center mode. Inspector adds adjustable circle-band width, hides face-only tools in Vertex mode, retaining relevant circle controls. Ring Height becomes a compact touch-sized draggable viewport panel with larger Apply/Cancel controls, preserving native preview/Undo. Dedicated 459-patch source SHA256 verified; both mobile desktop-site and 412px narrow-touch Chromium tests passed on a real painted UV-shifted model: circular ring 16 vertices with nearly zero radius variation, all highlighted, height preview moved every selected vertex +0.18 local Y and Cancel restored exactly, all UV changes zero. Physical Moto/Quest acceptance remains pending.",
-  "sourceCommit": "5c40566a8f05aacb10fa2ed5274b38e112282bdc",
-  "sourceIntegritySha256": "dc7f9acad42d387d81935b20971aaf438d2a7c26990bf9bc3d00d2edd52eea36",
-  "deliveryFix": "Browser download repair: exact source-verified v11.482 monolithic HTML exceeds 10 MiB and HF static URLs deliver it as a file. Package index.html and modeler.html as ~0.64MB pages referencing an external ~9.85MB ES module, each file under 10MB. Source manifest and original SHA remain unchanged; source tests and full Chromium mobile UI acceptance passed in run 44011665999; post-deploy HEAD/GET headers verify public HTML/JS MIME and no Content-Disposition attachment."
+  "releaseVersion": "v11.483",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_483_SORTING_HAT_STARTER",
+  "reason": "Create The Sorting Hat as a native editable §E Model Studio starter. Fully triangulated asymmetrical cloth crown, flared brim with underside, sculpted cloth eyes, mouth, nose and cheek folds, rolled band, rear patches and stitches; 49 editable topology meshes / 7874 vertices / 13238 triangles. Model loads through existing Projects → Starter Models and Model Studio, uses original geometry guided by the owner's reference photo and external multi-angle research. Exact 460-patch build and source integrity sealing completed successfully in GitHub Actions run 44024025334. Existing starters and unrelated projects preserved; Quest 2 and Moto physical acceptance remain owner-led.",
+  "sourceCommit": "3f61f4c18c9cb3084428af846cdd00440d732c4b",
+  "sourceIntegritySha256": "b874a02e72169d7238d5430a7020cdc43d791daed0493a4ad6e7a243249ffaa0"
 }
