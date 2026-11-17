@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT (owner-approved)",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.496",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_496_MODEL_MINI_STUDIOS",
-  "reason": "Publish three native Model, Rigging and Animation mini-studios over one Model Atelier viewport, with basic rig authoring, original clip tools and project workspace restoration.",
-  "sourceCommit": "009a98d8b719dc8c4c84833c72162fb6080c0f17",
-  "sourceIntegritySha256": "ad74cf4538a328d1c69fc08c7284e888200f1dfeaa5cf42e6078eb39ffe2312f"
+  "releaseVersion": "v11.497",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_497_SCULPTED_SORTING_HAT",
+  "reason": "Publish a second editable native Sorting Hat Starter Models project formed from one continuous sculpted cloth mesh with integrated facial folds; preserve the original starter and existing account projects.",
+  "sourceCommit": "492206829122aa11522db153836519b7376a67ee",
+  "sourceIntegritySha256": "dfce78243615ee410b7c092ba2bf81c661b05c94c9dd2d5c3247ec7a960f32bc"
 }
