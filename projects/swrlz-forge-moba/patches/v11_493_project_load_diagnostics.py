@@ -18,7 +18,7 @@ def apply(html):
  # Make the genuine loader's error visible to its selected account card.
  html=once(html,
    "  if(dirty&&!window.confirm('Load this account project and replace unsaved local changes? Save the current project first if you want to keep them.'))return;",
-   "  se493ProjectLoad.reset();\n  if(dirty&&!window.confirm('Load this account project and replace unsaved local changes? Save the current project first if you want to keep them.')){window.SWYRL_ENGINE_PROJECT_LOAD_493.failure(Error('Open cancelled to preserve unsaved changes.'));return false;}",
+   "  window.SWYRL_ENGINE_PROJECT_LOAD_493.reset();\n  if(dirty&&!window.confirm('Load this account project and replace unsaved local changes? Save the current project first if you want to keep them.')){window.SWYRL_ENGINE_PROJECT_LOAD_493.failure(Error('Open cancelled to preserve unsaved changes.'));return false;}",
    'distinguish cancelled load')
  html=once(html,
    "se183LoadStep(se183Ticket,'Downloading account project');const result=await rpc('cloud.load',{projectId});",
