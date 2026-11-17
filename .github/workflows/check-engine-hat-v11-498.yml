@@ -1,0 +1,42 @@
+name: §E v11.498 reference silhouette candidate
+on:
+  push:
+    branches: [main]
+    paths:
+      - "projects/swrlz-forge-moba/patches/v11_498_hat_proportions.py"
+      - "projects/swrlz-forge-moba/tests/sorting_hat_proportion_v11_498.cjs"
+      - ".github/workflows/check-engine-hat-v11-498.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  proportion-candidate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - name: Assemble source with the additional reference correction
+        run: |
+          python - <<'PY'
+          import json,base64,gzip,hashlib,sys
+          from pathlib import Path
+          root=Path('projects/swrlz-forge-moba').resolve()
+          sys.path.insert(0,str(root))
+          import build_space
+          m=json.loads((root/'source-manifest.json').read_text('utf8'))
+          payload=gzip.decompress(base64.b64decode(''.join((root/p).read_text('utf8').strip() for p in m['chunks']))).decode('utf8')
+          patches=m['patches'][:]
+          extra='patches/v11_498_hat_proportions.py'
+          if extra not in patches:patches.append(extra)
+          for name in patches:payload=build_space.load_patch(root/name)(payload)
+          out=Path('/tmp/se498-candidate.html')
+          content=payload.encode('utf8')
+          out.write_bytes(content)
+          print('SE498_CANDIDATE_BYTES',len(content),flush=True)
+          print('SE498_CANDIDATE_SHA256',hashlib.sha256(content).hexdigest(),flush=True)
+          print('SE498_PATCHES',len(patches),flush=True)
+          PY
+      - name: Validate literal browser runtime and mesh silhouette
+        run: |
+          python projects/swrlz-forge-moba/scripts/check_inline_js_syntax_v11_266.py /tmp/se498-candidate.html
+          node projects/swrlz-forge-moba/tests/sorting_hat_proportion_v11_498.cjs /tmp/se498-candidate.html
