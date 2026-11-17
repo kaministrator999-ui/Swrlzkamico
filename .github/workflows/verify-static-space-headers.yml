@@ -52,3 +52,25 @@ jobs:
             curl -sS -L --max-time 22 -D /tmp/hf-other -o /dev/null "${URL}" || true
             grep -iE '^HTTP/|^content-type:|^content-disposition:|^content-length:' /tmp/hf-other | tail -5 || true
           done
+
+      - name: Inspect storage metadata for served HTML files
+        run: |
+          python - <<'PY'
+          import json
+          from urllib.request import urlopen
+          for rid in ('kamiloki/swrlz-forge-moba','kramp/test-static'):
+              print('HF_REPO',rid,flush=True)
+              url='https://huggingface.co/api/spaces/'+rid+'/tree/main?recursive=false&expand=true'
+              try:
+                  with urlopen(url,timeout=20) as response:
+                      data=json.load(response)
+                  for item in data:
+                      if item.get('path') in ('index.html','modeler.html',
+                           'swrlz-engine-v11.482.js','.gitattributes','README.md'):
+                          print('HF_FILE',item.get('path'),{
+                              k:item.get(k) for k in ('type','size','oid','lfs','blobId')
+                              if k in item
+                          },flush=True)
+              except Exception as e:
+                  print('HF_REPO_PROBE_ERROR',type(e).__name__,str(e),flush=True)
+          PY
