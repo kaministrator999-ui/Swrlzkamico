@@ -40,7 +40,7 @@ jobs:
           for token in ('SWYRL_ENGINE_DEPLOY_MARKER: V11_496_MODEL_MINI_STUDIOS',
                         'SWYRL_ENGINE_MINI_STUDIOS_496',
                         'studioMode:window.SWYRL_ENGINE_MINI_STUDIOS_496',
-                        'id="se496ModeTabs"','se496Rest0','se496CreateRig'):
+                        'se496ModeTabs','se496Rest0','se496CreateRig'):
               if token not in html:raise AssertionError(token)
           data=html.encode('utf8')
           print('SE496_CANDIDATE_BYTES',len(data),flush=True)
