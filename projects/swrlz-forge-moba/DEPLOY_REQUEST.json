@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT (owner-approved)",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.495",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_495_FAST_REVISION_TRANSFER",
-  "reason": "Deduplicate repeated UV paint images inside historical project revisions, preserve lossless rollback, reduce cloud upload bytes and show actual transfer size.",
-  "sourceCommit": "b5816acd64c07e5399b03266bda46fa23159e4ab",
-  "sourceIntegritySha256": "6905959753e36d3dad2f92bccbd1383a91bfecb7f3444aae2838a271343030c5"
+  "releaseVersion": "v11.496",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_496_MODEL_MINI_STUDIOS",
+  "reason": "Publish three native Model, Rigging and Animation mini-studios over one Model Atelier viewport, with basic rig authoring, original clip tools and project workspace restoration.",
+  "sourceCommit": "009a98d8b719dc8c4c84833c72162fb6080c0f17",
+  "sourceIntegritySha256": "ad74cf4538a328d1c69fc08c7284e888200f1dfeaa5cf42e6078eb39ffe2312f"
 }
