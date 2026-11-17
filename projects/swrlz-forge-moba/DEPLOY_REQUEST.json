@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT (owner-approved)",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.481",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_481_TEXTURED_EDITABLE_COPY",
-  "reason": "Owner-approved §E textured model editing: preserve original authored UV atlas, texture PNG, UV slide/repeat and material while preparing a separate native editable topology working copy. Original remains in saved project and Source/Editable switch toggles it without geometry overlap. Component ring and height operations include all UV seam-duplicate physical vertices. Guard unsupported, rigged, multi-material, or over-budget geometry rather than flattening source. Verified 458-patch source SHA256 and both desktop-site and narrow-touch Chromium tests using a real painted and UV-shifted mesh: zero UV/position differences over 864 triangle corners, identical paint and UV correction, highlighted selected Ring Fill vertices, preview/cancel, source restoration. Physical Moto/Quest owner acceptance pending.",
-  "sourceCommit": "419615cc16cd6ad16d6149deca467364e524ed4b",
-  "sourceIntegritySha256": "c63d2667f7472ab69cd5cc4d497fab545aab86957aa8f1c9608e2babd5f8e5cb"
+  "releaseVersion": "v11.482",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_482_GEOMETRIC_RING_HEIGHT",
+  "reason": "Owner-requested §E Model Studio fixes on textured UFO: Ring and Ring Fill choose actual object-local geometric circles instead of topological edge-step diamonds, still respecting camera-visible side/UV seam vertex selection and explicit Set Ring Center mode. Inspector adds adjustable circle-band width, hides face-only tools in Vertex mode, retaining relevant circle controls. Ring Height becomes a compact touch-sized draggable viewport panel with larger Apply/Cancel controls, preserving native preview/Undo. Dedicated 459-patch source SHA256 verified; both mobile desktop-site and 412px narrow-touch Chromium tests passed on a real painted UV-shifted model: circular ring 16 vertices with nearly zero radius variation, all highlighted, height preview moved every selected vertex +0.18 local Y and Cancel restored exactly, all UV changes zero. Physical Moto/Quest acceptance remains pending.",
+  "sourceCommit": "5c40566a8f05aacb10fa2ed5274b38e112282bdc",
+  "sourceIntegritySha256": "dc7f9acad42d387d81935b20971aaf438d2a7c26990bf9bc3d00d2edd52eea36"
 }
