@@ -1,0 +1,19 @@
+{
+  "schema": "swrlz-forge-release-prepare-v1",
+  "requestedBy": "ChatGPT (owner-approved)",
+  "version": "v11.485",
+  "target": "kamiloki/swrlz-forge-moba",
+  "goal": "Replace the previously published Sorting Hat assembly with a single cohesive mesh sculpt, with dented eyes and sculpted brows rather than overlay objects or holes, using native UV paint for details",
+  "source": "authoring/sorting_hat_single_surface_v11_485.py",
+  "scene": "scenes/model-atelier-sorting-hat.swyrl.json",
+  "preserved": "scenes/model-atelier-sorting-hat-v11-483-assembly.swyrl.json",
+  "acceptance": [
+    "one single connected topology mesh",
+    "no eye or mouth openings",
+    "UV paint PNG within native 360KB data URI",
+    "vertex and triangle native limits",
+    "source seal and full modeler tests",
+    "browser-safe packaged deployment"
+  ],
+  "ownerPhysicalTest": "pending"
+}
