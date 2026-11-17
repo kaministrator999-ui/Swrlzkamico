@@ -52,6 +52,8 @@ se220RigValidate=function(rig){
 /* Exact authored per-vertex weights take priority on the original topology.
    If a user changes vertex count, gracefully fall back to procedural envelopes. */
 function se489AuthoredSkinWeights(part,index,rig,point){
+ if(rig.targetPartId&&part?.id!==rig.targetPartId)
+  return {indices:[0,0,0,0],weights:[1,0,0,0]};
  const data=part?.skinning;
  const positions=part?.topologyMesh?.positions;
  const count=Array.isArray(positions)?positions.length/3:0;
