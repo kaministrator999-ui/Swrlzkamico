@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.486
+title: §wyrl§ Engine v11.487
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,10 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.487 · Correct model and My Projects exports (2026-11-17)
+
+The legacy Model Atelier export functions still hardcoded `prism-jester.model.json`, `prism-jester.mesh.obj` and `o Prism_Jester`. Native model JSON and OBJ exports now derive their filename and OBJ object label from the current model project (or the standalone scratch model), without modifying persisted project/model names, meshes or UVs. In **My Projects**, every saved account or on-device project card now has **Export Project**, which reads the specific card's stored native scene with all materials, textures, rigging, animation and history, not the currently loaded viewport. **Export Model Update** additionally emits a round-trip package linked to that model project's stable ID and account revision (or the standalone model asset ID), compatible with the existing Update This Project operation. Stale account versions and non-model projects are rejected for model-update export. Source/test: `patches/v11_487_model_project_exports.py`, `tests/model_project_exports_v11_487.cjs`. Owner Moto/Quest verification is still required.
 
 ## §E v11.486 · Rolling project history and in-place updates (2026-11-17)
 
