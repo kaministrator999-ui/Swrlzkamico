@@ -69,24 +69,32 @@ const se498RigPolish=(()=>{
    if(text)text.textContent=' Show joints in Animation';
   }
   const summary=native.querySelector(':scope > summary');
-  if(summary)summary.textContent=mode()==='rig'?'Rigging · Skeleton':mode()==='animate'?'Animation · Clips':'Rig · Pose · Animate';
+  if(summary){
+   const title=mode()==='rig'?'Rigging · Skeleton':mode()==='animate'?'Animation · Clips':'Rig · Pose · Animate';
+   if(summary.textContent!==title)summary.textContent=title;
+  }
   const author=$('#se496BoneAuthoring');
   if(author){
    const hint=author.querySelector('small:last-child');
-   if(hint)hint.textContent='Select a joint on the model or in the list. Rest transforms and automatic influences affect this rig only.';
+   if(hint&&hint.textContent!=='Select a joint on the model or in the list. Rest transforms and automatic influences affect this rig only.')
+    hint.textContent='Select a joint on the model or in the list. Rest transforms and automatic influences affect this rig only.';
   }
   const small=native.querySelector('.atelier-rig-body > small:last-child');
   if(small&&r){
-   small.textContent=r.bones.length+' hierarchical joints · four-influence GPU skinning · source mesh and UVs unchanged.';
+   const label=r.bones.length+' hierarchical joints · four-influence GPU skinning · source mesh and UVs unchanged.';
+   if(small.textContent!==label)small.textContent=label;
   }
  }
  function helpers(){
   if(!modelRoot)return;
   const isolate=!!live();
   // Restore visibility, don't destroy the native box/gizmos or change their settings.
-  for(const object of modelRoot.children){
+  const sceneHelpers=[...modelRoot.children,...(world?.children||[])];
+  if(typeof atelierMeshGizmo!=='undefined'&&atelierMeshGizmo)sceneHelpers.push(atelierMeshGizmo);
+  for(const object of new Set(sceneHelpers)){
+   if(object===modelRoot||object===world)continue;
    if(object===visual?.group||object===se220BoneOverlay)continue;
-   if(!object.userData?.atelierHelper)continue;
+   if(!object.userData?.atelierHelper&&object!==atelierMeshGizmo)continue;
    if(isolate&&!object.userData.se498Hidden){
     object.userData.se498Hidden={visible:object.visible};
     object.visible=false;
