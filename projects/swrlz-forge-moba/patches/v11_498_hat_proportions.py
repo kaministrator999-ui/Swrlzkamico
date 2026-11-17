@@ -53,10 +53,9 @@ def apply(html):
         html=once(html,old,new,'fold depth')
     html=once(html,'const ripple=.082*Math.sin(3*theta+.55)+.062*Math.sin(5*theta-1.35)\n+.045*Math.sin(2*theta+1.7);',
        'const ripple=.023*Math.sin(3*theta+.55)+.019*Math.sin(5*theta-1.35)\n+.011*Math.sin(2*theta+1.7);', 'brim waves')
-    html=once(html,'(.035*Math.sin(4*theta+.8)+.018*Math.sin(9*theta))',
-       '(.015*Math.sin(4*theta+.8)+.008*Math.sin(9*theta))', 'brim radial x')
-    html=once(html,'(.035*Math.sin(4*theta+.8)+.018*Math.sin(9*theta))',
-       '(.015*Math.sin(4*theta+.8)+.008*Math.sin(9*theta))', 'brim radial z')
+    old='(.035*Math.sin(4*theta+.8)+.018*Math.sin(9*theta))'
+    assert html.count(old)==2,('brim radial',html.count(old))
+    html=html.replace(old,'(.015*Math.sin(4*theta+.8)+.008*Math.sin(9*theta))')
     # Retain original project registration, close surface, source mesh and UVs.
     for old,new in (
       ('SWYRL_ENGINE_DEPLOY_MARKER: V11_497_SCULPTED_SORTING_HAT',MARKER),
