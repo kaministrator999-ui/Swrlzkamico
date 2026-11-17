@@ -33,40 +33,92 @@ const se483RingDetailKernel=(()=>{
  }
  function splitEdges(d,cuts){
   const out=clone(d),lookup=new Map(),changed=[];
-  // Keyed by the source INDEX edge: every adjoining face uses the exact
-  // same newly created vertex. UV seam charts retain distinct UV samples.
+  // Adjacent faces share identical new indices on each indexed edge. UV
+  // seam charts stay separate but interpolate their own UV coordinates.
   for(const [edge,roots] of cuts){
-   const [a,b]=edge.split(':').map(Number);
-   const entries=[];
-   for(const t of [...new Set(roots.map(x=>Math.round(x*1e7)/1e7))].sort((a,b)=>a-b)){
+   const [a,b]=edge.split(':').map(Number),entries=[],unique=new Map();
+   for(const raw of roots){
+    const cut=typeof raw==='number'?{t:raw,tag:null}:raw;
+    const t=Math.round(cut.t*1e7)/1e7;
     if(!(t>1e-5&&t<1-1e-5))continue;
+    if(!unique.has(t))unique.set(t,{t,tags:new Set()});
+    if(cut.tag!==null&&cut.tag!==undefined)unique.get(t).tags.add(cut.tag);
+   }
+   for(const {t,tags} of [...unique.values()].sort((a,b)=>a.t-b.t)){
     if(out.positions.length/3>=limits().vertices)
      return BAD('Vertex safety limit reached. Reduce subdivisions or select a smaller region.');
-    const id=out.positions.length/3;
-    const pa=P(d,a),pb=P(d,b),ua=U(d,a),ub=U(d,b);
+    const id=out.positions.length/3,pa=P(d,a),pb=P(d,b),ua=U(d,a),ub=U(d,b);
     out.positions.push(...pa.map((x,k)=>x+(pb[k]-x)*t));
     out.uvs.push(...ua.map((x,k)=>x+(ub[k]-x)*t));
-    entries.push({id,t});changed.push(id);
+    entries.push({id,t,tags:[...tags],edge});changed.push(id);
    }
    if(entries.length)lookup.set(edge,entries);
   }
   if(!changed.length)return BAD('No eligible connected edges intersect the requested ring detail.');
   out.indices=[];
   const edgeSeq=(a,b)=>{
-   const entries=lookup.get(key(a,b))||[];
-   return a<b?entries.map(x=>x.id):entries.map(x=>x.id).reverse();
+   const seq=lookup.get(key(a,b))||[];
+   return a<b?seq:seq.slice().reverse();
   };
   for(let f=0;f<d.indices.length;f+=3){
-   const [a,b,c]=d.indices.slice(f,f+3),ab=edgeSeq(a,b),bc=edgeSeq(b,c),ca=edgeSeq(c,a);
+   const [a,b,c]=d.indices.slice(f,f+3);
+   const ab=edgeSeq(a,b),bc=edgeSeq(b,c),ca=edgeSeq(c,a);
    if(!ab.length&&!bc.length&&!ca.length){out.indices.push(a,b,c);continue;}
-   if(out.positions.length/3>=limits().vertices)
-    return BAD('Vertex safety limit reached while stitching selected faces.');
-   const center=out.positions.length/3;
-   out.positions.push(...P(d,a).map((v,k)=>(v+P(d,b)[k]+P(d,c)[k])/3));
-   out.uvs.push(...U(d,a).map((v,k)=>(v+U(d,b)[k]+U(d,c)[k])/3));
-   const contour=[a,...ab,b,...bc,c,...ca];
-   for(let j=0;j<contour.length;j++){
-    out.indices.push(contour[j],contour[(j+1)%contour.length],center);
+   const contour=[{id:a,tags:[],edge:null},...ab,
+    {id:b,tags:[],edge:null},...bc,
+    {id:c,tags:[],edge:null},...ca];
+   // Create actual edges between same-radius boundary points within each
+   // triangle. These chords form connected concentric loops across adjacent
+   // triangles, rather than merely painting dots over an unchanged surface.
+   const byTag=new Map();
+   for(const vertex of contour)for(const tag of vertex.tags||[]){
+    if(!byTag.has(tag))byTag.set(tag,[]);
+    byTag.get(tag).push(vertex);
+   }
+   let polygons=[contour.map(v=>v.id)];
+   for(const vertices of byTag.values()){
+    if(vertices.length%2)continue; // tangency: don't invent a connection
+    for(let j=0;j<vertices.length;j+=2){
+     const from=vertices[j],to=vertices[j+1];
+     if(from.edge===to.edge)continue;
+     let split=false;
+     for(let q=0;q<polygons.length;q++){
+      const poly=polygons[q],i=poly.indexOf(from.id),k=poly.indexOf(to.id);
+      if(i<0||k<0||i===k)continue;
+      const lo=Math.min(i,k),hi=Math.max(i,k);
+      const one=poly.slice(lo,hi+1),two=[...poly.slice(hi),...poly.slice(0,lo+1)];
+      if(one.length<3||two.length<3)continue;
+      polygons.splice(q,1,one,two);split=true;break;
+     }
+     if(!split)return BAD('Internal ring chords crossed or touched another cut. Reduce ring count.');
+    }
+   }
+   const pa=P(d,a),pb=P(d,b),pc=P(d,c);
+   const n=[
+    (pb[1]-pa[1])*(pc[2]-pa[2])-(pb[2]-pa[2])*(pc[1]-pa[1]),
+    (pb[2]-pa[2])*(pc[0]-pa[0])-(pb[0]-pa[0])*(pc[2]-pa[2]),
+    (pb[0]-pa[0])*(pc[1]-pa[1])-(pb[1]-pa[1])*(pc[0]-pa[0])
+   ];
+   function area(x,y,z){
+    const p=P(out,x),q=P(out,y),r=P(out,z);
+    const u=q.map((v,k)=>v-p[k]),v=r.map((w,k)=>w-p[k]);
+    const cross=[u[1]*v[2]-u[2]*v[1],u[2]*v[0]-u[0]*v[2],u[0]*v[1]-u[1]*v[0]];
+    return cross.reduce((sum,val,k)=>sum+val*n[k],0);
+   }
+   for(const polygon of polygons){
+    const poly=[...polygon];
+    while(poly.length>3){
+     let ear=-1;
+     for(let k=0;k<poly.length;k++){
+      const u=poly[(k-1+poly.length)%poly.length],v=poly[k],w=poly[(k+1)%poly.length];
+      if(area(u,v,w)>1e-12){ear=k;break;}
+     }
+     if(ear<0)return BAD('Ring geometry would create a degenerate triangle. Reduce density.');
+     out.indices.push(poly[(ear-1+poly.length)%poly.length],poly[ear],poly[(ear+1)%poly.length]);
+     poly.splice(ear,1);
+    }
+    if(area(...poly)<=1e-12)return BAD('A ring cut collapsed one triangle. Adjust spacing.');
+    out.indices.push(...poly);
    }
    if(out.indices.length/3>limits().faces)
     return BAD('Triangle safety limit reached. Reduce requested ring density.');
@@ -110,7 +162,7 @@ const se483RingDetailKernel=(()=>{
     const ox=p[ax[0]]-origin[ax[0]],oy=p[ax[1]]-origin[ax[1]];
     const A=dx*dx+dy*dy;if(A<1e-12)continue;
     const B=2*(ox*dx+oy*dy);
-    for(const rad of radii){
+    for(const [tag,rad] of radii.entries()){
      const C=ox*ox+oy*oy-rad*rad;
      const disc=B*B-4*A*C;
      if(disc<=1e-12)continue;
@@ -118,7 +170,7 @@ const se483RingDetailKernel=(()=>{
      for(const t of [(-B-sq)/(2*A),(-B+sq)/(2*A)]){
       if(t>1e-5&&t<1-1e-5){
        if(!cuts.has(e))cuts.set(e,[]);
-       cuts.get(e).push(t);
+       cuts.get(e).push({t,tag});
       }
      }
     }
