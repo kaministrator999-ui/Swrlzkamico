@@ -54,6 +54,7 @@ for token in (
  'SWYRL_ENGINE_UPDATE_READ_491','se491SelectedDocument','Retry Update',
  'SWYRL_ENGINE_ZIP_UPDATES_492','se492ModelUpload',
  'SWYRL_ENGINE_PROJECT_LOAD_493','se493ProjectLoad',
+ 'ZIP detected; checking archive member','Could not open project: ',
  'se488AskProjectName','se488NameAssetBeforeCloudSave','se488InstallNameAction',
  'se487ExportDisplayName','se487ExportStem','se487ExportOBJName',
  'se487MyProjectsExport','SWYRL_ENGINE_MY_PROJECTS_EXPORT_487',
