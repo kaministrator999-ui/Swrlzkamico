@@ -1,0 +1,9 @@
+{
+  "schema": "swrlz-forge-release-prepare-v1",
+  "requestedBy": "ChatGPT (owner-approved)",
+  "releaseVersion": "v11.486",
+  "scope": "rolling per-project revision history plus in-place model update; no plugin",
+  "expectedPrevious": "v11.485",
+  "sourcePatch": "patches/v11_486_project_revisions.py",
+  "requires": "full source seal, syntax, codec tests, manifest digest, static delivery and separate deploy request"
+}
