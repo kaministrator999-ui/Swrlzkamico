@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT (owner-approved)",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.484",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_484_RING_DETAIL_AND_TRANSFORMS",
-  "reason": "Owner-approved §E Model Studio: Ring vertex count up/down via real connected UV-preserving edges, 1–8 optional concentric internal ring subdivisions in Filled Ring, independent selection of newly inserted rings, group Position XYZ, Rotation XYZ, Scale, selection/circle/custom pivot, edge falloff and graduated ring twist; all through native preview/Apply/Cancel/Undo. Preserves existing UFO painted UV atlas, original source/working copy, and Sorting Hat native starter v11.483. 461-patch source sealed and verified. Real painted mesh tests pass mobile desktop-site and 412px narrow-touch Chromium: created 2 internal connected rings (+64 vertices), selected 16 highlighted ring vertices, transformed them +0.16 local Y with 7-degree Y rotation; Cancel returned every vertex and UV delta zero; Apply committed one native Undo checkpoint and selection persisted after transform. Focused topology tests verified ring density 8→12→8 and geometry guards. Maintain HF regular Git blob HTML delivery. Physical Moto/Quest owner acceptance pending.",
-  "sourceCommit": "07a4146a8fb9d3b853c5cb697176d2bab7e5599c",
-  "sourceIntegritySha256": "4e1982668be155c01a8a8ddce72a5a515809f2af8aef69fc5a7897a42a01c11e"
+  "releaseVersion": "v11.485",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_485_ONE_CLOTH_SORTING_HAT",
+  "reason": "Owner tested previous Sorting Hat starter on Moto and requested major correction: one complete cloth mesh, not 49 assembled shapes. No separate eyebrows/eyes/mouth; eyebrows and lips are real raised folds, eye sockets and speaking mouth are recessed into crown fabric, no eye holes. Full hat crown, curled tip, brim, brim underside and lining comprise one connected editable 7859-vertex/15552-triangle topologyMesh with genuine UV coordinates and hand-authored deterministic 768px cloth paint/shading texture. Previous 49-object hat preserved in backup. Source build 462 patches, 78 assets, PNG validation, topology connectivity, Node engine regressions and 10MB-safe static delivery passed GitHub Actions run 44027748342. Mobile/VR owner visual acceptance pending.",
+  "sourceCommit": "9c8b4129f84838087d0f4fde1d69be7f593685c3",
+  "sourceIntegritySha256": "f481b75ad06496a50a5c3bc17d8168d2e7c6dc4b8efb95f432a6b12f12d56208"
 }
