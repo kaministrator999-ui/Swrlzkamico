@@ -22,7 +22,7 @@ def apply(html):
 
     # Model Atelier's v11.3 legacy export still hardcodes Prism Jester even
     # when the active model is the owner's completely different mesh.
-    name_helper="""  function se487ModelExportBase(){
+    name_helper=r"""  function se487ModelExportBase(){
     const inScratch=window.SWYRL_ENGINE_WORKSPACES?.usingScratch?.()===true;
     const projectName=String(currentProject?.projectName||currentProject?.name||'').trim();
     const modelName=String(model()?.name||'').trim();
