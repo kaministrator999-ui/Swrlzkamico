@@ -1,0 +1,27 @@
+name: §E v11.483 ring detail focused safety tests
+on:
+  push:
+    branches: [main]
+    paths:
+      - "projects/swrlz-forge-moba/runtime/model_ring_detail_kernel_v11_483.js"
+      - "projects/swrlz-forge-moba/runtime/model_ring_detail_studio_v11_483.js"
+      - "projects/swrlz-forge-moba/runtime/model_ring_detail_studio_v11_483.css"
+      - "projects/swrlz-forge-moba/patches/v11_483_ring_detail_transforms.py"
+      - "projects/swrlz-forge-moba/tests/model_ring_detail_transforms_v11_483.mjs"
+      - ".github/workflows/check-ring-detail-v11-483.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  focused-ring-logic:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+      - name: JavaScript syntax and pure native topology regression
+        run: |
+          node --check projects/swrlz-forge-moba/runtime/model_ring_detail_kernel_v11_483.js
+          node --check projects/swrlz-forge-moba/runtime/model_ring_detail_studio_v11_483.js
+          node projects/swrlz-forge-moba/tests/model_ring_detail_transforms_v11_483.mjs
+      - name: Python release patch syntax
+        run: python -m py_compile projects/swrlz-forge-moba/patches/v11_483_ring_detail_transforms.py
