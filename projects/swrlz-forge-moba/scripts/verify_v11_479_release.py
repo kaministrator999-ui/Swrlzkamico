@@ -52,7 +52,7 @@ for token in (
  'SE466_RING_UI_START','SE466_RING_BRIDGE_START',
  'SE430_MODEL_WORKSHOP_BRIDGE_START','se474SpecificModes','se474ToolFlyout'
 ):assert token in html,token
-assert html.count(" source.engine='§wyrl§ Engine · Maker v11.479';source.version=11.478;")==5
+assert html.count(" source.engine='§wyrl§ Engine · Maker v11.479';source.version=11.479;")==5
 subprocess.run([sys.executable,str(ROOT/'scripts/check_inline_js_syntax_v11_266.py'),
  str(out/'index.html')],check=True)
 receipt=json.loads((out/'SOURCE.json').read_text('utf8'))
