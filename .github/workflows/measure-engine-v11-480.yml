@@ -46,6 +46,8 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git fetch origin main
+          test "$(git rev-parse HEAD)" = "$(git rev-parse origin/main)" || { echo 'Source moved; rebuild on latest main before sealing'; exit 1; }
           git add projects/swrlz-forge-moba/source-manifest.json
           if ! git diff --cached --quiet; then
             git commit -m "§E v11.480: seal Chromium-verified editable entry source"
