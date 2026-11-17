@@ -19,6 +19,7 @@ for file in ('sorting_hat_starter_v11_483.js','model_ring_detail_kernel_v11_483.
              'account_project_naming_v11_488.js','account_asset_naming_v11_488.js',
              'model_atelier_cloth_rig_v11_489.js','my_projects_update_model_v11_489.js',
              'model_atelier_rig_workspace_v11_490.js','model_account_update_recovery_v11_491.js',
+             'model_zip_update_v11_492.js','project_load_diagnostics_v11_493.js',
              'model_ring_kernel_v11_466.js','model_ring_ui_v11_466.js'):
  subprocess.run(['node','--check',str(ROOT/'runtime'/file)],check=True)
 subprocess.run([sys.executable,str(ROOT/'tests/sorting_hat_single_mesh_v11_485.py')],check=True)
@@ -28,6 +29,8 @@ subprocess.run(['node',str(ROOT/'tests/account_project_naming_v11_488.cjs')],che
 subprocess.run(['node',str(ROOT/'tests/cloth_rig_project_update_v11_489.cjs')],check=True)
 subprocess.run(['node',str(ROOT/'tests/model_rig_workspace_v11_490.cjs')],check=True)
 subprocess.run(['node',str(ROOT/'tests/cloud_model_update_recovery_v11_491.cjs')],check=True)
+subprocess.run(['node',str(ROOT/'tests/zip_model_update_v11_492.cjs')],check=True)
+subprocess.run(['node',str(ROOT/'tests/project_load_diagnostics_v11_493.cjs')],check=True)
 for file in ('model_progressive_hierarchy_v11_477.mjs','model_ring_vertex_highlight_v11_478.mjs','model_ring_rim_visible_side_v11_479.mjs','model_editable_entry_v11_480.mjs','model_textured_editable_copy_v11_481.mjs','model_geometric_ring_height_v11_482.mjs',
              'model_ring_detail_transforms_v11_483.mjs','model_progressive_rail_fix_v11_475.mjs',
              'model_progressive_tools_v11_474.mjs',
