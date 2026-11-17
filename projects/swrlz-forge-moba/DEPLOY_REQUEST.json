@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT (owner-approved)",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.497",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_497_SCULPTED_SORTING_HAT",
-  "reason": "Publish a second editable native Sorting Hat Starter Models project formed from one continuous sculpted cloth mesh with integrated facial folds; preserve the original starter and existing account projects.",
-  "sourceCommit": "492206829122aa11522db153836519b7376a67ee",
-  "sourceIntegritySha256": "dfce78243615ee410b7c092ba2bf81c661b05c94c9dd2d5c3247ec7a960f32bc"
+  "releaseVersion": "v11.498",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_498_HAT_PROPORTIONS",
+  "reason": "Correct screenshot-confirmed sculpted starter silhouette: lower crown, reduced tip bend, deeper cloth facial relief, softer natural folds and subtler brim ripples; still one UV-painted native watertight mesh and original starter preserved.",
+  "sourceCommit": "6609206c6155fd3efda1e0c09450b339039026bd",
+  "sourceIntegritySha256": "5b5631cad2175eb74583e78d63639db300486adff70fa17d3080045b16983218"
 }
