@@ -11,6 +11,7 @@ on:
       - "projects/swrlz-forge-moba/runtime/model_ring_height_layout_v11_482.css"
       - "projects/swrlz-forge-moba/scripts/prepare_v11_482_release.py"
       - "projects/swrlz-forge-moba/scripts/verify_v11_482_release.py"
+      - "projects/swrlz-forge-moba/scripts/package_static_delivery_v11_482.py"
       - "projects/swrlz-forge-moba/tests/model_geometric_ring_height_v11_482.mjs"
       - "projects/swrlz-forge-moba/tests/model_geometric_ring_height_browser_v11_482.cjs"
   workflow_dispatch:
@@ -36,6 +37,10 @@ jobs:
           node-version: '22'
       - name: Build, calculate SHA256 and verify 459 native-source patches
         run: python projects/swrlz-forge-moba/scripts/prepare_v11_482_release.py
+      - name: Package static HTML and validate both served files stay under 10MB
+        run: |
+          python projects/swrlz-forge-moba/scripts/package_static_delivery_v11_482.py --output projects/swrlz-forge-moba/_release_v11_482_candidate
+          node --check projects/swrlz-forge-moba/_release_v11_482_candidate/swrlz-engine-v11.482.js
       - name: Install Chromium touch browser
         run: |
           npm install --no-save playwright@1.56.1
