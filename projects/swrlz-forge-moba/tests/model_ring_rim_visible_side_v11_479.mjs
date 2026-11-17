@@ -24,6 +24,8 @@ assert(outline.vertexSlots.length>=4,'Ring must expand beyond tapped point');
 const fill=kernel.choose(square,edges,0,[0,0],'fill');
 assert(fill.ok);assert(fill.vertexSlots.includes(0));assert(fill.vertexSlots.includes(8));
 assert(fill.vertexSlots.length>outline.vertexSlots.length,'Filled ring includes interior');
+assert(outline.vertexSlots.every(id=>fill.vertexSlots.includes(id)),
+ 'Every outline vertex must also be selected by Ring Fill');
 const separated=kernel.choose([[0,1],[1,0],[0,-1],[-1,0],[0,1]],[[0,1],[1,2],[2,3],[3,0]],0,[0,0],'outline');
 assert(separated.ok);assert(!separated.vertexSlots.includes(4),
  'Identical projected point in an unconnected island must not join');
