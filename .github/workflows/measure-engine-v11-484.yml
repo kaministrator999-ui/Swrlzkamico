@@ -4,7 +4,7 @@ on:
   push:
     branches: [main]
     paths:
-      - ".github/workflows/measure-engine-v11-482.yml"
+      - ".github/workflows/measure-engine-v11-484.yml"
       - "projects/swrlz-forge-moba/patches/v11_484_ring_detail_transforms.py"
       - "projects/swrlz-forge-moba/runtime/model_ring_detail_kernel_v11_483.js"
       - "projects/swrlz-forge-moba/runtime/model_ring_detail_studio_v11_483.js"
@@ -20,11 +20,11 @@ permissions:
   contents: write
 
 concurrency:
-  group: se484-geometric-ring-measure
+  group: se484-ring-detail-measure
   cancel-in-progress: true
 
 jobs:
-  geometric-ring:
+  ring-detail:
     runs-on: ubuntu-24.04
     timeout-minutes: 25
     steps:
@@ -46,7 +46,7 @@ jobs:
           npm install --no-save playwright@1.56.1
           npx playwright install --with-deps --only-shell chromium
       - name: Test painted mesh inserted concentric rings, XYZ transforms, native Apply, UV fidelity and stored starter
-        run: node projects/swrlz-forge-moba/tests/model_geometric_ring_height_browser_v11_484.cjs projects/swrlz-forge-moba/_release_v11_484_candidate
+        run: node projects/swrlz-forge-moba/tests/model_ring_detail_browser_v11_484.cjs projects/swrlz-forge-moba/_release_v11_484_candidate
       - name: Seal verified source SHA and bytes to main
         if: success() && github.ref == 'refs/heads/main'
         run: |
