@@ -1,0 +1,16 @@
+{
+  "schema": "swrlz-engine-asset-only-repair-v1",
+  "requestedBy": "ChatGPT (owner-approved)",
+  "asset": "scenes/model-atelier-sorting-hat.swyrl.json",
+  "baseVersion": "v11.485",
+  "reason": "Fix abrupt jagged pointed tab on Sorting Hat tip observed in the 2026-11-17 mobile screenshot; replace with a smooth downward drooping curl using the same single mesh.",
+  "constraints": [
+    "do not add mesh objects",
+    "do not modify face, brim or lining geometry",
+    "preserve all UV coordinates and texture paint",
+    "preserve triangle connectivity",
+    "preserve engine source manifest",
+    "validate before deployment"
+  ],
+  "source": "authoring/sorting_hat_single_surface_v11_485.py"
+}
