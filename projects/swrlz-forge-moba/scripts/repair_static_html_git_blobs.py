@@ -68,7 +68,7 @@ def main():
                    GIT_CONFIG_NOSYSTEM="0")
         remote="https://huggingface.co/spaces/"+REPO
         work=d/"space"
-        sh("git","clone","--depth","1","--filter=blob:none","--single-branch",
+        sh("git","clone","--depth","1","--single-branch",
            remote,str(work),env=env)
         gitattributes=work/".gitattributes"
         existing=gitattributes.read_text("utf8") if gitattributes.exists() else ""
