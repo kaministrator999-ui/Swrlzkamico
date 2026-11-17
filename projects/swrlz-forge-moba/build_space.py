@@ -131,6 +131,7 @@ def main():
     media_paths.append("scenes/model-atelier-festival-polish-v11-19.swyrl.json")
     media_paths.append("scenes/model-atelier-festival-anatomy-v11-20.swyrl.json")
     media_paths.extend(p.relative_to(ROOT).as_posix() for p in sorted((ROOT / "assets/anime").glob("*.png")))
+    media_paths.append("scenes/model-atelier-sorting-hat.swyrl.json")
     media_paths.append("scenes/model-atelier-comet-courier-v11-77.swyrl.json")
     media_paths.extend(p.relative_to(ROOT).as_posix() for p in sorted((ROOT / "assets/models/comet-courier").glob("*")) if p.is_file())
     media_paths.extend(["scenes/sheep-tag-wildwood-v11-79.swyrl.json", "assets/sheep-tag/moonbell-wildwood-ground-4k.jpg"])
