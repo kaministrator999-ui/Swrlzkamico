@@ -187,5 +187,6 @@ const se482GeometricRing=(()=>{
   choose,selectCenter,noteRim,reselect,refresh:mount,sampleSlots,
   inspect:()=>({bandPercent,last:last?{...last}:null,circular:true})
  });
+ return window.SWYRL_ENGINE_GEOMETRIC_RING_482;
 })();
  /* SE482_GEOMETRIC_RING_END */
