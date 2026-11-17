@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT (owner-approved)",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.493",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_493_PROJECT_LOAD_DIAGNOSTICS",
-  "reason": "Repair model ZIP upload detection by binary signature and display precise My Projects cloud loading failures with read-only retries. Never change the saved revision or overwrite an active project on failure.",
-  "sourceCommit": "5719d4759b52f4747ac8d8c441a89c01d0156411",
-  "sourceIntegritySha256": "0297b912ea757c984843f6ad0542470ec7880e59c8b51c516cecec38f8cd2a4c"
+  "releaseVersion": "v11.494",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_494_MODEL_UPDATE_LIFECYCLE",
+  "reason": "Show real update stages, avoid redundant post-save re-download, immediately reopen verified project via canonical loader while preserving CAS and revision history.",
+  "sourceCommit": "e80f2fc2602771f8fc50b0113c73c8fa01103734",
+  "sourceIntegritySha256": "6a722a3395335c903276ff8f78ea8acbd2c0c9adbebff722326f1fa0341a9bc4"
 }
