@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Verify exact §E v11.484 native Sorting Hat starter source provenance."""
+"""Verify exact §E v11.484 ring topology, UV-safe transforms and Sorting Hat source provenance."""
 import argparse,hashlib,json,subprocess,sys
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
@@ -9,7 +9,7 @@ arg.add_argument('--request',action='store_true')
 args=arg.parse_args()
 m=json.loads((ROOT/'source-manifest.json').read_text('utf8'))
 assert m['name']=='§wyrl§ Engine v11.484'
-assert m['finalArtifact']=='swyrl_engine_v11_483.html'
+assert m['finalArtifact']=='swyrl_engine_v11_484.html'
 assert len(m['patches'])==461 and m['patches'][-2:]==['patches/v11_483_sorting_hat_starter.py','patches/v11_484_ring_detail_transforms.py']
 assert isinstance(m['finalBytes'],int) and isinstance(m['finalSha256'],str)
 for file in ('sorting_hat_starter_v11_483.js','model_ring_detail_kernel_v11_483.js','model_ring_detail_studio_v11_483.js','model_vertex_entry_v11_477.js','model_progressive_hierarchy_v11_477.js','model_ring_vertex_highlight_v11_478.js','model_ring_height_v11_478.js','model_ring_rim_visibility_v11_479.js','model_editable_entry_v11_480.js','model_textured_editable_copy_v11_481.js','model_geometric_ring_v11_482.js','model_ring_height_layout_v11_482.js',
