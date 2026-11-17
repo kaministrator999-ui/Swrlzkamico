@@ -18,7 +18,8 @@ subprocess.run(['node',str(ROOT/'tests/model_project_exports_v11_487.cjs')],chec
 subprocess.run(['node',str(ROOT/'tests/account_project_naming_v11_488.cjs')],check=True)
 subprocess.run(['node',str(ROOT/'tests/cloth_rig_project_update_v11_489.cjs')],check=True)
 subprocess.run(['node',str(ROOT/'tests/model_rig_workspace_v11_490.cjs')],check=True)
-subprocess.run(['node',str(ROOT/'tests/cloud_model_update_recovery_v11_492.cjs')],check=True)
+subprocess.run(['node',str(ROOT/'tests/cloud_model_update_recovery_v11_491.cjs')],check=True)
+subprocess.run(['node',str(ROOT/'tests/zip_model_update_v11_492.cjs')],check=True)
 m['name']='§wyrl§ Engine v11.492'
 m['finalArtifact']='swyrl_engine_v11_492.html'
 m['patches'].append('patches/v11_492_zip_model_updates.py')
@@ -43,7 +44,7 @@ with tempfile.TemporaryDirectory(prefix='engine-zip-model-update-492-') as folde
  assert receipt['sourceVersion']==m['name']
  assert receipt['finalSha256']==m['finalSha256']
  assert receipt['staticDelivery']['verifiedSourceSha256']==m['finalSha256']
- print(json.dumps({'status':'SE492_MODEL_UPDATE_RECOVERY_SEALED',
+ print(json.dumps({'status':'SE492_ZIP_MODEL_UPDATE_SEALED',
   'sha256':m['finalSha256'],'bytes':m['finalBytes'],
   'patches':len(m['patches']),
   'moduleBytes':receipt['staticDelivery']['moduleBytes']}),flush=True)
