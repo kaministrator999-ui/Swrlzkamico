@@ -20,7 +20,8 @@ subprocess.run(['node',str(ROOT/'tests/cloth_rig_project_update_v11_489.cjs')],c
 subprocess.run(['node',str(ROOT/'tests/model_rig_workspace_v11_490.cjs')],check=True)
 subprocess.run(['node',str(ROOT/'tests/cloud_model_update_recovery_v11_491.cjs')],check=True)
 subprocess.run(['node',str(ROOT/'tests/zip_model_update_v11_492.cjs')],check=True)
-subprocess.run(['node',str(ROOT/'tests/project_load_diagnostics_v11_494.cjs')],check=True)
+subprocess.run(['node',str(ROOT/'tests/project_load_diagnostics_v11_493.cjs')],check=True)
+subprocess.run(['node',str(ROOT/'tests/model_update_lifecycle_v11_494.cjs')],check=True)
 m['name']='§wyrl§ Engine v11.494'
 m['finalArtifact']='swyrl_engine_v11_494.html'
 m['patches'].append('patches/v11_494_model_update_lifecycle.py')
