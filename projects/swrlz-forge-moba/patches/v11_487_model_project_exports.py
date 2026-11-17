@@ -25,16 +25,16 @@ def apply(html):
  html=once(html,"  function exportJSON(){if(!model())return;",
   model+"\n  function exportJSON(){if(!model())return;","model export identity helper")
  html=once(html,
-  "download('prism-jester.model.json',JSON.stringify(",
-  "download(se487ExportStem()+'.model.json',JSON.stringify(",
+  "'prism-jester.model.json'",
+  "se487ExportStem()+'.model.json'",
   "native model JSON filename")
  html=once(html,
-  "const lines=['# §wyrl§ Model Atelier v11.3','o Prism_Jester'];",
-  "const lines=['# §wyrl§ Model Atelier v11.3','o '+se487ExportOBJName()];",
+  "'o Prism_Jester'",
+  "'o '+se487ExportOBJName()",
   "OBJ object label")
  html=once(html,
-  "download('prism-jester.mesh.obj',lines.join(",
-  "download(se487ExportStem()+'.mesh.obj',lines.join(",
+  "'prism-jester.mesh.obj'",
+  "se487ExportStem()+'.mesh.obj'",
   "OBJ download filename")
 
  # Wrap the existing My Projects cards *after* v11.471 deletion wrapper,
