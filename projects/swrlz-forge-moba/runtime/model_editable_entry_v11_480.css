@@ -1,0 +1,40 @@
+/* SE480_EDITABLE_ENTRY_STYLES_START */
+html #modelAtelierPanel .atelier-scene>#se480EditableEntry[hidden]{display:none!important}
+html #modelAtelierPanel .atelier-scene>#se480EditableEntry{
+ position:absolute!important;z-index:219!important;
+ top:var(--se480-y,170px)!important;left:7px!important;right:auto!important;
+ width:min(295px,calc(100% - 15px))!important;
+ min-height:0!important;max-height:min(210px,38vh)!important;
+ padding:8px!important;display:flex!important;flex-direction:column!important;
+ align-items:stretch!important;gap:5px!important;box-sizing:border-box!important;
+ background:#162e40ee!important;color:#eaf8ff!important;
+ border:1px solid #81a6bd!important;border-radius:9px!important;
+ box-shadow:0 4px 13px #0009!important;overflow-y:auto!important;
+ pointer-events:auto!important;touch-action:pan-y!important;
+}
+html #modelAtelierPanel #se480EditableHeading{
+ font:750 12px/1.3 system-ui!important;color:#f2fdff!important;
+}
+html #modelAtelierPanel #se480MakeEditable{
+ min-height:42px!important;width:100%!important;border-radius:7px!important;
+ background:#1b796e!important;border:1px solid #9fead3!important;
+ color:white!important;font:750 12px/1.2 system-ui!important;
+ touch-action:manipulation!important;white-space:normal!important;
+}
+html #modelAtelierPanel #se480MakeEditable:disabled{
+ background:#3b4956!important;border-color:#667485!important;
+ opacity:.65!important;cursor:not-allowed!important;
+}
+html #modelAtelierPanel #se480EditableReason{
+ margin:0!important;padding:0!important;font:11px/1.35 system-ui!important;
+ color:#d2ebf4!important;overflow-wrap:break-word!important;
+}
+html #modelAtelierPanel .atelier-scene>#se480EditableEntry[data-se480-blocked=true]{
+ border-color:#ad9d87!important;
+}
+@media(max-height:520px){
+ html #modelAtelierPanel .atelier-scene>#se480EditableEntry{
+  max-height:32vh!important;padding:6px!important;
+ }
+}
+/* SE480_EDITABLE_ENTRY_STYLES_END */
