@@ -4,7 +4,7 @@ on:
   push:
     branches: [main]
     paths:
-      - ".github/workflows/measure-engine-v11-481.yml"
+      - ".github/workflows/measure-engine-v11-482.yml"
       - "projects/swrlz-forge-moba/patches/v11_482_geometric_ring_height.py"
       - "projects/swrlz-forge-moba/runtime/model_geometric_ring_v11_482.js"
       - "projects/swrlz-forge-moba/runtime/model_ring_height_layout_v11_482.js"
