@@ -475,6 +475,6 @@
     "patches/v11_481_textured_editable_copy.py",
     "patches/v11_482_geometric_ring_height.py"
   ],
-  "finalBytes": null,
-  "finalSha256": null
+  "finalBytes": 10488713,
+  "finalSha256": "dc7f9acad42d387d81935b20971aaf438d2a7c26990bf9bc3d00d2edd52eea36"
 }
