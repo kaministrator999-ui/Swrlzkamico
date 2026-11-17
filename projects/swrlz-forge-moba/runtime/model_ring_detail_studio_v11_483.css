@@ -1,0 +1,82 @@
+/* SE483_RING_DETAIL_STUDIO_STYLES_START */
+html #modelAtelierPanel #se483RingDetailStudio[hidden]{display:none!important}
+html #modelAtelierPanel #se483RingDetailStudio{
+ display:flex!important;flex-direction:column!important;gap:8px!important;
+ width:100%!important;min-width:0!important;max-width:100%!important;
+ padding:10px!important;margin:7px 0!important;
+ box-sizing:border-box!important;
+ border-radius:9px!important;border:1px solid #6d9baa!important;
+ background:linear-gradient(175deg,#153744,#1d3840)!important;
+ color:#eaffff!important;overflow:visible!important;
+}
+html #modelAtelierPanel #se483RingDetailStudio>strong{
+ font:750 13px/1.4 system-ui!important;color:#d8fff3!important;
+}
+html #modelAtelierPanel #se483RingDetailStudio .se483-tabs{
+ display:grid!important;grid-template-columns:1fr 1fr!important;gap:6px!important;
+}
+html #modelAtelierPanel #se483RingDetailStudio button{
+ color:#eafaff!important;background:#284954!important;
+ border:1px solid #80abba!important;border-radius:7px!important;
+ min-height:38px!important;padding:6px 8px!important;
+ font:650 12px/1.3 system-ui!important;touch-action:manipulation!important;
+ overflow-wrap:break-word!important;white-space:normal!important;
+}
+html #modelAtelierPanel #se483RingDetailStudio button[aria-pressed=true]{
+ background:#287a70!important;border-color:#b3f1dc!important;
+}
+html #modelAtelierPanel #se483RingDetailStudio button:disabled{
+ opacity:.48!important;cursor:not-allowed!important;
+}
+html #modelAtelierPanel #se483RingDetailStudio .se483-pane{
+ display:flex!important;flex-direction:column!important;gap:8px!important;
+ min-width:0!important;
+}
+html #modelAtelierPanel #se483RingDetailStudio .se483-pane[hidden]{display:none!important}
+html #modelAtelierPanel #se483RingDetailStudio label{
+ display:flex!important;flex-direction:column!important;gap:3px!important;
+ min-width:0!important;max-width:100%!important;
+ font:600 11px/1.35 system-ui!important;color:#d9f1f5!important;
+}
+html #modelAtelierPanel #se483RingDetailStudio input,
+html #modelAtelierPanel #se483RingDetailStudio select{
+ min-height:36px!important;width:100%!important;min-width:0!important;
+ box-sizing:border-box!important;padding:5px 7px!important;
+ background:#163743!important;color:white!important;border:1px solid #668d99!important;
+ border-radius:5px!important;font:12px system-ui!important;touch-action:manipulation!important;
+}
+html #modelAtelierPanel #se483RingDetailStudio fieldset{
+ display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;
+ gap:6px!important;min-width:0!important;
+ border:1px solid #4b727b!important;border-radius:6px!important;
+ padding:7px!important;margin:0!important;
+}
+html #modelAtelierPanel #se483RingDetailStudio fieldset[hidden]{display:none!important}
+html #modelAtelierPanel #se483RingDetailStudio legend{
+ color:#d0faf6!important;font:650 11px system-ui!important;padding:0 3px!important;
+}
+html #modelAtelierPanel #se483RingDetailStudio .se483-row{
+ display:grid!important;grid-template-columns:repeat(auto-fit,minmax(80px,1fr))!important;
+ gap:6px!important;align-items:end!important;
+}
+html #modelAtelierPanel #se483RingDetailStudio .se483-actions{
+ display:grid!important;grid-template-columns:1fr 1fr!important;gap:7px!important;
+ border-top:1px solid #597f89!important;padding-top:8px!important;
+}
+html #modelAtelierPanel #se483RingDetailStudio .se483-actions button{
+ min-height:44px!important;
+}
+html #modelAtelierPanel #se483RingDetailStudio .se483-actions [data-se483=apply]{
+ background:#176e63!important;
+}
+html #modelAtelierPanel #se483RingDetailStudio .se483-explain{
+ font:10px/1.4 system-ui!important;color:#b7d4da!important;margin:1px 0!important;
+}
+html #modelAtelierPanel #se483RingDetailStudio [data-se483=message]{
+ display:block!important;min-height:19px!important;font:11px/1.4 system-ui!important;
+ color:#bde6d3!important;overflow-wrap:break-word!important;
+}
+html #modelAtelierPanel #se483RingDetailStudio [data-se483=message][data-error=true]{
+ color:#ffcaa1!important;
+}
+/* SE483_RING_DETAIL_STUDIO_STYLES_END */
