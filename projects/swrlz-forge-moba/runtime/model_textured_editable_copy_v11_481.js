@@ -176,7 +176,7 @@ const se481TexturedEditable=(()=>{
    });
    row.append(btn);
   }
-  const label=copy?'Show original UFO':'Return to editable copy';
+  const label=copy?'Show original model':'Return to editable copy';
   if(btn.textContent!==label)btn.textContent=label;
   btn.title='Switch between the preserved original model and its UV-faithful editable copy.';
  }
