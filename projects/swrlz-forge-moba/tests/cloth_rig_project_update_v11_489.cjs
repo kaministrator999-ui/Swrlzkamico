@@ -100,7 +100,7 @@ imported.project.modelAtelier.rigging=structuredClone(rig);
  const portableResult=await update.updateSelectedModel(rec,'cloud',
   {size:100,text:async()=>JSON.stringify(portable)});
  assert.match(portableResult,/revision 4/,'selected card can use model-only rig export');
- assert.equal(confirmCalls,1);
+ assert.equal(confirmCalls,2);
  const wrong=structuredClone(imported);wrong.project.canonicalId='not-sorting-hat';
  await assert.rejects(()=>update.updateSelectedModel(rec,'cloud',
   {size:100,text:async()=>JSON.stringify(wrong)}),/starter identity differs/);
