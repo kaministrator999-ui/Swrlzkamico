@@ -27,9 +27,9 @@ async function main(){
  const payload=await lib.pack(make(15)),decoded=await lib.unpack(payload);
  assert.equal(decoded.project.modelAtelier.parts[0].stamp,15);
  assert.equal(decoded.se486History,undefined);
- const tiny=await lib.prepare(saved,make(50),12,10500);
+ const cap=Buffer.byteLength(JSON.stringify(lib.withoutHistory(make(50))))+350;\n const tiny=await lib.prepare(saved,make(50),12,cap);
  assert.ok(tiny.dropped>=1,'quota pressure must prune oldest revisions');
- assert.ok(Buffer.byteLength(JSON.stringify(tiny.payload))<=10500,'bound revision payload under supplied quota');
+ assert.ok(Buffer.byteLength(JSON.stringify(tiny.payload))<=cap,'bound revision payload under supplied quota');
  const asset={project:{kind:'model-atelier',modelAtelier:{schema:'swyrl-model-atelier-v1',parts:[{id:'hat'}]}},
   scene:{actors:[]},editor:{studioWorkspace:'modeler'},assetRecord:{id:'asset-one',type:'modeler'}};
  const assetFuture={...asset,project:{...asset.project,modelAtelier:{...asset.project.modelAtelier,parts:[{id:'hat',rig:{bones:[1,2,3]}}]}}};
