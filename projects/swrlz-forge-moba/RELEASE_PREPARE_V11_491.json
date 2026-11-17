@@ -5,5 +5,7 @@
   "scope": "My Projects Update Model cloud-read failed-fetch recovery, selected JSON retry, confirmed-save status and ZIP input diagnostics",
   "expectedPrevious": "v11.490",
   "sourcePatch": "patches/v11_491_cloud_model_update_recovery.py",
-  "requires": "Unit test cloud.load-only retries; 468-patch build, source provenance, SHA receipt, native delivery packaging, public HTML and JS MIME check. Owner acceptance on Android."
+  "requires": "Unit test cloud.load-only retries; 468-patch build, source provenance, SHA receipt, native delivery packaging, public HTML and JS MIME check. Owner acceptance on Android.",
+  "retry": 2,
+  "retryReason": "Node cloud-read test and full 468-patch build passed; correct version-pinned verifier artifact filename was still v11.490. Updated to v11.491."
 }
