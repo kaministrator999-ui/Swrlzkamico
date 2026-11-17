@@ -6,5 +6,7 @@
   "expectedPrevious": "v11.489",
   "sourcePatch": "patches/v11_490_model_rig_workspace.py",
   "requires": "Node unit tests for skinned binding and project-specific view restore, 467-patch source build, inline JS syntax, source SHA seal, static delivery and exact hosted release verification. Owner Moto/Quest acceptance still required.",
-  "notes": "Owner's posed Sorting Hat export stays private in chat; no account record is overwritten automatically."
+  "notes": "Owner's posed Sorting Hat export stays private in chat; no account record is overwritten automatically.",
+  "retry": 2,
+  "retryReason": "Verifier expected old v11_489 filename after v11.490 build; corrected verifier pin. Build itself and Node regression succeeded."
 }
