@@ -1,0 +1,33 @@
+name: §E v11.497 sealed full build and delivery
+on:
+  push:
+    branches: [main]
+    paths:
+      - "projects/swrlz-forge-moba/source-manifest.json"
+      - "projects/swrlz-forge-moba/scripts/package_static_delivery_v11_497.py"
+      - ".github/workflows/check-engine-sealed-v11-497.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  sealed-build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Native geometry and JS acceptance
+        run: |
+          node --check projects/swrlz-forge-moba/runtime/sorting_hat_sculpted_v11_497.js
+          node projects/swrlz-forge-moba/tests/sorting_hat_sculpted_v11_497.cjs
+          python projects/swrlz-forge-moba/tests/sorting_hat_single_mesh_v11_485.py
+      - name: SHA-verified engine assembly and static packaging
+        run: |
+          python projects/swrlz-forge-moba/build_space.py --output /tmp/se497-sealed
+          python projects/swrlz-forge-moba/scripts/check_inline_js_syntax_v11_266.py /tmp/se497-sealed/index.html
+          python projects/swrlz-forge-moba/scripts/package_static_delivery_v11_497.py --output /tmp/se497-sealed
+          node --check /tmp/se497-sealed/swrlz-engine-v11.497.js
+      - name: Save release integrity receipt
+        uses: actions/upload-artifact@v4
+        with:
+          name: se497-integrity-receipt
+          path: /tmp/se497-sealed/SOURCE.json
