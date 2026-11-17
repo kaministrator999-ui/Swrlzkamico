@@ -1,0 +1,58 @@
+name: §E v11.498 rig studio targeted checks
+on:
+  push:
+    branches: [main]
+    paths:
+      - "projects/swrlz-forge-moba/runtime/model_rig_studio_polish_v11_498.js"
+      - "projects/swrlz-forge-moba/runtime/model_rig_studio_polish_v11_498.css"
+      - "projects/swrlz-forge-moba/patches/v11_498_rig_studio_polish.py"
+      - ".github/workflows/check-rig-studio-v11-498.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  rig-ui-check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - name: Syntax and compatibility checks
+        run: |
+          node --check projects/swrlz-forge-moba/runtime/model_rig_studio_polish_v11_498.js
+          python -m py_compile projects/swrlz-forge-moba/patches/v11_498_rig_studio_polish.py
+          node projects/swrlz-forge-moba/tests/model_rig_workspace_v11_490.cjs
+          node projects/swrlz-forge-moba/tests/sorting_hat_sculpted_v11_497.cjs
+      - name: Rebuild 475-patch candidate and inspect source hash
+        run: |
+          python - <<'PY'
+          import base64,gzip,hashlib,json,sys,subprocess
+          from pathlib import Path
+          root=Path('projects/swrlz-forge-moba').resolve()
+          sys.path.insert(0,str(root))
+          import build_space
+          manifest=json.loads((root/'source-manifest.json').read_text('utf8'))
+          chunks=''.join((root/p).read_text('utf8').strip() for p in manifest['chunks'])
+          html=gzip.decompress(base64.b64decode(chunks)).decode('utf8')
+          names=manifest['patches'][:]
+          candidate='patches/v11_498_rig_studio_polish.py'
+          if candidate not in names:names.append(candidate)
+          assert names[-2:]==['patches/v11_497_sculpted_sorting_hat.py',candidate]
+          for patch in names:
+              html=build_space.load_patch(root/patch)(html)
+          for token in ('SWYRL_ENGINE_DEPLOY_MARKER: V11_498_RIG_STUDIO_POLISH',
+                        'SWYRL_ENGINE_RIG_POLISH_498','se498RigPolish',
+                        'new THREE.SphereGeometry(1,12,9)',
+                        'new THREE.CylinderGeometry(.50,.86,1,9,1)',
+                        'data-se498-rig-kind=object',
+                        'se220RigFrame=function(...args)',
+                        'window.SWYRL_ENGINE_MINI_STUDIOS_496=se496MiniStudios;',
+                        'data-project-template="sorting-hat-sculpted"'):
+              assert token in html,token
+          data=html.encode('utf8')
+          print('SE498_CANDIDATE_BYTES',len(data),flush=True)
+          print('SE498_CANDIDATE_SHA256',hashlib.sha256(data).hexdigest(),flush=True)
+          filename=Path('/tmp/se498-candidate.html')
+          filename.write_bytes(data)
+          subprocess.run([sys.executable,str(root/'scripts/check_inline_js_syntax_v11_266.py'),str(filename)],check=True)
+          print('SE498_CANDIDATE_VALIDATED',flush=True)
+          PY
