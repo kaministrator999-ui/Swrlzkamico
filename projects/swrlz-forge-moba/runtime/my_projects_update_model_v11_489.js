@@ -25,6 +25,14 @@
        !m.uvs.every(n=>Number.isFinite(n)&&Math.abs(n)<1e5))return false;
     const count=m.positions.length/3;
     if(!m.indices.every(n=>Number.isInteger(n)&&n>=0&&n<count))return false;
+    if(part.skinning){
+     const skin=part.skinning;
+     if(skin.schema!=='swyrl-explicit-skin-v1'||
+        !Array.isArray(skin.indices)||!Array.isArray(skin.weights)||
+        skin.indices.length!==count*4||skin.weights.length!==count*4||
+        !skin.indices.every(n=>Number.isInteger(n)&&n>=0&&n<48)||
+        !skin.weights.every(n=>Number.isFinite(n)&&n>=0&&n<=1))return false;
+    }
    }
   }
   const rig=model.rigging;
@@ -73,8 +81,12 @@
     throw Error('The native project starter identity differs from this saved project.');
    if(!input.project.instanceId && !sameModel(current,candidate))
     throw Error('Unidentified export has no common mesh ID with this saved model.');
-  }else if(input?.schema==='swyrl-model-atelier-v1'){
-   throw Error('A bare model JSON has no project identity. Export a native project or bound update package.');
+  }else if(input?.schema==='swyrl-model-atelier-v1'&&input.model){
+   // Portable model-only export. Allowed only when at least one part ID
+   // belongs to this explicitly selected saved project.
+   candidate=input.model;
+   if(!sameModel(current,candidate))
+    throw Error('This model JSON does not share the selected project mesh ID.');
   }else throw Error('Unsupported update file. Use Export Model Update or a native .swyrl.json file.');
   if(!supported(candidate)||!sameModel(current,candidate))
    throw Error('Invalid model, rig, UV topology, or no matching original mesh ID.');
@@ -106,6 +118,18 @@
     ' (revision '+(metadata.revision||'local')+')?\n\nOnly the model data changes; the project ID, scene and revision history are retained.'))return 'Update cancelled.';
   const next=structuredClone(doc);
   next.project.modelAtelier=changed;
+  // Mirror the modified model into the matching editable active level.
+  // Leave unrelated game levels, scene actors, and project metadata alone.
+  const levels=next.project.levelPack?.levels;
+  if(Array.isArray(levels)){
+   const previousIds=new Set(current.parts.map(p=>p.id));
+   for(const level of levels){
+    const levelModel=level?.data?.project?.modelAtelier;
+    if(level?.data?.project?.kind==='model-atelier'&&
+       levelModel?.parts?.some(p=>previousIds.has(p.id)))
+     level.data.project.modelAtelier=structuredClone(changed);
+   }
+  }
   if(source==='cloud'){
    const isAsset=doc.assetRecord?.schema==='swrlz-asset-record-v1';
    const max=isAsset?8*1024*1024:MAX_RAW;
