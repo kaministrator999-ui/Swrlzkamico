@@ -5,5 +5,7 @@
   "scope": "rolling per-project revision history plus in-place model update; no plugin",
   "expectedPrevious": "v11.485",
   "sourcePatch": "patches/v11_486_project_revisions.py",
-  "requires": "full source seal, syntax, codec tests, manifest digest, static delivery and separate deploy request"
+  "requires": "full source seal, syntax, codec tests, manifest digest, static delivery and separate deploy request",
+  "retry": 2,
+  "retryReason": "Corrected executable regression test newline syntax"
 }
