@@ -120,14 +120,14 @@
   next.project.modelAtelier=changed;
   // Mirror the modified model into the matching editable active level.
   // Leave unrelated game levels, scene actors, and project metadata alone.
-  const levels=next.project.levelPack?.levels;
-  if(Array.isArray(levels)){
-   const previousIds=new Set(current.parts.map(p=>p.id));
-   for(const level of levels){
-    const levelModel=level?.data?.project?.modelAtelier;
-    if(level?.data?.project?.kind==='model-atelier'&&
-       levelModel?.parts?.some(p=>previousIds.has(p.id)))
-     level.data.project.modelAtelier=structuredClone(changed);
+  const levels=next.project.levelPack;
+  if(levels?.schema==='se-levels-v1'&&Array.isArray(levels.levels)){
+   const active=levels.levels.find(level=>level.id===levels.active);
+   const embedded=active?.data?.project?.modelAtelier;
+   if(active?.data?.project?.kind==='model-atelier'&&
+      embedded?.schema==='swyrl-model-atelier-v1'&&
+      Array.isArray(embedded.parts)&&sameModel(embedded,changed)){
+    active.data.project.modelAtelier=structuredClone(changed);
    }
   }
   if(source==='cloud'){
