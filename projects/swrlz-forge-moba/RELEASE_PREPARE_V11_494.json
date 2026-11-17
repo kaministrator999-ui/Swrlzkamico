@@ -6,5 +6,7 @@
   "expectedPrevious": "v11.493",
   "sourcePatch": "patches/v11_494_model_update_lifecycle.py",
   "requires": "Node verified-reopen regression tests; 471-patch full source build; SHA seal; static HTML, JS and HF MIME checks. Owner validates v4 Sorting Hat ZIP and Android mobile stage UI.",
-  "notes": "Do not upload model from the repo to a user's account, modify other projects, or retry unconfirmed writes."
+  "notes": "Do not upload model from the repo to a user's account, modify other projects, or retry unconfirmed writes.",
+  "retry": 2,
+  "retryReason": "Full unit suite passed; 471-patch builder reached final patch, which rejected two </head> occurrences from the preexisting page. CSS injection now deliberately targets the first document head. Visible progress also remains on-screen through auto-open."
 }
