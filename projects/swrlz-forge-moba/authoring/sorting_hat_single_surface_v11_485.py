@@ -23,15 +23,19 @@ TAU = 2 * math.pi
 ANGULAR = 96
 # Each ring has a duplicated UV vertex along the hidden back meridian. Despite
 # the UV seam, every component is connected through a *single* mesh surface.
+# Tip -> crown: a continuous fabric hook, not the abrupt folded triangle
+# seen on the first mobile render. Radii broaden gradually while the center
+# traces a gentle rightward droop: the very end is below the upper crest.
+# Keep eight rings so the single-mesh topology / UV indices remain identical.
 TIP = [
-    (2.90, .014, .84, -.28),
-    (2.94, .057, .80, -.26),
-    (2.995, .106, .74, -.245),
-    (3.065, .167, .67, -.22),
-    (3.110, .246, .58, -.20),
-    (3.085, .312, .49, -.185),
-    (3.010, .370, .40, -.17),
-    (2.915, .422, .32, -.15),
+    (2.735, .022, .955, -.270),  # softly rounded hanging end
+    (2.790, .063, .920, -.268),
+    (2.880, .112, .855, -.256),
+    (2.987, .164, .775, -.238),
+    (3.075, .225, .680, -.218),
+    (3.095, .288, .555, -.192),  # rounded upper bend
+    (3.020, .355, .440, -.168),
+    (2.925, .418, .345, -.156),  # flows into the existing crown
 ]
 BODY = [
     (.22,.875,.00,.00), (.43,.895,-.005,.005),
@@ -157,7 +161,7 @@ def build_mesh():
             # up across brim top, down beneath brim, inward in lining).
             m["indices"].extend((a,a+1,b,a+1,b+1,b))
     # Surface caps only at the pointed external tip and internal tip.
-    outer_c=vert((.84,2.90,-.28),.5,.978)
+    outer_c=vert((TIP[0][2],TIP[0][0],TIP[0][3]),.5,.978)
     last=len(rows)-1
     internal_c=vert((.55,2.85,-.22),.5,.005)
     for j in range(ANGULAR):
