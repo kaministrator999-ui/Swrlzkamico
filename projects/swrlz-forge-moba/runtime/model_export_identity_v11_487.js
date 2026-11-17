@@ -16,5 +16,5 @@ function se487ExportStem(){
   return stem||'untitled-model';
 }
 function se487ExportOBJName(){
-  return se487ExportStem().replace(/[^A-Za-z0-9_-]/g,'_');
+  return se487ExportStem().replace(/[^A-Za-z0-9_]/g,'_');
 }
