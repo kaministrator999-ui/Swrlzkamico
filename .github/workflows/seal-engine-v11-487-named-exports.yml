@@ -9,7 +9,7 @@ permissions:
   contents: write
   actions: write
 concurrency:
-  group: engine-v11-486-project-revisions
+  group: engine-v11-487-named-exports
   cancel-in-progress: false
 jobs:
   verify-seal-deploy:
@@ -27,7 +27,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "20"
-      - name: Verify revision core and assemble exact source
+      - name: Verify selected-project exports and assemble exact source
         run: python projects/swrlz-forge-moba/scripts/prepare_v11_487_release.py
       - name: Commit real source hash and trigger governed HF release separately
         env:
@@ -48,7 +48,7 @@ jobs:
           root=Path('projects/swrlz-forge-moba')
           m=json.loads((root/'source-manifest.json').read_text('utf8'))
           assert m['name']=='§wyrl§ Engine v11.487'
-          assert m['patches'][-1]=='patches/v11_487_project_revisions.py'
+          assert m['patches'][-1]=='patches/v11_487_model_project_exports.py'
           assert len(m['finalSha256'])==64
           request={
             'schema':'swrlz-forge-deploy-request-v1',
@@ -56,14 +56,14 @@ jobs:
             'target':'kamiloki/swrlz-forge-moba',
             'releaseVersion':'v11.487',
             'deployMarker':'SWYRL_ENGINE_DEPLOY_MARKER: V11_487_CORRECT_MODEL_PROJECT_EXPORT',
-            'reason':'Owner requested per-project eight-slot rolling revisions, an in-place model update export/import workflow for existing user projects, and the same account identity across cloud and standalone Model/Particle saves. Prune old snapshots under quota, preserve existing starter cloning and validate optimistic revision conflicts. Source tests and governed release checks are required; owner Moto/Quest acceptance follows.',
+            'reason':'Fix hardcoded Prism Jester JSON and OBJ filenames and object label; add selected My Projects card native scene export and model update package for local/account projects without changing active scene. Preserve stable project IDs, account revision checks, UVs, materials, rigs, animation and eight-slot history. Source and export regression tests required; owner Moto/Quest acceptance follows.',
             'sourceCommit':os.environ['SOURCE_COMMIT'],
             'sourceIntegritySha256':m['finalSha256']
           }
           (root/'DEPLOY_REQUEST.json').write_text(json.dumps(request,indent=2,ensure_ascii=False)+'\n','utf8')
           PY
           git add projects/swrlz-forge-moba/DEPLOY_REQUEST.json
-          git commit -m "deploy(§E): publish verified v11.487 revisions release"
+          git commit -m "deploy(§E): publish verified v11.487 export-fix release"
           git pull --rebase origin main
           git push origin HEAD:main
           gh workflow run deploy-swrlz-forge-moba.yml --ref main
