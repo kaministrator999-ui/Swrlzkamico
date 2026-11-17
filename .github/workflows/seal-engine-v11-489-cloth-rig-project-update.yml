@@ -1,0 +1,69 @@
+name: Seal and deploy §E v11.489 cloth rig and account model updating
+on:
+  push:
+    branches: [main]
+    paths:
+      - "projects/swrlz-forge-moba/RELEASE_PREPARE_V11_488.json"
+  workflow_dispatch:
+permissions:
+  contents: write
+  actions: write
+concurrency:
+  group: engine-v11-489-cloth-rig-project-update
+  cancel-in-progress: false
+jobs:
+  verify-seal-deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Checkout governed engine
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Verify account names and assemble exact source
+        run: python projects/swrlz-forge-moba/scripts/prepare_v11_489_release.py
+      - name: Commit real source hash and trigger governed HF release separately
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add projects/swrlz-forge-moba/source-manifest.json
+          git commit -m "seal(§E): verified v11.489 source and exact HTML digest"
+          git pull --rebase origin main
+          git push origin HEAD:main
+          export SOURCE_COMMIT="$(git rev-parse HEAD)"
+          python - <<'PY'
+          import json,os
+          from pathlib import Path
+          root=Path('projects/swrlz-forge-moba')
+          m=json.loads((root/'source-manifest.json').read_text('utf8'))
+          assert m['name']=='§wyrl§ Engine v11.489'
+          assert m['patches'][-1]=='patches/v11_489_cloth_rig_project_update.py'
+          assert len(m['finalSha256'])==64
+          request={
+            'schema':'swrlz-forge-deploy-request-v1',
+            'requestedBy':'ChatGPT (owner-approved)',
+            'target':'kamiloki/swrlz-forge-moba',
+            'releaseVersion':'v11.489',
+            'deployMarker':'SWYRL_ENGINE_DEPLOY_MARKER: V11_489_CLOTH_RIG_PROJECT_UPDATE',
+            'reason':'Add eleven-joint weighted cloth rig playback and editable clips to native Model Studio, and Update Model on selected My Projects account and local project cards with strict identity checks, optimistic cloud save, rollback history and no duplicate project. The owner-authored rigged model file is distributed privately through the conversation, not committed to GitHub. Source and regression tests required; owner Moto/Quest acceptance follows.',
+            'sourceCommit':os.environ['SOURCE_COMMIT'],
+            'sourceIntegritySha256':m['finalSha256']
+          }
+          (root/'DEPLOY_REQUEST.json').write_text(json.dumps(request,indent=2,ensure_ascii=False)+'\n','utf8')
+          PY
+          git add projects/swrlz-forge-moba/DEPLOY_REQUEST.json
+          git commit -m "deploy(§E): publish verified v11.489 cloth-rig-project-update release"
+          git pull --rebase origin main
+          git push origin HEAD:main
+          gh workflow run deploy-swrlz-forge-moba.yml --ref main
