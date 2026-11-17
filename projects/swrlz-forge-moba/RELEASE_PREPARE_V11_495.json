@@ -1,0 +1,10 @@
+{
+  "schema": "swrlz-forge-release-prepare-v1",
+  "requestedBy": "ChatGPT (owner-approved)",
+  "releaseVersion": "v11.495",
+  "scope": "Reduce enormous ZIP model account update upload by deduplicating repeated full-resolution UV paint across portable rolling revision history; preserve all stored versions; report MiB transfer; retain verified fast reopening",
+  "expectedPrevious": "v11.494",
+  "sourcePatch": "patches/v11_495_fast_revision_transfer.py",
+  "requires": "Lossless history reconstruction tests, full 472-patch build, SHA source seal, static browser module under 10MB, HF deployment + public MIME/HTTP check. Owner Android account transfer and Sorting Hat v5 mouth acceptance pending.",
+  "notes": "No account scene is modified by release; first subsequent owner save migrates legacy archived revisions, requiring additional one-time processing."
+}
