@@ -41,8 +41,12 @@ def main():
         receipt_path=hf_hub_download(repo_id=REPO,repo_type="space",filename="SOURCE.json",token=token)
         receipt=json.loads(Path(receipt_path).read_text("utf8"))
         delivery=receipt.get("staticDelivery",{})
-        if delivery.get("mode")!="external-es-module" or receipt.get("sourceVersion")!="§wyrl§ Engine v11.482":
-            raise ValueError("Space is not the verified split v11.482 delivery")
+        manifest=json.loads((Path(__file__).resolve().parents[1]/"source-manifest.json").read_text("utf8"))
+        if (delivery.get("mode")!="external-es-module" or
+            receipt.get("sourceVersion")!=manifest.get("name") or
+            receipt.get("finalSha256")!=manifest.get("finalSha256") or
+            delivery.get("verifiedSourceSha256")!=manifest.get("finalSha256")):
+            raise ValueError("Space is not the exact verified split release from the current source manifest")
         pages={}
         for path in FILES:
             file=hf_hub_download(repo_id=REPO,repo_type="space",filename=path,token=token)
