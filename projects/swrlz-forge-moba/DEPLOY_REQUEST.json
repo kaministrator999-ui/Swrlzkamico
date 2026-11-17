@@ -4,7 +4,7 @@
   "target": "kamiloki/swrlz-forge-moba",
   "releaseVersion": "v11.487",
   "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_487_CORRECT_MODEL_PROJECT_EXPORT",
-  "reason": "Fix hardcoded Prism Jester JSON and OBJ filenames and object label; add selected My Projects card native scene export and model update package for local/account projects without changing active scene. Preserve stable project IDs, account revision checks, UVs, materials, rigs, animation and eight-slot history. Full v11.487 464-patch source and export regression verified by GitHub Actions run 44051947331; owner Moto/Quest acceptance follows.",
-  "sourceCommit": "2f5c12b7aadc681fd1478a060ab4e8d5c88ab27a",
+  "reason": "Fix hardcoded Prism Jester JSON and OBJ filenames and object label; add selected My Projects card native scene export and model update package for local/account projects without changing active scene. Preserve stable project IDs, account revision checks, UVs, materials, rigs, animation and eight-slot history. Source and export regression tests required; owner Moto/Quest acceptance follows.",
+  "sourceCommit": "8e2ccfed20cffed51d9216fa96d004eb8667128e",
   "sourceIntegritySha256": "aa82629c7039dbfdc647cd716fafd240b60e4673f6c4874671d04b0176f1c10e"
 }
