@@ -44,8 +44,15 @@ def apply(html):
     # function name, CAS RPC and the already-installed se371 wrapper.
     # Earlier patches may have reformatted the original body, so anchor on
     # adjacent function declarations rather than historical indentation.
-    save_start=html.index(" async function saveCloud(){")
-    save_end=html.index(" async function listCloud(){",save_start)
+    import re
+    save_hit=re.search(r"async\\s+function\\s+saveCloud\\s*\\(\\s*\\)\\s*\\{",html)
+    list_hit=re.search(r"async\\s+function\\s+listCloud\\s*\\(\\s*\\)\\s*\\{",html)
+    if not save_hit or not list_hit or list_hit.start()<save_hit.start():
+        suspects=[html[max(0,m.start()-110):m.start()+180] for m in
+                  list(re.finditer(r"saveCloud",html))[:12]]
+        raise AssertionError(("no native cloud save boundary",bool(save_hit),bool(list_hit),suspects))
+    save_start=save_hit.start()
+    save_end=list_hit.start()
     previous_save=html[save_start:save_end]
     for required in ("cloud.save", "cloudRefs.set(", "MAX_RAW", "cloudBusy"):
         assert required in previous_save,("cloud save contract changed",required)
