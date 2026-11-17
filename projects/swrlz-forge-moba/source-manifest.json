@@ -477,6 +477,6 @@
     "patches/v11_483_sorting_hat_starter.py",
     "patches/v11_484_ring_detail_transforms.py"
   ],
-  "finalBytes": null,
-  "finalSha256": null
+  "finalBytes": 10536981,
+  "finalSha256": "4e1982668be155c01a8a8ddce72a5a515809f2af8aef69fc5a7897a42a01c11e"
 }
