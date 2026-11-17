@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """§E Sorting Hat single-surface native asset and UV-paint acceptance checks."""
 import base64,json,math,struct,zlib
+from collections import Counter
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
 path=ROOT/"scenes/model-atelier-sorting-hat.swyrl.json"
@@ -39,6 +40,44 @@ while todo:
   for adjacent in graph[todo.pop()]:
     if adjacent not in seen:seen.add(adjacent);todo.append(adjacent)
 assert len(seen)==len(used)==v,("The original hat, face and brim must be connected as one surface",len(seen),len(used),v)
+# Connected is NOT the same thing as closed: previous generator passed
+# this graph check while leaving two long exposed rear boundary edges.
+# Require every physical edge of the indexed surface to have exactly TWO
+# incident triangles with opposite winding (closed oriented manifold).
+edge_incidence=Counter()
+directed_edges=Counter()
+minimum_area=math.inf
+for index in range(0,len(ix),3):
+    a,b,c=ix[index:index+3]
+    coords=[[xyz[3*j],xyz[3*j+1],xyz[3*j+2]] for j in (a,b,c)]
+    u=[coords[1][i]-coords[0][i] for i in range(3)]
+    w=[coords[2][i]-coords[0][i] for i in range(3)]
+    cross=(u[1]*w[2]-u[2]*w[1],
+           u[2]*w[0]-u[0]*w[2],
+           u[0]*w[1]-u[1]*w[0])
+    area=.5*math.sqrt(sum(k*k for k in cross))
+    minimum_area=min(minimum_area,area)
+    for x,y in ((a,b),(b,c),(c,a)):
+        edge_incidence[(min(x,y),max(x,y))]+=1
+        directed_edges[(x,y)]+=1
+unsealed=[(edge,n) for edge,n in edge_incidence.items() if n!=2]
+assert not unsealed,("Open or nonmanifold hat edges",len(unsealed),unsealed[:8])
+assert all(count==1 and directed_edges[(b,a)]==1
+           for (a,b),count in directed_edges.items()),"Reversed or doubled triangle winding"
+assert minimum_area>1e-10,("Collapsed or zero-width seam face",minimum_area)
+assert v-len(edge_incidence)+t==2,("Unexpected Euler characteristic",v,len(edge_incidence),t)
+# The rear connection has its own nonzero sealing strip, while the original
+# UV chart still runs 0..1 across the back for native UV-editing compatibility.
+stride=97
+assert t==15714 and v==7859,(v,t)
+for row in range(81):
+    j0=3*(row*stride)
+    j96=3*(row*stride+96)
+    a=xyz[j0:j0+3];b=xyz[j96:j96+3]
+    gap=math.dist(a,b)
+    assert .00001<gap<.040,("Rear seam is open or degenerate",row,gap)
+    assert abs(uv[2*(row*stride)]-0.0)<1e-6
+    assert abs(uv[2*(row*stride+96)]-1.0)<1e-6
 # User reference: the unposed Sorting Hat is an upright fabric cone.
 # A rig may bend it later; no downturned point is baked into its geometry.
 # All eight crown rings taper to the upward apex on a near-vertical axis.
