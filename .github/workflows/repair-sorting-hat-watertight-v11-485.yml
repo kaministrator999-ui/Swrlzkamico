@@ -1,0 +1,51 @@
+name: Seal §E Sorting Hat rear mesh and crown
+on:
+  push:
+    branches: [main]
+    paths:
+      - "projects/swrlz-forge-moba/SORTING_HAT_SEAL_REQUEST.json"
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: se485-sorting-hat-manifold
+  cancel-in-progress: false
+jobs:
+  verify-and-commit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - name: Checkout canonical engine source
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Repair and audit complete watertight native topology
+        run: python projects/swrlz-forge-moba/scripts/repair_sorting_hat_watertight_v11_485.py
+      - name: Commit sealed native one-object model without changing the engine
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add projects/swrlz-forge-moba/scenes/model-atelier-sorting-hat.swyrl.json
+          git diff --cached --quiet && { echo "No asset update"; exit 1; }
+          git commit -m "fix(modeler): close Sorting Hat rear seam into watertight one-piece cloth"
+          git fetch origin main
+          git rebase origin/main
+          git push origin HEAD:main
+      - name: Preserve validated scene and source evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sorting-hat-watertight-verified
+          path: |
+            projects/swrlz-forge-moba/scenes/model-atelier-sorting-hat.swyrl.json
+            projects/swrlz-forge-moba/source-manifest.json
+          if-no-files-found: error
