@@ -78,11 +78,27 @@ const se479ProjectedRim=(()=>{
   if(length<1e-7)return true;
   const ray=new THREE.Raycaster(origin,delta.multiplyScalar(1/length),0,length+.05);
   const hit=ray.intersectObject(mesh,false)[0];
-  if(!hit)return true; // silhouette edges can legitimately miss triangles
   const geometry=mesh.geometry;
   if(!geometry.boundingSphere)geometry.computeBoundingSphere();
   const tolerance=Math.max(.0002,(geometry.boundingSphere?.radius||1)*.0035);
-  return hit.distance+tolerance>=length;
+  if(hit&&hit.distance+tolerance<length)return false;
+  // Ray hits at exact shared triangle corners can miss an occluding face.
+  // A second sample a fraction of a pixel toward the object's projected
+  // center distinguishes a hidden back corner from a visible front corner.
+  // Compare CAMERA DEPTH (not ray distance) because the sample is offset.
+  const center=new THREE.Box3().setFromObject(mesh).getCenter(new THREE.Vector3()).project(camera);
+  const inward=new THREE.Vector2(
+   projected.x*.995+center.x*.005,
+   projected.y*.995+center.y*.005
+  );
+  const probe=new THREE.Raycaster();
+  probe.setFromCamera(inward,camera);
+  const near=probe.intersectObject(mesh,false)[0];
+  if(!near)return !!hit; // don't invent visibility where both rays miss
+  const view=camera.matrixWorldInverse;
+  const depth=-target.clone().applyMatrix4(view).z;
+  const foreground=-near.point.clone().applyMatrix4(view).z;
+  return foreground+tolerance>=depth;
  }
  function trimToVisible(){
   if(!frontOnly||atelierComponentMode!=='vertex'||!atelierComponentIds.length)return;
@@ -294,6 +310,12 @@ const se479ProjectedRim=(()=>{
     atelierComponentIds.filter(id=>isVisible(atelierComponentMesh(),id)).length:0,
    material:window.SWYRL_ENGINE_MODEL_VIEW?.inspect?.()?.mode||null}),
   isVisibleSlot:slot=>isVisible(atelierComponentMesh(),slot),
+  vertexLocalPosition:slot=>{
+   const mesh=atelierComponentMesh(),top=mesh&&atelierComponentTopology(mesh);
+   const vertex=top?.vertices?.[slot],attr=mesh?.geometry?.attributes?.position;
+   return Number.isInteger(vertex)&&attr?[
+    attr.getX(vertex),attr.getY(vertex),attr.getZ(vertex)]:null;
+  },
   sync:()=>{attachUI();refreshViewControls();}
  });
 })();
