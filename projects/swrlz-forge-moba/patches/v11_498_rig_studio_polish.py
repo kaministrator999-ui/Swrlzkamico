@@ -16,7 +16,7 @@ def apply(html):
     assert 'window.SWYRL_ENGINE_RIG_POLISH_498=se498RigPolish' in js
     assert 'data-se498-rig-kind=object' in css
     html=once(html,'window.SWYRL_ENGINE_MINI_STUDIOS_496=se496MiniStudios;',
-      'window.SWYRL_ENGINE_MINI_STUDIOS_496=se496MiniStudios;\\n'+js,
+      'window.SWYRL_ENGINE_MINI_STUDIOS_496=se496MiniStudios;\n'+js,
       'append overlay and bone adapter inside ModelAtelier')
     if '</head>' not in html:raise AssertionError('No HTML root head')
     html=html.replace('</head>','<style id="se498RigStudioPolish">'+css+'</style>\n</head>',1)
