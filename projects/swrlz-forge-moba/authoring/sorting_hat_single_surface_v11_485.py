@@ -112,7 +112,7 @@ def build_mesh():
     rows=[]
     for profile in TIP:
         y=profile[0]
-        rows.append(("crown",y,profile))
+        rows.append(("crown",y,profile[1:]))
     for i in range(52):
         y=2.82+( .22-2.82)*i/51
         rows.append(("crown",y,interp(y)))
