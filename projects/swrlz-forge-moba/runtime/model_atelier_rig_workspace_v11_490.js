@@ -9,7 +9,7 @@ const se490Workspace=(()=>{
  function identity(){
   const m=model(),p=currentProject;
   if(!m||!Array.isArray(m.parts))return null;
-  const id=p?.instanceId||m.se470DraftId||p?.id||p?.canonicalId;
+  const id=m.se470DraftId||p?.instanceId||p?.id||p?.canonicalId;
   if(typeof id!=='string'||!id||id.length>160)return null;
   return PREFIX+encodeURIComponent(id);
  }
