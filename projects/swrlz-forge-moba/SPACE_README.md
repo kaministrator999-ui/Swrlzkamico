@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.489
+title: §wyrl§ Engine v11.496
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,11 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.496 · Model, Rigging and Animation mini-studios (2026-11-17)
+
+Model Atelier now has three in-place mini-studio modes: **Model** retains native sculpt/topology/UV/material tools; **Rigging** exposes the existing GPU-skinned skeleton, child bone authoring, joint rest-position editing and adjustable automatic influence envelopes; **Animation** exposes the native clip picker, joint pose, timeline, keyframes, loop and playback. An unrigged selected mesh can be assigned a validated 3-bone cloth armature without replacing the neutral mesh, topology, UV art or project. Switching modes retains the *same WebGL viewport, camera, project and model*, and persists the mode through the existing per-project workspace capture. Automatic influences are not freehand weight painting. User Moto/Quest input and visual acceptance follows source verification and deployment. Source: `patches/v11_496_model_mini_studios.py`, `runtime/model_mini_studios_v11_496.js`, `runtime/model_mini_studios_v11_496.css`.
+
 
 ## §E v11.489 · Single-cloth rig + in-place My Projects model updates (2026-11-17)
 
