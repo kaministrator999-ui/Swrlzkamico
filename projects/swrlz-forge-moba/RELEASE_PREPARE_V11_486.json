@@ -6,6 +6,6 @@
   "expectedPrevious": "v11.485",
   "sourcePatch": "patches/v11_486_project_revisions.py",
   "requires": "full source seal, syntax, codec tests, manifest digest, static delivery and separate deploy request",
-  "retry": 5,
-  "retryReason": "Found actual account-save function order and corrected source boundary selection"
+  "retry": 6,
+  "retryReason": "Full 463-patch source assembled; corrected final verifier numeric provenance expectation"
 }
