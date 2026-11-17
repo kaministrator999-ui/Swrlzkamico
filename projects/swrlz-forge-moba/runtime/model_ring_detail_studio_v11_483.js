@@ -139,10 +139,16 @@
   const visible=window.SWYRL_ENGINE_RIM_VISIBILITY_479;
   const tolerance=Math.max(.00008,saved.outerRadius*.007);
   const ids=[];
+  const memberIndices=level==='outer'?saved.outerMembers:saved.members?.[Number(level)];
+  const physicalKeys=new Set((memberIndices||[]).map(id=>{
+   const ps=c.part.topologyMesh.positions;
+   return [0,1,2].map(k=>Math.round(ps[id*3+k]*100000)).join(',');
+  }));
   for(let i=0;i<c.positions.length;i++){
    const p=c.positions[i];
+   const physical=p.map(n=>Math.round(n*100000)).join(',');
    const d=Math.hypot(p[ax[0]]-saved.center[ax[0]],p[ax[1]]-saved.center[ax[1]]);
-   if(Math.abs(d-radius)<=tolerance&&
+   if((physicalKeys.size?physicalKeys.has(physical):Math.abs(d-radius)<=tolerance)&&
       (!visible?.inspect()?.frontOnly||visible.isVisibleSlot(i)))ids.push(i);
   }
   if(!ids.length)return fail('No visible vertices on that ring. Orbit the camera or turn off Visible Side Only.');
