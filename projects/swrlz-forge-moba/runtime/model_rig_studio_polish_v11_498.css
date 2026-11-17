@@ -1,0 +1,34 @@
+/* §E v11.498 - UI isolation and schema-appropriate rig controls.
+   Rigging/Animation use the same renderer; DOM masking restores original styles. */
+html #modelAtelierPanel[data-se496-studio=rig] .atelier-rig-studio,
+html #modelAtelierPanel[data-se496-studio=animate] .atelier-rig-studio {
+ top:54px!important;right:8px!important;width:min(335px,52vw)!important;
+ max-height:calc(100% - 64px)!important;overflow-y:auto!important;
+ border-color:#6994aa!important;
+}
+html #modelAtelierPanel #modelAtelierRigStudio[data-se498-rig-kind=object] :is(.atelier-gesture-library,.atelier-thumb-kinematics,.atelier-rig-actions:has(#modelAtelierRigOpen)) {
+ display:none!important;
+}
+html #modelAtelierPanel[data-se496-studio=rig] #modelAtelierRigStudio .atelier-rig-timeline,
+html #modelAtelierPanel[data-se496-studio=rig] #modelAtelierRigStudio .se489-clip-selector,
+html #modelAtelierPanel[data-se496-studio=rig] #modelAtelierRigStudio .atelier-rig-actions:has(#modelAtelierRigPlay) {
+ display:none!important;
+}
+html #modelAtelierPanel[data-se496-studio=animate] #modelAtelierRigStudio #se496BoneAuthoring {
+ display:none!important;
+}
+html #modelAtelierPanel[data-se496-studio=rig] :is(#se320ModelTransform,#modelAtelierViewportModes,#se474SpecificModes,#se474ToolFlyout,#modelAtelierToolRail,#se251ModelLibrary,.atelier-inspector),
+html #modelAtelierPanel[data-se496-studio=animate] :is(#se320ModelTransform,#modelAtelierViewportModes,#se474SpecificModes,#se474ToolFlyout,#modelAtelierToolRail,#se251ModelLibrary,.atelier-inspector) {
+ display:none!important;pointer-events:none!important;
+}
+html #modelAtelierPanel[data-se496-studio=rig] .atelier-rig-studio .atelier-rig-axes,
+html #modelAtelierPanel[data-se496-studio=animate] .atelier-rig-studio .atelier-rig-axes {
+ border-top:1px solid #435d75;padding-top:8px;
+}
+@media(max-width:699px),(pointer:coarse){
+ html #modelAtelierPanel[data-se496-studio=rig] .atelier-rig-studio,
+ html #modelAtelierPanel[data-se496-studio=animate] .atelier-rig-studio{
+  top:52px!important;right:5px!important;
+  width:min(290px,78vw)!important;max-height:calc(100% - 59px)!important;
+ }
+}
