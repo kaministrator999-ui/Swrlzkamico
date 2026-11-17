@@ -5,5 +5,7 @@
   "scope": "Weighted animated single-mesh Sorting Hat cloth rig, multiple clips in native Rig Studio, revision-safe Update Model from selected My Projects card without duplicate saves",
   "expectedPrevious": "v11.488",
   "sourcePatch": "patches/v11_489_cloth_rig_project_update.py",
-  "requires": "Node regression: cloth weights, clips and same-ID account CAS; full 466-patch source build, JS parser, SHA sealed, HF static delivery. Owner Moto and Quest acceptance follows."
+  "requires": "Node regression: cloth weights, clips and same-ID account CAS; full 466-patch source build, JS parser, SHA sealed, HF static delivery. Owner Moto and Quest acceptance follows.",
+  "retry": 2,
+  "retryReason": "Fixed first document head insertion; previous source build found duplicate literal in scripted template"
 }
