@@ -171,8 +171,20 @@ const se482GeometricRing=(()=>{
   queueMicrotask(mount);
   return result;
  };
+ function sampleSlots(slots=[]){
+  const mesh=atelierComponentMesh(),top=mesh&&atelierComponentTopology(mesh);
+  const attr=mesh?.geometry?.getAttribute?.('position');
+  const uv=mesh?.geometry?.getAttribute?.('uv');
+  if(!top?.vertices||!attr)return null;
+  return slots.map(slot=>{
+   const id=top.vertices[slot];
+   return {slot,id,position:id===undefined?null:[
+    attr.getX(id),attr.getY(id),attr.getZ(id)],
+    uv:id===undefined||!uv?null:[uv.getX(id),uv.getY(id)]};
+  });
+ }
  window.SWYRL_ENGINE_GEOMETRIC_RING_482=Object.freeze({
-  choose,selectCenter,noteRim,reselect,refresh:mount,
+  choose,selectCenter,noteRim,reselect,refresh:mount,sampleSlots,
   inspect:()=>({bandPercent,last:last?{...last}:null,circular:true})
  });
 })();
