@@ -3,7 +3,7 @@ on:
   push:
     branches: [main]
     paths:
-      - "projects/swrlz-forge-moba/RELEASE_PREPARE_V11_488.json"
+      - "projects/swrlz-forge-moba/RELEASE_PREPARE_V11_489.json"
   workflow_dispatch:
 permissions:
   contents: write
