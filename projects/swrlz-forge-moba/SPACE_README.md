@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.487
+title: §wyrl§ Engine v11.488
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,11 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.488 · Name account projects and rename models in place (2026-11-17)
+
+For the first account save of an unnamed user project, §E asks for a name before creating the existing account-owned project copy. For standalone Model/Particle assets, default placeholder names (including the historic Prism Jester label) prompt for a user-supplied name before the first cloud save. Model Studio exposes a **Name Model** control in its existing asset toolbar; changing that name and saving updates the same account asset ID and adds a new revision rather than making a new project. Saves initiated from the Chat account panel use the same native project naming check. Cancellation leaves the account asset unchanged. My Projects exports, UVs, topology, rigging, eight-slot account history, and starter protection are preserved.
+
 
 ## §E v11.487 · Correct model and My Projects exports (2026-11-17)
 
