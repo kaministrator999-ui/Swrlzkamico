@@ -474,6 +474,6 @@
     "patches/v11_480_visible_make_editable.py",
     "patches/v11_481_textured_editable_copy.py"
   ],
-  "finalBytes": null,
-  "finalSha256": null
+  "finalBytes": 10467645,
+  "finalSha256": "c63d2667f7472ab69cd5cc4d497fab545aab86957aa8f1c9608e2babd5f8e5cb"
 }
