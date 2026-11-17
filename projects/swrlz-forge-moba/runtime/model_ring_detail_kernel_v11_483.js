@@ -111,7 +111,11 @@ const se483RingDetailKernel=(()=>{
      let ear=-1;
      for(let k=0;k<poly.length;k++){
       const u=poly[(k-1+poly.length)%poly.length],v=poly[k],w=poly[(k+1)%poly.length];
-      if(area(u,v,w)>1e-12){ear=k;break;}
+      if(area(u,v,w)>1e-12){
+       const remaining=[...poly];remaining.splice(k,1);
+       if(remaining.length===3&&area(...remaining)<=1e-12)continue;
+       ear=k;break;
+      }
      }
      if(ear<0)return BAD('Ring geometry would create a degenerate triangle. Reduce density.');
      out.indices.push(poly[(ear-1+poly.length)%poly.length],poly[ear],poly[(ear+1)%poly.length]);
