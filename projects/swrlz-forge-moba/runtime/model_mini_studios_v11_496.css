@@ -26,3 +26,12 @@ html #modelAtelierPanel[data-se320-ui][data-se251-layout=compact]:is([data-se496
  html #modelAtelierPanel[data-se496-studio=rig] .atelier-rig-studio,html #modelAtelierPanel[data-se496-studio=animate] .atelier-rig-studio{top:53px;right:5px;width:min(280px,77%);max-height:calc(100% - 61px)}
  html #modelAtelierPanel #se496RigSetup{top:53px;right:5px;max-height:calc(100% - 61px)}
 }
+
+/* Later v11.320/v11.474 display-important editor rules require the complete
+   desktop selector specificity: do not intercept rig/animation viewport taps. */
+html #modelAtelierPanel.se187-modeler-page[data-se320-ui][data-se496-studio=rig] #modelAtelierToolRail,
+html #modelAtelierPanel.se187-modeler-page[data-se320-ui][data-se496-studio=animate] #modelAtelierToolRail,
+html #modelAtelierPanel.se187-modeler-page[data-se320-ui][data-se496-studio=rig] .atelier-inspector,
+html #modelAtelierPanel.se187-modeler-page[data-se320-ui][data-se496-studio=animate] .atelier-inspector {
+ display:none!important;pointer-events:none!important;
+}
