@@ -9,18 +9,20 @@ arg.add_argument('--request',action='store_true')
 args=arg.parse_args()
 m=json.loads((ROOT/'source-manifest.json').read_text('utf8'))
 assert m['name']=='§wyrl§ Engine v11.488'
-assert m['finalArtifact']=='swyrl_engine_v11_487.html'
-assert len(m['patches'])==464 and m['patches'][-4:]==['patches/v11_484_ring_detail_transforms.py','patches/v11_485_one_cloth_sorting_hat.py','patches/v11_486_project_revisions.py','patches/v11_487_model_project_exports.py']
+assert m['finalArtifact']=='swyrl_engine_v11_488.html'
+assert len(m['patches'])==465 and m['patches'][-2:]==['patches/v11_487_model_project_exports.py','patches/v11_488_account_project_naming.py']
 assert isinstance(m['finalBytes'],int) and isinstance(m['finalSha256'],str)
 for file in ('sorting_hat_starter_v11_483.js','model_ring_detail_kernel_v11_483.js','model_ring_detail_studio_v11_483.js','model_vertex_entry_v11_477.js','model_progressive_hierarchy_v11_477.js','model_ring_vertex_highlight_v11_478.js','model_ring_height_v11_478.js','model_ring_rim_visibility_v11_479.js','model_editable_entry_v11_480.js','model_textured_editable_copy_v11_481.js','model_geometric_ring_v11_482.js','model_ring_height_layout_v11_482.js',
              'model_progressive_rail_fix_v11_475.js','model_progressive_tools_v11_474.js',
              'project_revisions_v11_486.js','project_revision_actions_v11_486.js','studio_asset_revisions_v11_486.js',
              'model_export_identity_v11_487.js','my_projects_export_v11_487.js',
+             'account_project_naming_v11_488.js','account_asset_naming_v11_488.js',
              'model_ring_kernel_v11_466.js','model_ring_ui_v11_466.js'):
  subprocess.run(['node','--check',str(ROOT/'runtime'/file)],check=True)
 subprocess.run([sys.executable,str(ROOT/'tests/sorting_hat_single_mesh_v11_485.py')],check=True)
 subprocess.run(['node',str(ROOT/'tests/project_revisions_v11_486.cjs')],check=True)
 subprocess.run(['node',str(ROOT/'tests/model_project_exports_v11_487.cjs')],check=True)
+subprocess.run(['node',str(ROOT/'tests/account_project_naming_v11_488.cjs')],check=True)
 for file in ('model_progressive_hierarchy_v11_477.mjs','model_ring_vertex_highlight_v11_478.mjs','model_ring_rim_visible_side_v11_479.mjs','model_editable_entry_v11_480.mjs','model_textured_editable_copy_v11_481.mjs','model_geometric_ring_height_v11_482.mjs',
              'model_ring_detail_transforms_v11_483.mjs','model_progressive_rail_fix_v11_475.mjs',
              'model_progressive_tools_v11_474.mjs',
