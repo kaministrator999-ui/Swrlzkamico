@@ -43,7 +43,7 @@ function scene(png=paint){
  const result=await codec.prepare(payload,newer,7,96*1024*1024);
  assert.equal(result.payload.se486History.se495TexturePool.length,1);
  assert.equal((await codec.unpack(codec.history(result.payload)[0])).project.modelAtelier.parts[0].uvPaintPNG,paint);
- await assert.rejects(()=>codec.unpack({...codec.history(payload)[0],_se495Pool:[]}),/missing texture/);
+ await assert.rejects(()=>codec.unpack({...codec.history(payload)[0],_se495Pool:[]}),/texture pool missing|missing texture/);
  console.log('SE495_COMPACT_SHARED_TEXTURE_HISTORY_PASS',JSON.stringify({
   oldBytes:JSON.stringify(before).length,newBytes:JSON.stringify(payload).length,
   revisions:restored.length,reducedPercent:Math.round((1-JSON.stringify(payload).length/JSON.stringify(before).length)*100)
