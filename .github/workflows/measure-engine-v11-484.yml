@@ -1,0 +1,69 @@
+name: Measure §E v11.484 connected internal rings, UV-safe density and XYZ transforms
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/measure-engine-v11-482.yml"
+      - "projects/swrlz-forge-moba/patches/v11_484_ring_detail_transforms.py"
+      - "projects/swrlz-forge-moba/runtime/model_ring_detail_kernel_v11_483.js"
+      - "projects/swrlz-forge-moba/runtime/model_ring_detail_studio_v11_483.js"
+      - "projects/swrlz-forge-moba/runtime/model_ring_detail_studio_v11_483.css"
+      - "projects/swrlz-forge-moba/scripts/prepare_v11_484_release.py"
+      - "projects/swrlz-forge-moba/scripts/verify_v11_484_release.py"
+      - "projects/swrlz-forge-moba/scripts/package_static_delivery_v11_484.py"
+      - "projects/swrlz-forge-moba/tests/model_ring_detail_transforms_v11_483.mjs"
+      - "projects/swrlz-forge-moba/tests/model_ring_detail_browser_v11_484.cjs"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: se484-geometric-ring-measure
+  cancel-in-progress: true
+
+jobs:
+  geometric-ring:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Build, calculate SHA256 and verify 461 native-source patches
+        run: python projects/swrlz-forge-moba/scripts/prepare_v11_484_release.py
+      - name: Package static HTML and validate both served files stay under 10MB
+        run: |
+          python projects/swrlz-forge-moba/scripts/package_static_delivery_v11_484.py --output projects/swrlz-forge-moba/_release_v11_484_candidate
+          node --check projects/swrlz-forge-moba/_release_v11_484_candidate/swrlz-engine-v11.484.js
+      - name: Install Chromium touch browser
+        run: |
+          npm install --no-save playwright@1.56.1
+          npx playwright install --with-deps --only-shell chromium
+      - name: Test painted mesh inserted concentric rings, XYZ transforms, native Apply, UV fidelity and stored starter
+        run: node projects/swrlz-forge-moba/tests/model_geometric_ring_height_browser_v11_484.cjs projects/swrlz-forge-moba/_release_v11_484_candidate
+      - name: Seal verified source SHA and bytes to main
+        if: success() && github.ref == 'refs/heads/main'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add projects/swrlz-forge-moba/source-manifest.json
+          if ! git diff --cached --quiet; then
+            git fetch origin main
+            test "$(git rev-parse HEAD)" = "$(git rev-parse origin/main)" || { echo 'Source moved; rebuild on latest main before sealing'; exit 1; }
+            git commit -m "§E v11.484: seal Chromium-verified native ring detail and transform source"
+            git push origin HEAD:main
+          fi
+      - name: Preserve exact source receipt and viewport screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: se484-geometric-ring-receipt
+          path: |
+            projects/swrlz-forge-moba/source-manifest.json
+            projects/swrlz-forge-moba/_release_v11_484_candidate/se484-*.png
