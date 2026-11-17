@@ -45,8 +45,8 @@ def apply(html):
     # Earlier patches may have reformatted the original body, so anchor on
     # adjacent function declarations rather than historical indentation.
     import re
-    save_hit=re.search(r"async\\s+function\\s+saveCloud\\s*\\(\\s*\\)\\s*\\{",html)
-    list_hit=re.search(r"async\\s+function\\s+listCloud\\s*\\(\\s*\\)\\s*\\{",html)
+    save_hit=re.search(r"async\s+function\s+saveCloud\s*\(\s*\)\s*\{",html)
+    list_hit=re.search(r"async\s+function\s+listCloud\s*\(\s*\)\s*\{",html)
     if not save_hit or not list_hit or list_hit.start()<save_hit.start():
         suspects=[html[max(0,m.start()-110):m.start()+180] for m in
                   list(re.finditer(r"saveCloud",html))[:12]]
