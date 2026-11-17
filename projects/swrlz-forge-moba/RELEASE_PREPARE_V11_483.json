@@ -1,0 +1,20 @@
+{
+  "schema": "swrlz-forge-release-prepare-v1",
+  "requestedBy": "ChatGPT (owner-approved)",
+  "target": "kamiloki/swrlz-forge-moba",
+  "version": "v11.483",
+  "feature": "The Sorting Hat native editable Model Studio starter",
+  "scene": "scenes/model-atelier-sorting-hat.swyrl.json",
+  "runtime": "runtime/sorting_hat_starter_v11_483.js",
+  "patch": "patches/v11_483_sorting_hat_starter.py",
+  "validations": [
+    "native asset schema and topology",
+    "node syntax",
+    "460 ordered patches",
+    "exact source digest",
+    "existing modeler regressions",
+    "browser-display packaging"
+  ],
+  "safety": "No user projects overwritten, no separate model renderer, no force-push, no live deploy until source seal is verified.",
+  "ownerPhysicalAcceptance": "pending"
+}
