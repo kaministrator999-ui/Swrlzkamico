@@ -473,6 +473,6 @@
     "patches/v11_479_rim_visible_side.py",
     "patches/v11_480_visible_make_editable.py"
   ],
-  "finalBytes": null,
-  "finalSha256": null
+  "finalBytes": 10451515,
+  "finalSha256": "eeb2866e5c84d27dc7bb64204f88502bc1841bb3f19fdfb024574bc8fdadc50b"
 }
