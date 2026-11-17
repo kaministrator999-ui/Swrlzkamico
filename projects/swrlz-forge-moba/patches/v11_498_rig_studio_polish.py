@@ -19,7 +19,7 @@ def apply(html):
       'window.SWYRL_ENGINE_MINI_STUDIOS_496=se496MiniStudios;\\n'+js,
       'append overlay and bone adapter inside ModelAtelier')
     if '</head>' not in html:raise AssertionError('No HTML root head')
-    html=html.replace('</head>','<style id="se498RigStudioPolish">'+css+'</style>\\n</head>',1)
+    html=html.replace('</head>','<style id="se498RigStudioPolish">'+css+'</style>\n</head>',1)
     for old,new in (
       ('SWYRL_ENGINE_DEPLOY_MARKER: V11_497_SCULPTED_SORTING_HAT',MARKER),
       ('ENGINE · MAKER v11.497','ENGINE · MAKER v11.498'),
@@ -47,4 +47,4 @@ def apply(html):
         'Existing model geometry, UV texture, GPU skinning, joint rest coordinates, clips, account saves and revision history are preserved.',
         'Focused source-integrity validation is automated; final Moto/Quest acceptance requires actual device testing.'
       ])
-    return html[:at]+json.dumps(notes,ensure_ascii=False,separators=(',',':')).replace('</',r'<\\/')+html[at+n:]
+    return html[:at]+json.dumps(notes,ensure_ascii=False,separators=(',',':')).replace('</',r'<\/')+html[at+n:]
