@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT (owner-approved)",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.478",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_478_RING_VERTEX_HIGHLIGHT",
-  "reason": "Owner-requested §E Model Studio: Extrude and Inset Vertex Ring highlights the complete connected outline, Filled Vertex Ring highlights the center and full connected radius, and either selection opens a responsive height slider with native live preview, Apply/Cancel and Undo. Source 455-patch SHA256 verified; mobile desktop-site and narrow touch Chromium regressions passed. Physical Moto/Quest acceptance remains pending.",
-  "sourceCommit": "b2cc356441ef4a48129caf969164db9bb745a9f1",
-  "sourceIntegritySha256": "615b158829f1c0d4c4f37f0bf29b34db302896d4d2d9d34fd3f6038a1ade6057"
+  "releaseVersion": "v11.479",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_479_RIM_VISIBLE_SIDE",
+  "reason": "Owner-requested §E Model Studio: Ring and Filled Ring interpret touched vertex as rim by default; Set Ring Center toggle preserves explicit centered selection. Native selected vertex highlighting remains complete. Material + Vertices View control with Visible Side Only uses depth occlusion in display, group selection and box/lasso to prevent selecting the opposite mesh surface. Both mobile desktop-site and narrow-touch Chromium suites passed, including actual cube Top camera selected 4 top vertices and 0 bottom vertices, full 456-patch integrity validation, no geometry or UV source changes. Physical Moto/Quest acceptance pending.",
+  "sourceCommit": "7366c6c8cde260a397237fe60aafd0c0f8e06659",
+  "sourceIntegritySha256": "1ca7cf251a2e4569ecb3e76e35f6918f15d00a75befe006f02cc1b99f4550f0f"
 }
