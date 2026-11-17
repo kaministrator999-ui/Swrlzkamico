@@ -7,6 +7,7 @@
  const workshop=()=>window.SWYRL_ENGINE_MODEL_WORKSHOP;
  const progressive=()=>window.SWYRL_ENGINE_PROGRESSIVE_TOOLS_474?.inspect?.();
  let panel=null,scene=null,card=null,button=null,reason=null,heading=null,queued=false;
+ let watchedPanel=null,listening=false;
  let lastStatus='';
  const write=(node,value)=>{
   if(node&&node.textContent!==value)node.textContent=value;
@@ -109,23 +110,44 @@
  }
  function schedule(){
   if(queued)return;queued=true;
-  queueMicrotask(()=>{queued=false;if(mount())refresh();});
+  queueMicrotask(()=>{queued=false;if(mount()){watch();refresh();}});
  }
  function watch(){
   const p=document.getElementById('modelAtelierPanel');
-  if(!p)return;
+  if(!p||watchedPanel===p)return;
+  watchedPanel=p;
   new MutationObserver(records=>{
    if(records.some(x=>[
     'data-se477-selection-type','data-se477-selection-shape','data-se477-operation',
     'data-se474-settings-open','data-se251-layout'].includes(x.attributeName)))schedule();
   }).observe(p,{attributes:true});
-  window.addEventListener('swrlz:model-workshop-change',schedule);
-  window.addEventListener('resize',schedule,{passive:true});
-  window.addEventListener('orientationchange',schedule,{passive:true});
+  if(!listening){
+   listening=true;
+   window.addEventListener('swrlz:model-workshop-change',schedule);
+   window.addEventListener('resize',schedule,{passive:true});
+   window.addEventListener('orientationchange',schedule,{passive:true});
+  }
+ }
+ // The modeler panel is mounted asynchronously after the account/startup gate.
+ // DOMContentLoaded alone is too early. Reuse the native modeler install hook
+ // and a bounded observer that stops scheduling once our card is connected.
+ const previousInstall=se430BeginnerInstall;
+ se430BeginnerInstall=function(p){
+  const result=previousInstall.apply(this,arguments);
+  schedule();
+  return result;
+ };
+ function watchRoot(){
+  const host=document.body;
+  if(!host)return;
+  new MutationObserver(records=>{
+   if(card?.isConnected)return;
+   if(records.some(record=>record.addedNodes.length))schedule();
+  }).observe(host,{childList:true,subtree:true});
  }
  if(document.readyState==='loading')
-  document.addEventListener('DOMContentLoaded',()=>{mount();watch();},{once:true});
- else{mount();watch();}
+  document.addEventListener('DOMContentLoaded',()=>{schedule();watchRoot();},{once:true});
+ else{schedule();watchRoot();}
  window.SWYRL_ENGINE_EDITABLE_ENTRY_480=Object.freeze({
   inspect:()=>({visible:!!card&&!card.hidden,enabled:!!button&&!button.disabled,
    message:lastStatus,partId:workshop()?.inspect?.()?.selection?.partId||null,
