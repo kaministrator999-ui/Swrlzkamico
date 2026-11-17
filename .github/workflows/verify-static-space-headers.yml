@@ -31,3 +31,24 @@ jobs:
               grep -iE '^HTTP/|^content-type:|^content-disposition:|^content-length:|^content-range:|^location:|^x-' /tmp/hf-head | tail -18 || true
             done
           done
+          echo "--- INLINE DELIVERY VARIANTS (actual GET without Range)"
+          for PATHQ in \
+            '/?download=false' \
+            '/?download=0' \
+            '/?raw=1' \
+            '/?inline=true' \
+            '/index.html?download=false' \
+            '/index.html?download=0' \
+            '/index.html?raw=1' \
+            '/index.html?inline=1' \
+            '/?v=11482'; do
+            echo "--- ${PATHQ}"
+            curl -sS -L --max-time 22 -D /tmp/hf-query -o /dev/null "${HOST}${PATHQ}" || true
+            grep -iE '^HTTP/|^content-type:|^content-disposition:|^content-length:' /tmp/hf-query | tail -5 || true
+          done
+          echo "--- HEAD vs GET at known other static space"
+          for URL in 'https://kramp-test-static.static.hf.space/' 'https://coyotte508-static-vite.static.hf.space/'; do
+            echo "--- ${URL}"
+            curl -sS -L --max-time 22 -D /tmp/hf-other -o /dev/null "${URL}" || true
+            grep -iE '^HTTP/|^content-type:|^content-disposition:|^content-length:' /tmp/hf-other | tail -5 || true
+          done
