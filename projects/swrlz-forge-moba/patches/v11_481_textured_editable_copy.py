@@ -68,6 +68,16 @@ def apply(html):
    else{write(reason,result?.reason||'Could not prepare the UV-preserving copy.');refresh();}
    return result;
   }""")
+ # One physical vertex may have several atlas seam corner indices.
+ # Ring/Fill selection must move all corresponding UV variants together,
+ # otherwise a height adjustment tears the painted surface at the seam.
+ html=once(html,
+  """  return [...new Set(atelierComponentIds.map(i=>top.vertices[i]).filter(id=>Number.isInteger(id)&&id>=0&&id<p.topologyMesh.positions.length/3))];""",
+  """  return [...new Set(atelierComponentIds.flatMap(i=>{
+   const representative=top.vertices[i];
+   return Number.isInteger(representative)?
+    (top.groups.get(top.keys[representative])||[]):[];
+  }).filter(id=>Number.isInteger(id)&&id>=0&&id<p.topologyMesh.positions.length/3))];""")
  # Existing native converter remains unchanged and still warns about UV regeneration
  # for untextured primitives. No silent fallback if a painted copy is unsafe.
  css="""/* SE481_TEXTURED_EDITABLE_COPY_STYLES_START */
