@@ -39,9 +39,9 @@ while todo:
   for adjacent in graph[todo.pop()]:
     if adjacent not in seen:seen.add(adjacent);todo.append(adjacent)
 assert len(seen)==len(used)==v,("The original hat, face and brim must be connected as one surface",len(seen),len(used),v)
-# Regression: the photographed first render had a sharp, pinched tip.
-# The revised single mesh finishes as a downward-curled, smoothly expanding
-# cloth end, with no extra tip object, hole or regenerated face geometry.
+# User reference: the unposed Sorting Hat is an upright fabric cone.
+# A rig may bend it later; no downturned point is baked into its geometry.
+# All eight crown rings taper to the upward apex on a near-vertical axis.
 stride=97
 tip_centers=[]
 tip_radii=[]
@@ -52,11 +52,16 @@ for ring in range(8):
     cz=sum(p[2] for p in coords)/len(coords)
     tip_centers.append((cx,cy,cz))
     tip_radii.append((max(p[0] for p in coords)-min(p[0] for p in coords))/2)
-assert tip_centers[0][1] < tip_centers[5][1]-.27,tip_centers
-assert tip_centers[0][0] > tip_centers[5][0]+.33,tip_centers
-assert all(tip_centers[i][0] > tip_centers[i+1][0] for i in range(7)),tip_centers
-assert all(tip_radii[i] < tip_radii[i+1] for i in range(7)),tip_radii
-assert max(math.dist(tip_centers[i],tip_centers[i+1]) for i in range(7))<.19
+# No hooked flap: the point is the highest ring, and consecutive rings
+# descend without reversals. Upper/lower ring centers remain vertically aligned.
+assert tip_centers[0][1]>tip_centers[-1][1]+1.10,tip_centers
+assert all(tip_centers[i][1]>tip_centers[i+1][1]+.052 for i in range(7)),tip_centers
+assert max(p[0] for p in tip_centers)-min(p[0] for p in tip_centers)<.055,tip_centers
+assert max(p[2] for p in tip_centers)-min(p[2] for p in tip_centers)<.055,tip_centers
+assert all(tip_radii[i]<tip_radii[i+1] for i in range(7)),tip_radii
+assert tip_radii[0]<.03 and .38<tip_radii[-1]<.46,tip_radii
+assert max(tip_radii[i+1]-tip_radii[i] for i in range(7))<.10
+assert max(math.dist(tip_centers[i],tip_centers[i+1]) for i in range(7))<.235
 tip_cap=xyz[-6:-3]  # exterior cap before interior lining's cap
 assert math.dist(tip_cap,tip_centers[0])<.035,(tip_cap,tip_centers[0])
 # Ring-to-crown junction is smooth, and the interior remains sealed.
