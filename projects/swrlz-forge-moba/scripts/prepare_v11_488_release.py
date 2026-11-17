@@ -8,20 +8,21 @@ m=json.loads(path.read_text('utf8'))
 assert m['name']=='§wyrl§ Engine v11.487',m['name']
 assert m['finalArtifact']=='swyrl_engine_v11_487.html'
 assert len(m['patches'])==464 and m['patches'][-1]=='patches/v11_487_model_project_exports.py'
-for p in ('runtime/model_export_identity_v11_487.js',
-          'runtime/my_projects_export_v11_487.js',
-          'patches/v11_487_model_project_exports.py',
-          'tests/model_project_exports_v11_487.cjs'):
+for p in ('runtime/account_project_naming_v11_488.js',
+          'runtime/account_asset_naming_v11_488.js',
+          'patches/v11_488_account_project_naming.py',
+          'tests/account_project_naming_v11_488.cjs'):
  assert (ROOT/p).is_file(),p
-for name in ('model_export_identity_v11_487.js','my_projects_export_v11_487.js'):
+for name in ('account_project_naming_v11_488.js','account_asset_naming_v11_488.js'):
  subprocess.run(['node','--check',str(ROOT/'runtime'/name)],check=True)
 subprocess.run(['node',str(ROOT/'tests/model_project_exports_v11_487.cjs')],check=True)
+subprocess.run(['node',str(ROOT/'tests/account_project_naming_v11_488.cjs')],check=True)
 m['name']='§wyrl§ Engine v11.488'
-m['finalArtifact']='swyrl_engine_v11_487.html'
-m['patches'].append('patches/v11_487_model_project_exports.py')
+m['finalArtifact']='swyrl_engine_v11_488.html'
+m['patches'].append('patches/v11_488_account_project_naming.py')
 m['finalBytes']=None;m['finalSha256']=None
 path.write_text(json.dumps(m,indent=2,ensure_ascii=False)+'\n','utf8')
-with tempfile.TemporaryDirectory(prefix='engine-exports-487-') as folder:
+with tempfile.TemporaryDirectory(prefix='engine-naming-488-') as folder:
  out=Path(folder)/'dist'
  subprocess.run([sys.executable,str(ROOT/'build_space.py'),'--output',str(out)],check=True)
  raw=(out/'index.html').read_bytes()
@@ -32,8 +33,8 @@ with tempfile.TemporaryDirectory(prefix='engine-exports-487-') as folder:
  m['finalBytes']=len(raw)
  m['finalSha256']=hashlib.sha256(raw).hexdigest()
  path.write_text(json.dumps(m,indent=2,ensure_ascii=False)+'\n','utf8')
- subprocess.run([sys.executable,str(ROOT/'scripts/verify_v11_487_release.py'),'--output',str(out)],check=True)
- subprocess.run([sys.executable,str(ROOT/'scripts/package_static_delivery_v11_487.py'),'--output',str(out)],check=True)
+ subprocess.run([sys.executable,str(ROOT/'scripts/verify_v11_488_release.py'),'--output',str(out)],check=True)
+ subprocess.run([sys.executable,str(ROOT/'scripts/package_static_delivery_v11_488.py'),'--output',str(out)],check=True)
  subprocess.run(['node','--check',str(out/'swrlz-engine-v11.488.js')],check=True)
  receipt=json.loads((out/'SOURCE.json').read_text('utf8'))
  assert receipt['sourceVersion']==m['name']
