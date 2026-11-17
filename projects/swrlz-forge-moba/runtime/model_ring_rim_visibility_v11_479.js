@@ -205,7 +205,8 @@ const se479ProjectedRim=(()=>{
    });
    row.append(button);
   }
-  button.textContent=centerMode?'Set Ring Center: ON':'Set Ring Center: OFF';
+  const label=centerMode?'Set Ring Center: ON':'Set Ring Center: OFF';
+  if(button.textContent!==label)button.textContent=label;
   button.title=centerMode?'Tap a vertex to set the center.':'Tap a vertex on the rim; center mode is disabled.';
   button.setAttribute('aria-pressed',String(centerMode));
   button.setAttribute('aria-label','Set vertex ring center mode');
