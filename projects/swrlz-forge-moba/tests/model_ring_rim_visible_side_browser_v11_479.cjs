@@ -138,11 +138,17 @@ const server=http.createServer((req,res)=>{
     const behind=await page.evaluate(()=>{
       const api=window.SWYRL_ENGINE_RIM_VISIBILITY_479;
       const count=window.SWYRL_ENGINE_MODEL_WORKSHOP.inspect().selection.vertexCount;
-      const all=Array.from({length:count},(_,slot)=>({slot,visible:api.isVisibleSlot(slot)}));
+      const all=Array.from({length:count},(_,slot)=>({
+       slot,visible:api.isVisibleSlot(slot),position:api.vertexLocalPosition(slot)
+      }));
       const front=all.filter(x=>x.visible).map(x=>x.slot);
       const back=all.filter(x=>!x.visible).map(x=>x.slot);
-      const result=api.selectRim(front[0]);
-      return {count,front,back,result,selection:api.inspect(),
+      const low=Math.min(...all.map(x=>x.position[1]));
+      const high=Math.max(...all.map(x=>x.position[1]));
+      const bottom=all.filter(x=>Math.abs(x.position[1]-low)<.0001).map(x=>x.slot);
+      const top=all.filter(x=>Math.abs(x.position[1]-high)<.0001).map(x=>x.slot);
+      const result=api.selectRim(front.find(id=>top.includes(id))??front[0]);
+      return {count,front,back,top,bottom,result,selection:api.inspect(),
        overlay:window.SWYRL_ENGINE_RING_HIGHLIGHT_478.inspect()};
     });
     console.log('SE479_BOX_OCCLUSION_'+cfg.name+' '+JSON.stringify(behind));
@@ -154,6 +160,10 @@ const server=http.createServer((req,res)=>{
       'Rim group must contain only actual camera-visible vertices');
     assert(behind.selection.selectedSlots.every(slot=>!behind.back.includes(slot)),
       'Bottom face must not be selected while viewing the top');
+    assert(behind.top.length>0&&behind.bottom.length>0,
+      'The cube must have distinguishable top and bottom source positions');
+    assert(behind.selection.selectedSlots.every(slot=>!behind.bottom.includes(slot)),
+      'Top camera must not select any actual bottom-layer source vertex');
     assert.equal(behind.overlay.highlightedCount,behind.selection.selectedCount);
     await page.screenshot({path:path.join(root,'se479-rim-top-'+cfg.name+'.png')});
     assert(errors.length===0,'Unexpected JS errors '+JSON.stringify(errors.slice(0,4)));
