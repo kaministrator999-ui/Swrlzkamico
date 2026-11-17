@@ -27,13 +27,13 @@ const se479ProjectedRim=(()=>{
   const lengths=graph[seed].filter(i=>finite(points[i]))
    .map(i=>distance(points[i],points[seed])).filter(x=>x>1e-7).sort((a,b)=>a-b);
   const spacing=lengths.length?lengths[Math.floor(lengths.length/2)]:0;
-  const tolerance=Math.max(.006,Math.min(.09,spacing*.38),radius*.028);
+  const tolerance=Math.max(.006,Math.min(.09,spacing>0?spacing*.38:.09,Math.max(.014,radius*.30)));
   const slots=[];
   for(const i of queue){
    if(!finite(points[i]))continue;
    const radial=distance(points[i],center);
    if(mode==='outline'?Math.abs(radial-radius)<=tolerance:
-       radial<=radius+tolerance*.25)slots.push(i);
+       radial<=radius+tolerance)slots.push(i);
   }
   if(!slots.includes(seed))slots.push(seed);
   slots.sort((a,b)=>a-b);
@@ -226,7 +226,7 @@ const se479ProjectedRim=(()=>{
   if(!state?.selection?.partId){showStatus('Select a model mesh first.',true);return false;}
   const view=window.SWYRL_ENGINE_MODEL_VIEW;
   if(!view?.setMode?.('shaded')){showStatus('Material view is not available.',true);return false;}
-  if(state.selection.mode!=='vertex'){
+  if(workshop()?.inspect?.()?.selection?.mode!=='vertex'){
    const result=workshop()?.setComponentMode?.('vertex');
    if(!result?.ok)return false;
   }
