@@ -55,6 +55,12 @@ const server=http.createServer((req,res)=>{
     await page.waitForFunction(()=>window.SWYRL_ENGINE_PROGRESSIVE_TOOLS_474?.inspect?.()?.tool==='Extrude',
       {timeout:10000});
     await page.locator('#se477SelectionShapes button[data-se474-value="fill"]').click({timeout:14000});
+    console.log('SE480_MOUNT_DIAG_'+cfg.name+' '+JSON.stringify(await page.evaluate(()=>({
+      widget:window.SWYRL_ENGINE_EDITABLE_ENTRY_480.inspect(),
+      element:!!document.getElementById('se480EditableEntry'),
+      scene:!!document.querySelector('#modelAtelierPanel .atelier-scene'),
+      progressive:window.SWYRL_ENGINE_PROGRESSIVE_TOOLS_474.inspect()
+    }))));
     await page.waitForSelector('#se480EditableEntry',{state:'visible',timeout:10000});
     const entry=await page.evaluate(()=>{
       const api=window.SWYRL_ENGINE_EDITABLE_ENTRY_480;
