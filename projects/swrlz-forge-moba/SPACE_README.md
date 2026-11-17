@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.488
+title: §wyrl§ Engine v11.489
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,13 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.489 · Single-cloth rig + in-place My Projects model updates (2026-11-17)
+
+The current native Model Studio extends the existing v11.220 GPU skinning system with a validated `swyrl-cloth-skin-v1` armature schema, smooth four-influence envelopes, and multiple editable keyframed clips. The owner's Sorting Hat is distributed separately as `The-Sorting-Hat-Rigged.swyrl.json` (not committed publicly). Its model remains a single cloth surface with original topology and UV-painted texture and has an eleven-bone rig with five animations: idle, talking, laughing, scowling and tip flourish. Open a rigged model, use **Rig · Pose · Animate → Animation clip**, then Play or edit joints and keys.
+
+The **My Projects** account/on-device cards now have **Update Model**. Select the correct card, choose a previously exported bound update package, or a complete native `.swyrl.json` file from the same model. Existing mesh identity must match; an identified file for another project or stale base revision is rejected. Cloud updates use the selected account ID, expectedRevision CAS, and bounded eight-slot history to create the next revision, preserving the project identity, scene, editor and other levels. Active-level model snapshots are synchronized, while sibling levels remain untouched. The current open editor is not silently replaced; reload after an account-side update. Existing asset records retain their account size limits and source copy policy.
+
 
 ## §E v11.488 · Name account projects and rename models in place (2026-11-17)
 
