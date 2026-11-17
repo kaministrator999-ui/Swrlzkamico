@@ -192,8 +192,40 @@ const se481TexturedEditable=(()=>{
   document.addEventListener('DOMContentLoaded',attach,{once:true});
  else attach();
  window.addEventListener('swrlz:model-workshop-change',attach);
+ function inspectFidelity(){
+  const p=partById(selection);
+  const src=p?.se481SourceId?partById(p.se481SourceId):p;
+  const copy=src?.se481WorkId?partById(src.se481WorkId):p?.se481SourceId?p:null;
+  const a=src&&modelRoot?.children.find(m=>m.isMesh&&m.userData?.atelierId===src.id);
+  const b=copy&&modelRoot?.children.find(m=>m.isMesh&&m.userData?.atelierId===copy.id);
+  if(!a||!b)return {ok:false,reason:'No paired rendered source and working copy.'};
+  const ga=a.geometry,gb=b.geometry;
+  const pa=ga.getAttribute('position'),pb=gb.getAttribute('position');
+  const ua=ga.getAttribute('uv'),ub=gb.getAttribute('uv');
+  const count=ga.index?.count||pa.count;
+  if(count!==(gb.index?.count||pb.count))
+   return {ok:false,reason:'Triangle count changed',sourceCorners:count};
+  let uvDifferences=0,positionDifferences=0;
+  for(let k=0;k<count;k++){
+   const ia=ga.index?ga.index.getX(k):k,ib=gb.index?gb.index.getX(k):k;
+   for(let j=0;j<2;j++)if(Math.abs(
+    (j?ua.getY(ia):ua.getX(ia))-(j?ub.getY(ib):ub.getX(ib)))>1e-6)uvDifferences++;
+   for(let j=0;j<3;j++)if(Math.abs(
+    pa.getComponent(ia,j)-pb.getComponent(ib,j))>1e-6)positionDifferences++;
+  }
+  const sourceMat=Array.isArray(a.material)?a.material[0]:a.material;
+  const copyMat=Array.isArray(b.material)?b.material[0]:b.material;
+  const matchingPaint=!!src.uvPaintPNG&&src.uvPaintPNG===copy.uvPaintPNG;
+  const sourceMap=sourceMat?.map,copyMap=copyMat?.map;
+  return {ok:!uvDifferences&&!positionDifferences&&matchingPaint&&!!sourceMap&&!!copyMap,
+   triangleCorners:count,uvDifferences,positionDifferences,matchingPaint,
+   sourceHasMap:!!sourceMap,copyHasMap:!!copyMap,
+   sourceHidden:!a.visible,copyVisible:b.visible,
+   sameUVOffset:JSON.stringify(src.uvPaintOffset||[0,0])===JSON.stringify(copy.uvPaintOffset||[0,0]),
+   sameUVRepeat:JSON.stringify(src.uvPaintRepeat||[1,1])===JSON.stringify(copy.uvPaintRepeat||[1,1])};
+ }
  window.SWYRL_ENGINE_TEXTURED_TOPOLOGY_481=Object.freeze({
-  inspect:getStatus,prepare,switchSource,build,
+  inspect:getStatus,prepare,switchSource,build,inspectFidelity,
   refresh:attach,
   inspectSource:()=>{
    const p=partById(selection);
