@@ -54,6 +54,10 @@ jobs:
           print("Uploaded §wyrl§ Engine to https://huggingface.co/spaces/kamiloki/swrlz-forge-moba")
           PY
 
+      - name: Convert published HTML entrypoints to regular Git blobs
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: python projects/swrlz-forge-moba/scripts/repair_static_html_git_blobs.py
       - name: Check public HTML and JavaScript response headers
         run: |
           python - <<'PY'
@@ -65,7 +69,7 @@ jobs:
               last=None
               for attempt in range(8):
                   try:
-                      req=Request(host+route,headers={"Range":"bytes=0-0","Cache-Control":"no-cache"})
+                      req=Request(host+route,headers={"Cache-Control":"no-cache"})
                       with urlopen(req,timeout=22) as response:
                           mime=(response.headers.get("Content-Type") or "").lower()
                           disposition=(response.headers.get("Content-Disposition") or "").lower()
