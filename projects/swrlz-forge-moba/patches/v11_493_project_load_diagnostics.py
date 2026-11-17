@@ -18,15 +18,15 @@ def apply(html):
  # Make the genuine loader's error visible to its selected account card.
  html=once(html,
    "  if(dirty&&!window.confirm('Load this account project and replace unsaved local changes? Save the current project first if you want to keep them.'))return;",
-   "  se493ProjectLoad.reset();\n  if(dirty&&!window.confirm('Load this account project and replace unsaved local changes? Save the current project first if you want to keep them.')){se493ProjectLoad.failure(Error('Open cancelled to preserve unsaved changes.'));return false;}",
+   "  se493ProjectLoad.reset();\n  if(dirty&&!window.confirm('Load this account project and replace unsaved local changes? Save the current project first if you want to keep them.')){window.SWYRL_ENGINE_PROJECT_LOAD_493.failure(Error('Open cancelled to preserve unsaved changes.'));return false;}",
    'distinguish cancelled load')
  html=once(html,
    "se183LoadStep(se183Ticket,'Downloading account project');const result=await rpc('cloud.load',{projectId});",
-   "se183LoadStep(se183Ticket,'Downloading account project');const result=await se493ProjectLoad.fetchProject(projectId,stage=>se183LoadStep(se183Ticket,stage));",
+   "se183LoadStep(se183Ticket,'Downloading account project');const result=await window.SWYRL_ENGINE_PROJECT_LOAD_493.fetchProject(projectId,stage=>se183LoadStep(se183Ticket,stage));",
    'retry only cloud load reads')
  html=once(html,
    "  }catch(error){setStatus('Account load failed: '+error.message,true);}finally{cloudBusy=false;se183FinishLoad(se183Ticket,se183Opened,se183Opened?'Account project ready':'Account project load failed');}",
-   "  }catch(error){se493ProjectLoad.failure(error);setStatus('Account load failed: '+se493ProjectLoad.getError(),true);}finally{cloudBusy=false;se183FinishLoad(se183Ticket,se183Opened,se183Opened?'Account project ready':'Account project load failed');}",
+   "  }catch(error){window.SWYRL_ENGINE_PROJECT_LOAD_493.failure(error);setStatus('Account load failed: '+window.SWYRL_ENGINE_PROJECT_LOAD_493.getError(),true);}finally{cloudBusy=false;se183FinishLoad(se183Ticket,se183Opened,se183Opened?'Account project ready':'Account project load failed');}",
    'surface exact cloud failure')
  html=once(html,
    "    else result.textContent='Could not open project. Your active scene was preserved.';",
