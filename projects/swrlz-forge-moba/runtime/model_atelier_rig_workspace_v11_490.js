@@ -68,7 +68,8 @@ const se490Workspace=(()=>{
     if(se220Rig().activeClip!==saved.rig.clip)se489SelectClip(saved.rig.clip);
     se220Playing=false;
     se220Time=Math.max(0,Math.min(se220Rig().duration,saved.rig.time));
-    se220RigPose(se220RigInterpolate(se220Rig(),se220Time));
+    se220Rig().pose=se220RigInterpolate(se220Rig(),se220Time);
+    se220RigPose(se220Rig().pose);
     se220RigRefresh();
    }
    if(typeof saved.camera.view==='string'&&saved.camera.view!=='orbit')
