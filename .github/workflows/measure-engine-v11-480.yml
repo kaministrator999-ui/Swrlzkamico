@@ -1,0 +1,61 @@
+name: Measure §E v11.480 reachable editable mesh conversion from Extrude/Inset
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/measure-engine-v11-479.yml"
+      - "projects/swrlz-forge-moba/patches/v11_480_visible_make_editable.py"
+      - "projects/swrlz-forge-moba/runtime/model_editable_entry_v11_480.js"
+      - "projects/swrlz-forge-moba/runtime/model_editable_entry_v11_480.css"
+      - "projects/swrlz-forge-moba/scripts/prepare_v11_480_release.py"
+      - "projects/swrlz-forge-moba/scripts/verify_v11_480_release.py"
+      - "projects/swrlz-forge-moba/tests/model_editable_entry_v11_480.mjs"
+      - "projects/swrlz-forge-moba/tests/model_editable_entry_browser_v11_480.cjs"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: se480-editable-entry-source-measure
+  cancel-in-progress: true
+
+jobs:
+  rim-visible-selection:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Build, calculate SHA256 and verify 457 native-source patches
+        run: python projects/swrlz-forge-moba/scripts/prepare_v11_480_release.py
+      - name: Install Chromium touch browser
+        run: |
+          npm install --no-save playwright@1.56.1
+          npx playwright install --with-deps --only-shell chromium
+      - name: Test Make mesh editable CTA in Extrude/Inset, source guards and restored vertex mode
+        run: node projects/swrlz-forge-moba/tests/model_editable_entry_browser_v11_480.cjs projects/swrlz-forge-moba/_release_v11_480_candidate
+      - name: Seal verified source SHA and bytes to main
+        if: success() && github.ref == 'refs/heads/main'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add projects/swrlz-forge-moba/source-manifest.json
+          if ! git diff --cached --quiet; then
+            git commit -m "§E v11.480: seal Chromium-verified editable entry source"
+            git push origin HEAD:main
+          fi
+      - name: Preserve exact source receipt and viewport screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: se480-editable-entry-receipt
+          path: |
+            projects/swrlz-forge-moba/source-manifest.json
+            projects/swrlz-forge-moba/_release_v11_480_candidate/se480-*.png
