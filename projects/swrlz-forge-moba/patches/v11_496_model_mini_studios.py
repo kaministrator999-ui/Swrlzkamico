@@ -20,9 +20,10 @@ def apply(html):
     assert '#se496ModeTabs' in css
     html=once(html,'  function refreshList(){',
         js+'\n  function refreshList(){','live model-scoped mini-studio controller')
-    html=once(html,'</head>',
-        '<style id="se496MiniStudios">'+css+'</style>\n</head>',
-        'focus and mobile layout styles')
+    # The engine contains one actual head and a second literal in a template.
+    if '</head>' not in html:raise AssertionError('No root HTML head')
+    html=html.replace('</head>',
+        '<style id="se496MiniStudios">'+css+'</style>\n</head>',1)
     # The existing saved workspace is the only persisted mode owner.
     # The model is not reloaded or cloned when changing the active studio.
     html=once(html,
