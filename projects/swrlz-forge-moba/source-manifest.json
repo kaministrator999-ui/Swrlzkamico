@@ -472,6 +472,6 @@
     "patches/v11_478_ring_vertex_highlight.py",
     "patches/v11_479_rim_visible_side.py"
   ],
-  "finalBytes": null,
-  "finalSha256": null
+  "finalBytes": 10438771,
+  "finalSha256": "ffe507364027f91ab3e24105bded64005ad58a1a0b3dce911b49666209cac816"
 }
