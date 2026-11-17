@@ -37,7 +37,9 @@
    ['vertex','face','edge'].includes(state.selectionType);
   const selected=native?.selection,part=selected?.partId?partById(selected.partId):null;
   const already=part?.kind==='topologyMesh';
-  card.hidden=!active||already;
+  // The operation flyout has selection priority over a contextual CTA.
+  // Release its touch targets completely while the tool list is open.
+  card.hidden=!active||already||!!state?.flyout;
   if(card.hidden){lastStatus='';return;}
   const converting=!!native?.convert?.available&&!native?.preview?.active;
   const preview=!!native?.preview?.active;
@@ -126,6 +128,10 @@
     'data-se477-selection-type','data-se477-selection-shape','data-se477-operation',
     'data-se474-settings-open','data-se251-layout'].includes(x.attributeName)))schedule();
   }).observe(p,{attributes:true});
+  const flyout=p.querySelector('#se474ToolFlyout');
+  if(flyout)new MutationObserver(schedule).observe(flyout,{
+   attributes:true,attributeFilter:['hidden']
+  });
   if(!listening){
    listening=true;
    window.addEventListener('swrlz:model-workshop-change',schedule);
