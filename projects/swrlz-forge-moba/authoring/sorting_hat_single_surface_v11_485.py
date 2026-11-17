@@ -143,9 +143,14 @@ def build_mesh():
         if typ=="brim-lip":return brim_point(theta,value,True)
         if typ=="brim-under":return brim_point(theta,value,True)
         return inner_point(value,theta)
+    # Preserve the existing native UV map exactly for the corrected tip:
+    # move only vertices, never slide/stretch the painted coordinates.
+    original_tip_heights=(2.90,2.94,2.995,3.065,3.110,3.085,3.010,2.915)
     for i,row in enumerate(rows):
         kind,a,_=row
-        if kind=="crown":v=.28+.70*clamp((a-.20)/2.91)
+        if kind=="crown":
+            painted_height=original_tip_heights[i] if i<len(TIP) else a
+            v=.28+.70*clamp((painted_height-.20)/2.91)
         elif kind=="brim-upper":v=.28-.10*clamp((a-.875)/(.74))
         elif kind=="brim-lip":v=.15
         elif kind=="brim-under":v=.15-.075*clamp((1.61-a)/.84)
