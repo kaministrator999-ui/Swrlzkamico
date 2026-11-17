@@ -1,0 +1,72 @@
+name: Repair §E HTML browser delivery without changing engine source
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/repair-space-html-serving.yml"
+      - "projects/swrlz-forge-moba/scripts/repair_static_html_git_blobs.py"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: swrlz-forge-moba-html-git-blob
+  cancel-in-progress: false
+
+jobs:
+  repair:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install Hugging Face Hub client
+        run: python -m pip install --quiet "huggingface_hub>=0.34,<2"
+      - name: Convert verified Space HTML entrypoints from LFS to normal Git blobs
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: python projects/swrlz-forge-moba/scripts/repair_static_html_git_blobs.py
+      - name: Verify Space Git metadata reports ordinary non-LFS HTML
+        run: |
+          python - <<'PY'
+          import json,time
+          from urllib.request import urlopen
+          url="https://huggingface.co/api/spaces/kamiloki/swrlz-forge-moba/tree/main?recursive=false&expand=true"
+          for attempt in range(9):
+              with urlopen(url,timeout=25) as response: items=json.load(response)
+              files={item.get('path'):item for item in items}
+              ok=all(name in files and not files[name].get('lfs') for name in ('index.html','modeler.html'))
+              print("SE482_SPACE_GIT_STORAGE",{
+                  name:('git-blob' if not files.get(name,{}).get('lfs') else 'LFS')
+                  for name in ('index.html','modeler.html')
+              },flush=True)
+              if ok:break
+              if attempt==8:raise SystemExit("HTML still stored as LFS")
+              time.sleep(5)
+          PY
+      - name: Verify public browser GET serves HTML inline
+        run: |
+          python - <<'PY'
+          import time
+          from urllib.request import Request,urlopen
+          host="https://kamiloki-swrlz-forge-moba.static.hf.space/"
+          for route in ("","modeler.html"):
+              for i in range(10):
+                  try:
+                      req=Request(host+route,headers={"Cache-Control":"no-cache"})
+                      with urlopen(req,timeout=22) as response:
+                          ct=response.headers.get("Content-Type","").lower()
+                          cd=response.headers.get("Content-Disposition","").lower()
+                          print("SE482_BROWSER_GET",route or "/",response.status,ct,cd,flush=True)
+                          if "text/html" not in ct or "attachment" in cd:
+                              raise ValueError("HTML still downloads rather than renders")
+                      break
+                  except Exception:
+                      if i==9:raise
+                      time.sleep(5)
+          print("SE482_PUBLIC_HTML_INLINE_PASS",flush=True)
+          PY
