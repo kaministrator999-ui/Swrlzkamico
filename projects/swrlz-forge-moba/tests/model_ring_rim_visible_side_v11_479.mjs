@@ -34,6 +34,7 @@ for(const token of [
  'const originalChoose=atelierComponentChoose',
  "if(frontOnly&&!isVisible(mesh,slot))",
  'new THREE.Raycaster','intersectObject(mesh,false)[0]',
+ 'const inward=new THREE.Vector2','vertexLocalPosition:slot=>',
  'originalRegionPick.apply(this,arguments)',
  'atelierComponentOverlayBuild=function(...args)',
  'child.material.depthTest=!!frontOnly',
