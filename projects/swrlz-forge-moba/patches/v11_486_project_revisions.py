@@ -119,7 +119,7 @@ def apply(html):
     for old,new,tag in (
         ("SWYRL_ENGINE_DEPLOY_MARKER: V11_485_ONE_CLOTH_SORTING_HAT",MARKER,"marker"),
         ("ENGINE · MAKER v11.485","ENGINE · MAKER v11.486","visible header"),
-        ("v11.485 · Sorting Hat reconstructed as one sculpted UV-painted fabric mesh",
+        ("v11.485 · unified sculpted Sorting Hat",
          "v11.486 · rolling project revisions and in-place model updates","headline"),
         ("window.SWRLZ_FORGE_BUILD={version:'v11.485'",
          "window.SWRLZ_FORGE_BUILD={version:'v11.486'","runtime build"),
