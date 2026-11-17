@@ -164,6 +164,13 @@ const se482GeometricRing=(()=>{
  }
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mount,{once:true});
  else mount();
+ window.addEventListener('swrlz:model-workshop-change',mount);
+ const se482PreviousInstall=se430BeginnerInstall;
+ se430BeginnerInstall=function(...args){
+  const result=se482PreviousInstall.apply(this,args);
+  queueMicrotask(mount);
+  return result;
+ };
  window.SWYRL_ENGINE_GEOMETRIC_RING_482=Object.freeze({
   choose,selectCenter,noteRim,reselect,refresh:mount,
   inspect:()=>({bandPercent,last:last?{...last}:null,circular:true})
