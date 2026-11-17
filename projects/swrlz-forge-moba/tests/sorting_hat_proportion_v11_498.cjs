@@ -5,7 +5,7 @@ const html=fs.readFileSync(process.argv[2],'utf8');
 const start=html.indexOf('function se497DeformHat(scene){');
 const end=html.indexOf('async function se497OpenSculptedHat(',start);
 assert(start>=0 && end>start);
-const source=html.slice(start,end)+'\nglobalThis.run=se497DeformHat;';
+const source="const se497SculptedHatId='sorting-hat-sculpted';\n"+html.slice(start,end)+'\nglobalThis.run=se497DeformHat;';
 const sandbox={};vm.runInNewContext(source,sandbox);
 const scene=JSON.parse(fs.readFileSync(path.join(root,'scenes/model-atelier-sorting-hat.swyrl.json'),'utf8'));
 const sourcePart=scene.project.modelAtelier.parts[0],original=sourcePart.topologyMesh.positions.slice();
