@@ -18,6 +18,25 @@ def apply(html):
  # v11.489's cloth rig code is already inside the original ModelAtelier
  # closure; retain the same lexical scope for its rig/render/camera hooks.
  html=once(html,"  function refreshList(){",src+"\n  function refreshList(){")
+ # Add a narrow, validated project-specific layout adapter to the v11.251
+ # dock controller; the original model, materials and resize handlers remain.
+ html=once(html,
+  "window.SWYRL_ENGINE_SHARED_WORKSTATIONS_251=Object.freeze({\\n mode,setMode:mode,",
+  """window.SWYRL_ENGINE_SHARED_WORKSTATIONS_251=Object.freeze({
+ modelDock:()=>({mode:state.mode,...state.model}),
+ setModelDock:next=>{
+  if(!next||typeof next!=='object')return false;
+  for(const side of ['left','right'])
+   if(Number.isFinite(next[side])&&next[side]>=140&&next[side]<=480)
+    state.model[side]=next[side];
+  for(const field of ['collapsed','rightCollapsed'])
+   if(typeof next[field]==='boolean')state.model[field]=next[field];
+  if(['auto','desktop','compact'].includes(next.mode))state.mode=next.mode;
+  sync();save();window.dispatchEvent(new Event('resize'));
+  return true;
+ },
+ mode,setMode:mode,""")
+
  for old,new in (
   ("SWYRL_ENGINE_DEPLOY_MARKER: V11_489_CLOTH_RIG_PROJECT_UPDATE",MARKER),
   ("ENGINE · MAKER v11.489","ENGINE · MAKER v11.490"),
