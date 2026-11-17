@@ -1,3 +1,7 @@
+## §E v11.496 · Unified model mini-studios (2026-11-17)
+
+Model Studio now uses one persistent native viewport with Model, Rigging and Animation interfaces. Modeling retains all existing topology/sculpt/UV tools; Rigging reuses real SkinnedMesh animation and adds simple skeleton/child bone/rest transform/automatic influence authoring; Animation surfaces named clips, joint poses, scrubber, keyframes and playback. Workspace mode persists with the project; no new renderer, project duplication, or implicit mesh replacement. Detailed brush weight painting is future work; Moto/Quest acceptance is separate from source validation.
+
 ## §E v11.465 · Mobile Model Studio inspector readability (2026-11-15)
 
 The right inspector now uses whole-word labels and a compact prompt when resized too narrow. Existing Expand/Dock restores readable native tool settings and viewport width without changing saved sidebar drags, camera, model or Undo/Redo. Verification and hosted activation are separate. See `projects/swrlz-forge-moba/docs/MODEL_INSPECTOR_READABILITY_V11_465.md`.
