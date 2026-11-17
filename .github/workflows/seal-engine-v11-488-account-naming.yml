@@ -3,13 +3,13 @@ on:
   push:
     branches: [main]
     paths:
-      - "projects/swrlz-forge-moba/RELEASE_PREPARE_V11_487.json"
+      - "projects/swrlz-forge-moba/RELEASE_PREPARE_V11_488.json"
   workflow_dispatch:
 permissions:
   contents: write
   actions: write
 concurrency:
-  group: engine-v11-487-account-naming
+  group: engine-v11-488-account-naming
   cancel-in-progress: false
 jobs:
   verify-seal-deploy:
@@ -28,7 +28,7 @@ jobs:
         with:
           node-version: "20"
       - name: Verify account names and assemble exact source
-        run: python projects/swrlz-forge-moba/scripts/prepare_v11_487_release.py
+        run: python projects/swrlz-forge-moba/scripts/prepare_v11_488_release.py
       - name: Commit real source hash and trigger governed HF release separately
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
