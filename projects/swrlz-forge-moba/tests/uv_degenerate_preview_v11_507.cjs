@@ -17,7 +17,7 @@ const smoothCode=fs.readFileSync(path.join(ROOT,'runtime/smooth_witch_hat_v11_50
 const smooth=Function("const se504Template='smooth-witch-hat';"+
  smoothCode.slice(smoothCode.indexOf('function se504SmoothHat('),
                       smoothCode.indexOf('async function se504OpenSmoothWitchHat'))+
- 'return se504SmoothHat;')(structuredClone(source));
+ 'return se504SmoothHat;')()(structuredClone(source));
 const mesh=smooth.project.modelAtelier.parts[0].topologyMesh;
 assert.equal(mesh.positions.length/3,7859);
 assert.equal(mesh.indices.length/3,15714);
