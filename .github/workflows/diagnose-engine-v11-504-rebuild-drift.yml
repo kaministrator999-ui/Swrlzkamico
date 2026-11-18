@@ -1,0 +1,49 @@
+name: Diagnose §E v11.504 reproducibility drift
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/diagnose-engine-v11-504-rebuild-drift.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Compare per-patch digests for published v11.504 and current tree
+        run: |
+          set -euo pipefail
+          git worktree add --detach /tmp/se504-published 4f068611e6071504568a3a4c6a984ae43eab1c13
+          python - <<'PY'
+          import base64,gzip,hashlib,importlib.util,json
+          from pathlib import Path
+          roots={'published':Path('/tmp/se504-published/projects/swrlz-forge-moba'),
+                 'current':Path('projects/swrlz-forge-moba').resolve()}
+          hist={}
+          for label,root in roots.items():
+              m=json.loads((root/'source-manifest.json').read_text('utf8'))
+              assert m['name']=='§wyrl§ Engine v11.504'
+              chunks=[(root/p).read_text('utf8').strip() for p in m['chunks']]
+              html=gzip.decompress(base64.b64decode(''.join(chunks))).decode('utf8')
+              hashes=[]
+              for idx,rel in enumerate(m['patches'][:-1]):
+                  path=root/rel
+                  spec=importlib.util.spec_from_file_location('se_diag_'+str(idx)+'_'+label,path)
+                  module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
+                  html=module.apply(html)
+                  hashes.append((idx,rel,hashlib.sha256(html.encode('utf8')).hexdigest()))
+              hist[label]=hashes
+              print('BEFORE_504',label,hashes[-1],flush=True)
+          old,new=hist['published'],hist['current']
+          changed=[(a,b)for a,b in zip(old,new) if a[-1]!=b[-1]]
+          print('FIRST_DIVERGENCE',changed[0] if changed else 'NONE',flush=True)
+          print('CHANGED_PATCH_COUNT',len(changed),flush=True)
+          PY
