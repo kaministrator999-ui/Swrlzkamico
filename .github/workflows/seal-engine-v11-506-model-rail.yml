@@ -3,8 +3,6 @@ on:
   workflow_dispatch:
   push:
     branches: [fix/engine-v11-506-model-tool-rail-live]
-    paths:
-      - 'projects/swrlz-forge-moba/scripts/seal_v11_506_model_rail.py'
 permissions:
   contents: write
 jobs:
