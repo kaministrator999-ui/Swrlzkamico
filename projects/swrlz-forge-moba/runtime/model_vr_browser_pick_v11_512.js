@@ -28,4 +28,22 @@ function se512QuestTapPick(event,press){
  }
  return null;
 }
+
+// Preserve the mature 2D pointer/gizmo/orbit pipeline. A Quest ray-tap that
+// fails its exact hit may retry nearby CSS pixels without remapping desktop,
+// touch, camera, selection state, or the WebXR controller pipeline.
+const se512BaseBrowserPointerUp=pointerUp;
+pointerUp=function(event){
+ const start=pressed?{x:pressed.x,y:pressed.y,moved:pressed.moved}:null;
+ const before=selection;
+ const wasGizmo=(typeof atelierMeshDrag!=='undefined'&&!!atelierMeshDrag)||
+  (typeof atelierComponentDrag!=='undefined'&&!!atelierComponentDrag);
+ const result=se512BaseBrowserPointerUp(event);
+ if(start&&!start.moved&&!wasGizmo&&(!selection||selection===before)&&se512QuestBrowser2D()){
+  const id=se512QuestTapPick(event,start);
+  if(id&&id!==selection)select(id);
+ }
+ return result;
+};
+
 /* SE512_QUEST_BROWSER_PICK_END */
