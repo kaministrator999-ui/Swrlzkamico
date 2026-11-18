@@ -3,13 +3,13 @@ on:
   push:
     branches: [main]
     paths:
-      - "projects/swrlz-forge-moba/RELEASE_PREPARE_V11_506.json"
+      - "projects/swrlz-forge-moba/RELEASE_PREPARE_V11_508.json"
   workflow_dispatch:
 permissions:
   contents: write
   actions: write
 concurrency:
-  group: engine-v11-506-uv-degenerate-preview
+  group: engine-v11-508-uv-degenerate-preview
   cancel-in-progress: false
 jobs:
   verify-seal-deploy:
