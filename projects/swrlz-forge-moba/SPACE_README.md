@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.496
+title: §wyrl§ Engine v11.501
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,11 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.501 · Center-aware UV heatmap and texture alignment diagnostics (2026-11-17)
+
+Model Studio's UV Editor adds **Texture + stretch** preview and two PNG exports: **Export stretch heatmap** and **Export texture + heatmap**. The latter overlays the real flattened UV wireframe and measured geometric distortion over the **currently mapped painted texture**, preserving UV Slide offsets, repeat/shape-fit and the mesh's saved UV coordinates. A picked UV point or saved marker is labeled and can frame the diagnostic in its authoring-space center, including saved marker rotation/scale. Adjustable heat overlay opacity and export sizes (1024/2048/4096 px) support focused inspection. Heat coloration measures local geometric stretching, **not automatic image-registration error detection**; overlapping islands and artwork placement still require human review. Neither output rewrites UVs, paint, geometry, markers or rig state. Source/test checks are separate from device acceptance.
+
 
 ## §E v11.500 · Connected bone dragging and weighted vertex preview (2026-11-17)
 
