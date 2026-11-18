@@ -1,0 +1,10 @@
+{
+  "schema": "swrlz-forge-release-prepare-v1",
+  "requestedBy": "ChatGPT (owner-approved)",
+  "releaseVersion": "v11.505",
+  "purpose": "Offer safe, confirmed editable mesh prerequisite and resume selected UV/Topology actions",
+  "expectedParent": "v11.504",
+  "preserveExistingProjects": true,
+  "trigger": "seal-engine-v11-505-action-prerequisites",
+  "revision": 1
+}
