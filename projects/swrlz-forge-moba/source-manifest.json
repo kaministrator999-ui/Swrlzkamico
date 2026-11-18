@@ -492,6 +492,6 @@
     "patches/v11_498_hat_proportions.py",
     "patches/v11_499_rig_studio_polish.py"
   ],
-  "finalBytes": 10670652,
-  "finalSha256": "3806db12ae151d492ff1faf40cf66ea603dbb6ca0e6d78c69dd75e0426e49433"
+  "finalBytes": 10670929,
+  "finalSha256": "87377054bf881c23666f1783e2608d31ff4162cd08ae66955f432b9bd1e2e59d"
 }
