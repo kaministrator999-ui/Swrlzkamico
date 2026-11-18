@@ -78,6 +78,14 @@ const se515SpatialPolish=(()=>{
   await previousLoad(record,visual);
   if(record.se362Visual===visual&&se340XR.session)updateGuide(record,visual);
  };
+ const previousCleanLabel=se362CleanLabel;
+ se362CleanLabel=function(action,s){
+  if(s?.mode==='rig'&&action==='grab')return 'Rotate selected bone';
+  if(s?.mode==='rig'&&action==='select')return 'Select joint';
+  if(s?.mode==='rig-weight'&&action==='select')return 'Paint bone weights';
+  if(s?.mode==='rig-weight'&&action==='grab')return '';
+  return previousCleanLabel(action,s);
+ };
  const previousDraw=se362DrawHint;
  se362DrawHint=function(hint,title,down=false,expanded=false){
   if(!hint?.se515Label&&hint?.key)hint.se515Label=true;
