@@ -9,6 +9,8 @@ avoids large-file/LFS download handling on static hosting.
 import argparse
 import hashlib
 import json
+import subprocess
+import tempfile
 from pathlib import Path
 
 SOURCE_START = b'<script type="module">\n(async()=>{\nconst app=document.getElementById'
@@ -42,10 +44,30 @@ def split_html(original):
         raise ValueError("Static delivery fails lossless round-trip")
     if '<title>§wyrl§ Engine · Maker v11.499</title>'.encode('utf8') not in served:
         raise ValueError("Static document lost its verified version")
-    for title, raw in (("HTML", served), ("JavaScript module", module)):
-        if len(raw) >= MAX_FILE:
-            raise ValueError(f"{title} remains over 10MB: {len(raw)} bytes")
+    if len(served) >= MAX_FILE:
+        raise ValueError(f"HTML remains over 10MB: {len(served)} bytes")
     return served, module
+
+def compact_module(source):
+    """Delivery-only whitespace compaction; original sealed HTML is unchanged.
+
+    Pin esbuild for JS-aware whitespace/comment handling (including templates,
+    regexes and quoted strings). Disable semantic minification and mangling.
+    """
+    with tempfile.TemporaryDirectory(prefix="se499-module-") as temp:
+        folder=Path(temp)
+        original=folder/"source.js"
+        output=folder/"compact.js"
+        original.write_bytes(source)
+        subprocess.run(["npx","--yes","esbuild@0.25.12",str(original),
+                        "--minify-whitespace","--legal-comments=none",
+                        "--charset=utf8","--target=es2022",
+                        "--outfile="+str(output)],check=True,timeout=180)
+        compact=output.read_bytes()
+    if not compact or len(compact)>=MAX_FILE:
+        raise ValueError(f"Compacted JavaScript still over 10MB: {len(compact)} bytes")
+    print("SE499_DELIVERY_MODULE_COMPACTED",len(source),len(compact),flush=True)
+    return compact
 
 
 def main():
@@ -61,7 +83,8 @@ def main():
         raise ValueError("Index/modeler must share the same sealed source")
     if len(page) != receipt["finalBytes"] or digest(page) != receipt["finalSha256"]:
         raise ValueError("Do not transform a source whose original SHA receipt fails")
-    served, module = split_html(page)
+    served, source_module = split_html(page)
+    module = compact_module(source_module)
     (root/"index.html").write_bytes(served)
     (root/"modeler.html").write_bytes(served)
     (root/MODULE).write_bytes(module)
@@ -69,6 +92,9 @@ def main():
         "mode": "external-es-module",
         "verifiedSourceSha256": receipt["finalSha256"],
         "module": MODULE,
+        "sourceModuleBytes": len(source_module),
+        "sourceModuleSha256": digest(source_module),
+        "deliveryTransform": "esbuild-0.25.12-whitespace-only",
         "moduleBytes": len(module),
         "moduleSha256": digest(module),
         "indexBytes": len(served),
