@@ -20,7 +20,8 @@ assert m['patches'][-10:]==[
  'patches/v11_505_action_prerequisites.py',
  'patches/v11_506_uv_button_ownership.py',
  'patches/v11_507_model_tool_rail_recovery.py',
- 'patches/v11_509_uv_degenerate_preview.py']
+ 'patches/v11_508_uv_degenerate_preview.py',
+ 'patches/v11_509_rail_reexpand.py']
 subprocess.run(['node','--check',str(root/'runtime/sorting_hat_sculpted_v11_497.js')],check=True)
 subprocess.run(['node','--check',str(root/'runtime/model_rig_studio_polish_v11_499.js')],check=True)
 subprocess.run(['node','--check',str(root/'runtime/model_rig_connected_math_v11_500.js')],check=True)
@@ -49,7 +50,7 @@ assert hashlib.sha256(raw).hexdigest()==m['finalSha256']
 s=raw.decode('utf8')
 for needle in (
  '<title>§wyrl§ Engine · Maker v11.509</title>',
- 'SWYRL_ENGINE_DEPLOY_MARKER: V11_509_UV_DEGENERATE_PREVIEW',
+ 'SWYRL_ENGINE_DEPLOY_MARKER: V11_509_RAIL_REEXPAND',
  'data-project-template="smooth-witch-hat"',
  'SE504_SMOOTH_WITCH_HAT_END',
  'SWYRL_ENGINE_SMOOTH_WITCH_HAT_504',
