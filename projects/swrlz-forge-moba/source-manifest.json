@@ -499,8 +499,8 @@
     "patches/v11_505_action_prerequisites.py",
     "patches/v11_506_model_tool_rail_recovery.py"
   ],
-  "finalBytes": null,
-  "finalSha256": null,
+  "finalBytes": 10758856,
+  "finalSha256": "a76fd01c0b753b91a9e071f180e153f22b549ed064005a7f99eb0cc8cecfe368",
   "previousFinalSha256": "db31f6261c8afc118506e72dd44e3f697dc89aebea9ffddc1740042c1dda6824",
   "previousFinalBytes": 10738620,
   "previousManifestFinalSha256": "f3dd6ef639829262263c5d8d2a099d887f15846c0b32cc44165267058fb5e937",
