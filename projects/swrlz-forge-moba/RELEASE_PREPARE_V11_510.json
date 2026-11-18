@@ -1,0 +1,10 @@
+{
+  "schema": "swrlz-forge-release-prepare-v1",
+  "requestedBy": "ChatGPT (owner-approved)",
+  "releaseVersion": "v11.510",
+  "purpose": "Auto-detect tapered crowns and project UVs onto flattened cone sectors; stretch diagnostics/heatmap; preserve all geometry and require confirmation before detaching artwork",
+  "expectedParent": "v11.509",
+  "preserveExistingProjects": true,
+  "trigger": "seal-engine-v11-510-cone-uv",
+  "revision": 1
+}
