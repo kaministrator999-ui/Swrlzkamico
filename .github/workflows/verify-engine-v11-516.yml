@@ -8,6 +8,7 @@ on:
       - projects/swrlz-forge-moba/runtime/model_rig_precision_v11_516.js
       - projects/swrlz-forge-moba/tests/model_rig_precision_v11_516.cjs
       - projects/swrlz-forge-moba/tests/model_rig_complex_bind_v11_516.mjs
+      - projects/swrlz-forge-moba/tests/model_vr_weight_visual_v11_516.mjs
       - projects/swrlz-forge-moba/source-manifest.json
   workflow_dispatch:
 permissions:
@@ -63,5 +64,6 @@ jobs:
           node "$ROOT/tests/model_rig_generic_bind_v11_513.mjs" "$THREE" /tmp/se516_candidate.html
           node "$ROOT/tests/model_rig_complex_bind_v11_516.mjs" "$THREE" /tmp/se516_candidate.html
           node "$ROOT/tests/model_vr_native_rig_v11_514.mjs" "$THREE"
+          node "$ROOT/tests/model_vr_weight_visual_v11_516.mjs" "$THREE" /tmp/se516_candidate.html
           node "$ROOT/tests/model_vr_spatial_polish_v11_515.mjs" "$THREE"
           node "$ROOT/tests/uv_degenerate_regression_v11_516.cjs" /tmp/se516_candidate.html
