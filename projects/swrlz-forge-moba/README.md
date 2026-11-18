@@ -1,3 +1,9 @@
+## §WYRL§ Engine v11.516 · Universal rig bind stability and precise weights (2026-11-18)
+
+**Generic mesh validation:** Four distinct arbitrary Three.js geometry fixtures cover neutral binds, nonuniform model/mesh transforms, repeated parented joint poses and resets, reparented bones, inverse bind matrices, and stable normalized skin weights. A skeleton rebind now detaches old root bone objects and previous helper before replacing native bind matrices. No specific starter mesh is rewritten.
+
+**Rigging authoring:** In 2D and the existing three-stage immersive WebXR Weight Painting menu, switch between smooth Region targeting and one nearest posed vertex (including coincident UV seam duplicates). Preserve Add/Erase, selected bone, live skinWeight/skinIndex updates, per-stroke Undo, and existing project serialization. The 2D bone influence preview also refreshes during painting rather than only on save. Owner Quest 2 latency, save/reload, Undo/Redo, live visuals and UI acceptance remain pending. See `docs/RIG_PRECISION_AND_COMPLEX_MESH_V11_516.md`.
+
 ## §WYRL§ Engine v11.515 · Native spatial menu and Quest hardware cues (2026-11-18)
 
 **Immersive WebXR GUI preservation:** The existing three-stage primary rail → operation submenu → modifier panel stays the sole immersive menu with its own hover, Trigger/Grip dispatch, hit blockers and world-space ownership. Transparent backplates and controls now draw in deterministic separate layers so lower quick Undo/Redo/Save and Display/operation controls cannot be obscured by their own background when the headset view angle changes. The spatial menu keeps its true world anchor when orbiting the model, still faces the headset, and still saves Grip-drag placement.
