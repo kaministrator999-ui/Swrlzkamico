@@ -1,0 +1,66 @@
+name: Check §E v11.514 native immersive Rigging
+on:
+  push:
+    branches:
+      - feat/se-vr-qa-514-native-rig-xr
+    paths:
+      - .github/workflows/verify-engine-v11-514-draft.yml
+      - projects/swrlz-forge-moba/patches/v11_514_native_xr_rig.py
+      - projects/swrlz-forge-moba/runtime/model_vr_native_rig_v11_514.js
+      - projects/swrlz-forge-moba/tests/model_vr_native_rig_v11_514.mjs
+      - projects/swrlz-forge-moba/source-manifest.json
+permissions:
+  contents: read
+jobs:
+  native-immersive-rigging:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Verify runtime JS and real Three169 rig interaction
+        run: |
+          node --check projects/swrlz-forge-moba/runtime/model_vr_native_rig_v11_514.js
+          python -m py_compile projects/swrlz-forge-moba/patches/v11_514_native_xr_rig.py
+          npm install --prefix /tmp/se514-three --no-save --ignore-scripts --silent three@0.169.0
+          node projects/swrlz-forge-moba/tests/model_vr_native_rig_v11_514.mjs /tmp/se514-three/node_modules/three/build/three.module.js
+      - name: Rebuild full ordered 491-patch candidate with native WebXR menu
+        run: |
+          python - <<'PY'
+          import pathlib,json
+          p=pathlib.Path('projects/swrlz-forge-moba/source-manifest.json')
+          m=json.loads(p.read_text('utf8'))
+          assert m['patches'][-1]=='patches/v11_513_rig_skin_weights.py'
+          assert len(m['patches'])==490
+          m['patches'].append('patches/v11_514_native_xr_rig.py')
+          m['name']='§wyrl§ Engine v11.514'
+          m['finalArtifact']='swyrl_engine_v11_514.html'
+          m['finalBytes']=0;m['finalSha256']=''
+          p.write_text(json.dumps(m,indent=2,ensure_ascii=False)+'\n','utf8')
+          print('SE514_PATCH_COUNT',len(m['patches']))
+          PY
+          python projects/swrlz-forge-moba/build_space.py --output /tmp/se514-build > /tmp/se514-build.log
+          python - <<'PY'
+          import pathlib,hashlib
+          p=pathlib.Path('/tmp/se514-build/index.html')
+          raw=p.read_bytes();s=raw.decode('utf8')
+          assert raw==pathlib.Path('/tmp/se514-build/modeler.html').read_bytes()
+          for t in ('SE514_NATIVE_XR_RIG_END','SWYRL_ENGINE_IMMERSIVE_RIG_514',
+          "['rig','Rigging']", "'rig-weights'", "'rig-pose-x-plus'",
+          'se514RigXR.beforeDispatch','se514RigXR.uiState()',
+          'se513SkinMath.region','SE512_MODEL_VR_TRIGGER_GIZMO_END',
+          'se340CreateModelVRUI','se340ModelXRAction'):
+           assert t in s,t
+          assert s.count("/* SE360_MODEL_VR_UI_START */")==1
+          assert s.count("function se340CreateModelVRUI(")==1,'Never duplicate XR menus'
+          assert s.count("function se514RigXRCreateAnotherMenu(")==0
+          print('SE514_CANDIDATE_BYTES',len(raw))
+          print('SE514_CANDIDATE_SHA256',hashlib.sha256(raw).hexdigest())
+          print('SE514_EXISTING_XR_MENU_REUSED',True)
+          PY
+          python projects/swrlz-forge-moba/scripts/check_inline_js_syntax_v11_266.py /tmp/se514-build/index.html
