@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.502
+title: §wyrl§ Engine v11.512
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,13 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.512 · Quest 2D selection and immersive modeling controls (2026-11-18)
+
+This source release candidate addresses the owner's November 18 environment-scoped VR QA: **#1** Quest Browser regular 2D pointer selection (larger tap jitter allowance plus helper-filtered fallback picks), **#2** native immersive VR Trigger-held Move/Rotate/Scale gizmo transactions (without changing general Grip bindings), **#4** main world-space floating menu facing the headset without head-following, **#6** scene-only Show/Hide Platform controls in both environments, and **#9** immersive outward Pull plus inward Indent using the existing signed sculpt vertex operator with radius, strength and selectable falloff. These changes use the existing ModelAtelier native project/Undo/scene roots. Neither saved project bytes nor original authored UV artwork are rewritten.
+
+**Verification boundary:** a full 489-patch build and generated JavaScript syntax check passed at candidate SHA `4aa1a8dfe46113fb2d00ad8eeaf078381763ccf89e97b30e4d20602bab2c8152` (10,783,774 bytes). This is source-level evidence, not Quest headset interaction acceptance. Items **#3, #5, #7, #8, #10, #11, #12** remain open, and in-headset validation is required even for #1/#2/#4/#6/#9. Full scoped requirements and acceptance criteria: [GitHub #472](https://github.com/kaministrator999-ui/Swrlzkamico/issues/472).
+
 
 ## §E v11.502 · Resizable UV Editor window (2026-11-17)
 
