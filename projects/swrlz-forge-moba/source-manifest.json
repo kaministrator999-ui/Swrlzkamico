@@ -1,10 +1,10 @@
 {
   "schema": "swrlz-forge-source-v2",
-  "name": "§wyrl§ Engine v11.505",
+  "name": "§wyrl§ Engine v11.506",
   "baseArtifact": "swrlz_forge_v4.html",
   "baseBytes": 99591,
   "baseSha256": "a8299fe89fbb98d15c6091751b7a66931a66efec8eec5cb464e1286f21895856",
-  "finalArtifact": "swyrl_engine_v11_505.html",
+  "finalArtifact": "swyrl_engine_v11_506.html",
   "encoding": "gzip+base64-chunks",
   "chunks": [
     "payload/part-01.txt",
@@ -496,15 +496,16 @@
     "patches/v11_502_uv_touch_resize.py",
     "patches/v11_503_uv_island_atlas.py",
     "patches/v11_504_smooth_witch_hat.py",
-    "patches/v11_505_action_prerequisites.py"
+    "patches/v11_505_action_prerequisites.py",
+    "patches/v11_506_model_tool_rail_recovery.py"
   ],
-  "finalBytes": 10756721,
-  "finalSha256": "f79e880e7c6c780fa06dd8ac6d969763faa17e656c41e5508950a832e970c43e",
+  "finalBytes": null,
+  "finalSha256": null,
   "previousFinalSha256": "db31f6261c8afc118506e72dd44e3f697dc89aebea9ffddc1740042c1dda6824",
   "previousFinalBytes": 10738620,
   "previousManifestFinalSha256": "f3dd6ef639829262263c5d8d2a099d887f15846c0b32cc44165267058fb5e937",
   "releaseNotesBaseline": {
-    "version": "v11.504",
-    "patchCount": 481
+    "version": "v11.505",
+    "patchCount": 482
   }
 }
