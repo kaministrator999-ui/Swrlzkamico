@@ -1,0 +1,31 @@
+name: UV island atlas v11.503 kernel acceptance
+on:
+  push:
+    branches: [main]
+    paths:
+      - "projects/swrlz-forge-moba/tests/model_uv_island_atlas_v11_503.cjs"
+      - "projects/swrlz-forge-moba/runtime/model_uv_island_math_v11_503.js"
+      - "projects/swrlz-forge-moba/runtime/model_uv_island_ui_v11_503.js"
+      - "projects/swrlz-forge-moba/patches/v11_503_uv_island_atlas.py"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Syntax and real Sorting Hat UV atlas tests
+        run: |
+          set -euo pipefail
+          node --check projects/swrlz-forge-moba/runtime/model_uv_island_math_v11_503.js
+          node --check projects/swrlz-forge-moba/runtime/model_uv_island_ui_v11_503.js
+          python -m py_compile projects/swrlz-forge-moba/patches/v11_503_uv_island_atlas.py
+          node projects/swrlz-forge-moba/tests/model_uv_island_atlas_v11_503.cjs
