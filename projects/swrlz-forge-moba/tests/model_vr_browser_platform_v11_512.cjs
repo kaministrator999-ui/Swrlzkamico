@@ -15,9 +15,9 @@ function fixture(ua='OculusBrowser/42',immersive=false){
   mouse,camera:{updateMatrixWorld(){}},
   raycaster:{setFromCamera(){},intersectObjects:meshes=>meshes.includes(mesh)&&Math.abs(mouse.x)<.02&&Math.abs(mouse.y)<.02?[{object:mesh}]:[]},
   partById:id=>id==='sphere'?{id}:null,
-  select(id){this.selection=id;},selection:null,
+  select(id){ctx.selection=id;},selection:null,
   pressed:null,
-  pointerUp(e){this.pressed=null;this.selection=null;},
+  pointerUp(e){ctx.pressed=null;ctx.selection=null;},
   getComputedStyle:()=>({position:'static'}),
   document:{createElement:()=>({style:{},attrs:{},listeners:{},setAttribute(key,value){this.attrs[key]=value;},
    addEventListener(type,callback){this.listeners[type]=callback;},remove(){this.removed=true;}})}
