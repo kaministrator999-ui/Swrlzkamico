@@ -9,7 +9,9 @@ function section(start,end){
  assert.ok(a>=0&&b>a,'missing compiled section '+start);
  return html.slice(a,b);
 }
-const math=Function(section('/* SE503_UV_ISLAND_MATH_START','// SE503_UV_ISLAND_MATH_END')+
+const math=Function(
+ section('/* SE510_CONE_AWARE_UV_START','/* SE503_UV_ISLAND_MATH_START')+
+ section('/* SE503_UV_ISLAND_MATH_START','// SE503_UV_ISLAND_MATH_END')+
  ';return se503AtlasMath;')();
 const source=JSON.parse(fs.readFileSync(path.join(ROOT,'scenes/model-atelier-sorting-hat.swyrl.json'),'utf8'));
 const orig=source.project.modelAtelier.parts[0].topologyMesh;
