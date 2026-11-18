@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT (owner-approved)",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.507",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_507_MODEL_TOOL_RAIL_RECOVERY",
-  "reason": "Publish verified native Modeling tool rail recovery on mobile and desktop, preserving v11.506 UV fixes.",
-  "sourceCommit": "4e28e11d58544462010116e68414fe8f222c3d63",
-  "sourceIntegritySha256": "1f0385df04afb2d066b9b1d89bb52fc36ee8b66dc516d7ae7b01581ee57a8e42"
+  "releaseVersion": "v11.508",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_508_UV_DEGENERATE_PREVIEW",
+  "reason": "Make UV atlas preview work on supported meshes with zero-area faces, retaining all geometry and reporting the warning without modifying source textures.",
+  "sourceCommit": "8f0e292e27ebcdf675ded83a43beaa9f896da542",
+  "sourceIntegritySha256": "80a866c9e459bcd2b010ad5256c730b202d348bd6e9808cccd7a5e053456bb65"
 }
