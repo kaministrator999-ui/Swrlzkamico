@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT (owner-approved)",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.515",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_515_XR_MENU_CONTROLLER_CLARITY",
-  "reason": "Deploy verified immersive native three-stage menu layer order and fixed world anchor, current-rail Rigging navigation and Quest Touch controller-attached small leader/glow button labels; full 492-patch release/source integrity, Three169, regressions and static packaging passed. Physical Quest acceptance remains open.",
-  "sourceCommit": "bf0a29a059fb78d41524c991cedd20e1eeb4b646",
-  "sourceIntegritySha256": "41bd5cd3483fcb271374b05678218723049502265c025e660bce44b8cb142606"
+  "releaseVersion": "v11.516",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_516_RIG_PRECISION",
+  "reason": "Deploy sealed 493-patch §E v11.516 with passing generic Three169 complex-mesh rebind/pose/reset, 2D + native immersive per-vertex and region influence editing, live native joint-weight visualization, and existing WebXR/menu/skin-weight regressions. Quest 2 physical acceptance remains pending.",
+  "sourceCommit": "3b9d73b2b9b8bb7c3ac9ccbd6cc3dcdc1a4dd613",
+  "sourceIntegritySha256": "e053301cb5487c9a115b819699285ef15b8ddb1a5d7c1ef67e63d299e74c3b35"
 }
