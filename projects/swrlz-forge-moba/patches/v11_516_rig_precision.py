@@ -16,6 +16,22 @@ def apply(html):
  assert 'SWYRL_ENGINE_DEPLOY_MARKER: V11_515_XR_MENU_CONTROLLER_CLARITY' in html
  helper=(ROOT/'runtime/model_rig_precision_v11_516.js').read_text('utf8')
  assert 'SE516_RIG_PRECISION_END' in helper
+ html=one(html,
+  'function se220RigBind(){\n se220Bones=null;se220Skeleton=null;se220BoneOverlay=null;',
+  '''function se220RigBind(){
+ // Rebinding after hierarchy/rest edits must detach previous bone roots and
+ // SkeletonHelper; otherwise old roots accumulate and invert bind transforms.
+ if(modelRoot){
+  for(const previous of Object.values(se220Bones||{}))
+   if(previous?.isBone&&previous.parent===modelRoot)previous.removeFromParent();
+  if(se220BoneOverlay?.parent===modelRoot){
+   se220BoneOverlay.removeFromParent();
+   se220BoneOverlay.geometry?.dispose?.();
+   se220BoneOverlay.material?.dispose?.();
+  }
+ }
+ se220Bones=null;se220Skeleton=null;se220BoneOverlay=null;''',
+  'clean old skeleton before arbitrary rig rebind')
  html=one(html,'/* SE513_RIG_WEIGHT_STUDIO_START',
               helper+'\n/* SE513_RIG_WEIGHT_STUDIO_START','generic precision math')
 
