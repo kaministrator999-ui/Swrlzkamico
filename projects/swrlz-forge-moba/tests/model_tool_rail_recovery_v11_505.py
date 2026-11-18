@@ -21,7 +21,7 @@ def run():
     ])
     categories = 'Meshes Sculpt Lasso Topology Face Appearance Motion References'.split()
     buttons = ''.join(f'<button type="button">{name}</button>' for name in categories)
-    fixture = f"""<!doctype html><html><head><style>
+    fixture = f"""<!doctype html><html><head><meta name="viewport" content="width=device-width, initial-scale=1"><style>
     #modelAtelierPanel{{width:100vw;height:600px}}
     #modelAtelierPanel .atelier-body{{display:grid;height:570px;
       grid-template-columns:34px minmax(0,1fr) 88px 0px;}}
