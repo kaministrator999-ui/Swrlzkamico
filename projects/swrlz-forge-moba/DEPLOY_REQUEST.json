@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT (owner-approved)",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.511",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_511_MODEL_DOCK_VISIBILITY",
-  "reason": "Restore native Modeling tool rail and inspector visibility without replacing buttons or changing mesh state.",
-  "sourceCommit": "b06bb93a2a159286347b66dfcb3349a8cf9fa8c0",
-  "sourceIntegritySha256": "2604cdcaa7ff7d3840b02fa2052e5c04cc15b0f842ef25bc8f6fc96d022b3d8b"
+  "releaseVersion": "v11.512",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_512_TRIGGER_GIZMOS_MENU_FACING",
+  "reason": "Quest Browser 2D model picking; immersive Trigger gizmo drags and menu facing; scene-only platform toggle in both environments; signed Indent sculpting.",
+  "sourceCommit": "4768f228b90f3732d707efaf422175226aa98e32",
+  "sourceIntegritySha256": "4aa1a8dfe46113fb2d00ad8eeaf078381763ccf89e97b30e4d20602bab2c8152"
 }
