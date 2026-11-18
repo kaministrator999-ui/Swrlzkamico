@@ -1,4 +1,4 @@
-name: Check §E v11.513 generic skin and weight studio
+name: Verify §E v11.513 rigging source and static package
 on:
   push:
     branches:
@@ -11,11 +11,13 @@ on:
       - projects/swrlz-forge-moba/tests/model_rig_skin_weight_v11_513.cjs
       - projects/swrlz-forge-moba/tests/model_rig_persisted_skin_v11_513.cjs
       - projects/swrlz-forge-moba/tests/model_rig_generic_bind_v11_513.mjs
+      - projects/swrlz-forge-moba/scripts/verify_v11_513_release.py
+      - projects/swrlz-forge-moba/scripts/package_static_delivery_v11_513.py
       - projects/swrlz-forge-moba/source-manifest.json
 permissions:
   contents: read
 jobs:
-  generic-rig:
+  sealed-qa:
     runs-on: ubuntu-latest
     timeout-minutes: 16
     steps:
@@ -26,50 +28,26 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      - name: Check syntax and standalone skin weight mathematics
+      - name: Verify v11.513 exact sealed source and existing regressions
         run: |
-          node --check projects/swrlz-forge-moba/runtime/model_rig_skin_math_v11_513.js
-          node --check projects/swrlz-forge-moba/runtime/model_rig_weight_studio_v11_513.js
-          node --check projects/swrlz-forge-moba/tests/model_rig_skin_weight_v11_513.cjs
-          node projects/swrlz-forge-moba/tests/model_rig_skin_weight_v11_513.cjs
-          node projects/swrlz-forge-moba/tests/model_rig_persisted_skin_v11_513.cjs
-          python -m py_compile projects/swrlz-forge-moba/patches/v11_513_rig_skin_weights.py
-      - name: Rebuild complete candidate from historical 489 patches and new rig patch
-        run: |
-          python - <<'PY'
-          import json,pathlib
-          p=pathlib.Path('projects/swrlz-forge-moba/source-manifest.json')
-          m=json.loads(p.read_text('utf8'))
-          if m['patches'][-1]=='patches/v11_512_vr_trigger_gizmo.py':
-              assert len(m['patches'])==489
-              m['patches'].append('patches/v11_513_rig_skin_weights.py')
-          else:
-              assert len(m['patches'])==490 and m['patches'][-1]=='patches/v11_513_rig_skin_weights.py'
-          m['name']='§wyrl§ Engine v11.513'
-          m['finalArtifact']='swyrl_engine_v11_513.html'
-          m['finalSha256']=''
-          m['finalBytes']=0
-          p.write_text(json.dumps(m,ensure_ascii=False,indent=2)+'\n')
-          print('SE513_PATCH_COUNT',len(m['patches']))
-          PY
-          python projects/swrlz-forge-moba/build_space.py --output /tmp/se513-candidate > /tmp/se513-build.log
-          python - <<'PY'
-          from pathlib import Path
-          import hashlib,json
-          root=Path('/tmp/se513-candidate')
-          data=(root/'index.html').read_bytes()
-          assert data==(root/'modeler.html').read_bytes()
-          html=data.decode('utf8')
-          for term in ('SE513_RIG_SKIN_MATH_END','SE513_RIG_WEIGHT_STUDIO_END',
-              'SE513_RIG_WEIGHT_STUDIO','se513SkinMath','swyrl-explicit-skin-v1',
-              'part.id!==rig.targetPartId','SE512_MODEL_VR_TRIGGER_GIZMO_END'):
-              assert term in html,term
-          print('SE513_DRAFT_BYTES',len(data))
-          print('SE513_DRAFT_SHA256',hashlib.sha256(data).hexdigest())
-          print('SE513_DRAFT_ASSETS_PRESERVED',True)
-          PY
-          python projects/swrlz-forge-moba/scripts/check_inline_js_syntax_v11_266.py /tmp/se513-candidate/index.html
-      - name: Generic real Three.js 169 skinning and bind-pose tests
+          python projects/swrlz-forge-moba/scripts/verify_v11_513_release.py --output /tmp/se513-sealed
+      - name: Test actual Three.js 169 neutral bind and posed generic meshes
         run: |
           npm install --prefix /tmp/se513-three --no-save --ignore-scripts --silent three@0.169.0
-          node projects/swrlz-forge-moba/tests/model_rig_generic_bind_v11_513.mjs /tmp/se513-three/node_modules/three/build/three.module.js /tmp/se513-candidate/index.html
+          node projects/swrlz-forge-moba/tests/model_rig_generic_bind_v11_513.mjs /tmp/se513-three/node_modules/three/build/three.module.js /tmp/se513-sealed/index.html
+      - name: Verify under-10MB browser static package and script
+        run: |
+          python projects/swrlz-forge-moba/scripts/package_static_delivery_v11_513.py --output /tmp/se513-sealed
+          node --check /tmp/se513-sealed/swrlz-engine-v11.513.js
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          root=Path('/tmp/se513-sealed')
+          receipt=json.loads((root/'SOURCE.json').read_text('utf8'))
+          assert receipt['sourceVersion']=='§wyrl§ Engine v11.513'
+          assert receipt['finalBytes']==10800369
+          assert receipt['finalSha256']=='94419930e9ff77fa49b84efc638f372542b012c5b901c7859910aa1e0a08ac4b'
+          assert receipt['staticDelivery']['moduleBytes']<10000000
+          print('SE513_SEALED_SOURCE',receipt['finalSha256'])
+          print('SE513_DELIVERY_MODULE_BYTES',receipt['staticDelivery']['moduleBytes'])
+          PY
