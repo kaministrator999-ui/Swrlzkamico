@@ -48,9 +48,9 @@ def apply(html):
 
     css = (ROOT / 'runtime/model_tool_rail_recovery_v11_505.css').read_text('utf-8')
     assert 'SE505_MODEL_TOOL_RAIL_RECOVERY_STYLES_END' in css
-    html = once(html, '</head>',
-        '<style id="se505ModelToolRailRecovery">\\n' + css + '\\n</style>\\n</head>',
-        'late scoped rail visibility CSS')
+    assert '</head>' in html and html.index('</head>') < html.index('<body'), 'root HTML head missing'
+    html = html.replace('</head>',
+        '<style id="se505ModelToolRailRecovery">\\n' + css + '\\n</style>\\n</head>', 1)
 
     for old, new in (
         ('SWYRL_ENGINE_DEPLOY_MARKER: V11_504_SMOOTH_WITCH_HAT', MARKER),
