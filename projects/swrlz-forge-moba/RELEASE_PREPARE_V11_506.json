@@ -1,0 +1,10 @@
+{
+  "schema": "swrlz-forge-release-prepare-v1",
+  "requestedBy": "ChatGPT (owner-approved)",
+  "releaseVersion": "v11.506",
+  "purpose": "Fix greyed-out nested UV atlas buttons, preserve their independent disabled states and support preview without rendered Three.js mesh",
+  "expectedParent": "v11.505",
+  "preserveExistingProjects": true,
+  "trigger": "seal-engine-v11-506-uv-buttons",
+  "revision": 1
+}
