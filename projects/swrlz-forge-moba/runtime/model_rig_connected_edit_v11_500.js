@@ -6,7 +6,7 @@ const se500RigEdit=(()=>{
  const validRig=()=>se220RigAvailable()&&se220Rig()?.schema==='swyrl-cloth-skin-v1';
  const inRig=()=>panel&&!panel.hidden&&panel.dataset.se496Studio==='rig'&&validRig();
  const math=se500RestMath;
- let stage=null,drag=null,overlay=null,history=[];
+ let stage=null,drag=null,overlay=null,history=[],lastRig=null;
  let threshold=.12,showWeights=true,lockLength=true;
  const ray=new THREE.Raycaster(),xy=new THREE.Vector2();
  const point=new THREE.Vector3(),worldPos=new THREE.Vector3();
@@ -32,8 +32,7 @@ const se500RigEdit=(()=>{
    for(let i=0;i<p.count;i++){
     const indices=[idx.getX(i),idx.getY(i),idx.getZ(i),idx.getW(i)];
     const weights=[w.getX(i),w.getY(i),w.getZ(i),w.getW(i)];
-    let value=0;
-    for(let j=0;j<4;j++)if(indices[j]===boneIndex)value+=weights[j];
+    const value=math.weightOf(indices,weights,boneIndex);
     if(value>=threshold)entries.push({mesh,index:i,weight:value});
    }
   }
@@ -88,6 +87,8 @@ const se500RigEdit=(()=>{
  }
  function refreshSelected(){
   const r=se220Rig();if(!r)return;
+  if(lastRig!==r){history=[];lastRig=r;forgetOverlay();}
+  const undo=$('se500UndoRest');if(undo)undo.disabled=!history.length;
   const name=r.bones.find(b=>b.id===se220Joint)?.label||se220Joint;
   const label=$('se500Selected');if(label)label.textContent='Selected: '+name;
   for(let i=0;i<3;i++){
@@ -323,7 +324,7 @@ const se500RigEdit=(()=>{
   return out;
  };
  const priorClose=close;
- close=function(...args){cancel();forgetOverlay();history=[];return priorClose.apply(this,args);};
+ close=function(...args){cancel();forgetOverlay();history=[];lastRig=null;return priorClose.apply(this,args);};
  document.addEventListener('keydown',event=>{
   if(event.key==='Escape'&&drag){cancel();event.stopImmediatePropagation();}
  });
