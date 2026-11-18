@@ -1,6 +1,6 @@
 {
   "schema": "swrlz-forge-source-v2",
-  "name": "§wyrl§ Engine v11.503",
+  "name": "§wyrl§ Engine v11.504",
   "baseArtifact": "swrlz_forge_v4.html",
   "baseBytes": 99591,
   "baseSha256": "a8299fe89fbb98d15c6091751b7a66931a66efec8eec5cb464e1286f21895856",
@@ -494,8 +494,11 @@
     "patches/v11_500_connected_rig_weights.py",
     "patches/v11_501_uv_diagnostic_exports.py",
     "patches/v11_502_uv_touch_resize.py",
-    "patches/v11_503_uv_island_atlas.py"
+    "patches/v11_503_uv_island_atlas.py",
+    "patches/v11_504_smooth_witch_hat.py"
   ],
-  "finalBytes": 10738620,
-  "finalSha256": "f3dd6ef639829262263c5d8d2a099d887f15846c0b32cc44165267058fb5e937"
+  "finalBytes": 0,
+  "finalSha256": "",
+  "previousFinalSha256": "f3dd6ef639829262263c5d8d2a099d887f15846c0b32cc44165267058fb5e937",
+  "previousFinalBytes": 10738620
 }
