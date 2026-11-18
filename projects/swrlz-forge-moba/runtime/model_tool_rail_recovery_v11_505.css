@@ -1,0 +1,27 @@
+/* SE505_MODEL_TOOL_RAIL_RECOVERY_STYLES_START */
+/* Preserve Rigging/Animation's intentionally hidden modeling tools.
+   In the Model mini-studio the native category rail must remain actionable,
+   including when an inspector is closed or the tool rail itself is folded. */
+html #modelAtelierPanel.se187-modeler-page[data-se320-ui]:not([data-se496-studio=rig]):not([data-se496-studio=animate]) #modelAtelierToolRail {
+ display:flex!important;
+ visibility:visible!important;
+ opacity:1!important;
+ pointer-events:auto!important;
+}
+html #modelAtelierPanel.se187-modeler-page[data-se320-ui]:not([data-se496-studio=rig]):not([data-se496-studio=animate]) #modelAtelierToolRail #se473RailFold {
+ display:block!important;
+ pointer-events:auto!important;
+ touch-action:manipulation!important;
+ min-height:44px!important;
+ position:sticky!important;
+ z-index:210!important;
+}
+html #modelAtelierPanel.se187-modeler-page[data-se320-ui]:not([data-se496-studio=rig]):not([data-se496-studio=animate])[data-se473-rail-collapsed=false] #modelAtelierToolRail > button:not(#se473RailFold) {
+ visibility:visible!important;
+ pointer-events:auto!important;
+}
+html #modelAtelierPanel.se187-modeler-page[data-se320-ui]:not([data-se496-studio=rig]):not([data-se496-studio=animate]) #modelAtelierToolRail #se473RailFold:focus-visible {
+ outline:2px solid #aafde8!important;
+ outline-offset:-2px!important;
+}
+/* SE505_MODEL_TOOL_RAIL_RECOVERY_STYLES_END */
