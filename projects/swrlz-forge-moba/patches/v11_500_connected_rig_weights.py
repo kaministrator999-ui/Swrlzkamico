@@ -34,7 +34,9 @@ def apply(html):
       ('<title>§wyrl§ Engine · Maker v11.499</title>',
        '<title>§wyrl§ Engine · Maker v11.500</title>')
     ):html=once(html,old,new,'version identity')
-    old=" source.engine='§wyrl§ Engine · Maker v11.499';source.version=11.499;"
+    old=" source.engine='§wyrl§ Engine · Maker v11.499';source.version=11.498;"
+    # v11.499 historically retained numeric 11.498 alongside its 11.499 label.
+    # Repair on forward release only; do not rewrite the sealed predecessor.
     if html.count(old)!=5:raise AssertionError(('model provenance',html.count(old)))
     html=html.replace(old," source.engine='§wyrl§ Engine · Maker v11.500';source.version=11.500;")
     label='const SE_RELEASE_NOTES='
