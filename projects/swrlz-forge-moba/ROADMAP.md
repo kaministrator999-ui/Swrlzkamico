@@ -1,3 +1,11 @@
+## §E v11.513 · Generic skinning and precise bone-weight editing (2026-11-18)
+
+The current **Rigging Studio (regular 2D browser)** now exposes a deliberately armed Add/Erase weight brush for a selected bone on an arbitrary editable rigged mesh, with radius, influence step, smooth falloff, and a visible live GPU skinning preview. Native project `swyrl-explicit-skin-v1` per-vertex weights, up to four normalized influences, one Undo snapshot per completed stroke, correct save/reload, no unrelated vertex or UV edits, and cancellation rollback are preserved. Ordinary viewport bone selection and camera navigation operate when the brush is off.
+
+For `swyrl-cloth-skin-v1`, the skinned-mesh factory now binds **only** the named `targetPartId`; unrelated meshes remain independent of the cloth skeleton. Tests use generic Three.js 169 neutral binds, hierarchical posing and reset, along with local influence, UV-seam, bounds and authored-weight reload cases.
+
+**Scope boundary:** This is a partial improvement for QA items #11/#12, **not** a declaration that Sorting Hat-specific distortion is fixed. The immersive WebXR bone and weight-paint UI, complete arbitrary-rig acceptance, and physical Quest checks remain outstanding in [issue #472](https://github.com/kaministrator999-ui/Swrlzkamico/issues/472). Existing v11.512 VR selection/gizmos/menu orientation, sculpt Indent, platform toggle, UV editor, starters and account project lineage remain unchanged. See `docs/RIG_SKIN_WEIGHT_STUDIO_V11_513.md`.
+
 ## §E v11.512 · Quest 2D selection and immersive modeling controls (2026-11-18)
 
 This source release candidate addresses the owner's November 18 environment-scoped VR QA: **#1** Quest Browser regular 2D pointer selection (larger tap jitter allowance plus helper-filtered fallback picks), **#2** native immersive VR Trigger-held Move/Rotate/Scale gizmo transactions (without changing general Grip bindings), **#4** main world-space floating menu facing the headset without head-following, **#6** scene-only Show/Hide Platform controls in both environments, and **#9** immersive outward Pull plus inward Indent using the existing signed sculpt vertex operator with radius, strength and selectable falloff. These changes use the existing ModelAtelier native project/Undo/scene roots. Neither saved project bytes nor original authored UV artwork are rewritten.
