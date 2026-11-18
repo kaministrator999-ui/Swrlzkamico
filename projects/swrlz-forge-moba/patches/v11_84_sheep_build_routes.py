@@ -15,8 +15,8 @@ def release_notes(root,manifest):
     if baseline is not None:
         version=baseline.get('version') if isinstance(baseline,dict) else None
         count=baseline.get('patchCount') if isinstance(baseline,dict) else None
-        if not isinstance(version,str) or not re.fullmatch(r'v\\d+\\.\\d+',version) or \\
-           not isinstance(count,int) or not 1<=count<=len(manifest['patches']):
+        if not (isinstance(version,str) and re.fullmatch(r'v[0-9]+[.][0-9]+',version)
+                and isinstance(count,int) and 1<=count<=len(manifest['patches'])):
             raise AssertionError('Invalid pinned release notes baseline')
         manifest={**manifest,'name':'§wyrl§ Engine '+version,
                   'patches':manifest['patches'][:count]}
