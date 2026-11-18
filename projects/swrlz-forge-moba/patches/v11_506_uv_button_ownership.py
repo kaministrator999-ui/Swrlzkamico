@@ -10,13 +10,12 @@ def once(html,old,new,label):
     return html.replace(old,new,1)
 def apply(html):
     assert hashlib.sha256(html.encode('utf8')).hexdigest()==PREVIOUS_SHA256,'v11.505 source chain changed'
-    # Old v11.336 update scanned all descendants. That includes the much newer
-    # v11.356 Preview controls and v11.503 Atlas controls, making them dead.
-    # Only the five native v11.336 toolbar buttons belong to that updater.
-    html=once(html,
-       "for (const button of root.querySelectorAll('button'))\n    button.disabled = !target || (button.id === 'se336UVRemove' && !target.part.uvPaintPNG);",
-       "for (const button of root.querySelectorAll('.se336-uv-actions > button'))\n    button.disabled = !target || (button.id === 'se336UVRemove' && !target.part.uvPaintPNG);",
-       'legacy UV toolbar ownership')
+    # Isolate native UV toolbar ownership without depending on historical
+    # inline formatting changed by other engine patches.
+    guard=(ROOT/'runtime/model_uv_button_ownership_v11_506.js').read_text('utf8')
+    assert 'SE506_UV_BUTTON_OWNERSHIP_START' in guard
+    html=once(html,'  function ensurePanel(){',
+              guard+'\n  function ensurePanel(){','legacy UV toolbar ownership')
     # Candidate atlas is generated directly from serialized topologyMesh. It
     # does not need a rendered Three.js mesh instance to be present.
     html=once(html,
