@@ -59,7 +59,7 @@ assert hashlib.sha256(raw).hexdigest()==m['finalSha256']
 s=raw.decode('utf8')
 for needle in (
  '<title>§wyrl§ Engine · Maker v11.512</title>',
- 'SWYRL_ENGINE_DEPLOY_MARKER: V11_511_MODEL_DOCK_VISIBILITY',
+ 'SWYRL_ENGINE_DEPLOY_MARKER: V11_512_TRIGGER_GIZMOS_MENU_FACING',
  'data-project-template="smooth-witch-hat"',
  'SE504_SMOOTH_WITCH_HAT_END',
  'SWYRL_ENGINE_SMOOTH_WITCH_HAT_504',
