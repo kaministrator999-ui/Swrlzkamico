@@ -78,6 +78,77 @@ def apply(html):
  html=scope(html,'/* SE513_RIG_WEIGHT_STUDIO_START','/* SE513_RIG_WEIGHT_STUDIO_END',edit2d)
 
  def editVR(s):
+  s=one(s,"let handles=null,drag=null,lastRig=null,lastRoot=null;",
+        "let handles=null,drag=null,lastRig=null,lastRoot=null,weightViz=null;",
+        'XR weight visual state')
+  s=one(s," function dispose(){",
+   """ function clearWeightViz(){
+  if(!weightViz)return;
+  weightViz.points.removeFromParent();
+  weightViz.points.geometry.dispose();
+  weightViz.points.material.dispose();
+  weightViz=null;
+ }
+ function syncWeightViz(){
+  if(!handles?.group?.visible||!isMode()){clearWeightViz();return;}
+  const target=skinTarget(),rig=se220Rig(),
+   boneIndex=rig?.bones?.findIndex(b=>b.id===se220Joint);
+  if(!target||boneIndex<0){clearWeightViz();return;}
+  const {mesh,vertices,idx,w}=target,version=idx.version+'/'+w.version;
+  const stale=!weightViz||weightViz.mesh!==mesh||weightViz.bone!==boneIndex||
+   weightViz.version!==version||weightViz.count!==vertices;
+  if(stale){
+   clearWeightViz();
+   const entries=[],max=1200;
+   for(let i=0;i<vertices;i++){
+    let influence=0;
+    for(let k=0;k<4;k++)if(idx.getComponent(i,k)===boneIndex)
+     influence+=w.getComponent(i,k);
+    if(influence>=.015)entries.push({index:i,weight:influence});
+   }
+   const stride=Math.max(1,Math.ceil(entries.length/max));
+   const samples=entries.filter((e,i)=>i%stride===0).slice(0,max);
+   const g=new THREE.BufferGeometry(),colors=new Float32Array(samples.length*3);
+   for(let i=0;i<samples.length;i++){
+    const amount=samples[i].weight;
+    colors[3*i]=.18+.82*amount;
+    colors[3*i+1]=.94-.65*amount;
+    colors[3*i+2]=1-.35*amount;
+   }
+   g.setAttribute('position',new THREE.Float32BufferAttribute(new Float32Array(samples.length*3),3));
+   g.setAttribute('color',new THREE.Float32BufferAttribute(colors,3));
+   const points=new THREE.Points(g,new THREE.PointsMaterial({
+    size:.011,sizeAttenuation:true,vertexColors:true,
+    depthTest:false,depthWrite:false,opacity:.92,transparent:true
+   }));
+   points.name='Selected bone weighted vertices';
+   points.renderOrder=9100;points.frustumCulled=false;
+   points.userData.editorOnly=true;points.raycast=()=>{};
+   handles.group.add(points);
+   weightViz={mesh,bone:boneIndex,version,count:vertices,points,samples};
+  }
+  if(se340XR.frameCount%4!==0&&!stale)return;
+  handles.group.updateMatrixWorld(true);
+  mesh.updateMatrixWorld(true);
+  const toGroup=handles.group.matrixWorld.clone().invert();
+  const pos=mesh.geometry.getAttribute('position');
+  const dest=weightViz.points.geometry.getAttribute('position');
+  for(let i=0;i<weightViz.samples.length;i++){
+   const vertex=weightViz.samples[i].index;
+   const p=tempA.fromBufferAttribute(pos,vertex);
+   if(typeof mesh.applyBoneTransform==='function')mesh.applyBoneTransform(vertex,p);
+   p.applyMatrix4(mesh.matrixWorld).applyMatrix4(toGroup);
+   dest.setXYZ(i,p.x,p.y,p.z);
+  }
+  dest.needsUpdate=true;
+  if(dest.count)weightViz.points.geometry.computeBoundingSphere();
+ }
+ function dispose(){
+  clearWeightViz();""",
+   'reuse existing XR joint gizmo scene for live color-weighted vertices')
+  s=one(s,"   handles.group.updateWorldMatrix(true,true);\n  }\n  function choose(id){",
+        "   handles.group.updateWorldMatrix(true,true);\n   syncWeightViz();\n  }\n  function choose(id){",
+        'animate influence preview along actual skinned bone deformation')
   s=one(s,"let paintMode='add',radius=.18,strength=.16,undoStack=[],previous=new Map();",
         "let paintMode='add',selection='region',radius=.18,strength=.16,undoStack=[],previous=new Map();",
         'native XR target state')
