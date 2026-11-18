@@ -1,4 +1,4 @@
-name: Check §E v11.515 native XR panels and Quest button cues
+name: Verify §E v11.515 native XR source and static package
 on:
   push:
     branches:
@@ -8,11 +8,13 @@ on:
       - projects/swrlz-forge-moba/patches/v11_515_spatial_menu_controller.py
       - projects/swrlz-forge-moba/runtime/model_vr_spatial_polish_v11_515.js
       - projects/swrlz-forge-moba/tests/model_vr_spatial_polish_v11_515.mjs
+      - projects/swrlz-forge-moba/scripts/verify_v11_515_release.py
+      - projects/swrlz-forge-moba/scripts/package_static_delivery_v11_515.py
       - projects/swrlz-forge-moba/source-manifest.json
 permissions:
   contents: read
 jobs:
-  native-immersive-panels:
+  sealed-native-menu:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
@@ -23,48 +25,28 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      - name: Syntax, real Three169 spatial/orbit and controller visual checks
+      - name: Verify exact 492-patch source with historic model/UV/rig regression
         run: |
-          node --check projects/swrlz-forge-moba/runtime/model_vr_spatial_polish_v11_515.js
-          python -m py_compile projects/swrlz-forge-moba/patches/v11_515_spatial_menu_controller.py
+          python projects/swrlz-forge-moba/scripts/verify_v11_515_release.py --output /tmp/se515-sealed
+      - name: Verify Three169 real XR spatial menu, controller hints and prior rig gestures
+        run: |
           npm install --prefix /tmp/se515-three --no-save --ignore-scripts --silent three@0.169.0
           node projects/swrlz-forge-moba/tests/model_vr_spatial_polish_v11_515.mjs /tmp/se515-three/node_modules/three/build/three.module.js
-      - name: Build complete 492-patch §E candidate and check exact native spatial menu wiring
+          node projects/swrlz-forge-moba/tests/model_vr_native_rig_v11_514.mjs /tmp/se515-three/node_modules/three/build/three.module.js
+          node projects/swrlz-forge-moba/tests/model_rig_generic_bind_v11_513.mjs /tmp/se515-three/node_modules/three/build/three.module.js /tmp/se515-sealed/index.html
+      - name: Verify sealed under-10MB static browser delivery
         run: |
+          python projects/swrlz-forge-moba/scripts/package_static_delivery_v11_515.py --output /tmp/se515-sealed
+          node --check /tmp/se515-sealed/swrlz-engine-v11.515.js
           python - <<'PY'
-          import pathlib,json
-          p=pathlib.Path('projects/swrlz-forge-moba/source-manifest.json')
-          m=json.loads(p.read_text('utf8'))
-          assert m['patches'][-1]=='patches/v11_514_native_xr_rig.py'
-          assert len(m['patches'])==491
-          m['patches'].append('patches/v11_515_spatial_menu_controller.py')
-          m['name']='§wyrl§ Engine v11.515'
-          m['finalArtifact']='swyrl_engine_v11_515.html'
-          m['finalBytes']=0
-          m['finalSha256']=''
-          p.write_text(json.dumps(m,indent=2,ensure_ascii=False)+'\n','utf8')
-          print('SE515_PATCH_COUNT',len(m['patches']))
-          PY
-          python projects/swrlz-forge-moba/build_space.py --output /tmp/se515-candidate > /tmp/se515-build.log
-          python - <<'PY'
+          import json
           from pathlib import Path
-          import hashlib
-          p=Path('/tmp/se515-candidate/index.html')
-          raw=p.read_bytes();s=raw.decode('utf8')
-          assert raw==Path('/tmp/se515-candidate/modeler.html').read_bytes()
-          for key in ('SE515_SPATIAL_VR_POLISH_END','SWYRL_ENGINE_VR_SPATIAL_POLISH_515',
-          'SE445_VR_PROGRESSIVE_TOOLS_END','se372MenuRemember()',
-          'se362ControllerDisconnected','se362PartCenter',
-          "['rig','Rigging','rig']", "['rig-weights','Weight painting']",
-          "name.includes('background')?8380", "name.startsWith('Close ')?8660",
-          "name.startsWith('Quick ')?8610", "return action==='rig-weights'"):
-           assert key in s,key
-          assert s.count('function se340CreateModelVRUI(')==1,'only one native XR menu'
-          assert s.count('function se340ModelXRFrameCore(')==1,'only one native XR frame'
-          assert s.count("const se515SpatialPolish=")==1
-          assert s.find('installPerformanceSettings();',s.index('SE515_SPATIAL_VR_POLISH_END'))>=0
-          print('SE515_CANDIDATE_BYTES',len(raw))
-          print('SE515_CANDIDATE_SHA256',hashlib.sha256(raw).hexdigest())
-          print('SE515_NATIVE_MENU_SINGLE_OWNER',True)
+          root=Path('/tmp/se515-sealed')
+          receipt=json.loads((root/'SOURCE.json').read_text('utf8'))
+          assert receipt['sourceVersion']=='§wyrl§ Engine v11.515'
+          assert receipt['finalBytes']==10836830
+          assert receipt['finalSha256']=='41bd5cd3483fcb271374b05678218723049502265c025e660bce44b8cb142606'
+          assert receipt['staticDelivery']['moduleBytes']<10000000
+          print('SE515_SEALED_SOURCE',receipt['finalSha256'])
+          print('SE515_DELIVERY_MODULE_BYTES',receipt['staticDelivery']['moduleBytes'])
           PY
-          python projects/swrlz-forge-moba/scripts/check_inline_js_syntax_v11_266.py /tmp/se515-candidate/index.html
