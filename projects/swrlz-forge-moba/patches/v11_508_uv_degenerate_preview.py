@@ -69,7 +69,7 @@ def apply(html):
     for old,new in (
       ('SWYRL_ENGINE_DEPLOY_MARKER: V11_507_MODEL_TOOL_RAIL_RECOVERY',MARKER),
       ('ENGINE · MAKER v11.507','ENGINE · MAKER v11.508'),
-      ('v11.507 · model rail state restored',
+      ('v11.507 · restore modeling toolset rail on mobile',
        'v11.508 · UV preview tolerates degenerate source triangles'),
       ("window.SWRLZ_FORGE_BUILD={version:'v11.507'",
        "window.SWRLZ_FORGE_BUILD={version:'v11.508'"),
@@ -78,7 +78,7 @@ def apply(html):
     ):html=once(html,old,new,'release identity')
     prior=" source.engine='§wyrl§ Engine · Maker v11.507';source.version=11.507;"
     assert html.count(prior)==5,('v11.508 project provenance',html.count(prior))
-    html=html.replace(prior," source.engine='§wyrl§ Engine · Maker v11.508';source.version=11.507;")
+    html=html.replace(prior," source.engine='§wyrl§ Engine · Maker v11.508';source.version=11.508;")
     key='const SE_RELEASE_NOTES='
     index=html.index(key)+len(key)
     notes,width=json.JSONDecoder().raw_decode(html[index:])
