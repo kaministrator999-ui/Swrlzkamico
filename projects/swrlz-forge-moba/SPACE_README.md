@@ -10,6 +10,11 @@ header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
 
+## §E v11.499 · Isolated Rigging/Animation and selectable 3D bones (2026-11-17)
+
+Owner Moto screenshot identified Modeling mode controls floating over Rigging/Animation, a wire-only bone display, a persistent model-selection cage and hand-specific gesture/thumb controls on the Sorting Hat. The new Model Atelier adapter hides/restores **only the modeling UI and world-space selection helpers** when switching mini-studios; one live WebGL scene and camera remain authoritative. Rigging presents selectable parent/child joints as rounded colored nodes plus tapered links, with selected-joint highlighting, draw-through-mesh visibility and pointer selection; Animation continues to use native clip, keyframe, timeline and playback handlers. Hand gesture/thumb controls are shown only for genuine hand rigs. Rest geometry, UVs, painted image, skeleton, four-influence skinning, save/revision history, and both Sorting Hat starters remain untouched. See `patches/v11_499_rig_studio_polish.py` and `runtime/model_rig_studio_polish_v11_499.js`. Source checks and separate owner Moto/Quest acceptance are required.
+
+
 ## §E v11.496 · Model, Rigging and Animation mini-studios (2026-11-17)
 
 Model Atelier now has three in-place mini-studio modes: **Model** retains native sculpt/topology/UV/material tools; **Rigging** exposes the existing GPU-skinned skeleton, child bone authoring, joint rest-position editing and adjustable automatic influence envelopes; **Animation** exposes the native clip picker, joint pose, timeline, keyframes, loop and playback. An unrigged selected mesh can be assigned a validated 3-bone cloth armature without replacing the neutral mesh, topology, UV art or project. Switching modes retains the *same WebGL viewport, camera, project and model*, and persists the mode through the existing per-project workspace capture. Automatic influences are not freehand weight painting. User Moto/Quest input and visual acceptance follows source verification and deployment. Source: `patches/v11_496_model_mini_studios.py`, `runtime/model_mini_studios_v11_496.js`, `runtime/model_mini_studios_v11_496.css`.
