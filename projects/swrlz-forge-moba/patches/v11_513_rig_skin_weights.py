@@ -36,7 +36,8 @@ def apply(html):
  border-radius:8px;color:#f1f7ff;background:#253952;padding:7px 9px}
 #se513WeightStudio button[aria-pressed=true]{border-color:#9ef3d0;background:#225c56}
 """
- html=once(html,'</head>','<style id="se513WeightStudio">'+css+'</style>\n</head>')
+ if '</head>' not in html:raise AssertionError('v11.513 document head missing')
+ html=html.replace('</head>','<style id="se513WeightStudio">'+css+'</style>\n</head>',1)
  for old,new in (
   ('SWYRL_ENGINE_DEPLOY_MARKER: V11_512_TRIGGER_GIZMOS_MENU_FACING',MARKER),
   ('ENGINE · MAKER v11.512','ENGINE · MAKER v11.513'),
