@@ -357,6 +357,9 @@ se340CancelGesture=function(...args){
 };
 const se514PriorAction=se340ModelXRAction;
 se340ModelXRAction=function(command,record=null){
+ if(se514RigXR.isMode()&&['studio','tools','mesh','views','aim','projects','objects','cameras','create-menu'].includes(command)){
+  se514RigXR.cancelPaint();se340XR.mode='inspect';
+ }
  if(command==='rig'||command.startsWith('rig-'))return se514RigXR.action(command);
  if(command==='undo'&&se514RigXR.isMode()&&se514RigXR.undoRig()){
   se340SyncUI();return true;
