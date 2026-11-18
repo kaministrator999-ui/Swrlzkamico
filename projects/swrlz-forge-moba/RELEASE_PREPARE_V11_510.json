@@ -6,5 +6,6 @@
   "expectedParent": "v11.509",
   "preserveExistingProjects": true,
   "trigger": "seal-engine-v11-510-cone-uv",
-  "revision": 1
+  "revision": 2,
+  "fix": "Legacy v11.508 UV regression now targets current v11.510 release marker while retaining all original assertions"
 }
