@@ -9,7 +9,7 @@ ap.add_argument('--request',action='store_true')
 args=ap.parse_args()
 m=json.loads((root/'source-manifest.json').read_text('utf8'))
 assert m['name']=='§wyrl§ Engine v11.506'
-assert m['finalArtifact']=='swyrl_engine_v11_505.html'
+assert m['finalArtifact']=='swyrl_engine_v11_506.html'
 assert len(m['patches'])==483
 assert m['patches'][-7:]==[
  'patches/v11_500_connected_rig_weights.py',
