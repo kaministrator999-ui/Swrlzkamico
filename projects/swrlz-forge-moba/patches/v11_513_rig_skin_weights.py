@@ -21,8 +21,14 @@ def apply(html):
      'window.SWYRL_ENGINE_RIG_CONNECTED_EDIT_500=se500RigEdit;\n'+math+'\n'+editor)
  # Only the authored cloth target is skinned; unrelated model objects must not
  # inherit an arbitrary character's bind skeleton and accidentally deform.
- html=once(html,'if(!pos)return new THREE.Mesh(g,mat);',
+ # Earlier patches contain an unrelated !pos fallback. Scope this edit
+ # to the actual native skinned-mesh factory, not the whole generated document.
+ begin=html.index('function se220RigMesh(part){')
+ end=html.index('function se220RigBind(){',begin)
+ factory=html[begin:end]
+ factory=once(factory,'if(!pos)return new THREE.Mesh(g,mat);',
      "if(!pos||rig.schema==='swyrl-cloth-skin-v1'&&part.id!==rig.targetPartId)return new THREE.Mesh(g,mat);")
+ html=html[:begin]+factory+html[end:]
  css="""
 #se513WeightStudio{display:grid;gap:8px;margin:8px 0;padding:10px;
  border:1px solid #627894;border-radius:9px;background:#182438;color:#e5efff}
