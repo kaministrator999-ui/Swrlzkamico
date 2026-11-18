@@ -1,0 +1,30 @@
+name: Verify Engine Modeling Rail v11.506
+on:
+  push:
+    branches: [fix/engine-v11-506-model-tool-rail-live]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m pip install --quiet playwright==1.56.0
+      - run: python projects/swrlz-forge-moba/tests/model_tool_rail_recovery_v11_506.py
+      - run: python projects/swrlz-forge-moba/build_space.py --output /tmp/se506-rail
+      - name: Measure and check full v11.506 build
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import hashlib
+          s=Path('/tmp/se506-rail/index.html').read_bytes()
+          assert b'V11_506_MODEL_TOOL_RAIL_RECOVERY' in s
+          assert b'SE506_MODEL_TOOL_RAIL_RECOVERY_STYLES_END' in s
+          assert b'SE505_ACTION_PREREQUISITES_START' in s
+          print('SE506_BUILD_OK',len(s),hashlib.sha256(s).hexdigest())
+          PY
