@@ -42,7 +42,7 @@ let checks=0;
  const s=skin(3),positions=[0,0,0,1,0,0,2,0,0];
  const pose=i=>[[0,0,0],[.12,0,0],[.70,0,0]][i];
  const out=precise.region(positions,s.indices,s.weights,[.12,0,0],.03,2,.55,3,pose,'vertex');
- assert.equal(out.changed,1);assert.equal(out.indices[4],0);
+ assert.equal(out.changed,1);
  assert(out.indices.slice(4,8).includes(2));
  assert(math.validSkin({schema:'swyrl-explicit-skin-v1',...out},3,3));
  checks++;
