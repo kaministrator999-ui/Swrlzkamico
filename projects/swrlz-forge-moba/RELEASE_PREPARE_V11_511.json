@@ -3,6 +3,6 @@
   "target": "kamiloki/swrlz-forge-moba",
   "reason": "Restore native mobile Modeling rail and inspector visibility",
   "sourceVersion": "v11.510",
-  "retry": 2,
-  "note": "Verifier corrected after v11.511 marker assertion failure"
+  "retry": 3,
+  "note": "Updated inherited UV regression release marker for v11.511"
 }
