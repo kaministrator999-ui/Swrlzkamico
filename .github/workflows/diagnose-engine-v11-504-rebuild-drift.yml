@@ -10,38 +10,36 @@ permissions:
 jobs:
   diagnose:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      - name: Compare patch outputs across independent Python hash seeds
+      - name: Replay inherited patch chain after candidate manifest mutation
+        env:
+          PYTHONHASHSEED: "0"
         run: |
           set -euo pipefail
-          cat > /tmp/audit_patches.py <<'PY'
-          import base64,gzip,hashlib,importlib.util,json,sys
+          python - <<'PY'
+          import base64,gzip,hashlib,importlib.util,json
           from pathlib import Path
-          root=Path('projects/swrlz-forge-moba')
-          m=json.loads((root/'source-manifest.json').read_text('utf8'))
+          root=Path('projects/swrlz-forge-moba').resolve()
+          p=root/'source-manifest.json'
+          m=json.loads(p.read_text('utf8'))
           assert m['name']=='§wyrl§ Engine v11.504'
-          html=gzip.decompress(base64.b64decode(''.join((root/p).read_text('utf8').strip() for p in m['chunks']))).decode('utf8')
-          hashes=[]
-          for idx,rel in enumerate(m['patches'][:-1]):
-              p=root/rel
-              spec=importlib.util.spec_from_file_location('swrlz_patch_'+p.stem,p)
+          m['name']='§wyrl§ Engine v11.505'
+          m['finalArtifact']='swyrl_engine_v11_505.html'
+          m['finalSha256']=None
+          m['finalBytes']=None
+          m['patches'].append('patches/v11_505_action_prerequisites.py')
+          p.write_text(json.dumps(m,indent=2,ensure_ascii=False)+'\n','utf8')
+          encoded=''.join((root/q).read_text('utf8').strip() for q in m['chunks'])
+          html=gzip.decompress(base64.b64decode(encoded)).decode('utf8')
+          for idx,rel in enumerate(m['patches'][:-2]):
+              q=root/rel
+              spec=importlib.util.spec_from_file_location('swrlz_patch_'+q.stem,q)
               module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
               html=module.apply(html)
-              hashes.append((rel,hashlib.sha256(html.encode('utf8')).hexdigest()))
-          Path(sys.argv[1]).write_text(json.dumps(hashes)+'\n','utf8')
-          print('BEFORE_504',sys.argv[1],hashes[-1],flush=True)
-          PY
-          PYTHONHASHSEED=0 python /tmp/audit_patches.py /tmp/seed0.json
-          PYTHONHASHSEED=1 python /tmp/audit_patches.py /tmp/seed1.json
-          python - <<'PY'
-          import json
-          a=json.load(open('/tmp/seed0.json'));b=json.load(open('/tmp/seed1.json'))
-          changes=[(i,x,y)for i,(x,y)in enumerate(zip(a,b))if x!=y]
-          print('HASH_SEED_FIRST_DIVERGENCE',changes[0] if changes else 'NONE')
-          print('HASH_SEED_DIFFERING_PATCHES',len(changes))
+          print('BEFORE_504_WITH_505_MANIFEST',hashlib.sha256(html.encode('utf8')).hexdigest(),flush=True)
           PY
