@@ -1,3 +1,11 @@
+## §WYRL§ Engine v11.515 · Native spatial menu and Quest hardware cues (2026-11-18)
+
+**Immersive WebXR GUI preservation:** The existing three-stage primary rail → operation submenu → modifier panel stays the sole immersive menu with its own hover, Trigger/Grip dispatch, hit blockers and world-space ownership. Transparent backplates and controls now draw in deterministic separate layers so lower quick Undo/Redo/Save and Display/operation controls cannot be obscured by their own background when the headset view angle changes. The spatial menu keeps its true world anchor when orbiting the model, still faces the headset, and still saves Grip-drag placement.
+
+The current far-right tool rail now exposes **Rigging** and **Weight Painting**, including native bone posing, weight brushes and existing actions—no parallel menu or generic DOM popup. Quest Touch model hints now have smaller labels with exact modeled-button leaders, corresponding color-matched glows and pressed-state feedback. All ten keys retain the existing XR input profiles and visual cleanup.
+
+**Automated verification:** Three.js r169 anchor/label/hardware test, complete 492-patch build, native menu single-owner check, historical source/rig/UV regression, and signed browser static package. **Physical Quest acceptance still pending** for QA #3/#8; #5/#7/#10/#11/#12 and prior owner-device checks remain open. Details: `projects/swrlz-forge-moba/docs/SPATIAL_MENU_CONTROLLER_V11_515.md`. No starter model or UV changes.
+
 ## §WYRL§ Engine v11.514 · Immersive native Rigging and Weight Painting (2026-11-18)
 
 **Immersive WebXR now uses the established §E spatial console** to enter Rigging or Weight Painting from its existing Studio page/wheel, retaining native hover, ray blocking, controller input profiles, selected states, hit priority and lifecycle. The same skinned model/three.js skeleton and existing project source stay in use.

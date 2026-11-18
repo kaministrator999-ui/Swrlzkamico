@@ -1,0 +1,52 @@
+name: Verify §E v11.515 native XR source and static package
+on:
+  push:
+    branches:
+      - feat/se-vr-qa-515-spatial-menu-controller-guides
+    paths:
+      - .github/workflows/verify-engine-v11-515-draft.yml
+      - projects/swrlz-forge-moba/patches/v11_515_spatial_menu_controller.py
+      - projects/swrlz-forge-moba/runtime/model_vr_spatial_polish_v11_515.js
+      - projects/swrlz-forge-moba/tests/model_vr_spatial_polish_v11_515.mjs
+      - projects/swrlz-forge-moba/scripts/verify_v11_515_release.py
+      - projects/swrlz-forge-moba/scripts/package_static_delivery_v11_515.py
+      - projects/swrlz-forge-moba/source-manifest.json
+permissions:
+  contents: read
+jobs:
+  sealed-native-menu:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Verify exact 492-patch source with historic model/UV/rig regression
+        run: |
+          python projects/swrlz-forge-moba/scripts/verify_v11_515_release.py --output /tmp/se515-sealed
+      - name: Verify Three169 real XR spatial menu, controller hints and prior rig gestures
+        run: |
+          npm install --prefix /tmp/se515-three --no-save --ignore-scripts --silent three@0.169.0
+          node projects/swrlz-forge-moba/tests/model_vr_spatial_polish_v11_515.mjs /tmp/se515-three/node_modules/three/build/three.module.js
+          node projects/swrlz-forge-moba/tests/model_vr_native_rig_v11_514.mjs /tmp/se515-three/node_modules/three/build/three.module.js
+          node projects/swrlz-forge-moba/tests/model_rig_generic_bind_v11_513.mjs /tmp/se515-three/node_modules/three/build/three.module.js /tmp/se515-sealed/index.html
+      - name: Verify sealed under-10MB static browser delivery
+        run: |
+          python projects/swrlz-forge-moba/scripts/package_static_delivery_v11_515.py --output /tmp/se515-sealed
+          node --check /tmp/se515-sealed/swrlz-engine-v11.515.js
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          root=Path('/tmp/se515-sealed')
+          receipt=json.loads((root/'SOURCE.json').read_text('utf8'))
+          assert receipt['sourceVersion']=='§wyrl§ Engine v11.515'
+          assert receipt['finalBytes']==10836830
+          assert receipt['finalSha256']=='41bd5cd3483fcb271374b05678218723049502265c025e660bce44b8cb142606'
+          assert receipt['staticDelivery']['moduleBytes']<10000000
+          print('SE515_SEALED_SOURCE',receipt['finalSha256'])
+          print('SE515_DELIVERY_MODULE_BYTES',receipt['staticDelivery']['moduleBytes'])
+          PY
