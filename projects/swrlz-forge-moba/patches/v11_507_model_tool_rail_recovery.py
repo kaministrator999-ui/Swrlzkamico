@@ -55,7 +55,7 @@ def apply(html):
     for old, new in (
         ('SWYRL_ENGINE_DEPLOY_MARKER: V11_506_UV_BUTTON_OWNERSHIP', MARKER),
         ('ENGINE · MAKER v11.506', 'ENGINE · MAKER v11.507'),
-        ('v11.506 · UV atlas preview button ownership and prerequisites',
+        ('v11.506 · UV atlas preview button and editable prerequisite repair',
          'v11.507 · restore modeling toolset rail on mobile'),
         ("window.SWRLZ_FORGE_BUILD={version:'v11.506'",
          "window.SWRLZ_FORGE_BUILD={version:'v11.507'"),
