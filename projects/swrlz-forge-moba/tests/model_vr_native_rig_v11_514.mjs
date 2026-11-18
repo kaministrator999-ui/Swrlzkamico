@@ -69,12 +69,10 @@ const sandbox={
  se340Cleanup:()=>{viewer.session=null;viewer.scene=null;viewer.gesture=null;return true;},
  partById:id=>project.parts.find(p=>p.id===id),
  checkpoint:()=>nativeUndo.push(JSON.stringify(project.parts)),
- undo:nativeUndo,
- se513SkinMath:null
+ undo:nativeUndo
 };
 const ctx=vm.createContext(sandbox);
 vm.runInContext(fs.readFileSync(path.join(root,'runtime/model_rig_skin_math_v11_513.js'),'utf8'),ctx);
-vm.runInContext('se513SkinMath=window.SWYRL_ENGINE_RIG_SKIN_MATH_513',ctx);
 vm.runInContext(fs.readFileSync(path.join(root,'runtime/model_vr_native_rig_v11_514.js'),'utf8'),ctx);
 const api=sandbox.window.SWYRL_ENGINE_IMMERSIVE_RIG_514;
 assert(api?.action&&api?.beforeDispatch&&api?.undoRig&&api?.inspect);
