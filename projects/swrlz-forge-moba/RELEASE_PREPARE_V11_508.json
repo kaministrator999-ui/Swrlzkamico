@@ -1,0 +1,10 @@
+{
+  "schema": "swrlz-forge-release-prepare-v1",
+  "requestedBy": "ChatGPT (owner-approved)",
+  "releaseVersion": "v11.508",
+  "purpose": "Prevent UV atlas preview failures on meshes with degenerate triangles, including Smooth Witch Hat; preserve source topology and show actionable preview with warnings",
+  "expectedParent": "v11.507",
+  "preserveExistingProjects": true,
+  "trigger": "seal-engine-v11-508-uv-degenerate",
+  "revision": 1
+}
