@@ -10,6 +10,11 @@ header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
 
+## §E v11.500 · Connected bone dragging and weighted vertex preview (2026-11-17)
+
+Rigging now exposes the actual GPU skinning weights of the selected cloth bone as color-coded vertices on the mesh. Select a joint in the dropdown or tap its enlarged viewport pick target; adjust the minimum influence threshold to reveal affected vertices. Drag a joint directly in the viewport or edit Rest X/Y/Z: by default, parent segment length is maintained and all descendants and automatic influence envelope centers follow. A checkbox optionally permits chain translation without length lock; Root moves the entire skeleton. Rigging offers an Undo Bone Placement action and restores the existing animation pose after each neutral rest bind. Source mesh, UV painting, authored skin indices, saved clips, account project identity and history remain unchanged. This is rest-skeleton placement; animation keyframes are edited separately in Animation mode. Physical Moto/Quest interaction still requires owner acceptance.
+
+
 ## §E v11.499 · Isolated Rigging/Animation and selectable 3D bones (2026-11-17)
 
 Owner Moto screenshot identified Modeling mode controls floating over Rigging/Animation, a wire-only bone display, a persistent model-selection cage and hand-specific gesture/thumb controls on the Sorting Hat. The new Model Atelier adapter hides/restores **only the modeling UI and world-space selection helpers** when switching mini-studios; one live WebGL scene and camera remain authoritative. Rigging presents selectable parent/child joints as rounded colored nodes plus tapered links, with selected-joint highlighting, draw-through-mesh visibility and pointer selection; Animation continues to use native clip, keyframe, timeline and playback handlers. Hand gesture/thumb controls are shown only for genuine hand rigs. Rest geometry, UVs, painted image, skeleton, four-influence skinning, save/revision history, and both Sorting Hat starters remain untouched. See `patches/v11_499_rig_studio_polish.py` and `runtime/model_rig_studio_polish_v11_499.js`. Source checks and separate owner Moto/Quest acceptance are required.
