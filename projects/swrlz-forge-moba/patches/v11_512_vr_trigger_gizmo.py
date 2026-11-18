@@ -17,6 +17,20 @@ def apply(html):
     assert "SE512_MODEL_VR_TRIGGER_GIZMO_END" in src
     html=once(html,"installPerformanceSettings();se189InstallPerfUI();",
               src+"\ninstallPerformanceSettings();se189InstallPerfUI();")
+    # Quest Browser 2D alone: tolerate small controller-ray pointer jitter,
+    # and exclude non-editable overlay/helper geometry from fallback picking.
+    pick=(ROOT/'runtime/model_vr_browser_pick_v11_512.js').read_text('utf8')
+    assert 'SE512_QUEST_BROWSER_PICK_END' in pick
+    html=once(html,'  function point(e){',pick+'\n  function point(e){')
+    html=once(html,
+      'if(Math.hypot(dx,dy)>5)pressed.moved=true;',
+      'if(Math.hypot(dx,dy)>(se512QuestBrowser2D()?16:5))pressed.moved=true;')
+    html=once(html,
+      'if(!pressed)return;const hit=!pressed.moved;pressed=null;',
+      'if(!pressed)return;const se512Press=pressed,hit=!pressed.moved;pressed=null;')
+    html=once(html,
+      "const hits=raycaster.intersectObjects(meshes,false);select(hits[0]?.object?.userData?.atelierId||null);",
+      "const hits=raycaster.intersectObjects(meshes,false);const first=hits.find(h=>partById(h.object?.userData?.atelierId));select(first?.object?.userData?.atelierId||se512QuestTapPick(e,se512Press)||null);")
     # §E VR sculpting: positive normal displacement stays outward Pull;
     # negative normal displacement is inward Indent using the same native
     # geometry preview, sparse vertex edits, save and Undo pipeline.
@@ -69,11 +83,12 @@ def apply(html):
     notes["history"]=[x for x in notes.get("history",[]) if x.get("version")!="v11.511"]
     notes["history"].insert(0,{"version":"v11.511","changes":notes.get("changes",[])})
     notes.update(version="v11.512",date="2026-11-18",
-      title="Native Trigger gizmos, world-space menu facing and signed indent sculpting",
+      title="Native Quest Browser picking, Trigger gizmos, menu facing and signed indent sculpting",
       changes=[
        "Controller Trigger directly captures an aim-hovered visible transform gizmo; native Move, Rotate, Scale and Grab-axis previews use existing skin-safe model transactions and one-step Undo.",
        "Trigger release completes one native edit and suppresses the otherwise generated selection click. Cancel, tracking loss and XR cleanup discard pending previews.",
        "Movable immersive VR console maintains its placed world position while continuously facing the headset for readable front-side controls.",
+       "Regular Meta Quest Browser pointer taps tolerate small ray jitter and ignore nonmodel helper meshes, without affecting immersive WebXR or desktop camera handling.",
        "Immersive sculpting now offers positive outward Pull and inward Indent with radius, strength and smooth/soft/sharp/flat falloff using the existing native signed displacement operator.",
        "Existing Grip/free grab, account project data, UV texture, and browser 2D editing behavior are untouched."
       ])
