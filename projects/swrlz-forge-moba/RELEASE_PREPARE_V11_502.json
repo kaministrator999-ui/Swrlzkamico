@@ -5,5 +5,7 @@
   "purpose": "Touch-resizable UV Editor: draggable edges/corners, saved size, Max/Restore titlebar",
   "expectedParent": "v11.501",
   "preserveExistingProjects": true,
-  "trigger": "seal-engine-v11-502-uv-resize"
+  "trigger": "seal-engine-v11-502-uv-resize",
+  "revision": 2,
+  "fix": "Use first document head in generated HTML; prior runner rejected duplicate literal </head> in source"
 }
