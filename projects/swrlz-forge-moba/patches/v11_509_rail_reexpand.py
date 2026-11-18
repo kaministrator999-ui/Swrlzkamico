@@ -11,7 +11,7 @@ def apply(html):
  assert 'SWYRL_ENGINE_DEPLOY_MARKER: V11_508_UV_DEGENERATE_PREVIEW' in html
  css=(ROOT/'runtime/model_rail_reexpand_v11_509.css').read_text('utf8')
  assert 'SE509_RAIL_REEXPAND_END' in css
- html=once(html,'</head>','<style id="se509RailReexpand">\n'+css+'\n</style>\n</head>','css')
+ html=html.replace('</head>','<style id="se509RailReexpand">\n'+css+'\n</style>\n</head>',1)
  for a,b in (
  ('SWYRL_ENGINE_DEPLOY_MARKER: V11_508_UV_DEGENERATE_PREVIEW',MARKER),
  ('ENGINE · MAKER v11.508','ENGINE · MAKER v11.509'),
