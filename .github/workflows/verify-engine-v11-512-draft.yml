@@ -37,38 +37,6 @@ jobs:
           node --check projects/swrlz-forge-moba/tests/model_vr_trigger_gizmo_v11_512.cjs
           node projects/swrlz-forge-moba/tests/model_vr_trigger_gizmo_v11_512.cjs
           python -m py_compile projects/swrlz-forge-moba/patches/v11_512_vr_trigger_gizmo.py
-      - name: Build temporary v11.512 from all 488 sealed historical patches
-        run: |
-          python - <<'PY'
-          import json,pathlib
-          p=pathlib.Path('projects/swrlz-forge-moba/source-manifest.json')
-          m=json.loads(p.read_text())
-          if m['patches'][-1] != 'patches/v11_512_vr_trigger_gizmo.py':
-              assert len(m['patches'])==488 and m['patches'][-1]=='patches/v11_511_model_dock_visibility.py'
-              m['patches'].append('patches/v11_512_vr_trigger_gizmo.py')
-          m['name']='§wyrl§ Engine v11.512'
-          m['finalArtifact']='swyrl_engine_v11_512.html'
-          m['finalSha256']=''
-          m['finalBytes']=0
-          p.write_text(json.dumps(m,ensure_ascii=False,indent=2)+'\n')
-          print('SE512_PATCH_COUNT',len(m['patches']))
-          PY
-          python projects/swrlz-forge-moba/build_space.py --output /tmp/se512-draft > /tmp/se512-build.log
-          python - <<'PY'
-          import pathlib,json,hashlib
-          path=pathlib.Path('/tmp/se512-draft/index.html')
-          data=path.read_bytes()
-          assert data==pathlib.Path('/tmp/se512-draft/modeler.html').read_bytes()
-          source=data.decode('utf8')
-          for term in ('V11_512_TRIGGER_GIZMOS_MENU_FACING','SE512_MODEL_VR_TRIGGER_GIZMO_END', 'sculpt-indent', "brushFalloff", "mode==='grab'?'move'"):
-              assert term in source,term
-          print('SE512_DRAFT_SEALED_BYTES',len(data))
-          print('SE512_DRAFT_SEALED_SHA256',hashlib.sha256(data).hexdigest())
-          print('SE512_RUNTIME_MARKERS_OK')
-          print('SE512_RECEIPT',json.loads(pathlib.Path('/tmp/se512-draft/SOURCE.json').read_text())['sourceVersion'])
-          PY
-          python projects/swrlz-forge-moba/scripts/check_inline_js_syntax_v11_266.py /tmp/se512-draft/index.html
-          git restore -- projects/swrlz-forge-moba/source-manifest.json
       - name: Verify exact sealed v11.512 release and browser static delivery
         run: |
           python projects/swrlz-forge-moba/scripts/verify_v11_512_release.py --output /tmp/se512-sealed
