@@ -1,0 +1,30 @@
+name: Verify §E v11.505 prerequisite continuation
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/check-engine-prerequisites-v11-505.yml"
+      - "projects/swrlz-forge-moba/runtime/model_action_prerequisites_v11_505.js"
+      - "projects/swrlz-forge-moba/tests/model_action_prerequisites_v11_505.cjs"
+      - "projects/swrlz-forge-moba/patches/v11_505_action_prerequisites.py"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Validate shared gate, cancellation, reuse, resume, safe selection
+        run: |
+          set -euo pipefail
+          node --check projects/swrlz-forge-moba/runtime/model_action_prerequisites_v11_505.js
+          node projects/swrlz-forge-moba/tests/model_action_prerequisites_v11_505.cjs
+          python -m py_compile projects/swrlz-forge-moba/patches/v11_505_action_prerequisites.py
