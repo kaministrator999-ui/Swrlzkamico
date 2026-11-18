@@ -23,6 +23,7 @@ subprocess.run(['node',str(ROOT/'tests/model_action_prerequisites_v11_505.cjs')]
 m['name']='§wyrl§ Engine v11.505'
 m['finalArtifact']='swyrl_engine_v11_505.html'
 m['patches'].append('patches/v11_505_action_prerequisites.py')
+m['releaseNotesBaseline']={'version':'v11.504','patchCount':481}
 m['finalBytes']=None
 m['finalSha256']=None
 manifest.write_text(json.dumps(m,indent=2,ensure_ascii=False)+'\n','utf8')
