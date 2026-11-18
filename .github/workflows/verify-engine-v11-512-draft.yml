@@ -68,6 +68,7 @@ jobs:
           print('SE512_RECEIPT',json.loads(pathlib.Path('/tmp/se512-draft/SOURCE.json').read_text())['sourceVersion'])
           PY
           python projects/swrlz-forge-moba/scripts/check_inline_js_syntax_v11_266.py /tmp/se512-draft/index.html
+          git restore -- projects/swrlz-forge-moba/source-manifest.json
       - name: Verify exact sealed v11.512 release and browser static delivery
         run: |
           python projects/swrlz-forge-moba/scripts/verify_v11_512_release.py --output /tmp/se512-sealed
