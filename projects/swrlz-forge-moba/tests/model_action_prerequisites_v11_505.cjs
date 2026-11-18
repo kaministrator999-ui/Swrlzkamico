@@ -5,7 +5,7 @@ const code=fs.readFileSync(path.join(__dirname,'../runtime/model_action_prerequi
 function harness(kind){
  const objects={a:{id:'a',name:'Test cloth',kind:kind==='topology'?'topologyMesh':'sphere',position:[0,0,0]},b:{id:'b',kind:'topologyMesh'}};
  const project={parts:Object.values(objects)},calls={confirm:0,native:0,copy:0,switch:0,resume:0,status:[]},pending=[];
- let selectedId='a',nativeAvailable=kind==='native',copyAvailable=kind==='textured';
+ let selectedId='a',nativeAvailable=kind==='native'||kind==='cancel',copyAvailable=kind==='textured';
  if(kind==='reuse')objects.a.se481WorkId='b';
  if(kind==='textured')objects.a.uvPaintPNG='data:image/png;base64,Z';
  const runtime={
