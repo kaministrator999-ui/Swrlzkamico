@@ -1,0 +1,39 @@
+name: Check Engine Smooth Witch Hat v11.504
+on:
+  push:
+    branches:
+      - feature/engine-smooth-witch-hat-starter
+    paths:
+      - 'projects/swrlz-forge-moba/**'
+      - '.github/workflows/check-engine-smooth-witch-hat-v11-504.yml'
+  pull_request:
+    paths:
+      - 'projects/swrlz-forge-moba/**'
+      - '.github/workflows/check-engine-smooth-witch-hat-v11-504.yml'
+  workflow_dispatch:
+jobs:
+  smooth-hat:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validate independent geometry and original UV texture
+        run: node projects/swrlz-forge-moba/tests/smooth_witch_hat_v11_504.cjs
+      - name: Build complete existing Engine patch chain
+        run: python3 projects/swrlz-forge-moba/build_space.py --output /tmp/se504-engine
+      - name: Verify third starter is registered in published engine
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib
+          html=Path('/tmp/se504-engine/index.html').read_text('utf-8')
+          assert html.count('data-project-template="smooth-witch-hat"')>=2
+          assert 'SE504_SMOOTH_WITCH_HAT_END' in html
+          assert 'data-project-template="sorting-hat-sculpted"' in html
+          assert 'data-project-template="sorting-hat"' in html
+          assert "get('project')==='smooth-witch-hat'" in html
+          print('SE504_BUILD_PASS',len(html.encode('utf-8')),hashlib.sha256(html.encode('utf-8')).hexdigest())
+          PY
