@@ -1,0 +1,9 @@
+{
+  "schema": "swrlz-forge-release-prepare-v1",
+  "requestedBy": "ChatGPT (owner-approved)",
+  "releaseVersion": "v11.502",
+  "purpose": "Touch-resizable UV Editor: draggable edges/corners, saved size, Max/Restore titlebar",
+  "expectedParent": "v11.501",
+  "preserveExistingProjects": true,
+  "trigger": "seal-engine-v11-502-uv-resize"
+}
