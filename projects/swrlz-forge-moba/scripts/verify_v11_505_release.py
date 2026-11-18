@@ -9,7 +9,7 @@ ap.add_argument('--request',action='store_true')
 args=ap.parse_args()
 m=json.loads((root/'source-manifest.json').read_text('utf8'))
 assert m['name']=='§wyrl§ Engine v11.505'
-assert m['finalArtifact']=='swyrl_engine_v11_504.html'
+assert m['finalArtifact']=='swyrl_engine_v11_505.html'
 assert len(m['patches'])==482
 assert m['patches'][-6:]==[
  'patches/v11_500_connected_rig_weights.py',
@@ -67,7 +67,8 @@ for needle in (
  'SE502_UV_TOUCH_RESIZE_START','se502InstallResizable(popup)',
  'se502UVMax','se502-uv-se','se502ToggleMax',
  'SE503_UV_ISLAND_MATH_START','SE503_UV_ISLAND_UI_START',
- 'se503AtlasPrepare','se503AtlasApply','V11_504_SMOOTH_WITCH_HAT'
+ 'se503AtlasPrepare','se503AtlasApply','SE505_ACTION_PREREQUISITES_START',
+ 'SWYRLZ_E_REQUIREMENTS_505','V11_505_ACTION_PREREQUISITES'
 ):assert needle in s,needle
 subprocess.run([sys.executable,str(root/'scripts/check_inline_js_syntax_v11_266.py'),str(out/'index.html')],check=True)
 subprocess.run(['node',str(root/'tests/sorting_hat_proportion_v11_498.cjs'),str(out/'index.html')],check=True)
