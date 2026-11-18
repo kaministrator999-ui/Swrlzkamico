@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.513
+title: §wyrl§ Engine v11.514
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,17 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §WYRL§ Engine v11.514 · Immersive native Rigging and Weight Painting (2026-11-18)
+
+**Immersive WebXR now uses the established §E spatial console** to enter Rigging or Weight Painting from its existing Studio page/wheel, retaining native hover, ray blocking, controller input profiles, selected states, hit priority and lifecycle. The same skinned model/three.js skeleton and existing project source stay in use.
+
+**Rigging:** controller ray selects joints; selected joint appears in the existing workspace as articulated bone gizmos; right Grip rotates its pose through the native skeleton without editing rest positions or the camera; 5° per-axis adjustments, B cancel, release commit and in-VR Undo are available.
+
+**Weight Painting:** right Trigger paints the selected bone's real `skinIndex`/`skinWeight` with Add/Erase, adjustable radius/strength, four-influence normalization, live posed-mesh preview, rollback on cancel and authored in-project weight persistence. The native VR menu remains the only GUI—no extra popup or alternate controller menu is created.
+
+Source is verified through the 491-patch build and real Three.js 169 controller tests. Physical Quest acceptance and other ongoing VR QA requirements remain open in [issue #472](https://github.com/kaministrator999-ui/Swrlzkamico/issues/472). Full scope and acceptance: `docs/NATIVE_IMMERSIVE_RIGGING_V11_514.md`.
+
 
 ## §E v11.513 · Generic skinning and precise bone-weight editing (2026-11-18)
 
