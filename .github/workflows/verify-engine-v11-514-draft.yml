@@ -1,4 +1,4 @@
-name: Check §E v11.514 native immersive Rigging
+name: Verify §E v11.514 native Rigging source and static package
 on:
   push:
     branches:
@@ -8,11 +8,13 @@ on:
       - projects/swrlz-forge-moba/patches/v11_514_native_xr_rig.py
       - projects/swrlz-forge-moba/runtime/model_vr_native_rig_v11_514.js
       - projects/swrlz-forge-moba/tests/model_vr_native_rig_v11_514.mjs
+      - projects/swrlz-forge-moba/scripts/verify_v11_514_release.py
+      - projects/swrlz-forge-moba/scripts/package_static_delivery_v11_514.py
       - projects/swrlz-forge-moba/source-manifest.json
 permissions:
   contents: read
 jobs:
-  native-immersive-rigging:
+  sealed-native-rig:
     runs-on: ubuntu-latest
     timeout-minutes: 18
     steps:
@@ -23,44 +25,27 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      - name: Verify runtime JS and real Three169 rig interaction
+      - name: Verify exact 491-patch source and historical project regressions
         run: |
-          node --check projects/swrlz-forge-moba/runtime/model_vr_native_rig_v11_514.js
-          python -m py_compile projects/swrlz-forge-moba/patches/v11_514_native_xr_rig.py
+          python projects/swrlz-forge-moba/scripts/verify_v11_514_release.py --output /tmp/se514-sealed
+      - name: Verify native immersive controller pose and weight painting on Three169
+        run: |
           npm install --prefix /tmp/se514-three --no-save --ignore-scripts --silent three@0.169.0
           node projects/swrlz-forge-moba/tests/model_vr_native_rig_v11_514.mjs /tmp/se514-three/node_modules/three/build/three.module.js
-      - name: Rebuild full ordered 491-patch candidate with native WebXR menu
+          node projects/swrlz-forge-moba/tests/model_rig_generic_bind_v11_513.mjs /tmp/se514-three/node_modules/three/build/three.module.js /tmp/se514-sealed/index.html
+      - name: Verify under-10MB static browser delivery
         run: |
+          python projects/swrlz-forge-moba/scripts/package_static_delivery_v11_514.py --output /tmp/se514-sealed
+          node --check /tmp/se514-sealed/swrlz-engine-v11.514.js
           python - <<'PY'
-          import pathlib,json
-          p=pathlib.Path('projects/swrlz-forge-moba/source-manifest.json')
-          m=json.loads(p.read_text('utf8'))
-          assert m['patches'][-1]=='patches/v11_513_rig_skin_weights.py'
-          assert len(m['patches'])==490
-          m['patches'].append('patches/v11_514_native_xr_rig.py')
-          m['name']='§wyrl§ Engine v11.514'
-          m['finalArtifact']='swyrl_engine_v11_514.html'
-          m['finalBytes']=0;m['finalSha256']=''
-          p.write_text(json.dumps(m,indent=2,ensure_ascii=False)+'\n','utf8')
-          print('SE514_PATCH_COUNT',len(m['patches']))
+          import json
+          from pathlib import Path
+          root=Path('/tmp/se514-sealed')
+          receipt=json.loads((root/'SOURCE.json').read_text('utf8'))
+          assert receipt['sourceVersion']=='§wyrl§ Engine v11.514'
+          assert receipt['finalBytes']==10825921
+          assert receipt['finalSha256']=='e970e2ab119c1d98f16b47aa90b49d360647a8935a0e09bb92e61e965c1c0bf7'
+          assert receipt['staticDelivery']['moduleBytes']<10000000
+          print('SE514_SEALED_SOURCE',receipt['finalSha256'])
+          print('SE514_DELIVERY_MODULE_BYTES',receipt['staticDelivery']['moduleBytes'])
           PY
-          python projects/swrlz-forge-moba/build_space.py --output /tmp/se514-build > /tmp/se514-build.log
-          python - <<'PY'
-          import pathlib,hashlib
-          p=pathlib.Path('/tmp/se514-build/index.html')
-          raw=p.read_bytes();s=raw.decode('utf8')
-          assert raw==pathlib.Path('/tmp/se514-build/modeler.html').read_bytes()
-          for t in ('SE514_NATIVE_XR_RIG_END','SWYRL_ENGINE_IMMERSIVE_RIG_514',
-          "['rig','Rigging']", "'rig-weights'", "'rig-pose-x-plus'",
-          'se514RigXR.beforeDispatch','se514RigXR.uiState()',
-          'se513SkinMath.region','SE512_MODEL_VR_TRIGGER_GIZMO_END',
-          'se340CreateModelVRUI','se340ModelXRAction'):
-           assert t in s,t
-          assert s.count("/* SE360_MODEL_VR_UI_START */")==1
-          assert s.count("function se340CreateModelVRUI(")==1,'Never duplicate XR menus'
-          assert s.count("function se514RigXRCreateAnotherMenu(")==0
-          print('SE514_CANDIDATE_BYTES',len(raw))
-          print('SE514_CANDIDATE_SHA256',hashlib.sha256(raw).hexdigest())
-          print('SE514_EXISTING_XR_MENU_REUSED',True)
-          PY
-          python projects/swrlz-forge-moba/scripts/check_inline_js_syntax_v11_266.py /tmp/se514-build/index.html
