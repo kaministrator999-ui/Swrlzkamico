@@ -20,6 +20,7 @@ for file in ('runtime/model_action_prerequisites_v11_505.js',):
 subprocess.run([sys.executable,'-m','py_compile',
  str(ROOT/'patches/v11_505_action_prerequisites.py')],check=True)
 subprocess.run(['node',str(ROOT/'tests/model_action_prerequisites_v11_505.cjs')],check=True)
+subprocess.run([sys.executable,str(ROOT/'tests/source_release_notes_baseline_v11_505.py')],check=True)
 m['name']='§wyrl§ Engine v11.505'
 m['finalArtifact']='swyrl_engine_v11_505.html'
 m['patches'].append('patches/v11_505_action_prerequisites.py')
