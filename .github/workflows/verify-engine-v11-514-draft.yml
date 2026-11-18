@@ -1,0 +1,51 @@
+name: Verify §E v11.514 native Rigging source and static package
+on:
+  push:
+    branches:
+      - feat/se-vr-qa-514-native-rig-xr
+    paths:
+      - .github/workflows/verify-engine-v11-514-draft.yml
+      - projects/swrlz-forge-moba/patches/v11_514_native_xr_rig.py
+      - projects/swrlz-forge-moba/runtime/model_vr_native_rig_v11_514.js
+      - projects/swrlz-forge-moba/tests/model_vr_native_rig_v11_514.mjs
+      - projects/swrlz-forge-moba/scripts/verify_v11_514_release.py
+      - projects/swrlz-forge-moba/scripts/package_static_delivery_v11_514.py
+      - projects/swrlz-forge-moba/source-manifest.json
+permissions:
+  contents: read
+jobs:
+  sealed-native-rig:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Verify exact 491-patch source and historical project regressions
+        run: |
+          python projects/swrlz-forge-moba/scripts/verify_v11_514_release.py --output /tmp/se514-sealed
+      - name: Verify native immersive controller pose and weight painting on Three169
+        run: |
+          npm install --prefix /tmp/se514-three --no-save --ignore-scripts --silent three@0.169.0
+          node projects/swrlz-forge-moba/tests/model_vr_native_rig_v11_514.mjs /tmp/se514-three/node_modules/three/build/three.module.js
+          node projects/swrlz-forge-moba/tests/model_rig_generic_bind_v11_513.mjs /tmp/se514-three/node_modules/three/build/three.module.js /tmp/se514-sealed/index.html
+      - name: Verify under-10MB static browser delivery
+        run: |
+          python projects/swrlz-forge-moba/scripts/package_static_delivery_v11_514.py --output /tmp/se514-sealed
+          node --check /tmp/se514-sealed/swrlz-engine-v11.514.js
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          root=Path('/tmp/se514-sealed')
+          receipt=json.loads((root/'SOURCE.json').read_text('utf8'))
+          assert receipt['sourceVersion']=='§wyrl§ Engine v11.514'
+          assert receipt['finalBytes']==10825921
+          assert receipt['finalSha256']=='e970e2ab119c1d98f16b47aa90b49d360647a8935a0e09bb92e61e965c1c0bf7'
+          assert receipt['staticDelivery']['moduleBytes']<10000000
+          print('SE514_SEALED_SOURCE',receipt['finalSha256'])
+          print('SE514_DELIVERY_MODULE_BYTES',receipt['staticDelivery']['moduleBytes'])
+          PY
