@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT (owner-approved)",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.503",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_503_UV_ISLAND_ATLAS",
-  "reason": "Generate real UV seams, fit separate front/back and brim islands, support bounded island transforms and reversible native Undo; preserve all prior UV tools.",
-  "sourceCommit": "4de0ec5de5fc1bec56507f066d021598f4e51f36",
-  "sourceIntegritySha256": "f3dd6ef639829262263c5d8d2a099d887f15846c0b32cc44165267058fb5e937"
+  "releaseVersion": "v11.504",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_504_SMOOTH_WITCH_HAT",
+  "reason": "Publish third independent Smooth Witch Hat starter: smooth single-mesh witch cone with original painted UVs and separate project card; preserve both earlier Sorting Hats.",
+  "sourceCommit": "b9af593b91ee6d3527cba693bca7952f95310cca",
+  "sourceIntegritySha256": "99bf4e5ce75d65255ccabcee90af9dd0cd8f734e79dfe453c632dfa55e6a2941"
 }
