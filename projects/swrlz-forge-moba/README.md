@@ -1,3 +1,13 @@
+## §WYRL§ Engine v11.514 · Immersive native Rigging and Weight Painting (2026-11-18)
+
+**Immersive WebXR now uses the established §E spatial console** to enter Rigging or Weight Painting from its existing Studio page/wheel, retaining native hover, ray blocking, controller input profiles, selected states, hit priority and lifecycle. The same skinned model/three.js skeleton and existing project source stay in use.
+
+**Rigging:** controller ray selects joints; selected joint appears in the existing workspace as articulated bone gizmos; right Grip rotates its pose through the native skeleton without editing rest positions or the camera; 5° per-axis adjustments, B cancel, release commit and in-VR Undo are available.
+
+**Weight Painting:** right Trigger paints the selected bone's real `skinIndex`/`skinWeight` with Add/Erase, adjustable radius/strength, four-influence normalization, live posed-mesh preview, rollback on cancel and authored in-project weight persistence. The native VR menu remains the only GUI—no extra popup or alternate controller menu is created.
+
+Source is verified through the 491-patch build and real Three.js 169 controller tests. Physical Quest acceptance and other ongoing VR QA requirements remain open in [issue #472](https://github.com/kaministrator999-ui/Swrlzkamico/issues/472). Full scope and acceptance: `docs/NATIVE_IMMERSIVE_RIGGING_V11_514.md`.
+
 ## §E v11.513 · Generic skinning and precise bone-weight editing (2026-11-18)
 
 The current **Rigging Studio (regular 2D browser)** now exposes a deliberately armed Add/Erase weight brush for a selected bone on an arbitrary editable rigged mesh, with radius, influence step, smooth falloff, and a visible live GPU skinning preview. Native project `swyrl-explicit-skin-v1` per-vertex weights, up to four normalized influences, one Undo snapshot per completed stroke, correct save/reload, no unrelated vertex or UV edits, and cancellation rollback are preserved. Ordinary viewport bone selection and camera navigation operate when the brush is off.
