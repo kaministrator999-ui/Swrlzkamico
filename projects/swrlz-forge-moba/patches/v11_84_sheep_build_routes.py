@@ -7,6 +7,19 @@ def once(html,old,new):
     return html.replace(old,new,1)
 
 def release_notes(root,manifest):
+    # Historical release-note generation must not consume future patches.
+    # v11.505+ manifests pin a published baseline; the appended release patch
+    # writes its own current notes later. Manifests without this field preserve
+    # their exact original behavior and byte-for-byte historical releases.
+    baseline=manifest.get('releaseNotesBaseline')
+    if baseline is not None:
+        version=baseline.get('version') if isinstance(baseline,dict) else None
+        count=baseline.get('patchCount') if isinstance(baseline,dict) else None
+        if not isinstance(version,str) or not re.fullmatch(r'v\\d+\\.\\d+',version) or \\
+           not isinstance(count,int) or not 1<=count<=len(manifest['patches']):
+            raise AssertionError('Invalid pinned release notes baseline')
+        manifest={**manifest,'name':'§wyrl§ Engine '+version,
+                  'patches':manifest['patches'][:count]}
     notes=json.loads((root/'runtime/engine_release_notes_v11_84.json').read_text())
     version=manifest['name'].removeprefix('§wyrl§ Engine ')
     known=notes['version'];groups={}
