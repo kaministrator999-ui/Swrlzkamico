@@ -1,0 +1,17 @@
+/* SE503_UV_ISLAND_STYLES_START */
+#se503AtlasTool{border:1px solid #49617d;border-radius:10px;margin:12px 0;padding:10px;background:#17243a;color:#e9f0fc}
+#se503AtlasTool summary{cursor:pointer;font-weight:700;padding:6px;color:#f3e8b2}
+#se503AtlasTool p{font-size:12px;line-height:1.45;margin:8px 0}
+#se503AtlasTool label{display:flex;gap:6px;align-items:center;justify-content:space-between;margin:8px 0;font-size:12px;flex-wrap:wrap}
+#se503AtlasTool select{max-width:100%;min-width:90px;color:inherit;background:#1e3250;border:1px solid #50647c;border-radius:6px;padding:5px}
+#se503AtlasTool input[type=range]{min-width:100px;flex:1;max-width:180px;touch-action:pan-y}
+#se503AtlasTool .se503-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(165px,1fr));gap:4px 12px}
+#se503AtlasTool output{display:inline-block;min-width:36px;text-align:right}
+#se503AtlasTool .se503-actions{display:flex;flex-wrap:wrap;gap:8px;padding:8px 0}
+#se503AtlasTool button{border:1px solid #6f88a5;background:#294461;color:#fff;border-radius:8px;padding:8px 11px;font:inherit}
+#se503AtlasTool button:disabled{opacity:.42}
+#se503AtlasCanvas{display:block;width:min(100%,440px);height:auto;aspect-ratio:1;margin:10px auto;border:1px solid #556a83}
+#se503AtlasCanvas[hidden]{display:none}
+#se503AtlasStatus{font-weight:600;overflow-wrap:anywhere}
+@media(max-width:480px){#se503AtlasTool .se503-grid{grid-template-columns:1fr}}
+/* SE503_UV_ISLAND_STYLES_END */
