@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""§E v11.513 release: Quest-browser picking, immersive gizmo capture, platform visibility and signed sculpting; exact HF source."""
+"""§E v11.513 release: generic cloth binding and editable skin weights, preserving v11.512 VR tools; exact HF source."""
 import argparse,hashlib,json,subprocess,sys
 from pathlib import Path
 root=Path(__file__).resolve().parents[1]
@@ -9,7 +9,7 @@ ap.add_argument('--request',action='store_true')
 args=ap.parse_args()
 m=json.loads((root/'source-manifest.json').read_text('utf8'))
 assert m['name']=='§wyrl§ Engine v11.513'
-assert m['finalArtifact']=='swyrl_engine_v11_512.html'
+assert m['finalArtifact']=='swyrl_engine_v11_513.html'
 assert len(m['patches'])==490
 assert m['patches'][-14:]==[
  'patches/v11_500_connected_rig_weights.py',
