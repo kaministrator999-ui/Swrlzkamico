@@ -42,7 +42,8 @@ const se514RigXR=(()=>{
   if(!handles)init();
   const rig=se220Rig();
   if(lastRig!==rig||lastRoot!==modelRoot||handles.pivots.length!==rig.bones.length){
-   for(const item of [...handles.pivots,...handles.shafts])item.removeFromParent();
+   for(const item of handles.pivots)item.removeFromParent();
+   for(const item of handles.shafts)item.mesh.removeFromParent();
    handles.pivots=[];handles.shafts=[];lastRig=rig;lastRoot=modelRoot;
    for(const spec of rig.bones){
     const dot=new THREE.Mesh(sphere,material);dot.name='Joint · '+spec.label;
