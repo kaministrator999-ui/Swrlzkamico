@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT (owner-approved)",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.500",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_500_CONNECTED_RIG_WEIGHTS",
-  "reason": "Show actual mesh vertices influenced by selected cloth bone with editable weight threshold, enable touch-friendly connected-bone rest dragging with bone-length lock, subtree envelope propagation, numeric joint edits and undo; preserve geometry/UV/animations.",
-  "sourceCommit": "d2c340215b7c0295c0e631e9fa19d0301b1633d2",
-  "sourceIntegritySha256": "efabed2ab16ad945666f5642a6fece5f337896bf48cc5b65353543179d80a3d3"
+  "releaseVersion": "v11.501",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_501_UV_DIAGNOSTIC_EXPORTS",
+  "reason": "Export UV stretch heatmap and current mapped-texture overlay PNGs, center-framed to the selected UV point, with distortion opacity and resolution controls; preserve model data.",
+  "sourceCommit": "69708107030b1cdadd6e6d23ef6c164d40f5f923",
+  "sourceIntegritySha256": "f2051c885030b365474637c24b4dd760108f44dcf3cfd5d27b36d7640f2ab90f"
 }
