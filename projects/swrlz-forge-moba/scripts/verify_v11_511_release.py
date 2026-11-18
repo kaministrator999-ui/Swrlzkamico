@@ -75,10 +75,10 @@ for needle in (
  'SE503_UV_ISLAND_MATH_START','SE503_UV_ISLAND_UI_START',
  'SE510_CONE_AWARE_UV_START','se510ConeUV.compare',
  'se503AtlasPrepare','se503AtlasApply','SE505_ACTION_PREREQUISITES_START',
- 'SWYRLZ_E_REQUIREMENTS_505','V11_510_CONE_AWARE_UV'
+ 'SWYRLZ_E_REQUIREMENTS_505','SE511_MODEL_DOCK_VISIBILITY_END'
 ):assert needle in s,needle
 subprocess.run([sys.executable,str(root/'scripts/check_inline_js_syntax_v11_266.py'),str(out/'index.html')],check=True)
-subprocess.run(['node',str(root/'tests/uv_degenerate_regression_v11_511.cjs'),str(out/'index.html')],check=True)
+subprocess.run(['node',str(root/'tests/uv_degenerate_regression_v11_510.cjs'),str(out/'index.html')],check=True)
 subprocess.run(['node','--check',str(root/'runtime/model_uv_cone_metric_v11_510.js')],check=True)
 subprocess.run(['node',str(root/'tests/model_uv_cone_aware_v11_510.cjs'),str(out/'index.html')],check=True)
 subprocess.run(['node',str(root/'tests/sorting_hat_proportion_v11_498.cjs'),str(out/'index.html')],check=True)
@@ -92,7 +92,7 @@ assert len(scene['project']['modelAtelier']['parts'])==1
 if args.request:
  req=json.loads((root/'DEPLOY_REQUEST.json').read_text('utf8'))
  assert req['releaseVersion']=='v11.511'
- assert req['deployMarker']=='SWYRL_ENGINE_DEPLOY_MARKER: V11_510_CONE_AWARE_UV'
+ assert req['deployMarker']=='SWYRL_ENGINE_DEPLOY_MARKER: V11_511_MODEL_DOCK_VISIBILITY'
  assert req['target']=='kamiloki/swrlz-forge-moba'
  assert req['sourceIntegritySha256']==m['finalSha256']
  assert len(req.get('sourceCommit',''))==40
