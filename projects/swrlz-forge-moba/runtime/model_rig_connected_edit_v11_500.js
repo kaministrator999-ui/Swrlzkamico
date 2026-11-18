@@ -6,8 +6,8 @@ const se500RigEdit=(()=>{
  const validRig=()=>se220RigAvailable()&&se220Rig()?.schema==='swyrl-cloth-skin-v1';
  const inRig=()=>panel&&!panel.hidden&&panel.dataset.se496Studio==='rig'&&validRig();
  const math=se500RestMath;
- let stage=null,drag=null,overlay=null,selectedKey='',history=[],lastRig=null;
- let threshold=.12,showWeights=true,lockLength=true,raf=0;
+ let stage=null,drag=null,overlay=null,history=[];
+ let threshold=.12,showWeights=true,lockLength=true;
  const ray=new THREE.Raycaster(),xy=new THREE.Vector2();
  const point=new THREE.Vector3(),worldPos=new THREE.Vector3();
  function meshList(){
@@ -20,7 +20,7 @@ const se500RigEdit=(()=>{
   if(overlay?.root?.parent)overlay.root.parent.remove(overlay.root);
   overlay?.points?.geometry?.dispose();
   overlay?.points?.material?.dispose();
-  overlay=null;selectedKey='';
+  overlay=null;
  }
  function collectWeights(){
   const rig=se220Rig(),id=se220Joint,boneIndex=rig.bones.findIndex(b=>b.id===id);
@@ -42,9 +42,7 @@ const se500RigEdit=(()=>{
  function refreshOverlay(force=false){
   const enabled=inRig()&&showWeights;
   if(!enabled){if(overlay)overlay.root.visible=false;return;}
-  const key=[se220Rig(),se220Joint,threshold,modelRoot].map(v=>
-   typeof v==='object'?v===modelRoot?'scene':'rig':String(v)).join(':');
-  // Explicitly compare identity too, not just stringified model references.
+   // Explicitly compare identity too, not just stringified model references.
   if(force||!overlay||overlay.rig!==se220Rig()||overlay.bone!==se220Joint||
    overlay.threshold!==threshold||overlay.scene!==modelRoot){
    forgetOverlay();
@@ -94,7 +92,7 @@ const se500RigEdit=(()=>{
   const label=$('se500Selected');if(label)label.textContent='Selected: '+name;
   for(let i=0;i<3;i++){
    const v=$('se496Rest'+i),rest=r.bones.find(b=>b.id===se220Joint)?.rest;
-   if(v&&rest&&document.activeElement!==v)v.value=rest[i].toFixed(3);
+   if(v&&rest)v.value=rest[i].toFixed(3);
   }
   const info=$('se500MoveHelp');
   if(info)info.textContent=lockLength?
@@ -218,15 +216,23 @@ const se500RigEdit=(()=>{
   ray.setFromCamera(xy,camera);
   return ray.intersectObjects(group.children.filter(x=>x.isMesh&&x.visible),false)[0]?.object?.userData?.se499BoneId||null;
  }
- function eventTarget(event){
+ function rayOnPlane(event,plane){
   const rect=renderer.domElement.getBoundingClientRect();
   xy.set(2*(event.clientX-rect.left)/rect.width-1,1-2*(event.clientY-rect.top)/rect.height);
   ray.setFromCamera(xy,camera);
   const world=new THREE.Vector3();
-  if(!ray.ray.intersectPlane(drag.plane,world))return null;
+  if(!ray.ray.intersectPlane(plane,world))return null;
+  return world;
+ }
+ function eventTarget(event){
+  const world=rayOnPlane(event,drag.plane);
+  if(!world)return null;
+  world.add(drag.grabOffset);
   return modelRoot.worldToLocal(world);
  }
  function down(event){
+  // Do not intercept floating rig UI or camera controls above the canvas.
+  if(event.target!==renderer?.domElement)return;
   const id=selectable(event);if(!id||drag)return;
   se220Playing=false;se220Joint=id;
   const joint=se220R('Joint');if(joint)joint.value=id;
@@ -237,7 +243,9 @@ const se500RigEdit=(()=>{
   drag={pointer:event.pointerId,start:[event.clientX,event.clientY],
    initial:pivot.clone(),plane:new THREE.Plane().setFromNormalAndCoplanarPoint(normal,pivot),
    base:math.snapshot(se220Rig()),moved:false,valid:true,
-   scene:modelRoot,rig:se220Rig(),id};
+   grabOffset:new THREE.Vector3(),scene:modelRoot,rig:se220Rig(),id};
+  const grab=rayOnPlane(event,drag.plane);
+  if(grab)drag.grabOffset.copy(pivot).sub(grab);
   stage?.setPointerCapture?.(event.pointerId);
   event.preventDefault();event.stopImmediatePropagation();
   refreshOverlay(true);refreshSelected();
