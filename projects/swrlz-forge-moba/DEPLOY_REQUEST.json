@@ -5,6 +5,6 @@
   "releaseVersion": "v11.504",
   "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_504_SMOOTH_WITCH_HAT",
   "reason": "Publish third independent Smooth Witch Hat starter: smooth single-mesh witch cone with original painted UVs and separate project card; preserve both earlier Sorting Hats.",
-  "sourceCommit": "20b848057ae541530ab51025d9ba3d9671e5ed6b",
+  "sourceCommit": "2814a23f4eaceca8146e573d613fe2c6e17daf71",
   "sourceIntegritySha256": "99bf4e5ce75d65255ccabcee90af9dd0cd8f734e79dfe453c632dfa55e6a2941"
 }
