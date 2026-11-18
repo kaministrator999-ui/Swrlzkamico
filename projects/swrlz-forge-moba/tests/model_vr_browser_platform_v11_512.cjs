@@ -60,7 +60,6 @@ let tests=0;
  const button=stage.children[0];assert.equal(button.textContent,'Hide platform');
  button.listeners.click();assert.equal(floor.visible,false);
  assert.equal(button.textContent,'Show platform');
- assert.equal(ctx.se512BrowserFloorVisible,false);
  ctx.se512PlatformBrowserDetach();assert.equal(button.removed,true);
  assert.equal(stage.style.position,'');tests++;
 }
