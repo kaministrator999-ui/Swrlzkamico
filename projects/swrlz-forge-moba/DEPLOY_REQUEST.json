@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT (owner-approved)",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.508",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_508_UV_DEGENERATE_PREVIEW",
-  "reason": "Make UV atlas preview work on supported meshes with zero-area faces, retaining all geometry and reporting the warning without modifying source textures.",
-  "sourceCommit": "8f0e292e27ebcdf675ded83a43beaa9f896da542",
-  "sourceIntegritySha256": "80a866c9e459bcd2b010ad5256c730b202d348bd6e9808cccd7a5e053456bb65"
+  "releaseVersion": "v11.509",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_509_RAIL_REEXPAND",
+  "reason": "Keep the existing Modeling toolbar collapse/expand button reachable after folding on compact mobile screens.",
+  "sourceCommit": "2af71544049bc46336658b933e070d0433c8866b",
+  "sourceIntegritySha256": "26367c6cc6273c1017aeaa2a428ce5c51cf21a50a637adaf7067fab3f9c1b03e"
 }
