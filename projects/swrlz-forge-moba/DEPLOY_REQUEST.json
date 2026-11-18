@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT (owner-approved)",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.501",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_501_UV_DIAGNOSTIC_EXPORTS",
-  "reason": "Export UV stretch heatmap and current mapped-texture overlay PNGs, center-framed to the selected UV point, with distortion opacity and resolution controls; preserve model data.",
-  "sourceCommit": "69708107030b1cdadd6e6d23ef6c164d40f5f923",
-  "sourceIntegritySha256": "f2051c885030b365474637c24b4dd760108f44dcf3cfd5d27b36d7640f2ab90f"
+  "releaseVersion": "v11.502",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_502_UV_TOUCH_RESIZE",
+  "reason": "Allow mobile touch resizing from sides and bottom of the UV Editor, with a Max/Restore titlebar control, saved window dimensions, and unchanged UV tools and model data.",
+  "sourceCommit": "f80d7b78898eba6eb50defcfef1226b8c5dfac32",
+  "sourceIntegritySha256": "b711c5a380a209c446b4013548770815bfeca8feca94222372dc92caff061fa8"
 }
