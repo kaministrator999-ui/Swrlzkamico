@@ -7,7 +7,7 @@ const script=fs.readFileSync(path.resolve(__dirname,'../runtime/model_vr_project
 const camera={yaw:.4,pitch:-.1,mode:'rotate',gesture:null,session:{},scene:{},ending:false,
  stateKey:'',se517ProjectBusy:false};
 const parts={chosen:{rotation:0},other:{rotation:.32}};
-let notice='',cancels=0,actionCalls=[];
+let notice='',cancels=0,cancelReason='',actionCalls=[];
 const sandbox=vm.createContext({window:{},se340XR:camera,
  se340Notice:s=>{notice=s;},se340Publish:()=>{},se340SyncUI:()=>{},
  se350Tools:()=>({selection:()=>({ids:['chosen']})}),
@@ -16,7 +16,7 @@ const sandbox=vm.createContext({window:{},se340XR:camera,
   if(camera.gesture?.mode==='rotate')parts.chosen.rotation+=.12;
   return true;
  },
- se340CancelGesture:()=>{cancels++;camera.gesture=null;return true;},
+ se340CancelGesture:reason=>{cancelReason=String(reason);cancels++;camera.gesture=null;return true;},
  se340Cleanup:()=>{},se340VisibleSession:()=>true});
 vm.runInContext(script,sandbox);
 const api=sandbox.window.SWYRL_ENGINE_VR_PROJECT_BROWSER_517;
@@ -34,7 +34,7 @@ vm.runInContext('se340UpdateGesture()',sandbox);
 assert.equal(cancels,1,'camera drift cancels object rotation instead of combining transforms');
 assert.equal(camera.yaw,original.yaw);
 assert.equal(camera.pitch,original.pitch);
-assert(/camera orbit changed/.test(notice));
+assert(/camera orbit changed/.test(cancelReason));
 console.log('SE517_ROTATION_ISOLATION_PASS',JSON.stringify({
  selectedModelRotated:true,otherModelStationary:true,cameraOrbitUnchanged:true,
  driftCanceled:true}));
