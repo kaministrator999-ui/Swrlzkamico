@@ -4,7 +4,7 @@
   "target": "kamiloki/swrlz-forge-moba",
   "releaseVersion": "v11.509",
   "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_509_RAIL_REEXPAND",
-  "reason": "Keep the existing Modeling toolbar collapse/expand button reachable after folding on compact mobile screens.",
+  "reason": "Keep the existing Modeling toolbar collapse/expand button reachable after folding on compact mobile screens. Retry after correcting stale v11.508 deploy verifier and package references.",
   "sourceCommit": "2af71544049bc46336658b933e070d0433c8866b",
   "sourceIntegritySha256": "26367c6cc6273c1017aeaa2a428ce5c51cf21a50a637adaf7067fab3f9c1b03e"
 }
