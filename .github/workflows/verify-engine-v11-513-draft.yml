@@ -9,6 +9,7 @@ on:
       - projects/swrlz-forge-moba/runtime/model_rig_skin_math_v11_513.js
       - projects/swrlz-forge-moba/runtime/model_rig_weight_studio_v11_513.js
       - projects/swrlz-forge-moba/tests/model_rig_skin_weight_v11_513.cjs
+      - projects/swrlz-forge-moba/tests/model_rig_persisted_skin_v11_513.cjs
       - projects/swrlz-forge-moba/tests/model_rig_generic_bind_v11_513.mjs
       - projects/swrlz-forge-moba/source-manifest.json
 permissions:
@@ -31,6 +32,7 @@ jobs:
           node --check projects/swrlz-forge-moba/runtime/model_rig_weight_studio_v11_513.js
           node --check projects/swrlz-forge-moba/tests/model_rig_skin_weight_v11_513.cjs
           node projects/swrlz-forge-moba/tests/model_rig_skin_weight_v11_513.cjs
+          node projects/swrlz-forge-moba/tests/model_rig_persisted_skin_v11_513.cjs
           python -m py_compile projects/swrlz-forge-moba/patches/v11_513_rig_skin_weights.py
       - name: Rebuild complete candidate from historical 489 patches and new rig patch
         run: |
