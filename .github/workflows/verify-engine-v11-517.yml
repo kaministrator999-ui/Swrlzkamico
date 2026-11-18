@@ -1,0 +1,76 @@
+name: Verify §E v11.517 VR projects and rotation candidate
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/verify-engine-v11-516.yml
+      - projects/swrlz-forge-moba/patches/v11_517_rig_precision.py
+      - projects/swrlz-forge-moba/runtime/model_vr_project_library_v11_517.js
+      - projects/swrlz-forge-moba/runtime/model_vr_project_browser_v11_517.js
+      - projects/swrlz-forge-moba/tests/model_vr_project_library_v11_517.cjs
+      - projects/swrlz-forge-moba/tests/model_vr_project_menu_v11_517.mjs
+      - projects/swrlz-forge-moba/tests/model_vr_rotation_isolation_v11_517.cjs
+
+
+      - projects/swrlz-forge-moba/source-manifest.json
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  candidate-vr-projects:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Verify native browser project service and rotation safeguards
+        run: |
+          ROOT=projects/swrlz-forge-moba
+          node --check "$ROOT/runtime/model_vr_project_library_v11_517.js"
+          node --check "$ROOT/runtime/model_vr_project_browser_v11_517.js"
+          node "$ROOT/tests/model_vr_project_library_v11_517.cjs"
+          node "$ROOT/tests/model_vr_rotation_isolation_v11_517.cjs"
+          node "$ROOT/tests/model_rig_skin_weight_v11_513.cjs"
+          node "$ROOT/tests/model_rig_persisted_skin_v11_513.cjs"
+      - name: Build all historical source patches plus v11.517 and report exact sha
+        run: |
+          python - <<'PY'
+          import sys,json,hashlib,gzip,base64
+          from pathlib import Path
+          root=Path('projects/swrlz-forge-moba')
+          sys.path.insert(0,str(root.resolve()))
+          from build_space import load_patch
+          manifest=json.loads((root/'source-manifest.json').read_text('utf8'))
+          encoded=''.join((root/p).read_text('utf8').strip() for p in manifest['chunks'])
+          source=gzip.decompress(base64.b64decode(encoded)).decode('utf8')
+          chain=manifest['patches']
+          extra='patches/v11_517_xr_project_rotation.py'
+          if extra not in chain:chain=chain+[extra]
+          for path in chain:source=load_patch(root/path)(source)
+          raw=source.encode('utf8')
+          Path('/tmp/se517_candidate.html').write_bytes(raw)
+          print('SE517_CANDIDATE_BYTES',len(raw),flush=True)
+          print('SE517_CANDIDATE_SHA256',hashlib.sha256(raw).hexdigest(),flush=True)
+          print('SE517_CANDIDATE_PATCHES',len(chain),flush=True)
+          assert 'SE517_PROJECT_LIBRARY_END' in source
+          assert 'SE517_XR_PROJECT_BROWSER_END' in source
+          assert "['project-open'," in source
+          PY
+          python projects/swrlz-forge-moba/scripts/check_inline_js_syntax_v11_266.py /tmp/se517_candidate.html
+      - name: Verify source-linked Three169 tools and native project menu
+        run: |
+          npm install --prefix /tmp/se517-three --no-save --ignore-scripts --silent three@0.169.0
+          THREE=/tmp/se517-three/node_modules/three/build/three.module.js
+          ROOT=projects/swrlz-forge-moba
+          node "$ROOT/tests/model_rig_generic_bind_v11_513.mjs" "$THREE" /tmp/se517_candidate.html
+          node "$ROOT/tests/model_rig_complex_bind_v11_516.mjs" "$THREE" /tmp/se517_candidate.html
+          node "$ROOT/tests/model_vr_native_rig_v11_514.mjs" "$THREE"
+          node "$ROOT/tests/model_vr_weight_visual_v11_516.mjs" "$THREE" /tmp/se517_candidate.html
+          node "$ROOT/tests/model_vr_spatial_polish_v11_515.mjs" "$THREE"
+          node "$ROOT/tests/model_vr_project_menu_v11_517.mjs" /tmp/se517_candidate.html
+          node "$ROOT/tests/uv_degenerate_regression_v11_517.cjs" /tmp/se517_candidate.html
