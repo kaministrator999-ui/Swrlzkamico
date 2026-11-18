@@ -6,6 +6,6 @@
   "expectedParent": "v11.505",
   "preserveExistingProjects": true,
   "trigger": "seal-engine-v11-506-uv-buttons",
-  "revision": 2,
-  "fix": "Replace fragile historical-code text match with a runtime ownership guard; regression test covers native and nested buttons."
+  "revision": 3,
+  "fix": "Use saved editable topology for atlas preview; make primary Preview button actionable in every prerequisite state. Compiled legacy UV toolbar is already isolated; no redundant guard."
 }
