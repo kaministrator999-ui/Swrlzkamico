@@ -48,7 +48,7 @@ def run():
                     viewport={'width':width,'height':height},
                     is_mobile=mobile,has_touch=mobile)
                 page = context.new_page()
-                page.route('http://engine.test/**/*',lambda route:route.fulfill(
+                page.route('**/*',lambda route:route.fulfill(
                     status=200,content_type='text/html',body=fixture))
                 page.goto('http://engine.test/editor',wait_until='domcontentloaded')
                 page.evaluate("""() => {
