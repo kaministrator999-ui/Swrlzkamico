@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT (owner-approved)",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.498",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_498_HAT_PROPORTIONS",
-  "reason": "Correct screenshot-confirmed sculpted starter silhouette: lower crown, reduced tip bend, deeper cloth facial relief, softer natural folds and subtler brim ripples; still one UV-painted native watertight mesh and original starter preserved.",
-  "sourceCommit": "6609206c6155fd3efda1e0c09450b339039026bd",
-  "sourceIntegritySha256": "5b5631cad2175eb74583e78d63639db300486adff70fa17d3080045b16983218"
+  "releaseVersion": "v11.499",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_499_RIG_STUDIO_POLISH",
+  "reason": "Fix visible modeling controls in Rigging and Animation, use selectable 3D bones instead of wire-only skeletons, remove hand-only controls from cloth rigs, and retain existing model, camera and project revisions.",
+  "sourceCommit": "6fb2a3e1e06d98463dd105ca63736a460add701f",
+  "sourceIntegritySha256": "87377054bf881c23666f1783e2608d31ff4162cd08ae66955f432b9bd1e2e59d"
 }
