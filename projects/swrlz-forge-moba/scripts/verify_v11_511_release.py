@@ -52,7 +52,7 @@ assert hashlib.sha256(raw).hexdigest()==m['finalSha256']
 s=raw.decode('utf8')
 for needle in (
  '<title>§wyrl§ Engine · Maker v11.511</title>',
- 'SWYRL_ENGINE_DEPLOY_MARKER: V11_510_CONE_AWARE_UV',
+ 'SWYRL_ENGINE_DEPLOY_MARKER: V11_511_MODEL_DOCK_VISIBILITY',
  'data-project-template="smooth-witch-hat"',
  'SE504_SMOOTH_WITCH_HAT_END',
  'SWYRL_ENGINE_SMOOTH_WITCH_HAT_504',
@@ -96,6 +96,6 @@ if args.request:
  assert req['target']=='kamiloki/swrlz-forge-moba'
  assert req['sourceIntegritySha256']==m['finalSha256']
  assert len(req.get('sourceCommit',''))==40
-print('SE510_SOURCE_VERIFIED',json.dumps({'version':'v11.511','patches':487,
+print('SE510_SOURCE_VERIFIED',json.dumps({'version':'v11.511','patches':488,
  'bytes':len(raw),'sha256':m['finalSha256'],
  'nativeSingleMesh':True,'originalStarterPreserved':True,'rigStudioUIIsolated':True,'connectedRigAndWeights':True,'uvDiagnosticExports':True,'uvTouchResize':True,'uvIslandAtlas':True}),flush=True)
