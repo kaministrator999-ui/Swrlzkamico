@@ -10,13 +10,13 @@ permissions:
 jobs:
   diagnose:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      - name: Replay inherited patch chain after candidate manifest mutation
+      - name: Identify first patch dependent on mutable source manifest
         env:
           PYTHONHASHSEED: "0"
         run: |
@@ -26,20 +26,29 @@ jobs:
           from pathlib import Path
           root=Path('projects/swrlz-forge-moba').resolve()
           p=root/'source-manifest.json'
-          m=json.loads(p.read_text('utf8'))
-          assert m['name']=='§wyrl§ Engine v11.504'
-          m['name']='§wyrl§ Engine v11.505'
-          m['finalArtifact']='swyrl_engine_v11_505.html'
-          m['finalSha256']=None
-          m['finalBytes']=None
-          m['patches'].append('patches/v11_505_action_prerequisites.py')
-          p.write_text(json.dumps(m,indent=2,ensure_ascii=False)+'\n','utf8')
-          encoded=''.join((root/q).read_text('utf8').strip() for q in m['chunks'])
-          html=gzip.decompress(base64.b64decode(encoded)).decode('utf8')
-          for idx,rel in enumerate(m['patches'][:-2]):
-              q=root/rel
-              spec=importlib.util.spec_from_file_location('swrlz_patch_'+q.stem,q)
-              module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
-              html=module.apply(html)
-          print('BEFORE_504_WITH_505_MANIFEST',hashlib.sha256(html.encode('utf8')).hexdigest(),flush=True)
+          original=p.read_text('utf8')
+          parent=json.loads(original)
+          assert parent['name']=='§wyrl§ Engine v11.504'
+          candidate=json.loads(original)
+          candidate.update(name='§wyrl§ Engine v11.505',
+            finalArtifact='swyrl_engine_v11_505.html',finalSha256=None,finalBytes=None)
+          candidate['patches'].append('patches/v11_505_action_prerequisites.py')
+          outputs={}
+          try:
+              for label,manifest in (('parent',parent),('candidate',candidate)):
+                  p.write_text(json.dumps(manifest,indent=2,ensure_ascii=False)+'\n','utf8')
+                  html=gzip.decompress(base64.b64decode(''.join((root/q).read_text('utf8').strip() for q in manifest['chunks']))).decode('utf8')
+                  digests=[]
+                  for idx,rel in enumerate(parent['patches'][:-1]):
+                      q=root/rel
+                      spec=importlib.util.spec_from_file_location('swrlz_patch_'+q.stem,q)
+                      module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
+                      html=module.apply(html)
+                      digests.append((rel,hashlib.sha256(html.encode('utf8')).hexdigest()))
+                  outputs[label]=digests
+                  print('BEFORE_504',label,digests[-1],flush=True)
+          finally:p.write_text(original,'utf8')
+          changes=[(i,x,y)for i,(x,y)in enumerate(zip(outputs['parent'],outputs['candidate']))if x[1]!=y[1]]
+          print('MANIFEST_FIRST_DIVERGENCE',changes[0] if changes else 'NONE',flush=True)
+          print('MANIFEST_CHANGED_PATCHES',len(changes),flush=True)
           PY
