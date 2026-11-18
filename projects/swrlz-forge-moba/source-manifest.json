@@ -4,7 +4,7 @@
   "baseArtifact": "swrlz_forge_v4.html",
   "baseBytes": 99591,
   "baseSha256": "a8299fe89fbb98d15c6091751b7a66931a66efec8eec5cb464e1286f21895856",
-  "finalArtifact": "swyrl_engine_v11_503.html",
+  "finalArtifact": "swyrl_engine_v11_504.html",
   "encoding": "gzip+base64-chunks",
   "chunks": [
     "payload/part-01.txt",
