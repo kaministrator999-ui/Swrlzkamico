@@ -147,7 +147,8 @@ const se514RigXR=(()=>{
   rot[axis]=THREE.MathUtils.clamp(rot[axis]+step,-2.8,2.8);
   rig.pose[se220Joint]=rot;
   if(!se220RigValidate(rig)){rig.pose=before;return false;}
-  rig.pose=before;se220RigRemember();rig.pose[se220Joint]=rot;
+  const after=structuredClone(rig.pose);
+  rig.pose=before;se220RigRemember();rig.pose=after;
   se220Playing=false;se220RigPose(rig.pose);se220RigJointUI();
   undoStack.push({kind:'pose',rig,old:before});if(undoStack.length>20)undoStack.shift();
   se220RigTouched('Immersive joint '+m[1].toUpperCase()+' pose changed by 5°.');
