@@ -7,6 +7,8 @@ on:
       - "projects/swrlz-forge-moba/runtime/model_action_prerequisites_v11_505.js"
       - "projects/swrlz-forge-moba/tests/model_action_prerequisites_v11_505.cjs"
       - "projects/swrlz-forge-moba/patches/v11_505_action_prerequisites.py"
+      - "projects/swrlz-forge-moba/patches/v11_84_sheep_build_routes.py"
+      - "projects/swrlz-forge-moba/tests/source_release_notes_baseline_v11_505.py"
   workflow_dispatch:
 permissions:
   contents: read
@@ -28,3 +30,5 @@ jobs:
           node --check projects/swrlz-forge-moba/runtime/model_action_prerequisites_v11_505.js
           node projects/swrlz-forge-moba/tests/model_action_prerequisites_v11_505.cjs
           python -m py_compile projects/swrlz-forge-moba/patches/v11_505_action_prerequisites.py
+          python -m py_compile projects/swrlz-forge-moba/patches/v11_84_sheep_build_routes.py
+          python projects/swrlz-forge-moba/tests/source_release_notes_baseline_v11_505.py
