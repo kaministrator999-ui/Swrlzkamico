@@ -93,9 +93,6 @@ def apply(html):
     page==='rig-weights'?'Right Trigger: paint surface · B: cancel · Y: Undo':page==='objects'&&""",
     'native controller help')
  html=html[:begin]+ui+html[end:]
- html=once(html,'const state={selectedRegionId:se350Surface().inspect().selectedRegionId',
-               'const state={...se514RigXR.uiState(),selectedRegionId:se350Surface().inspect().selectedRegionId',
-               'menu UI state supplied from existing XR frame')
  html=once(html,"'draw-finish','draw-clear','lasso','lasso-clear']",
     """'draw-finish','draw-clear','lasso','lasso-clear',
    'rig','rig-prev','rig-next','rig-undo','rig-weights','rig-weight-add','rig-weight-erase',
