@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.501
+title: §wyrl§ Engine v11.502
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,12 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.502 · Resizable UV Editor window (2026-11-17)
+
+UV Editor now has a Windows-style **Max/Restore** control in the titlebar and touch-friendly resize grips along the left, right, top and bottom edges, including corners. Drag the titlebar to move it, drag the visible bottom or corner handle to enlarge it, or tap **Max** to use the available browser screen and **Restore** to return to the previous dimensions. Resize clamps to the visual viewport, persists popup position and dimensions, works with touch/mouse/pen, and supports arrow-key resizing with keyboard focus. This restores direct resizing on phones, where earlier mobile CSS disabled the native resize affordance. The UV preview, stretch heatmap, mapped texture, existing import/export controls and original mesh data remain unchanged. Physical mobile and Quest interaction is still subject to owner testing.
+
+
 
 ## §E v11.501 · Center-aware UV heatmap and texture alignment diagnostics (2026-11-17)
 
