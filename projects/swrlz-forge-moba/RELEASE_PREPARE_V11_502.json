@@ -6,6 +6,6 @@
   "expectedParent": "v11.501",
   "preserveExistingProjects": true,
   "trigger": "seal-engine-v11-502-uv-resize",
-  "revision": 2,
-  "fix": "Use first document head in generated HTML; prior runner rejected duplicate literal </head> in source"
+  "revision": 3,
+  "fix": "Verifier now checks v11.502 finalArtifact and deploy marker"
 }
