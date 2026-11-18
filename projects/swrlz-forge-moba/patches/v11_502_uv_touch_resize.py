@@ -30,8 +30,8 @@ def apply(html):
     html=once(html,"    popup=q('#se355UVPopup',panel)||createPopup(panel);\n    const host=q('#se355UVNativeHost',popup);",
       "    popup=q('#se355UVPopup',panel)||createPopup(panel);\n    se502InstallResizable(popup);\n    const host=q('#se355UVNativeHost',popup);",
       'install controls without rebuilding existing UV widgets')
-    html=once(html,'</head>','<style id="se502UVResizeStyles">\n'+css+'\n</style>\n</head>',
-      'responsive resize style')
+    assert '</head>' in html and html.index('</head>') < html.index('<body'), 'missing document head'
+    html=html.replace('</head>','<style id="se502UVResizeStyles">\n'+css+'\n</style>\n</head>',1)
     for old,new in (
         ('SWYRL_ENGINE_DEPLOY_MARKER: V11_501_UV_DIAGNOSTIC_EXPORTS',MARKER),
         ('ENGINE · MAKER v11.501','ENGINE · MAKER v11.502'),
