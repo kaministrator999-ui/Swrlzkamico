@@ -75,7 +75,7 @@ for needle in (
  'SWYRLZ_E_REQUIREMENTS_505','V11_509_RAIL_REEXPAND'
 ):assert needle in s,needle
 subprocess.run([sys.executable,str(root/'scripts/check_inline_js_syntax_v11_266.py'),str(out/'index.html')],check=True)
-subprocess.run(['node',str(root/'tests/uv_degenerate_preview_v11_508.cjs'),str(out/'index.html')],check=True)
+subprocess.run(['node',str(root/'tests/uv_degenerate_preview_v11_509.cjs'),str(out/'index.html')],check=True)
 subprocess.run(['node',str(root/'tests/sorting_hat_proportion_v11_498.cjs'),str(out/'index.html')],check=True)
 receipt=json.loads((out/'SOURCE.json').read_text('utf8'))
 for key,value in [('sourceVersion',m['name']),('finalBytes',len(raw)),
