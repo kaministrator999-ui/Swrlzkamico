@@ -6,5 +6,6 @@
   "expectedParent": "v11.504",
   "preserveExistingProjects": true,
   "trigger": "seal-engine-v11-505-action-prerequisites",
-  "revision": 1
+  "revision": 2,
+  "fix": "Pin v11.504 release note baseline during historical rebuild, preserving checksum and allowing appended v11.505 action prerequisites."
 }
