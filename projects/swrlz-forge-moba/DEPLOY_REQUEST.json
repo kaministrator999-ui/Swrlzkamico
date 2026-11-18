@@ -4,7 +4,7 @@
   "target": "kamiloki/swrlz-forge-moba",
   "releaseVersion": "v11.499",
   "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_499_RIG_STUDIO_POLISH",
-  "reason": "Fix visible modeling controls in Rigging and Animation, use selectable 3D bones instead of wire-only skeletons, remove hand-only controls from cloth rigs, and retain existing model, camera and project revisions.",
-  "sourceCommit": "6fb2a3e1e06d98463dd105ca63736a460add701f",
+  "reason": "Fix visible modeling controls in Rigging and Animation, use selectable 3D bones instead of wire-only skeletons, remove hand-only controls from cloth rigs, and retain existing model, camera and project revisions. JavaScript delivery uses verified whitespace-only compaction to stay below the static-hosting file limit.",
+  "sourceCommit": "f95d559b8b7475a6cb2824efbd0c3cd453d90d32",
   "sourceIntegritySha256": "87377054bf881c23666f1783e2608d31ff4162cd08ae66955f432b9bd1e2e59d"
 }
