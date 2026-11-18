@@ -13,7 +13,7 @@ const se499RigPolish=(()=>{
   '.se320-selection-tools'
  ];
  let visual=null, observer=null, observedPanel=null, pending=false, hovered=null;
- const canvases=new WeakSet();
+ const canvases=new WeakSet(),boneToggles=new WeakSet();
  const worldPoint=new THREE.Vector3(),parentPoint=new THREE.Vector3();
  const inverse=new THREE.Matrix4(), axis=new THREE.Vector3(0,1,0);
  function mode(){return panel?.dataset.se496Studio||'model';}
@@ -206,6 +206,13 @@ const se499RigPolish=(()=>{
   queueMicrotask(()=>{pending=false;sync();});
  }
  function observe(){
+  const toggle=se220R('ShowBones');
+  if(toggle&&!boneToggles.has(toggle)){
+   boneToggles.add(toggle);
+   toggle.addEventListener('change',()=>{
+    queueMicrotask(()=>{if(se220BoneOverlay)se220BoneOverlay.visible=false;updateVisual();});
+   });
+  }
   if(!panel||observedPanel===panel)return;
   observer?.disconnect();observedPanel=panel;
   observer=new MutationObserver(schedule);
