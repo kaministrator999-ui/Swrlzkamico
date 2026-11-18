@@ -39,7 +39,8 @@ def run():
       </div>
     </section></body></html>"""
     with sync_playwright() as p:
-        browser = p.chromium.launch(headless=True,
+        chrome=next((str(x) for x in [Path('/usr/bin/chromium'),Path('/usr/bin/google-chrome'),Path('/usr/bin/google-chrome-stable')] if x.exists()),None)
+        browser = p.chromium.launch(executable_path=chrome,headless=True,
             args=['--no-sandbox','--disable-dev-shm-usage'])
         try:
             for width, height, mobile in [(820,1700,False),(390,800,True)]:
