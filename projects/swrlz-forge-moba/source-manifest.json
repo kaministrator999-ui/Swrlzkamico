@@ -497,8 +497,9 @@
     "patches/v11_503_uv_island_atlas.py",
     "patches/v11_504_smooth_witch_hat.py"
   ],
-  "finalBytes": 0,
-  "finalSha256": "",
-  "previousFinalSha256": "f3dd6ef639829262263c5d8d2a099d887f15846c0b32cc44165267058fb5e937",
-  "previousFinalBytes": 10738620
+  "finalBytes": 10745436,
+  "finalSha256": "99bf4e5ce75d65255ccabcee90af9dd0cd8f734e79dfe453c632dfa55e6a2941",
+  "previousFinalSha256": "db31f6261c8afc118506e72dd44e3f697dc89aebea9ffddc1740042c1dda6824",
+  "previousFinalBytes": 10738620,
+  "previousManifestFinalSha256": "f3dd6ef639829262263c5d8d2a099d887f15846c0b32cc44165267058fb5e937"
 }
