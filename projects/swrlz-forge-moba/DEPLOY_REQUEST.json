@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT (owner-approved)",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.505",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_505_ACTION_PREREQUISITES",
-  "reason": "Offer verified editable conversion or a recoverable UV-preserving working copy, select the single unambiguous mesh, and resume the original UV/Topology tool after confirmation. Cancel never changes the project.",
-  "sourceCommit": "758d9c8f2b3b5bb9537a7568c8f819cfd0491286",
-  "sourceIntegritySha256": "f79e880e7c6c780fa06dd8ac6d969763faa17e656c41e5508950a832e970c43e"
+  "releaseVersion": "v11.506",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_506_UV_BUTTON_OWNERSHIP",
+  "reason": "Prevent inherited UV controls from greying out nested atlas actions; preserve independent preview/apply state and resume prerequisites safely.",
+  "sourceCommit": "f8f398c39b706b0ae70315fdfbac4bf60d59a4a0",
+  "sourceIntegritySha256": "01d4daf1780e8938a6f8d2ef1f0c94744be5a978171124f0ef51613037beedba"
 }
