@@ -23,7 +23,8 @@ assert m['patches'][-13:]==[
  'patches/v11_508_uv_degenerate_preview.py',
  'patches/v11_509_rail_reexpand.py',
  'patches/v11_510_cone_aware_uv.py',
- 'patches/v11_512_model_dock_visibility.py']
+ 'patches/v11_511_model_dock_visibility.py',
+ 'patches/v11_512_vr_trigger_gizmo.py']
 for rel in ('runtime/model_vr_trigger_gizmo_v11_512.js',
             'runtime/model_vr_browser_pick_v11_512.js',
             'runtime/model_display_platform_v11_512.js'):
@@ -86,7 +87,7 @@ for needle in (
  'platform-toggle','se512QuestTapPick','se512GizmoInput'
 ):assert needle in s,needle
 subprocess.run([sys.executable,str(root/'scripts/check_inline_js_syntax_v11_266.py'),str(out/'index.html')],check=True)
-subprocess.run(['node',str(root/'tests/uv_degenerate_regression_v11_512.cjs'),str(out/'index.html')],check=True)
+subprocess.run(['node',str(root/'tests/uv_degenerate_regression_v11_511.cjs'),str(out/'index.html')],check=True)
 subprocess.run(['node','--check',str(root/'runtime/model_uv_cone_metric_v11_510.js')],check=True)
 subprocess.run(['node',str(root/'tests/model_uv_cone_aware_v11_510.cjs'),str(out/'index.html')],check=True)
 subprocess.run(['node',str(root/'tests/sorting_hat_proportion_v11_498.cjs'),str(out/'index.html')],check=True)
@@ -100,7 +101,7 @@ assert len(scene['project']['modelAtelier']['parts'])==1
 if args.request:
  req=json.loads((root/'DEPLOY_REQUEST.json').read_text('utf8'))
  assert req['releaseVersion']=='v11.512'
- assert req['deployMarker']=='SWYRL_ENGINE_DEPLOY_MARKER: V11_511_MODEL_DOCK_VISIBILITY'
+ assert req['deployMarker']=='SWYRL_ENGINE_DEPLOY_MARKER: V11_512_TRIGGER_GIZMOS_MENU_FACING'
  assert req['target']=='kamiloki/swrlz-forge-moba'
  assert req['sourceIntegritySha256']==m['finalSha256']
  assert len(req.get('sourceCommit',''))==40
