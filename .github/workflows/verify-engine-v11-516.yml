@@ -1,0 +1,65 @@
+name: Verify §E v11.516 rig precision candidate
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/verify-engine-v11-516.yml
+      - projects/swrlz-forge-moba/patches/v11_516_rig_precision.py
+      - projects/swrlz-forge-moba/runtime/model_rig_precision_v11_516.js
+      - projects/swrlz-forge-moba/tests/model_rig_precision_v11_516.cjs
+      - projects/swrlz-forge-moba/source-manifest.json
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  candidate-rigging:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Verify JS math and original skin normalization regression
+        run: |
+          ROOT=projects/swrlz-forge-moba
+          node --check "$ROOT/runtime/model_rig_precision_v11_516.js"
+          node "$ROOT/tests/model_rig_precision_v11_516.cjs"
+          node "$ROOT/tests/model_rig_skin_weight_v11_513.cjs"
+          node "$ROOT/tests/model_rig_persisted_skin_v11_513.cjs"
+      - name: Build all historical source patches plus v11.516 and report exact sha
+        run: |
+          python - <<'PY'
+          import sys,json,hashlib,gzip,base64
+          from pathlib import Path
+          root=Path('projects/swrlz-forge-moba')
+          sys.path.insert(0,str(root.resolve()))
+          from build_space import load_patch
+          manifest=json.loads((root/'source-manifest.json').read_text('utf8'))
+          encoded=''.join((root/p).read_text('utf8').strip() for p in manifest['chunks'])
+          source=gzip.decompress(base64.b64decode(encoded)).decode('utf8')
+          chain=manifest['patches']
+          extra='patches/v11_516_rig_precision.py'
+          if extra not in chain:chain=chain+[extra]
+          for path in chain:source=load_patch(root/path)(source)
+          raw=source.encode('utf8')
+          Path('/tmp/se516_candidate.html').write_bytes(raw)
+          print('SE516_CANDIDATE_BYTES',len(raw),flush=True)
+          print('SE516_CANDIDATE_SHA256',hashlib.sha256(raw).hexdigest(),flush=True)
+          print('SE516_CANDIDATE_PATCHES',len(chain),flush=True)
+          assert 'SE516_RIG_PRECISION_END' in source
+          assert "['rig-select-mode','Target: Region / Vertex']" in source
+          PY
+          python projects/swrlz-forge-moba/scripts/check_inline_js_syntax_v11_266.py /tmp/se516_candidate.html
+      - name: Verify prior real Three169 skeleton binding and native XR menus
+        run: |
+          npm install --prefix /tmp/se516-three --no-save --ignore-scripts --silent three@0.169.0
+          THREE=/tmp/se516-three/node_modules/three/build/three.module.js
+          ROOT=projects/swrlz-forge-moba
+          node "$ROOT/tests/model_rig_generic_bind_v11_513.mjs" "$THREE" /tmp/se516_candidate.html
+          node "$ROOT/tests/model_vr_native_rig_v11_514.mjs" "$THREE"
+          node "$ROOT/tests/model_vr_spatial_polish_v11_515.mjs" "$THREE"
+          node "$ROOT/tests/uv_degenerate_regression_v11_515.cjs" /tmp/se516_candidate.html
