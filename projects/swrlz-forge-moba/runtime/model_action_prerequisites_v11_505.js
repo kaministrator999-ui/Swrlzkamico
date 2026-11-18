@@ -62,8 +62,10 @@ const se505ActionRequirements=(()=>{
    select(original.partId);
    if(model()!==original.project||selected()!==original.part)
     return lastResult=failure('Could not select the only visible mesh.');
-   const r=continueAction();
-   return lastResult={ok:true,kind:'auto-select',result:r,partId:original.partId};
+   // Selection is only the first prerequisite: recheck topology and ask for
+   // conversion if the newly selected mesh still needs one.
+   const resumed=requireEditable(action,continueAction,mode);
+   return lastResult=resumed.ok?{...resumed,autoSelected:true}:resumed;
   }
   if(typeof window.confirm!=='function')return lastResult=failure('Confirmation is unavailable. No conversion performed.');
   const accepted=window.confirm('Before '+intent+':\n\n'+original.explanation+'\n\nContinue with '+intent+' after preparing the mesh?');
