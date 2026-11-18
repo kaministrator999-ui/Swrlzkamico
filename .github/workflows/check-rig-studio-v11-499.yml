@@ -6,7 +6,7 @@ on:
       - "projects/swrlz-forge-moba/runtime/model_rig_studio_polish_v11_499.js"
       - "projects/swrlz-forge-moba/runtime/model_rig_studio_polish_v11_499.css"
       - "projects/swrlz-forge-moba/patches/v11_499_rig_studio_polish.py"
-      - ".github/workflows/check-rig-studio-v11-498.yml"
+      - ".github/workflows/check-rig-studio-v11-499.yml"
   workflow_dispatch:
 permissions:
   contents: read
@@ -22,7 +22,7 @@ jobs:
           python -m py_compile projects/swrlz-forge-moba/patches/v11_499_rig_studio_polish.py
           node projects/swrlz-forge-moba/tests/model_rig_workspace_v11_490.cjs
           node projects/swrlz-forge-moba/tests/sorting_hat_sculpted_v11_497.cjs
-      - name: Rebuild 475-patch candidate and inspect source hash
+      - name: Rebuild 476-patch candidate and inspect source hash
         run: |
           python - <<'PY'
           import base64,gzip,hashlib,json,sys,subprocess
