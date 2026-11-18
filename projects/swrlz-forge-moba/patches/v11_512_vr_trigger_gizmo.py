@@ -23,7 +23,8 @@ def apply(html):
     html=once(html,'  function point(e){',platform+'\n  function point(e){')
     html=once(html,'floor.position.y=-.07;world.add(floor);',
       'floor.position.y=-.07;world.add(floor);se512PlatformBrowserAttach(floor,stage);')
-    html=once(html,'  function close(){','  function close(){se512PlatformBrowserDetach();')
+    html=once(html,'renderer?.dispose();renderer?.domElement?.remove();',
+      'se512PlatformBrowserDetach();renderer?.dispose();renderer?.domElement?.remove();')
     html=once(html,
       "['focus','Focus'],['aim','Aim'],['studio','Studio'],\n    ['help','Guide'],['tools','Quick tools'],['exit','Exit VR']",
       "['focus','Focus'],['aim','Aim'],['platform-toggle','Platform'],\n    ['help','Guide'],['tools','Quick tools'],['exit','Exit VR']")
@@ -75,8 +76,8 @@ def apply(html):
       "['brush-strength-plus','Strength +'],['studio','Studio'],['exit','Exit VR']",
       "['brush-strength-plus','Strength +'],['sculpt-falloff','Falloff'],['exit','Exit VR']")
     html=once(html,
-      "function label(item){\n  if(item.id==='index-add')",
-      "function label(item){\n  if(item.id==='sculpt-falloff')return 'Falloff: '+(state.brushFalloff||'smooth');\n  if(item.id==='index-add')")
+      "function label(item){\n  if(item.id==='platform-toggle')return state.platformVisible?'Hide platform':'Show platform';\n  if(item.id==='index-add')",
+      "function label(item){\n  if(item.id==='sculpt-falloff')return 'Falloff: '+(state.brushFalloff||'smooth');\n  if(item.id==='platform-toggle')return state.platformVisible?'Hide platform':'Show platform';\n  if(item.id==='index-add')")
     html=once(html,
       "selectedCount:selectedIds.size,sculptTool:s.sculptTool,brushRadius:s.brushRadius",
       "selectedCount:selectedIds.size,sculptTool:s.sculptTool,brushFalloff:s.brushFalloff,brushRadius:s.brushRadius")
