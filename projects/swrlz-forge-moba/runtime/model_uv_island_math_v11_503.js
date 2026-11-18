@@ -91,9 +91,19 @@ const se503AtlasMath=(()=>{
      map.set(key,mapped);
     }
     const q=tri.coords[k];
-    const u=s.center[0]+(q[0]-s.base[0])*s.factor;
-    const v=s.center[1]+(q[1]-s.base[1])*s.factor;
-    if(u<0||u>1||v<0||v>1)throw Error('UV packing overflow.');
+    const adjust=options.transforms?.[tri.group]||{};
+    const angle=(Number(adjust.angle)||0)*Math.PI/180;
+    const scale=Number(adjust.scale)||1;
+    const shiftU=Number(adjust.shiftU)||0,shiftV=Number(adjust.shiftV)||0;
+    if(![angle,scale,shiftU,shiftV].every(Number.isFinite)||scale<.55||scale>1.3||
+       Math.abs(shiftU)>.10||Math.abs(shiftV)>.10||Math.abs(angle)>.8)
+      throw Error('UV island transform is outside supported limits.');
+    const x=(q[0]-s.base[0])*s.factor*scale,y=(q[1]-s.base[1])*s.factor*scale;
+    const u=s.center[0]+x*Math.cos(angle)-y*Math.sin(angle)+shiftU;
+    const v=s.center[1]+x*Math.sin(angle)+y*Math.cos(angle)+shiftV;
+    if(u<s.rect[0]+.001||u>s.rect[2]-.001||
+       v<s.rect[1]+.001||v>s.rect[3]-.001)
+       throw Error(s.name+' exceeds its padded atlas region; reduce size/rotation/offset.');
     next.uvs[mapped*2]=u;next.uvs[mapped*2+1]=v;
     idx.push(mapped);uvTriangle.push([u,v]);
    }
