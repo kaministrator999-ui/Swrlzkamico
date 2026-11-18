@@ -51,7 +51,7 @@ assert hashlib.sha256(raw).hexdigest()==m['finalSha256']
 s=raw.decode('utf8')
 for needle in (
  '<title>§wyrl§ Engine · Maker v11.510</title>',
- 'SWYRL_ENGINE_DEPLOY_MARKER: V11_509_RAIL_REEXPAND',
+ 'SWYRL_ENGINE_DEPLOY_MARKER: V11_510_CONE_AWARE_UV',
  'data-project-template="smooth-witch-hat"',
  'SE504_SMOOTH_WITCH_HAT_END',
  'SWYRL_ENGINE_SMOOTH_WITCH_HAT_504',
@@ -74,7 +74,7 @@ for needle in (
  'SE503_UV_ISLAND_MATH_START','SE503_UV_ISLAND_UI_START',
  'SE510_CONE_AWARE_UV_START','se510ConeUV.compare',
  'se503AtlasPrepare','se503AtlasApply','SE505_ACTION_PREREQUISITES_START',
- 'SWYRLZ_E_REQUIREMENTS_505','V11_509_RAIL_REEXPAND'
+ 'SWYRLZ_E_REQUIREMENTS_505','V11_510_CONE_AWARE_UV'
 ):assert needle in s,needle
 subprocess.run([sys.executable,str(root/'scripts/check_inline_js_syntax_v11_266.py'),str(out/'index.html')],check=True)
 subprocess.run(['node',str(root/'tests/uv_degenerate_preview_v11_508.cjs'),str(out/'index.html')],check=True)
@@ -91,7 +91,7 @@ assert len(scene['project']['modelAtelier']['parts'])==1
 if args.request:
  req=json.loads((root/'DEPLOY_REQUEST.json').read_text('utf8'))
  assert req['releaseVersion']=='v11.510'
- assert req['deployMarker']=='SWYRL_ENGINE_DEPLOY_MARKER: V11_509_RAIL_REEXPAND'
+ assert req['deployMarker']=='SWYRL_ENGINE_DEPLOY_MARKER: V11_510_CONE_AWARE_UV'
  assert req['target']=='kamiloki/swrlz-forge-moba'
  assert req['sourceIntegritySha256']==m['finalSha256']
  assert len(req.get('sourceCommit',''))==40
