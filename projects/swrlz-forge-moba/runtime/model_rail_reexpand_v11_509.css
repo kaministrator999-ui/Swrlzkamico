@@ -1,0 +1,19 @@
+/* SE509_RAIL_REEXPAND_START */
+/* The same native toggle must escape the compact collapsed rail clipping. */
+html #modelAtelierPanel.se187-modeler-page[data-se320-ui][data-se473-rail-collapsed=true]:not([data-se496-studio=rig]):not([data-se496-studio=animate]) #modelAtelierToolRail #se473RailFold {
+ position:fixed!important;
+ top:clamp(76px,18dvh,160px)!important;
+ right:max(8px,env(safe-area-inset-right))!important;
+ left:auto!important;
+ width:48px!important;
+ min-width:48px!important;
+ min-height:48px!important;
+ display:block!important;
+ visibility:visible!important;
+ opacity:1!important;
+ pointer-events:auto!important;
+ touch-action:manipulation!important;
+ z-index:2147483000!important;
+ box-shadow:0 2px 12px #000a!important;
+}
+/* SE509_RAIL_REEXPAND_END */
