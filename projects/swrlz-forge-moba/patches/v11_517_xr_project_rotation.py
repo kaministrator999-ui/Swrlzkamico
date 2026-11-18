@@ -35,7 +35,7 @@ def apply(html):
   s=one(s,"let detailPage='tools',lastState=null,lastHover=null,disposed=false;",
     "let detailPage='tools',lastState=null,lastHover=null,disposed=false,lastProjectRevision=-1;",
     'project row revision state')
-  s=one(s,"function update(next){\n    lastState=next||{};",
+  s=one(s,"function update(next){\n   lastState=next||{};",
     """function update(next){
     lastState=next||{};
     if(category==='projects'&&next?.projectBrowserRevision!==lastProjectRevision){
