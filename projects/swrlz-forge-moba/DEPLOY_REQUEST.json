@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT (owner-approved)",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.514",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_514_NATIVE_XR_RIG",
-  "reason": "Deploy verified native immersive WebXR Rigging/Weight Painting pages integrated with existing spatial menu and controller input; full 491-patch source and Three169 tests pass. Quest hardware acceptance remains open.",
-  "sourceCommit": "c93a334181d5807402f7081f37ca578d28632fb7",
-  "sourceIntegritySha256": "e970e2ab119c1d98f16b47aa90b49d360647a8935a0e09bb92e61e965c1c0bf7"
+  "releaseVersion": "v11.515",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_515_XR_MENU_CONTROLLER_CLARITY",
+  "reason": "Deploy verified immersive native three-stage menu layer order and fixed world anchor, current-rail Rigging navigation and Quest Touch controller-attached small leader/glow button labels; full 492-patch release/source integrity, Three169, regressions and static packaging passed. Physical Quest acceptance remains open.",
+  "sourceCommit": "bf0a29a059fb78d41524c991cedd20e1eeb4b646",
+  "sourceIntegritySha256": "41bd5cd3483fcb271374b05678218723049502265c025e660bce44b8cb142606"
 }
