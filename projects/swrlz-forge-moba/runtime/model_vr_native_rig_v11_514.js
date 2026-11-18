@@ -368,6 +368,14 @@ se340ModelXRAction=function(command,record=null){
 };
 const se514PriorDispatch=se350Dispatch;
 se350Dispatch=function(sample){return se514PriorDispatch(se514RigXR.beforeDispatch(sample));};
+// Feed rig state through the spatial console's EXISTING update API. Native XR
+// owns page rendering, hover, hit testing, transitions and controller dispatch.
+const se514PriorSyncUI=se340SyncUI;
+se340SyncUI=function(...args){
+ const result=se514PriorSyncUI.apply(this,args);
+ if(se340XR.ui)se340XR.ui.update(se514RigXR.uiState());
+ return result;
+};
 const se514PriorCleanup=se340Cleanup;
 se340Cleanup=function(...args){se514RigXR.exit();return se514PriorCleanup.apply(this,args);};
 window.SWYRL_ENGINE_IMMERSIVE_RIG_514=se514RigXR;
