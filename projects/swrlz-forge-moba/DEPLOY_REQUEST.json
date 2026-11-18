@@ -4,7 +4,7 @@
   "target": "kamiloki/swrlz-forge-moba",
   "releaseVersion": "v11.509",
   "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_509_RAIL_REEXPAND",
-  "reason": "Retry v11.509 after adapting inherited UV regression test to current release marker.",
+  "reason": "Retry sealed v11.509 using request-version-selected deployment scripts; do not switch to unsealed v11.510.",
   "sourceCommit": "2af71544049bc46336658b933e070d0433c8866b",
   "sourceIntegritySha256": "26367c6cc6273c1017aeaa2a428ce5c51cf21a50a637adaf7067fab3f9c1b03e"
 }
