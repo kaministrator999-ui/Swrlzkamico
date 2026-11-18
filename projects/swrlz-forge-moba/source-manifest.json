@@ -505,7 +505,7 @@
   "previousFinalBytes": 10738620,
   "previousManifestFinalSha256": "f3dd6ef639829262263c5d8d2a099d887f15846c0b32cc44165267058fb5e937",
   "releaseNotesBaseline": {
-    "version": "v11.505",
-    "patchCount": 482
+    "version": "v11.504",
+    "patchCount": 481
   }
 }
