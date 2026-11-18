@@ -70,7 +70,7 @@ assert(find(sub,'project-source-local')&&find(sub,'project-source-cloud')&&find(
 assert(find(sub,'project-pick-0')&&find(sub,'project-pick-1'));
 assert(find(sub,'project-open')&&find(sub,'project-cancel'));
 assert.equal(ui.press(find(sub,'project-pick-0')),true,'name is a real native Trigger target');
-currentList=currentList.map(([action,label] = [])=>action==='project-pick-0'?[action,'Sorting Hat edited']:action==='project-open'?[action,'Open: Sorting Hat edited']:action?[action,label]:null);
+currentList=currentList.map(entry=>!entry?null:entry[0]==='project-pick-0'?[entry[0],'Sorting Hat edited']:entry[0]==='project-open'?[entry[0],'Open: Sorting Hat edited']:entry);
 ui.update({page:'projects',projectBrowserRevision:2});tick();
 assert(find(sub,'project-pick-0')&&find(sub,'project-open'));
 assert.equal(ui.press(find(rail,'projects')),true);tick();
