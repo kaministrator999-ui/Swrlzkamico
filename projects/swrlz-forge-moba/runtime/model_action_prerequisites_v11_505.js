@@ -129,13 +129,14 @@ const se505ActionRequirements=(()=>{
  function intercept(event){
   const button=event.target.closest?.('button');
   if(!button||button.disabled)return;
-  const plan=inspect();if(plan.kind==='ready'||plan.kind==='blocked')return;
+  const plan=inspect();if(plan.kind==='ready')return;
   const tool=button.closest('#se474ToolFlyout');
   const mode=button.closest('#se474SpecificModes');
   if(tool&&button.dataset.se474Kind==='tool'){
    const kind=button.dataset.se474ToolType,name=button.dataset.se474Value;
    if(!requiresTopology(kind,name))return;
    event.preventDefault();event.stopImmediatePropagation();
+   if(plan.kind==='blocked'){report(plan.reason,true);return;}
    requireEditable('use '+name,()=>progress()?.chooseTool(name,kind),
     kind==='vertex'?'vertex':null);
    return;
@@ -145,6 +146,7 @@ const se505ActionRequirements=(()=>{
    if(!requiresTopology(kind,state?.tool))return;
    const value=button.dataset.se474Value;
    event.preventDefault();event.stopImmediatePropagation();
+   if(plan.kind==='blocked'){report(plan.reason,true);return;}
    requireEditable('choose '+value+' mode',()=>progress()?.chooseMode(value),
     kind==='vertex'?'vertex':null);
   }
