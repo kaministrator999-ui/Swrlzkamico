@@ -1,0 +1,73 @@
+name: Check §E v11.513 generic skin and weight studio
+on:
+  push:
+    branches:
+      - feat/se-vr-qa-513-rig-weight-accuracy
+    paths:
+      - .github/workflows/verify-engine-v11-513-draft.yml
+      - projects/swrlz-forge-moba/patches/v11_513_rig_skin_weights.py
+      - projects/swrlz-forge-moba/runtime/model_rig_skin_math_v11_513.js
+      - projects/swrlz-forge-moba/runtime/model_rig_weight_studio_v11_513.js
+      - projects/swrlz-forge-moba/tests/model_rig_skin_weight_v11_513.cjs
+      - projects/swrlz-forge-moba/tests/model_rig_generic_bind_v11_513.mjs
+      - projects/swrlz-forge-moba/source-manifest.json
+permissions:
+  contents: read
+jobs:
+  generic-rig:
+    runs-on: ubuntu-latest
+    timeout-minutes: 16
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Check syntax and standalone skin weight mathematics
+        run: |
+          node --check projects/swrlz-forge-moba/runtime/model_rig_skin_math_v11_513.js
+          node --check projects/swrlz-forge-moba/runtime/model_rig_weight_studio_v11_513.js
+          node --check projects/swrlz-forge-moba/tests/model_rig_skin_weight_v11_513.cjs
+          node projects/swrlz-forge-moba/tests/model_rig_skin_weight_v11_513.cjs
+          python -m py_compile projects/swrlz-forge-moba/patches/v11_513_rig_skin_weights.py
+      - name: Rebuild complete candidate from historical 489 patches and new rig patch
+        run: |
+          python - <<'PY'
+          import json,pathlib
+          p=pathlib.Path('projects/swrlz-forge-moba/source-manifest.json')
+          m=json.loads(p.read_text('utf8'))
+          if m['patches'][-1]=='patches/v11_512_vr_trigger_gizmo.py':
+              assert len(m['patches'])==489
+              m['patches'].append('patches/v11_513_rig_skin_weights.py')
+          else:
+              assert len(m['patches'])==490 and m['patches'][-1]=='patches/v11_513_rig_skin_weights.py'
+          m['name']='§wyrl§ Engine v11.513'
+          m['finalArtifact']='swyrl_engine_v11_513.html'
+          m['finalSha256']=''
+          m['finalBytes']=0
+          p.write_text(json.dumps(m,ensure_ascii=False,indent=2)+'\n')
+          print('SE513_PATCH_COUNT',len(m['patches']))
+          PY
+          python projects/swrlz-forge-moba/build_space.py --output /tmp/se513-candidate > /tmp/se513-build.log
+          python - <<'PY'
+          from pathlib import Path
+          import hashlib,json
+          root=Path('/tmp/se513-candidate')
+          data=(root/'index.html').read_bytes()
+          assert data==(root/'modeler.html').read_bytes()
+          html=data.decode('utf8')
+          for term in ('SE513_RIG_SKIN_MATH_END','SE513_RIG_WEIGHT_STUDIO_END',
+              'SE513_RIG_WEIGHT_STUDIO','se513SkinMath','swyrl-explicit-skin-v1',
+              'part.id!==rig.targetPartId','SE512_MODEL_VR_TRIGGER_GIZMO_END'):
+              assert term in html,term
+          print('SE513_DRAFT_BYTES',len(data))
+          print('SE513_DRAFT_SHA256',hashlib.sha256(data).hexdigest())
+          print('SE513_DRAFT_ASSETS_PRESERVED',True)
+          PY
+          python projects/swrlz-forge-moba/scripts/check_inline_js_syntax_v11_266.py /tmp/se513-candidate/index.html
+      - name: Generic real Three.js 169 skinning and bind-pose tests
+        run: |
+          npm install --prefix /tmp/se513-three --no-save --ignore-scripts --silent three@0.169.0
+          node projects/swrlz-forge-moba/tests/model_rig_generic_bind_v11_513.mjs /tmp/se513-three/node_modules/three/build/three.module.js /tmp/se513-candidate/index.html
