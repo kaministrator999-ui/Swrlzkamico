@@ -3,8 +3,8 @@ on:
   push:
     branches: [main]
     paths:
-      - .github/workflows/verify-engine-v11-516.yml
-      - projects/swrlz-forge-moba/patches/v11_517_rig_precision.py
+      - .github/workflows/verify-engine-v11-517.yml
+      - projects/swrlz-forge-moba/patches/v11_517_xr_project_rotation.py
       - projects/swrlz-forge-moba/runtime/model_vr_project_library_v11_517.js
       - projects/swrlz-forge-moba/runtime/model_vr_project_browser_v11_517.js
       - projects/swrlz-forge-moba/tests/model_vr_project_library_v11_517.cjs
