@@ -88,7 +88,7 @@ for needle in (
  'platform-toggle','se512QuestTapPick','se512GizmoInput'
 ):assert needle in s,needle
 subprocess.run([sys.executable,str(root/'scripts/check_inline_js_syntax_v11_266.py'),str(out/'index.html')],check=True)
-subprocess.run(['node',str(root/'tests/uv_degenerate_regression_v11_511.cjs'),str(out/'index.html')],check=True)
+subprocess.run(['node',str(root/'tests/uv_degenerate_regression_v11_512.cjs'),str(out/'index.html')],check=True)
 subprocess.run(['node','--check',str(root/'runtime/model_uv_cone_metric_v11_510.js')],check=True)
 subprocess.run(['node',str(root/'tests/model_uv_cone_aware_v11_510.cjs'),str(out/'index.html')],check=True)
 subprocess.run(['node',str(root/'tests/sorting_hat_proportion_v11_498.cjs'),str(out/'index.html')],check=True)
