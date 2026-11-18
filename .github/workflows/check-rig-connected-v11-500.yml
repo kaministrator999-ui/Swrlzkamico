@@ -1,0 +1,59 @@
+name: §E v11.500 connected rig editing and skin weights
+on:
+  push:
+    branches: [main]
+    paths:
+      - "projects/swrlz-forge-moba/runtime/model_rig_connected_math_v11_500.js"
+      - "projects/swrlz-forge-moba/runtime/model_rig_connected_edit_v11_500.js"
+      - "projects/swrlz-forge-moba/runtime/model_rig_connected_edit_v11_500.css"
+      - "projects/swrlz-forge-moba/tests/model_rig_connected_v11_500.cjs"
+      - "projects/swrlz-forge-moba/patches/v11_500_connected_rig_weights.py"
+      - ".github/workflows/check-rig-connected-v11-500.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify-connected-rig:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - name: Test rig geometry maths and JS syntax
+        run: |
+          node --check projects/swrlz-forge-moba/runtime/model_rig_connected_math_v11_500.js
+          node --check projects/swrlz-forge-moba/runtime/model_rig_connected_edit_v11_500.js
+          node projects/swrlz-forge-moba/tests/model_rig_connected_v11_500.cjs
+          node projects/swrlz-forge-moba/tests/model_rig_workspace_v11_490.cjs
+          python -m py_compile projects/swrlz-forge-moba/patches/v11_500_connected_rig_weights.py
+      - name: Compile 477-patch candidate and check generated HTML syntax
+        run: |
+          python - <<'PY'
+          import base64,gzip,hashlib,json,subprocess,sys
+          from pathlib import Path
+          root=Path('projects/swrlz-forge-moba').resolve()
+          sys.path.insert(0,str(root))
+          import build_space
+          m=json.loads((root/'source-manifest.json').read_text('utf8'))
+          chunks=''.join((root/p).read_text('utf8').strip() for p in m['chunks'])
+          html=gzip.decompress(base64.b64decode(chunks)).decode('utf8')
+          patches=m['patches'][:]
+          next_patch='patches/v11_500_connected_rig_weights.py'
+          if next_patch not in patches:patches.append(next_patch)
+          assert patches[-2:]==['patches/v11_499_rig_studio_polish.py',next_patch]
+          for path in patches:html=build_space.load_patch(root/path)(html)
+          for token in ('SWYRL_ENGINE_DEPLOY_MARKER: V11_500_CONNECTED_RIG_WEIGHTS',
+                        'SWYRL_ENGINE_RIG_CONNECTED_MATH_500',
+                        'SWYRL_ENGINE_RIG_CONNECTED_EDIT_500',
+                        'se500WeightsCount','se500LockLength','se500RigEdit',
+                        'syncRestTransform','new THREE.PointsMaterial',
+                        'window.SWYRL_ENGINE_RIG_POLISH_499=se499RigPolish;',
+                        'data-project-template="sorting-hat-sculpted"'):
+              assert token in html,token
+          raw=html.encode('utf8')
+          print('SE500_CANDIDATE_BYTES',len(raw),flush=True)
+          print('SE500_CANDIDATE_SHA256',hashlib.sha256(raw).hexdigest(),flush=True)
+          path=Path('/tmp/se500-candidate.html')
+          path.write_bytes(raw)
+          subprocess.run([sys.executable,str(root/'scripts/check_inline_js_syntax_v11_266.py'),str(path)],check=True)
+          print('SE500_CANDIDATE_VALIDATED',flush=True)
+          PY
