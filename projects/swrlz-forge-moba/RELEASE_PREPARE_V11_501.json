@@ -1,0 +1,9 @@
+{
+  "schema": "swrlz-forge-release-prepare-v1",
+  "requestedBy": "ChatGPT (owner-approved)",
+  "releaseVersion": "v11.501",
+  "purpose": "Build and seal center-aware UV heatmap and current painted-texture overlay PNG exports",
+  "expectedParent": "v11.500",
+  "preserveExistingProjects": true,
+  "trigger": "seal-engine-v11-501-uv-diagnostics"
+}
