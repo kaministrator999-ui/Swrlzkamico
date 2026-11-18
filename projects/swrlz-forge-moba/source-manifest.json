@@ -1,10 +1,10 @@
 {
   "schema": "swrlz-forge-source-v2",
-  "name": "§wyrl§ Engine v11.514",
+  "name": "§wyrl§ Engine v11.515",
   "baseArtifact": "swrlz_forge_v4.html",
   "baseBytes": 99591,
   "baseSha256": "a8299fe89fbb98d15c6091751b7a66931a66efec8eec5cb464e1286f21895856",
-  "finalArtifact": "swyrl_engine_v11_514.html",
+  "finalArtifact": "swyrl_engine_v11_515.html",
   "encoding": "gzip+base64-chunks",
   "chunks": [
     "payload/part-01.txt",
@@ -505,10 +505,11 @@
     "patches/v11_511_model_dock_visibility.py",
     "patches/v11_512_vr_trigger_gizmo.py",
     "patches/v11_513_rig_skin_weights.py",
-    "patches/v11_514_native_xr_rig.py"
+    "patches/v11_514_native_xr_rig.py",
+    "patches/v11_515_spatial_menu_controller.py"
   ],
-  "finalBytes": 10825921,
-  "finalSha256": "e970e2ab119c1d98f16b47aa90b49d360647a8935a0e09bb92e61e965c1c0bf7",
+  "finalBytes": 10836830,
+  "finalSha256": "41bd5cd3483fcb271374b05678218723049502265c025e660bce44b8cb142606",
   "previousFinalSha256": "db31f6261c8afc118506e72dd44e3f697dc89aebea9ffddc1740042c1dda6824",
   "previousFinalBytes": 10738620,
   "previousManifestFinalSha256": "f3dd6ef639829262263c5d8d2a099d887f15846c0b32cc44165267058fb5e937",
