@@ -67,7 +67,7 @@ const se503AtlasMath=(()=>{
    const [a,b,c,d]=s.bounds;
    if(c-a<1e-9||d-b<1e-9)throw Error('Projected '+s.name+' island has no width or height.');
    const [u0,v0,u1,v1]=s.rect;
-   const inner=.005;
+   const inner=.02;
    const availableU=u1-u0-2*inner,availableV=v1-v0-2*inner;
    s.factor=Math.min(availableU/(c-a),availableV/(d-b));
    s.center=[(u0+u1)/2,(v0+v1)/2];s.base=[(a+c)/2,(b+d)/2];
