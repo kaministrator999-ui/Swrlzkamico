@@ -1,3 +1,9 @@
+## §WYRL§ Engine v11.517 · Immersive project library and model rotation (2026-11-18)
+
+**VR #5:** Existing right-stick WebXR camera/reference orbit and selected-object Rotate are explicitly isolated. Rotate requires a selection, operates on authored part TRS through the native transform system, and cancels rather than mixing an unexpected camera orbit into a model gesture.
+
+**VR #7:** The original three-stage immersive Projects tool now browses saved device projects, signed-in account projects and model starters with named rows, pagination and native Trigger selection. Loads safely in the current WebXR session through native root release/reborrow. Unsaved changes require explicit confirmation; every switch writes an independent local recovery copy before source changes, and supported Model Atelier projects keep their account/source identity. No new VR menu, OAuth flow or starter overwrite. Physical Quest acceptance remains pending. See `docs/XR_PROJECTS_ROTATION_V11_517.md`.
+
 ## §WYRL§ Engine v11.516 · Universal rig bind stability and precise weights (2026-11-18)
 
 **Generic mesh validation:** Four distinct arbitrary Three.js geometry fixtures cover neutral binds, nonuniform model/mesh transforms, repeated parented joint poses and resets, reparented bones, inverse bind matrices, and stable normalized skin weights. A skeleton rebind now detaches old root bone objects and previous helper before replacing native bind matrices. No specific starter mesh is rewritten.
