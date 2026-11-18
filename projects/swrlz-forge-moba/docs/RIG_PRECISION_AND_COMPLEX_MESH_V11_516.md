@@ -9,6 +9,8 @@ Scope: all valid rigged projects sharing the existing `SkinnedMesh`, four-influe
 
 **Immersive WebXR:** the same target switch is now inside the existing far-right Rigging rail → Weight Painting operation list and native details page. It reuses the original 3-stage spatial GUI, controller ray priority, Right Trigger paint input, Grip pose tools, and in-VR Undo. There are no new detached panels, browser DOM replacements, second VR input dispatcher, or new project documents. Switching selected bone during an unfinished paint stroke cancels that stroke rather than mutating another joint.
 
+The existing 2D bone-influence point cloud is refreshed while brushing (with a bounded 100 ms cadence). Immersive WebXR now renders up to 1,200 color-coded influenced vertices inside the existing skeletal gizmo group, following deformed bone positions on the existing WebXR frame loop at a bounded cadence; those markers are non-interactive and never intercept menu/object raycasts. Their scene resources are disposed on VR exit. These overlays are visual aids, not additional editing menus.
+
 All edits use the existing `swyrl-explicit-skin-v1` four-influence format and normalization, rejecting missing topology or invalid weights. Posed-point matching and UV seam co-selection are not specific to any starter.
 
 ## Rig binding and hierarchy stability
