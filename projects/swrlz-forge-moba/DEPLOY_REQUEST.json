@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT (owner-approved)",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.510",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_510_CONE_AWARE_UV",
-  "reason": "Add measured cone-aware atlas projection for tapered meshes, keep legacy modes and stretch heatmap, preserve source textures until confirmed Apply.",
-  "sourceCommit": "a04f3f4d72760c25738d8905b1828b83fc37cd4b",
-  "sourceIntegritySha256": "70adeebcac766b4b3c7c090f18860f159b399f552e2a100b46904747422e4c67"
+  "releaseVersion": "v11.511",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_511_MODEL_DOCK_VISIBILITY",
+  "reason": "Restore native Modeling tool rail and inspector visibility without replacing buttons or changing mesh state.",
+  "sourceCommit": "b06bb93a2a159286347b66dfcb3349a8cf9fa8c0",
+  "sourceIntegritySha256": "2604cdcaa7ff7d3840b02fa2052e5c04cc15b0f842ef25bc8f6fc96d022b3d8b"
 }
