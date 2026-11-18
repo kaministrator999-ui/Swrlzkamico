@@ -25,9 +25,23 @@ def apply(html):
       'floor.position.y=-.07;world.add(floor);se512PlatformBrowserAttach(floor,stage);')
     html=once(html,'renderer?.dispose();renderer?.domElement?.remove();',
       'se512PlatformBrowserDetach();renderer?.dispose();renderer?.domElement?.remove();')
-    html=once(html,
-      "['focus','Focus'],['aim','Aim'],['studio','Studio'],\n    ['help','Guide'],['tools','Quick tools'],['exit','Exit VR']",
-      "['focus','Focus'],['aim','Aim'],['platform-toggle','Platform'],\n    ['help','Guide'],['tools','Quick tools'],['exit','Exit VR']")
+    # The Display page may have received earlier dock/layout refinements.
+    # Replace one existing utility slot there without changing page capacity.
+    import re
+    ui_start=html.index('/* SE360_MODEL_VR_UI_START */')
+    ui_end=html.index('/* SE360_MODEL_VR_UI_END */',ui_start)
+    ui=html[ui_start:ui_end]
+    views=re.search(r"(?m)^\s*views:\[\s*(.*?)\n\s*\],",ui,re.S)
+    if not views:raise AssertionError(('v11.512 Display menu missing',ui.count('views:[')))
+    pane=views.group(1)
+    replacement=None
+    for legacy in ("['studio','Studio']","['help','Guide']","['tools','Quick tools']"):
+        if legacy in pane:
+            replacement=legacy
+            break
+    if not replacement:raise AssertionError(('v11.512 Display menu lacks optional slot',pane[:700]))
+    ui=ui[:views.start(1)]+pane.replace(replacement,"['platform-toggle','Platform']",1)+ui[views.end(1):]
+    html=html[:ui_start]+ui+html[ui_end:]
     html=once(html,
       "function label(item){\n  if(item.id==='index-add')",
       "function label(item){\n  if(item.id==='platform-toggle')return state.platformVisible?'Hide platform':'Show platform';\n  if(item.id==='index-add')")
