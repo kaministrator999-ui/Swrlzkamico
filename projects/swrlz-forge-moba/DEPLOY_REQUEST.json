@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT (owner-approved)",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.513",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_513_RIG_SKIN_WEIGHT_STUDIO",
-  "reason": "Release validated native 2D Rigging Studio bone-weight paint, four-influence skinning persistence and generic cloth target mesh isolation; physical Quest QA remains pending.",
-  "sourceCommit": "c64f202c0b2f1b19aea5eb86664bf6c4c1e29ccd",
-  "sourceIntegritySha256": "94419930e9ff77fa49b84efc638f372542b012c5b901c7859910aa1e0a08ac4b"
+  "releaseVersion": "v11.514",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_514_NATIVE_XR_RIG",
+  "reason": "Deploy verified native immersive WebXR Rigging/Weight Painting pages integrated with existing spatial menu and controller input; full 491-patch source and Three169 tests pass. Quest hardware acceptance remains open.",
+  "sourceCommit": "c93a334181d5807402f7081f37ca578d28632fb7",
+  "sourceIntegritySha256": "e970e2ab119c1d98f16b47aa90b49d360647a8935a0e09bb92e61e965c1c0bf7"
 }
