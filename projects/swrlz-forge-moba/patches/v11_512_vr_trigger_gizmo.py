@@ -17,6 +17,25 @@ def apply(html):
     assert "SE512_MODEL_VR_TRIGGER_GIZMO_END" in src
     html=once(html,"installPerformanceSettings();se189InstallPerfUI();",
               src+"\ninstallPerformanceSettings();se189InstallPerfUI();")
+    # Display platform is a scene prop, distinct from the model's native root.
+    platform=(ROOT/'runtime/model_display_platform_v11_512.js').read_text('utf8')
+    assert 'SE512_DISPLAY_PLATFORM_END' in platform
+    html=once(html,'  function point(e){',platform+'\n  function point(e){')
+    html=once(html,'floor.position.y=-.07;world.add(floor);',
+      'floor.position.y=-.07;world.add(floor);se512PlatformBrowserAttach(floor,stage);')
+    html=once(html,'  function close(){','  function close(){se512PlatformBrowserDetach();')
+    html=once(html,
+      "['focus','Focus'],['aim','Aim'],['studio','Studio'],\n    ['help','Guide'],['tools','Quick tools'],['exit','Exit VR']",
+      "['focus','Focus'],['aim','Aim'],['platform-toggle','Platform'],\n    ['help','Guide'],['tools','Quick tools'],['exit','Exit VR']")
+    html=once(html,
+      "function label(item){\n  if(item.id==='index-add')",
+      "function label(item){\n  if(item.id==='platform-toggle')return state.platformVisible?'Hide platform':'Show platform';\n  if(item.id==='index-add')")
+    html=once(html,
+      "mode:s.mode,selectedName:selected?.name||'',hoverName:hover?.name||'',dragging:!!s.gesture,",
+      "mode:s.mode,selectedName:selected?.name||'',hoverName:hover?.name||'',dragging:!!s.gesture,platformVisible:s.platform?.visible!==false,")
+    html=once(html,
+      "if(action==='exit'){void se340ModelXRExit();return true;}",
+      "if(action==='exit'){void se340ModelXRExit();return true;}\n if(action==='platform-toggle'){if(!s.platform)return false;s.platform.visible=!s.platform.visible;se340Notice(s.platform.visible?'Display platform shown.':'Display platform hidden.');se340SyncUI();se340Publish();return true;}")
     # Quest Browser 2D alone: tolerate small controller-ray pointer jitter,
     # and exclude non-editable overlay/helper geometry from fallback picking.
     pick=(ROOT/'runtime/model_vr_browser_pick_v11_512.js').read_text('utf8')
@@ -83,11 +102,12 @@ def apply(html):
     notes["history"]=[x for x in notes.get("history",[]) if x.get("version")!="v11.511"]
     notes["history"].insert(0,{"version":"v11.511","changes":notes.get("changes",[])})
     notes.update(version="v11.512",date="2026-11-18",
-      title="Native Quest Browser picking, Trigger gizmos, menu facing and signed indent sculpting",
+      title="Native Quest selection, Trigger gizmos, menu facing, sculpt Indent and platform visibility",
       changes=[
        "Controller Trigger directly captures an aim-hovered visible transform gizmo; native Move, Rotate, Scale and Grab-axis previews use existing skin-safe model transactions and one-step Undo.",
        "Trigger release completes one native edit and suppresses the otherwise generated selection click. Cancel, tracking loss and XR cleanup discard pending previews.",
        "Movable immersive VR console maintains its placed world position while continuously facing the headset for readable front-side controls.",
+       "Display platform visibility is independently adjustable in both the 2D editor and the immersive Display panel, never moving model geometry.",
        "Regular Meta Quest Browser pointer taps tolerate small ray jitter and ignore nonmodel helper meshes, without affecting immersive WebXR or desktop camera handling.",
        "Immersive sculpting now offers positive outward Pull and inward Indent with radius, strength and smooth/soft/sharp/flat falloff using the existing native signed displacement operator.",
        "Existing Grip/free grab, account project data, UV texture, and browser 2D editing behavior are untouched."
