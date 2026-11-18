@@ -1,7 +1,7 @@
 name: Verify Engine Modeling Rail v11.507
 on:
   push:
-    branches: [fix/engine-v11-507-model-tool-rail-live]
+    branches: [fix/engine-v11-507-tool-rail-live]
   workflow_dispatch:
 permissions:
   contents: read
