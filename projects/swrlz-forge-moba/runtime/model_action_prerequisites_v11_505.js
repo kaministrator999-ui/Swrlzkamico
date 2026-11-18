@@ -11,7 +11,13 @@ const se505ActionRequirements=(()=>{
  const selected=()=>partById(selection);
  function inspect(){
   const part=selected(),project=model(),api=workshop(),native=api?.inspect?.();
-  if(!project||!part)return {kind:'blocked',reason:'Select one mesh before using this tool.'};
+  if(!project)return {kind:'blocked',reason:'Open a Model Studio project first.'};
+  if(!part){
+   const visible=project.parts.filter(p=>!p.se481SourceHidden&&!p.se481WorkHidden);
+   if(visible.length===1)return {kind:'auto-select',project,part:visible[0],partId:visible[0].id,
+    explanation:'The project has one visible mesh. Select it and continue the requested tool.'};
+   return {kind:'blocked',reason:'Select which mesh to edit; this project has '+visible.length+' visible objects.'};
+  }
   const multiple=(atelierMeshIds||[]).filter(id=>partById(id)).length>1;
   if(multiple)return {kind:'blocked',reason:'Select one mesh at a time. Choose which object you want to edit.'};
   if(native?.preview?.active)return {kind:'blocked',reason:'Apply or Cancel the current modeling preview first.'};
@@ -51,6 +57,13 @@ const se505ActionRequirements=(()=>{
   if(original.kind==='blocked'){report(original.reason,true);return lastResult=failure(original.reason);}
   if(original.kind==='ready'){
    const r=continueAction();lastResult={ok:true,kind:'ready',result:r};return lastResult;
+  }
+  if(original.kind==='auto-select'){
+   select(original.partId);
+   if(model()!==original.project||selected()!==original.part)
+    return lastResult=failure('Could not select the only visible mesh.');
+   const r=continueAction();
+   return lastResult={ok:true,kind:'auto-select',result:r,partId:original.partId};
   }
   if(typeof window.confirm!=='function')return lastResult=failure('Confirmation is unavailable. No conversion performed.');
   const accepted=window.confirm('Before '+intent+':\n\n'+original.explanation+'\n\nContinue with '+intent+' after preparing the mesh?');
@@ -105,12 +118,13 @@ const se505ActionRequirements=(()=>{
   const button=root?.querySelector('#se503AtlasPrepare');
   if(button){
    const plan=inspect();
-   if(plan.kind==='native'||plan.kind==='textured-copy'||plan.kind==='reuse'){
+   if(['native','textured-copy','reuse','auto-select'].includes(plan.kind)){
     button.disabled=false;
-    button.title='Offer editable conversion, then preview UV islands.';
-    button.textContent='Make editable & Preview UV atlas';
+    button.title=plan.kind==='auto-select'?'Select only visible mesh, then preview.':'Offer editable conversion, then preview UV islands.';
+    button.textContent=plan.kind==='auto-select'?'Select mesh & Preview UV atlas':'Make editable & Preview UV atlas';
     if(!se503Preview)root.querySelector('#se503AtlasStatus').textContent=
-      'This action can prepare the mesh for editing, then immediately preview the UV atlas.';
+      plan.kind==='auto-select'?'The only visible mesh will be selected automatically.':
+       'This action can prepare the mesh for editing, then immediately preview the UV atlas.';
    }else {
     button.textContent='Preview UV atlas';
     if(plan.kind==='blocked'&&!se503Preview){
