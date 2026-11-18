@@ -30,6 +30,7 @@ const context={THREE,modelRoot:rootNode,se220RigAvailable:()=>true,se220Rig:()=>
  se220RigWeights:([x,y,z])=>y<.25?{indices:[0,0,0,0],weights:[1,0,0,0]}:
   y>.75?{indices:[2,0,0,0],weights:[1,0,0,0]}:
   {indices:[1,0,0,0],weights:[1,0,0,0]},
+ se489AuthoredSkinWeights:(part,index,rig,point)=>context.se220RigWeights(point,rig),
  se220RigValidate:()=>true,se220BoneOverlay:null,se220Bones:null,se220Skeleton:null,
  $m:()=>({checked:true})};
 vm.runInNewContext(source,vm.createContext(context));
