@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT (owner-approved)",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.512",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_512_TRIGGER_GIZMOS_MENU_FACING",
-  "reason": "Quest Browser 2D model picking; immersive Trigger gizmo drags and menu facing; scene-only platform toggle in both environments; signed Indent sculpting.",
-  "sourceCommit": "4768f228b90f3732d707efaf422175226aa98e32",
-  "sourceIntegritySha256": "4aa1a8dfe46113fb2d00ad8eeaf078381763ccf89e97b30e4d20602bab2c8152"
+  "releaseVersion": "v11.513",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_513_RIG_SKIN_WEIGHT_STUDIO",
+  "reason": "Release validated native 2D Rigging Studio bone-weight paint, four-influence skinning persistence and generic cloth target mesh isolation; physical Quest QA remains pending.",
+  "sourceCommit": "c64f202c0b2f1b19aea5eb86664bf6c4c1e29ccd",
+  "sourceIntegritySha256": "94419930e9ff77fa49b84efc638f372542b012c5b901c7859910aa1e0a08ac4b"
 }
