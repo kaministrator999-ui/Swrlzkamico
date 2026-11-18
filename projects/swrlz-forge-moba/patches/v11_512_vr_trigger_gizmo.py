@@ -45,12 +45,6 @@ def apply(html):
     html=once(html,
       'if(Math.hypot(dx,dy)>5)pressed.moved=true;',
       'if(Math.hypot(dx,dy)>(se512QuestBrowser2D()?16:5))pressed.moved=true;')
-    html=once(html,
-      'if(!pressed)return;const hit=!pressed.moved;pressed=null;',
-      'if(!pressed)return;const se512Press=pressed,hit=!pressed.moved;pressed=null;')
-    html=once(html,
-      "const hits=raycaster.intersectObjects(meshes,false);select(hits[0]?.object?.userData?.atelierId||null);",
-      "const hits=raycaster.intersectObjects(meshes,false);const first=hits.find(h=>partById(h.object?.userData?.atelierId));select(first?.object?.userData?.atelierId||se512QuestTapPick(e,se512Press)||null);")
     # §E VR sculpting: positive normal displacement stays outward Pull;
     # negative normal displacement is inward Indent using the same native
     # geometry preview, sparse vertex edits, save and Undo pipeline.
