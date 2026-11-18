@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT (owner-approved)",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.502",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_502_UV_TOUCH_RESIZE",
-  "reason": "Allow mobile touch resizing from sides and bottom of the UV Editor, with a Max/Restore titlebar control, saved window dimensions, and unchanged UV tools and model data.",
-  "sourceCommit": "f80d7b78898eba6eb50defcfef1226b8c5dfac32",
-  "sourceIntegritySha256": "b711c5a380a209c446b4013548770815bfeca8feca94222372dc92caff061fa8"
+  "releaseVersion": "v11.503",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_503_UV_ISLAND_ATLAS",
+  "reason": "Generate real UV seams, fit separate front/back and brim islands, support bounded island transforms and reversible native Undo; preserve all prior UV tools.",
+  "sourceCommit": "4de0ec5de5fc1bec56507f066d021598f4e51f36",
+  "sourceIntegritySha256": "f3dd6ef639829262263c5d8d2a099d887f15846c0b32cc44165267058fb5e937"
 }
