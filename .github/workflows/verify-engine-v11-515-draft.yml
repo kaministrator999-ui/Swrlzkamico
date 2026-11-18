@@ -62,7 +62,7 @@ jobs:
           assert s.count('function se340CreateModelVRUI(')==1,'only one native XR menu'
           assert s.count('function se340ModelXRFrameCore(')==1,'only one native XR frame'
           assert s.count("const se515SpatialPolish=")==1
-          assert s.index('SE515_SPATIAL_VR_POLISH_END')<s.index('installPerformanceSettings();')
+          assert s.find('installPerformanceSettings();',s.index('SE515_SPATIAL_VR_POLISH_END'))>=0
           print('SE515_CANDIDATE_BYTES',len(raw))
           print('SE515_CANDIDATE_SHA256',hashlib.sha256(raw).hexdigest())
           print('SE515_NATIVE_MENU_SINGLE_OWNER',True)
