@@ -30,6 +30,7 @@ for rel in ('runtime/model_vr_trigger_gizmo_v11_512.js',
             'runtime/model_display_platform_v11_512.js'):
  subprocess.run(['node','--check',str(root/rel)],check=True)
 subprocess.run(['node',str(root/'tests/model_vr_trigger_gizmo_v11_512.cjs')],check=True)
+subprocess.run(['node',str(root/'tests/model_vr_browser_platform_v11_512.cjs')],check=True)
 subprocess.run(['node','--check',str(root/'runtime/sorting_hat_sculpted_v11_497.js')],check=True)
 subprocess.run(['node','--check',str(root/'runtime/model_rig_studio_polish_v11_499.js')],check=True)
 subprocess.run(['node','--check',str(root/'runtime/model_rig_connected_math_v11_500.js')],check=True)
