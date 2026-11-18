@@ -10,12 +10,9 @@ def once(html,old,new,label):
     return html.replace(old,new,1)
 def apply(html):
     assert hashlib.sha256(html.encode('utf8')).hexdigest()==PREVIOUS_SHA256,'v11.505 source chain changed'
-    # Isolate native UV toolbar ownership without depending on historical
-    # inline formatting changed by other engine patches.
-    guard=(ROOT/'runtime/model_uv_button_ownership_v11_506.js').read_text('utf8')
-    assert 'SE506_UV_BUTTON_OWNERSHIP_START' in guard
-    html=once(html,'  function ensurePanel(){',
-              guard+'\n  function ensurePanel(){','legacy UV toolbar ownership')
+    # The inherited native UV actions are already scoped correctly in the
+    # built engine. The atlas preview itself still depends on a rendered mesh
+    # and the shared prerequisite wrapper fails to enable the ready state.
     # Candidate atlas is generated directly from serialized topologyMesh. It
     # does not need a rendered Three.js mesh instance to be present.
     html=once(html,
@@ -74,9 +71,9 @@ def apply(html):
     notes['history']=[x for x in notes.get('history',[]) if x.get('version')!='v11.505']
     notes['history'].insert(0,{'version':'v11.505','changes':notes.get('changes',[])})
     notes.update(version='v11.506',date='2026-11-18',
-      title='UV Editor button ownership and actionable atlas preview',
+      title='UV atlas preview state and actionable editable prerequisites',
       changes=[
-        'Restrict legacy UV toolbar disabled-state updates to its own five native buttons, not nested UV Preview or Atlas controls.',
+        'Keep the atlas preview action enabled for saved editable topology even before the corresponding Three.js mesh is rendered.',
         'Allow the UV island preview to use the selected saved topology mesh even when its 3D render instance is temporarily missing.',
         'Keep the primary Preview UV atlas action clickable; safely offer conversion and continuation or explain a blocked prerequisite.',
         'Leave Apply, Cancel and Export guide disabled until a valid atlas preview exists; never apply geometry or texture changes without confirmation.',
