@@ -74,8 +74,9 @@ const se513SkinMath=(()=>{
    if(!next)return null;
    if(next.indices.some((n,k)=>n!==old.indices[k])||
       next.weights.some((w,k)=>Math.abs(w-old.weights[k])>1e-7)){
-    resultIndices.splice(i*4,4,...next.indices);
-    resultWeights.splice(i*4,4,...next.weights);
+    for(let k=0;k<4;k++){
+     resultIndices[i*4+k]=next.indices[k];resultWeights[i*4+k]=next.weights[k];
+    }
     changed++;
    }
   }
