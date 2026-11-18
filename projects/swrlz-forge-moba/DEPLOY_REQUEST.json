@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT (owner-approved)",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.516",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_516_RIG_PRECISION",
-  "reason": "Deploy sealed 493-patch §E v11.516 with passing generic Three169 complex-mesh rebind/pose/reset, 2D + native immersive per-vertex and region influence editing, live native joint-weight visualization, and existing WebXR/menu/skin-weight regressions. Quest 2 physical acceptance remains pending.",
-  "sourceCommit": "3b9d73b2b9b8bb7c3ac9ccbd6cc3dcdc1a4dd613",
-  "sourceIntegritySha256": "e053301cb5487c9a115b819699285ef15b8ddb1a5d7c1ef67e63d299e74c3b35"
+  "releaseVersion": "v11.517",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_517_XR_PROJECTS_ROTATION",
+  "reason": "Deploy source-sealed §E v11.517 (494 patches) with successful Three169 VR native menu and rig regressions, authenticated on-device/Google/starter project browsing, guarded in-session immersive model switch and local recovery, and independent selected-model Rotate vs WebXR reference orbit. Physical Quest acceptance remains pending.",
+  "sourceCommit": "b25cb671882ec70b490d04937aa6ac257a141f90",
+  "sourceIntegritySha256": "92257776aaa75b90ae6d5a09e782ffb7226adb4864bbdcae83501e1c26f2da81"
 }
