@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT (owner-approved)",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.506",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_506_UV_BUTTON_OWNERSHIP",
-  "reason": "Prevent inherited UV controls from greying out nested atlas actions; preserve independent preview/apply state and resume prerequisites safely.",
-  "sourceCommit": "f8f398c39b706b0ae70315fdfbac4bf60d59a4a0",
-  "sourceIntegritySha256": "01d4daf1780e8938a6f8d2ef1f0c94744be5a978171124f0ef51613037beedba"
+  "releaseVersion": "v11.507",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_507_MODEL_TOOL_RAIL_RECOVERY",
+  "reason": "Publish verified native Modeling tool rail recovery on mobile and desktop, preserving v11.506 UV fixes.",
+  "sourceCommit": "4e28e11d58544462010116e68414fe8f222c3d63",
+  "sourceIntegritySha256": "1f0385df04afb2d066b9b1d89bb52fc36ee8b66dc516d7ae7b01581ee57a8e42"
 }
