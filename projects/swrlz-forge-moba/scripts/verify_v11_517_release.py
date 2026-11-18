@@ -9,7 +9,7 @@ ap.add_argument('--request',action='store_true')
 args=ap.parse_args()
 m=json.loads((root/'source-manifest.json').read_text('utf8'))
 assert m['name']=='§wyrl§ Engine v11.517'
-assert m['finalArtifact']=='swyrl_engine_v11_516.html'
+assert m['finalArtifact']=='swyrl_engine_v11_517.html'
 assert len(m['patches'])==494
 assert m['patches'][-18:]==[
  'patches/v11_500_connected_rig_weights.py',
@@ -120,7 +120,7 @@ assert len(scene['project']['modelAtelier']['parts'])==1
 if args.request:
  req=json.loads((root/'DEPLOY_REQUEST.json').read_text('utf8'))
  assert req['releaseVersion']=='v11.517'
- assert req['deployMarker']=='SWYRL_ENGINE_DEPLOY_MARKER: V11_516_RIG_PRECISION'
+ assert req['deployMarker']=='SWYRL_ENGINE_DEPLOY_MARKER: V11_517_XR_PROJECTS_ROTATION'
  assert req['target']=='kamiloki/swrlz-forge-moba'
  assert req['sourceIntegritySha256']==m['finalSha256']
  assert len(req.get('sourceCommit',''))==40
