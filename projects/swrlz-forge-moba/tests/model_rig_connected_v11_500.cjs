@@ -3,7 +3,7 @@ const fs=require('node:fs'),vm=require('node:vm'),path=require('node:path'),asse
 const root=path.resolve(__dirname,'..'),source=fs.readFileSync(path.join(root,'runtime/model_rig_connected_math_v11_500.js'),'utf8');
 const sandbox={window:{}};vm.runInNewContext(source,sandbox);
 const math=sandbox.window.SWYRL_ENGINE_RIG_CONNECTED_MATH_500;
-assert(math?.solve&&math?.snapshot&&math?.apply);
+assert(math?.solve&&math?.snapshot&&math?.apply&&math?.weightOf);
 const approx=(a,b)=>assert(Math.abs(a-b)<1e-5,String(a)+' != '+String(b));
 const vecApprox=(a,b)=>a.forEach((v,i)=>approx(v,b[i]));
 const distance=(a,b)=>Math.hypot(...a.map((x,i)=>x-b[i]));
@@ -50,4 +50,8 @@ assert(flip);math.apply(rig,flip);
 approx(distance(byId('lower'),byId('mid')),1);
 approx(distance(byId('mid'),byId('tip')),1);
 assert(rig.bones.every(b=>b.rest.every(Number.isFinite)));
-console.log('SE500_CONNECTED_BONE_MATH_PASS',JSON.stringify({childrenPreserved:true,rootMovesWholeRig:true,sourceUnchanged:true,undoRestores:true,lockedSegments:true}));
+approx(math.weightOf([0,2,3,2],[.1,.2,.3,.4],2),.6);
+approx(math.weightOf([0,2,3,2],[.1,.2,.3,.4],1),0);
+approx(math.weightOf([0,1,2,3],[.1,.2,.3,.4],3),.4);
+assert.equal(math.weightOf([0,1],[.2,.8],0),0);
+console.log('SE500_CONNECTED_BONE_MATH_PASS',JSON.stringify({childrenPreserved:true,rootMovesWholeRig:true,sourceUnchanged:true,undoRestores:true,lockedSegments:true,weightedVertices:true}));
