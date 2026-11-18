@@ -146,8 +146,8 @@ def apply(html):
  function dispose(){
   clearWeightViz();""",
    'reuse existing XR joint gizmo scene for live color-weighted vertices')
-  s=one(s,"handles.group.updateWorldMatrix(true,true);",
-        "handles.group.updateWorldMatrix(true,true);syncWeightViz();",
+  s=one(s,"  handles.group.updateWorldMatrix(true,true);\n }\n function choose(id){",
+        "  handles.group.updateWorldMatrix(true,true);syncWeightViz();\n }\n function choose(id){",
         'animate influence preview along actual skinned bone deformation')
   s=one(s,"let paintMode='add',radius=.18,strength=.16,undoStack=[],previous=new Map();",
         "let paintMode='add',selection='region',radius=.18,strength=.16,undoStack=[],previous=new Map();",
