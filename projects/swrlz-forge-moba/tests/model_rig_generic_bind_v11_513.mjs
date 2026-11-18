@@ -37,7 +37,7 @@ vm.runInNewContext(source,vm.createContext(context));
 const mesh=context.se220RigMesh(part);mesh.userData.atelierId=part.id;
 mesh.position.fromArray(part.position);rootNode.add(mesh);
 const plain=context.se220RigMesh({...part,id:'unrelated-part'});
-assert.equal(plain.isSkinnedMesh,false,'non-target mesh must remain independent of cloth skeleton');
+assert(!plain.isSkinnedMesh&&plain.isMesh,'non-target mesh must remain an ordinary independent Mesh');
 context.se220RigBind();
 const pos=mesh.geometry.getAttribute('position');
 const world=(id)=>new THREE.Vector3().fromBufferAttribute(pos,id).applyMatrix4(mesh.matrixWorld);
