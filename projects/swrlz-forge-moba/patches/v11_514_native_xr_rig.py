@@ -36,7 +36,10 @@ def apply(html):
     ['rig-undo','Undo rig edit'],['rig','Bone posing'],['exit','Exit VR']
    ],
 """
- ui=once(ui,'   sculpt:[\n',pages+'   sculpt:[\n','native UI pages')
+ import re
+ hits=list(re.finditer(r'(?m)^[ \t]*sculpt\s*:\s*\[',ui))
+ if len(hits)!=1:raise AssertionError(('native rig page insertion',len(hits)))
+ ui=ui[:hits[0].start()]+pages+ui[hits[0].start():]
  ui=once(ui,"['views','Display'],['aim','Pointer aim'],['help','Guide'],",
             "['views','Display'],['rig','Rigging'],['help','Guide'],",'studio tab entry')
  ui=once(ui,"['views','Display'],['aim','Pointer aim'],['help','Guide']]",
