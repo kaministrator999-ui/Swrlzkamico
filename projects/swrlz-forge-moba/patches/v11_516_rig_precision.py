@@ -51,6 +51,18 @@ def apply(html):
    });
    $('se513PaintArm').addEventListener('click',()=>arm(!armed));""",
    '2D target state update')
+  s=one(s,
+   "idx.needsUpdate=true;w.needsUpdate=true;\n  mesh.skeleton?.update();\n  return true;",
+   """idx.needsUpdate=true;w.needsUpdate=true;
+  mesh.skeleton?.update();
+  // Keep existing selected-bone influence colors live without a second GUI.
+  const now=performance.now();
+  if(!session.overlayRefreshAt||now-session.overlayRefreshAt>=100){
+   session.overlayRefreshAt=now;
+   $('se500RefreshVertices')?.click();
+  }
+  return true;""",
+   'throttled live 2D weight visualization')
   s=one(s,'const result=se513SkinMath.region(','const result=se516SkinPrecision.region(',
         '2D target algorithm')
   s=one(s,'point.toArray(),radius,session.boneIndex,change,session.rig.bones.length,pose);',
