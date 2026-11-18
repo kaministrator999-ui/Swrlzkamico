@@ -69,6 +69,12 @@ const se500RestMath=(()=>{
   return {bones,envelopes,affected:chosen.size,
    locked:!!parent&&!!lockLength,selected:bones.find(b=>b.id===id)?.rest};
  }
+ function weightOf(indices,weights,boneIndex){
+  if(!Array.isArray(indices)||!Array.isArray(weights)||indices.length!==4||weights.length!==4)return 0;
+  let sum=0;
+  for(let i=0;i<4;i++)if(indices[i]===boneIndex&&Number.isFinite(weights[i])&&weights[i]>0)sum+=weights[i];
+  return Math.min(1,Math.max(0,sum));
+ }
  function snapshot(rig){
   return {bones:rig.bones.map(b=>({id:b.id,rest:b.rest.slice()})),
    envelopes:(rig.envelopes||[]).map((e,index)=>({index,center:e.center.slice()}))};
@@ -86,6 +92,6 @@ const se500RestMath=(()=>{
   }
   return true;
  }
- return Object.freeze({solve,snapshot,apply,descendants,quaternionBetween,rotate});
+ return Object.freeze({solve,snapshot,apply,descendants,quaternionBetween,rotate,weightOf});
 })();
 window.SWYRL_ENGINE_RIG_CONNECTED_MATH_500=se500RestMath;
