@@ -1,0 +1,53 @@
+name: Verify §E v11.513 rigging source and static package
+on:
+  push:
+    branches:
+      - feat/se-vr-qa-513-rig-weight-accuracy
+    paths:
+      - .github/workflows/verify-engine-v11-513-draft.yml
+      - projects/swrlz-forge-moba/patches/v11_513_rig_skin_weights.py
+      - projects/swrlz-forge-moba/runtime/model_rig_skin_math_v11_513.js
+      - projects/swrlz-forge-moba/runtime/model_rig_weight_studio_v11_513.js
+      - projects/swrlz-forge-moba/tests/model_rig_skin_weight_v11_513.cjs
+      - projects/swrlz-forge-moba/tests/model_rig_persisted_skin_v11_513.cjs
+      - projects/swrlz-forge-moba/tests/model_rig_generic_bind_v11_513.mjs
+      - projects/swrlz-forge-moba/scripts/verify_v11_513_release.py
+      - projects/swrlz-forge-moba/scripts/package_static_delivery_v11_513.py
+      - projects/swrlz-forge-moba/source-manifest.json
+permissions:
+  contents: read
+jobs:
+  sealed-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 16
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Verify v11.513 exact sealed source and existing regressions
+        run: |
+          python projects/swrlz-forge-moba/scripts/verify_v11_513_release.py --output /tmp/se513-sealed
+      - name: Test actual Three.js 169 neutral bind and posed generic meshes
+        run: |
+          npm install --prefix /tmp/se513-three --no-save --ignore-scripts --silent three@0.169.0
+          node projects/swrlz-forge-moba/tests/model_rig_generic_bind_v11_513.mjs /tmp/se513-three/node_modules/three/build/three.module.js /tmp/se513-sealed/index.html
+      - name: Verify under-10MB browser static package and script
+        run: |
+          python projects/swrlz-forge-moba/scripts/package_static_delivery_v11_513.py --output /tmp/se513-sealed
+          node --check /tmp/se513-sealed/swrlz-engine-v11.513.js
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          root=Path('/tmp/se513-sealed')
+          receipt=json.loads((root/'SOURCE.json').read_text('utf8'))
+          assert receipt['sourceVersion']=='§wyrl§ Engine v11.513'
+          assert receipt['finalBytes']==10800369
+          assert receipt['finalSha256']=='94419930e9ff77fa49b84efc638f372542b012c5b901c7859910aa1e0a08ac4b'
+          assert receipt['staticDelivery']['moduleBytes']<10000000
+          print('SE513_SEALED_SOURCE',receipt['finalSha256'])
+          print('SE513_DELIVERY_MODULE_BYTES',receipt['staticDelivery']['moduleBytes'])
+          PY
