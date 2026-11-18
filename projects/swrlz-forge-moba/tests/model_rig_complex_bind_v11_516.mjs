@@ -62,7 +62,7 @@ for(const [label,factory] of fixtures){
   return v.applyMatrix4(mesh.matrixWorld);
  };
  const assertNeutral=tag=>{
-  modelRoot.updateWorldMatrix(true,true);
+  modelRoot.updateMatrixWorld(true);
   for(let i=0;i<pos.count;i++){
    const d=unskinned(i).distanceTo(skinned(i));
    assert(d<3e-5,label+': '+tag+' bind vertex '+i+' drift '+d);
