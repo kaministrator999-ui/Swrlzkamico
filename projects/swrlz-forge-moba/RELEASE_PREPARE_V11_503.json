@@ -1,0 +1,10 @@
+{
+  "schema": "swrlz-forge-release-prepare-v1",
+  "requestedBy": "ChatGPT (owner-approved)",
+  "releaseVersion": "v11.503",
+  "purpose": "Seam-aware per-mesh front/back/brim UV atlas with independent transforms and reversible preview",
+  "expectedParent": "v11.502",
+  "preserveExistingProjects": true,
+  "trigger": "seal-engine-v11-503-uv-atlas",
+  "revision": 1
+}
