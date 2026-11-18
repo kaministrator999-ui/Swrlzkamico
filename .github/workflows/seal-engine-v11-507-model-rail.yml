@@ -2,7 +2,7 @@ name: Seal Engine v11.507 Modeling Rail
 on:
   workflow_dispatch:
   push:
-    branches: [fix/engine-v11-507-model-tool-rail-live]
+    branches: [fix/engine-v11-507-tool-rail-live]
 permissions:
   contents: write
 jobs:
@@ -12,7 +12,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: fix/engine-v11-507-model-tool-rail-live
+          ref: fix/engine-v11-507-tool-rail-live
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
@@ -38,4 +38,4 @@ jobs:
           git add projects/swrlz-forge-moba/source-manifest.json
           if git diff --cached --quiet; then exit 0; fi
           git commit -m "seal(engine): exact v11.507 modeling rail source"
-          git push origin HEAD:fix/engine-v11-507-model-tool-rail-live
+          git push origin HEAD:fix/engine-v11-507-tool-rail-live
