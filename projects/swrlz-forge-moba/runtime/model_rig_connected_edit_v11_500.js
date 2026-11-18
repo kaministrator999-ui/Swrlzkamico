@@ -70,13 +70,13 @@ const se500RigEdit=(()=>{
   }
   overlay.root.visible=true;
   overlay.scene.updateMatrixWorld(true);
+  const toModel=new THREE.Matrix4().copy(modelRoot.matrixWorld).invert();
   const positions=overlay.points.geometry.getAttribute('position');
   for(let i=0;i<overlay.samples.length;i++){
    const item=overlay.samples[i],mesh=item.mesh;
    const vertex=point.fromBufferAttribute(mesh.geometry.getAttribute('position'),item.index);
    if(typeof mesh.applyBoneTransform==='function')mesh.applyBoneTransform(item.index,vertex);
-   vertex.applyMatrix4(mesh.matrixWorld);
-   modelRoot.worldToLocal(vertex);
+   vertex.applyMatrix4(mesh.matrixWorld).applyMatrix4(toModel);
    positions.setXYZ(i,vertex.x,vertex.y,vertex.z);
   }
   positions.needsUpdate=true;
@@ -109,7 +109,8 @@ const se500RigEdit=(()=>{
    '<label class="se500-check"><input id="se500WeightsToggle" type="checkbox" checked> Show attached mesh vertices</label>'+
    '<label>Minimum bone influence <output id="se500ThresholdValue">12%</output>'+
    '<input id="se500Threshold" type="range" min="0.01" max="0.95" step="0.01" value="0.12"></label>'+
-   '<small id="se500WeightsCount" aria-live="polite"></small>'+
+   '<small id="se500WeightsCount" aria-live="polite"></small>'+ 
+   '<small>Color: cyan = light influence · pink = stronger influence</small>'+
    '<label class="se500-check"><input id="se500LockLength" type="checkbox" checked> Keep bone length (move connected chain)</label>'+
    '<div class="se500-actions"><button type="button" id="se500UndoRest">Undo bone placement</button>'+
    '<button type="button" id="se500RefreshVertices">Refresh weights</button></div>'+
