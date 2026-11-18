@@ -24,7 +24,8 @@ def apply(html):
     assert 'SE503_UV_ISLAND_MATH_START' in code
     assert 'SE503_UV_ISLAND_UI_END' in code
     html=once(html,'  function ensurePanel(){',code+'\n  function ensurePanel(){')
-    html=once(html,'</head>','<style id="se503UVAtlasStyle">\n'+style+'\n</style>\n</head>')
+    assert '</head>' in html and html.index('</head>')<html.index('<body'), 'missing document head'
+    html=html.replace('</head>','<style id="se503UVAtlasStyle">\n'+style+'\n</style>\n</head>',1)
     for old,new in (
         ('SWYRL_ENGINE_DEPLOY_MARKER: V11_502_UV_TOUCH_RESIZE',MARKER),
         ('ENGINE · MAKER v11.502','ENGINE · MAKER v11.503'),
