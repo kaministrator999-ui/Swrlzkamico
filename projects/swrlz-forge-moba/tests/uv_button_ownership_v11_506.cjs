@@ -17,7 +17,7 @@ const names={'#se336UVName':{textContent:''},'#se336UVHasPaint':{textContent:''}
 const uvRoot={
  querySelector:s=>names[s],
  querySelectorAll:s=>{
-  if(s==='.se336-uv-actions > button')return native;
+  if(s==='.se336-uv-actions button')return native;
   if(s==='button')return native.concat(foreign);
   throw Error('Unexpected legacy selector: '+s);
  }
@@ -30,10 +30,10 @@ const baseSe336=Function('document','se336SelectedMesh',
  se336Doc,
  ()=>hasRender?{part:{name:'Hat',uvPaintPNG:paint?'png':undefined}}:null
 );
-const se336=Function('se336UpdateUI','document','se503Refresh',
- extract('const se506Prior336UpdateUI=se336UpdateUI;',
-         '/* SE506_UV_BUTTON_OWNERSHIP_END */')+
- '\nreturn se336UpdateUI;')(baseSe336,se336Doc,()=>{});
+const se336=baseSe336;
+assert.ok(extract('function se336UpdateUI() {','function se336InstallUI()')
+ .includes("root.querySelectorAll('.se336-uv-actions button')"),
+ 'compiled legacy toolbar already scopes its own buttons');
 const snapshot=()=>foreign.map(x=>x.disabled);
 const baseline=snapshot();
 se336();
