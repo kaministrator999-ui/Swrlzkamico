@@ -42,6 +42,7 @@ const vmctx=vm.createContext({window:{},structuredClone,Date,Math,
  summaryName:x=>String(x||''),se175Restore:(row,state)=>{recovered++;current=structuredClone(row.data);vmctx.dirty=state.dirty;},
  loadCloud:async id=>{if(!cloudAuth)throw Error('Cloud disconnected');current=doc('Cloud Model');return id==='cloud-model';},
 });
+Object.defineProperty(vmctx,'currentProject',{get:()=>current.project});
 const run=async()=>{
  vm.runInContext(source,vmctx);
  const api=vmctx.window.SWYRL_ENGINE_VR_PROJECT_LIBRARY_517;
