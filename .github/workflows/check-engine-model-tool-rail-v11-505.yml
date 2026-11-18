@@ -1,0 +1,41 @@
+name: Check Engine Modeling Tool Rail v11.505
+on:
+  push:
+    branches: [fix/engine-v11-505-model-tool-rail]
+    paths:
+      - 'projects/swrlz-forge-moba/**'
+      - '.github/workflows/check-engine-model-tool-rail-v11-505.yml'
+  pull_request:
+    paths:
+      - 'projects/swrlz-forge-moba/**'
+      - '.github/workflows/check-engine-model-tool-rail-v11-505.yml'
+  workflow_dispatch:
+jobs:
+  rail:
+    runs-on: ubuntu-latest
+    timeout-minutes: 16
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install browser-testing dependency
+        run: python -m pip install --quiet playwright==1.56.0
+      - name: Verify existing rail behavior in desktop-site and phone sizes
+        run: python projects/swrlz-forge-moba/tests/model_tool_rail_recovery_v11_505.py
+      - name: Assemble the full current Engine source
+        run: python projects/swrlz-forge-moba/build_space.py --output /tmp/se505-rail
+      - name: Assert built modeling rail and original studio isolation
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import hashlib
+          h=Path('/tmp/se505-rail/index.html').read_text('utf-8')
+          assert 'SWYRL_ENGINE_DEPLOY_MARKER: V11_505_MODEL_TOOL_RAIL_RECOVERY' in h
+          assert 'swyrl.engine.modeler.tool-rail-fold.v2' in h
+          assert "if(!event.target.closest('button')||event.target.closest('#se473RailFold'))return;" in h
+          assert 'SE505_MODEL_TOOL_RAIL_RECOVERY_STYLES_END' in h
+          assert 'SWYRL_ENGINE_MINI_STUDIOS_496' in h
+          assert 'data-project-template="smooth-witch-hat"' in h
+          print('SE505_RAIL_BUILD_PASS',len(h.encode('utf-8')),hashlib.sha256(h.encode('utf-8')).hexdigest())
+          PY
