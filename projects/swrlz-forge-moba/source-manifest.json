@@ -502,8 +502,8 @@
     "patches/v11_508_uv_degenerate_preview.py",
     "patches/v11_509_rail_reexpand.py"
   ],
-  "finalBytes": null,
-  "finalSha256": null,
+  "finalBytes": 10762508,
+  "finalSha256": "26367c6cc6273c1017aeaa2a428ce5c51cf21a50a637adaf7067fab3f9c1b03e",
   "previousFinalSha256": "db31f6261c8afc118506e72dd44e3f697dc89aebea9ffddc1740042c1dda6824",
   "previousFinalBytes": 10738620,
   "previousManifestFinalSha256": "f3dd6ef639829262263c5d8d2a099d887f15846c0b32cc44165267058fb5e937",
