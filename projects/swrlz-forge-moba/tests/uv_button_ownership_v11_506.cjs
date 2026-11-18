@@ -23,11 +23,17 @@ const uvRoot={
  }
 };
 let hasRender=false,paint=false;
-const se336=Function('document','se336SelectedMesh',extract('function se336UpdateUI() {','function se336InstallUI()')+
+const se336Doc={getElementById:()=>uvRoot};
+const baseSe336=Function('document','se336SelectedMesh',
+ extract('function se336UpdateUI() {','function se336InstallUI()')+
  '\nreturn se336UpdateUI;')(
-  {getElementById:()=>uvRoot},
-  ()=>hasRender?{part:{name:'Hat',uvPaintPNG:paint?'png':undefined}}:null
- );
+ se336Doc,
+ ()=>hasRender?{part:{name:'Hat',uvPaintPNG:paint?'png':undefined}}:null
+);
+const se336=Function('se336UpdateUI','document','se503Refresh',
+ extract('const se506Prior336UpdateUI=se336UpdateUI;',
+         '/* SE506_UV_BUTTON_OWNERSHIP_END */')+
+ '\nreturn se336UpdateUI;')(baseSe336,se336Doc,()=>{});
 const snapshot=()=>foreign.map(x=>x.disabled);
 const baseline=snapshot();
 se336();
