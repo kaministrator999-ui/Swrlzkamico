@@ -1,5 +1,5 @@
 """§E v11.499: repair rig/animation UI leakage and show selectable 3D bones.
-Additive repair on v11.497; source mesh, UV and rig payload untouched.
+Additive repair on v11.498; source mesh, UV and rig payload untouched.
 """
 from pathlib import Path
 import json
@@ -13,7 +13,7 @@ def apply(html):
     assert 'SWYRL_ENGINE_DEPLOY_MARKER: V11_498_HAT_PROPORTIONS' in html
     js=(ROOT/'runtime/model_rig_studio_polish_v11_499.js').read_text('utf8')
     css=(ROOT/'runtime/model_rig_studio_polish_v11_499.css').read_text('utf8')
-    assert 'window.SWYRL_ENGINE_RIG_POLISH_498=se499RigPolish' in js
+    assert 'window.SWYRL_ENGINE_RIG_POLISH_499=se499RigPolish' in js
     assert 'data-se499-rig-kind=object' in css
     html=once(html,'window.SWYRL_ENGINE_MINI_STUDIOS_496=se496MiniStudios;',
       'window.SWYRL_ENGINE_MINI_STUDIOS_496=se496MiniStudios;\n'+js,
