@@ -1,0 +1,55 @@
+name: §E VR QA v11.512 draft source check
+on:
+  push:
+    branches:
+      - feat/se-vr-qa-512-trigger-gizmos
+    paths:
+      - .github/workflows/verify-engine-v11-512-draft.yml
+      - projects/swrlz-forge-moba/runtime/model_vr_trigger_gizmo_v11_512.js
+      - projects/swrlz-forge-moba/runtime/model_vr_browser_pick_v11_512.js
+      - projects/swrlz-forge-moba/runtime/model_display_platform_v11_512.js
+      - projects/swrlz-forge-moba/tests/model_vr_browser_platform_v11_512.cjs
+      - projects/swrlz-forge-moba/scripts/verify_v11_512_release.py
+      - projects/swrlz-forge-moba/scripts/package_static_delivery_v11_512.py
+      - projects/swrlz-forge-moba/patches/v11_512_vr_trigger_gizmo.py
+      - projects/swrlz-forge-moba/tests/model_vr_trigger_gizmo_v11_512.cjs
+      - projects/swrlz-forge-moba/source-manifest.json
+permissions:
+  contents: read
+jobs:
+  focused-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify candidate source JavaScript and gesture tests
+        run: |
+          node --check projects/swrlz-forge-moba/runtime/model_vr_trigger_gizmo_v11_512.js
+          node --check projects/swrlz-forge-moba/runtime/model_vr_browser_pick_v11_512.js
+          node --check projects/swrlz-forge-moba/runtime/model_display_platform_v11_512.js
+          node projects/swrlz-forge-moba/tests/model_vr_browser_platform_v11_512.cjs
+          node --check projects/swrlz-forge-moba/tests/model_vr_trigger_gizmo_v11_512.cjs
+          node projects/swrlz-forge-moba/tests/model_vr_trigger_gizmo_v11_512.cjs
+          python -m py_compile projects/swrlz-forge-moba/patches/v11_512_vr_trigger_gizmo.py
+      - name: Verify exact sealed v11.512 release and browser static delivery
+        run: |
+          python projects/swrlz-forge-moba/scripts/verify_v11_512_release.py --output /tmp/se512-sealed
+          python projects/swrlz-forge-moba/scripts/package_static_delivery_v11_512.py --output /tmp/se512-sealed
+          node --check /tmp/se512-sealed/swrlz-engine-v11.512.js
+          python - <<'PY'
+          from pathlib import Path
+          import json,hashlib
+          root=Path('/tmp/se512-sealed')
+          receipt=json.loads((root/'SOURCE.json').read_text())
+          assert receipt['sourceVersion']=='§wyrl§ Engine v11.512'
+          assert receipt['finalSha256']=='4aa1a8dfe46113fb2d00ad8eeaf078381763ccf89e97b30e4d20602bab2c8152'
+          assert receipt['staticDelivery']['moduleBytes']<10_000_000
+          print('SE512_VERIFIED_SOURCE',receipt['finalSha256'])
+          print('SE512_STATIC_BYTES',receipt['staticDelivery']['moduleBytes'])
+          PY
