@@ -7,7 +7,7 @@ import json
 
 ROOT = Path(__file__).resolve().parents[1]
 MARKER = 'SWYRL_ENGINE_DEPLOY_MARKER: V11_504_SMOOTH_WITCH_HAT'
-PREVIOUS_SHA256 = 'f3dd6ef639829262263c5d8d2a099d887f15846c0b32cc44165267058fb5e937'
+PREVIOUS_SHA256 = 'db31f6261c8afc118506e72dd44e3f697dc89aebea9ffddc1740042c1dda6824'
 
 def once(source, old, new, label):
     count = source.count(old)
