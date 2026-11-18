@@ -3,13 +3,13 @@ on:
   push:
     branches: [main]
     paths:
-      - "projects/swrlz-forge-moba/RELEASE_PREPARE_V11_505.json"
+      - "projects/swrlz-forge-moba/RELEASE_PREPARE_V11_506.json"
   workflow_dispatch:
 permissions:
   contents: write
   actions: write
 concurrency:
-  group: engine-v11-505-uv-button-ownership
+  group: engine-v11-506-uv-button-ownership
   cancel-in-progress: false
 jobs:
   verify-seal-deploy:
@@ -52,7 +52,7 @@ jobs:
           root=Path('projects/swrlz-forge-moba')
           m=json.loads((root/'source-manifest.json').read_text('utf8'))
           assert m['name']=='§wyrl§ Engine v11.506'
-          assert m['patches'][-1]=='patches/v11_506_action_prerequisites.py'
+          assert m['patches'][-1]=='patches/v11_506_uv_button_ownership.py'
           assert len(m['finalSha256'])==64 and m['finalBytes']>100000
           request={
             'schema':'swrlz-forge-deploy-request-v1',
