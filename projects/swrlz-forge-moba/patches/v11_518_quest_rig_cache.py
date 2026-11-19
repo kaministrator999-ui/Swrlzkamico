@@ -49,10 +49,6 @@ def apply(html):
    s=re.sub(r'\b'+old+r'\b',replacement,s)
   return aliases+s+'\n})();\n'
  html=section(html,'/* SE514_NATIVE_XR_RIG_START','/* SE514_NATIVE_XR_RIG_END */',lambda s:vr(s))
- # The old end marker is AFTER the transformed body. Terminate the wrapper
- # after the ORIGINAL block end marker, not before it.
- html=one(html,'/* SE514_NATIVE_XR_RIG_END */\n})();',
-  '/* SE514_NATIVE_XR_RIG_END */\n})();','scope closure terminator')
  # Embed the version-checked account cache within the existing verified
  # account closure, after previous credential-free §E project helpers.
  html=one(html,'/* SE517_PROJECT_LIBRARY_END */',
