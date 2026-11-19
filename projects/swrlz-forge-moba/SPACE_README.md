@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.520
+title: §wyrl§ Engine v11.521
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,16 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §WYRL§ Engine v11.521 · Labs and persistent edit history (2026-11-19)
+
+**Modeling Studio immersive WebXR:** The original grippable three-panel menu now keeps **Labs / Projects / Display** above contextual Modeling, Rigging, Animation, or Texture & Materials Lab tools. Only lab-specific middle rows change. Modeling consolidates Grab/Move/Rotate/Scale inside Transform; Save remains within Projects and Delete within Transform; **Undo / Redo** are the only permanent bottom actions.
+
+**Native project history:** Model Atelier persists an append-only edit journal inside the saved model document. Each authored edit, Undo, and Redo is separately recorded with its lab and target event; project switching restores the correct saved journal. Consecutive Undo/Redo acts on earlier eligible edits rather than its own log record. Inter-lab dependencies are checked before reversal; incompatible reverts are rejected to protect newer edits. Existing project content remains; historical actions predating this journal cannot be reconstructed.
+
+**Scope:** This release establishes the Lab hierarchy, core actions, and history persistence. Detailed Texture & Materials immersive controls and the full visual history browser are reserved for the subsequent submenu passes. Device-level Quest acceptance is pending. See `docs/VR_LABS_EDIT_JOURNAL_V11_521.md`.
+
+
 
 ## §WYRL§ Engine v11.520 · Quest VR interaction QA (2026-11-18)
 

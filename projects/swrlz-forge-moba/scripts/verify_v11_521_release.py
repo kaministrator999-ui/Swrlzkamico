@@ -9,7 +9,7 @@ ap.add_argument('--request',action='store_true')
 args=ap.parse_args()
 m=json.loads((root/'source-manifest.json').read_text('utf8'))
 assert m['name']=='§wyrl§ Engine v11.521'
-assert m['finalArtifact']=='swyrl_engine_v11_520.html'
+assert m['finalArtifact']=='swyrl_engine_v11_521.html'
 assert len(m['patches'])==498
 assert m['patches'][-22:]==[
  'patches/v11_500_connected_rig_weights.py',
@@ -34,7 +34,7 @@ assert m['patches'][-22:]==[
  'patches/v11_519_quest_browser_selection.py',
  'patches/v11_520_quest_interaction_qa.py',
  'patches/v11_521_model_labs_persistent_history.py']
-for rel in ('runtime/model_edit_journal_v11_521.js','runtime/model_vr_labs_v11_521.js'):
+for rel in ('runtime/model_edit_journal_v11_521.js','runtime/model_lab_native_bridge_v11_521.js','runtime/model_vr_labs_v11_521.js'):
  subprocess.run(['node','--check',str(root/rel)],check=True)
 subprocess.run(['node',str(root/'tests/model_project_edit_journal_v11_521.cjs')],check=True)
 for rel in ('runtime/model_vr_trigger_gizmo_v11_512.js',
@@ -111,6 +111,7 @@ for needle in (
   "['rig-weights','Weight painting']", 'se515SpatialPolish', 'se362PartCenter',
   'SE516_RIG_PRECISION_END','se516SkinPrecision','rig-select-mode',
   'SE517_PROJECT_LIBRARY_END',
+ 'SE521_PERSISTENT_EDIT_JOURNAL_END','SE521_MODEL_LAB_NATIVE_BRIDGE_END','SE521_MODEL_VR_LABS_END','swyrl-edit-journal-v1',
  'SE518_RIG_SCOPE_ACCESS_END','SE518_REVISION_CACHE_END','SE519_QUEST_BROWSER_TRANSFORM_END','SE520_QUEST_BROWSER_PICK_END','SE520_VR_INTERACTION_REPAIR_END','SE517_XR_PROJECT_BROWSER_END','se517XRProjects','project-open'
 ):assert needle in s,needle
 subprocess.run([sys.executable,str(root/'scripts/check_inline_js_syntax_v11_266.py'),str(out/'index.html')],check=True)
