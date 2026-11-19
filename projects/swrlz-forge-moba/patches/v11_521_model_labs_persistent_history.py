@@ -164,8 +164,8 @@ def apply(html):
    if(action.startsWith('texture-'))return 'views';""",
    'map new workspace operations to native controls')
   s=one(s,
-   "  function update(next){\n   lastState=next||{};",
-   "  function update(next){\n   renderLab(se340XR.se521Lab||model()?.editorWorkspace?.vrLab||'model');\n   lastState=next||{};",
+   "  function update(next){",
+   "  function update(next){\n   renderLab(se340XR.se521Lab||'model');",
    'refresh lab tool rail after project/lab changes')
   s=one(s,'   if(secondary){chooseOperation(secondary);return true;}',
    """   if(secondary){
