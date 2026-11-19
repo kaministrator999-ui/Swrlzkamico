@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT (owner-approved)",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.524",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_524_SELECT_MENU_CLEANUP",
-  "reason": "Owner-approved native immersive VR Select menu cleanup. Exactly Sweep, Lasso, Clear Selection; combine Front/Through into contextual third-stage native Lasso depth control; remove redundant Select within Select and Focus from Select; remove duplicated Clear Selection under Objects (Focus remains there). Keep reversible Left Trigger sweep, Left Grip lasso with front depth band and through depth, 32-part selection guard, B cancel, and all project history. Explicit Inspect selection mode prevents stray Sculpt/Draw gestures. Preserve native WebXR 3D menu and other Labs and Face Tools. Source-verified 501 patches, 10906464 bytes, SHA256 658d0a76b25327815217f56cc83bbabe254a48f9e79e0ffdfc9d9fd8d742db2f; compiled Select behavior, sculpt regression, inline-JS checks passed; owner Quest acceptance pending.",
-  "sourceCommit": "8e82fa5d8bc83ab7f6e30a990a712c0d75a40d9d",
-  "sourceIntegritySha256": "658d0a76b25327815217f56cc83bbabe254a48f9e79e0ffdfc9d9fd8d742db2f"
+  "releaseVersion": "v11.525",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_525_DISPLAY_MENU_GROUPS",
+  "reason": "Owner-approved immersive §E Display cleanup in existing 3-stage WebXR spatial menu: View Angles and Render Modes in the middle rail, separated by an actual visible divider and physical gap. View Angles third stage has seven working camera poses: front/back/left/right/top/bottom/isometric. Render Modes third stage has five distinct preview-only modes: Textured, Solid, Wireframe, X-Ray, Normals. Remove navigation/tool duplication (Focus, Aim, Studio, Guide, Exit VR) from these third-stage panels; preserve original headset exit control, native camera orbit, model materials, Undo/Redo, project histories, Labs, Sculpt, Select and Face Tools. Compiled native Display divider, menu routing and existing Sculpt/Select regressions passed; source integrity measured at 502 patches, 10908216 bytes, SHA-256 627074c5d9d6476c0633474513b52f756e28c73e2bbc158b71baa22765a5e2b5. Device-level Quest acceptance pending.",
+  "sourceCommit": "1126496af75038e8c28596689ed01ac1d5f89b0e",
+  "sourceIntegritySha256": "627074c5d9d6476c0633474513b52f756e28c73e2bbc158b71baa22765a5e2b5"
 }
