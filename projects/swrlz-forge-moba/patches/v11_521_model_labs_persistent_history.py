@@ -39,7 +39,7 @@ def apply(html):
    if c=='\\':i+=2;continue
    if c==quote:quote=None
   elif html.startswith('//',i):
-   k=html.find('\\n',i);i=len(html) if k<0 else k;continue
+   k=html.find('\n',i);i=len(html) if k<0 else k;continue
   elif html.startswith('/*',i):
    k=html.find('*/',i+2);i=len(html) if k<0 else k+2;continue
   elif c in ("'",'"','`'):quote=c
