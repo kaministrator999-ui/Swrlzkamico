@@ -1,3 +1,9 @@
+## §WYRL§ Engine v11.523 · Sculpt direction and redundant Exit cleanup (2026-11-19)
+
+**Modeling Lab → Sculpt:** Push / Pull is one brush with a native Direction control for Push In or Pull Out. Six distinct operators remain: Push / Pull, Translate, Inflate, Pinch, Flatten, Smooth. Source audit confirms Inflate uses each vertex normal; Push / Pull follows one brush axis.
+
+**Reduced redundancy:** Remove Indent as a separate brush, including controller cycling. Remove Exit VR from immersive native settings because Meta offers session Exit, while preserving the internal engine cleanup. Retain Radius, Strength, Falloff, Face Tools, Labs and persistent project edit history. Physical Quest acceptance pending.
+
 ## §WYRL§ Engine v11.522 · Immersive Sculpt brush menu (2026-11-19)
 
 **Modeling Lab → Sculpt:** Six brushes ordered Push, Translate, Inflate, Pinch, Flatten, Smooth. The third-stage native settings panel contains Radius −/+, Strength −/+ rather than duplicating the brush choices. Sculpt is focused on surface manipulation.
