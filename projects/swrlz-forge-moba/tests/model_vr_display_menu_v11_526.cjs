@@ -18,7 +18,7 @@ assert.deepEqual(pairs(group),[['views-angles','View Angles'],['views-render','R
 assert(stage.includes("SE525_DISPLAY_DIVIDER"),'Compiled visible divider missing');
 assert(stage.includes("paintMesh(submenu,'Display · angles / render separator'"),'Separator must be native world-space geometry');
 assert(stage.includes(".200,.006,0,.246"),'Divider must be located between groups');
-assert(stage.includes("item.mesh.position.y=category==='views'&&i===1?.212:.280-i*.049"),'Render row must leave physical separator gap');
+assert(stage.includes("item.mesh.position.y=category==='views'&&i===1?.212:category==='create-menu'&&i>=4?.280-i*.049-.027:.280-i*.049"),'Both Display and Create rows must leave their respective physical separator gaps');
 assert(stage.includes("displayDivider.mesh.visible=category==='views'&&submenuOpen"),
  'Divider must only appear when Display is opened');
 assert(stage.includes("if(action==='views-angles')return 'cameras'"));
