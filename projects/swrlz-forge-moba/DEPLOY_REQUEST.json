@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT (owner-approved)",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.522",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_522_SCULPT_BRUSH_MENU",
-  "reason": "Ship source-sealed §E v11.522 (499 ordered patches) for the immersive Modeling Lab Sculpt menu: six ordered surface brushes Push, Translate, Inflate, Pinch, Flatten, Smooth. Remove duplicate face-topology shortcuts from Sculpt; retain Inset, Extrude, Solidify, Subdivide and related commands under Face Tools. Preserve every native Sculpt modifier, including Indent, Radius −/+, Strength −/+, Falloff and Exit VR. Preserve the original native three-stage spatial menu, project-scoped Undo/Redo, all labs and controller actions. Targeted menu regression and inline JS parse passed with measured source bytes/SHA; hands-on Quest owner acceptance pending.",
-  "sourceCommit": "f3e857413174f868f8eea4514f67fa72d545a121",
-  "sourceIntegritySha256": "7a94b36f6f7c9bd8a26a172b86a138499e69235edda583a4f27f5413f1ad100b"
+  "releaseVersion": "v11.523",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_523_SCULPT_DIRECTION_CLEANUP",
+  "reason": "Owner-directed immersive VR Sculpt deduplication: audit shows Inflate has per-vertex normal displacement distinct from Pull; merge signed Push/Indent into one Push / Pull brush with Push In/Pull Out native direction control. Remove duplicate Indent from menu/controller cycle and redundant Exit VR buttons across native settings because the headset menu already provides exit; retain engine cleanup path. Preserve six separate surface operators, Radius/Strength/Falloff, Face Tools, Labs, project edit journal, native 3D menu and controllers. 500 source patches measured at 10904371 bytes SHA256 a404cd8668a0e5bc4699ca32c6741cdb6e42d2f9c0b7b8a5e17ea5688c3c4555. Compiled-menu and JS syntax checks passed; Quest hands-on acceptance pending.",
+  "sourceCommit": "4251aec1b3f9296cd1217735728e9bc277c8936f",
+  "sourceIntegritySha256": "a404cd8668a0e5bc4699ca32c6741cdb6e42d2f9c0b7b8a5e17ea5688c3c4555"
 }
