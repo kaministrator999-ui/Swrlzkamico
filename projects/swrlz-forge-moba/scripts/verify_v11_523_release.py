@@ -50,7 +50,7 @@ for rel in ('runtime/model_rig_skin_math_v11_513.js','runtime/model_rig_weight_s
 for rel in ('tests/model_rig_skin_weight_v11_513.cjs','tests/model_rig_persisted_skin_v11_513.cjs','tests/model_rig_precision_v11_516.cjs','tests/model_vr_project_library_v11_517.cjs','tests/model_vr_rotation_isolation_v11_517.cjs','tests/engine_cloud_revision_cache_v11_518.cjs','tests/model_quest_browser_transform_v11_519.cjs'):
  subprocess.run(['node',str(root/rel)],check=True)
 subprocess.run(['node','--check',str(root/'runtime/sorting_hat_sculpted_v11_497.js')],check=True)
-subprocess.run(['node','--check',str(root/'runtime/model_rig_studio_polish_v11_500.js')],check=True)
+subprocess.run(['node','--check',str(root/'runtime/model_rig_studio_polish_v11_499.js')],check=True)
 subprocess.run(['node','--check',str(root/'runtime/model_rig_connected_math_v11_500.js')],check=True)
 subprocess.run(['node','--check',str(root/'runtime/model_rig_connected_edit_v11_500.js')],check=True)
 subprocess.run(['node',str(root/'tests/model_rig_connected_v11_500.cjs')],check=True)
