@@ -104,7 +104,7 @@ def apply(html):
  # material, UV, texture, or selection itself to perform the stroke.
  def surface(s):
   return one(s,
-   "  return finish({distance:1.2,point:cast.ray.at(1.2,new THREE.Vector3())});\n }\n function se340Pressed",
+   "  return finish({distance:1.2,point:cast.ray.at(1.2,new THREE.Vector3())});\n}\nfunction se340Pressed",
    """  if(se340XR.mode==='sculpt'){
     let selected=null;
     for(const entry of entries){
