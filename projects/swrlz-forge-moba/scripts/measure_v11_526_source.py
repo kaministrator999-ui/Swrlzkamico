@@ -6,7 +6,7 @@ root=Path(__file__).resolve().parents[1]
 path=root/'source-manifest.json';original=path.read_text('utf8')
 m=json.loads(original)
 assert m['name']=='§wyrl§ Engine v11.526'
-assert len(m['patches'])==503 and m['patches'][-1]=='patches/v11_526_create_menu_groups.py'
+assert len(m['patches'])==503 and m['patches'][-1]=='patches/v11_526_create_menu_cleanup.py'
 m['finalBytes']=0;m['finalSha256']=''
 try:
  path.write_text(json.dumps(m,ensure_ascii=False,indent=2)+'\n','utf8')
@@ -26,4 +26,4 @@ finally:path.write_text(original,encoding='utf8')
 
 # The production manifest is sealed only after this exact source is measured.
 
-# Candidate measurement validates the visible divider and both settings pages.
+# Candidate measurement validates primitive/accessory separation and contextual pouch settings.
