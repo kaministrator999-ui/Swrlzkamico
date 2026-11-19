@@ -7,7 +7,7 @@ function between(a,b){const i=html.indexOf(a),j=html.indexOf(b,i+a.length);
 const stage=between('/* SE445_VR_PROGRESSIVE_TOOLS_START','/* SE445_VR_PROGRESSIVE_TOOLS_END');
 const native=between('/* SE360_MODEL_VR_UI_START','/* SE360_MODEL_VR_UI_END');
 const primitive=between('/* SE390_MODEL_VR_QUICK_CREATE_START','/* SE390_MODEL_VR_QUICK_CREATE_END');
-const accessory=between('/* SE410_MODEL_VR_ACCESSORY_START','/* SE410_MODEL_VR_ACCESSORY_END');
+const accessory=between('/* SE410_MODEL_VR_ACCESSORY_WORKSHOP_START','/* SE410_MODEL_VR_ACCESSORY_WORKSHOP_END');
 const pairs=s=>[...s.matchAll(/\['([^']+)','([^']+)'\]/g)].map(m=>[m[1],m[2]]);
 const createRow=stage.split('\n').find(s=>s.trim().startsWith("'create-menu':[["));
 assert(createRow,'Missing native Create operation row');
