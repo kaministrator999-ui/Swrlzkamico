@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT (owner-approved)",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.520",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_520_QUEST_SCULPT_TRIGGER_MENUS",
-  "reason": "Deploy source-sealed §E v11.520 (497 patches): immersive UV-painted mesh native sculpt with precise texture-aware contact and adaptive sparse brush radius; Quest Browser 2D mesh selection no longer hits visual BoxHelper; immersive Trigger held on already-selected model previews Move/Grab continuously with 14 mm tap deadzone, single release commit and native gizmo/menu priority; original three-stage spatial VR panel faces headset every frame without moving its world anchor. Prior v11.518 rig startup and account cache preserved. Compiled source, Three169, UV, rigging, input, projects and new four QA regressions passed. Physical Quest acceptance remains pending.",
-  "sourceCommit": "55ec51cd591d63344bf637d88a0d254046414a31",
-  "sourceIntegritySha256": "8b268e6c9e3371aa15b10145e209da444cf238bd799537dbf21dccce544755c4"
+  "releaseVersion": "v11.521",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_521_LABS_PROJECT_JOURNAL",
+  "reason": "Release source-sealed §E v11.521 (498 ordered patches): immersive Model Studio fixed Labs/Projects/Display top, contextual Modeling/Rigging/Animation/Texture & Materials middle, Undo/Redo bottom; grouped Transform tools and native Trigger/Grip; Save within Projects and guarded Delete within Transform. Native project-scoped append-only edit journal survives saved reloads, logs Undo and Redo without erasing originals, isolates labs, and rejects conflicting cross-lab reversals. Texture & Materials detailed immersive controls and visual history browsing remain for next submenu pass. Focused automated source, syntax and journal tests passed; Quest owner acceptance remains pending.",
+  "sourceCommit": "2ec07882dbb97f0db25023129a6e4b6cfd92f9ed",
+  "sourceIntegritySha256": "02c3c5be8fc3a6421a5fea7dc5ea679165817d012951e5d5c70824695e7f98e9"
 }
