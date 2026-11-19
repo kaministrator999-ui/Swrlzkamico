@@ -17,8 +17,8 @@ assert(row,'Missing native Modeling Lab Select operation rail');
 assert.deepEqual(pairs(row),[
  ['selector-sweep','Sweep'],['selector-lasso','Lasso'],['selection-clear','Clear Selection']
 ],'Select should expose exactly three purposeful actions');
-assert(stage.includes("detailsOpen=category==='inspect'?item.action==='selector-lasso':true"),
- 'Only Lasso should open the existing native settings panel');
+assert(stage.includes("detailsOpen=category==='inspect'?item.action==='selector-lasso':category==='create-menu'?item.action==='create-pouch':true"),
+ 'Only Lasso in Select and Pouch in Create should open contextual native settings');
 const objects=stage.split('\n').find(x=>x.trim().startsWith('objects:[['));
 assert(objects,'Missing Objects category');
 assert(!pairs(objects).some(x=>x[0]==='selection-clear'),'Clear Selection duplicated under Objects');
