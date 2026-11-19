@@ -73,9 +73,13 @@ def apply(html):
   """    const loaded=await se518CloudCache.load(choice.slice(6));
     if(!loaded)setStatus('Account project could not be loaded; current workspace preserved.',true);
     await se176RefreshProjects();""",'picker cloud load reuses verified cache')
- html=one(html,'const ok=await loadCloud(id);',
-  'const ok=await window.SWYRL_ENGINE_CLOUD_CACHE_518.load(id);',
-  'My Projects cards use same account revision cache')
+ # Earlier project card revisions may inline a differently named loader;
+ # the authenticated startup and My Projects selected-project handler are
+ # the stable v11.518 integration points. Do not patch an absent card call.
+ if html.count('const ok=await loadCloud(id);')==1:
+  html=one(html,'const ok=await loadCloud(id);',
+   'const ok=await window.SWYRL_ENGINE_CLOUD_CACHE_518.load(id);',
+   'optional legacy My Projects card')
  html=one(html,
   """    const choice=defaults();
     if(choice)void openSelected(choice);""",
