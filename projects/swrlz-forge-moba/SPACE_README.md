@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.525
+title: §wyrl§ Engine v11.526
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,16 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §WYRL§ Engine v11.526 · Immersive Create menu cleanup (2026-11-19)
+
+**Modeling Lab → Create:** The native three-stage WebXR middle menu now has only Cube, Sphere, Cylinder, Cone, then a visible physical separator followed by Hip Pouch. Shape placement still uses the existing preview ghost, controller sizing, fresh Trigger confirmation and B cancellation. Primitive choices do not open a redundant settings pane; no repeated shape controls.
+
+**Accessory creation:** Hip Pouch opens its real, contextual accessory panel (Body Shape, Flap & Details, Fit & Attach, Leather, Stitching, Emblem, Reset Shape); deeper accessory editing pages remain unchanged. Draw Outline remains under Draw and Duplicate under Objects. The Create page no longer includes those duplicated actions, repeated shape buttons or unrelated navigation.
+
+Project history, all other Labs, Select, Transform, Sculpt, Display, Face Tools, saved materials and the native VR menu architecture are preserved. Quest headset acceptance remains pending.
+
+
 
 ## §WYRL§ Engine v11.525 · Native VR Display menu with section divider (2026-11-19)
 
