@@ -22,30 +22,30 @@ def apply(html):
  assert 'SWYRL_ENGINE_DEPLOY_MARKER: V11_521_LABS_PROJECT_JOURNAL' in html
 
  def sculpt_operations(block):
-  start=block.index('    sculpt:[')
-  end=block.index("\n    'manual-mesh':",start)
-  assert block.count('    sculpt:[')==1
+  start=block.index('   sculpt:[')
+  end=block.index("\n   'manual-mesh':",start)
+  assert block.count('   sculpt:[')==1
   # Preserve all other categories; only substitute Sculpt's operation entries.
   replacement=(
-   "    // SE522_SCULPT_BRUSH_MENU: primary shaping -> detail refinement;\n"
-   "    // topology remains exclusively in Face Tools.\n"
-   "    sculpt:[['sculpt-push','Push'],['sculpt-translate','Translate'],"
+   "   // SE522_SCULPT_BRUSH_MENU: primary shaping -> detail refinement;\n"
+   "   // topology remains exclusively in Face Tools.\n"
+   "   sculpt:[['sculpt-push','Push'],['sculpt-translate','Translate'],"
    "['sculpt-inflate','Inflate'],['sculpt-pinch','Pinch'],"
    "['sculpt-flatten','Flatten'],['sculpt-smooth','Smooth']],")
   block=block[:start]+replacement+block[end:]
-  assert "    'manual-mesh':[['manual-convert','Make editable']" in block
+  assert "   'manual-mesh':[['manual-convert','Make editable']" in block
   assert "['manual-inset','Inset']" in block and "['manual-extrude','Extrude']" in block
   return block
  html=section(html,'/* SE445_VR_PROGRESSIVE_TOOLS_START',
               '/* SE445_VR_PROGRESSIVE_TOOLS_END',sculpt_operations)
 
  def sculpt_settings(block):
-  start=block.index('   sculpt:[')
-  end=block.index("\n   create:[",start)
-  assert block.count('   sculpt:[')==1
+  start=block.index('  sculpt:[')
+  end=block.index("\n  create:[",start)
+  assert block.count('  sculpt:[')==1
   replacement=(
-   "   // SE522_SCULPT_SETTINGS: the operation rail owns the six brush choices.\n"
-   "   sculpt:[\n"
+   "  // SE522_SCULPT_SETTINGS: the operation rail owns the six brush choices.\n"
+   "  sculpt:[\n"
    "    ['brush-radius-minus','Radius −'],['brush-radius-plus','Radius +'],\n"
    "    ['brush-strength-minus','Strength −'],['brush-strength-plus','Strength +'],\n"
    "    ['studio','Studio'],['exit','Exit VR']\n"
