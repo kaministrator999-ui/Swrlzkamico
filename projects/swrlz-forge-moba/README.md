@@ -1,3 +1,9 @@
+## §WYRL§ Engine v11.522 · Immersive Sculpt brush menu (2026-11-19)
+
+**Modeling Lab → Sculpt:** Six brushes ordered Push, Translate, Inflate, Pinch, Flatten, Smooth. The third-stage native settings panel contains Radius −/+, Strength −/+ rather than duplicating the brush choices. Sculpt is focused on surface manipulation.
+
+**Face Tools retained:** Make Editable, Pick Flat Region, Inset, Extrude, Solidify, Delete Faces, Subdivide, Repair Normals and the tool guide remain in the original Face Tools submenu. Existing Labs, project-scoped Undo/Redo, menus, input and saved projects are unchanged. Physical Quest acceptance remains pending.
+
 ## §WYRL§ Engine v11.521 · Labs and persistent edit history (2026-11-19)
 
 **Modeling Studio immersive WebXR:** The original grippable three-panel menu now keeps **Labs / Projects / Display** above contextual Modeling, Rigging, Animation, or Texture & Materials Lab tools. Only lab-specific middle rows change. Modeling consolidates Grab/Move/Rotate/Scale inside Transform; Save remains within Projects and Delete within Transform; **Undo / Redo** are the only permanent bottom actions.

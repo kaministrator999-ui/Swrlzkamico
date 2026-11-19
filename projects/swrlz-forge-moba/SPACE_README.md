@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.521
+title: §wyrl§ Engine v11.522
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,12 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §WYRL§ Engine v11.522 · Immersive Sculpt brush menu (2026-11-19)
+
+**Modeling Lab → Sculpt:** Six brushes ordered Push, Translate, Inflate, Pinch, Flatten, Smooth. The third-stage native settings panel contains Radius −/+, Strength −/+ rather than duplicating the brush choices. Sculpt is focused on surface manipulation.
+
+**Face Tools retained:** Make Editable, Pick Flat Region, Inset, Extrude, Solidify, Delete Faces, Subdivide, Repair Normals and the tool guide remain in the original Face Tools submenu. Existing Labs, project-scoped Undo/Redo, menus, input and saved projects are unchanged. Physical Quest acceptance remains pending.
 
 ## §WYRL§ Engine v11.521 · Labs and persistent edit history (2026-11-19)
 
