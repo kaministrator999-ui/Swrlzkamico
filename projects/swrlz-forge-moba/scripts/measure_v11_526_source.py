@@ -27,3 +27,5 @@ finally:path.write_text(original,encoding='utf8')
 # The production manifest is sealed only after this exact source is measured.
 
 # Candidate measurement validates primitive/accessory separation and contextual pouch settings.
+
+# Build-time test workspace is ephemeral; sealed production bytes remain governed by SHA.
