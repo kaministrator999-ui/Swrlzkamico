@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT (owner-approved)",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.525",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_525_DISPLAY_MENU_GROUPS",
-  "reason": "Owner-approved immersive §E Display cleanup in existing 3-stage WebXR spatial menu: View Angles and Render Modes in the middle rail, separated by an actual visible divider and physical gap. View Angles third stage has seven working camera poses: front/back/left/right/top/bottom/isometric. Render Modes third stage has five distinct preview-only modes: Textured, Solid, Wireframe, X-Ray, Normals. Remove navigation/tool duplication (Focus, Aim, Studio, Guide, Exit VR) from these third-stage panels; preserve original headset exit control, native camera orbit, model materials, Undo/Redo, project histories, Labs, Sculpt, Select and Face Tools. Compiled native Display divider, menu routing and existing Sculpt/Select regressions passed; source integrity measured at 502 patches, 10908216 bytes, SHA-256 627074c5d9d6476c0633474513b52f756e28c73e2bbc158b71baa22765a5e2b5. Device-level Quest acceptance pending.",
-  "sourceCommit": "1126496af75038e8c28596689ed01ac1d5f89b0e",
-  "sourceIntegritySha256": "627074c5d9d6476c0633474513b52f756e28c73e2bbc158b71baa22765a5e2b5"
+  "releaseVersion": "v11.526",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_526_CREATE_MENU_CLEANUP",
+  "reason": "Owner-approved immersive §E Modeling Lab Create cleanup in existing three-stage WebXR spatial menu. Exactly Cube, Sphere, Cylinder, Cone, then non-interactive visible divider and Hip Pouch; remove Draw Outline and Duplicate from Create since those remain respectively in Draw and Objects. Primitive actions reuse native pending preview, controller sizing, Trigger placement confirmation, B cancellation, and model history; no redundant Create settings pane. Pouch enters the real accessory customization settings with Body Shape, Flap & Details, Fit & Attach, Leather, Stitching, Emblem and Reset Shape; editing controls stay disabled before valid preview. Preserve deeper accessory controls, persistent project journal and all other Labs, Select, Sculpt, Display and Face Tools. Compiled Create layout and native creation regression, prior Select/Display/Sculpt regressions, JavaScript syntax passed; measured 503-patch HTML at 10909703 bytes, SHA256 1428ceb7c33ce6cd01c5c024dca6b032fc41312ff286fd450620718f9788fd6b. Quest headset visual acceptance pending.",
+  "sourceCommit": "d8a1754f019380b447d200bdebcd376776904e2d",
+  "sourceIntegritySha256": "1428ceb7c33ce6cd01c5c024dca6b032fc41312ff286fd450620718f9788fd6b"
 }
