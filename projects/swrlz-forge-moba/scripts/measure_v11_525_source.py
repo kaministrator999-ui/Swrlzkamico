@@ -6,7 +6,7 @@ root=Path(__file__).resolve().parents[1]
 path=root/'source-manifest.json';original=path.read_text('utf8')
 m=json.loads(original)
 assert m['name']=='§wyrl§ Engine v11.525'
-assert len(m['patches'])==502 and m['patches'][-1]=='patches/v11_525_select_menu_cleanup.py'
+assert len(m['patches'])==502 and m['patches'][-1]=='patches/v11_525_display_menu_groups.py'
 m['finalBytes']=0;m['finalSha256']=''
 try:
  path.write_text(json.dumps(m,ensure_ascii=False,indent=2)+'\n','utf8')
