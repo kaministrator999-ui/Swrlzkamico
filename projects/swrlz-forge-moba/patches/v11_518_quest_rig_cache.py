@@ -86,15 +86,11 @@ def apply(html):
   """    const choice=chosenRow()||defaults();
     if(choice)void openSelected(choice);""",
   'honor manually selected startup gate item before automatic fallback')
- html=one(html,
-  """   $('se476Remember').checked=!!chosen&&pref?.source===chosen.source&&pref?.id===chosen.id;
-   });""",
-  """   if(chosen)window.SWYRL_ENGINE_SAVED_DEFAULT?.set?.(chosen.source,chosen.id);
-   $('se476Remember').checked=!!chosen&&
-    window.SWYRL_ENGINE_SAVED_DEFAULT?.read?.()?.source===chosen.source&&
-    window.SWYRL_ENGINE_SAVED_DEFAULT?.read?.()?.id===chosen.id;
-   });""",
-  'startup project selection is the project to restore next time')
+ html=one(html,"$('se476Projects')?.addEventListener('change',()=>{",
+  """$('se476Projects')?.addEventListener('change',()=>{
+   const se518Selection=chosenRow();
+   if(se518Selection)window.SWYRL_ENGINE_SAVED_DEFAULT?.set?.(se518Selection.source,se518Selection.id);""",
+  'remember user-selected startup project through original chooser event')
  # On a successful cached cloud read, local loader stamps a local session ID.
  # The cache changes that back to the remote ID after authorized validation.
  # Previous start app and selected studio continue to govern camera restore.
