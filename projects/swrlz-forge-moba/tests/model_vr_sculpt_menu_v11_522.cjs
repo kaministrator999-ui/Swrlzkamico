@@ -31,11 +31,16 @@ for(const command of ['manual-convert','manual-pick','manual-inset','manual-extr
  assert(face.includes("'"+command+"'"),'Face Tools lost '+command);
 const nativeSculpt=native.match(/^\s*sculpt:\[\n([\s\S]*?)^\s*\],/m);
 assert(nativeSculpt,'Missing native Sculpt settings');
-assert.deepEqual(entries(nativeSculpt[1]),[
+const modifiers=entries(nativeSculpt[1]);
+for(const [id,label] of [
  ['brush-radius-minus','Radius −'],['brush-radius-plus','Radius +'],
  ['brush-strength-minus','Strength −'],['brush-strength-plus','Strength +'],
  ['studio','Studio'],['exit','Exit VR']
-],'Native Sculpt panel must contain only brush adjustments plus navigation');
+])assert(modifiers.some(row=>row[0]===id&&row[1]===label),'Missing Sculpt setting '+id);
+for(const id of ['sculpt-push','sculpt-translate','sculpt-inflate','sculpt-pinch','sculpt-flatten','sculpt-smooth'])
+ assert(!modifiers.some(row=>row[0]===id),'Duplicate brush selector in settings: '+id);
+for(const id of ['sculpt-indent','sculpt-falloff'])
+ assert(modifiers.some(row=>row[0]===id),'Previously available Sculpt modifier lost: '+id);
 assert(menu.includes("['manual-mesh','Face Tools','manual-mesh']"),
  'Contextual Modeling Lab must keep Face Tools reachable');
 assert(menu.includes("['labs','Labs','labs']")&&menu.includes("['projects','Projects','projects']"),

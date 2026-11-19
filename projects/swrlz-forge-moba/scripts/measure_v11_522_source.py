@@ -4,6 +4,7 @@ Only the runner's temporary manifest is unsealed; never deploy that temporary bu
 """
 import hashlib,json,subprocess,sys,tempfile
 from pathlib import Path
+# This source build verifies the preservation of additional Sculpt modifiers.
 root=Path(__file__).resolve().parents[1]
 path=root/'source-manifest.json'
 original=path.read_text('utf8')
