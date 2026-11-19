@@ -4,7 +4,7 @@
   "target": "kamiloki/swrlz-forge-moba",
   "releaseVersion": "v11.522",
   "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_522_SCULPT_BRUSH_MENU",
-  "reason": "Release source-sealed §E v11.522: immersive Modeling Lab Sculpt now lists only six brushes in workflow order (Push, Translate, Inflate, Pinch, Flatten, Smooth); the third-stage native Sculpt settings retain Radius −/+, Strength −/+; Inset/Extrude/Solidify/Subdivide and other topology tools remain in Face Tools. No changes to mesh algorithms, projects, lab switching, user history, controller profiles or save formats. Source measurement and JavaScript syntax checks passed; Quest owner acceptance is pending.",
-  "sourceCommit": "408a8f84c5f501569e5ae663140630f137be57a1",
+  "reason": "Release source-sealed §E v11.522: immersive Modeling Lab Sculpt now lists only six brushes in workflow order (Push, Translate, Inflate, Pinch, Flatten, Smooth); the third-stage native Sculpt settings retain Radius −/+, Strength −/+; Inset/Extrude/Solidify/Subdivide and other topology tools remain in Face Tools. No changes to mesh algorithms, projects, lab switching, user history, controller profiles or save formats. Source measurement and JavaScript syntax checks passed; Quest owner acceptance is pending. Release verifier filename assertion corrected from historical v11.521 to v11.522; exact sealed source bytes remain unchanged.",
+  "sourceCommit": "f85b653ff08dfaeea9f7b9abf610ef780391cf39",
   "sourceIntegritySha256": "aa536fec22cbd598d88374e26a57b2d2f4de30521c86826cbcbd90856fe916c9"
 }
