@@ -1,3 +1,7 @@
+## §WYRL§ Engine v11.518 · Quest VR entry and project resume (2026-11-18)
+
+**VR launch fix:** Resolves the `se220RigAvailable is not defined` crash for unrigged/rigged models by providing immersive Rigging with a scope-safe native Model Atelier bridge. This preserves original WebXR three-stage menus and controller bindings. **Selected project:** Manually choosing a local or Google project in My Projects/startup remembers that choice for the next browser visit. **Download reuse:** Signed-in cloud project opens verify the current remote revision and reuse its matching complete IndexedDB snapshot instead of repeatedly downloading the same model; a new revision downloads normally. No account secrets in localStorage, no starter overwrites. See `docs/QUEST_VR_STARTUP_PROJECT_CACHE_V11_518.md`; physical Quest acceptance remains pending.
+
 ## §WYRL§ Engine v11.517 · Immersive project library and model rotation (2026-11-18)
 
 **VR #5:** Existing right-stick WebXR camera/reference orbit and selected-object Rotate are explicitly isolated. Rotate requires a selection, operates on authored part TRS through the native transform system, and cancels rather than mixing an unexpected camera orbit into a model gesture.
