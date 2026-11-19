@@ -1,0 +1,21 @@
+name: Measure §E v11.522 Sculpt menu source
+on:
+  push:
+    branches: [main]
+    paths:
+      - "projects/swrlz-forge-moba/patches/v11_522_sculpt_brush_menu.py"
+      - "projects/swrlz-forge-moba/scripts/measure_v11_522_source.py"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  measure:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout exact candidate source
+        uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Measure patched engine and check Sculpt menu
+        run: python projects/swrlz-forge-moba/scripts/measure_v11_522_source.py
