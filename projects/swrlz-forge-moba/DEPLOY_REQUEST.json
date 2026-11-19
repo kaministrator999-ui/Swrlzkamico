@@ -4,7 +4,7 @@
   "target": "kamiloki/swrlz-forge-moba",
   "releaseVersion": "v11.521",
   "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_521_LABS_PROJECT_JOURNAL",
-  "reason": "Release source-sealed §E v11.521 (498 ordered patches): immersive Model Studio fixed Labs/Projects/Display top, contextual Modeling/Rigging/Animation/Texture & Materials middle, Undo/Redo bottom; grouped Transform tools and native Trigger/Grip; Save within Projects and guarded Delete within Transform. Native project-scoped append-only edit journal survives saved reloads, logs Undo and Redo without erasing originals, isolates labs, and rejects conflicting cross-lab reversals. Texture & Materials detailed immersive controls and visual history browsing remain for next submenu pass. Focused automated source, syntax and journal tests passed; Quest owner acceptance remains pending.",
-  "sourceCommit": "2ec07882dbb97f0db25023129a6e4b6cfd92f9ed",
+  "reason": "Release source-sealed §E v11.521 (498 ordered patches): immersive Model Studio fixed Labs/Projects/Display top, contextual Modeling/Rigging/Animation/Texture & Materials middle, Undo/Redo bottom; grouped Transform tools and native Trigger/Grip; Save within Projects and guarded Delete within Transform. Native project-scoped append-only edit journal survives saved reloads, logs Undo and Redo without erasing originals, isolates labs, and rejects conflicting cross-lab reversals. Texture & Materials detailed immersive controls and visual history browsing remain for next submenu pass. Focused automated source, syntax and journal tests passed; Quest owner acceptance remains pending. Release verifier updated to expect Labs and contextual Rigging instead of obsolete top-level Rigging; sealed HTML unchanged.",
+  "sourceCommit": "8872f5441f0af9e0393d5e134f356d033c27af2b",
   "sourceIntegritySha256": "02c3c5be8fc3a6421a5fea7dc5ea679165817d012951e5d5c70824695e7f98e9"
 }
