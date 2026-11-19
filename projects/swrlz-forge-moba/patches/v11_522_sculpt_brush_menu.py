@@ -57,8 +57,7 @@ def apply(html):
    assert id in [x for x,label in kept],('v11.522 missing modifier',id)
   rows=[]
   for i in range(0,len(kept),2):
-   rows.append('   '+','.join("['%s','%s']"%(id,label) for id,label in kept[i:i+2]))
-                +(',' if i+2<len(kept) else ''))
+   rows.append('   '+','.join("['%s','%s']"%(id,label) for id,label in kept[i:i+2])+(',' if i+2<len(kept) else ''))
   replacement=("  // SE522_SCULPT_SETTINGS: native modifiers preserved; six brushes on operation rail.\n"
                "  sculpt:[\n"+'\n'.join(rows)+"\n  ],")
   return block[:start]+replacement+block[end:]
