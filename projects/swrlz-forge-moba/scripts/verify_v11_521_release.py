@@ -107,7 +107,7 @@ for needle in (
   'SE514_NATIVE_XR_RIG_END','SWYRL_ENGINE_IMMERSIVE_RIG_514',
   'se514RigXR.beforeDispatch','rig-weights','rig-pose-x-plus',
   'SE515_SPATIAL_VR_POLISH_END','SWYRL_ENGINE_VR_SPATIAL_POLISH_515',
-  "name.includes('background')?8380", "['rig','Rigging','rig']", 
+  "name.includes('background')?8380", "['labs','Labs','labs']", "['rig','Bones','rig']", "['transform-menu','Transform','mesh']", 
   "['rig-weights','Weight painting']", 'se515SpatialPolish', 'se362PartCenter',
   'SE516_RIG_PRECISION_END','se516SkinPrecision','rig-select-mode',
   'SE517_PROJECT_LIBRARY_END',
