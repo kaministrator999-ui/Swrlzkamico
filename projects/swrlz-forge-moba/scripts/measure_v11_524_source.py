@@ -21,3 +21,5 @@ try:
   print('SE524_MEASURED_BYTES='+str(len(data)),flush=True)
   print('SE524_MEASURED_SHA256='+hashlib.sha256(data).hexdigest(),flush=True)
 finally:path.write_text(original,encoding='utf8')
+
+# The production manifest is sealed only after this exact source is measured.
