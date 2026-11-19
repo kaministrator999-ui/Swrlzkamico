@@ -67,14 +67,16 @@ def apply(html):
  # The native XR bridge previously gated Undo against the obsolete temporary
  # stack. Its own wrapper must use the same immutable project journal.
  def bridge(s):
-  s=one(s,
-   "if (!(backward ? undo : redo).length) return {ok: true, changed: false};\n     historyStep(backward); identity(); hideNativeHelpers(); lastError = '';",
-   "const result=se521Journal.step(backward);\n     if(!result.changed)return result;\n     identity(); hideNativeHelpers(); lastError = '';",
-   'immersive history backed by native project journal')
-  s=one(s,
-   "selectedId: selection, canUndo: undo.length > 0, canRedo: redo.length > 0,\n         undoDepth: undo.length, redoDepth: redo.length,",
-   "selectedId: selection, ...se521Journal.depths(),",
-   'native XR button enabled state follows current lab')
+  # Keep all historical bridge gesture/projection behavior intact. The only
+  # change is what the public undo/redo methods and UI counters consult.
+  import re
+  s,count=re.subn(r'undo:\s*\(\)\s*=>\s*history\(true\),\s*redo:\s*\(\)\s*=>\s*history\(false\)',
+    'undo: () => se521Journal.step(true), redo: () => se521Journal.step(false)',s,count=1)
+  assert count==1,('v11.521 bridge undo/redo contract',count)
+  # Existing inspection metadata is retained; only the depth values get
+  # overwritten by the document journal's selected lab.
+  s=s.replace('error: lastError, lastAction};',
+    'error: lastError, lastAction, ...se521Journal.depths()};',1)
   return s
  html=section(html,'/* SE340_MODEL_VR_BRIDGE_START','/* SE340_MODEL_VR_BRIDGE_END',bridge)
  # Lab-specific authoring including rig poses/keyframes produces the same
