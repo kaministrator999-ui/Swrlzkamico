@@ -3,7 +3,7 @@ on:
   push:
     branches: [main]
     paths:
-      - .github/workflows/verify-engine-v11-519.yml
+      - .github/workflows/verify-engine-v11-520.yml
       - projects/swrlz-forge-moba/patches/v11_520_quest_interaction_qa.py
       - projects/swrlz-forge-moba/runtime/model_vr_interaction_repair_v11_520.js
       - projects/swrlz-forge-moba/runtime/model_quest_browser_picking_v11_520.js
