@@ -77,7 +77,7 @@ const sandbox={
  undo:nativeUndo
 };
 sandbox.window.SWYRL_ENGINE_MODEL_RIG_ACCESS_518={
- available:sandbox.se220RigAvailable,rig:sandbox.se220Rig,
+ available:()=>sandbox.se220RigAvailable(),rig:sandbox.se220Rig,
  get bones(){return sandbox.se220Bones;},
  get skeleton(){return sandbox.se220Skeleton;},
  get root(){return sandbox.modelRoot;},
@@ -96,6 +96,10 @@ vm.runInContext(fs.readFileSync(path.join(root,'runtime/model_rig_precision_v11_
 vm.runInContext(compiled.slice(a,b+'/* SE514_NATIVE_XR_RIG_END */'.length),ctx);
 const api=sandbox.window.SWYRL_ENGINE_IMMERSIVE_RIG_514;
 assert(api?.action&&api?.beforeDispatch&&api?.undoRig&&api?.inspect);
+sandbox.se220RigAvailable=()=>false;
+assert.equal(api.valid(),false,'ordinary unrigged sphere must enter VR without missing rig globals');
+assert.equal(api.uiState().rigAvailable,false,'unrigged model stays in regular Model Studio');
+sandbox.se220RigAvailable=()=>true;
 vm.runInContext('se340MakeStage()',ctx);
 assert.equal(stageCalls,1);
 assert.equal(api.action('rig'),true);
