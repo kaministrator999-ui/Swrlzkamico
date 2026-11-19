@@ -63,24 +63,30 @@ def apply(html):
               '/* SE360_MODEL_VR_UI_END',panel)
 
  def interaction(block):
+  # Extend the real post-patch dispatcher; preserve any existing code injected
+  # by later maintenance patches, including legacy selector actions.
   block=one(block,
-   """  if(action==='selector'){s.page='selector';s.se376SelectionMode||='sweep';}
-  else if(['selector-sweep','selector-lasso-front','selector-lasso-through'].includes(action)){
-   s.page='selector';s.se376SelectionMode=action.slice('selector-'.length);
-  }else return false;
-  if(s.gesture)se340CancelGesture('Selection mode changed · unfinished gesture canceled.');""",
-   """  if(!['selector','selector-sweep','selector-lasso','selector-depth',
-       'selector-lasso-front','selector-lasso-through'].includes(action))return false;
+   "function se376PanelMode(action){\n const s=se340XR;",
+   """function se376PanelMode(action){
+ const s=se340XR;
+ // SE524_SELECT_MODE_ROUTE: coherent selection modes, no concurrent sculpt.
+ if(['selector','selector-sweep','selector-lasso','selector-depth',
+     'selector-lasso-front','selector-lasso-through'].includes(action)){
   if(s.gesture)se340CancelGesture('Selection mode changed · unfinished gesture canceled.');
-  // A selection tool must never leave the previous Sculpt/Draw mode active.
   s.mode='inspect';s.page='selector';
   if(action==='selector'||action==='selector-sweep')s.se376SelectionMode='sweep';
   else if(action==='selector-lasso')s.se376SelectionMode=
-   s.se376SelectionMode==='lasso-through'?'lasso-through':'lasso-front';
+    s.se376SelectionMode==='lasso-through'?'lasso-through':'lasso-front';
   else if(action==='selector-depth')s.se376SelectionMode=
-   s.se376SelectionMode==='lasso-through'?'lasso-front':'lasso-through';
-  else s.se376SelectionMode=action.slice('selector-'.length);""",
-   'single Lasso action and preserved front/through implementation')
+    s.se376SelectionMode==='lasso-through'?'lasso-front':'lasso-through';
+  else s.se376SelectionMode=action.slice('selector-'.length);
+  const title={'sweep':'Trigger sweep: sweep forward to add, retrace to remove.',
+    'lasso-front':'Front lasso: hold Left Grip and outline the visible mesh cluster.',
+    'lasso-through':'Through lasso: hold Left Grip; include meshes behind the outline.'};
+  se340Notice(title[s.se376SelectionMode]||title.sweep);
+  se340SyncUI();se340Publish();return true;
+ }""",
+   'extend existing selector mode dispatcher without overwriting later patches')
   return block
  html=section(html,'/* SE376_VR_SELECTOR_LASSO_START',
               '/* SE376_VR_SELECTOR_LASSO_END',interaction)
