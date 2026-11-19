@@ -517,8 +517,8 @@
     "patches/v11_523_sculpt_direction_cleanup.py",
     "patches/v11_524_select_menu_cleanup.py"
   ],
-  "finalBytes": 0,
-  "finalSha256": "",
+  "finalBytes": 10906464,
+  "finalSha256": "658d0a76b25327815217f56cc83bbabe254a48f9e79e0ffdfc9d9fd8d742db2f",
   "previousFinalSha256": "a404cd8668a0e5bc4699ca32c6741cdb6e42d2f9c0b7b8a5e17ea5688c3c4555",
   "previousFinalBytes": 10904371,
   "previousManifestFinalSha256": "a404cd8668a0e5bc4699ca32c6741cdb6e42d2f9c0b7b8a5e17ea5688c3c4555",
