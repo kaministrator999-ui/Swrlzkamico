@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.524
+title: §wyrl§ Engine v11.525
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,14 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §WYRL§ Engine v11.525 · Native VR Display menu with section divider (2026-11-19)
+
+**Permanent Display → View Angles / Render Modes:** The existing three-stage immersive menu now shows two middle-rail groups with a dedicated visible spatial separator and extra spacing between them. View Angles opens the third-stage presets Front, Back, Left, Right, Top, Bottom, Isometric. Render Modes opens Textured, Solid, Wireframe, X-Ray, Normals. Right-stick orbit remains, and these preview modes borrow temporary runtime materials without saving changes into the project.
+
+**No duplicated navigation:** The Display settings panels no longer repeat Focus, Aim, Studio, Guide, Exit VR, or other menu navigation. The original §E VR controls, Sculpt and Select, permanent Labs/Projects/Display rail, and per-project history are preserved. Quest headset visual/gesture acceptance remains pending.
+
+
 
 ## §WYRL§ Engine v11.524 · Native Select menu cleanup (2026-11-19)
 
