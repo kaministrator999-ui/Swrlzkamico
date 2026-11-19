@@ -3,7 +3,7 @@
 const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict');
 const ROOT=path.resolve(__dirname,'..');
 const html=fs.readFileSync(process.argv[2]||path.join(ROOT,'../../dist/index.html'),'utf8');
-assert.ok(html.includes('SWYRL_ENGINE_DEPLOY_MARKER: V11_522_SCULPT_BRUSH_MENU'));
+assert.ok(html.includes('SWYRL_ENGINE_DEPLOY_MARKER: V11_523_SCULPT_DIRECTION_CLEANUP'));
 function section(start,end){
  const a=html.indexOf(start),b=html.indexOf(end,a+start.length);
  assert.ok(a>=0&&b>a,'missing compiled section '+start);
