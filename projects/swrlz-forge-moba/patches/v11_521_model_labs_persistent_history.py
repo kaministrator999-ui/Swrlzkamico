@@ -17,11 +17,13 @@ def apply(html):
  assert 'SWYRL_ENGINE_DEPLOY_MARKER: V11_520_QUEST_SCULPT_TRIGGER_MENUS' in html
  j=(ROOT/'runtime/model_edit_journal_v11_521.js').read_text('utf8')
  vr=(ROOT/'runtime/model_vr_labs_v11_521.js').read_text('utf8')
+ native=(ROOT/'runtime/model_lab_native_bridge_v11_521.js').read_text('utf8')
  assert 'SE521_PERSISTENT_EDIT_JOURNAL_END' in j and 'SE521_MODEL_VR_LABS_END' in vr
+ assert 'SE521_MODEL_LAB_NATIVE_BRIDGE_END' in native
  # This lives inside the existing ModelAtelier closure, where the authored
  # project document, native checkpoint and rendering functions are visible.
  html=one(html,'/* SE340_MODEL_VR_BRIDGE_END */',
-   '/* SE340_MODEL_VR_BRIDGE_END */\n'+j,'native project-scoped journal')
+   '/* SE340_MODEL_VR_BRIDGE_END */\n'+j+'\n'+native,'native project-scoped journal and XR authority bridge')
  html=one(html,'installPerformanceSettings();se189InstallPerfUI();',
    vr+'\ninstallPerformanceSettings();se189InstallPerfUI();','single native XR lab action router')
  # Retire only the temporary 50-entry model undo/redo stack. Old projects
@@ -165,7 +167,7 @@ def apply(html):
    'map new workspace operations to native controls')
   s=one(s,
    "  function update(next){",
-   "  function update(next){\n   renderLab(se340XR.se521Lab||'model');",
+   "  function update(next){\n   renderLab(se340XR.se521Lab||window.SWYRL_ENGINE_MODEL_LAB_NATIVE_521?.savedLab?.()||'model');",
    'refresh lab tool rail after project/lab changes')
   s=one(s,'   if(secondary){chooseOperation(secondary);return true;}',
    """   if(secondary){
@@ -176,7 +178,7 @@ def apply(html):
    }""",
    'lab selection changes primary rail without extra panel')
   s=one(s,'  sync();\n  return Object.freeze({...ui,update,hitTest,press,hover,tick,openWheel,dispose,',
-   """  renderLab(se340XR.se521Lab||model()?.editorWorkspace?.vrLab||'model');
+   """  renderLab(se340XR.se521Lab||window.SWYRL_ENGINE_MODEL_LAB_NATIVE_521?.savedLab?.()||'model');
   sync();
   return Object.freeze({...ui,update,hitTest,press,hover,tick,openWheel,dispose,""",
    'initial world-space lab rail state')
@@ -189,7 +191,7 @@ def apply(html):
  # project's lab; it must not carry the previous project's history or tools.
  html=one(html,
    "se340XR.mode='inspect';se340XR.page='projects';",
-   "se340XR.mode='inspect';se340XR.page='projects';\n   se340XR.se521Lab=model()?.editorWorkspace?.vrLab||'model';",
+   "se340XR.mode='inspect';se340XR.page='projects';\n   se340XR.se521Lab=window.SWYRL_ENGINE_MODEL_LAB_NATIVE_521?.savedLab?.()||'model';",
    'reset active XR lab to the loaded project')
  for old,new in [
   ('SWYRL_ENGINE_DEPLOY_MARKER: V11_520_QUEST_SCULPT_TRIGGER_MENUS',MARKER),
