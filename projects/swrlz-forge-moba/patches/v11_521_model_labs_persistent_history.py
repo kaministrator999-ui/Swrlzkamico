@@ -30,11 +30,24 @@ def apply(html):
   'function checkpoint(){if(!model())return;undo.push(modelSnapshot());if(undo.length>50)undo.shift();redo=[];}',
   'function checkpoint(){se521Journal.before();}',
   'native authoring checkpoint')
- import re
  a=html.index('function historyStep(backward){')
- match=re.search(r'function historyStep\(backward\)\{[\s\S]{0,1500}?\n   \}',html[a:])
- assert match, 'Could not safely isolate legacy model history function'
- b=a+match.end()
+ i=a+len('function historyStep(backward){')
+ depth=1;quote=None
+ while depth and i<len(html) and i-a<12000:
+  c=html[i]
+  if quote:
+   if c=='\\':i+=2;continue
+   if c==quote:quote=None
+  elif html.startswith('//',i):
+   k=html.find('\\n',i);i=len(html) if k<0 else k;continue
+  elif html.startswith('/*',i):
+   k=html.find('*/',i+2);i=len(html) if k<0 else k+2;continue
+  elif c in ("'",'"','`'):quote=c
+  elif c=='{':depth+=1
+  elif c=='}':depth-=1
+  i+=1
+ assert depth==0,('Could not isolate legacy history function',html[a:a+220])
+ b=i
  html=html[:a]+"""function historyStep(backward){
     const result=se521Journal.step(backward);
     status(result.changed?(backward?'Undid':'Redid')+' '+result.lab+' edit.':
