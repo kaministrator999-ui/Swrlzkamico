@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.523
+title: §wyrl§ Engine v11.524
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,14 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §WYRL§ Engine v11.524 · Native Select menu cleanup (2026-11-19)
+
+**Modeling Lab → Select:** Exactly Sweep, Lasso and Clear Selection in the existing native three-stage WebXR menu. Sweep keeps its reversible Left Trigger gesture. Lasso is one Left Grip selection tool, with its Front/Through depth setting only in the contextual third-stage settings panel. Depth changes preserve the existing front-band and all-depth selection algorithms. Selecting Sweep/Lasso explicitly enters Inspect mode, preventing prior Sculpt/Draw strokes from remaining armed.
+
+**No redundant commands:** Remove Select-as-a-Select-option, separate Front/Through Lasso entries, and Focus from the Select operation rail. Focus stays under Objects; Clear Selection is no longer duplicated under Objects. The immutable saved project history, other Labs, Sculpt, Face Tools, native ray controls and 32-part selection limit remain intact. Physical Quest acceptance pending.
+
+
 
 ## §WYRL§ Engine v11.523 · Sculpt direction and redundant Exit cleanup (2026-11-19)
 
