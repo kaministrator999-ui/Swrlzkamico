@@ -74,7 +74,7 @@ jobs:
           node "$ROOT/tests/model_rig_generic_bind_v11_513.mjs" "$THREE" /tmp/se518_candidate.html
           node "$ROOT/tests/model_rig_complex_bind_v11_516.mjs" "$THREE" /tmp/se518_candidate.html
           node "$ROOT/tests/model_vr_native_rig_v11_514.mjs" "$THREE"
-          node "$ROOT/tests/model_vr_weight_visual_v11_516.mjs" "$THREE" /tmp/se518_candidate.html
+          node "$ROOT/tests/model_vr_rig_scope_v11_518.mjs" "$THREE" /tmp/se518_candidate.html
           node "$ROOT/tests/model_vr_spatial_polish_v11_515.mjs" "$THREE"
           node "$ROOT/tests/model_vr_project_menu_v11_517.mjs" /tmp/se518_candidate.html
           node "$ROOT/tests/uv_degenerate_regression_v11_518.cjs" /tmp/se518_candidate.html
