@@ -103,9 +103,12 @@ def apply(html):
  # temporary, immediately-restored double-sided raycast; never edit the
  # material, UV, texture, or selection itself to perform the stroke.
  def surface(s):
-  return one(s,
-   "  return finish({distance:1.2,point:cast.ray.at(1.2,new THREE.Vector3())});\n}\nfunction se340Pressed",
-   """  if(se340XR.mode==='sculpt'){
+  needle="return finish({distance:1.2,point:cast.ray.at(1.2,new THREE.Vector3())});"
+  begin=s.index("function se340Hit(record,precise=true){")
+  end=s.index("function se340Pressed(",begin)
+  found=s.rfind(needle,begin,end)
+  if found<0:raise AssertionError(('v11.520','UV precise fallback',s[begin:end][-260:]))
+  extra="""if(se340XR.mode==='sculpt'){
     let selected=null;
     for(const entry of entries){
      const mesh=entry.mesh,mats=Array.isArray(mesh.material)?mesh.material:[mesh.material];
@@ -125,10 +128,9 @@ def apply(html):
      mesh:selected.entry.mesh,distance:selected.hit.distance,point:selected.hit.point,
      face:selected.hit.face,normal:selected.hit.normal});
    }
-   return finish({distance:1.2,point:cast.ray.at(1.2,new THREE.Vector3())});
- }
- function se340Pressed""",
-   'UV-textured mesh exact fallback raycast without side effects')
+   """
+  return s[:found]+extra+s[found:]
+
  html=section(html,'/* SE340_MODEL_VR_WORKSPACE_START','/* SE340_MODEL_VR_WORKSPACE_END',surface)
  html=one(html,
   "if(result?.ok===false)se340CancelGesture(result.error||'Sculpt source changed.');",
