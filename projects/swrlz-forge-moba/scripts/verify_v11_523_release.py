@@ -9,7 +9,7 @@ ap.add_argument('--request',action='store_true')
 args=ap.parse_args()
 m=json.loads((root/'source-manifest.json').read_text('utf8'))
 assert m['name']=='§wyrl§ Engine v11.523'
-assert m['finalArtifact']=='swyrl_engine_v11_522.html'
+assert m['finalArtifact']=='swyrl_engine_v11_523.html'
 assert len(m['patches'])==500
 assert m['patches'][-24:]==[
  'patches/v11_500_connected_rig_weights.py',
@@ -86,10 +86,10 @@ for needle in (
  'SWYRL_ENGINE_SORTING_HAT_SCULPTED_497',
  'SE483_SORTING_HAT_END',
  'SWYRL_ENGINE_MINI_STUDIOS_496',
- 'SWYRL_ENGINE_RIG_POLISH_500',
+ 'SWYRL_ENGINE_RIG_POLISH_499',
  'new THREE.SphereGeometry(1,12,9)',
  'new THREE.CylinderGeometry(.50,.86,1,9,1)',
- 'data-se500-rig-kind=object',
+ 'data-se499-rig-kind=object',
  'SWYRL_ENGINE_RIG_CONNECTED_MATH_500',
  'SWYRL_ENGINE_RIG_CONNECTED_EDIT_500',
  'se500WeightsCount','se500LockLength','syncRestTransform',
