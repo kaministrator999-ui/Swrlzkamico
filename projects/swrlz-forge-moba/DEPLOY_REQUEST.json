@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT (owner-approved)",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.523",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_523_SCULPT_DIRECTION_CLEANUP",
-  "reason": "Owner-directed immersive VR Sculpt deduplication: audit shows Inflate has per-vertex normal displacement distinct from Pull; merge signed Push/Indent into one Push / Pull brush with Push In/Pull Out native direction control. Remove duplicate Indent from menu/controller cycle and redundant Exit VR buttons across native settings because the headset menu already provides exit; retain engine cleanup path. Preserve six separate surface operators, Radius/Strength/Falloff, Face Tools, Labs, project edit journal, native 3D menu and controllers. 500 source patches measured at 10904371 bytes SHA256 a404cd8668a0e5bc4699ca32c6741cdb6e42d2f9c0b7b8a5e17ea5688c3c4555. Compiled-menu and JS syntax checks passed; Quest hands-on acceptance pending. Release verifier updated to match v11.523 artifact and preserve historical v11.499 rig markers; sealed source bytes and SHA unchanged. Final verifier regression path restored to existing v11.499 rig studio module, without modifying source HTML. UV regression copied from v11.522 now asserts the current v11.523 release marker; no change to verified engine bytes.",
-  "sourceCommit": "20fdb0039c1543916f77ecaa1e2de1ce90669816",
-  "sourceIntegritySha256": "a404cd8668a0e5bc4699ca32c6741cdb6e42d2f9c0b7b8a5e17ea5688c3c4555"
+  "releaseVersion": "v11.524",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_524_SELECT_MENU_CLEANUP",
+  "reason": "Owner-approved native immersive VR Select menu cleanup. Exactly Sweep, Lasso, Clear Selection; combine Front/Through into contextual third-stage native Lasso depth control; remove redundant Select within Select and Focus from Select; remove duplicated Clear Selection under Objects (Focus remains there). Keep reversible Left Trigger sweep, Left Grip lasso with front depth band and through depth, 32-part selection guard, B cancel, and all project history. Explicit Inspect selection mode prevents stray Sculpt/Draw gestures. Preserve native WebXR 3D menu and other Labs and Face Tools. Source-verified 501 patches, 10906464 bytes, SHA256 658d0a76b25327815217f56cc83bbabe254a48f9e79e0ffdfc9d9fd8d742db2f; compiled Select behavior, sculpt regression, inline-JS checks passed; owner Quest acceptance pending.",
+  "sourceCommit": "8e82fa5d8bc83ab7f6e30a990a712c0d75a40d9d",
+  "sourceIntegritySha256": "658d0a76b25327815217f56cc83bbabe254a48f9e79e0ffdfc9d9fd8d742db2f"
 }
