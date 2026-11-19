@@ -20,3 +20,4 @@ try:
   print('SE523_MEASURED_BYTES='+str(len(data)),flush=True)
   print('SE523_MEASURED_SHA256='+hashlib.sha256(data).hexdigest(),flush=True)
 finally:path.write_text(original,encoding='utf8')
+# Validate candidate against the updated 500-patch source manifest.
