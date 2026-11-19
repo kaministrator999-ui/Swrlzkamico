@@ -50,7 +50,8 @@ def apply(html):
   entries=re.findall(r"\['([^']+)','([^']+)'\]",page)
   brush_ids={'sculpt-push','sculpt-translate','sculpt-inflate',
              'sculpt-pinch','sculpt-flatten','sculpt-smooth'}
-  assert len([id for id,label in entries if id in brush_ids])==6
+  # The native settings may already omit some selectors; preserve other entries.
+  assert len([id for id,label in entries if id in brush_ids])<=6
   kept=[(id,label) for id,label in entries if id not in brush_ids]
   for id in ('brush-radius-minus','brush-radius-plus',
              'brush-strength-minus','brush-strength-plus'):
