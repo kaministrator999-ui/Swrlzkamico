@@ -115,7 +115,7 @@ for needle in (
  'SE518_RIG_SCOPE_ACCESS_END','SE518_REVISION_CACHE_END','SE519_QUEST_BROWSER_TRANSFORM_END','SE520_QUEST_BROWSER_PICK_END','SE520_VR_INTERACTION_REPAIR_END','SE517_XR_PROJECT_BROWSER_END','se517XRProjects','project-open'
 ):assert needle in s,needle
 subprocess.run([sys.executable,str(root/'scripts/check_inline_js_syntax_v11_266.py'),str(out/'index.html')],check=True)
-subprocess.run(['node',str(root/'tests/uv_degenerate_regression_v11_520.cjs'),str(out/'index.html')],check=True)
+subprocess.run(['node',str(root/'tests/uv_degenerate_regression_v11_521.cjs'),str(out/'index.html')],check=True)
 subprocess.run(['node','--check',str(root/'runtime/model_uv_cone_metric_v11_510.js')],check=True)
 subprocess.run(['node',str(root/'tests/model_uv_cone_aware_v11_510.cjs'),str(out/'index.html')],check=True)
 subprocess.run(['node',str(root/'tests/sorting_hat_proportion_v11_498.cjs'),str(out/'index.html')],check=True)
