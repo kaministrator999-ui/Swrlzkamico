@@ -5,6 +5,7 @@
 const se521ModelLabs=(()=>{
  'use strict';
  const choices=new Set(['model','rig','animate','texture']);
+ let pendingDelete=null;
  const status=(msg,bad=false)=>{se340Notice(msg,bad);se340SyncUI();se340Publish();};
  const lab=()=>choices.has(se340XR.se521Lab)?se340XR.se521Lab:'model';
  function switchLab(next){
@@ -66,12 +67,12 @@ const se521ModelLabs=(()=>{
   if(!m||!ids.length){status('Select a mesh before Delete.',true);return true;}
   if(m.parts.length<=ids.length){status('Keep at least one editable mesh in the project.',true);return true;}
   const key=String(currentProject?.instanceId||'')+'|'+ids.join('|');
-  if(se521ModelLabs.pendingDelete?.key!==key){
-   se521ModelLabs.pendingDelete={key};
+  if(pendingDelete?.key!==key){
+   pendingDelete={key};
    status('Delete '+ids.length+' selected mesh(es)? Trigger Delete again to confirm; B cancels.',true);
    return true;
   }
-  se521ModelLabs.pendingDelete=null;
+  pendingDelete=null;
   se521Journal.setLabel('Modeling · deleted '+ids.length+' selected mesh(es)');
   checkpoint();
   const chosen=new Set(ids);
@@ -111,10 +112,10 @@ const se521ModelLabs=(()=>{
   return result;
  };
  const priorCleanup=se340Cleanup;
- se340Cleanup=function(...args){se521ModelLabs.pendingDelete=null;return priorCleanup.apply(this,args);};
+ se340Cleanup=function(...args){pendingDelete=null;return priorCleanup.apply(this,args);};
  return Object.freeze({switchLab,lab,inspect:()=>({lab:lab(),
   saved:model()?.editorWorkspace?.vrLab||null,history:se521Journal.inspect()}),
-  pendingDelete:null});
+  get pendingDelete(){return pendingDelete;}});
 })();
 window.SWYRL_ENGINE_MODEL_VR_LABS_521=se521ModelLabs;
 /* SE521_MODEL_VR_LABS_END */
