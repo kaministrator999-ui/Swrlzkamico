@@ -31,3 +31,5 @@ finally:path.write_text(original,encoding='utf8')
 # Build-time test workspace is ephemeral; sealed production bytes remain governed by SHA.
 
 # Verify Create divider, context panel and earlier menu regressions together.
+
+# The two visible separators have independent placement checks in the emitted UI.
