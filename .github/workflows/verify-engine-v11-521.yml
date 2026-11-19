@@ -1,0 +1,34 @@
+name: Verify §E v11.521 Labs and Project Edit Journal
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/verify-engine-v11-521.yml"
+      - "projects/swrlz-forge-moba/patches/v11_521_model_labs_persistent_history.py"
+      - "projects/swrlz-forge-moba/runtime/model_edit_journal_v11_521.js"
+      - "projects/swrlz-forge-moba/runtime/model_vr_labs_v11_521.js"
+      - "projects/swrlz-forge-moba/tests/model_project_edit_journal_v11_521.cjs"
+      - "projects/swrlz-forge-moba/source-manifest.json"
+      - "projects/swrlz-forge-moba/scripts/measure_v11_521_source.py"
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Check new native history and lab runtime
+        run: |
+          node --check projects/swrlz-forge-moba/runtime/model_edit_journal_v11_521.js
+          node --check projects/swrlz-forge-moba/runtime/model_vr_labs_v11_521.js
+          node projects/swrlz-forge-moba/tests/model_project_edit_journal_v11_521.cjs
+      - name: Rebuild complete ordered source and report exact integrity receipt
+        run: |
+          python projects/swrlz-forge-moba/scripts/measure_v11_521_source.py
