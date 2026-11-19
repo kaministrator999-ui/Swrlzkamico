@@ -4,7 +4,7 @@
   "target": "kamiloki/swrlz-forge-moba",
   "releaseVersion": "v11.522",
   "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_522_SCULPT_BRUSH_MENU",
-  "reason": "Release source-sealed §E v11.522: immersive Modeling Lab Sculpt now lists only six brushes in workflow order (Push, Translate, Inflate, Pinch, Flatten, Smooth); the third-stage native Sculpt settings retain Radius −/+, Strength −/+; Inset/Extrude/Solidify/Subdivide and other topology tools remain in Face Tools. No changes to mesh algorithms, projects, lab switching, user history, controller profiles or save formats. Source measurement and JavaScript syntax checks passed; Quest owner acceptance is pending. Release verifier filename assertion corrected from historical v11.521 to v11.522; exact sealed source bytes remain unchanged.",
-  "sourceCommit": "f85b653ff08dfaeea9f7b9abf610ef780391cf39",
-  "sourceIntegritySha256": "aa536fec22cbd598d88374e26a57b2d2f4de30521c86826cbcbd90856fe916c9"
+  "reason": "Ship source-sealed §E v11.522 (499 ordered patches) for the immersive Modeling Lab Sculpt menu: six ordered surface brushes Push, Translate, Inflate, Pinch, Flatten, Smooth. Remove duplicate face-topology shortcuts from Sculpt; retain Inset, Extrude, Solidify, Subdivide and related commands under Face Tools. Preserve every native Sculpt modifier, including Indent, Radius −/+, Strength −/+, Falloff and Exit VR. Preserve the original native three-stage spatial menu, project-scoped Undo/Redo, all labs and controller actions. Targeted menu regression and inline JS parse passed with measured source bytes/SHA; hands-on Quest owner acceptance pending.",
+  "sourceCommit": "f3e857413174f868f8eea4514f67fa72d545a121",
+  "sourceIntegritySha256": "7a94b36f6f7c9bd8a26a172b86a138499e69235edda583a4f27f5413f1ad100b"
 }
