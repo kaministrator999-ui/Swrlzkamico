@@ -40,16 +40,27 @@ def apply(html):
               '/* SE445_VR_PROGRESSIVE_TOOLS_END',sculpt_operations)
 
  def sculpt_settings(block):
+  # Keep every pre-existing modifier except the six duplicate brush selectors.
+  # Older Sculpt pages also expose controls such as Indent / Falloff: they must
+  # not disappear when the operation rail is reorganized.
+  import re
   start=block.index('  sculpt:[')
   end=block.index("\n  create:[",start)
-  assert block.count('  sculpt:[')==1
-  replacement=(
-   "  // SE522_SCULPT_SETTINGS: the operation rail owns the six brush choices.\n"
-   "  sculpt:[\n"
-   "    ['brush-radius-minus','Radius −'],['brush-radius-plus','Radius +'],\n"
-   "    ['brush-strength-minus','Strength −'],['brush-strength-plus','Strength +'],\n"
-   "    ['studio','Studio'],['exit','Exit VR']\n"
-   "   ],")
+  page=block[start:end]
+  entries=re.findall(r"\['([^']+)','([^']+)'\]",page)
+  brush_ids={'sculpt-push','sculpt-translate','sculpt-inflate',
+             'sculpt-pinch','sculpt-flatten','sculpt-smooth'}
+  assert len([id for id,label in entries if id in brush_ids])==6
+  kept=[(id,label) for id,label in entries if id not in brush_ids]
+  for id in ('brush-radius-minus','brush-radius-plus',
+             'brush-strength-minus','brush-strength-plus'):
+   assert id in [x for x,label in kept],('v11.522 missing modifier',id)
+  rows=[]
+  for i in range(0,len(kept),2):
+   rows.append('   '+','.join("['%s','%s']"%(id,label) for id,label in kept[i:i+2]))
+                +(',' if i+2<len(kept) else ''))
+  replacement=("  // SE522_SCULPT_SETTINGS: native modifiers preserved; six brushes on operation rail.\n"
+               "  sculpt:[\n"+'\n'.join(rows)+"\n  ],")
   return block[:start]+replacement+block[end:]
  html=section(html,'/* SE360_MODEL_VR_UI_START',
               '/* SE360_MODEL_VR_UI_END',sculpt_settings)

@@ -8,13 +8,10 @@ root=Path(__file__).resolve().parents[1]
 path=root/'source-manifest.json'
 original=path.read_text('utf8')
 m=json.loads(original)
-assert m['name']=='§wyrl§ Engine v11.521'
-assert m['finalSha256']=='02c3c5be8fc3a6421a5fea7dc5ea679165817d012951e5d5c70824695e7f98e9'
-assert len(m['patches'])==498
-assert m['patches'][-1]=='patches/v11_521_model_labs_persistent_history.py'
-m['name']='§wyrl§ Engine v11.522'
-m['finalArtifact']='swyrl_engine_v11_522.html'
-m['patches'].append('patches/v11_522_sculpt_brush_menu.py')
+assert m['name']=='§wyrl§ Engine v11.522'
+assert m['finalSha256']=='aa536fec22cbd598d88374e26a57b2d2f4de30521c86826cbcbd90856fe916c9'
+assert len(m['patches'])==499
+assert m['patches'][-1]=='patches/v11_522_sculpt_brush_menu.py'
 m['finalBytes']=0
 m['finalSha256']=''
 try:
