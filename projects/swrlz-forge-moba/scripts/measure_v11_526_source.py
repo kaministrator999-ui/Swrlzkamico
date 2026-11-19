@@ -29,3 +29,5 @@ finally:path.write_text(original,encoding='utf8')
 # Candidate measurement validates primitive/accessory separation and contextual pouch settings.
 
 # Build-time test workspace is ephemeral; sealed production bytes remain governed by SHA.
+
+# Verify Create divider, context panel and earlier menu regressions together.
