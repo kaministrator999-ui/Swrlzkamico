@@ -8,7 +8,7 @@ const history=[],messages=[],bounds={type:'BoxHelper',visible:true},mesh={type:'
  wireframe={type:'LineSegments',visible:true};
 const ui={children:[],append(node){this.children.push(node);node.isConnected=true;}};
 const panel={hidden:false,querySelector:selector=>selector==='.atelier-viewport-controls'?ui:null};
-const canvas={getBoundingClientRect:()=>({left:5,top:10,width:1000,height:600})};
+const canvas={getBoundingClientRect:()=>({left:5,top:10,right:1005,bottom:610,width:1000,height:600})};
 const world={traverse:callback=>[bounds,mesh,wireframe].forEach(callback)};
 const snap={
  window:{},document:{createElement:()=>({isConnected:false,attributes:{},setAttribute(k,v){this.attributes[k]=v;},
