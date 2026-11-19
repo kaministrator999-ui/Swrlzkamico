@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.518
+title: §wyrl§ Engine v11.519
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,12 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §WYRL§ Engine v11.519 · Quest Browser 2D selection and transform gizmos (2026-11-18)
+
+**Regular Quest Browser 2D (not immersive WebXR):** selected-object Move/Rotate/Scale gizmos gain 28-CSS-pixel controller-ray hit targets, the same visible mesh can be tapped again to deselect without triggering on drags/handles, and the existing viewport toolbar receives a **Hide bounds / Show bounds** toggle that only hides native BoxHelper selection outlines. This release includes v11.518's immersive `se220RigAvailable` scope fix and signed-in, revision-verified local caching for selected account projects. No new source scene, alternate XR menu, geometry edits or account credentials in localStorage. Details: `docs/QUEST_BROWSER_TRANSFORM_SELECTION_V11_519.md`. Physical Quest acceptance remains pending.
+
+
 
 ## §WYRL§ Engine v11.518 · Quest VR entry and project resume (2026-11-18)
 
