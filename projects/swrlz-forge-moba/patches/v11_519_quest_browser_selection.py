@@ -25,9 +25,11 @@ def apply(html):
   s=one(s,"const coarse=()=>pointerType==='touch'||(!pointerType&&typeof matchMedia==='function'&&matchMedia('(pointer:coarse)').matches);",
         "const coarse=()=>pointerType==='touch'||(typeof se512QuestBrowser2D==='function'&&se512QuestBrowser2D())||(!pointerType&&typeof matchMedia==='function'&&matchMedia('(pointer:coarse)').matches);",
         'Quest controller rays use larger projection handles, not tiny mouse targets')
-  s=one(s,"const targetRadius=type=>type==='touch'?22:type==='pen'?18:12;",
-        "const targetRadius=type=>typeof se512QuestBrowser2D==='function'&&se512QuestBrowser2D()?28:type==='touch'?22:type==='pen'?18:12;",
-        'Quest controller projected gizmo aim radius')
+  radius=re.findall(r"const targetRadius=type=>[^;\n]+;",s)
+  assert len(radius)==1,('v11.519 native gizmo target radius',radius)
+  s=s.replace(radius[0],
+    "const targetRadius=type=>typeof se512QuestBrowser2D==='function'&&se512QuestBrowser2D()?28:"+radius[0][len('const targetRadius=type=>'):],
+    1)
   s=one(s,"e.target!==c||e.isPrimary===false||!primary||!ready()",
         "e.target!==c||(e.isPrimary===false&&!(typeof se512QuestBrowser2D==='function'&&se512QuestBrowser2D()))||!primary||!ready()",
         'allow Quest non-primary hand while canvas still owns press')
