@@ -22,8 +22,8 @@ def apply(html):
   assert "['exit','Exit VR']" not in s
   s=one(s,"function label(item){\n  if(item.id==='sculpt-falloff')",
    "function label(item){\n  if(item.id==='sculpt-direction')return state.sculptDirection==='in'?'Push In':'Pull Out';\n  if(item.id==='sculpt-falloff')",'direction label')
-  s=one(s,"function active(item){const id=item.id;\n  if(id==='index-add')",
-   "function active(item){const id=item.id;\n  if(id==='sculpt-direction')return state.sculptDirection==='in';\n  if(id==='index-add')",'direction active')
+  s=one(s,"  if(id==='index-add')return !!state.indexMulti;",
+   "  if(id==='sculpt-direction')return state.sculptDirection==='in';\n  if(id==='index-add')return !!state.indexMulti;",'direction active')
   s=one(s,"function description(item){\n  if(item.id.startsWith('index-part-'))",
    "function description(item){\n  if(item.id==='sculpt-direction')return 'Push inward / pull outward along brush axis';\n  if(item.id.startsWith('index-part-'))",'direction hint')
   return s
