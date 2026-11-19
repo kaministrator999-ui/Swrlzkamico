@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT (owner-approved)",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.519",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_519_QUEST_BROWSER_TRANSFORMS",
-  "reason": "Deploy verified §E v11.519 496-patch release: Quest WebXR native rig scope startup crash fix, selected My Projects/default resume, same-revision account IndexedDB reuse with cloud validation and refresh, plus Quest regular 2D Browser native gizmo controller targets, tap-to-deselect and display-only native BoxHelper toggle. Earlier native VR spatial menus, rigging, user projects, starters and geometry remain unchanged. Physical Quest acceptance pending.",
-  "sourceCommit": "2532dfa69d807ab8445412f7aca724ef0a0dbe31",
-  "sourceIntegritySha256": "54531f13f4964c9344d19b2a8261d229987901407dcfe10490a48c3f00350d8c"
+  "releaseVersion": "v11.520",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_520_QUEST_SCULPT_TRIGGER_MENUS",
+  "reason": "Deploy source-sealed §E v11.520 (497 patches): immersive UV-painted mesh native sculpt with precise texture-aware contact and adaptive sparse brush radius; Quest Browser 2D mesh selection no longer hits visual BoxHelper; immersive Trigger held on already-selected model previews Move/Grab continuously with 14 mm tap deadzone, single release commit and native gizmo/menu priority; original three-stage spatial VR panel faces headset every frame without moving its world anchor. Prior v11.518 rig startup and account cache preserved. Compiled source, Three169, UV, rigging, input, projects and new four QA regressions passed. Physical Quest acceptance remains pending.",
+  "sourceCommit": "55ec51cd591d63344bf637d88a0d254046414a31",
+  "sourceIntegritySha256": "8b268e6c9e3371aa15b10145e209da444cf238bd799537dbf21dccce544755c4"
 }
