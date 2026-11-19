@@ -515,8 +515,8 @@
     "patches/v11_521_model_labs_persistent_history.py",
     "patches/v11_522_sculpt_brush_menu.py"
   ],
-  "finalBytes": 10903473,
-  "finalSha256": "aa536fec22cbd598d88374e26a57b2d2f4de30521c86826cbcbd90856fe916c9",
+  "finalBytes": 10903521,
+  "finalSha256": "7a94b36f6f7c9bd8a26a172b86a138499e69235edda583a4f27f5413f1ad100b",
   "previousFinalSha256": "02c3c5be8fc3a6421a5fea7dc5ea679165817d012951e5d5c70824695e7f98e9",
   "previousFinalBytes": 10902947,
   "previousManifestFinalSha256": "02c3c5be8fc3a6421a5fea7dc5ea679165817d012951e5d5c70824695e7f98e9",
