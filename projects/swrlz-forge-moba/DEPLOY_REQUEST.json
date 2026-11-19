@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT (owner-approved)",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.521",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_521_LABS_PROJECT_JOURNAL",
-  "reason": "Release source-sealed §E v11.521 (498 ordered patches): immersive Model Studio fixed Labs/Projects/Display top, contextual Modeling/Rigging/Animation/Texture & Materials middle, Undo/Redo bottom; grouped Transform tools and native Trigger/Grip; Save within Projects and guarded Delete within Transform. Native project-scoped append-only edit journal survives saved reloads, logs Undo and Redo without erasing originals, isolates labs, and rejects conflicting cross-lab reversals. Texture & Materials detailed immersive controls and visual history browsing remain for next submenu pass. Focused automated source, syntax and journal tests passed; Quest owner acceptance remains pending. Release verifier updated to expect Labs and contextual Rigging instead of obsolete top-level Rigging; sealed HTML unchanged. The v11.521 UV regression retains v11.520 historical test unchanged and expects the new deployment marker.",
-  "sourceCommit": "3567f7f12d6f7262c6fe9d1c898bf50e3d6e1684",
-  "sourceIntegritySha256": "02c3c5be8fc3a6421a5fea7dc5ea679165817d012951e5d5c70824695e7f98e9"
+  "releaseVersion": "v11.522",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_522_SCULPT_BRUSH_MENU",
+  "reason": "Release source-sealed §E v11.522: immersive Modeling Lab Sculpt now lists only six brushes in workflow order (Push, Translate, Inflate, Pinch, Flatten, Smooth); the third-stage native Sculpt settings retain Radius −/+, Strength −/+; Inset/Extrude/Solidify/Subdivide and other topology tools remain in Face Tools. No changes to mesh algorithms, projects, lab switching, user history, controller profiles or save formats. Source measurement and JavaScript syntax checks passed; Quest owner acceptance is pending.",
+  "sourceCommit": "408a8f84c5f501569e5ae663140630f137be57a1",
+  "sourceIntegritySha256": "aa536fec22cbd598d88374e26a57b2d2f4de30521c86826cbcbd90856fe916c9"
 }
