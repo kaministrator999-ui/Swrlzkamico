@@ -3,7 +3,7 @@ on:
   push:
     branches: [main]
     paths:
-      - .github/workflows/verify-engine-v11-517.yml
+      - .github/workflows/verify-engine-v11-518.yml
       - projects/swrlz-forge-moba/patches/v11_518_quest_rig_cache.py
       - projects/swrlz-forge-moba/runtime/model_rig_scope_access_v11_518.js
       - projects/swrlz-forge-moba/runtime/engine_cloud_revision_cache_v11_518.js
