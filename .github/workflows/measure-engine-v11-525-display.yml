@@ -1,0 +1,19 @@
+name: Measure §E v11.525 Display menu
+on:
+  push:
+    branches: [main]
+    paths:
+      - "projects/swrlz-forge-moba/patches/v11_525_display_menu_groups.py"
+      - "projects/swrlz-forge-moba/scripts/measure_v11_525_source.py"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  measure:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: python projects/swrlz-forge-moba/scripts/measure_v11_525_source.py
