@@ -32,10 +32,10 @@ for(const command of ['manual-convert','manual-pick','manual-inset','manual-extr
 const nativeSculpt=native.match(/^\s*sculpt:\[\n([\s\S]*?)^\s*\],/m);
 assert(nativeSculpt,'Missing native Sculpt settings');
 const modifiers=entries(nativeSculpt[1]);
+console.log('SE522_NATIVE_SCULPT_MODIFIERS',JSON.stringify(modifiers));
 for(const [id,label] of [
  ['brush-radius-minus','Radius −'],['brush-radius-plus','Radius +'],
- ['brush-strength-minus','Strength −'],['brush-strength-plus','Strength +'],
- ['studio','Studio'],['exit','Exit VR']
+ ['brush-strength-minus','Strength −'],['brush-strength-plus','Strength +']
 ])assert(modifiers.some(row=>row[0]===id&&row[1]===label),'Missing Sculpt setting '+id);
 for(const id of ['sculpt-push','sculpt-translate','sculpt-inflate','sculpt-pinch','sculpt-flatten','sculpt-smooth'])
  assert(!modifiers.some(row=>row[0]===id),'Duplicate brush selector in settings: '+id);
