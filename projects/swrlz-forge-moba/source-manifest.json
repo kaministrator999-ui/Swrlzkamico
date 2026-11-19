@@ -1,10 +1,10 @@
 {
   "schema": "swrlz-forge-source-v2",
-  "name": "§wyrl§ Engine v11.523",
+  "name": "§wyrl§ Engine v11.524",
   "baseArtifact": "swrlz_forge_v4.html",
   "baseBytes": 99591,
   "baseSha256": "a8299fe89fbb98d15c6091751b7a66931a66efec8eec5cb464e1286f21895856",
-  "finalArtifact": "swyrl_engine_v11_523.html",
+  "finalArtifact": "swyrl_engine_v11_524.html",
   "encoding": "gzip+base64-chunks",
   "chunks": [
     "payload/part-01.txt",
@@ -514,13 +514,14 @@
     "patches/v11_520_quest_interaction_qa.py",
     "patches/v11_521_model_labs_persistent_history.py",
     "patches/v11_522_sculpt_brush_menu.py",
-    "patches/v11_523_sculpt_direction_cleanup.py"
+    "patches/v11_523_sculpt_direction_cleanup.py",
+    "patches/v11_524_select_menu_cleanup.py"
   ],
-  "finalBytes": 10904371,
-  "finalSha256": "a404cd8668a0e5bc4699ca32c6741cdb6e42d2f9c0b7b8a5e17ea5688c3c4555",
-  "previousFinalSha256": "7a94b36f6f7c9bd8a26a172b86a138499e69235edda583a4f27f5413f1ad100b",
-  "previousFinalBytes": 10903521,
-  "previousManifestFinalSha256": "7a94b36f6f7c9bd8a26a172b86a138499e69235edda583a4f27f5413f1ad100b",
+  "finalBytes": 0,
+  "finalSha256": "",
+  "previousFinalSha256": "a404cd8668a0e5bc4699ca32c6741cdb6e42d2f9c0b7b8a5e17ea5688c3c4555",
+  "previousFinalBytes": 10904371,
+  "previousManifestFinalSha256": "a404cd8668a0e5bc4699ca32c6741cdb6e42d2f9c0b7b8a5e17ea5688c3c4555",
   "releaseNotesBaseline": {
     "version": "v11.504",
     "patchCount": 481
