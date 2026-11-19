@@ -61,8 +61,8 @@ def apply(html):
  html=one(html,"$m('Undo').disabled=!undo.length;$m('Redo').disabled=!redo.length;",
    "const steps=se521Journal.depths();$m('Undo').disabled=!steps.canUndo;$m('Redo').disabled=!steps.canRedo;",
    'native model buttons use journal depth')
- html=one(html,"function syncProject(){\n     const button=",
-   "function syncProject(){\n     se521Journal.bind();\n     const button=",
+ html=one(html,'function syncProject(){',
+   'function syncProject(){\n     se521Journal.bind();',
    'bind saved document history on project changes')
  # The native XR bridge previously gated Undo against the obsolete temporary
  # stack. Its own wrapper must use the same immutable project journal.
