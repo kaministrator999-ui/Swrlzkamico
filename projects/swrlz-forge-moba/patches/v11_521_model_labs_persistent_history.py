@@ -81,9 +81,8 @@ def apply(html):
  html=section(html,'/* SE340_MODEL_VR_BRIDGE_START','/* SE340_MODEL_VR_BRIDGE_END',bridge)
  # Lab-specific authoring including rig poses/keyframes produces the same
  # persistent journal without treating animation playback as an authored edit.
- html=one(html,
-   "function se220RigTouched(message){\n  const m=model();if(m)m.editedAt='local';",
-   "function se220RigTouched(message){\n  se521Journal.touched('',message);\n  const m=model();if(m)m.editedAt='local';",
+ html=one(html,'function se220RigTouched(message){',
+   "function se220RigTouched(message){\n  se521Journal.touched('',message);",
    'rig and animation touch notifications persist authoring deltas')
  def stage(s):
   s=one(s,'  const presets={',
