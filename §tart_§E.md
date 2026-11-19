@@ -1,3 +1,9 @@
+## §WYRL§ Engine v11.520 · Quest VR interaction QA (2026-11-18)
+
+**Immersive WebXR:** UV-textured mesh sculpting now retries exact double-sided source-surface contact when necessary and adapts brush radius only for sparse textured vertices, retaining the authored UV image and native sculpt history. Selected models in Move/Grab support genuine **held Trigger** controller drag (14 mm tap deadzone, continuous pose preview, one commit on release, B cancels); native transform gizmos and three-stage spatial panels retain ray priority. The original world-anchored right/middle/left VR menu faces the tracked headset each rendered frame without relocating.
+
+**Quest Browser 2D, not immersive:** Native selection BoxHelper outlines are made non-pickable, while clicks are resolved against actual mesh surfaces, respecting active gizmo captures and the existing tap-to-deselect and Hide/Show bounds controls. The v11.518 rig startup crash and revision-based project cache improvements remain. Source and acceptance: `docs/QUEST_BROWSER_IMMERSIVE_QA_V11_520.md`. **Hardware Quest acceptance pending.**
+
 ## §WYRL§ Engine v11.519 · Quest Browser 2D selection and transform gizmos (2026-11-18)
 
 **Regular Quest Browser 2D (not immersive WebXR):** selected-object Move/Rotate/Scale gizmos gain 28-CSS-pixel controller-ray hit targets, the same visible mesh can be tapped again to deselect without triggering on drags/handles, and the existing viewport toolbar receives a **Hide bounds / Show bounds** toggle that only hides native BoxHelper selection outlines. This release includes v11.518's immersive `se220RigAvailable` scope fix and signed-in, revision-verified local caching for selected account projects. No new source scene, alternate XR menu, geometry edits or account credentials in localStorage. Details: `docs/QUEST_BROWSER_TRANSFORM_SELECTION_V11_519.md`. Physical Quest acceptance remains pending.
