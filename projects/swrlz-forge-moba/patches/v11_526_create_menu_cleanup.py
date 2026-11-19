@@ -62,6 +62,10 @@ def apply(html):
    ['accessory-reset','Reset Shape']
   ],"""+s[j:]
   s=one(s,
+   "function enabled(id){",
+   "function enabled(id){\\n  if(['accessory-body','accessory-details','accessory-fit'].includes(id))return !!state.accessoryActive;",
+   'pouch editing subpages are unavailable until a valid preview starts')
+  s=one(s,
    "create:['Create a model','CHOOSE · PREVIEW · PLACE']",
    "create:['Create a model','CONTROLLER PREVIEW · TRIGGER TO PLACE · B TO CANCEL']",
    'primitive contextual status and unchanged placement')
