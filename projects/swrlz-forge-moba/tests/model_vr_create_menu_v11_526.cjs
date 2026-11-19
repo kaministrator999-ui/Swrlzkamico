@@ -30,6 +30,7 @@ assert(stage.includes("detailsOpen=category==='inspect'?item.action==='selector-
  'Only Pouch may open Create context settings');
 assert(stage.includes("if(action==='create-pouch')return 'accessory'"),'Pouch must open its actual accessory settings');
 assert(native.includes('SE526_CREATE_CONTEXT'));
+assert(native.includes("if(['accessory-body','accessory-details','accessory-fit'].includes(id))return !!state.accessoryActive;"),'Pouch editing should be disabled until preview is valid');
 assert(native.includes('  create:[],'));
 const match=native.match(/^\s*accessory:\[\n([\s\S]*?)^\s*\],/m);
 assert(match,'Missing pouch settings page');
