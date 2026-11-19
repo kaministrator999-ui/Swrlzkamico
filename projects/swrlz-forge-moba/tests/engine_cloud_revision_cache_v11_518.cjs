@@ -42,7 +42,7 @@ const go=async()=>{
  sandbox.cloudBusy=true;
  assert.equal(await api.load('remote-1'),false);
  assert.equal(download,2,'in-progress cloud work cannot be bypassed');
- assert(refresh>=4);
+ assert.equal(refresh,3,'only eligible loads should request revision metadata');
  console.log('SE518_CLOUD_CACHE_PASS',JSON.stringify({sameRevisionCacheHit:true,
   changedRevisionFetched:true,missingSnapshotFetched:true,logoutBlocked:true,
   cloudBusyBlocked:true,metadataLookups:refresh}));
