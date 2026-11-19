@@ -24,3 +24,5 @@ try:
 finally:path.write_text(original,encoding='utf8')
 
 # The production manifest is sealed only after this exact source is measured.
+
+# Candidate measurement validates the visible divider and both settings pages.
