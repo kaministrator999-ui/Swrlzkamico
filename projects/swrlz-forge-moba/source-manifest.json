@@ -1,10 +1,10 @@
 {
   "schema": "swrlz-forge-source-v2",
-  "name": "§wyrl§ Engine v11.517",
+  "name": "§wyrl§ Engine v11.518",
   "baseArtifact": "swrlz_forge_v4.html",
   "baseBytes": 99591,
   "baseSha256": "a8299fe89fbb98d15c6091751b7a66931a66efec8eec5cb464e1286f21895856",
-  "finalArtifact": "swyrl_engine_v11_517.html",
+  "finalArtifact": "swyrl_engine_v11_518.html",
   "encoding": "gzip+base64-chunks",
   "chunks": [
     "payload/part-01.txt",
@@ -508,13 +508,14 @@
     "patches/v11_514_native_xr_rig.py",
     "patches/v11_515_spatial_menu_controller.py",
     "patches/v11_516_rig_precision.py",
-    "patches/v11_517_xr_project_rotation.py"
+    "patches/v11_517_xr_project_rotation.py",
+    "patches/v11_518_quest_rig_cache.py"
   ],
-  "finalBytes": 10860235,
-  "finalSha256": "92257776aaa75b90ae6d5a09e782ffb7226adb4864bbdcae83501e1c26f2da81",
-  "previousFinalSha256": "e053301cb5487c9a115b819699285ef15b8ddb1a5d7c1ef67e63d299e74c3b35",
-  "previousFinalBytes": 10844828,
-  "previousManifestFinalSha256": "41bd5cd3483fcb271374b05678218723049502265c025e660bce44b8cb142606",
+  "finalBytes": 10867053,
+  "finalSha256": "d322e5b815091cb16e8f8548158770dc0970a5d799f0a3e41bfd59b22c39086f",
+  "previousFinalSha256": "92257776aaa75b90ae6d5a09e782ffb7226adb4864bbdcae83501e1c26f2da81",
+  "previousFinalBytes": 10860235,
+  "previousManifestFinalSha256": "e053301cb5487c9a115b819699285ef15b8ddb1a5d7c1ef67e63d299e74c3b35",
   "releaseNotesBaseline": {
     "version": "v11.504",
     "patchCount": 481
