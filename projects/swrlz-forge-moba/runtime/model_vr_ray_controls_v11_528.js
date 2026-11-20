@@ -135,7 +135,7 @@
    mesh.visible=false;mesh.renderOrder=8581;bar.add(mesh);owned.push(mesh.geometry);
    buttons.push({mesh,i,side});targets.push(mesh);
   }
-  let groups=[],hover='',signature='',disposed=false;
+  let groups=[],hoveredAction='',signature='',disposed=false;
   const cap=t=>String(t||'').replace(/^brush-/,'').replace(/^rig-/,'').replace(/^accessory-/,'').replaceAll('-',' ');
   function render(){
    if(!bar.visible)return;
@@ -147,7 +147,7 @@
     if(g.id==='rig-strength')return Math.round((rig?.rigStrength||0)*100)+'%';
     return 'Adjust';
    });
-   const state=JSON.stringify([groups.map(g=>g.id),vals,hover]);
+   const state=JSON.stringify([groups.map(g=>g.id),vals,hoveredAction]);
    if(signature===state)return;signature=state;
    const h=cv.height,w=cv.width;c.clearRect(0,0,w,h);
    c.fillStyle='#1b293e';c.fillRect(0,0,w,h);
@@ -161,8 +161,8 @@
     c.font='650 31px system-ui';c.fillStyle='#a7d6d6';c.fillText(vals[i],390,y+72);
     for(const side of ['minus','plus']){
      const x=side==='minus'?60:655,id=groups[i][side];
-     c.fillStyle=hover===id?'#377975':'#345466';c.fillRect(x,y+50,118,47);
-     c.strokeStyle=hover===id?'#b9ffe0':'#7198a7';c.strokeRect(x,y+50,118,47);
+     c.fillStyle=hoveredAction===id?'#377975':'#345466';c.fillRect(x,y+50,118,47);
+     c.strokeStyle=hoveredAction===id?'#b9ffe0':'#7198a7';c.strokeRect(x,y+50,118,47);
      c.fillStyle='#f7ffff';c.font='800 43px system-ui';c.textAlign='center';
      c.fillText(side==='minus'?'−':'+',x+59,y+86);c.textAlign='left';
     }
@@ -212,10 +212,10 @@
   function hover(target){
    if(bar.visible&&target?.userData?.se528Parameter){
     const id=target.userData.se340Action;
-    if(id!==hover){hover=id;signature='';render();}
+    if(id!==hoveredAction){hoveredAction=id;signature='';render();}
     return null;
    }
-   if(hover){hover='';signature='';render();}
+   if(hoveredAction){hoveredAction='';signature='';render();}
    return priorHover(target);
   }
   function dispose(){restore();disposed=true;bar.removeFromParent();
