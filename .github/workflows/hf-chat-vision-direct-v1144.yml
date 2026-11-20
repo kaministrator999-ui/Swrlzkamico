@@ -1,0 +1,118 @@
+name: Guarded §C 1.1.44 Qwen direct vision commit
+on:
+  push:
+    branches: [main]
+    paths: [".deploy/HF_CHAT_VISION_DIRECT_1144_REQUEST.txt"]
+permissions:
+  contents: read
+concurrency:
+  group: swrlz-hf-space-deployment
+  cancel-in-progress: false
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - name: Require exact HF source, scope, nonce and approved deployment
+        id: authority
+        shell: bash
+        run: |
+          set -euo pipefail
+          file=.deploy/HF_CHAT_VISION_DIRECT_1144_REQUEST.txt
+          test -f "$file"
+          key() { sed -n "s/^$1=//p" "$file" | tail -1; }
+          test "$(key SPACE)" = "kamiloki/Swyrlz"
+          test "$(key SOURCE_REVISION)" = "a676721e889c7b1c3552d7e02e3c510680c31b99"
+          test "$(key SCOPE)" = "station-vision-original-answer-and-chat-ui-only"
+          mode="$(key MODE)"
+          [[ "$mode" == inspect || "$mode" == deploy ]]
+          if [[ "$mode" == deploy ]]; then test "$(key APPROVED)" == yes; fi
+          nonce="$(key NONCE)"
+          [[ "$nonce" =~ ^[a-z0-9-]{12,90}$ ]]
+          echo "mode=$mode" >> "$GITHUB_OUTPUT"
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.11"}
+      - uses: actions/setup-node@v4
+        with: {node-version: "22"}
+      - name: Validate release script and install source reader
+        run: |
+          python -m py_compile scripts/hf_chat_vision_direct_commit_v1144_release.py
+          python -m pip install --quiet "huggingface_hub>=0.34,<2"
+      - name: Snapshot exact live source and produce checksum-pinned patch
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: python -u scripts/hf_chat_vision_direct_commit_v1144_release.py inspect
+      - name: Test unchanged UI, no-code intent, source-verified answer and direct event route
+        shell: bash
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import ast,hashlib,os,pathlib,re,subprocess,types
+          from huggingface_hub import hf_hub_download
+          root=pathlib.Path("reports/swrlz-vision-direct-commit-1144/candidate")
+          html=(root/"chat/§wyrlz/index.html").read_text("utf-8")
+          station=(root/"station.py").read_text("utf-8")
+          assert 'swrlz-chat-version" content="1.1.44"' in html
+          assert 'swrlz-chat-design-version" content="1.0.60"' in html
+          assert 'stationGeneration={...stationGeneration,text:firstQwenVisionAnswer,' in html
+          assert html.index("renderStationGeneration();\n            }else activity.update") < html.index("removeVisionActivity(activity);",html.index("if(accepted.visionAnswerReused===true"))
+          assert "stationGeneration=held" in html
+          assert '"visionAnswerReused":bool(direct_vision_answer)' in station
+          assert 'vision_job_resource_receipt(google_owner,vision_job_id,prompt)' in station
+          assert 'raise HTTPException(409,"Image analysis is no longer verifiable.' in station
+          assert "if direct_vision_answer:" in station
+          assert "payload[\"verifiedVisionAnswer\"]=direct_vision_answer" in station
+          scripts=[part for part in re.findall(r'<script(?:\s[^>]*)?>([\s\S]*?)</script>',html,re.I) if part.strip()]
+          assert len(scripts)==1
+          pathlib.Path("/tmp/swrlz-direct-1144.js").write_text(scripts[0],"utf-8")
+          node=ast.parse(station)
+          run=next(n for n in node.body if isinstance(n,ast.FunctionDef) and n.name=="_run")
+          direct=next(n for n in ast.walk(run) if isinstance(n,ast.If) and isinstance(n.test,ast.BoolOp) and any(
+             isinstance(a,ast.Call) and isinstance(a.func,ast.Name) and a.func.id=="isinstance" for a in n.test.values)
+             and any(isinstance(t,ast.Assign) and any(isinstance(target,ast.Name) and target.id=="event_source" for target in t.targets) for t in n.body))
+          assert 'verifiedVisionAnswer' in ast.unparse(direct)
+          branch_code=compile(ast.Module(body=direct.body,type_ignores=[]),"<verified-direct-route>","exec")
+          prompt="A small intricate sorting hat with folded fabric."
+          environment={"payload":{"verifiedVisionAnswer":prompt}}
+          exec(branch_code,environment)
+          emitted=list(environment["event_source"])
+          assert [e["type"] for e in emitted]==["STATUS","DELTA","COMPLETE"]
+          assert emitted[1]["text"]==prompt
+          model_src=pathlib.Path(hf_hub_download("kamiloki/Swyrlz","model_router.py",
+             repo_type="space",revision="a676721e889c7b1c3552d7e02e3c510680c31b99",token=os.environ["HF_TOKEN"])).read_text()
+          model=ast.parse(model_src)
+          fn=next(n for n in model.body if isinstance(n,ast.FunctionDef) and n.name=="_direct_vision_description")
+          def direct_format(text):return text
+          namespace={"re":re,"_VISION_START":"\n\n[Uploaded image — vision description, not original pixels]\n",
+                     "_VISION_END":"\n[/Uploaded image]","_format_direct_vision_report":direct_format}
+          exec(compile(ast.Module(body=[fn],type_ignores=[]),"<direct-image-question>","exec"),namespace)
+          question="What's this image look like to you?"
+          description="A brown pointed 3D sorting hat inside an editor."
+          full=question+namespace["_VISION_START"]+description+namespace["_VISION_END"]
+          assert namespace["_direct_vision_description"]({"prompt":full})==description
+          code="Write a Blender script for this model"+namespace["_VISION_START"]+description+namespace["_VISION_END"]
+          assert namespace["_direct_vision_description"]({"prompt":code}) is None
+          print("SWRLZ_VISION_DIRECT_1144_TEST_PASS: verified original-answer reuse, code isolation, UI continuity",flush=True)
+          PY
+          node --check /tmp/swrlz-direct-1144.js
+      - name: Preserve immutable live source, candidate and rollback metadata
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: swrlz-vision-direct-1144-source-and-backup
+          path: reports/swrlz-vision-direct-commit-1144/
+          retention-days: 30
+          if-no-files-found: ignore
+      - name: Commit only the approved Station and Chat changes; verify live Qwen readiness
+        if: ${{ steps.authority.outputs.mode == 'deploy' }}
+        timeout-minutes: 22
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          SWRLZ_VISION_DIRECT_1144_APPROVED: "yes"
+        run: |
+          set -euo pipefail
+          python -u scripts/hf_chat_vision_direct_commit_v1144_release.py publish
+          echo "SWRLZ_VISION_DIRECT_1144_LIVE_VERIFIED"
