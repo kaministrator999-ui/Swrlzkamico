@@ -2,8 +2,8 @@
   "version": "v11.528",
   "status": "source-build-verified",
   "patches": 505,
-  "bytes": 10943660,
-  "sha256": "7f0b85798f3cf4646f9d5dd635d5c0ddd72af2a9988bf79c32ca69751a7c3212",
+  "bytes": 10944440,
+  "sha256": "d62dfd82aea741cbfb545016c2b4576374052512baef59195b4d44f77a6f6efc",
   "checks": [
     "generated source integrity",
     "JavaScript syntax",
