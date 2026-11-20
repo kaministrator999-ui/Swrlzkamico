@@ -1,0 +1,47 @@
+name: Inspect current HF §C image routing (read only)
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/inspect-current-chat-image-20261120.yml"]
+permissions:
+  contents: read
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: python -m pip install --quiet "huggingface_hub>=0.34,<2"
+      - name: Inspect deployed-source routing without changing HF or user data
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          python - <<'PY'
+          import os,re,pathlib
+          from huggingface_hub import HfApi,hf_hub_download
+          api=HfApi(token=os.environ.get("HF_TOKEN"))
+          rev=api.repo_info("kamiloki/Swyrlz",repo_type="space").sha
+          print("LIVE_REV",rev,flush=True)
+          pattern=re.compile(r'imageReuse|imageMemory|image_context|reuseImage|reuse_image|vision_job|requestVisionDescription|selectedImage|updateImagePreview|inputMode|input.mode|browser recognition|Turbo|visionAnalysis|visionMode|imageSha256|imageAnalysisContext|imageMatch',re.I)
+          for name in ("chat/§wyrlz/index.html","station.py","chat_vision.py"):
+            s=pathlib.Path(hf_hub_download("kamiloki/Swyrlz",name,repo_type="space",revision=rev,token=os.environ.get("HF_TOKEN"))).read_text("utf-8")
+            lines=s.splitlines()
+            hits=[i for i,line in enumerate(lines) if pattern.search(line)]
+            print("FILE",name,"LEN",len(s),"LINES",len(lines),"HITS",len(hits),flush=True)
+            windows=[]
+            for i in hits:
+              b=max(0,i-(12 if name.endswith(".html") else 8))
+              e=min(len(lines),i+(17 if name.endswith(".html") else 12))
+              if windows and b<=windows[-1][1]:windows[-1]=(windows[-1][0],max(e,windows[-1][1]))
+              else:windows.append((b,e))
+            for b,e in windows:
+              if (e-b)>180:
+                # Long blocks can result from dense UI code; trim center but preserve starts and ends.
+                ranges=[(b,b+90),(e-90,e)]
+              else:ranges=[(b,e)]
+              for x,y in ranges:
+                print(f"SECTION {name} {x+1}-{y}",flush=True)
+                for n in range(x,y):print(f"{n+1}: {lines[n][:700]}",flush=True)
+          PY
