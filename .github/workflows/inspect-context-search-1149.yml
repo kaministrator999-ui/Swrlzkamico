@@ -1,0 +1,51 @@
+name: Inspect Chat history retrieval and vision handoff (read only)
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/inspect-context-search-1149.yml"]
+permissions:
+  contents: read
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.11"}
+      - run: python -m pip install -q 'huggingface_hub>=0.34,<2'
+      - name: Inspect Space modules without reading user records
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          python - <<'PY'
+          import os,pathlib,re,hashlib
+          from huggingface_hub import HfApi,hf_hub_download
+          api=HfApi(token=os.environ.get("HF_TOKEN"));repo="kamiloki/Swyrlz"
+          rev=api.repo_info(repo,repo_type="space").sha
+          print("SPACE_REV",rev,flush=True)
+          names=["personal_history_lookup.py","project_thread_memory.py","station.py","chat_vision.py","model_router.py"]
+          for name in names:
+            raw=pathlib.Path(hf_hub_download(repo,name,repo_type="space",revision=rev,token=api.token)).read_bytes()
+            lines=raw.decode("utf8").splitlines()
+            print("FILE",name,"LINES",len(lines),"SHA",hashlib.sha256(raw).hexdigest(),flush=True)
+            needles={
+             "personal_history_lookup.py":("def ","import ","from ","class "),
+             "project_thread_memory.py":("def ","import ","from ","class "),
+             "station.py":("def _vision_reference_hints","def _send_owned","def _history_projection","def _inference_prompt_after_vision","matched_image_threads","payload[","privateHistoryIntent"),
+             "chat_vision.py":("def _vision_reference_context","def _ask_vision_local","def _run_vision_job","def install(","def vision_job_resource_receipt","context_hints"),
+             "model_router.py":("def _direct_vision_description","def dispatch(","personal_history_lookup","privateHistoryIntent","imageContext"),
+            }[name]
+            matched=[i for i,l in enumerate(lines) if any(k in l for k in needles)]
+            print("HEADINGS",name,[(i+1,lines[i][:140]) for i in matched][:125])
+            windows={
+              "personal_history_lookup.py":[(1,min(len(lines),275))],
+              "project_thread_memory.py":[(1,min(len(lines),120))],
+              "station.py":[(2470,2550),(2600,2653),(2680,2720),(2825,2890)],
+              "chat_vision.py":[(150,198),(568,585),(621,661),(1250,1322)],
+              "model_router.py":[(1,95)],
+            }[name]
+            for start,end in windows:
+              if start>len(lines):continue
+              print("SECTION",name,start,end)
+              for i in range(start-1,min(end,len(lines))):print(f"{i+1}: {lines[i][:600]}")
+          PY
