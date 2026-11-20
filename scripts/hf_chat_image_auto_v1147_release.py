@@ -121,7 +121,7 @@ def patch_ui(data):
         "automatic server request")
     html = region(html,
         '// A fresh image request must never be silently upgraded to use',
-        '           sendAcknowledged=true;',
+        'sendAcknowledged=true;',
         '''           // A same-account SHA match is the only valid automatic reuse.
            // Any unexpected server mode fails closed rather than silently merging history.
            if(attachment && !["fresh","cross-thread-auto"].includes(accepted.imageContextMode))
