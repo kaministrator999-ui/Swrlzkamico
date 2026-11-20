@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.527
+title: §wyrl§ Engine v11.528
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,16 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §WYRL§ Engine v11.528 · Immersive VR projects, controls and cloud saves (2026-11-19)
+
+**Immersive Projects:** A spacious native world-space Projects dialog replaces the narrow list, with Device / My Account / Starters project cards, pagination, Refresh, Open, Save to device, Save to account, Clone and Close. All project loads still use the existing authenticated library and native WebXR scene, not a duplicate workspace.
+
+**Sculpt and transform:** A posed rig requiring neutral geometry offers explicit Set Rest Pose / Keep Pose before Push/Pull; rest-pose confirmation is recorded in native rig history. Move/Rotate/Scale gizmo drags follow the controller aim ray while preserving the native transform transaction and B cancellation. Adjacent +/- controls are grouped in contextual parameter toolbars.
+
+**Controller and account:** The left Quest Menu button toggles the existing tool menu where the browser exposes it; X remains a fallback. Save to account in §Chat and My Projects uses one durable cloud-save path with stable project identity, confirmed revision and error feedback; account project loading normalizes selected IDs. No new OAuth credentials or cloud store.
+
+See [v11.528 immersive QA and acceptance](docs/IMMERSIVE_XR_OWNER_QA_V11_528.md). Real Quest and signed-in account acceptance pending.
 
 ## §WYRL§ Engine v11.527 · Contextual immersive Draw menu (2026-11-19)
 
