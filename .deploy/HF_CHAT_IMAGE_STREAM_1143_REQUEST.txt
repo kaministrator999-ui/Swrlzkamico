@@ -1,6 +1,6 @@
 SPACE=kamiloki/Swyrlz
 SOURCE_REVISION=561e5fa93039cde26c3563ade1cd238860368893
 SCOPE=only-image-vision-stream-and-chat-intent-no-code
-MODE=inspect
-APPROVED=no
-NONCE=20261120-qwen-image-stream-1143-inspect-01
+MODE=deploy
+APPROVED=yes
+NONCE=20261120-qwen-image-stream-1143-deploy-01
