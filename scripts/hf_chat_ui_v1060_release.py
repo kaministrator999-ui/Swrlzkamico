@@ -2,7 +2,7 @@
 """Release §C 1.0.60 visual delta onto the exact live Hugging Face Chat.
 
 Preserves all unrelated live JavaScript, account/model/stream APIs, and files.
-Only the live Chat HTML and canonical Chat VERSION.txt may change, with a
+Only the live Chat HTML may change, with a
 preflight snapshot, parent-commit CAS, readback, served-page QA, and rollback.
 """
 from __future__ import annotations
@@ -23,7 +23,7 @@ from huggingface_hub import CommitOperationAdd, HfApi, hf_hub_download
 SPACE = "kamiloki/Swyrlz"
 UI = "chat/§wyrlz/index.html"
 VERSION = "chat/§wyrlz/VERSION.txt"
-FILES = (UI, VERSION)
+FILES = (UI,)
 MARK = "/* §C 1.0.60 — Unified professional interface."
 BACKUP = Path("reports/chat-ui-v1060-live-release")
 BASE = "https://kamiloki-swyrlz.hf.space"
@@ -178,7 +178,8 @@ def snapshot(api: HfApi, candidate_path: Path) -> None:
     originals = read_space_files(api, revision)
     try:
         html = originals[UI].decode("utf-8")
-        version = originals[VERSION].decode("utf-8")
+        version = re.search(r'swrlz-chat-version" content="([^"]+)"',html).group(1)
+            if 'swrlz-chat-version" content="' in html else "unknown"
     except UnicodeDecodeError as exc:
         raise RuntimeError("Live Chat source is not UTF-8") from exc
     emit("LIVE_BASELINE", revision=revision,
@@ -197,7 +198,7 @@ def snapshot(api: HfApi, candidate_path: Path) -> None:
                 "sourceSha256":digest(candidate.encode("utf-8"))}
     (BACKUP/"manifest.json").write_text(json.dumps(manifest,indent=2)+"\n")
     new_html = patch(html, candidate).encode("utf-8")
-    desired = {UI:new_html, VERSION:b"1.0.60\n"}
+    desired = {UI:new_html}
     for name, blob in desired.items():
         out = BACKUP / "candidate" / name
         out.parent.mkdir(parents=True, exist_ok=True)
