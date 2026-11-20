@@ -1,0 +1,45 @@
+name: Inspect §C conversation reasoning and history path
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/inspect-conversation-intelligence-1150.yml"]
+permissions:
+  contents: read
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.11"}
+      - run: python -m pip install -q 'huggingface_hub>=0.34,<2'
+      - name: Inspect code architecture (no account data)
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          python - <<'PY'
+          import os,pathlib,hashlib,re
+          from huggingface_hub import HfApi,hf_hub_download
+          api=HfApi(token=os.environ.get("HF_TOKEN"));repo="kamiloki/Swyrlz"
+          rev=api.repo_info(repo,repo_type="space").sha
+          print("SOURCE_REVISION",rev,flush=True)
+          files=api.list_repo_files(repo,repo_type="space",revision=rev)
+          print("MODULES", [p for p in files if p.endswith(".py") and
+            (not "/" in p or any(q in p for q in ("brain","chat","model","memory","prompt")) )][:180])
+          for name in ["station.py","model_router.py","brain.py","brain_lalm.py","brain_prompt.py","server.py","app.py","chatgpt_account_memory.py"]:
+            if name not in files:continue
+            raw=pathlib.Path(hf_hub_download(repo,name,repo_type="space",revision=rev,token=api.token)).read_bytes()
+            lines=raw.decode("utf8").splitlines()
+            print("FILE",name,"SHA",hashlib.sha256(raw).hexdigest(),"LINES",len(lines))
+            if name=="station.py":windows=[(1185,1255),(1280,1390),(2535,2570),(2598,2706)]
+            elif name=="model_router.py":windows=[(85,180),(600,708),(1038,1079)]
+            elif name=="chatgpt_account_memory.py":windows=[(145,213)]
+            else:windows=[(1,min(135,len(lines)))]
+            print("MATCH",name,[(i+1,l.strip()[:120]) for i,l in enumerate(lines) if 
+              ("history" in l or "instruction" in l.lower() or "system" in l.lower() or 
+              "def generate" in l or "def build" in l or "context" in l.lower())][:85])
+            for lo,hi in windows:
+              if lo>len(lines):continue
+              print("SECTION",name,lo,hi)
+              for i in range(lo-1,min(hi,len(lines))):print(f"{i+1}: {lines[i][:500]}")
+          PY
