@@ -38,7 +38,7 @@ jobs:
           s=raw.decode("utf8")
           for token in ("V11_530_QUEST_GIZMO_CONTROLLER_MENU",
               "SE530_VR_CONTINUOUS_GIZMO_AND_CONTROLLER_PALETTE_END",
-              "['sculpt-indent','Indent / Lower']",
+              "['sculpt-push','Push / Pull']",
               "controllerFollowMenu:true"):
               assert token in s,token
           print("SE530_FINAL_BYTES="+str(len(raw)),flush=True)
