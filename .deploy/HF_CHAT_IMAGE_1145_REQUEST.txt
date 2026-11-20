@@ -1,6 +1,6 @@
 SPACE=kamiloki/Swyrlz
 SOURCE_REVISION=70905ffeebd77d21fc99982f6f8f9a5a19a22018
 SCOPE=single-image-bubble-and-account-scoped-image-match
-MODE=inspect
-APPROVED=no
-NONCE=20261120-image-single-memory-v1145-inspect-02
+MODE=deploy
+APPROVED=yes
+NONCE=20261120-image-single-memory-v1145-deploy-01
