@@ -1,0 +1,20 @@
+// Candidate static/regression checks. Physical Meta Quest acceptance remains separate.
+'use strict';
+const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');
+const root=path.resolve(__dirname,'..');
+const source=fs.readFileSync(path.join(root,'runtime/model_vr_controller_palette_v11_530.js'),'utf8');
+const patch=fs.readFileSync(path.join(root,'patches/v11_531_quest_gizmo_controller_menu.py'),'utf8');
+const html=fs.readFileSync(process.argv[2],'utf8');
+for(const token of ['se390UpdatePose=function(g,pose,gain)','g.se530Continuous',
+ 'if(state.worldAxis)','state.translation.add(localDelta','if(g.mode===\'move\')',
+ 'root.position.copy(pose.position).add(location)','root.scale.setScalar(.94)',
+ "se372MenuDragStart=function(){return false;}","activeSculptOperation",
+ 'banner.visible=sculpt','Direction · Falloff · Radius · Strength','controllerFollowMenu:true'])
+ assert(source.includes(token),'Missing native scoped behavior: '+token);
+assert(patch.includes("['sculpt-push','Push / Pull']"),'Unified signed sculpt operation must be preserved');
+for(const token of ['SE530_VR_CONTINUOUS_GIZMO_AND_CONTROLLER_PALETTE_END',
+ "['sculpt-push','Push / Pull']", 'V11_531_QUEST_GIZMO_CONTROLLER_MENU',
+ "window.SWRLZ_FORGE_BUILD={version:'v11.531'"])
+ assert(html.includes(token),'Not published in assembled release: '+token);
+assert(html.includes('SE529_NATIVE_PROJECT_ACCOUNT_SAVE_START'),'Prior account project path was lost');
+console.log('SE530_CONTROLLER_MENU_STATIC_CHECK_PASS');
