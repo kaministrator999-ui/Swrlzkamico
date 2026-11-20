@@ -12,7 +12,7 @@ from pathlib import Path
 from huggingface_hub import HfApi, hf_hub_download, CommitOperationAdd
 
 SPACE="kamiloki/Swyrlz"
-SOURCE_REVISION="401d3025870a6338f8f4a53c73b18dadd7cc627a"
+SOURCE_REVISION="c2cd5dc3e4d2fd692f3135575586f70e7872fc85"
 UI="chat/§wyrlz/index.html"
 ROUTER="model_router.py"
 FILES=(UI,ROUTER)
@@ -25,8 +25,8 @@ EXPECTED={
 }
 
 def digest(b):return hashlib.sha256(b).hexdigest()
-def emit(stage,**details):
- print("SWRLZ_MEDIA_QWEN_1141",json.dumps({"event":stage,**details},sort_keys=True),flush=True)
+def emit(event,**details):
+ print("SWRLZ_MEDIA_QWEN_1141",json.dumps({"event":event,**details},sort_keys=True),flush=True)
 def one(s,before,after,label):
  n=s.count(before)
  if n!=1:raise RuntimeError(f"SOURCE_DRIFT {label}: expected one, got {n}")
