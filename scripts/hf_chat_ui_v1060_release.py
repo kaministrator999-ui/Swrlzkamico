@@ -267,7 +267,7 @@ def snapshot(api: HfApi, candidate_path: Path) -> None:
 
 
 def served_version(expected_version: str) -> tuple[bool,str]:
-    for path in ("/chat/%C2%A7wyrlz", "/chat/%C2%A7wyrlz/index.html"):
+    for path in ("/", "/chat/%C2%A7wyrlz", "/chat/%C2%A7wyrlz/index.html"):
         try:
             req = urllib.request.Request(
                 BASE+path+"?design_release_v1060="+str(time.monotonic_ns()),
