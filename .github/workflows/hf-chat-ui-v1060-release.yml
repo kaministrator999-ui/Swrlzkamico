@@ -18,7 +18,7 @@ on:
         type: string
         default: "e28a8cd03eef1fb4386b93bac31a4797c73f3d57"
       approved:
-        description: "Authorize exact two-file patch to existing kamiloki/Swyrlz only"
+        description: "Authorize exact single-file patch to existing kamiloki/Swyrlz only"
         required: true
         type: choice
         options: ["no", "yes"]
@@ -101,7 +101,7 @@ jobs:
           path: reports/chat-ui-v1060-live-release/
           retention-days: 30
           if-no-files-found: ignore
-      - name: Publish two-file UI-only patch and verify served Chat; revert if rejected
+      - name: Publish single-file UI-only patch and verify served Chat; revert if rejected
         if: ${{ steps.release_config.outputs.mode == 'deploy' && steps.release_config.outputs.approved == 'yes' }}
         timeout-minutes: 12
         shell: bash
