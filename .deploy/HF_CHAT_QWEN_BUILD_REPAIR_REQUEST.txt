@@ -1,6 +1,6 @@
 TARGET=kamiloki/Swyrlz
 SOURCE_REVISION=ef65f2a0f38262a37ba98ffba87b3af5c8431675
 SCOPE=qwen-native-build-concurrency-only
-MODE=inspect
-APPROVED=no
-REQUEST_NONCE=20261120-qwen-build-inspect-01
+MODE=deploy
+APPROVED=yes
+REQUEST_NONCE=20261120-qwen-build-deploy-01
