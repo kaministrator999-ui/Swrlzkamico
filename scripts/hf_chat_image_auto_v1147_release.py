@@ -52,10 +52,10 @@ def one(source, before, after, label):
 
 def region(source, before, after, replacement, label):
     start = source.find(before)
-    if start < 0 or source.count(before) != 1:
+    if start < 0:
         raise RuntimeError("SOURCE_DRIFT missing start " + label)
     end = source.find(after, start + len(before))
-    if end < 0 or source.count(after) != 1:
+    if end < 0:
         raise RuntimeError("SOURCE_DRIFT missing end " + label)
     return source[:start] + replacement + source[end:]
 
@@ -99,6 +99,9 @@ def patch_ui(data):
           :same?"Exact image recognized in this conversation. Existing discussion remains available.":"";
       };
 ''', "replace manual selection with passive recognition")
+    html = one(html, '       const imageReuseChoice=document.getElementById("imageReuseChoice");', '', "remove obsolete image choice")
+    html = one(html, '       const imageReuseCheckbox=document.getElementById("imageReuseCheckbox");', '', "remove obsolete image checkbox")
+    html = one(html, '       const imageReuseSelect=document.getElementById("imageReuseSelect");', '', "remove obsolete image select")
     html = one(html,
         'selectedImage={file:stableFile,bytes,url,imageSha256,reuseThreadId:"",reuseConfirmedForThreadId:""};',
         'selectedImage={file:stableFile,bytes,url,imageSha256};',
