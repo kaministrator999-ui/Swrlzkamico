@@ -2698,3 +2698,7 @@ After pressing the deploy button:
 Never substitute `workflow_dispatch`, an arbitrary watched source file, or an intermediate commit for this repo's dedicated final deploy-button mechanism.
 
 Sealed HTML: **2,621,375 bytes**, SHA-256 `d0db24152221ea1dfd4ecc284f65686af71f74c770d4c7c15134979d98b77494`. Local native authoring completed 14 recorded edit groups, exact Save/reimport and eight review views. The 283-part set retains 1,623,252 measured triangles (heroine 1,339,364; head 48,768). The focused phone Apply/Undo, invalid-section/import and surface-cleanup/Undo checks passed.
+
+
+### §E v11.531 · Quest menu, held-axis dragging and account project correction (2026-11-20)
+Immersive controller menu follows the left controller's position rather than wrist rotation, faces the headset upright, and reflows native tool tiers/brush controls. Trigger capture keeps X/Y/Z gizmo movement live until release, with reversal and B cancellation. Account-project open avoids a conflicting parent transition lock and exposes listing errors; existing saved formats and recovery protection remain. Physical Quest acceptance remains pending.
