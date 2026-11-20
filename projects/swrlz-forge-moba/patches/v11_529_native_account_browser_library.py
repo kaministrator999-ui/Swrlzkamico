@@ -30,8 +30,11 @@ def apply(html):
  anchor='/* SE528_ACCOUNT_PROJECT_REPAIR_END */'
  html=one(html,anchor,anchor+'\n'+account+'\n'+ui,
           'project-account bridge and native browser gallery')
- html=one(html,'</head>','<style id="se529NativeProjectLibrary">\n'+css+
-    '\n</style>\n</head>','scoped responsive CSS')
+ # The assembled document has a second closing head token in an embedded
+ # template string. Insert CSS only into the first (actual) HTML head.
+ if '</head>' not in html:raise AssertionError('missing main document head')
+ html=html.replace('</head>','<style id="se529NativeProjectLibrary">\n'+css+
+    '\n</style>\n</head>',1)
  for old,new in (
   ('SWYRL_ENGINE_DEPLOY_MARKER: V11_528_IMMERSIVE_UX_ACCOUNT_REPAIR',MARKER),
   ('ENGINE · MAKER v11.528','ENGINE · MAKER v11.529'),
