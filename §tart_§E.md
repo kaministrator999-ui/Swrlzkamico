@@ -1,3 +1,9 @@
+## §WYRL§ Engine v11.527 · Contextual immersive Draw menu (2026-11-19)
+
+**Modeling Lab → Draw:** Exactly Draw Outline, Make Face, Thicken Outline and Discard Outline in the existing native world-space operation rail. Make Face enables after at least three points during an active outline. Discard is limited to an unfinished outline. Thicken enables only for one selected planar open-outline mesh passing the same topology validation as native Grip extrusion. Disabled actions are dimmed and cannot be activated by the controller ray.
+
+**No duplicate systems:** Draw does not open a redundant settings panel or duplicate Undo/Redo, which remain in the global project-history controls. Native drawing/extrusion checkpoints, persistent per-project edit journal, Create, Sculpt, Select, Display and other Labs remain. See [Draw acceptance and source notes](docs/MODEL_VR_DRAW_MENU_V11_527.md). Physical Quest testing is still required.
+
 ## §WYRL§ Engine v11.520 · Quest VR interaction QA (2026-11-18)
 
 **Immersive WebXR:** UV-textured mesh sculpting now retries exact double-sided source-surface contact when necessary and adapts brush radius only for sparse textured vertices, retaining the authored UV image and native sculpt history. Selected models in Move/Grab support genuine **held Trigger** controller drag (14 mm tap deadzone, continuous pose preview, one commit on release, B cancels); native transform gizmos and three-stage spatial panels retain ray priority. The original world-anchored right/middle/left VR menu faces the tracked headset each rendered frame without relocating.
