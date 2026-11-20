@@ -173,8 +173,8 @@ def patch_vision(original):
             _prune_jobs(now)''',
   "owner-scoped reference lookup")
  s=one(s,
-  '                                  "levelRecords": []}',
-  '                                  "levelRecords": [],"visionContextHintCount":len(context_hints)}',
+  '"levelRecords": []}',
+  '"levelRecords": [],"visionContextHintCount":len(context_hints)}',
   "bounded context provenance count")
  s=one(s,
   'target=_run_vision_job, args=(job_id, image, question, cancel_event, analysis_levels),',
