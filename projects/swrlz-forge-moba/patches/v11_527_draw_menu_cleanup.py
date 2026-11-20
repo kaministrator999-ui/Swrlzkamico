@@ -145,7 +145,7 @@ def apply(html):
    "if(action==='extrude'){const id=se340Bridge().inspect().selectedId;if(s.gesture||se350Tools().selection().ids.length!==1||!se350Surface().canExtrude(id))return false;s.mode='extrude';s.page='draw';se340Notice('Point at the valid outline face, hold grip and pull to add thickness.');se340SyncUI();se340Publish();return true;}",
    'arm existing extrusion gesture only for eligible selected geometry')
   return s
- html=section(html,'/* SE350_MODEL_VR_WORKSPACE_START','/* SE350_MODEL_VR_WORKSPACE_END',xr)
+ html=section(html,'/* SE340_MODEL_VR_WORKSPACE_START','/* SE340_MODEL_VR_WORKSPACE_END',xr)
  for old,new in (
   ('SWYRL_ENGINE_DEPLOY_MARKER: V11_526_CREATE_MENU_CLEANUP',MARKER),
   ('ENGINE · MAKER v11.526','ENGINE · MAKER v11.527'),
