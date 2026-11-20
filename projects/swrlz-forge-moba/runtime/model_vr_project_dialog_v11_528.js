@@ -235,11 +235,23 @@
  };
  const priorAction=se340ModelXRAction;
  se340ModelXRAction=function(action,record){
-  if(action==='projects'){se340XR.ui?.openProjects?.();return true;}
   if(action==='cancel'&&se340XR.ui?.isModalOpen?.()){
-   se340XR.ui?.closeDialog?.();return true;
+   se340XR.ui.closeDialog();return true;
   }
+  if(action==='projects'){
+   if(se340XR.ui?.isModalOpen?.())se340XR.ui.closeDialog();
+   else se340XR.ui?.openProjects?.();
+   return true;
+  }
+  // Modal action buttons use the dialog's native ray targets. Suppress global
+  // Undo/Delete, tool mode changes and palette hide while confirmation is open.
+  if(se340XR.ui?.isModalOpen?.())return true;
   return priorAction.apply(this,arguments);
+ };
+ const priorBegin=se340BeginGesture;
+ se340BeginGesture=function(...args){
+  if(se340XR.ui?.isModalOpen?.())return false;
+  return priorBegin.apply(this,args);
  };
  const priorTrigger=se340Trigger;
  se340Trigger=function(record,additive=false){
