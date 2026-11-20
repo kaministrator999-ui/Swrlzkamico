@@ -133,6 +133,7 @@ for needle in (
 ):assert needle in s,needle
 subprocess.run([sys.executable,str(root/'scripts/check_inline_js_syntax_v11_266.py'),str(out/'index.html')],check=True)
 subprocess.run(['node',str(root/'tests/model_vr_controller_palette_v11_531.cjs'),str(out/'index.html')],check=True)
+subprocess.run(['node',str(root/'tests/model_vr_held_axis_v11_531.cjs')],check=True)
 subprocess.run(['node',str(root/'tests/model_vr_sculpt_menu_v11_531.cjs'),str(out/'index.html')],check=True)
 subprocess.run(['node',str(root/'tests/model_vr_select_menu_v11_531.cjs'),str(out/'index.html')],check=True)
 subprocess.run(['node',str(root/'tests/model_vr_display_menu_v11_531.cjs'),str(out/'index.html')],check=True)
