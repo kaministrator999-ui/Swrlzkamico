@@ -53,6 +53,7 @@ def one(source, before, after, label):
 def region(source, before, after, replacement, label):
     start = source.find(before)
     if start < 0:
+        event("PATCH_ANCHOR_MISS", label=label, nearby=[line.strip()[:240] for line in source.splitlines() if "imageContextMode" in line or "fresh image request" in line or "sendAcknowledged=true" in line][:14])
         raise RuntimeError("SOURCE_DRIFT missing start " + label)
     end = source.find(after, start + len(before))
     if end < 0:
