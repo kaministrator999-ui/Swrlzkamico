@@ -103,3 +103,21 @@ jobs:
           path: reports/current-space-startup/
           if-no-files-found: error
           retention-days: 7
+      - name: Capture most recent Qwen native compiler failure and build dependencies
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          python - <<'PY'
+          import os,json,re
+          from huggingface_hub import HfApi
+          api=HfApi(token=os.environ.get("HF_TOKEN"))
+          rows=list(api.fetch_space_logs("kamiloki/Swyrlz",follow=False))
+          print("SECHAT_NATIVE_LOG_ENTRIES",len(rows),flush=True)
+          for i,line in enumerate(rows):
+              txt=str(line).strip()
+              if "QWEN35_BUILD_FAILED" in txt:
+                  safe=re.sub(r"hf_[a-zA-Z0-9]{15,}","[REDACTED]",txt)
+                  print("SECHAT_COMPILER_FAILURE",i,safe[-6800:],flush=True)
+              if 'HF_WARMUP_FAILED' in txt or 'QWEN35_BUILD_SUCCEEDED' in txt:
+                  print("SECHAT_BUILD_EVENT",i,txt[:600],flush=True)
+          PY
