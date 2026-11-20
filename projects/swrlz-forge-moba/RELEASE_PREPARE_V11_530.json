@@ -1,0 +1,10 @@
+{
+  "version": "v11.530",
+  "scope": "Immersive WebXR continuous gizmo movement, controller-following three-stage tool palette, focused sculpt operations",
+  "checks": [
+    "assembled source checksum",
+    "JavaScript syntax",
+    "append-only patch application"
+  ],
+  "status": "candidate integrity measurement; not a deploy request"
+}
