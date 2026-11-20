@@ -1,0 +1,6 @@
+SPACE=kamiloki/Swyrlz
+SOURCE_REVISION=63b049ea7372e755d3045d7bce65ba38be0a04ea
+SCOPE=conversation-continuity-and-model-turn-reasoning-only
+MODE=inspect
+APPROVED=no
+NONCE=conversation-intelligence-1150-inspect-20261120
