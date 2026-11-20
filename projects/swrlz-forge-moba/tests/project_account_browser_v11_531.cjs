@@ -19,7 +19,7 @@ const native=section('/* SE528_ACCOUNT_PROJECT_REPAIR_START',
  '/* SE528_ACCOUNT_PROJECT_REPAIR_END');
 const legacy=section('/* §E v11.488 — naming guard around existing account writes.',
  'window.SWYRL_ENGINE_SAFE_PROJECTS_371=Object.freeze');
-assert(html.includes('SWYRL_ENGINE_DEPLOY_MARKER: V11_531_QUEST_GIZMO_CONTROLLER_MENU'));
+assert(html.includes('SWYRL_ENGINE_DEPLOY_MARKER: V11_531_QUEST_MENU_GIZMO_ACCOUNT'));
 assert(html.includes('<title>§wyrl§ Engine · Maker v11.531</title>'));
 assert(legacy.includes("assets.save('modeler',true)"),'Standalone model asset save remains independent');
 assert(saving.includes('await se371PreviousSaveCloud()===true'),'Full-project save must use native source, not model-asset dispatcher');
