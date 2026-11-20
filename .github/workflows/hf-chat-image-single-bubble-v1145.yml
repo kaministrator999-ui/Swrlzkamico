@@ -1,0 +1,98 @@
+name: Guarded §C 1.1.45 one-bubble and exact-image memory
+
+on:
+  push:
+    branches: [main]
+    paths: [".deploy/HF_CHAT_IMAGE_1145_REQUEST.txt"]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: swrlz-hf-space-deployment
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 32
+    steps:
+      - uses: actions/checkout@v4
+      - name: Authorize only the exact approved Hugging Face release
+        id: authority
+        shell: bash
+        run: |
+          set -euo pipefail
+          file=.deploy/HF_CHAT_IMAGE_1145_REQUEST.txt
+          test -f "$file"
+          key(){ sed -n "s/^$1=//p" "$file" | tail -1; }
+          test "$(key SPACE)" = "kamiloki/Swyrlz"
+          test "$(key SOURCE_REVISION)" = "70905ffeebd77d21fc99982f6f8f9a5a19a22018"
+          test "$(key SCOPE)" = "single-image-bubble-and-account-scoped-image-match"
+          mode="$(key MODE)"
+          [[ "$mode" == inspect || "$mode" == deploy ]]
+          if [[ "$mode" == deploy ]]; then test "$(key APPROVED)" = yes; fi
+          nonce="$(key NONCE)"
+          [[ "$nonce" =~ ^[a-z0-9-]{12,100}$ ]]
+          echo "mode=$mode" >> "$GITHUB_OUTPUT"
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Validate release launcher
+        run: python -m py_compile scripts/hf_chat_image_single_bubble_v1145_release.py
+      - name: Install Hugging Face source reader
+        run: python -m pip install --quiet "huggingface_hub>=0.34,<2"
+      - name: Inspect exact served Space source; apply verified image patch
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: python -u scripts/hf_chat_image_single_bubble_v1145_release.py inspect
+      - name: Validate account-bound image reuse, one live bubble and unchanged source
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import ast,hashlib,pathlib,re
+          root=pathlib.Path("reports/swrlz-image-1145/candidate")
+          server=(root/"station.py").read_text()
+          vision=(root/"chat_vision.py").read_text()
+          html=(root/"chat/§wyrlz/index.html").read_text()
+          ast.parse(server);ast.parse(vision)
+          checks={
+            "serverOriginalImageHash": 'image_sha256 = hashlib.sha256(base64.b64decode(' in vision,
+            "serverStoresImageHash": '\"imageSha256\":verified_image_sha' in server,
+            "hashOwnerVerified": 'vision_job_resource_receipt(google_owner,vision_job_id,prompt)' in server,
+            "crossThreadOptInValidated": 'if reuse_thread_id and not verified_image_sha:' in server and 'selected_image_context=next(' in server,
+            "sameThreadAutoContext": 'payload[\"imageContextMatchedThreadId\"]=tid' in server,
+            "crossThreadContextBounded": '\"\\n\".join(excerpt)[:4200]' in server or '\"\\\\n\".join(excerpt)[:4200]' in server,
+            "uiOriginalImageHash": 'crypto.subtle.digest(\"SHA-256\",bytes)' in html,
+            "uiExactMatch": 'const imageMemoryMatches=sha=>' in html,
+            "uiCrossThreadPermission": 'reuseImageCheckbox.addEventListener(\"change\"' in html,
+            "uiOneMessage": 'activity.liveBubble.classList.add(\"rendered-message\",\"station-live-message\")' in html,
+            "uiPreservesOnAck": 'stationGeneration={...stationGeneration,text:firstQwenVisionAnswer' in html,
+            "uiOriginalDesign": 'swrlz-chat-design-version\" content=\"1.0.60\"' in html,
+            "noImageTextPreviewClone": 'vision-progress-observation' not in html[html.index('const startVisionActivity='):html.index('const removeVisionActivity=')],
+          }
+          print("SWRLZ_IMAGE_1145_ACCEPTANCE_CHECKS",checks,flush=True)
+          if not all(checks.values()):raise AssertionError("Image source validation missing: "+str([k for k,v in checks.items() if not v]))
+          PY
+      - name: Keep rollback files and candidate for inspection
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: swrlz-image-1145-original-and-candidate
+          path: reports/swrlz-image-1145/
+          retention-days: 30
+          if-no-files-found: ignore
+      - name: Release only the exact approved source and prove Qwen ready
+        if: ${{ steps.authority.outputs.mode == 'deploy' }}
+        timeout-minutes: 24
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          SWRLZ_IMAGE_1145_APPROVED: "yes"
+        run: |
+          set -euo pipefail
+          python -u scripts/hf_chat_image_single_bubble_v1145_release.py publish
+          echo "SWRLZ_IMAGE_1145_LIVE_VERIFIED"
