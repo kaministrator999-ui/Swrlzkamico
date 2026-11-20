@@ -1,0 +1,6 @@
+SPACE=kamiloki/Swyrlz
+SOURCE_REVISION=5cd7fae054108e123eeb7b36ed866276f18cc9ec
+SCOPE=only-chat-image-consent-and-station-server-validation
+MODE=inspect
+APPROVED=no
+NONCE=20261120-chat-image-consent-1146-inspect-01
