@@ -6,5 +6,7 @@
     "JavaScript syntax",
     "append-only patch application"
   ],
-  "status": "candidate integrity measurement; not a deploy request"
+  "status": "candidate integrity measurement; not a deploy request",
+  "revision": 2,
+  "reason": "Verify unified Push/Pull and continuous ray gizmo source after first candidate anchor mismatch"
 }
