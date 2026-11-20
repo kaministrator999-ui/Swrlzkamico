@@ -523,8 +523,8 @@
     "patches/v11_529_native_account_browser_library.py",
     "patches/v11_530_quest_gizmo_controller_menu.py"
   ],
-  "finalBytes": 0,
-  "finalSha256": "",
+  "finalBytes": 10980471,
+  "finalSha256": "a7707c10bac67c015d67c9d457526f34c7383a71c94309725bd1eeb38d5de8e1",
   "previousFinalSha256": "1e6780f411223dc5743feb0fc728aabd82db1525104432adebb6bda786f70505",
   "previousFinalBytes": 10969738,
   "previousManifestFinalSha256": "1e6780f411223dc5743feb0fc728aabd82db1525104432adebb6bda786f70505",
