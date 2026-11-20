@@ -1,6 +1,6 @@
 {
   "version": "v11.531",
   "scope": "Quest head-facing wrist-independent menu, native held-axis Trigger drag, account project loader transition",
-  "revision": 4,
-  "status": "sealed full verification plus dynamic captured-trigger XYZ movement regression"
+  "revision": 5,
+  "status": "corrected Node vector test double; full sealed source plus dynamic XYZ captured Trigger"
 }
