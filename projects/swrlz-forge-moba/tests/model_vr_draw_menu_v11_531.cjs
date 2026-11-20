@@ -56,6 +56,6 @@ assert(surface.includes('function extrudeBegin(id)')&&surface.includes('function
 assert(surface.includes('checkpoint(); g.part.topologyMesh = g.next'),
  'Original native extrusion checkpoint retained');
 assert(native.includes("id==='extrude'?!!state.canExtrudeOutline:true"),'Native modifier state must agree');
-assert(html.includes('SWYRL_ENGINE_DEPLOY_MARKER: V11_531_QUEST_GIZMO_CONTROLLER_MENU'));
+assert(html.includes('SWYRL_ENGINE_DEPLOY_MARKER: V11_531_QUEST_MENU_GIZMO_ACCOUNT'));
 assert(html.includes('<title>§wyrl§ Engine · Maker v11.531</title>'));
 console.log('SE527_DRAW_MENU_PASS: four actions; dynamic enabled states; no duplicate settings/history; single native extrusion validator');
