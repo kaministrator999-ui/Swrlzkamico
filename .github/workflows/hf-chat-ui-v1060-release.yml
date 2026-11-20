@@ -1,0 +1,95 @@
+name: Guarded §C 1.0.60 live UI release
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "Read-only inspect first, then explicit deploy"
+        required: true
+        type: choice
+        options: [inspect, deploy]
+        default: inspect
+      source_ref:
+        description: "Immutable reviewed source commit for canonical §C 1.0.60"
+        required: true
+        type: string
+        default: "e28a8cd03eef1fb4386b93bac31a4797c73f3d57"
+      approved:
+        description: "Authorize exact two-file patch to existing kamiloki/Swyrlz only"
+        required: true
+        type: choice
+        options: ["no", "yes"]
+        default: "no"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: swrlz-hf-space-deployment
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 24
+    steps:
+      - uses: actions/checkout@v4
+      - name: Require immutable reviewed UI source and explicit publish approval
+        shell: bash
+        env:
+          SOURCE: ${{ inputs.source_ref }}
+          MODE: ${{ inputs.mode }}
+          APPROVED: ${{ inputs.approved }}
+        run: |
+          set -euo pipefail
+          test "$SOURCE" = "e28a8cd03eef1fb4386b93bac31a4797c73f3d57"
+          test "$MODE" = inspect -o "$MODE" = deploy
+          if [ "$MODE" = deploy ]; then
+            test "$APPROVED" = yes || { echo "::error::Explicit publish approval missing"; exit 1; }
+          fi
+          test -f scripts/hf_chat_ui_v1060_release.py
+          test "$GITHUB_REF_NAME" = main
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.source_ref }}
+          path: release-source
+          fetch-depth: 1
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Verify exact §C candidate and original interface bindings
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(cat release-source/chat/§wyrlz/VERSION.txt)" = "1.0.60"
+          python -m py_compile scripts/hf_chat_ui_v1060_release.py
+          ( cd release-source && python -m unittest discover -s tests -p 'test_chat_ui_professional_v1060.py' -v )
+      - name: Install existing Hugging Face source client
+        shell: bash
+        run: python -m pip install --quiet "huggingface_hub>=0.34,<2"
+      - name: Snapshot exact live Chat and validate source-derived visual delta
+        shell: bash
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          set -euo pipefail
+          python -u scripts/hf_chat_ui_v1060_release.py inspect --source 'release-source/chat/§wyrlz/index.html'
+      - name: Preserve exact pre-release live HTML and manifest
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: swrlz-chat-ui-1060-exact-live-backup
+          path: reports/chat-ui-v1060-live-release/
+          retention-days: 30
+          if-no-files-found: ignore
+      - name: Publish two-file UI-only patch and verify served Chat; revert if rejected
+        if: ${{ inputs.mode == 'deploy' && inputs.approved == 'yes' }}
+        timeout-minutes: 12
+        shell: bash
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          SWRLZ_UI_1060_DEPLOY_APPROVED: "1"
+        run: |
+          set -euo pipefail
+          python -u scripts/hf_chat_ui_v1060_release.py publish --source 'release-source/chat/§wyrlz/index.html'
+          echo "SWRLZ_CHAT_UI_1060_LIVE_VERIFIED"
