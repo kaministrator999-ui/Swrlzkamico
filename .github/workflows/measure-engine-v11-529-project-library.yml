@@ -1,0 +1,79 @@
+name: Measure and seal §E v11.529 project library
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/measure-engine-v11-529-project-library.yml"
+      - "projects/swrlz-forge-moba/patches/v11_529_native_account_browser_library.py"
+      - "projects/swrlz-forge-moba/runtime/project_account_save_v11_529.js"
+      - "projects/swrlz-forge-moba/runtime/project_library_browser_ui_v11_529.js"
+      - "projects/swrlz-forge-moba/runtime/project_library_browser_ui_v11_529.css"
+      - "projects/swrlz-forge-moba/tests/*_v11_529.cjs"
+      - "projects/swrlz-forge-moba/scripts/measure_v11_529_source.py"
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  measure:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Build native project save and browser gallery with regression checks
+        id: result
+        shell: bash
+        run: |
+          set +e
+          python projects/swrlz-forge-moba/scripts/measure_v11_529_source.py > /tmp/se529-measure.log 2>&1
+          RC=$?
+          tail -n 55 /tmp/se529-measure.log
+          echo "exit_code=$RC" >> "$GITHUB_OUTPUT"
+          exit 0
+      - name: Commit measured source receipt or exact blocker
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import json,re
+          root=Path("projects/swrlz-forge-moba")
+          text=Path("/tmp/se529-measure.log").read_text("utf8",errors="replace")
+          size=re.search(r"SE529_MEASURED_BYTES=(\d+)",text)
+          digest=re.search(r"SE529_MEASURED_SHA256=([0-9a-f]{64})",text)
+          if size and digest:
+              path=root/"source-manifest.json"
+              m=json.loads(path.read_text("utf8"))
+              assert m["name"]=="§wyrl§ Engine v11.529"
+              assert m["patches"][-1]=="patches/v11_529_native_account_browser_library.py"
+              m["finalBytes"]=int(size.group(1));m["finalSha256"]=digest.group(1)
+              path.write_text(json.dumps(m,ensure_ascii=False,indent=2)+"\n","utf8")
+              print("SE529_SOURCE_MEASURE_PASS",m["finalBytes"],m["finalSha256"])
+          else:
+              path=root/"reports"/"v11_529_library_measurement_failure.log"
+              path.write_text(text[-18000:],"utf8")
+              print("SE529_SOURCE_MEASURE_FAILED",path)
+          PY
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add projects/swrlz-forge-moba/source-manifest.json
+          if [ -f projects/swrlz-forge-moba/reports/v11_529_library_measurement_failure.log ]; then
+            git add projects/swrlz-forge-moba/reports/v11_529_library_measurement_failure.log
+          fi
+          if ! git diff --cached --quiet; then
+            git commit -m "build(engine): record measured v11.529 project library source"
+            for attempt in 1 2 3 4; do
+              if git push origin HEAD:main; then exit 0; fi
+              git fetch origin main
+              git rebase origin/main
+            done
+            exit 1
+          fi
+      - name: Stop on compiled validation failure
+        if: steps.result.outputs.exit_code != '0'
+        run: exit 1
