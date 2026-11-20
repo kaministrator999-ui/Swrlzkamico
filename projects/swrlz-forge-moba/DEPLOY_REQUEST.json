@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT (owner-approved)",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.526",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_526_CREATE_MENU_CLEANUP",
-  "reason": "Owner-approved immersive §E Modeling Lab Create cleanup in existing three-stage WebXR spatial menu. Exactly Cube, Sphere, Cylinder, Cone, then non-interactive visible divider and Hip Pouch; remove Draw Outline and Duplicate from Create since those remain respectively in Draw and Objects. Primitive actions reuse native pending preview, controller sizing, Trigger placement confirmation, B cancellation, and model history; no redundant Create settings pane. Pouch enters the real accessory customization settings with Body Shape, Flap & Details, Fit & Attach, Leather, Stitching, Emblem and Reset Shape; editing controls stay disabled before valid preview. Preserve deeper accessory controls, persistent project journal and all other Labs, Select, Sculpt, Display and Face Tools. Compiled Create layout and native creation regression, prior Select/Display/Sculpt regressions, JavaScript syntax passed; measured 503-patch HTML at 10909703 bytes, SHA256 1428ceb7c33ce6cd01c5c024dca6b032fc41312ff286fd450620718f9788fd6b. Quest headset visual acceptance pending.",
-  "sourceCommit": "d8a1754f019380b447d200bdebcd376776904e2d",
-  "sourceIntegritySha256": "1428ceb7c33ce6cd01c5c024dca6b032fc41312ff286fd450620718f9788fd6b"
+  "releaseVersion": "v11.527",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_527_DRAW_MENU_CLEANUP",
+  "reason": "Owner-approved §E immersive WebXR Modeling Lab Draw cleanup in the original three-stage spatial menu. Exactly Draw Outline, Make Face, Thicken Outline, Discard Outline. Make Face enables only with active drawing and at least three traced points; Discard only while an unfinished outline exists. Thicken enables for exactly one selected mesh that passes the native shared, read-only planar open-outline topology and bind-pose validation, and still uses the existing Grip extrusion/checkpoint system. Disabled controls appear dimmed and cannot dispatch controller actions. No duplicated Undo or Draw settings panel; global project-scoped Undo/Redo, native tools, all other Labs/menus, textures, UV and rig remain. Verified 504-patch generated source, JS syntax, Draw/Select/Sculpt/Display/Create/UV/rig/history regressions; 10,912,716 source bytes, SHA-256 ab47b19b56cfa7061bbdaae6e4c5dc9d1d49b94136a5cbdda5e54bf947f92119. Quest headset acceptance pending.",
+  "sourceCommit": "8186210915e023fffc4d8dc28a4d9266bfd63b47",
+  "sourceIntegritySha256": "ab47b19b56cfa7061bbdaae6e4c5dc9d1d49b94136a5cbdda5e54bf947f92119"
 }
