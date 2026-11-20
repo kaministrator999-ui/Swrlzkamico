@@ -1,0 +1,6 @@
+SPACE=kamiloki/Swyrlz
+SOURCE_REVISION=221d3fcaea6b6fea9910d787ffc507f15468f63a
+SCOPE=station-model-router-and-related-visual-history-only
+MODE=inspect
+APPROVED=no
+NONCE=related-memory-1149-source-validation-20261120
