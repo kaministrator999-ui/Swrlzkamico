@@ -42,7 +42,7 @@ jobs:
               "chatgpt_account_memory.py":[(140,min(len(lines),213))],
               "station.py":[(1390,1415),(2542,2575),(2600,2672),(2680,2740)],
               
-              "model_router.py":[(875,934),(998,1045)],
+              "model_router.py":[(1040,1079)],
             }[name]
             for start,end in windows:
               if start>len(lines):continue
