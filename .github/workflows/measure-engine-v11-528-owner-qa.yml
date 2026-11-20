@@ -1,0 +1,74 @@
+name: Measure and seal §E v11.528 owner QA
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/measure-engine-v11-528-owner-qa.yml"
+      - "projects/swrlz-forge-moba/patches/v11_528_immersive_ux_account_repair.py"
+      - "projects/swrlz-forge-moba/runtime/model_vr_project_dialog_v11_528.js"
+      - "projects/swrlz-forge-moba/runtime/model_vr_ray_controls_v11_528.js"
+      - "projects/swrlz-forge-moba/runtime/model_account_project_repair_v11_528.js"
+      - "projects/swrlz-forge-moba/tests/model_vr_owner_qa_v11_528.cjs"
+      - "projects/swrlz-forge-moba/scripts/measure_v11_528_source.py"
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  measure:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Build and validate compiled XR source
+        id: result
+        shell: bash
+        run: |
+          set +e
+          python projects/swrlz-forge-moba/scripts/measure_v11_528_source.py > /tmp/se528-measure.log 2>&1
+          RC=$?
+          tail -n 45 /tmp/se528-measure.log
+          echo "exit_code=$RC" >> "$GITHUB_OUTPUT"
+          exit 0
+      - name: Commit exact artifact receipt or actionable failure log
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import json,re
+          root=Path("projects/swrlz-forge-moba")
+          text=Path("/tmp/se528-measure.log").read_text("utf8",errors="replace")
+          a=re.search(r"SE528_MEASURED_BYTES=(\d+)",text)
+          b=re.search(r"SE528_MEASURED_SHA256=([0-9a-f]{64})",text)
+          if a and b:
+              path=root/"source-manifest.json"
+              m=json.loads(path.read_text("utf8"))
+              assert m["name"]=="§wyrl§ Engine v11.528"
+              assert m["patches"][-1]=="patches/v11_528_immersive_ux_account_repair.py"
+              m["finalBytes"]=int(a.group(1));m["finalSha256"]=b.group(1)
+              path.write_text(json.dumps(m,ensure_ascii=False,indent=2)+"\n","utf8")
+              print("SE528_MEASURE_PASS",m["finalBytes"],m["finalSha256"],flush=True)
+          else:
+              path=root/"reports"/"v11_528_owner_measurement_failure.log"
+              path.write_text(text[-24000:],"utf8")
+              print("SE528_MEASURE_FAILURE_REPORT",path,flush=True)
+          PY
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add projects/swrlz-forge-moba/source-manifest.json
+          if [ -f projects/swrlz-forge-moba/reports/v11_528_owner_measurement_failure.log ]; then
+            git add projects/swrlz-forge-moba/reports/v11_528_owner_measurement_failure.log
+          fi
+          if ! git diff --cached --quiet; then
+            git commit -m "build(engine): record measured v11.528 owner QA source"
+            git push origin HEAD:main
+          fi
+      - name: Report failed compiled validation
+        if: steps.result.outputs.exit_code != '0'
+        run: exit 1
