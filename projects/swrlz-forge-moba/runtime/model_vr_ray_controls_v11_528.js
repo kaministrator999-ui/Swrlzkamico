@@ -32,7 +32,7 @@
    gain:null};
  }
  se390UpdatePose=function(g,pose,gain){
-  if(!g?.se512Trigger||!['move','rotate','scale'].includes(g.mode))
+  if(!(g?.se512Trigger||['x','y','z','uniform'].includes(g?.axis))||!['move','rotate','scale'].includes(g.mode))
    return previousPose.apply(this,arguments);
   let state=g.se528Ray;
   if(!state){state=createRayState(g);if(!state)return;g.se528Ray=state;}
@@ -130,7 +130,7 @@
    depthTest:false,depthWrite:false,side:T.DoubleSide});owned.push(hitMat);
   for(let i=0;i<6;i++)for(const side of ['minus','plus']){
    const mesh=new T.Mesh(new T.PlaneGeometry(.072,.046),hitMat);
-   mesh.position.set(side==='minus'?-.124:.124,.134-i*.052,.027);
+   mesh.position.set(side==='minus'?-.124:.124,.092-i*.0505,.027);
    mesh.userData={editorOnly:true,se340UI:true,se528Parameter:true,se340Action:''};
    mesh.visible=false;mesh.renderOrder=8581;bar.add(mesh);owned.push(mesh.geometry);
    buttons.push({mesh,i,side});targets.push(mesh);
