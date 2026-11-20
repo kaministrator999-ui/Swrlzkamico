@@ -202,6 +202,32 @@ def read_space_files(api: HfApi, revision: str) -> dict[str, bytes]:
                        revision=revision, token=api.token)).read_bytes() for name in FILES}
 
 
+def inspect_live_runtime(api: HfApi) -> None:
+    try:
+        runtime = api.get_space_runtime(SPACE)
+        emit("SPACE_RUNTIME", stage=str(getattr(runtime,"stage","unknown")),
+             hardware=str(getattr(runtime,"hardware","unknown")),
+             requestedHardware=str(getattr(runtime,"requested_hardware","unknown")))
+    except Exception as exc:
+        emit("SPACE_RUNTIME_UNAVAILABLE", error=type(exc).__name__,
+             detail=str(exc)[:180])
+    for path in ("/", "/chat/%C2%A7wyrlz", "/chat/%C2%A7wyrlz/index.html", "/probe"):
+        try:
+            req = urllib.request.Request(
+                BASE+path+("?diagnostic="+str(time.monotonic_ns())),
+                headers={"User-Agent":"Swyrlz-Chat-Live-ReadOnly-Diagnostic",
+                         "Cache-Control":"no-cache"})
+            with urllib.request.urlopen(req,timeout=18) as response:
+                data=response.read(30000).decode("utf-8",errors="replace")
+                emit("LIVE_HTTP", path=path, status=response.status,
+                     contentType=response.headers.get("Content-Type",""),
+                     containsChatVersion='swrlz-chat-version' in data,
+                     containsExistingChat="id=\"chatViewport\"" in data)
+        except Exception as exc:
+            emit("LIVE_HTTP_FAILED",path=path,error=type(exc).__name__,
+                 status=getattr(exc,"code",None),detail=str(exc)[:160])
+
+
 def snapshot(api: HfApi, candidate_path: Path) -> None:
     candidate = candidate_path.read_text(encoding="utf-8")
     revision = api.repo_info(SPACE, repo_type="space").sha
@@ -237,6 +263,7 @@ def snapshot(api: HfApi, candidate_path: Path) -> None:
     (BACKUP/"manifest.json").write_text(json.dumps(manifest,indent=2)+"\n")
     emit("CANDIDATE_CHECKED", revision=revision, files=list(FILES),
          insertedCSSBytes=len(visual_delta(candidate)), after=manifest["after"])
+    inspect_live_runtime(api)
 
 
 def served_version(expected_version: str) -> tuple[bool,str]:
