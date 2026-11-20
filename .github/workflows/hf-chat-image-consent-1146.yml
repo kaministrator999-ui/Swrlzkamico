@@ -1,0 +1,67 @@
+name: Guarded §C 1.1.46 cross-thread image consent
+
+on:
+  push:
+    branches: [main]
+    paths: [".deploy/HF_CHAT_IMAGE_CONSENT_1146_REQUEST.txt"]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: swrlz-hf-space-deployment
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 31
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate exact production source and explicit release authorization
+        id: check
+        shell: bash
+        run: |
+          set -euo pipefail
+          file=.deploy/HF_CHAT_IMAGE_CONSENT_1146_REQUEST.txt
+          test -f "$file"
+          key(){ sed -n "s/^$1=//p" "$file" | tail -1; }
+          test "$(key SPACE)" = "kamiloki/Swyrlz"
+          test "$(key SOURCE_REVISION)" = "5cd7fae054108e123eeb7b36ed866276f18cc9ec"
+          test "$(key SCOPE)" = "only-chat-image-consent-and-station-server-validation"
+          mode="$(key MODE)"
+          [[ "$mode" == inspect || "$mode" == deploy ]]
+          if [[ "$mode" == deploy ]]; then test "$(key APPROVED)" = yes; fi
+          nonce="$(key NONCE)"
+          [[ "$nonce" =~ ^[a-z0-9-]{12,100}$ ]]
+          echo "mode=$mode" >> "$GITHUB_OUTPUT"
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.11"}
+      - uses: actions/setup-node@v4
+        with: {node-version: "22"}
+      - name: Compile guarded source patch
+        run: python -m py_compile scripts/hf_chat_image_consent_v1146_release.py
+      - name: Install Hugging Face source reader
+        run: python -m pip install --quiet "huggingface_hub>=0.34,<2"
+      - name: Apply immutable patch to exact live source; test Python and JavaScript
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: python -u scripts/hf_chat_image_consent_v1146_release.py inspect
+      - name: Preserve source, patched candidate and rollback metadata
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: swrlz-image-consent-1146-source-backup
+          path: reports/swrlz-image-consent-1146/
+          retention-days: 30
+          if-no-files-found: ignore
+      - name: Publish only approved Chat and Station patch; require exact serving revision and Qwen readiness
+        if: ${{ steps.check.outputs.mode == 'deploy' }}
+        timeout-minutes: 23
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          SWRLZ_IMAGE_CONSENT_1146_APPROVED: "yes"
+        run: |
+          set -euo pipefail
+          python -u scripts/hf_chat_image_consent_v1146_release.py deploy
+          echo "SWRLZ_IMAGE_CONSENT_1146_LIVE_VERIFIED"
