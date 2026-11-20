@@ -99,9 +99,9 @@ def patch_ui(data):
           :same?"Exact image recognized in this conversation. Existing discussion remains available.":"";
       };
 ''', "replace manual selection with passive recognition")
-    html = one(html, '       const imageReuseChoice=document.getElementById("imageReuseChoice");', '', "remove obsolete image choice")
-    html = one(html, '       const imageReuseCheckbox=document.getElementById("imageReuseCheckbox");', '', "remove obsolete image checkbox")
-    html = one(html, '       const imageReuseSelect=document.getElementById("imageReuseSelect");', '', "remove obsolete image select")
+    # Older inline elements can be absent after replacement of the manual block.
+    for element in ("imageReuseChoice", "imageReuseCheckbox", "imageReuseSelect"):
+        html = re.sub(r'(?m)^\\s*const '+element+r'=document\\.getElementById\\("'+element+r'"\\);[ \\t]*$', '', html)
     html = one(html,
         'selectedImage={file:stableFile,bytes,url,imageSha256,reuseThreadId:"",reuseConfirmedForThreadId:""};',
         'selectedImage={file:stableFile,bytes,url,imageSha256};',
