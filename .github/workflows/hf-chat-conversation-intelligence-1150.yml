@@ -1,0 +1,67 @@
+name: Guarded §C 1.1.50 overall conversation intelligence
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/hf-chat-conversation-intelligence-1150.yml"
+      - ".deploy/HF_CHAT_CONVERSATION_INTELLIGENCE_1150_REQUEST.txt"
+permissions:
+  contents: read
+concurrency:
+  group: swrlz-hf-space-deployment
+  cancel-in-progress: false
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 34
+    steps:
+      - uses: actions/checkout@v4
+      - name: Require exact source and approved intent
+        id: gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          file=.deploy/HF_CHAT_CONVERSATION_INTELLIGENCE_1150_REQUEST.txt
+          mode=inspect
+          if [[ -e "$file" ]]; then
+            get(){ sed -n "s/^$1=//p" "$file" | tail -1; }
+            test "$(get SPACE)" = "kamiloki/Swyrlz"
+            test "$(get SOURCE_REVISION)" = "63b049ea7372e755d3045d7bce65ba38be0a04ea"
+            test "$(get SCOPE)" = "conversation-continuity-and-model-turn-reasoning-only"
+            [[ "$(get NONCE)" =~ ^[a-z0-9-]{14,100}$ ]]
+            mode="$(get MODE)"
+            [[ "$mode" == inspect || "$mode" == deploy ]]
+            if [[ "$mode" == deploy ]]; then test "$(get APPROVED)" = yes; fi
+          fi
+          echo "mode=$mode" >> "$GITHUB_OUTPUT"
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.11"}
+      - name: Compile and test isolated dialogue scenarios
+        run: |
+          set -euo pipefail
+          python -m py_compile scripts/hf_chat_conversation_intelligence_v1150_release.py scripts/releases/conversation_continuity_v1150.py scripts/tests/test_conversation_continuity_v1150.py
+          python scripts/tests/test_conversation_continuity_v1150.py
+      - name: Install Hugging Face source client
+        run: python -m pip install -q "huggingface_hub>=0.34,<2"
+      - name: Test source-pinned candidate against production files
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: python -u scripts/hf_chat_conversation_intelligence_v1150_release.py inspect
+      - name: Keep before and after file hashes
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: swrlz-conversation-intelligence-1150-evidence
+          path: reports/swrlz-conversation-intelligence-v1150/
+          retention-days: 30
+          if-no-files-found: ignore
+      - name: Publish source-pinned cognitive continuity and verify live Qwen
+        if: ${{ steps.gate.outputs.mode == 'deploy' }}
+        timeout-minutes: 26
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          SWRLZ_CONVERSATION_1150_APPROVED: "yes"
+        run: |
+          set -euo pipefail
+          python -u scripts/hf_chat_conversation_intelligence_v1150_release.py deploy
+          echo SWRLZ_CONVERSATION_1150_LIVE_VERIFIED
