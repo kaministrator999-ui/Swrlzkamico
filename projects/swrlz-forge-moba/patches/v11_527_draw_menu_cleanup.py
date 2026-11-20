@@ -141,9 +141,9 @@ def apply(html):
    "if(action==='draw-finish'){if(s.gesture?.kind==='draw'&&s.gesture.points.length>=3)return se350FinishTrigger(s.gesture.record);return false;}",
    'face creation needs at least three traced corners')
   s=one(s,
-   "if(action==='extrude'){se340CancelGesture();s.mode='extrude';s.page='draw';se340Notice('Point at a drawn face, hold grip and pull to add thickness.');se340SyncUI();se340Publish();return true;}",
-   "if(action==='extrude'){const id=se340Bridge().inspect().selectedId;if(s.gesture||se350Tools().selection().ids.length!==1||!se350Surface().canExtrude(id))return false;s.mode='extrude';s.page='draw';se340Notice('Point at the valid outline face, hold grip and pull to add thickness.');se340SyncUI();se340Publish();return true;}",
-   'arm existing extrusion gesture only for eligible selected geometry')
+   "if(action==='extrude'){",
+   "if(action==='extrude'){const id=se340Bridge().inspect().selectedId;if(s.gesture||se350Tools().selection().ids.length!==1||!se350Surface().canExtrude(id))return false;",
+   'guard the existing native extrusion action without replacing its handlers')
   return s
  html=section(html,'/* SE340_MODEL_VR_WORKSPACE_START','/* SE340_MODEL_VR_WORKSPACE_END',xr)
  for old,new in (
