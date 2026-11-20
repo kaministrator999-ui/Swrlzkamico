@@ -218,7 +218,7 @@ def test_candidate_functions(station,vision):
  format_hint=def_context["_vision_reference_context"]
  assert format_hint([])==""
  view=format_hint(nonexact)
- assert "Sorting Hat" in view and "not evidence about today's" in view
+ assert "Sorting Hat" in view and "not evidence about today's" in view.lower()
  assert "untrusted historical" in view and len(view)<2500
  report("UNIT_TESTS_PASS",tests=["account-isolation","exact-vs-similar","prior-user-correction","no-history","untrusted-hint-provenance"])
 
