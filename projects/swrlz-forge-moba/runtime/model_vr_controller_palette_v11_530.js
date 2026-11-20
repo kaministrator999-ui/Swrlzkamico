@@ -125,8 +125,8 @@
   texture.minFilter=T.LinearFilter;texture.magFilter=T.LinearFilter;
   const material=new T.MeshBasicMaterial({map:texture,transparent:true,depthTest:false,
    depthWrite:false,toneMapped:false,side:T.DoubleSide});
-  const geometry=new T.PlaneGeometry(.55,.176);
-  const banner=new T.Mesh(geometry,material);banner.position.set(0,-.012,.10);
+  const geometry=new T.PlaneGeometry(.46,.176);
+  const banner=new T.Mesh(geometry,material);banner.position.set(.03,-.012,.10);
   banner.renderOrder=8670;banner.frustumCulled=false;banner.visible=false;
   banner.name='§E · contextual sculpt brush guide';banner.userData.editorOnly=true;
   details.add(banner);
