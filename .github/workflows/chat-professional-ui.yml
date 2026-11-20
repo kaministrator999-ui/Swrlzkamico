@@ -36,7 +36,7 @@ jobs:
           python - <<'PY'
           import pathlib,re
           source=pathlib.Path('chat/§wyrlz/index.html').read_text(encoding='utf-8')
-          scripts=[s for s in re.findall(r'<script(?:\\s[^>]*)?>([\\s\\S]*?)</script>',source,re.I) if s.strip()]
+          scripts=[s for s in re.findall(r'<script(?:\s[^>]*)?>([\s\S]*?)</script>',source,re.I) if s.strip()]
           assert len(scripts)==1, f'Expected one inline script, found {len(scripts)}'
           pathlib.Path('/tmp/swrlz-chat-inline.js').write_text(scripts[0],encoding='utf-8')
           PY
