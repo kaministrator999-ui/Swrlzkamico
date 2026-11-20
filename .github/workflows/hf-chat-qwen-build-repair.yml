@@ -1,0 +1,74 @@
+name: Guarded §C Qwen build startup repair
+
+on:
+  push:
+    branches: [main]
+    paths: [".deploy/HF_CHAT_QWEN_BUILD_REPAIR_REQUEST.txt"]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: swrlz-hf-space-deployment
+  cancel-in-progress: false
+
+jobs:
+  repair:
+    runs-on: ubuntu-latest
+    timeout-minutes: 27
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate source and action authorization
+        shell: bash
+        id: request
+        run: |
+          set -euo pipefail
+          src=.deploy/HF_CHAT_QWEN_BUILD_REPAIR_REQUEST.txt
+          test -f "$src"
+          get() { sed -n "s/^$1=//p" "$src" | tail -n 1; }
+          test "$(get TARGET)" = "kamiloki/Swyrlz"
+          test "$(get SOURCE_REVISION)" = "ef65f2a0f38262a37ba98ffba87b3af5c8431675"
+          test "$(get SCOPE)" = "qwen-native-build-concurrency-only"
+          mode="$(get MODE)"
+          test "$mode" = inspect -o "$mode" = deploy
+          if [ "$mode" = deploy ]; then
+            test "$(get APPROVED)" = yes
+          fi
+          nonce="$(get REQUEST_NONCE)"
+          [[ "$nonce" =~ ^[a-z0-9-]{12,96}$ ]]
+          echo "mode=$mode" >> "$GITHUB_OUTPUT"
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Parse exact startup repair and native build change
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m py_compile scripts/hf_chat_qwen35_build_startup_repair.py
+          test -f scripts/hf_chat_ui_v1060_release.py
+      - name: Install Hugging Face source client
+        run: python -m pip install --quiet "huggingface_hub>=0.34,<2"
+      - name: Snapshot immutable live model-runtime source and inspect patch
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          set -euo pipefail
+          python -u scripts/hf_chat_qwen35_build_startup_repair.py inspect
+      - name: Preserve exact previous runtime file and proposed repair
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: swrlz-qwen35-startup-repair-snapshot
+          path: reports/swrlz-qwen35-build-startup-repair/
+          retention-days: 30
+          if-no-files-found: ignore
+      - name: Commit approved one-file repair and verify serving state
+        if: ${{ steps.request.outputs.mode == 'deploy' }}
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          SWRLZ_QWEN_BUILD_REPAIR_APPROVED: "1"
+        timeout-minutes: 19
+        run: |
+          set -euo pipefail
+          python -u scripts/hf_chat_qwen35_build_startup_repair.py publish
+          echo "SWRLZ_QWEN_STARTUP_RESTORED"
