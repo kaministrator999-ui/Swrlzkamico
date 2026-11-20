@@ -521,8 +521,8 @@
     "patches/v11_527_draw_menu_cleanup.py",
     "patches/v11_528_immersive_ux_account_repair.py"
   ],
-  "finalBytes": 10943660,
-  "finalSha256": "7f0b85798f3cf4646f9d5dd635d5c0ddd72af2a9988bf79c32ca69751a7c3212",
+  "finalBytes": 10944440,
+  "finalSha256": "d62dfd82aea741cbfb545016c2b4576374052512baef59195b4d44f77a6f6efc",
   "previousFinalSha256": "627074c5d9d6476c0633474513b52f756e28c73e2bbc158b71baa22765a5e2b5",
   "previousFinalBytes": 10908216,
   "previousManifestFinalSha256": "627074c5d9d6476c0633474513b52f756e28c73e2bbc158b71baa22765a5e2b5",
