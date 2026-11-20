@@ -2,7 +2,7 @@
 
 **Modeling Lab → Draw:** Exactly Draw Outline, Make Face, Thicken Outline and Discard Outline in the existing native world-space operation rail. Make Face enables after at least three points during an active outline. Discard is limited to an unfinished outline. Thicken enables only for one selected planar open-outline mesh passing the same topology validation as native Grip extrusion. Disabled actions are dimmed and cannot be activated by the controller ray.
 
-**No duplicate systems:** Draw does not open a redundant settings panel or duplicate Undo/Redo, which remain in the global project-history controls. Native drawing/extrusion checkpoints, persistent per-project edit journal, Create, Sculpt, Select, Display and other Labs remain. See [Draw acceptance and source notes](docs/MODEL_VR_DRAW_MENU_V11_527.md). Physical Quest testing is still required.
+**No duplicate systems:** Draw does not open a redundant settings panel or duplicate Undo/Redo, which remain in the global project-history controls. Native drawing/extrusion checkpoints, persistent per-project edit journal, Create, Sculpt, Select, Display and other Labs remain. See [Draw acceptance and source notes](projects/swrlz-forge-moba/docs/MODEL_VR_DRAW_MENU_V11_527.md). Physical Quest testing is still required.
 
 ## §WYRL§ Engine v11.520 · Quest VR interaction QA (2026-11-18)
 
