@@ -121,3 +121,36 @@ jobs:
               if 'HF_WARMUP_FAILED' in txt or 'QWEN35_BUILD_SUCCEEDED' in txt:
                   print("SECHAT_BUILD_EVENT",i,txt[:600],flush=True)
           PY
+      - name: Snapshot current §C media and Qwen owners (read only)
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          python - <<'PY'
+          import os,json,pathlib,hashlib
+          from huggingface_hub import HfApi,hf_hub_download
+          api=HfApi(token=os.environ["HF_TOKEN"])
+          info=api.repo_info("kamiloki/Swyrlz",repo_type="space")
+          names=api.list_repo_files("kamiloki/Swyrlz",repo_type="space",revision=info.sha)
+          selected=[x for x in names if x in (
+              "station.py","chat_vision.py","qwen35_single_runtime.py","model_router.py",
+              "chat/§wyrlz/index.html","voice_stt.py","audio_tools.py"
+              ) or ("vision" in x.lower() and x.endswith(".py"))]
+          print("SECHAT_MEDIA_SOURCES",json.dumps({"revision":info.sha,"files":selected}),flush=True)
+          root=pathlib.Path("reports/live-media-source")
+          root.mkdir(parents=True,exist_ok=True)
+          (root/"manifest.json").write_text(json.dumps({"revision":info.sha,"files":selected},indent=2))
+          for name in selected:
+              original=pathlib.Path(hf_hub_download("kamiloki/Swyrlz",name,repo_type="space",
+                  revision=info.sha,token=os.environ["HF_TOKEN"]))
+              data=original.read_bytes()
+              path=root/name
+              path.parent.mkdir(parents=True,exist_ok=True)
+              path.write_bytes(data)
+              print("SECHAT_MEDIA_FILE",name,len(data),hashlib.sha256(data).hexdigest(),flush=True)
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: swrlz-exact-live-media-source
+          path: reports/live-media-source/
+          if-no-files-found: error
+          retention-days: 7
