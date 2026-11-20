@@ -1,24 +1,72 @@
-name: Measure §E v11.527 Draw menu
+name: Measure and seal §E v11.527 Draw menu
 on:
   push:
     branches: [main]
     paths:
       - "projects/swrlz-forge-moba/patches/v11_527_draw_menu_cleanup.py"
       - "projects/swrlz-forge-moba/scripts/measure_v11_527_source.py"
-      - "projects/swrlz-forge-moba/source-manifest.json"
       - "projects/swrlz-forge-moba/tests/model_vr_draw_menu_v11_527.cjs"
+      - ".github/workflows/measure-engine-v11-527-draw.yml"
   workflow_dispatch:
 permissions:
-  contents: read
+  contents: write
 jobs:
   measure:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
       - uses: actions/setup-node@v4
         with:
           node-version: "22"
-      - run: python projects/swrlz-forge-moba/scripts/measure_v11_527_source.py
+      - name: Measure compiled Draw and run focused tests
+        id: measurement
+        shell: bash
+        run: |
+          set +e
+          python projects/swrlz-forge-moba/scripts/measure_v11_527_source.py > /tmp/se527-measure.log 2>&1
+          RC=$?
+          cat /tmp/se527-measure.log
+          echo "exit_code=$RC" >> "$GITHUB_OUTPUT"
+          exit 0
+      - name: Commit verified SHA or precise failure report
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import json,re
+          root=Path("projects/swrlz-forge-moba")
+          output=Path("/tmp/se527-measure.log").read_text("utf8",errors="replace")
+          a=re.search(r"SE527_MEASURED_BYTES=(\d+)",output)
+          b=re.search(r"SE527_MEASURED_SHA256=([0-9a-f]{64})",output)
+          if a and b:
+              path=root/"source-manifest.json"
+              m=json.loads(path.read_text("utf8"))
+              assert m["name"]=="§wyrl§ Engine v11.527"
+              assert m["patches"][-1]=="patches/v11_527_draw_menu_cleanup.py"
+              m["finalBytes"]=int(a.group(1))
+              m["finalSha256"]=b.group(1)
+              path.write_text(json.dumps(m,ensure_ascii=False,indent=2)+"\n",encoding="utf8")
+              print("SE527_SOURCE_SEAL",m["finalBytes"],m["finalSha256"],flush=True)
+          else:
+              path=root/"reports"/"v11_527_draw_measurement_failure.log"
+              path.write_text(output[-16000:],encoding="utf8")
+              print("SE527_MEASURE_FAILURE_REPORT",path,flush=True)
+          PY
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add projects/swrlz-forge-moba/source-manifest.json
+          if [ -f projects/swrlz-forge-moba/reports/v11_527_draw_measurement_failure.log ]; then
+            git add projects/swrlz-forge-moba/reports/v11_527_draw_measurement_failure.log
+          fi
+          if ! git diff --cached --quiet; then
+            git commit -m "build(engine): record measured v11.527 Draw source result"
+            git push origin HEAD:main
+          fi
+      - name: Fail if compiled source validation failed
+        if: steps.measurement.outputs.exit_code != '0'
+        run: exit 1
