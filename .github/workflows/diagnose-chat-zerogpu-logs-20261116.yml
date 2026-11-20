@@ -154,3 +154,44 @@ jobs:
           path: reports/live-media-source/
           if-no-files-found: error
           retention-days: 7
+      - name: Measure anonymous Qwen inference latency (read only)
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          python - <<'PY'
+          import os,json,statistics
+          from huggingface_hub import HfApi
+          api=HfApi(token=os.environ["HF_TOKEN"])
+          entries=[]
+          vision=[]
+          for entry in api.fetch_space_logs("kamiloki/Swyrlz",follow=False):
+              line=str(entry)
+              if '"event": "QWEN35_INFERENCE_TIMING_V3"' in line or '"event":"QWEN35_INFERENCE_TIMING_V3"' in line:
+                  try:
+                      record=json.loads(line[line.index("{"):])
+                      entries.append(record)
+                  except Exception: pass
+              if '"event": "LOCAL_VISION_DONE"' in line or '"event":"LOCAL_VISION_DONE"' in line:
+                  try:vision.append(json.loads(line[line.index("{"):]))
+                  except Exception:pass
+          samples=entries[-30:]
+          def median(field):
+              items=[float(x[field]) for x in samples if x.get(field) is not None]
+              return round(statistics.median(items),1) if items else None
+          speeds=[1000*float(x["generatedTokens"])/float(x["decodeMs"]) for x in samples
+                  if x.get("generatedTokens") and x.get("decodeMs") and float(x["decodeMs"])>0]
+          print("SECHAT_QWEN_LATENCY",json.dumps({
+              "sampleCount":len(samples),
+              "medianFirstTextMs":median("firstTextMs"),
+              "medianTotalMs":median("totalMs"),
+              "medianPromptMs":median("promptMs"),
+              "medianDecodeMs":median("decodeMs"),
+              "medianPromptTokens":median("evaluatedPromptTokens"),
+              "medianGeneratedTokens":median("generatedTokens"),
+              "medianDecodeTokensPerSec":round(statistics.median(speeds),2) if speeds else None,
+              "visionSampleCount":len(vision[-15:]),
+              "visionMedianSeconds":round(statistics.median(
+                  [float(x["seconds"]) for x in vision[-15:] if x.get("seconds") is not None]),1)
+                  if any(x.get("seconds") is not None for x in vision[-15:]) else None,
+          },sort_keys=True),flush=True)
+          PY
