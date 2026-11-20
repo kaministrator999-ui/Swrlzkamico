@@ -131,10 +131,15 @@ def patch_vision(original):
   "            on_partial=lambda description: _set_vision_partial(job_id, description),",
   "            on_partial=lambda description: _set_vision_partial(job_id, description),\n            context_hints=context_hints,",
   "single-pass history to Qwen")
- s=one(s,
-  "def _ask_vision_local(image_url: str, question: str, report_phase=None, should_cancel=None,\n                       analysis_levels: int = 1, on_partial=None) -> str:",
-  "def _ask_vision_local(image_url: str, question: str, report_phase=None, should_cancel=None,\n                       analysis_levels: int = 1, on_partial=None, context_hints=()) -> str:",
-  "Qwen inference signature")
+ # Preserve the serving function's indentation/line breaks; add one optional input.
+ sign_start=s.index("def _ask_vision_local(")
+ sign_end=s.index(") -> str:",sign_start)
+ if sign_start<0 or sign_end<0:raise RuntimeError("Missing Qwen inference signature")
+ original_signature=s[sign_start:sign_end+len(") -> str:")]
+ if original_signature.count("on_partial=None)")!=1:
+  raise RuntimeError("Unknown Qwen inference arguments")
+ updated_signature=original_signature.replace("on_partial=None)","on_partial=None, context_hints=())")
+ s=s[:sign_start]+updated_signature+s[sign_end+len(") -> str:"):]
  s=one(s,
   "def _ask_vision_local(image_url: str, question: str, report_phase=None, should_cancel=None,",
   VISION_CONTEXT_SOURCE+"\ndef _ask_vision_local(image_url: str, question: str, report_phase=None, should_cancel=None,",
