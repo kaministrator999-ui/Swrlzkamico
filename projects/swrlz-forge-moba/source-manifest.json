@@ -520,8 +520,8 @@
     "patches/v11_526_create_menu_cleanup.py",
     "patches/v11_527_draw_menu_cleanup.py"
   ],
-  "finalBytes": 0,
-  "finalSha256": "",
+  "finalBytes": 10912716,
+  "finalSha256": "ab47b19b56cfa7061bbdaae6e4c5dc9d1d49b94136a5cbdda5e54bf947f92119",
   "previousFinalSha256": "627074c5d9d6476c0633474513b52f756e28c73e2bbc158b71baa22765a5e2b5",
   "previousFinalBytes": 10908216,
   "previousManifestFinalSha256": "627074c5d9d6476c0633474513b52f756e28c73e2bbc158b71baa22765a5e2b5",
