@@ -1,0 +1,49 @@
+name: Inspect live §C image-to-chat routing and stream (read only)
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/hf-chat-image-stream-audit-20261120.yml"]
+permissions:
+  contents: read
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.11"}
+      - name: Install public Hub reader
+        run: python -m pip install --quiet "huggingface_hub>=0.34,<2"
+      - name: Snapshot exact live Chat owners with no user data
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          python - <<'PY'
+          import json,os,pathlib,hashlib
+          from huggingface_hub import HfApi,hf_hub_download
+          api=HfApi(token=os.environ["HF_TOKEN"])
+          repo="kamiloki/Swyrlz"
+          head=api.repo_info(repo,repo_type="space").sha
+          files=set(api.list_repo_files(repo,repo_type="space",revision=head))
+          wanted=["app.py","brain_programming.py","model_router.py","station.py","chat_vision.py",
+                  "qwen35_single_runtime.py","coder_model_config.py","chat/§wyrlz/index.html",
+                  "generation_validation.py","programming_generation.py","coder_candidate_validation.py",
+                  "programming_intent_v1.py","qwen35_coder.py","brain_coder.py"]
+          picked=[p for p in wanted if p in files]
+          assert all(p in picked for p in ("brain_programming.py","model_router.py","station.py","app.py","chat/§wyrlz/index.html"))
+          root=pathlib.Path("reports/chat-image-stream-live")
+          root.mkdir(parents=True,exist_ok=True)
+          (root/"manifest.json").write_text(json.dumps({"revision":head,"selected":picked},indent=2))
+          for p in picked:
+              src=pathlib.Path(hf_hub_download(repo,p,repo_type="space",revision=head,token=os.environ["HF_TOKEN"]))
+              data=src.read_bytes()
+              dst=root/p;dst.parent.mkdir(parents=True,exist_ok=True);dst.write_bytes(data)
+              print("SWRLZ_IMAGE_STREAM_FILE",p,len(data),hashlib.sha256(data).hexdigest(),flush=True)
+          print("SWRLZ_IMAGE_STREAM_SOURCE",head,flush=True)
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: swrlz-image-chat-stream-live-snapshot
+          path: reports/chat-image-stream-live/
+          if-no-files-found: error
+          retention-days: 3
