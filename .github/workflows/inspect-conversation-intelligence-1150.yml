@@ -26,15 +26,16 @@ jobs:
           files=api.list_repo_files(repo,repo_type="space",revision=rev)
           print("MODULES", [p for p in files if p.endswith(".py") and
             (not "/" in p or any(q in p for q in ("brain","chat","model","memory","prompt")) )][:180])
-          for name in ["response_cognition.py","lfm2_700m_engine.py","original_engine.py","qwen35_single_runtime.py","station.py","model_router.py"]:
+          for name in ["response_cognition.py","lfm2_700m_engine.py","station.py"]:
             if name not in files:continue
             raw=pathlib.Path(hf_hub_download(repo,name,repo_type="space",revision=rev,token=api.token)).read_bytes()
             lines=raw.decode("utf8").splitlines()
             print("FILE",name,"SHA",hashlib.sha256(raw).hexdigest(),"LINES",len(lines))
-            if name=="station.py":windows=[(1205,1310),(1340,1390),(2528,2585)]
+            if name=="station.py":windows=[(1218,1298),(2550,2570)]
             elif name=="model_router.py":windows=[(740,825),(1040,1083)]
-            elif name=="response_cognition.py":windows=[(1,min(260,len(lines)))]
-            else:windows=[(1,min(230,len(lines)))]
+            elif name=="response_cognition.py":windows=[(278,487)]
+            elif name=="lfm2_700m_engine.py":windows=[(745,815),(815,950),(950,1045)]
+            else:windows=[(1,min(90,len(lines)))]
             print("MATCH",name,[(i+1,l.strip()[:120]) for i,l in enumerate(lines) if 
               ("history" in l or "instruction" in l.lower() or "system" in l.lower() or 
               "def generate" in l or "def build" in l or "context" in l.lower())][:85])
