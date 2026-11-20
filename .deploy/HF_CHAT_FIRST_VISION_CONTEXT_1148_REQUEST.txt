@@ -1,6 +1,6 @@
 SPACE=kamiloki/Swyrlz
 SOURCE_REVISION=092c3f66b922472a1e3b833c4b6969c4969f9c87
 SCOPE=only-verified-first-vision-history-candidates-and-grounded-qwen-prompt
-MODE=inspect
-APPROVED=no
-NONCE=first-vision-1148-source-check-20261120b
+MODE=deploy
+APPROVED=yes
+NONCE=first-vision-1148-approved-deploy-20261120
