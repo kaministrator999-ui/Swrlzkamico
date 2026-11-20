@@ -1,6 +1,9 @@
 name: Guarded §C 1.0.60 live UI release
 
 on:
+  push:
+    branches: [main]
+    paths: ['.deploy/HF_CHAT_UI_1060_REQUEST.txt']
   workflow_dispatch:
     inputs:
       mode:
@@ -35,6 +38,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Require immutable reviewed UI source and explicit publish approval
+        id: release_config
         shell: bash
         env:
           SOURCE: ${{ inputs.source_ref }}
@@ -42,6 +46,18 @@ jobs:
           APPROVED: ${{ inputs.approved }}
         run: |
           set -euo pipefail
+          if [ "$GITHUB_EVENT_NAME" = push ]; then
+            request=.deploy/HF_CHAT_UI_1060_REQUEST.txt
+            test -f "$request"
+            get() { sed -n "s/^$1=//p" "$request" | tail -n 1; }
+            test "$(get TARGET)" = "kamiloki/Swyrlz"
+            test "$(get SCOPE)" = "chat-ui-visual-only-v1060"
+            SOURCE="$(get SOURCE_REF)"
+            MODE="$(get MODE)"
+            APPROVED="$(get APPROVED)"
+            nonce="$(get REQUEST_NONCE)"
+            [[ "$nonce" =~ ^[a-z0-9-]{12,96}$ ]]
+          fi
           test "$SOURCE" = "e28a8cd03eef1fb4386b93bac31a4797c73f3d57"
           test "$MODE" = inspect -o "$MODE" = deploy
           if [ "$MODE" = deploy ]; then
@@ -49,9 +65,12 @@ jobs:
           fi
           test -f scripts/hf_chat_ui_v1060_release.py
           test "$GITHUB_REF_NAME" = main
+          echo "ref=$SOURCE" >> "$GITHUB_OUTPUT"
+          echo "mode=$MODE" >> "$GITHUB_OUTPUT"
+          echo "approved=$APPROVED" >> "$GITHUB_OUTPUT"
       - uses: actions/checkout@v4
         with:
-          ref: ${{ inputs.source_ref }}
+          ref: ${{ steps.release_config.outputs.ref }}
           path: release-source
           fetch-depth: 1
       - uses: actions/setup-python@v5
@@ -83,7 +102,7 @@ jobs:
           retention-days: 30
           if-no-files-found: ignore
       - name: Publish two-file UI-only patch and verify served Chat; revert if rejected
-        if: ${{ inputs.mode == 'deploy' && inputs.approved == 'yes' }}
+        if: ${{ steps.release_config.outputs.mode == 'deploy' && steps.release_config.outputs.approved == 'yes' }}
         timeout-minutes: 12
         shell: bash
         env:
