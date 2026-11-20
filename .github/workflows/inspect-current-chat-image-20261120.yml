@@ -24,6 +24,8 @@ jobs:
           api=HfApi(token=os.environ.get("HF_TOKEN"))
           rev=api.repo_info("kamiloki/Swyrlz",repo_type="space").sha
           print("LIVE_REV",rev,flush=True)
+          runtime=api.get_space_runtime("kamiloki/Swyrlz")
+          print("LIVE_STAGE",str(runtime.stage),"SERVING_SHA",str((runtime.raw or {}).get("sha") or ""),flush=True)
           pattern=re.compile(r'imageReuse|imageMemory|image_context|reuseImage|reuse_image|vision_job|requestVisionDescription|selectedImage|updateImagePreview|inputMode|input.mode|browser recognition|Turbo|visionAnalysis|visionMode|imageSha256|imageAnalysisContext|imageMatch',re.I)
           for name in ("chat/§wyrlz/index.html","station.py","chat_vision.py"):
             s=pathlib.Path(hf_hub_download("kamiloki/Swyrlz",name,repo_type="space",revision=rev,token=os.environ.get("HF_TOKEN"))).read_text("utf-8")
