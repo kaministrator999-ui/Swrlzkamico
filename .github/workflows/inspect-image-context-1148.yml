@@ -26,9 +26,9 @@ jobs:
           print("SOURCE_REVISION",rev,flush=True)
           names=("station.py","chat_vision.py","chat/§wyrlz/index.html")
           windows={
-          "station.py":[(1,115),(1190,1230),(2260,2355),(2438,2458),(2605,2638),(2810,2838)],
-          "chat_vision.py":[(160,191),(570,645),(1210,1255),(1280,1335)],
-          "chat/§wyrlz/index.html":[(5070,5128),(5180,5225),(5250,5286)]
+          "station.py":[(275,345),(345,400),(790,850)],
+          "chat_vision.py":[(542,575),(1225,1250)],
+          "chat/§wyrlz/index.html":[(5090,5120)]
           }
           needles={"station.py":("def _history_projection","def _inference_prompt_after_vision","project_thread_memory","_owned_project_edit_intent","if direct_vision_answer:","image_context_policy"),
           "chat_vision.py":("def install(","def _run_vision_job","def _vision_analysis","def analyze_image","def _analyze","question =", "description"),
