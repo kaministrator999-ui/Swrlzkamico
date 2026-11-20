@@ -100,18 +100,6 @@ def patch_ui(data):
       };
 ''', "replace manual selection with passive recognition")
     html = one(html,
-        '''       const imageReuseChoice=document.getElementById("imageReuseChoice");''',
-        '''       // Image-memory selection is now automatic. No manual selection controls.''',
-        "remove manual choice reference")
-    html = one(html,
-        '''       const imageReuseCheckbox=document.getElementById("imageReuseCheckbox");''',
-        '''       // The server is authoritative for exact-image history.''',
-        "remove manual checkbox reference")
-    html = one(html,
-        '''       const imageReuseSelect=document.getElementById("imageReuseSelect");''',
-        '''       // Client-side match labels never authorize server-side context.''',
-        "remove manual select reference")
-    html = one(html,
         'selectedImage={file:stableFile,bytes,url,imageSha256,reuseThreadId:"",reuseConfirmedForThreadId:""};',
         'selectedImage={file:stableFile,bytes,url,imageSha256};',
         "clean image attachment")
