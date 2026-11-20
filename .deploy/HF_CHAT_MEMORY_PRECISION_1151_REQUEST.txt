@@ -1,0 +1,6 @@
+SPACE=kamiloki/Swyrlz
+SOURCE_REVISION=ba91d6841a1e1242eed9f63716d8f9c3330aeffc
+SCOPE=only-station-exact-vision-hints-and-related-visual-history-recall
+MODE=deploy
+APPROVED=yes
+NONCE=memory-precision-1151-user-authorized-deploy-20261120
