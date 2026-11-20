@@ -40,7 +40,7 @@ assert(selector.includes("purpose==='pan'&&record.input?.handedness==='left'"),
 assert(selector.includes('if(already.size>=32)'),'Selection-limit guard must survive');
 assert(selector.includes("se376SelectionMode==='lasso-through'?'lasso-front':'lasso-through'"),
  'Lasso Depth must switch the existing front and through modes');
-assert(html.includes('SWYRL_ENGINE_DEPLOY_MARKER: V11_531_QUEST_GIZMO_CONTROLLER_MENU'));
+assert(html.includes('SWYRL_ENGINE_DEPLOY_MARKER: V11_531_QUEST_MENU_GIZMO_ACCOUNT'));
 assert(stage.includes("['labs','Labs','labs']")&&stage.includes("['projects','Projects','projects']")&&stage.includes("['undo','Undo'],['redo','Redo']"),
  'Labs, Projects and durable history controls must be preserved');
 // Execute the real compiled selection-mode router in isolation with mocked
