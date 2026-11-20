@@ -2321,3 +2321,7 @@ In immersive WebXR Sheep Tag, clicking the left joystick opens the same three-pa
 ## §E v11.278 · Quest menu performance comparison
 
 Nerd Stats in immersive VR sits 12 cm farther forward and 6 cm higher over the left controller. The existing L3 toggle remains; in-world text repaint is limited to approximately two seconds except on immediate page changes. Metrics **page 4/4** compares approximate frame cadence for no panels, Nerd Stats only, radial menu only and both open, helping test Quest 2 menu-induced lag. Values are WebXR callback intervals, not GPU render time; observations at different house counts should not be treated as a controlled performance comparison.
+
+
+### §E v11.531 · Quest menu, held-axis dragging and account project correction (2026-11-20)
+Immersive controller menu follows the left controller's position rather than wrist rotation, faces the headset upright, and reflows native tool tiers/brush controls. Trigger capture keeps X/Y/Z gizmo movement live until release, with reversal and B cancellation. Account-project open avoids a conflicting parent transition lock and exposes listing errors; existing saved formats and recovery protection remain. Physical Quest acceptance remains pending.
