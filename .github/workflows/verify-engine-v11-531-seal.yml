@@ -38,3 +38,7 @@ jobs:
           PY
           python projects/swrlz-forge-moba/scripts/check_inline_js_syntax_v11_266.py /tmp/se531-candidate.html
           echo SE531_CANDIDATE_JS_CHECK_PASS
+          python projects/swrlz-forge-moba/scripts/verify_v11_531_release.py --output /tmp/se531-sealed
+          python projects/swrlz-forge-moba/scripts/package_static_delivery_v11_531.py --output /tmp/se531-sealed
+          node --check /tmp/se531-sealed/swrlz-engine-v11.531.js
+          echo SE531_SEALED_RELEASE_AND_STATIC_DELIVERY_OK
