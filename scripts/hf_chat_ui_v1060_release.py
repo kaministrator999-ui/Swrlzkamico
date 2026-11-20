@@ -178,8 +178,8 @@ def snapshot(api: HfApi, candidate_path: Path) -> None:
     originals = read_space_files(api, revision)
     try:
         html = originals[UI].decode("utf-8")
-        version = re.search(r'swrlz-chat-version" content="([^"]+)"',html).group(1)
-            if 'swrlz-chat-version" content="' in html else "unknown"
+        version = (re.search(r'swrlz-chat-version" content="([^"]+)"',html).group(1)
+                   if 'swrlz-chat-version" content="' in html else "unknown")
     except UnicodeDecodeError as exc:
         raise RuntimeError("Live Chat source is not UTF-8") from exc
     emit("LIVE_BASELINE", revision=revision,
