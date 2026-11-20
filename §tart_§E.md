@@ -1,3 +1,13 @@
+## §WYRL§ Engine v11.528 · Immersive VR projects, controls and cloud saves (2026-11-19)
+
+**Immersive Projects:** A spacious native world-space Projects dialog replaces the narrow list, with Device / My Account / Starters project cards, pagination, Refresh, Open, Save to device, Save to account, Clone and Close. All project loads still use the existing authenticated library and native WebXR scene, not a duplicate workspace.
+
+**Sculpt and transform:** A posed rig requiring neutral geometry offers explicit Set Rest Pose / Keep Pose before Push/Pull; rest-pose confirmation is recorded in native rig history. Move/Rotate/Scale gizmo drags follow the controller aim ray while preserving the native transform transaction and B cancellation. Adjacent +/- controls are grouped in contextual parameter toolbars.
+
+**Controller and account:** The left Quest Menu button toggles the existing tool menu where the browser exposes it; X remains a fallback. Save to account in §Chat and My Projects uses one durable cloud-save path with stable project identity, confirmed revision and error feedback; account project loading normalizes selected IDs. No new OAuth credentials or cloud store.
+
+See [v11.528 immersive QA and acceptance](projects/swrlz-forge-moba/docs/IMMERSIVE_XR_OWNER_QA_V11_528.md). Real Quest and signed-in account acceptance pending.
+
 ## §WYRL§ Engine v11.527 · Contextual immersive Draw menu (2026-11-19)
 
 **Modeling Lab → Draw:** Exactly Draw Outline, Make Face, Thicken Outline and Discard Outline in the existing native world-space operation rail. Make Face enables after at least three points during an active outline. Discard is limited to an unfinished outline. Thicken enables only for one selected planar open-outline mesh passing the same topology validation as native Grip extrusion. Disabled actions are dimmed and cannot be activated by the controller ray.
