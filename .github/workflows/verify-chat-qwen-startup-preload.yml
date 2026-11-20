@@ -1,0 +1,68 @@
+name: Verify §C Qwen preloaded at server startup (read only)
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/verify-chat-qwen-startup-preload.yml"]
+permissions: {contents: read}
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.11"}
+      - run: python -m pip install --quiet "huggingface_hub>=0.34,<2"
+      - name: Verify exact live startup and resident Qwen readiness
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json,os,pathlib,re,urllib.error,urllib.request
+          from huggingface_hub import HfApi,hf_hub_download
+          space="kamiloki/Swyrlz"
+          api=HfApi(token=os.environ["HF_TOKEN"])
+          head=api.repo_info(space,repo_type="space").sha
+          runtime=api.get_space_runtime(space)
+          stage=str(runtime.stage).split(".")[-1]
+          image_sha=str((runtime.raw or {}).get("sha") or "")
+          print("SWRLZ_PRELOAD_RUNTIME",json.dumps({"head":head,"stage":stage,"image":image_sha},sort_keys=True),flush=True)
+          def source(name):
+              return pathlib.Path(hf_hub_download(space,name,repo_type="space",
+                   revision=head,token=os.environ["HF_TOKEN"])).read_text("utf-8")
+          app=source("app.py")
+          native=source("qwen35_single_runtime.py")
+          station=source("station.py")
+          checks={
+             "startupCallsPreloadBeforeUvicorn": app.rfind("    _warm_backends()") > app.rfind('if __name__=="__main__":') and app.rfind("    _warm_backends()") < app.rfind("    uvicorn.run("),
+             "warmupLoadsResidentModel": "model = load()" in native and 'def warmup():' in native,
+             "warmupRequiresTokenizer": 'QWEN35_TOKENIZER_NOT_READY' in native,
+             "warmupRequiresShortGeneration": 'QWEN35_INFERENCE_NOT_READY' in native,
+             "warmupStateRecorded": '\"HF_WARMUP_READY\"' in app and '\"HF_WARMUP_FAILED\"' in app,
+             "singleResidentNativeServer": "if _instance is None or not _healthy():" in native,
+             "visionProjectorPreloaded": "actual_projector = _verified_asset(PROJECTOR_FILE)" in native and '"--mmproj", projector_path' in native,
+             "readinessEndpointExists": '@app.get("/api/hf/qwen35-ready")' in station,
+          }
+          print("SWRLZ_PRELOAD_SOURCE_CONTRACT",json.dumps(checks,sort_keys=True),flush=True)
+          assert all(checks.values()),"Preload source contract failed"
+          url="https://kamiloki-swyrlz.hf.space/api/hf/qwen35-ready"
+          try:
+              with urllib.request.urlopen(urllib.request.Request(url,headers={"User-Agent":"Swyrlz-Qwen-Preload-Source-QA","Cache-Control":"no-cache"}),timeout=20) as response:
+                  obj=json.load(response)
+                  print("SWRLZ_PRELOAD_LIVE_READY",json.dumps({"http":response.status,"ready":obj.get("ready"),"model":obj.get("model"),"cpuCapacity":obj.get("cpuCapacity"),"decodeThreads":obj.get("decodeThreads")},sort_keys=True),flush=True)
+          except Exception as e:
+              print("SWRLZ_PRELOAD_LIVE_CHECK_FAILED",type(e).__name__,str(e)[:170],flush=True)
+          events=[]
+          try:
+              for line in api.fetch_space_logs(space,follow=False):
+                  if any(token in str(line) for token in ('"HF_WARMUP_READY"','"HF_WARMUP_FAILED"','"QWEN35_BUILD_FAILED"')):
+                      try:
+                          obj=json.loads(str(line)[str(line).index("{"):])
+                          events.append({"event":obj.get("event"),"model":obj.get("modelId"),
+                                         "elapsedSeconds":obj.get("elapsedSeconds"),
+                                         "errorType":obj.get("errorType")})
+                      except Exception: pass
+              print("SWRLZ_PRELOAD_RECENT_EVENTS",json.dumps(events[-8:],sort_keys=True),flush=True)
+          except Exception as e:
+              print("SWRLZ_PRELOAD_LOG_READ_FAILED",type(e).__name__,str(e)[:150],flush=True)
+          PY
