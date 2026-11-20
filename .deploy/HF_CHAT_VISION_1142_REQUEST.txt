@@ -1,0 +1,6 @@
+SPACE=kamiloki/Swyrlz
+SOURCE_REVISION=44330852bf147887398f0ca3eabb99d66d93db4f
+SCOPE=chat-image-picker-and-qwen-vision-only
+MODE=inspect
+APPROVED=no
+NONCE=20261120-vision-original-1142-preflight-01
