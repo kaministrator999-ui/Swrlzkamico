@@ -5,6 +5,8 @@ on:
     paths:
       - ".github/workflows/verify-engine-v11-528-owner-qa.yml"
       - "projects/swrlz-forge-moba/scripts/verify_v11_528_release.py"
+      - "projects/swrlz-forge-moba/tests/model_vr_owner_qa_v11_528.cjs"
+      - "projects/swrlz-forge-moba/source-manifest.json"
   workflow_dispatch:
 permissions:
   contents: write
