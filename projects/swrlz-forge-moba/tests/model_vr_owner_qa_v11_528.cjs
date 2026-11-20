@@ -30,6 +30,9 @@ assert(menu.includes("if(se340XR.ui?.isModalOpen?.())")&&menu.includes('return f
  'Modal must block background edits');
 assert(menu.includes("if(action==='cancel'&&se340XR.ui?.isModalOpen?.())")&&
  menu.includes('closeDialog:close'), 'B cancellation must close modal safely');
+assert(menu.includes("if(se340XR.ui?.isModalOpen?.())return true")&&
+ menu.includes("if(se340XR.ui?.isModalOpen?.())return false"),
+ 'Modal must block global controller actions and grip transformations');
 assert(menu.includes('SCULPT_REQUIRES_BIND_POSE')&&menu.includes('showRestPose')&&
  menu.includes('project-rest-confirm')&&menu.includes('project-rest-cancel'),
  'Push/Pull pose rejection should open confirmation');
@@ -61,6 +64,8 @@ assert(account.includes("prior.startsWith('cloud:')")&&account.includes('se528Pr
 assert(account.includes("const ok=await saveCloud()===true")&&
  account.includes("if(!ok)")&&account.includes('se371Display('),
  'Account saving must require durable acknowledgement and show failures');
+assert(account.includes("document.addEventListener('click',()=>requestAnimationFrame(se528InstallAccountSave),true)"),
+ 'My Projects save-to-account must appear after lazy panel mount');
 assert(account.includes("chat.onclick=()=>void se528SaveAccount()")&&
  account.includes("button.onclick=()=>void se528SaveAccount()"),
  'Both Chat and My Projects must use one save-to-account path');
