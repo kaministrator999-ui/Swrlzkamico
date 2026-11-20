@@ -46,7 +46,7 @@ jobs:
         run: python -m pip install --quiet "huggingface_hub>=0.34,<2"
       - name: Hash-verify exact live source and compile patched Python and JavaScript
         env:
-          HF_TOKEN: \${{ secrets.HF_TOKEN }}
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: python -u scripts/hf_chat_image_auto_v1147_release.py inspect
       - name: Preserve original + candidate and manifest
         if: always()
@@ -57,10 +57,10 @@ jobs:
           retention-days: 30
           if-no-files-found: ignore
       - name: Publish authorized, readback-verified Space update and verify resident Qwen readiness
-        if: \${{ steps.gate.outputs.mode == 'deploy' }}
+        if: ${{ steps.gate.outputs.mode == 'deploy' }}
         timeout-minutes: 24
         env:
-          HF_TOKEN: \${{ secrets.HF_TOKEN }}
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
           SWRLZ_IMAGE_AUTO_1147_APPROVED: "yes"
         run: |
           set -euo pipefail
