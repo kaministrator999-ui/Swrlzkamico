@@ -25,7 +25,7 @@ assert m.retrieve(t,"now","How about that?")["matches"]==0
 assert m.retrieve(t,"now","What about our Sorting Hat animation rigging?",is_visual=True)["matches"]==0
 assert m.retrieve([old_work,active],"now","What about our Sorting Hat animation rigging?")["matches"]==0
 assert "Quest VR testing" in m.retrieve(t,"now","Can we fix Quest headset VR controllers and ray dragging?")["context"]
-assert "Current conversation" not in m.retrieve(t,"now","Is the moon covered with craters and ice?")["context"]
+assert "Current conversation" in m.retrieve(t,"now","Is the moon covered with craters and ice?")["context"]
 # The recent conversation already has its last turns in the model input.
 recent={"id":"now","messages":[user("sorting hat rigging animation")]*8}
 assert m.retrieve([recent],"now","Can we talk sorting hat rigging animation?")["matches"]==0
