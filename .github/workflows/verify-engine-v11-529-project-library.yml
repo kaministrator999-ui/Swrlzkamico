@@ -5,6 +5,8 @@ on:
     paths:
       - ".github/workflows/verify-engine-v11-529-project-library.yml"
       - "projects/swrlz-forge-moba/scripts/verify_v11_529_release.py"
+      - "projects/swrlz-forge-moba/source-manifest.json"
+      - "projects/swrlz-forge-moba/tests/project_account_browser_v11_529.cjs"
   workflow_dispatch:
 permissions:
   contents: write
