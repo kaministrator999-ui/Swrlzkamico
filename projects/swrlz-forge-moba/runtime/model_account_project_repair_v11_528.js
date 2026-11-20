@@ -95,6 +95,10 @@ const se528PriorMount=mount;
 mount=function(...args){const result=se528PriorMount.apply(this,args);se528InstallAccountSave();return result;};
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',se528InstallAccountSave,{once:true});
 else queueMicrotask(se528InstallAccountSave);
+// My Projects can mount after the account panel. Install the shared Save action
+// when its existing native panel appears; never duplicate the button.
+document.addEventListener('click',()=>requestAnimationFrame(se528InstallAccountSave),true);
+window.addEventListener('swrlz:project-loaded',()=>queueMicrotask(se528InstallAccountSave));
 window.SWYRL_ENGINE_ACCOUNT_SAVE_528=Object.freeze({
  save:se528SaveAccount,status:()=>({connected:!!(ready&&se176AccountConnected),busy:se528SaveBusy||cloudBusy})
 });
