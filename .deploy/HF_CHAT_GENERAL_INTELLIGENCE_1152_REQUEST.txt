@@ -1,0 +1,6 @@
+SPACE=kamiloki/Swyrlz
+SOURCE_REVISION=f5ebce144a1f6f7c16d89754e5308e3fc59f8bb2
+SCOPE=historical-evidence-separation-and-original-reasoning-only
+MODE=inspect
+APPROVED=no
+NONCE=general-intelligence-v1152-source-inspect-20261120
