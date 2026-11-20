@@ -141,7 +141,7 @@ def patch_vision(original):
   "pure context projection")
  s=one(s,
   '            "For a screenshot describe the visible application, model or subject, "',
-  '            "Identify the primary subject first, rather than cataloging phone status icons. "\n            "If distinctive visible features suggest a recognizable cultural, "\n            "fictional, or real-world object, name the possible association and "\n            "explain which visible clues support it; say resembles when uncertain. "\n            "Do not claim it is the user\\'s project based on appearance alone. "\n            "For a screenshot describe the visible application, model or subject, "',
+  '            "Identify the primary subject first, rather than cataloging phone status icons. "\n            "If distinctive visible features suggest a recognizable cultural, "\n            "fictional, or real-world object, name the possible association and "\n            "explain which visible clues support it; say resembles when uncertain. "\n            "Do not claim it is the user project based on appearance alone. "\n            "For a screenshot describe the visible application, model or subject, "',
   "visually grounded named-object recognition")
  s=one(s,
   '            "everything is a character design. User question: " + question[:400]\n        )',
