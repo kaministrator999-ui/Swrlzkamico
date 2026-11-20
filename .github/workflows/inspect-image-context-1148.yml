@@ -1,0 +1,44 @@
+name: Inspect first-turn vision and project context source
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/inspect-image-context-1148.yml"]
+permissions:
+  contents: read
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.11"}
+      - run: python -m pip install -q 'huggingface_hub>=0.34,<2'
+      - name: Inspect only source code (no user records)
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          python - <<'PY'
+          import os,re,pathlib,hashlib
+          from huggingface_hub import HfApi,hf_hub_download
+          a=HfApi(token=os.environ.get("HF_TOKEN"))
+          rev=a.repo_info("kamiloki/Swyrlz",repo_type="space").sha
+          print("SOURCE_REVISION",rev,flush=True)
+          names=("station.py","chat_vision.py","chat/§wyrlz/index.html")
+          windows={
+          "station.py":[(2350,2420),(2460,2495),(2500,2535),(2575,2610),(2615,2640),(2670,2700),(2750,2793)],
+          "chat_vision.py":[(100,155),(160,185),(570,645),(1233,1290)],
+          "chat/§wyrlz/index.html":[(1787,1824),(1940,1960),(1965,1987),(5144,5167),(5234,5251),(5310,5347)]
+          }
+          needles={"station.py":("def _history_projection","def _inference_prompt_after_vision","project_thread_memory","_owned_project_edit_intent","if direct_vision_answer:","image_context_policy"),
+          "chat_vision.py":("def install(","def _run_vision_job","def _vision_analysis","def analyze_image","def _analyze","question =", "description"),
+          "chat/§wyrlz/index.html":("const imageMemoryMatches","const updateImageReuseHint","const requestVisionDescription","imageContextPolicy","voiceProviderSelect")}
+          for name in names:
+            raw=pathlib.Path(hf_hub_download("kamiloki/Swyrlz",name,repo_type="space",revision=rev,token=a.token)).read_bytes()
+            lines=raw.decode("utf8").splitlines()
+            print("FILE",name,len(lines),hashlib.sha256(raw).hexdigest())
+            for start,end in windows[name]:
+              print("SECTION",name,start,end)
+              for i in range(start-1,min(end,len(lines))):print(f"{i+1}: {lines[i][:550]}")
+            print("MATCHES",name,[(i+1,l.strip()[:170]) for i,l in enumerate(lines) if any(k in l for k in needles[name])][:40])
+          PY
