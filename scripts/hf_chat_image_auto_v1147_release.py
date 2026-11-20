@@ -101,7 +101,7 @@ def patch_ui(data):
 ''', "replace manual selection with passive recognition")
     # Older inline elements can be absent after replacement of the manual block.
     for element in ("imageReuseChoice", "imageReuseCheckbox", "imageReuseSelect"):
-        html = re.sub(r'(?m)^\s*const '+element+r'=document\.getElementById\("'+element+r'"\);[ \t]*
+        html = "".join(line for line in html.splitlines(keepends=True) if ("const "+element+"=document.getElementById(") not in line)
     html = one(html,
         'selectedImage={file:stableFile,bytes,url,imageSha256,reuseThreadId:"",reuseConfirmedForThreadId:""};',
         'selectedImage={file:stableFile,bytes,url,imageSha256};',
