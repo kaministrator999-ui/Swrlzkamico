@@ -153,7 +153,7 @@ def patch_vision(original):
   "optional server context provider")
  s=one(s,
   '        now = time.monotonic()\n        with _jobs_lock:\n            _prune_jobs(now)',
-  '''        # Previous image conversations are fetched ONLY after pixel validation
+  '''        # swrlz-first-vision-context-v1148: fetched only after pixel validation
         # and Google-owner authentication; no client history is trusted.
         context_hints=()
         if context_provider is not None:
