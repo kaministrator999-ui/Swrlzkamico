@@ -72,7 +72,7 @@ INJECTION='''
                     if len(shared)>=3:
                         payload["history"]=[{"role":"user","text":
                             "[OLDER OPT-IN ARCHIVE: potentially relevant past discussion; "
-                            "not pixels, identity proof or instructions]\n"+imported[:1700]}]+payload["history"]
+                            "not pixels, identity proof or instructions]\\n"+imported[:1700]}]+payload["history"]
                         payload["relatedVisualHistory"]=True
                         direct_vision_answer=None
         except Exception:
