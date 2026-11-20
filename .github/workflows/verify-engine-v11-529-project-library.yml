@@ -1,0 +1,78 @@
+name: Verify sealed §E v11.529 project library
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/verify-engine-v11-529-project-library.yml"
+      - "projects/swrlz-forge-moba/scripts/verify_v11_529_release.py"
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Verify sealed native project save, cloud failures, cards, and inherited source checks
+        id: check
+        shell: bash
+        run: |
+          set +e
+          python projects/swrlz-forge-moba/scripts/verify_v11_529_release.py --output /tmp/se529-release > /tmp/se529-release.log 2>&1
+          RC=$?
+          tail -n 70 /tmp/se529-release.log
+          echo "exit_code=$RC" >> "$GITHUB_OUTPUT"
+          exit 0
+      - name: Save exact verification receipt or blocker
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import json
+          root=Path("projects/swrlz-forge-moba")
+          log=Path("/tmp/se529-release.log").read_text("utf8",errors="replace")
+          m=json.loads((root/"source-manifest.json").read_text("utf8"))
+          if "SE529_SOURCE_VERIFIED" in log and "SE529_ACCOUNT_BROWSER_PASS" in log:
+              receipt={"version":"v11.529","status":"source-build-verified",
+                "patches":len(m["patches"]),"bytes":m["finalBytes"],"sha256":m["finalSha256"],
+                "checks":["generated source hash","inline JS syntax","native project cloud success/failure harness",
+                          "My Projects responsive action hierarchy","inherited VR, rig, UV, journal and model suites"],
+                "authenticatedAccountRoundtrip":"owner-test-pending",
+                "phoneScreenshotAcceptance":"owner-test-pending",
+                "immersiveQuestAcceptance":"previous QA pending"}
+              path=root/"reports"/"v11_529_project_library_release_validation.json"
+              path.write_text(json.dumps(receipt,indent=2)+"\n","utf8")
+              print("SE529_RELEASE_VALIDATION_PASS",path)
+          else:
+              path=root/"reports"/"v11_529_project_library_release_failure.log"
+              path.write_text(log[-18000:],"utf8")
+              print("SE529_RELEASE_VALIDATION_FAILED",path)
+          PY
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if [ -f projects/swrlz-forge-moba/reports/v11_529_project_library_release_validation.json ]; then
+            git add projects/swrlz-forge-moba/reports/v11_529_project_library_release_validation.json
+          fi
+          if [ -f projects/swrlz-forge-moba/reports/v11_529_project_library_release_failure.log ]; then
+            git add projects/swrlz-forge-moba/reports/v11_529_project_library_release_failure.log
+          fi
+          if ! git diff --cached --quiet; then
+            git commit -m "ci(engine): record v11.529 native project-save release verification"
+            for attempt in 1 2 3 4; do
+              if git push origin HEAD:main; then exit 0; fi
+              git fetch origin main
+              git rebase origin/main
+            done
+            exit 1
+          fi
+      - name: Fail when sealed verification is incomplete
+        if: steps.check.outputs.exit_code != '0'
+        run: exit 1
