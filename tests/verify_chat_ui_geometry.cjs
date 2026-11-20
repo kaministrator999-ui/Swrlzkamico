@@ -25,7 +25,8 @@ const fs = require('node:fs');
       return {
         innerWidth:innerWidth,innerHeight:innerHeight,scrollWidth:document.documentElement.scrollWidth,
         header:rect('topEdge'),menu:rect('menuButton'),chat:rect('chatViewport'),
-        composer:rect('composerShell'),prompt:rect('prompt'),send:rect('sendButton')
+        composer:rect('composerShell'),prompt:rect('prompt'),send:rect('sendButton'),
+        workLabelVisible:getComputedStyle(document.querySelector('.work-label')).display!=='none'
       };
     });
     assert(m.header && m.menu && m.chat && m.composer && m.prompt && m.send);
@@ -35,6 +36,7 @@ const fs = require('node:fs');
     assert(m.chat.width>0 && m.prompt.width>=130, `Chat/composer unusable at ${width}`);
     assert(Math.abs(m.composer.bottom-height)<2, `Composer not bottom anchored at ${width}`);
     assert(m.send.right<=width+1, `Send action clips at ${width}`);
+    assert(m.workLabelVisible, `Work control has no label at ${width}`);
 
     await page.evaluate(() => document.body.classList.add('menu-open'));
     await page.waitForTimeout(390);
