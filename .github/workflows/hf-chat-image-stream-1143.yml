@@ -1,0 +1,88 @@
+name: Guarded §C 1.1.43 live Qwen image stream release
+on:
+  push:
+    branches: [main]
+    paths: [".deploy/HF_CHAT_IMAGE_STREAM_1143_REQUEST.txt"]
+permissions:
+  contents: read
+concurrency:
+  group: swrlz-hf-space-deployment
+  cancel-in-progress: false
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 28
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check exact HF source, scope, mode and explicit authorization
+        id: authority
+        shell: bash
+        run: |
+          set -euo pipefail
+          file=.deploy/HF_CHAT_IMAGE_STREAM_1143_REQUEST.txt
+          test -f "$file"
+          key() { sed -n "s/^$1=//p" "$file" | tail -1; }
+          test "$(key SPACE)" = "kamiloki/Swyrlz"
+          test "$(key SOURCE_REVISION)" = "561e5fa93039cde26c3563ade1cd238860368893"
+          test "$(key SCOPE)" = "only-image-vision-stream-and-chat-intent-no-code"
+          mode="$(key MODE)"
+          [[ "$mode" == "inspect" || "$mode" == "deploy" ]]
+          if [[ "$mode" == "deploy" ]]; then test "$(key APPROVED)" = "yes"; fi
+          nonce="$(key NONCE)"
+          [[ "$nonce" =~ ^[a-z0-9-]{12,90}$ ]]
+          echo "mode=$mode" >> "$GITHUB_OUTPUT"
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.11"}
+      - uses: actions/setup-node@v4
+        with: {node-version: "22"}
+      - name: Compile the deployer and no-model regression tests
+        run: |
+          python -m py_compile scripts/hf_chat_image_stream_v1143_release.py
+          python -m py_compile scripts/test_hf_chat_image_stream_v1143.py
+      - name: Install source reader and isolated test requirements
+        run: python -m pip install --quiet "huggingface_hub>=0.34,<2" "fastapi>=0.110,<1" "pillow>=10,<13"
+      - name: Snapshot exact currently deployed source and generate verified candidate
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: python -u scripts/hf_chat_image_stream_v1143_release.py inspect
+      - name: Validate actual candidate JavaScript, original Qwen stream and non-code route
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import ast,pathlib,re
+          root=pathlib.Path("reports/swrlz-image-live-stream-1143/candidate")
+          ui=(root/"chat/§wyrlz/index.html").read_text("utf-8")
+          for name in ("model_router.py","chat_vision.py"):
+              ast.parse((root/name).read_text("utf-8"))
+          assert 'swrlz-chat-version" content="1.1.43"' in ui
+          assert 'swrlz-chat-design-version" content="1.0.60"' in ui
+          assert "partialDescription:state.partialDescription" in ui
+          assert "progressiveBody.textContent=streamingVision" in ui
+          assert "const streamingVision=" in ui
+          assert "const consumeGeneration = async" in ui
+          assert '/api/lalm_station/stream?requestId=' in ui
+          scripts=[x for x in re.findall(r'<script(?:\s[^>]*)?>([\s\S]*?)</script>',ui,re.I) if x.strip()]
+          assert len(scripts)==1,"Chat's original active script count must remain unchanged"
+          pathlib.Path("/tmp/swrlz-1143.js").write_text(scripts[0])
+          PY
+          node --check /tmp/swrlz-1143.js
+          python -u scripts/test_hf_chat_image_stream_v1143.py
+      - name: Keep exact candidate and rollback source for inspection
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: swrlz-image-stream-1143-source-backup
+          path: reports/swrlz-image-live-stream-1143/
+          retention-days: 30
+          if-no-files-found: ignore
+      - name: Publish exact three-file patch, verify live Chat and Qwen readiness
+        if: ${{ steps.authority.outputs.mode == 'deploy' }}
+        timeout-minutes: 22
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          SWRLZ_IMAGE_STREAM_1143_APPROVED: "yes"
+        run: |
+          set -euo pipefail
+          python -u scripts/hf_chat_image_stream_v1143_release.py publish
+          echo "SWRLZ_IMAGE_STREAM_1143_LIVE_VERIFIED"
