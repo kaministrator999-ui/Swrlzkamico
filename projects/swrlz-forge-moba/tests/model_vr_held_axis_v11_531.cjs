@@ -6,7 +6,7 @@ const assert=require('node:assert/strict');
 const fs=require('node:fs'),vm=require('node:vm'),path=require('node:path');
 const src=fs.readFileSync(path.resolve(__dirname,'../runtime/model_vr_quest_interactions_v11_531.js'),'utf8');
 class V {
- constructor(x=0,y=0,z=0){this.x=x;this.y=y;this.z=z;}
+ constructor(x=0,y=0,z=0){this.x=x;this.y=y;this.z=z;this.isVector3=true;}
  clone(){return new V(this.x,this.y,this.z);}
  add(v){this.x+=v.x;this.y+=v.y;this.z+=v.z;return this;}
  addScaledVector(v,k){this.x+=v.x*k;this.y+=v.y*k;this.z+=v.z*k;return this;}
