@@ -1,0 +1,64 @@
+name: Guarded §C 1.1.48 first-image contextual recognition
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/hf-chat-first-vision-context-1148.yml"
+      - ".deploy/HF_CHAT_FIRST_VISION_CONTEXT_1148_REQUEST.txt"
+permissions:
+  contents: read
+concurrency:
+  group: swrlz-hf-space-deployment
+  cancel-in-progress: false
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 34
+    steps:
+      - uses: actions/checkout@v4
+      - name: Require pinned Space revision and approved scope
+        id: gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          file=.deploy/HF_CHAT_FIRST_VISION_CONTEXT_1148_REQUEST.txt
+          mode=inspect
+          if [[ -e "$file" ]]; then
+            get(){ sed -n "s/^$1=//p" "$file" | tail -1; }
+            test "$(get SPACE)" = "kamiloki/Swyrlz"
+            test "$(get SOURCE_REVISION)" = "092c3f66b922472a1e3b833c4b6969c4969f9c87"
+            test "$(get SCOPE)" = "only-verified-first-vision-history-candidates-and-grounded-qwen-prompt"
+            [[ "$(get NONCE)" =~ ^[a-z0-9-]{14,100}$ ]]
+            mode="$(get MODE)"
+            [[ "$mode" == inspect || "$mode" == deploy ]]
+            if [[ "$mode" == deploy ]]; then test "$(get APPROVED)" = yes; fi
+          fi
+          echo "mode=$mode" >> "$GITHUB_OUTPUT"
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.11"}
+      - name: Compile source-pinned release before network
+        run: python -m py_compile scripts/hf_chat_first_vision_context_v1148_release.py
+      - name: Install current Hugging Face client
+        run: python -m pip install -q "huggingface_hub>=0.34,<2"
+      - name: Inspect exact authenticated live Station and Qwen sources; test isolated owner-history cases
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: python -u scripts/hf_chat_first_vision_context_v1148_release.py inspect
+      - name: Preserve original source, tested candidate and rollback hashes
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: swrlz-vision-first-context-1148-guarded-source
+          path: reports/swrlz-vision-first-context-1148/
+          retention-days: 30
+          if-no-files-found: ignore
+      - name: Release authorized 2-file first-turn recognition upgrade and confirm resident Qwen
+        if: ${{ steps.gate.outputs.mode == 'deploy' }}
+        timeout-minutes: 25
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          SWRLZ_VISION_CONTEXT_1148_APPROVED: "yes"
+        run: |
+          set -euo pipefail
+          python -u scripts/hf_chat_first_vision_context_v1148_release.py deploy
+          echo SWRLZ_FIRST_VISION_CONTEXT_1148_LIVE_VERIFIED
