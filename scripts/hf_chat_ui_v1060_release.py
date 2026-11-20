@@ -74,12 +74,38 @@ def visual_delta(candidate: str) -> str:
     delta = candidate[start:end]
     if len(delta) < 15000 or "--ui-elevated" not in delta:
         raise RuntimeError("Incomplete design delta")
+    # Preserve the newer live Chat's ResizeObserver-owned composer geometry.
+    for old, new in (
+        ("inset:0 0 102px;", "inset:0 0 var(--composer-visible-height,102px);"),
+        ("inset:0 0 88px;", "inset:0 0 var(--composer-visible-height,88px);"),
+    ):
+        if delta.count(old) != 1:
+            raise RuntimeError("Reviewed CSS did not contain the expected composer inset")
+        delta = delta.replace(old,new,1)
     return delta
 
 
 def patch(live: str, candidate: str) -> str:
     if MARK in live:
-        raise RuntimeError("This design is already present in live Chat; refuse duplicate release")
+        if (live.count(MARK)!=1 or
+            live.count('name="swrlz-chat-version" content="1.1.40"')!=1 or
+            live.count('name="swrlz-chat-design-version" content="1.0.60"')!=1):
+            raise RuntimeError("Pre-existing UI design/version is not a repairable 1.1.40 release")
+        next_html = live
+        for old, new in (
+            ("inset:0 0 102px;", "inset:0 0 var(--composer-visible-height,102px);"),
+            ("inset:0 0 88px;", "inset:0 0 var(--composer-visible-height,88px);"),
+        ):
+            if live.count(old) != 1:
+                raise RuntimeError("Live design inset has drifted; refuse unreviewed repair")
+            next_html = replace_once(next_html,old,new,"preserve live composer measurement")
+        next_html = replace_once(next_html,
+            'name="swrlz-chat-version" content="1.1.40"',
+            'name="swrlz-chat-version" content="1.1.41"', "increment live repair version")
+        if element_ids(live)!=element_ids(next_html):
+            raise RuntimeError("Composer repair changed component IDs")
+        emit("LIVE_1140_REPAIR_BUILT", nextVersion="1.1.41", preservedDynamicComposer=True)
+        return next_html
     if live.count("</style>") < 1 or live.count("<body>") != 1:
         raise RuntimeError("Unexpected live Chat page structure")
     necessary = (
@@ -213,7 +239,7 @@ def snapshot(api: HfApi, candidate_path: Path) -> None:
          insertedCSSBytes=len(visual_delta(candidate)), after=manifest["after"])
 
 
-def served_version() -> tuple[bool,str]:
+def served_version(expected_version: str) -> tuple[bool,str]:
     for path in ("/chat/%C2%A7wyrlz", "/chat/%C2%A7wyrlz/index.html"):
         try:
             req = urllib.request.Request(
@@ -222,7 +248,7 @@ def served_version() -> tuple[bool,str]:
                          "Cache-Control":"no-cache"})
             with urllib.request.urlopen(req,timeout=30) as response:
                 payload = response.read(950000).decode("utf-8", errors="replace")
-            if (MARK in payload and 'swrlz-chat-version" content="1.1.40"' in payload
+            if (MARK in payload and 'swrlz-chat-version" content="' + expected_version + '"' in payload
                     and 'swrlz-chat-design-version" content="1.0.60"' in payload):
                 return True, path
         except Exception as exc:
@@ -258,23 +284,25 @@ def publish(api: HfApi, candidate_path: Path) -> None:
     revision = None
     try:
         revision = upload(api, manifest["revision"], edited,
-            "§C: integrate UI 1.0.60 design onto live 1.1.39 as Chat 1.1.40")
+            "§C: preserve live composer geometry in professional Chat UI release")
         emit("COMMITTED", revision=revision, previous=manifest["revision"])
         verify = read_space_files(api, revision)
         if verify != edited:
             raise RuntimeError("Published source does not match exact candidate")
         emit("EXACT_READBACK_PASS", revision=revision)
+        expected_version = re.search(r'swrlz-chat-version" content="([^"]+)"',
+                                     edited[UI].decode("utf-8")).group(1)
         for attempt in range(1,21):
             if api.repo_info(SPACE,repo_type="space").sha != revision:
                 raise RuntimeError("CONCURRENT_SPACE_COMMIT during served-page check")
-            ok, detail = served_version()
+            ok, detail = served_version(expected_version)
             if ok:
                 emit("LIVE_ACCEPTED", revision=revision, servedPath=detail, attempt=attempt,
                      files=list(FILES))
                 return
             emit("SERVED_PENDING", attempt=attempt, detail=detail)
             time.sleep(10)
-        raise RuntimeError("Chat 1.1.40 with UI design 1.0.60 did not appear live")
+        raise RuntimeError("Chat UI design did not appear with expected version: "+expected_version)
     except Exception as exc:
         emit("RELEASE_REJECTED", error=type(exc).__name__, detail=str(exc)[:300],
              revision=revision)
