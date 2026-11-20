@@ -9,7 +9,7 @@ for(const token of ['se390UpdatePose=function(g,pose,gain)','g.se530Continuous',
  'if(state.worldAxis)','state.translation.add(localDelta','if(g.mode===\'move\')',
  'root.position.copy(pose.position).add(location)','root.scale.setScalar(.94)',
  "se372MenuDragStart=function(){return false;}","activeSculptOperation",
- 'banner.visible=sculpt','PARAMETERS','controllerFollowMenu:true'])
+ 'banner.visible=sculpt','Direction · Falloff · Radius · Strength','controllerFollowMenu:true'])
  assert(source.includes(token),'Missing native scoped behavior: '+token);
 assert(patch.includes("['sculpt-push','Push / Pull']"),'Unified signed sculpt operation must be preserved');
 for(const token of ['SE530_VR_CONTINUOUS_GIZMO_AND_CONTROLLER_PALETTE_END',
