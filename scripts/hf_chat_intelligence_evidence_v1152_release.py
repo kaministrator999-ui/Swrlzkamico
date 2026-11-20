@@ -54,8 +54,10 @@ def station_patch(data):
 
  # Same-image historical context has been falsely added to the chat as a
  # new USER utterance. Preserve the actual old role labels and provenance.
- start=only(s,'            payload["history"]=[{"role":"user","text":\n',
-            "previous exact-image history injection")
+ marker=only(s,'"[PRIOR DISCUSSION OF THE SAME EXACT IMAGE IN A DIFFERENT CONVERSATION; "',
+             "same-image evidence marker")
+ start=s.rfind('            payload["history"]=[{"role":"user","text":\n',0,marker)
+ if start<0:raise RuntimeError("Missing same-image injection before marker")
  end=s.find('            payload["imageContextMatchedThreadId"]',start)
  if end<start:raise RuntimeError("Image history source terminator missing")
  old=s[start:end]
