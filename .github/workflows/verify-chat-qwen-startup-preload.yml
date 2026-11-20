@@ -50,6 +50,7 @@ jobs:
               with urllib.request.urlopen(urllib.request.Request(url,headers={"User-Agent":"Swyrlz-Qwen-Preload-Source-QA","Cache-Control":"no-cache"}),timeout=20) as response:
                   obj=json.load(response)
                   print("SWRLZ_PRELOAD_LIVE_READY",json.dumps({"http":response.status,"ready":obj.get("ready"),"model":obj.get("model"),"cpuCapacity":obj.get("cpuCapacity"),"decodeThreads":obj.get("decodeThreads")},sort_keys=True),flush=True)
+                  assert response.status==200 and obj.get("ready") is True and obj.get("model")=="qwen3.5-9b","Qwen is not resident/ready after rebuild"
           except Exception as e:
               print("SWRLZ_PRELOAD_LIVE_CHECK_FAILED",type(e).__name__,str(e)[:170],flush=True)
           events=[]
