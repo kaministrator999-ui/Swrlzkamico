@@ -11,7 +11,7 @@ const older=section('/* SE517_XR_PROJECT_BROWSER_START','/* SE517_XR_PROJECT_BRO
 const cloud=section('/* SE372_VR_PROJECTS_IN_CHAT_CLOSURE_START','/* SE372_VR_PROJECTS_IN_CHAT_CLOSURE_END');
 const workflow=section('/* SE350_MODEL_VR_SURFACE_START','/* SE350_MODEL_VR_SURFACE_END');
 const native=section('/* SE445_VR_PROGRESSIVE_TOOLS_START','/* SE445_VR_PROGRESSIVE_TOOLS_END');
-for(const tag of ['V11_531_QUEST_GIZMO_CONTROLLER_MENU','<title>§wyrl§ Engine · Maker v11.531</title>'])
+for(const tag of ['V11_531_QUEST_MENU_GIZMO_ACCOUNT','<title>§wyrl§ Engine · Maker v11.531</title>'])
  assert(html.includes(tag),'release identity '+tag);
 assert(menu.includes("const priorCreate=se340CreateModelVRUI")&&menu.includes("const ui=priorCreate(options)"));
 assert(menu.includes("modal.position.set(-.205,0,.155)"),'Project dialog must have independent, sizeable world-space geometry');
