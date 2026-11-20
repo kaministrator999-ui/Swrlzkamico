@@ -1,0 +1,76 @@
+name: Verify sealed §E v11.527 Draw release
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/verify-engine-v11-527-draw.yml"
+      - "projects/swrlz-forge-moba/scripts/verify_v11_527_release.py"
+      - "projects/swrlz-forge-moba/tests/model_vr_draw_menu_v11_527.cjs"
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Check sealed source, native menus, history and project regressions
+        id: check
+        shell: bash
+        run: |
+          set +e
+          python projects/swrlz-forge-moba/scripts/verify_v11_527_release.py --output /tmp/se527-verify > /tmp/se527-verify.log 2>&1
+          RC=$?
+          tail -n 110 /tmp/se527-verify.log
+          echo "exit_code=$RC" >> "$GITHUB_OUTPUT"
+          exit 0
+      - name: Save actual verification receipt or failure details
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import json
+          root=Path("projects/swrlz-forge-moba")
+          output=Path("/tmp/se527-verify.log").read_text("utf8",errors="replace")
+          m=json.loads((root/"source-manifest.json").read_text("utf8"))
+          if "SE527_SOURCE_VERIFIED" in output:
+              receipt={
+                "version":"v11.527",
+                "status":"source-build-verified",
+                "patches":len(m["patches"]),
+                "bytes":m["finalBytes"],
+                "sha256":m["finalSha256"],
+                "checks":["generated SHA","JS syntax","Draw","Select","Sculpt","Display","Create","UV","journal","rig"],
+                "questHeadsetAcceptance":"pending"
+              }
+              path=root/"reports"/"v11_527_draw_release_validation.json"
+              path.write_text(json.dumps(receipt,indent=2)+"\n","utf8")
+              print("SE527_VERIFIED_RECEIPT",path,flush=True)
+          else:
+              path=root/"reports"/"v11_527_draw_release_failure.log"
+              path.write_text(output[-20000:],"utf8")
+              print("SE527_VERIFY_FAILURE_REPORT",path,flush=True)
+          PY
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if [ -f projects/swrlz-forge-moba/reports/v11_527_draw_release_validation.json ]; then
+            git add projects/swrlz-forge-moba/reports/v11_527_draw_release_validation.json
+          fi
+          if [ -f projects/swrlz-forge-moba/reports/v11_527_draw_release_failure.log ]; then
+            git add projects/swrlz-forge-moba/reports/v11_527_draw_release_failure.log
+          fi
+          if ! git diff --cached --quiet; then
+            git commit -m "ci(engine): record v11.527 Draw release verification"
+            git push origin HEAD:main
+          fi
+      - name: Fail if package validation failed
+        if: steps.check.outputs.exit_code != '0'
+        run: exit 1
