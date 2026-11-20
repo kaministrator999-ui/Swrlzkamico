@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.529
+title: §wyrl§ Engine v11.530
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,16 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §WYRL§ Engine v11.530 · Immersive controller console and continuous gizmos (2026-11-20)
+
+**Continuous transform:** Trigger-grabbing a native Move/Rotate/Scale gizmo updates the native preview continuously as the controller ray moves, with a grip fallback for unstable nearly parallel rays. The existing selected-model direct Trigger drag also supports axis-free movement. Release commits one history edit; B cancels.
+
+**Left-hand console:** The existing Tools → Operations → Settings menu follows the tracked left controller at a fixed forward offset, facing the headset. Its ray targets, menu state and project workflows remain native; staying nearby keeps canvas text legible. Left Menu toggles the whole console when WebXR exposes that hardware button; X is the fallback.
+
+**Sculpt third panel:** The original single signed Push/Pull brush and Push In/Pull Out direction remain. A compact contextual footer preserves native Direction, Falloff, Radius and Strength controls without duplicate brushes.
+
+**Verification:** Full artifact SHA, JavaScript syntax and static delivery checks gate this release. Meta Quest headset acceptance remains pending.
 
 ## §WYRL§ Engine v11.529 · Native cloud save and clean My Projects (2026-11-19)
 
