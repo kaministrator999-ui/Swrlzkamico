@@ -28,12 +28,12 @@ jobs:
           wanted=["app.py","brain_programming.py","model_router.py","station.py","chat_vision.py",
                   "qwen35_single_runtime.py","coder_model_config.py","chat/§wyrlz/index.html",
                   "generation_validation.py","programming_generation.py","coder_candidate_validation.py",
-                  "programming_intent_v1.py","qwen35_coder.py","brain_coder.py"]
+                  "programming_intent_v1.py","qwen35_coder.py","brain_coder.py", "chat_history.py", "chat_persistence.py", "account_storage.py", "chat_memory.py", "station_history.py"]
           picked=[p for p in wanted if p in files]
           assert all(p in picked for p in ("brain_programming.py","model_router.py","station.py","app.py","chat/§wyrlz/index.html"))
           root=pathlib.Path("reports/chat-image-stream-live")
           root.mkdir(parents=True,exist_ok=True)
-          (root/"manifest.json").write_text(json.dumps({"revision":head,"selected":picked},indent=2))
+          (root/"manifest.json").write_text(json.dumps({"revision":head,"selected":picked, "audit":"single-bubble-vision-image-reuse-20261120"},indent=2))
           for p in picked:
               src=pathlib.Path(hf_hub_download(repo,p,repo_type="space",revision=head,token=os.environ["HF_TOKEN"]))
               data=src.read_bytes()
