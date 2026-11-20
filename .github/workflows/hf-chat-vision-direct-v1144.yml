@@ -86,7 +86,7 @@ jobs:
           model=ast.parse(model_src)
           fn=next(n for n in model.body if isinstance(n,ast.FunctionDef) and n.name=="_direct_vision_description")
           def direct_format(text):return text
-          namespace={"re":re,"_VISION_START":"\n\n[Uploaded image — vision description, not original pixels]\n",
+          namespace={"re":re,"Any":object,"_VISION_START":"\n\n[Uploaded image — vision description, not original pixels]\n",
                      "_VISION_END":"\n[/Uploaded image]","_format_direct_vision_report":direct_format}
           exec(compile(ast.Module(body=[fn],type_ignores=[]),"<direct-image-question>","exec"),namespace)
           question="What's this image look like to you?"
