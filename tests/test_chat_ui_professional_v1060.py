@@ -84,7 +84,7 @@ class ChatProfessionalUIContract(unittest.TestCase):
             self.assertIn(token, self.source)
 
     def test_single_html_document_and_inline_styles(self):
-        self.assertEqual(len(re.findall(r"<html\\b", self.source)), 1)
+        self.assertEqual(len(re.findall(r"<html\b", self.source)), 1)
         self.assertEqual(self.source.count("</html>"), 1)
         self.assertEqual(self.source.count("</style>"), 1)
         self.assertEqual(self.source.count("<body>"), 1)
