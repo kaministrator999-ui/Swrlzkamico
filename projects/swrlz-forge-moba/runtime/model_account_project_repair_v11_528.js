@@ -34,7 +34,14 @@ loadCloud=async function(projectKey){
   transient.textContent='Loading saved account project';cloudList.append(transient);
   cloudList.value=transient.value;
  }
- try{return await se528PriorLoadCloud.call(this);}
+ try{
+  await se528PriorLoadCloud.call(this);
+  // The legacy importer catches its own errors and returns undefined even
+  // after success. Its cloudRefs revision receipt is authoritative instead.
+  const applied=cloudRefs.get(getProjectId());
+  const requested=prior.replace(/^cloud:/,'');
+  return !!applied?.id&&applied.id===requested&&Number.isInteger(applied.revision);
+ }
  finally{
   if(transient)transient.remove();
   if(cloudList&&prior&&[...cloudList.options].some(x=>x.value===prior))cloudList.value=prior;
