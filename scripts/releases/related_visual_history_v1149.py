@@ -118,6 +118,7 @@ def retrieve(threads,active_thread_id,question,visual_description="",verified_im
     visual=_clean(visual_description,1800) if is_visual else ""
     query_tokens=list(dict.fromkeys(terms(query+" "+visual)))[:65]
     if len(query_tokens)<2:return {"context":"","count":0,"query":""}
+    query_view=" ".join(query_tokens[:15])[:220]
     target=set(query_tokens)
     meaningful_question=set(terms(query))
     # Multiple distinct cues prevent a single generic noun from triggering
@@ -136,7 +137,7 @@ def retrieve(threads,active_thread_id,question,visual_description="",verified_im
                 if _image(msg,vision_handoff):continue
                 item=_topic_record(msg,thread)
             if item is not None:docs.append(item)
-    if not docs:return {"context":"","count":0,"query":""}
+    if not docs:return {"context":"","count":0,"query":query_view}
     freq=Counter()
     for doc in docs:freq.update(set(terms(doc["matchText"])))
     scored=[]
@@ -168,7 +169,7 @@ def retrieve(threads,active_thread_id,question,visual_description="",verified_im
         if sum(len(s) for s in excerpts)+len(excerpt)>MAX_CONTEXT:continue
         excerpts.append(excerpt);used_threads.add(tid)
         if len(excerpts)>=MAX_EXCERPTS:break
-    if not excerpts:return {"context":"","count":0,"query":""}
+    if not excerpts:return {"context":"","count":0,"query":query_view}
     context=("RELATED PAST DISCUSSIONS AND IMAGES (verified same-account records; "
              "retrieval CANDIDATES, not new visual evidence):\n"+
              "\n".join(excerpts)+
@@ -179,4 +180,4 @@ def retrieve(threads,active_thread_id,question,visual_description="",verified_im
              "and never invent identity, provenance, changes, or tool access.")
     return {"context":context[:MAX_CONTEXT+440],
             "count":len(excerpts),
-            "query":" ".join(query_tokens[:15])[:220]}
+            "query":query_view}
