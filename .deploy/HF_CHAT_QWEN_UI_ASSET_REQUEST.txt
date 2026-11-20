@@ -1,0 +1,6 @@
+TARGET=kamiloki/Swyrlz
+SOURCE_REVISION=79c9f0dd2cd5ab89d351f2a678f4a52cc338ce88
+SCOPE=disable-native-unneeded-webui-assets
+MODE=deploy
+APPROVED=yes
+REQUEST_NONCE=20261120-qwen-ui-asset-fix-01
