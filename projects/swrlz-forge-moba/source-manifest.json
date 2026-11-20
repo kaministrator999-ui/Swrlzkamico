@@ -1,10 +1,10 @@
 {
   "schema": "swrlz-forge-source-v2",
-  "name": "§wyrl§ Engine v11.530",
+  "name": "§wyrl§ Engine v11.531",
   "baseArtifact": "swrlz_forge_v4.html",
   "baseBytes": 99591,
   "baseSha256": "a8299fe89fbb98d15c6091751b7a66931a66efec8eec5cb464e1286f21895856",
-  "finalArtifact": "swyrl_engine_v11_530.html",
+  "finalArtifact": "swyrl_engine_v11_531.html",
   "encoding": "gzip+base64-chunks",
   "chunks": [
     "payload/part-01.txt",
@@ -521,10 +521,11 @@
     "patches/v11_527_draw_menu_cleanup.py",
     "patches/v11_528_immersive_ux_account_repair.py",
     "patches/v11_529_native_account_browser_library.py",
-    "patches/v11_530_quest_gizmo_controller_menu.py"
+    "patches/v11_530_quest_gizmo_controller_menu.py",
+    "patches/v11_531_quest_menu_gizmo_account.py"
   ],
-  "finalBytes": 10980471,
-  "finalSha256": "a7707c10bac67c015d67c9d457526f34c7383a71c94309725bd1eeb38d5de8e1",
+  "finalBytes": 0,
+  "finalSha256": "",
   "previousFinalSha256": "1e6780f411223dc5743feb0fc728aabd82db1525104432adebb6bda786f70505",
   "previousFinalBytes": 10969738,
   "previousManifestFinalSha256": "1e6780f411223dc5743feb0fc728aabd82db1525104432adebb6bda786f70505",
