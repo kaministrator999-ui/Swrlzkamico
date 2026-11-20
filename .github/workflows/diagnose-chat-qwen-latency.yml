@@ -1,0 +1,56 @@
+name: Diagnose §C Qwen response latency (read only)
+
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/diagnose-chat-qwen-latency.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  timing:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.11"}
+      - run: python -m pip install --quiet "huggingface_hub>=0.34,<2"
+      - name: Report timing counters only; do not print user messages
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          python - <<'PY'
+          import json,os,statistics,itertools
+          from huggingface_hub import HfApi
+          api=HfApi(token=os.environ["HF_TOKEN"])
+          model=[]
+          vision=[]
+          for line in itertools.islice(api.fetch_space_logs("kamiloki/Swyrlz",follow=False),2500):
+              text=str(line)
+              if "QWEN35_INFERENCE_TIMING_V3" not in text and "LOCAL_VISION_DONE" not in text:
+                  continue
+              try:
+                  obj=json.loads(text[text.index("{"):])
+              except (ValueError,KeyError):
+                  continue
+              if obj.get("event")=="QWEN35_INFERENCE_TIMING_V3":model.append(obj)
+              if obj.get("event")=="LOCAL_VISION_DONE":vision.append(obj)
+          observations=model[-30:]
+          def mid(key):
+              values=[float(v[key]) for v in observations if v.get(key) is not None]
+              return round(statistics.median(values),1) if values else None
+          rates=[1000*float(v["generatedTokens"])/float(v["decodeMs"]) for v in observations
+                 if isinstance(v.get("generatedTokens"),(int,float)) and
+                 isinstance(v.get("decodeMs"),(int,float)) and v["decodeMs"]>0]
+          durations=[float(v["seconds"]) for v in vision[-15:] if isinstance(v.get("seconds"),(int,float))]
+          summary={"modelSamples":len(observations),"visionSamples":len(durations),
+                   "p50FirstTextMs":mid("firstTextMs"),"p50TotalMs":mid("totalMs"),
+                   "p50EvaluatedPromptTokens":mid("evaluatedPromptTokens"),
+                   "p50PromptMs":mid("promptMs"),"p50GeneratedTokens":mid("generatedTokens"),
+                   "p50DecodeMs":mid("decodeMs"),
+                   "p50DecodeTokensPerSec":round(statistics.median(rates),2) if rates else None,
+                   "p50ImageAnalysisSeconds":round(statistics.median(durations),1) if durations else None}
+          print("SECHAT_QWEN_PERFORMANCE_SNAPSHOT="+json.dumps(summary,sort_keys=True),flush=True)
+          PY
