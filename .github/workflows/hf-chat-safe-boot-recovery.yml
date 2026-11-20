@@ -1,0 +1,65 @@
+name: Guarded §C web startup recovery
+
+on:
+  push:
+    branches: [main]
+    paths: [".deploy/HF_CHAT_SAFE_BOOT_REQUEST.txt"]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: swrlz-hf-space-deployment
+  cancel-in-progress: false
+
+jobs:
+  recover:
+    runs-on: ubuntu-latest
+    timeout-minutes: 24
+    steps:
+      - uses: actions/checkout@v4
+      - name: Enforce exact Space scope, pinned source and explicit recovery authority
+        id: request
+        shell: bash
+        run: |
+          set -euo pipefail
+          request=".deploy/HF_CHAT_SAFE_BOOT_REQUEST.txt"
+          test -f "$request"
+          get() { sed -n "s/^$1=//p" "$request" | tail -n 1; }
+          test "$(get TARGET)" = "kamiloki/Swyrlz"
+          test "$(get SOURCE_REVISION)" = "5e646baf86c86703e04e324b928387e565501f33"
+          test "$(get SCOPE)" = "station-startup-nonfatal-native-warmup"
+          mode="$(get MODE)"
+          test "$mode" = inspect -o "$mode" = deploy
+          if [ "$mode" = deploy ]; then test "$(get APPROVED)" = yes; fi
+          nonce="$(get REQUEST_NONCE)"
+          [[ "$nonce" =~ ^[a-z0-9-]{12,96}$ ]]
+          echo "mode=$mode" >> "$GITHUB_OUTPUT"
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.11"}
+      - name: Verify repair script syntax
+        run: python -m py_compile scripts/hf_chat_safe_boot_recovery.py
+      - name: Install authenticated Hub client
+        run: python -m pip install --quiet "huggingface_hub>=0.34,<2"
+      - name: Snapshot exact live startup files and validate guarded patch
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: python -u scripts/hf_chat_safe_boot_recovery.py inspect
+      - name: Retain exact-source startup rollback checkpoint
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: swrlz-safe-boot-prerelease-exact-files
+          path: reports/swrlz-chat-safe-boot-20261120/
+          if-no-files-found: ignore
+          retention-days: 30
+      - name: Apply approved bounded two-file startup repair and verify HTTP service
+        if: ${{ steps.request.outputs.mode == 'deploy' }}
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          SWRLZ_SAFE_BOOT_APPROVED: "yes"
+        timeout-minutes: 18
+        run: |
+          set -euo pipefail
+          python -u scripts/hf_chat_safe_boot_recovery.py publish
+          echo "SWRLZ_CHAT_WEB_SERVICE_RESTORED"
