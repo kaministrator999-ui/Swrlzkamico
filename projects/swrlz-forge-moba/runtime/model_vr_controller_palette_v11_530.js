@@ -118,33 +118,33 @@
  se340CreateModelVRUI=function(options){
   const ui=previousCreate(options),details=ui.root.getObjectByName('Model VR · native modifier panel');
   if(!details)return ui;
-  const canvas=document.createElement('canvas');canvas.width=1400;canvas.height=450;
+  const canvas=document.createElement('canvas');canvas.width=1400;canvas.height=240;
   const ctx=canvas.getContext('2d');
   if(!ctx)return ui;
   const texture=new T.CanvasTexture(canvas);texture.colorSpace=T.SRGBColorSpace;
   texture.minFilter=T.LinearFilter;texture.magFilter=T.LinearFilter;
   const material=new T.MeshBasicMaterial({map:texture,transparent:true,depthTest:false,
    depthWrite:false,toneMapped:false,side:T.DoubleSide});
-  const geometry=new T.PlaneGeometry(.46,.176);
-  const banner=new T.Mesh(geometry,material);banner.position.set(.03,-.012,.10);
+  const geometry=new T.PlaneGeometry(.55,.091);
+  const banner=new T.Mesh(geometry,material);banner.position.set(0,-.348,.09);
   banner.renderOrder=8670;banner.frustumCulled=false;banner.visible=false;
   banner.name='§E · contextual sculpt brush guide';banner.userData.editorOnly=true;
   details.add(banner);
   let activeOperation=null,disposed=false,lastRender='';
   const pretty=id=>String(id||'').replace(/^sculpt-/,'').replaceAll('-',' ').toUpperCase();
   function render(){
-   const s=JSON.stringify([activeOperation,se340XR.brushRadius,se340XR.brushStrength]);
+   const s=JSON.stringify([activeOperation,se340XR.sculptDirection,se340XR.brushRadius,se340XR.brushStrength]);
    if(s===lastRender)return;lastRender=s;
    ctx.clearRect(0,0,canvas.width,canvas.height);
    ctx.fillStyle='#1d2d3e';ctx.fillRect(0,0,canvas.width,canvas.height);
    ctx.strokeStyle='#7bb2a7';ctx.lineWidth=8;ctx.strokeRect(5,5,canvas.width-10,canvas.height-10);
-   ctx.fillStyle='#b8f2df';ctx.font='700 58px system-ui';
-   ctx.fillText('SCULPT  /  '+pretty(activeOperation),48,92);
-   ctx.fillStyle='#f2f7ff';ctx.font='600 40px system-ui';
-   ctx.fillText('Aim at your model · Hold Trigger to sculpt',48,182);
-   ctx.fillStyle='#bacde0';ctx.font='34px system-ui';
-   ctx.fillText('Adjust radius and strength in PARAMETERS',48,256);
-   ctx.fillText('Release applies · B cancels · Undo records the edit',48,320);
+   const inwards=se340XR.sculptDirection==='in';
+   ctx.fillStyle='#b8f2df';ctx.font='700 54px system-ui';
+   const label=activeOperation==='sculpt-push'?
+    'PUSH / PULL · '+(inwards?'PUSH IN':'PULL OUT'):pretty(activeOperation);
+   ctx.fillText('SCULPT · '+label,42,88);
+   ctx.fillStyle='#f2f7ff';ctx.font='38px system-ui';
+   ctx.fillText('Use native Direction · Falloff · Radius · Strength controls',42,169);
    texture.needsUpdate=true;
   }
   const originalPress=ui.press,originalUpdate=ui.update,originalInspect=ui.inspect,
@@ -154,18 +154,7 @@
    const sculpt=!!activeOperation?.startsWith('sculpt-')&&
     info?.settingsOpen&&info?.drawerProgress>.01;
    banner.visible=sculpt;
-   if(sculpt){
-    render();
-    // Native sculpt page repeats the middle-tier brush list. Hide only
-    // those duplicate tool cards, not the native modifier toolbar or
-    // the primary/secondary rows. Keep invisible cards out of ray hits.
-    for(let i=ui.targets.length-1;i>=0;i--){
-     const target=ui.targets[i];
-     if(target?.userData?.se360Role==='tool'){
-      target.visible=false;ui.targets.splice(i,1);
-     }
-    }
-   }
+   if(sculpt)render(); // Preserve native Direction, Falloff, Radius and Strength actions.
   }
   function press(target){
    const mesh=target?.object||target,action=mesh?.userData?.se340Action;

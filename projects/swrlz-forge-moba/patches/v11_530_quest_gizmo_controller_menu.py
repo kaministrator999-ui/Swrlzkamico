@@ -23,20 +23,13 @@ def apply(html):
         '/* SE528_XR_RAY_AND_PARAMETER_CONTROLS_END */\n'+runtime,
         'install native XR ray/menu correction after previous input layers')
 
-    # Add both sculpt directions to the actual second-level operation menu.
-    # Face tools remain accessible under their existing first-level category.
-    start='/* SE443_MODEL_VR_VERTICAL_DOCK_START */'
-    end='/* SE445_VR_PROGRESSIVE_TOOLS_END */'
-    a=html.index(start)
-    b=html.index(end,a)
-    dock=html[a:b]
-    dock=one(dock,"sculpt:[['sculpt-push','Push'],['sculpt-smooth','Smooth']",
-        "sculpt:[['sculpt-push','Pull / Raise'],['sculpt-indent','Indent / Lower'],['sculpt-smooth','Smooth']",
-        'make outward/inward sculpt operations explicit')
-    dock=one(dock,"['manual-subdivide','Subdivide'],['manual-mesh','Other face tools']]",
-        "['manual-subdivide','Subdivide']]",
-        'keep eleven operation rows without duplicate face category')
-    html=html[:a]+dock+html[b:]
+    # v11.523 already unified Push/Pull with the signed direction
+    # modifier. Preserve it instead of reintroducing a redundant Indent.
+    start=html.index('/* SE445_VR_PROGRESSIVE_TOOLS_START')
+    end=html.index('/* SE445_VR_PROGRESSIVE_TOOLS_END',start)
+    operations=html[start:end]
+    assert "['sculpt-push','Push / Pull']" in operations
+    assert "['sculpt-indent','Indent']" not in operations
 
     for before,after in [
         ('SWYRL_ENGINE_DEPLOY_MARKER: V11_529_NATIVE_ACCOUNT_BROWSER_LIBRARY',MARKER),
@@ -65,7 +58,7 @@ def apply(html):
             'Immersive Move/Rotate/Scale Trigger grips continuously sample the tracked controller ray and update the existing native preview; near-parallel ray positions fall back to controlled grip displacement instead of freezing.',
             'Selected-model direct Trigger movement now supports free translation without requiring a gizmo axis; precision switching and solver changes rebase without a sudden jump.',
             'The original three-stage Tools, Operations and Settings menu follows the left controller grip at a consistent comfortable forward offset, always facing the headset and retaining the existing ray hit targets and panel state.',
-            'Sculpt second-stage operations expose both outward Raise and inward Indent. The third-stage sculpt inspector shows one focused operation and its original radius/strength parameter toolbar rather than repeating the full brush menu.',
+            'The existing unified Push/Pull brush retains its inward/outward direction toggle; the third-stage Sculpt inspector keeps native Radius, Strength, Falloff and Direction controls without redundant brush cards.',
             'The left Quest menu button still toggles the entire tool console when WebXR exposes it; X remains the fallback on Meta/browser builds that reserve that hardware button.',
             'No duplicate WebXR scene, model document, sculpt transaction, settings authority or cloud save path is introduced. Physical Quest acceptance is required.'
         ])

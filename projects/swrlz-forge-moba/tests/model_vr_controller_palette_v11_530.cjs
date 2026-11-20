@@ -9,11 +9,11 @@ for(const token of ['se390UpdatePose=function(g,pose,gain)','g.se530Continuous',
  'if(state.worldAxis)','state.translation.add(localDelta','if(g.mode===\'move\')',
  'root.position.copy(pose.position).add(location)','root.scale.setScalar(.94)',
  "se372MenuDragStart=function(){return false;}","activeSculptOperation",
- 'target.visible=false;ui.targets.splice(i,1)','parameters','controllerFollowMenu:true'])
+ 'banner.visible=sculpt','PARAMETERS','controllerFollowMenu:true'])
  assert(source.includes(token),'Missing native scoped behavior: '+token);
-assert(patch.includes("['sculpt-indent','Indent / Lower']"),'No inward sculpt operation');
+assert(patch.includes("['sculpt-push','Push / Pull']"),'Unified signed sculpt operation must be preserved');
 for(const token of ['SE530_VR_CONTINUOUS_GIZMO_AND_CONTROLLER_PALETTE_END',
- "['sculpt-indent','Indent / Lower']", 'V11_530_QUEST_GIZMO_CONTROLLER_MENU',
+ "['sculpt-push','Push / Pull']", 'V11_530_QUEST_GIZMO_CONTROLLER_MENU',
  "window.SWRLZ_FORGE_BUILD={version:'v11.530'"])
  assert(html.includes(token),'Not published in assembled release: '+token);
 assert(html.includes('SE529_NATIVE_PROJECT_ACCOUNT_SAVE_START'),'Prior account project path was lost');

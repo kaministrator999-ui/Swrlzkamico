@@ -14,9 +14,10 @@ world-anchored menu, the canvas surfaces become difficult to read.
 - The same three-stage menu follows the **left controller** at a local forward
   offset and faces the headset. Its existing hit targets, pages, tool choices,
   account project dialog and primary/secondary/tertiary hierarchy remain.
-- Sculpt exposes Raise and Indent as separate operations. The selected
-  operation's third panel removes redundant brush cards and preserves the
-  original +/- radius and strength parameter toolbar.
+- Sculpt preserves the existing unified Push/Pull operation with signed
+  inward/outward Direction. Its selected operation's third panel displays
+  a compact operation/direction label and preserves native Direction,
+  Falloff, Radius and Strength controls.
 
 ## Quest acceptance checklist
 1. Select model, choose Move and Trigger-grab each X/Y/Z handle. Hold the
@@ -27,9 +28,9 @@ world-anchored menu, the canvas surfaces become difficult to read.
    Grip-based free Grab remains available.
 4. Move and rotate the left hand at different headset distances: all three
    menu tiers follow at an accessible distance; right-hand ray hit-tests align.
-5. Sculpt → Raise and Sculpt → Indent each open one focused third-level panel.
-   The radius/strength +/- toolbar remains selectable; no invisible cards
-   intercept ray hits. Menu button toggles when exposed by WebXR; X remains
+5. Sculpt → Push/Pull opens the focused third-level inspector. Toggle
+   Push In/Pull Out Direction, Falloff, and Radius/Strength +/- successfully;
+   no invisible cards intercept ray hits. Menu button toggles when exposed by WebXR; X remains
    fallback if reserved by Meta Quest Browser.
 
 This file is a candidate specification until the generated HTML SHA, tests,
