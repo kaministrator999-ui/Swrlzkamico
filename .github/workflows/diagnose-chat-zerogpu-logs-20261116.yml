@@ -79,3 +79,27 @@ jobs:
               print("SECHAT_SIGNIFICANT_LOG",i,line,flush=True)
           print("SECHAT_SIGNIFICANT_COUNT",len(selected),len(lines),flush=True)
           PY
+      - name: Snapshot exact live startup files for read-only diagnosis
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          python - <<'PY'
+          import json,os,pathlib
+          from huggingface_hub import HfApi,hf_hub_download
+          api=HfApi(token=os.environ.get("HF_TOKEN"))
+          revision=api.repo_info("kamiloki/Swyrlz",repo_type="space").sha
+          dest=pathlib.Path("reports/current-space-startup")
+          dest.mkdir(parents=True,exist_ok=True)
+          (dest/"revision.json").write_text(json.dumps({"revision":revision,"space":"kamiloki/Swyrlz"},indent=2))
+          for name in ("app.py","qwen35_single_runtime.py","requirements.txt"):
+              source=hf_hub_download("kamiloki/Swyrlz",name,repo_type="space",revision=revision,token=os.environ.get("HF_TOKEN"))
+              data=pathlib.Path(source).read_bytes()
+              (dest/name).write_bytes(data)
+              print("SECHAT_SOURCE_SNAPSHOT",name,len(data),revision,flush=True)
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: swrlz-exact-live-startup-source-readonly
+          path: reports/current-space-startup/
+          if-no-files-found: error
+          retention-days: 7
