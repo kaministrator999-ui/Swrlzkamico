@@ -1,0 +1,63 @@
+name: §C Professional UI Preflight
+
+on:
+  push:
+    paths:
+      - 'chat/§wyrlz/**'
+      - 'tests/test_chat_ui_professional_v1060.py'
+      - 'tests/verify_chat_ui_geometry.cjs'
+      - '.github/workflows/chat-professional-ui.yml'
+  pull_request:
+    paths:
+      - 'chat/§wyrlz/**'
+      - 'tests/test_chat_ui_professional_v1060.py'
+      - '.github/workflows/chat-professional-ui.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  preflight:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Verify UI and Chat interaction continuity
+        run: python -m unittest discover -s tests -p 'test_chat_ui_professional_v1060.py' -v
+      - name: Parse active inline browser JavaScript
+        shell: bash
+        run: |
+          python - <<'PY'
+          import pathlib,re
+          source=pathlib.Path('chat/§wyrlz/index.html').read_text(encoding='utf-8')
+          scripts=[s for s in re.findall(r'<script(?:\s[^>]*)?>([\s\S]*?)</script>',source,re.I) if s.strip()]
+          assert len(scripts)==1, f'Expected one inline script, found {len(scripts)}'
+          pathlib.Path('/tmp/swrlz-chat-inline.js').write_text(scripts[0],encoding='utf-8')
+          PY
+          node --check /tmp/swrlz-chat-inline.js
+      - name: Install headless Chromium for responsive geometry checks
+        shell: bash
+        run: |
+          npm install --no-save --no-package-lock playwright
+          npx playwright install --with-deps chromium
+      - name: Test mobile / tablet / desktop layout in a real browser
+        shell: bash
+        run: |
+          python -m http.server 8765 --bind 127.0.0.1 >/tmp/swrlz-chat-http.log 2>&1 &
+          sleep 2
+          node tests/verify_chat_ui_geometry.cjs
+      - name: Preserve visual QA screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: swrlz-chat-ui-v1060-visual-qa
+          path: reports/chat-ui-v1060/
+          if-no-files-found: ignore
+          retention-days: 14
