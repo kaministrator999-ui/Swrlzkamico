@@ -1,0 +1,20 @@
+{
+  "version": "v11.527",
+  "status": "source-build-verified",
+  "patches": 504,
+  "bytes": 10912716,
+  "sha256": "ab47b19b56cfa7061bbdaae6e4c5dc9d1d49b94136a5cbdda5e54bf947f92119",
+  "checks": [
+    "generated SHA",
+    "JS syntax",
+    "Draw",
+    "Select",
+    "Sculpt",
+    "Display",
+    "Create",
+    "UV",
+    "journal",
+    "rig"
+  ],
+  "questHeadsetAcceptance": "pending"
+}
