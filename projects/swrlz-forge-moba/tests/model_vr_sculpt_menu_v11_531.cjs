@@ -18,7 +18,7 @@ const findRow=(source,label)=>{
  assert(row,'Missing '+label);
  return row;
 };
-assert(html.includes('SWYRL_ENGINE_DEPLOY_MARKER: V11_531_QUEST_GIZMO_CONTROLLER_MENU'));
+assert(html.includes('SWYRL_ENGINE_DEPLOY_MARKER: V11_531_QUEST_MENU_GIZMO_ACCOUNT'));
 assert(menu.includes('SE522_SCULPT_BRUSH_MENU'));
 assert(native.includes('SE522_SCULPT_SETTINGS'));
 assert.deepEqual(entries(findRow(menu,'sculpt:[[')),[
