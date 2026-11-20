@@ -2410,3 +2410,7 @@ In *immersive WebXR Sheep Tag*, the existing native three-page Nerd Stats panel 
 ### v11.278 · Quest wrist HUD clearance and menu cadence
 
 In immersive Sheep Tag, move the controller-mounted Nerd Stats surface 12 cm farther forward and 6 cm up for better readability. Reduce ordinary CanvasTexture metric redraw frequency to about two seconds (page changes remain immediate), reuse a scratch coordinate vector per XR frame, and introduce Nerd Stats **page 4/4** comparing callback frame cadence when the metrics/radial menus are on or off. These are observational frame-gap figures, not GPU timings or controlled benchmarks. No changes to scene geometry, AI, multiplayer or VR gameplay controls. See `docs/QUEST_MENU_CADENCE_V11_278.md`.
+
+
+### §E v11.531 · Quest menu, held-axis dragging and account project correction (2026-11-20)
+Immersive controller menu follows the left controller's position rather than wrist rotation, faces the headset upright, and reflows native tool tiers/brush controls. Trigger capture keeps X/Y/Z gizmo movement live until release, with reversal and B cancellation. Account-project open avoids a conflicting parent transition lock and exposes listing errors; existing saved formats and recovery protection remain. Physical Quest acceptance remains pending.
