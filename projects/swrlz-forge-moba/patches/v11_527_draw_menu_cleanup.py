@@ -19,8 +19,8 @@ def section(s,start,end,transform):
 def apply(html):
  assert 'SWYRL_ENGINE_DEPLOY_MARKER: V11_526_CREATE_MENU_CLEANUP' in html
  def surface(s):
-  a=s.index('   function extrudeBegin(id) {')
-  b=s.index('   function extrudeData(g, depth) {',a)
+  a=s.index('  function extrudeBegin(id) {')
+  b=s.index('  function extrudeData(g, depth) {',a)
   s=s[:a]+"""   // SE527_DRAW_OUTLINE_ELIGIBILITY: a read-only predicate shared by the
    // native extrusion gesture and the spatial Draw menu. No preview or save.
    function outlineEligibility(part, mesh) {
@@ -47,7 +47,7 @@ def apply(html):
      const mesh=modelRoot.children.find(m=>m.isMesh && m.userData?.atelierId===id);
      return !!part && !!mesh?.geometry?.attributes?.position && outlineEligibility(part,mesh).ok;
    }
-   function extrudeBegin(id) {
+  function extrudeBegin(id) {
      const g=capture(id);if(!g.ok)return g;
      const eligibility=outlineEligibility(g.part,g.mesh);
      if(!eligibility.ok)return fail(eligibility.reason);
@@ -65,11 +65,11 @@ def apply(html):
  html=section(html,'/* SE350_MODEL_VR_SURFACE_START','/* SE350_MODEL_VR_SURFACE_END',surface)
  def stage(s):
   s=one(s,
-   "    draw:[['draw','Draw outline'],['draw-finish','Make face'],['extrude','Thicken outline'],['draw-clear','Discard outline'],['undo','Undo']],",
-   "    // SE527_DRAW_ACTIONS: four tools, global Undo/Redo remain on the far-right rail.\n    draw:[['draw','Draw Outline'],['draw-finish','Make Face'],['extrude','Thicken Outline'],['draw-clear','Discard Outline']],",
+   "   draw:[['draw','Draw outline'],['draw-finish','Make face'],['extrude','Thicken outline'],['draw-clear','Discard outline'],['undo','Undo']],",
+   "    // SE527_DRAW_ACTIONS: four tools, global Undo/Redo remain on the far-right rail.\n   draw:[['draw','Draw Outline'],['draw-finish','Make Face'],['extrude','Thicken Outline'],['draw-clear','Discard Outline']],",
    'four Draw operations, no history duplication')
   s=one(s,
-   '   function paintRow(item){',
+   '  function paintRow(item){',
    """   // SE527_DRAW_STATE: disabled actions are visible but do not accept a ray press.
    function drawEnabled(action){
      if(category!=='draw')return true;
@@ -78,45 +78,45 @@ def apply(html):
      if(action==='extrude')return !!lastState?.canExtrudeOutline;
      return true;
    }
-   function paintRow(item){""",'contextual Draw eligibility')
+  function paintRow(item){""",'contextual Draw eligibility')
   s=one(s,
-   '    const hovered=item===lastHover,selected=!!item.active;',
-   "    const hovered=item===lastHover,selected=!!item.active,disabled=item.role==='submenu'&&!drawEnabled(action);",
+   '   const hovered=item===lastHover,selected=!!item.active;',
+   "   const hovered=item===lastHover,selected=!!item.active,disabled=item.role==='submenu'&&!drawEnabled(action);",
    'disabled visual state')
   s=one(s,
-   "    c.fillStyle=hovered?'#38665a':selected?'#295449':'#263345';c.fillRect(0,0,w,h);",
+   "   c.fillStyle=hovered?'#38665a':selected?'#295449':'#263345';c.fillRect(0,0,w,h);",
    "    c.fillStyle=disabled?'#202a33':hovered?'#38665a':selected?'#295449':'#263345';c.fillRect(0,0,w,h);",
    'dim unavailable Draw actions')
   s=one(s,
-   "    c.strokeStyle=hovered?'#c7fff2':selected?'#8fe5c5':'#586e7f';",
+   "   c.strokeStyle=hovered?'#c7fff2':selected?'#8fe5c5':'#586e7f';",
    "    c.strokeStyle=disabled?'#485564':hovered?'#c7fff2':selected?'#8fe5c5':'#586e7f';",
    'disabled border')
   s=one(s,
-   "    c.fillStyle='#deeffb';c.textBaseline='middle';",
+   "   c.fillStyle='#deeffb';c.textBaseline='middle';",
    "    c.fillStyle=disabled?'#758898':'#deeffb';c.textBaseline='middle';",
    'disabled text')
   s=one(s,
-   '    item.texture.needsUpdate=true;mesh.userData.se340Selected=selected;',
-   '    item.texture.needsUpdate=true;mesh.userData.se340Selected=selected;mesh.userData.se527Disabled=disabled;',
+   '   item.texture.needsUpdate=true;mesh.userData.se340Selected=selected;',
+   '   item.texture.needsUpdate=true;mesh.userData.se340Selected=selected;mesh.userData.se527Disabled=disabled;',
    'disabled ray metadata')
   s=one(s,
-   '   function chooseOperation(item){',
-   "   function chooseOperation(item){\n    if(category==='draw'&&!drawEnabled(item.action))return;",
+   '  function chooseOperation(item){',
+   "  function chooseOperation(item){\n    if(category==='draw'&&!drawEnabled(item.action))return;",
    'guard draw selection')
   s=one(s,
    "detailPage=choosePage(item.action);detailsOpen=category==='inspect'?item.action==='selector-lasso':category==='create-menu'?item.action==='create-pouch':true;",
    "detailPage=choosePage(item.action);detailsOpen=category==='inspect'?item.action==='selector-lasso':category==='create-menu'?item.action==='create-pouch':category==='draw'?false:true;",
    'Draw is direct action, not an obsolete duplicated settings page')
   s=one(s,
-   '    lastState=next||{};',
-   """    lastState=next||{};
+   '   lastState=next||{};',
+   """   lastState=next||{};
     if(category==='draw')for(const item of submenuRows)if(item.mesh.visible){
      const unavailable=!drawEnabled(item.action);
      if(item.se527LastDisabled!==unavailable){item.se527LastDisabled=unavailable;item.paint();}
     }""",'repaint when native gesture/selection changes')
   s=one(s,
-   '    if(secondary){\n',
-   "    if(secondary){\n     if(category==='draw'&&!drawEnabled(secondary.action))return false;\n",
+   '   if(secondary){\n',
+   "   if(secondary){\n     if(category==='draw'&&!drawEnabled(secondary.action))return false;\n",
    'prevent invalid ray press from dispatching')
   return s
  html=section(html,'/* SE445_VR_PROGRESSIVE_TOOLS_START','/* SE445_VR_PROGRESSIVE_TOOLS_END',stage)
