@@ -32,3 +32,23 @@ jobs:
           for line in found[-65:]:print('SECHAT_RUNTIME_LOG',line,flush=True)
           print('SECHAT_FILTERED_COUNT',len(found),flush=True)
           PY
+      - name: Inspect bounded build and runtime failure tail without mutation
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          python - <<'PY'
+          import itertools,os,re
+          from huggingface_hub import HfApi
+          api=HfApi(token=os.environ.get("HF_TOKEN"))
+          sensitive=re.compile(r'(?i)(bearer\s+\S+|hf_[a-zA-Z0-9]{15,}|(?:token|secret|password|api[_-]?key)\s*[=:]\s*\S+)')
+          for build in (True,False):
+              name="BUILD" if build else "RUNTIME"
+              try:
+                  lines=list(itertools.islice(api.fetch_space_logs("kamiloki/Swyrlz",build=build,follow=False),2500))
+                  print("SECHAT_"+name+"_LOG_COUNT",len(lines),flush=True)
+                  for row in lines[-90:]:
+                      value=sensitive.sub("[REDACTED]",str(row).rstrip())[:520]
+                      print("SECHAT_"+name+"_TAIL",value,flush=True)
+              except Exception as error:
+                  print("SECHAT_"+name+"_LOG_FAILURE",type(error).__name__,str(error)[:140],flush=True)
+          PY
