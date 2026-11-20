@@ -62,7 +62,7 @@ jobs:
           assert 'bytes instanceof Uint8Array' in html
           assert 'analysisLevels:1' in html
           assert "image = image_url" in backend.read_text()
-          scripts=re.findall(r'<script(?:\s[^>]*)?>([\s\S]*?)</script>',html,re.I)
+          scripts=re.findall(r'<script>([\s\S]*?)</script>',html,re.I)
           assert len(scripts)==1
           pathlib.Path("/tmp/swrlz-1142.js").write_text(scripts[0])
           capacity=types.ModuleType("runtime_capacity")
