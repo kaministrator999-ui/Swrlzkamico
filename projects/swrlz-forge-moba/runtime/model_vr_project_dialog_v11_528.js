@@ -76,6 +76,7 @@
   function draw(){
    if(!active||disposed)return;
    c.clearRect(0,0,CW,CH);
+   for(const region of regions)region.mesh.visible=false;
    rect(0,0,W,H,'#151c2b','#8aa0b4',28);
    rect(0,.333,W,.102,'#212d45',null,24);
    txt(active==='rest'?'REST POSE REQUIRED':'MY PROJECTS',-.422,.332,42,'#f7f8ff',800);
@@ -229,14 +230,13 @@
    return priorDispose();
   }
   return Object.freeze({...ui,hitTest,press,hover,update,dispose,
-   openProjects:()=>setOpen('projects'),showRestPose,isModalOpen:()=>!!active,
+   openProjects:()=>setOpen('projects'),showRestPose,closeDialog:close,isModalOpen:()=>!!active,
    dialogInspect:()=>({active,note,busy,projectRevision:se517XRProjects.inspect().revision})});
  };
  const priorAction=se340ModelXRAction;
  se340ModelXRAction=function(action,record){
   if(action==='projects'){se340XR.ui?.openProjects?.();return true;}
   if(action==='cancel'&&se340XR.ui?.isModalOpen?.()){
-   se340XR.ui?.press?.(null); // no change to models
    se340XR.ui?.closeDialog?.();return true;
   }
   return priorAction.apply(this,arguments);
