@@ -1,0 +1,253 @@
+/* SE529_MY_PROJECTS_BROWSER_CSS_START
+   Project Library refinement. Scoped to existing browser DOM only;
+   immersive WebXR uses its separate world-space Projects dialog. */
+#projectHub:has(#se170-pane-mine:not([hidden])) .project-window{
+ width:min(1020px,calc(100vw - 20px))!important;
+ max-width:calc(100vw - 20px)!important;
+ max-height:min(88dvh,940px)!important;
+ padding-bottom:8px;
+ background:#101827;
+ border:1px solid #52637c;
+ box-shadow:0 28px 90px #020509bb,0 0 0 1px #8b9bbe22;
+}
+#projectHub .se170-hub-tabs{
+ background:#182338!important;
+ padding:8px 14px 0!important;
+ border-bottom:1px solid #39455e;
+}
+#projectHub .se170-hub-tabs button{
+ font:700 13px/1.3 system-ui,sans-serif;
+ min-height:43px!important;
+ color:#aabbce;
+ background:#1c293a!important;
+ border:1px solid #3e516b!important;
+ border-bottom:0!important;
+ border-radius:11px 11px 0 0!important;
+}
+#projectHub .se170-hub-tabs button[aria-selected=true]{
+ color:#f6faff!important;background:#243953!important;
+ box-shadow:inset 0 3px #84dad2;
+}
+#projectHub #se170-pane-mine{
+ box-sizing:border-box;width:100%;min-width:0;
+ padding:14px 16px 24px;
+ background:linear-gradient(180deg,#111a2a,#111521 60%);
+ color:#ebf4ff;
+}
+#projectHub #se529LibraryHero{
+ border:1px solid #49667a;
+ border-radius:16px;
+ background:linear-gradient(135deg,#203149,#162437 56%,#152332);
+ padding:17px 18px 15px;
+ margin-bottom:22px;
+ box-shadow:0 12px 32px #0004;
+}
+#projectHub .se529-library-heading{
+ display:flex;align-items:flex-start;justify-content:space-between;gap:12px;
+}
+#projectHub .se529-library-heading h2{
+ margin:0 0 7px;color:#f4faff;
+ font:780 clamp(19px,2.5vw,25px)/1.25 system-ui,sans-serif;
+ letter-spacing:-.018em;
+}
+#projectHub .se529-library-heading p{
+ margin:0;color:#afc5d8;font:500 12px/1.5 system-ui,sans-serif;
+ overflow-wrap:anywhere;
+}
+#projectHub .se529-connect{
+ display:inline-flex;align-items:center;gap:7px;
+ padding:9px 11px;border:1px solid #a98585;border-radius:999px;
+ background:#322831;color:#ffe4dd;
+ font:700 11px/1.3 system-ui,sans-serif;min-height:37px;
+ cursor:pointer;white-space:nowrap;
+}
+#projectHub .se529-connect::before{
+ content:"";width:7px;height:7px;border-radius:50%;background:#f2b396;
+ box-shadow:0 0 0 3px #f2b39624;
+}
+#projectHub .se529-connect.connected{
+ background:#173b40;border-color:#4f9996;color:#d0f9ed;
+}
+#projectHub .se529-connect.connected::before{background:#79e5bd;box-shadow:0 0 0 3px #79e5bd26}
+#projectHub .se529-commandbar{
+ display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr) auto;
+ gap:10px;margin-top:17px;
+}
+#projectHub .se529-command{
+ appearance:none;box-sizing:border-box;cursor:pointer;
+ border:1px solid #647e95;border-radius:10px;
+ background:#2b4058;color:#f0f7ff;
+ font:720 13px/1.35 system-ui,sans-serif;
+ min-height:46px;padding:10px 16px;
+ transition:background .13s,border-color .13s,transform .13s;
+}
+#projectHub .se529-command.primary{
+ background:linear-gradient(135deg,#266e6b,#217f80);
+ border-color:#77d5c2;
+ color:#f3fffc;
+}
+#projectHub .se529-command:not(:disabled):hover{
+ background:#365977;border-color:#ace7f2;
+}
+#projectHub .se529-command.primary:not(:disabled):hover{
+ background:#2a9290;
+}
+#projectHub .se529-command:disabled{
+ opacity:.47;cursor:not-allowed;
+}
+#projectHub #se529Advanced{
+ margin-top:10px;border-top:1px solid #40536a;
+}
+#projectHub #se529Advanced>summary{
+ display:list-item;list-style-position:inside;
+ cursor:pointer;color:#acccdf;
+ font:640 12px/1.45 system-ui,sans-serif;
+ padding:12px 3px 4px;min-height:27px;
+}
+#projectHub #se529Advanced[open]>summary{color:#def7f4}
+#projectHub #se529Advanced .se529-advanced-contents{
+ margin-top:9px;padding:12px;
+ display:grid;gap:12px;
+ background:#132131;border:1px solid #34566b;border-radius:11px;
+}
+#projectHub #se529Advanced #se175LocalProjects,
+#projectHub #se529Advanced .se170-my-tools{
+ box-sizing:border-box;width:100%;
+ display:flex;flex-wrap:wrap;align-items:center;
+ gap:8px;padding:0;margin:0;
+ background:transparent;border:0;
+}
+#projectHub #se529Advanced #se175LocalProjects>strong{width:100%;font-size:12px;color:#bdcddd}
+#projectHub #se529Advanced #se184LocalTools{max-width:100%;}
+#projectHub #se529Advanced #se184LocalTools summary{
+ background:#273d51;padding:11px 14px;border-radius:9px;
+ font:650 12px system-ui,sans-serif;
+}
+#projectHub #se529Advanced button{
+ box-sizing:border-box;min-height:39px;
+ padding:8px 11px;border:1px solid #536e85;border-radius:8px;
+ background:#243b51;color:#e7f2ff;
+ font:650 12px/1.3 system-ui,sans-serif;
+}
+#projectHub #se529Advanced button[hidden],
+#projectHub #se529Advanced [data-se528-save-account]{display:none!important}
+#projectHub #se529Advanced select{
+ flex:1;min-width:170px;max-width:100%;
+ padding:8px;border:1px solid #567286;border-radius:8px;
+ background:#172c40;color:#e8f4ff;
+}
+#projectHub #se529AccountFeedback{
+ margin:13px 0 0;padding:0;color:#aac4d6;
+ font:550 12px/1.5 system-ui,sans-serif;
+ overflow-wrap:anywhere;
+}
+#projectHub #se529AccountFeedback[data-state=success]{color:#b2f3da}
+#projectHub #se529AccountFeedback[data-state=error]{color:#ffc1bb}
+#projectHub .se529-group-heading{
+ margin:20px 0 10px;padding:0 1px;
+ font:760 15px/1.3 system-ui,sans-serif;
+ color:#f0f7ff;
+ letter-spacing:.005em;
+}
+#projectHub #se184CloudHeading[hidden]{display:none!important}
+#projectHub #se170-library-status{
+ padding:2px 1px 10px;min-height:0;margin:0;
+ font:500 12px/1.4 system-ui,sans-serif;
+ color:#a6b8c9;
+}
+#projectHub #se184LocalCards,
+#projectHub .se170-project-list{
+ display:grid;grid-template-columns:repeat(auto-fill,minmax(min(255px,100%),1fr));
+ gap:16px;padding:0;align-items:start;
+}
+#projectHub .se184-project-card{
+ background:linear-gradient(155deg,#22354a 0%,#172637 63%,#14202f);
+ border:1px solid #4a6376;border-radius:15px;
+ box-shadow:0 8px 25px #0005;
+ transition:border-color .15s,transform .15s;
+}
+#projectHub .se184-project-card:focus-within{border-color:#8fd8df}
+#projectHub .se184-preview{aspect-ratio:16/9;border-bottom:1px solid #405d73}
+#projectHub .se184-card-info{gap:5px;padding:13px 14px 5px}
+#projectHub .se184-card-info strong{
+ color:#f3faff;font:730 14px/1.4 system-ui,sans-serif;
+}
+#projectHub .se184-card-info small{
+ color:#a7c4d4;font:550 11px/1.4 system-ui,sans-serif;
+}
+#projectHub .se184-card-actions{
+ display:grid;grid-template-columns:1.1fr .9fr;
+ gap:8px;padding:12px 13px 9px;
+}
+#projectHub .se184-card-actions button{
+ min-width:0;min-height:42px;
+ padding:9px 10px;border:1px solid #587286;
+ border-radius:9px;background:#2a4157;color:#f4f7ff;
+ font:650 12px/1.3 system-ui,sans-serif;
+}
+#projectHub .se184-card-actions button:first-child{
+ background:#2b716e;border-color:#6ecbb8;color:#f6fffc;
+}
+#projectHub .se529-card-more{
+ border-top:1px solid #364c63;
+ margin:0 13px;padding:0;
+}
+#projectHub .se529-card-more>summary{
+ cursor:pointer;padding:11px 2px;color:#c0d3e2;
+ font:650 12px/1.45 system-ui,sans-serif;
+}
+#projectHub .se529-card-more-actions{
+ display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
+ gap:8px;padding:2px 0 13px;
+}
+#projectHub .se529-card-more-actions button{
+ min-height:41px;min-width:0;
+ border:1px solid #586a7c;border-radius:8px;
+ background:#26374a;color:#e7f3ff;
+ padding:8px;font:620 11px/1.35 system-ui,sans-serif;
+}
+#projectHub .se529-card-more-actions button.se471-confirm-danger,
+#projectHub .se529-card-more-actions button:is([data-danger],.se471-delete-button){
+ background:#56373f;color:#ffe1df;border-color:#a66c73;
+}
+#projectHub .se184-default-label{
+ margin-top:3px;padding:12px 13px;
+ font:600 11px/1.35 system-ui,sans-serif;
+}
+#projectHub .se184-default-label input{
+ width:19px;height:19px;min-width:19px;
+}
+#projectHub .se184-preview-status{padding:0 12px 10px;min-height:0}
+#projectHub .se529-command:focus-visible,
+#projectHub #se529Advanced summary:focus-visible,
+#projectHub .se529-card-more summary:focus-visible,
+#projectHub .se184-project-card button:focus-visible{
+ outline:2px solid #a4f9ea;outline-offset:2px;
+}
+#seChatAccountPanel #seChatStatus{
+ max-height:120px!important;overflow:auto!important;
+ overflow-wrap:anywhere;line-height:1.5;
+}
+@media(max-width:690px){
+ #projectHub:has(#se170-pane-mine:not([hidden])) .project-window{
+  width:calc(100vw - 12px)!important;
+  max-width:calc(100vw - 12px)!important;
+  max-height:calc(100dvh - 22px)!important;
+ }
+ #projectHub #se170-pane-mine{padding:10px 10px 20px}
+ #projectHub #se529LibraryHero{padding:14px;margin-bottom:17px}
+ #projectHub .se529-library-heading{align-items:flex-start}
+ #projectHub .se529-library-heading h2{font-size:19px}
+ #projectHub .se529-library-heading p{font-size:11px}
+ #projectHub .se529-commandbar{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+ #projectHub #se529Refresh{grid-column:1/-1}
+ #projectHub #se184LocalCards,#projectHub .se170-project-list{
+  grid-template-columns:repeat(auto-fit,minmax(min(230px,100%),1fr));gap:12px;
+ }
+}
+@media(max-width:420px){
+ #projectHub .se529-library-heading{flex-direction:column}
+ #projectHub .se529-connect{align-self:flex-start}
+ #projectHub #se184LocalCards,#projectHub .se170-project-list{grid-template-columns:minmax(0,1fr)}
+}
+/* SE529_MY_PROJECTS_BROWSER_CSS_END */
