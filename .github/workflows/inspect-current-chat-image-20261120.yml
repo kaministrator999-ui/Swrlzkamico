@@ -36,6 +36,8 @@ jobs:
               e=min(len(lines),i+(17 if name.endswith(".html") else 12))
               if windows and b<=windows[-1][1]:windows[-1]=(windows[-1][0],max(e,windows[-1][1]))
               else:windows.append((b,e))
+            extra=({"chat/§wyrlz/index.html":[(1610,1670),(1886,1928),(2090,2122)],"station.py":[(2416,2466),(2590,2638),(2760,2799)],"chat_vision.py":[(185,324),(570,705),(1168,1310)]}).get(name,[])
+            windows+=extra
             for b,e in windows:
               if (e-b)>180:
                 # Long blocks can result from dense UI code; trim center but preserve starts and ends.
