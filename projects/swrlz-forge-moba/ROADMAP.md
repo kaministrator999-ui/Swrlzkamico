@@ -2850,3 +2850,7 @@ Immersive WebXR metrics follow the Quest left controller every native frame with
 #### v11.278 · Quest menu diagnostic tuning
 
 Controller-mounted VR Nerd Stats pushed forward/up for usable viewing; lower frequency diagnostics canvas upload; 4th in-VR page compares measured callback frame intervals for four HUD/radial menu combinations. Owner Quest 2 acceptance and controlled same-scene A/B timings pending. Preserve game-side 2D stats, Sheep Tag AI, LAN, and all particle studio work.
+
+
+### §E v11.531 · Quest menu, held-axis dragging and account project correction (2026-11-20)
+Immersive controller menu follows the left controller's position rather than wrist rotation, faces the headset upright, and reflows native tool tiers/brush controls. Trigger capture keeps X/Y/Z gizmo movement live until release, with reversal and B cancellation. Account-project open avoids a conflicting parent transition lock and exposes listing errors; existing saved formats and recovery protection remain. Physical Quest acceptance remains pending.
