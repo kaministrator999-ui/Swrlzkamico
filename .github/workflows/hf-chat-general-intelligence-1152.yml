@@ -1,0 +1,67 @@
+name: Guarded §C 1.1.52 general reasoning evidence integrity
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/hf-chat-general-intelligence-1152.yml"
+      - ".deploy/HF_CHAT_GENERAL_INTELLIGENCE_1152_REQUEST.txt"
+permissions:
+  contents: read
+concurrency:
+  group: swrlz-hf-space-deployment
+  cancel-in-progress: false
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - name: Enforce exact production source and authorized release request
+        id: gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          request=.deploy/HF_CHAT_GENERAL_INTELLIGENCE_1152_REQUEST.txt
+          mode=inspect
+          if [[ -e "$request" ]]; then
+            get(){ sed -n "s/^$1=//p" "$request" | tail -1; }
+            test "$(get SPACE)" = "kamiloki/Swyrlz"
+            test "$(get SOURCE_REVISION)" = "f5ebce144a1f6f7c16d89754e5308e3fc59f8bb2"
+            test "$(get SCOPE)" = "historical-evidence-separation-and-original-reasoning-only"
+            [[ "$(get NONCE)" =~ ^[a-z0-9-]{14,100}$ ]]
+            mode="$(get MODE)"
+            [[ "$mode" == inspect || "$mode" == deploy ]]
+            if [[ "$mode" == deploy ]]; then test "$(get APPROVED)" = yes; fi
+          fi
+          echo "mode=$mode" >> "$GITHUB_OUTPUT"
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.11"}
+      - name: Compile and execute synthetic evidence tests
+        run: |
+          set -euo pipefail
+          python -m py_compile scripts/hf_chat_intelligence_evidence_v1152_release.py scripts/releases/historical_evidence_v1152.py scripts/tests/test_historical_evidence_v1152.py
+          python scripts/tests/test_historical_evidence_v1152.py
+      - name: Install Hub verification library
+        run: python -m pip install -q "huggingface_hub>=0.34,<2"
+      - name: Inspect exact live source and patched model routes
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: python -u scripts/hf_chat_intelligence_evidence_v1152_release.py inspect
+      - name: Preserve before and after source snapshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: swrlz-general-intelligence-1152-source-evidence
+          path: reports/swrlz-general-intelligence-v1152/
+          retention-days: 30
+          if-no-files-found: ignore
+      - name: Publish verified source and confirm exact Qwen runtime
+        if: ${{ steps.gate.outputs.mode == 'deploy' }}
+        timeout-minutes: 26
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          SWRLZ_INTELLIGENCE_1152_APPROVED: "yes"
+        run: |
+          set -euo pipefail
+          python -u scripts/hf_chat_intelligence_evidence_v1152_release.py deploy
+          echo SWRLZ_GENERAL_INTELLIGENCE_1152_LIVE_VERIFIED
