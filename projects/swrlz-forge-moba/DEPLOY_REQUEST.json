@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT (owner-approved)",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.528",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_528_IMMERSIVE_UX_ACCOUNT_REPAIR",
-  "reason": "Owner-approved six §E native immersive WebXR QA fixes: enlarged world-space Projects card dialog using the existing account/device/starter project browser; non-rest rig Push/Pull confirmation with undoable native rest pose; controller-ray Move/Rotate/Scale gizmo drag using native transaction; contextual grouped +/- modifier toolbar; left Quest Menu toggles existing tools where the browser exposes it, with X fallback; Save to Account repaired for §Chat panel and My Projects, with stable project ID, raw cloud ID normalization, native authenticated durable save confirmation and no false cloud success. Modal stops background edits. Sealed v11.528 source: 505 patches, 10,944,440 bytes, SHA-256 d62dfd82aea741cbfb545016c2b4576374052512baef59195b4d44f77a6f6efc. Full sealed source verifier passed JS syntax and VR menus, UV, rig, journal and six owner QA tests. Physical Meta Quest XR and authenticated account acceptance still pending.",
-  "sourceCommit": "4c18b623e534defde6756860d3a6a65452880419",
-  "sourceIntegritySha256": "d62dfd82aea741cbfb545016c2b4576374052512baef59195b4d44f77a6f6efc"
+  "releaseVersion": "v11.529",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_529_NATIVE_ACCOUNT_BROWSER_LIBRARY",
+  "reason": "Owner-approved §E browser My Projects redesign and native full-project account-save correction. Prior v11.488 active Model Studio saveCloud() rerouted full-project buttons into the model asset library, causing incomplete/failed account sync. v11.529 routes §Chat, My Projects and XR project saves through the existing native complete-project revision-checked save facade, maintaining naming, independent starter copies, device recovery, durable authenticated cloud response, in-place revision checks and truthful error details. Independent model/particle asset saves remain separate. Browser My Projects has one consolidated Save to Account / Save on Device / Refresh bar, connected-account status, separate device/account galleries and counts, advanced revision/clone utilities, and per-card More actions for Delete/Export/Update while preserving native handlers. Compiled source, authenticated-save simulation, missing-cloud-receipt tests, JavaScript, UV/rig/history and VR regressions passed. 506 patches, 10,969,738 source bytes, SHA-256 1e6780f411223dc5743feb0fc728aabd82db1525104432adebb6bda786f70505. Physical phone layout and signed-in account save/load acceptance pending.",
+  "sourceCommit": "6a4bf4d7e107e0bf9d73f5e6bd8e3ae65eb0a234",
+  "sourceIntegritySha256": "1e6780f411223dc5743feb0fc728aabd82db1525104432adebb6bda786f70505"
 }
