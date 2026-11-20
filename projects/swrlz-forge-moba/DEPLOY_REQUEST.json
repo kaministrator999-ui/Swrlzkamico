@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT (owner-approved)",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.529",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_529_NATIVE_ACCOUNT_BROWSER_LIBRARY",
-  "reason": "Owner-approved §E browser My Projects redesign and native full-project account-save correction. Prior v11.488 active Model Studio saveCloud() rerouted full-project buttons into the model asset library, causing incomplete/failed account sync. v11.529 routes §Chat, My Projects and XR project saves through the existing native complete-project revision-checked save facade, maintaining naming, independent starter copies, device recovery, durable authenticated cloud response, in-place revision checks and truthful error details. Independent model/particle asset saves remain separate. Browser My Projects has one consolidated Save to Account / Save on Device / Refresh bar, connected-account status, separate device/account galleries and counts, advanced revision/clone utilities, and per-card More actions for Delete/Export/Update while preserving native handlers. Compiled source, authenticated-save simulation, missing-cloud-receipt tests, JavaScript, UV/rig/history and VR regressions passed. 506 patches, 10,969,738 source bytes, SHA-256 1e6780f411223dc5743feb0fc728aabd82db1525104432adebb6bda786f70505. Physical phone layout and signed-in account save/load acceptance pending.",
-  "sourceCommit": "6a4bf4d7e107e0bf9d73f5e6bd8e3ae65eb0a234",
-  "sourceIntegritySha256": "1e6780f411223dc5743feb0fc728aabd82db1525104432adebb6bda786f70505"
+  "releaseVersion": "v11.530",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_530_QUEST_GIZMO_CONTROLLER_MENU",
+  "reason": "Owner-directed immersive VR Model Studio repair: continuous controller-ray native Move/Rotate/Scale gizmo dragging with free selected-model Trigger translation and near-parallel grip fallback; preserve native B cancel, release commit, single model history and project saves. Original three-tier Tools/Operations/Settings console follows left controller at readable fixed offset and faces headset while retaining ray-hit targets; signed Push/Pull settings retain Direction, Falloff, Radius and Strength. Left Menu toggles when exposed by WebXR; X fallback remains. GitHub sealed 507-patch 10,980,471-byte HTML SHA-256 a7707c10bac67c015d67c9d457526f34c7383a71c94309725bd1eeb38d5de8e1; full version-pinned regression, JS parser, original history/rig/UV/account checks and static module packaging passed. Physical Quest testing pending.",
+  "sourceCommit": "171491462e0551d041006f36ea4a88f148f20d83",
+  "sourceIntegritySha256": "a7707c10bac67c015d67c9d457526f34c7383a71c94309725bd1eeb38d5de8e1"
 }
