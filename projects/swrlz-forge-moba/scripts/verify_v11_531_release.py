@@ -154,7 +154,7 @@ assert len(scene['project']['modelAtelier']['parts'])==1
 if args.request:
  req=json.loads((root/'DEPLOY_REQUEST.json').read_text('utf8'))
  assert req['releaseVersion']=='v11.531'
- assert req['deployMarker']=='SWYRL_ENGINE_DEPLOY_MARKER: V11_531_QUEST_GIZMO_CONTROLLER_MENU'
+ assert req['deployMarker']=='SWYRL_ENGINE_DEPLOY_MARKER: V11_531_QUEST_MENU_GIZMO_ACCOUNT'
  assert req['target']=='kamiloki/swrlz-forge-moba'
  assert req['sourceIntegritySha256']==m['finalSha256']
  assert len(req.get('sourceCommit',''))==40
