@@ -120,7 +120,7 @@ def patch_ui(data):
         '...(imageContextPolicy?{imageContextPolicy}:{}),',
         "automatic server request")
     html = region(html,
-        '           // A fresh image request must never be silently upgraded to use',
+        '// A fresh image request must never be silently upgraded to use',
         '           sendAcknowledged=true;',
         '''           // A same-account SHA match is the only valid automatic reuse.
            // Any unexpected server mode fails closed rather than silently merging history.
