@@ -1,0 +1,6 @@
+TARGET=kamiloki/Swyrlz
+SOURCE_REVISION=5e646baf86c86703e04e324b928387e565501f33
+SCOPE=station-startup-nonfatal-native-warmup
+MODE=inspect
+APPROVED=no
+REQUEST_NONCE=20261120-safe-boot-inspect-01
