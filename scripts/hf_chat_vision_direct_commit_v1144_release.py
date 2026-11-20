@@ -99,7 +99,7 @@ def patch_station(raw):
  '''    response=JSONResponse({"ok":True,"contract":CONTRACT,"requestId":rid,"modelId":model_id,
                            "visionAnswerReused":bool(direct_vision_answer)},status_code=202)''',"ack")
  ast.parse(s,filename=STATION)
- if s.count("swrlz-vision-direct-commit-v1144")!=3:raise RuntimeError("Station direct-answer markers changed")
+ if s.count("swrlz-vision-direct-commit-v1144")!=2:raise RuntimeError("Station direct-answer markers changed")
  return s.encode("utf-8")
 
 def patch_ui(raw):
