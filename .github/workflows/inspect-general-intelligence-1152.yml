@@ -25,12 +25,12 @@ jobs:
           rev=api.repo_info(space,repo_type="space").sha
           print("SPACE_REVISION",rev,flush=True)
           windows={
-            "station.py":[(1192,1255),(2550,2570),(2610,2645),(2698,2770)],
-            "response_cognition.py":[(1,130),(270,375),(380,498)],
-            "lfm2_700m_engine.py":[(38,145),(280,330),(786,835),(850,915),(1060,1110)],
-            "conversation_continuity.py":[(1,150)],
-            "related_visual_history.py":[(115,188)],
-            "model_router.py":[(858,895),(1042,1056)],
+            "station.py":[(2465,2515),(2630,2670),(2683,2730)],
+            "response_cognition.py":[(380,415)],
+            "lfm2_700m_engine.py":[(876,915)],
+            "original_engine.py":[(20,60)],
+            "related_visual_history.py":[(162,188)],
+            "model_router.py":[(1043,1060)],
           }
           for name,blocks in windows.items():
             raw=pathlib.Path(hf_hub_download(space,name,repo_type="space",revision=rev,token=api.token)).read_bytes()
