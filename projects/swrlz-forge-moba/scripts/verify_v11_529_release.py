@@ -9,6 +9,7 @@ ap.add_argument('--request',action='store_true')
 args=ap.parse_args()
 m=json.loads((root/'source-manifest.json').read_text('utf8'))
 assert m['name']=='§wyrl§ Engine v11.529'
+assert m['finalBytes']>1000000 and len(m['finalSha256'])==64, 'Unsealed v11.529 source cannot be released'
 assert m['finalArtifact']=='swyrl_engine_v11_529.html'
 assert len(m['patches'])==506
 assert m['patches'][-30:]==[
