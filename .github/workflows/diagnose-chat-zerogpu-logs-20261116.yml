@@ -52,3 +52,30 @@ jobs:
               except Exception as error:
                   print("SECHAT_"+name+"_LOG_FAILURE",type(error).__name__,str(error)[:140],flush=True)
           PY
+      - name: Inspect runtime metadata and nonrepeated startup failures
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          python - <<'PY'
+          import os,json,re
+          from huggingface_hub import HfApi
+          api=HfApi(token=os.environ.get("HF_TOKEN"))
+          runtime=api.get_space_runtime("kamiloki/Swyrlz")
+          raw=getattr(runtime,"raw",{}) or {}
+          safe={k:str(v)[:220] for k,v in raw.items() if any(w in k.lower() for w in ("stage","error","message","sha","hardware","status"))}
+          print("SECHAT_RUNTIME_META",json.dumps(safe,sort_keys=True),flush=True)
+          lines=list(api.fetch_space_logs("kamiloki/Swyrlz",follow=False))
+          selected=[]
+          pattern=re.compile(r"startup|warm|zerogpu|cmake|fatal|failed|error|traceback|exception|uvicorn|llama|ready|port|exit|subprocess|server|register",re.I)
+          duplicate={}
+          for i,line in enumerate(lines):
+              message=str(line).strip()
+              if not pattern.search(message):continue
+              normalized=re.sub(r"0x[0-9a-f]+","0xADDR",message)
+              duplicate[normalized]=duplicate.get(normalized,0)+1
+              if duplicate[normalized]>2:continue
+              selected.append((i,message[:350]))
+          for i,line in selected[:125]:
+              print("SECHAT_SIGNIFICANT_LOG",i,line,flush=True)
+          print("SECHAT_SIGNIFICANT_COUNT",len(selected),len(lines),flush=True)
+          PY
