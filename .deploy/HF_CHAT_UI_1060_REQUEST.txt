@@ -1,6 +1,6 @@
 TARGET=kamiloki/Swyrlz
 SCOPE=chat-ui-visual-only-v1060
 SOURCE_REF=e28a8cd03eef1fb4386b93bac31a4797c73f3d57
-MODE=inspect
-APPROVED=no
-REQUEST_NONCE=20261120-ui1060-inspect-04
+MODE=deploy
+APPROVED=yes
+REQUEST_NONCE=20261120-ui1060-deploy-01
