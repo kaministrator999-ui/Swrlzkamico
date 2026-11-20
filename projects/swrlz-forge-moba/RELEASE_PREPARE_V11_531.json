@@ -1,6 +1,6 @@
 {
   "version": "v11.531",
   "scope": "Quest head-facing wrist-independent menu, native held-axis Trigger drag, account project loader transition",
-  "revision": 2,
-  "status": "full sealed source, XR/account/UV regressions and static delivery verification"
+  "revision": 3,
+  "status": "all new v531 regression references corrected; full sealed verification"
 }
