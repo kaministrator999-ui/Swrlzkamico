@@ -7,6 +7,6 @@
     "append-only patch application"
   ],
   "status": "candidate integrity measurement; not a deploy request",
-  "revision": 3,
-  "reason": "Run final v11.530 sealed artifact and regression verifier + static delivery"
+  "revision": 4,
+  "reason": "Run sealed v11.530 release suite using version-pinned ported XR and account regression tests"
 }
