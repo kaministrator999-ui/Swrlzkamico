@@ -52,7 +52,7 @@ assert(xr.includes("canExtrudeOutline:selectedIds.size===1&&se350Surface().canEx
 assert(xr.includes("if(s.gesture||se350Tools().selection().ids.length!==1||!se350Surface().canExtrude(id))return false"));
 assert(xr.includes("if(s.gesture?.kind==='draw'&&s.gesture.points.length>=3)"));
 assert(xr.includes("if(s.gesture?.kind!=='draw'||!s.gesture.points.length)return false"));
-assert(xr.includes("se350Surface().extrudeBegin(hit.id)"),'Existing Grip extrusion retained');
+assert(surface.includes('function extrudeBegin(id)')&&surface.includes('function extrudeEnd(commit')&&xr.includes("s.mode='extrude'"),'Existing native Grip extrusion retained');
 assert(surface.includes('checkpoint(); g.part.topologyMesh = g.next'),
  'Original native extrusion checkpoint retained');
 assert(native.includes("id==='extrude'?!!state.canExtrudeOutline:true"),'Native modifier state must agree');
