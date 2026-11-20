@@ -3,4 +3,4 @@ SOURCE_REVISION=6025e37604f1efe1303be263e17a1513f512589d
 SCOPE=only-chat-ui-station-verified-image-context-and-vision-prompt
 MODE=inspect
 APPROVED=no
-NONCE=auto-image-v1147-preflight-20261120b
+NONCE=auto-image-v1147-preflight-20261120c
