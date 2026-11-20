@@ -1,0 +1,41 @@
+name: Inspect §C memory quality and first-vision relevance
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/inspect-context-quality-1151.yml"]
+permissions:
+  contents: read
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.11"}
+      - run: python -m pip install -q 'huggingface_hub>=0.34,<2'
+      - name: Inspect code and fingerprints only; no private chat data
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          python - <<'PY'
+          from huggingface_hub import HfApi,hf_hub_download
+          import os,hashlib,pathlib
+          api=HfApi(token=os.environ["HF_TOKEN"]);space="kamiloki/Swyrlz";rev=api.repo_info(space,repo_type="space").sha
+          print("SOURCE_REV",rev,flush=True)
+          mapping={
+          "station.py":[(2835,2900),(2605,2685),(2700,2740)],
+          "related_visual_history.py":[(1,225)],
+          "conversation_continuity.py":[(1,185)],
+          "response_cognition.py":[(380,420)],
+          "chat_vision.py":[(566,600),(645,678),(1260,1270)],
+          "model_router.py":[(1041,1060)],
+          }
+          for name,windows in mapping.items():
+            raw=pathlib.Path(hf_hub_download(space,name,repo_type="space",revision=rev,token=api.token)).read_bytes()
+            lines=raw.decode("utf8").splitlines()
+            print("FILE",name,"sha256",hashlib.sha256(raw).hexdigest(),"lineCount",len(lines))
+            for start,end in windows:
+              if start>len(lines):continue
+              print("SECTION",name,start,end)
+              for i in range(start-1,min(end,len(lines))):print(str(i+1)+": "+lines[i][:420])
+          PY
