@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT (owner-approved)",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.530",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_530_QUEST_GIZMO_CONTROLLER_MENU",
-  "reason": "Owner-directed immersive VR Model Studio repair: continuous controller-ray native Move/Rotate/Scale gizmo dragging with free selected-model Trigger translation and near-parallel grip fallback; preserve native B cancel, release commit, single model history and project saves. Original three-tier Tools/Operations/Settings console follows left controller at readable fixed offset and faces headset while retaining ray-hit targets; signed Push/Pull settings retain Direction, Falloff, Radius and Strength. Left Menu toggles when exposed by WebXR; X fallback remains. GitHub sealed 507-patch 10,980,471-byte HTML SHA-256 a7707c10bac67c015d67c9d457526f34c7383a71c94309725bd1eeb38d5de8e1; full version-pinned regression, JS parser, original history/rig/UV/account checks and static module packaging passed. Physical Quest testing pending.",
-  "sourceCommit": "171491462e0551d041006f36ea4a88f148f20d83",
-  "sourceIntegritySha256": "a7707c10bac67c015d67c9d457526f34c7383a71c94309725bd1eeb38d5de8e1"
+  "releaseVersion": "v11.531",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_531_QUEST_MENU_GIZMO_ACCOUNT",
+  "reason": "Owner Quest 2 screenshots and live QA: left-hand menu followed wrist rotation, floated sideways and overlapped native Sculpt/Push-Pull modifier controls; controller-facing, wrist-independent follow and closer staged layout. Captured X/Y/Z Transform Trigger now accumulates continuous reversible native one-axis hand movement until Trigger release; cancels with B, keeps mesh/history authority. Account project open no longer pre-locks the cloud loader and reveals project list refresh failures while preserving local recovery copies. Append-only 508-patch v11.531 source 10987494 bytes SHA-256 390d5b4b26fcd30cd2a721d3019bc47c00b87b7d8e628b65ff8ad793a10712d9; full sealed v531 regression, old runtime lineage, source parser and static delivery checked in GitHub Actions; physical Quest acceptance still pending.",
+  "sourceCommit": "46c06c143c1959bbe874f55ededff570eb754981",
+  "sourceIntegritySha256": "390d5b4b26fcd30cd2a721d3019bc47c00b87b7d8e628b65ff8ad793a10712d9"
 }
