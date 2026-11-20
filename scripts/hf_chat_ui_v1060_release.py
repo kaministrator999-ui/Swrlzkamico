@@ -80,7 +80,7 @@ def visual_delta(candidate: str) -> str:
 def patch(live: str, candidate: str) -> str:
     if MARK in live:
         raise RuntimeError("This design is already present in live Chat; refuse duplicate release")
-    if live.count("</style>") != 1 or live.count("<body>") != 1:
+    if live.count("</style>") < 1 or live.count("<body>") != 1:
         raise RuntimeError("Unexpected live Chat page structure")
     necessary = (
         'id="menuButton"', 'id="sideMenu"', 'id="menuShade"',
@@ -99,7 +99,7 @@ def patch(live: str, candidate: str) -> str:
         if live.count('data-settings-pane="' + section + '"') != 1:
             raise RuntimeError("Live settings pane mismatch: " + section)
     delta = visual_delta(candidate)
-    next_html = replace_once(live, "  </style>", "\n    " + delta + "\n  </style>", "one CSS owner")
+    next_html = live.replace("  </style>", "\n    " + delta + "\n  </style>", 1)
 
     groups = (
         ('<nav class="settings-nav" aria-label="Settings sections">',
@@ -119,10 +119,11 @@ def patch(live: str, candidate: str) -> str:
         r'<meta name="swrlz-chat-version" content="([^"]+)">', next_html)
     if not version_match:
         raise RuntimeError("Live version meta was not found")
-    if version_match.group(1) == "1.0.60":
-        raise RuntimeError("Live version claims 1.0.60 without the design marker")
+    if version_match.group(1) != "1.1.39":
+        raise RuntimeError("UNEXPECTED_LIVE_VERSION: expected current 1.1.39")
     next_html = replace_once(next_html, version_match.group(0),
-        '<meta name="swrlz-chat-version" content="1.0.60">', "version marker")
+        '<meta name="swrlz-chat-version" content="1.1.40">\n  '
+        '<meta name="swrlz-chat-design-version" content="1.0.60">', "version marker")
 
     for old, new in (
         ("<title>Chat</title>", "<title>§wyrlz · Chat</title>"),
@@ -151,7 +152,8 @@ def patch(live: str, candidate: str) -> str:
         raise RuntimeError("Pre-existing duplicate live IDs prevent safe patch")
     if next_html.count(MARK) != 1 or next_html.count("settings-nav-group-label") < 4:
         raise RuntimeError("Presentation delta incomplete")
-    if next_html.count('content="1.0.60"') != 1:
+    if (next_html.count('name="swrlz-chat-design-version" content="1.0.60"') != 1 or
+            next_html.count('name="swrlz-chat-version" content="1.1.40"') != 1):
         raise RuntimeError("Version metadata differs from candidate")
     return next_html
 
@@ -218,7 +220,8 @@ def served_version() -> tuple[bool,str]:
                          "Cache-Control":"no-cache"})
             with urllib.request.urlopen(req,timeout=30) as response:
                 payload = response.read(950000).decode("utf-8", errors="replace")
-            if MARK in payload and 'swrlz-chat-version" content="1.0.60"' in payload:
+            if (MARK in payload and 'swrlz-chat-version" content="1.1.40"' in payload
+                    and 'swrlz-chat-design-version" content="1.0.60"' in payload):
                 return True, path
         except Exception as exc:
             last = type(exc).__name__ + ": " + str(exc)[:120]
@@ -253,7 +256,7 @@ def publish(api: HfApi, candidate_path: Path) -> None:
     revision = None
     try:
         revision = upload(api, manifest["revision"], edited,
-            "§C: professional responsive Chat UI 1.0.60, preserving live runtime")
+            "§C: integrate UI 1.0.60 design onto live 1.1.39 as Chat 1.1.40")
         emit("COMMITTED", revision=revision, previous=manifest["revision"])
         verify = read_space_files(api, revision)
         if verify != edited:
@@ -269,7 +272,7 @@ def publish(api: HfApi, candidate_path: Path) -> None:
                 return
             emit("SERVED_PENDING", attempt=attempt, detail=detail)
             time.sleep(10)
-        raise RuntimeError("Chat 1.0.60 did not appear at live URL within acceptance window")
+        raise RuntimeError("Chat 1.1.40 with UI design 1.0.60 did not appear live")
     except Exception as exc:
         emit("RELEASE_REJECTED", error=type(exc).__name__, detail=str(exc)[:300],
              revision=revision)
