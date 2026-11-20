@@ -1,3 +1,11 @@
+## §WYRL§ Engine v11.529 · Native cloud save and clean My Projects (2026-11-19)
+
+**Cloud project save fix:** §Chat and My Projects now save the *complete native project* via the existing versioned project-save bridge, not the separate Model Studio asset save path. Local recovery persists first; success requires an authenticated durable account response and advancing remote revision. Standalone model-asset saving remains separate.
+
+**Browser My Projects:** One cohesive header with active project/account status, one Save to Account button, one Save on Device button and Refresh. Advanced project controls (Clone, revisions, selected-project utilities) are collapsed. On-device/account galleries stay separate; Open/Preview are prominent, while Delete/Export/Update retain their original handlers under each card's More actions. Responsive, touch-friendly layout and readable error feedback.
+
+See [v11.529 account-save and browser-library verification](docs/PROJECT_LIBRARY_ACCOUNT_FIX_V11_529.md). Physical phone screenshot and authenticated account save/load acceptance remain owner-test pending; compiled source/CI evidence is recorded separately.
+
 ## §WYRL§ Engine v11.528 · Immersive VR projects, controls and cloud saves (2026-11-19)
 
 **Immersive Projects:** A spacious native world-space Projects dialog replaces the narrow list, with Device / My Account / Starters project cards, pagination, Refresh, Open, Save to device, Save to account, Clone and Close. All project loads still use the existing authenticated library and native WebXR scene, not a duplicate workspace.
