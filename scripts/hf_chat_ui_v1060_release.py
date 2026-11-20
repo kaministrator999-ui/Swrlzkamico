@@ -112,7 +112,9 @@ def patch(live: str, candidate: str) -> str:
          '<div class="settings-nav-group-label" aria-hidden="true">Interface</div>'),
     )
     for anchor, group in groups:
-        next_html = replace_once(next_html, anchor, anchor + "\n        " + group,
+        placement = (anchor + "\n        " + group if anchor.startswith("<nav ")
+                     else group + "\n        " + anchor)
+        next_html = replace_once(next_html, anchor, placement,
                                  "settings group " + group)
 
     version_match = re.search(
