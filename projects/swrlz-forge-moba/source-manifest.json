@@ -524,8 +524,8 @@
     "patches/v11_530_quest_gizmo_controller_menu.py",
     "patches/v11_531_quest_menu_gizmo_account.py"
   ],
-  "finalBytes": 0,
-  "finalSha256": "",
+  "finalBytes": 10987494,
+  "finalSha256": "390d5b4b26fcd30cd2a721d3019bc47c00b87b7d8e628b65ff8ad793a10712d9",
   "previousFinalSha256": "1e6780f411223dc5743feb0fc728aabd82db1525104432adebb6bda786f70505",
   "previousFinalBytes": 10969738,
   "previousManifestFinalSha256": "1e6780f411223dc5743feb0fc728aabd82db1525104432adebb6bda786f70505",
