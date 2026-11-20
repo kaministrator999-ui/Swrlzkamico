@@ -1,0 +1,40 @@
+name: Measure and verify §E v11.531 candidate
+on:
+  push:
+    branches: [main]
+    paths:
+      - projects/swrlz-forge-moba/RELEASE_PREPARE_V11_531.json
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  candidate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Assemble and measure append-only candidate
+        run: |
+          python -m py_compile projects/swrlz-forge-moba/patches/v11_531_quest_menu_gizmo_account.py
+          node --check projects/swrlz-forge-moba/runtime/model_vr_quest_interactions_v11_531.js
+          python - <<'PY'
+          import base64,gzip,hashlib,json,importlib.util,pathlib
+          r=pathlib.Path('projects/swrlz-forge-moba')
+          m=json.loads((r/'source-manifest.json').read_text('utf8'))
+          raw=gzip.decompress(base64.b64decode(''.join((r/n).read_text().strip() for n in m['chunks'])))
+          assert hashlib.sha256(raw).hexdigest()==m['baseSha256']
+          s=raw.decode('utf8')
+          for rel in m['patches']:
+              p=r/rel
+              spec=importlib.util.spec_from_file_location('m_'+p.stem,p)
+              mod=importlib.util.module_from_spec(spec)
+              spec.loader.exec_module(mod)
+              s=mod.apply(s)
+          out=s.encode('utf8')
+          pathlib.Path('/tmp/se531-candidate.html').write_bytes(out)
+          print('SE531_CANDIDATE_MEASURE',json.dumps({'bytes':len(out),'sha256':hashlib.sha256(out).hexdigest(),'patches':len(m['patches'])}),flush=True)
+          PY
+          python projects/swrlz-forge-moba/scripts/check_inline_js_syntax_v11_266.py /tmp/se531-candidate.html
+          echo SE531_CANDIDATE_JS_CHECK_PASS
