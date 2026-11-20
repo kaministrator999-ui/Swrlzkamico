@@ -1,6 +1,6 @@
 TARGET=kamiloki/Swyrlz
-SOURCE_REVISION=401d3025870a6338f8f4a53c73b18dadd7cc627a
+SOURCE_REVISION=c2cd5dc3e4d2fd692f3135575586f70e7872fc85
 SCOPE=composer-media-and-single-qwen-vision-fastpath-only
 MODE=deploy
 APPROVED=yes
-REQUEST_NONCE=20261120-media-qwen-1141-deploy-01
+REQUEST_NONCE=20261120-media-qwen-1141-deploy-02
