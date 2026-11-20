@@ -60,5 +60,5 @@ assert(stage.includes("['labs','Labs','labs']")&&
  stage.includes("['projects','Projects','projects']")&&
  stage.includes("['views','Display','views']")&&stage.includes("['undo','Undo'],['redo','Redo']"),
  'Permanent rail and model edit history must remain');
-assert(html.includes('SWYRL_ENGINE_DEPLOY_MARKER: V11_531_QUEST_GIZMO_CONTROLLER_MENU'));
+assert(html.includes('SWYRL_ENGINE_DEPLOY_MARKER: V11_531_QUEST_MENU_GIZMO_ACCOUNT'));
 console.log('SE526_CREATE_MENU_PASS: 5 actions, real spatial divider, no duplicated controls, native previews and pouch settings');
