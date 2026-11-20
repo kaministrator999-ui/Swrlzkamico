@@ -1,6 +1,6 @@
 SPACE=kamiloki/Swyrlz
 SOURCE_REVISION=a676721e889c7b1c3552d7e02e3c510680c31b99
 SCOPE=station-vision-original-answer-and-chat-ui-only
-MODE=inspect
-APPROVED=no
-NONCE=20261120-qwen-direct-vision-v1144-inspect-01
+MODE=deploy
+APPROVED=yes
+NONCE=20261120-qwen-direct-vision-v1144-deploy-01
