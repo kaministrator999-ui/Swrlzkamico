@@ -9,7 +9,7 @@ const stage=slice('/* SE445_VR_PROGRESSIVE_TOOLS_START','/* SE445_VR_PROGRESSIVE
 const ui=slice('/* SE360_MODEL_VR_UI_START','/* SE360_MODEL_VR_UI_END');
 const tools=slice('/* SE345_MODEL_VR_DISPLAY_MODES_START','/* SE345_MODEL_VR_DISPLAY_MODES_END');
 const pairs=s=>[...s.matchAll(/\['([^']+)','([^']+)'\]/g)].map(m=>[m[1],m[2]]);
-assert(html.includes('SWYRL_ENGINE_DEPLOY_MARKER: V11_531_QUEST_GIZMO_CONTROLLER_MENU'));
+assert(html.includes('SWYRL_ENGINE_DEPLOY_MARKER: V11_531_QUEST_MENU_GIZMO_ACCOUNT'));
 assert(stage.includes("['views','Display','views']"),'Display still belongs in permanent top rail');
 const group=stage.split('\n').find(x=>x.trim().startsWith('views:[['));
 assert(group,'Missing Display middle rail');
