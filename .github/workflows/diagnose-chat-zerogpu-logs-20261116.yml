@@ -1,5 +1,6 @@
 name: Diagnose §C ZeroGPU runtime startup logs (read only)
 # Read-only verification after Gradio ZeroGPU launch bridge (2026-11-16).
+# Read-only runtime-error investigation after UI-only release rollback (2026-11-20).
 on:
   push:
     branches: [main]
