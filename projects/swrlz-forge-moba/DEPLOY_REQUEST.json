@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT (owner-approved)",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.527",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_527_DRAW_MENU_CLEANUP",
-  "reason": "Owner-approved §E immersive WebXR Modeling Lab Draw cleanup in the original three-stage spatial menu. Exactly Draw Outline, Make Face, Thicken Outline, Discard Outline. Make Face enables only with active drawing and at least three traced points; Discard only while an unfinished outline exists. Thicken enables for exactly one selected mesh that passes the native shared, read-only planar open-outline topology and bind-pose validation, and still uses the existing Grip extrusion/checkpoint system. Disabled controls appear dimmed and cannot dispatch controller actions. No duplicated Undo or Draw settings panel; global project-scoped Undo/Redo, native tools, all other Labs/menus, textures, UV and rig remain. Verified 504-patch generated source, JS syntax, Draw/Select/Sculpt/Display/Create/UV/rig/history regressions; 10,912,716 source bytes, SHA-256 ab47b19b56cfa7061bbdaae6e4c5dc9d1d49b94136a5cbdda5e54bf947f92119. Quest headset acceptance pending.",
-  "sourceCommit": "8186210915e023fffc4d8dc28a4d9266bfd63b47",
-  "sourceIntegritySha256": "ab47b19b56cfa7061bbdaae6e4c5dc9d1d49b94136a5cbdda5e54bf947f92119"
+  "releaseVersion": "v11.528",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_528_IMMERSIVE_UX_ACCOUNT_REPAIR",
+  "reason": "Owner-approved six §E native immersive WebXR QA fixes: enlarged world-space Projects card dialog using the existing account/device/starter project browser; non-rest rig Push/Pull confirmation with undoable native rest pose; controller-ray Move/Rotate/Scale gizmo drag using native transaction; contextual grouped +/- modifier toolbar; left Quest Menu toggles existing tools where the browser exposes it, with X fallback; Save to Account repaired for §Chat panel and My Projects, with stable project ID, raw cloud ID normalization, native authenticated durable save confirmation and no false cloud success. Modal stops background edits. Sealed v11.528 source: 505 patches, 10,944,440 bytes, SHA-256 d62dfd82aea741cbfb545016c2b4576374052512baef59195b4d44f77a6f6efc. Full sealed source verifier passed JS syntax and VR menus, UV, rig, journal and six owner QA tests. Physical Meta Quest XR and authenticated account acceptance still pending.",
+  "sourceCommit": "4c18b623e534defde6756860d3a6a65452880419",
+  "sourceIntegritySha256": "d62dfd82aea741cbfb545016c2b4576374052512baef59195b4d44f77a6f6efc"
 }
