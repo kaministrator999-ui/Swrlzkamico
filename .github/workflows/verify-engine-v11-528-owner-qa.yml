@@ -1,0 +1,76 @@
+name: Verify sealed §E v11.528 immersive owner QA
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/verify-engine-v11-528-owner-qa.yml"
+      - "projects/swrlz-forge-moba/scripts/verify_v11_528_release.py"
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Verify sealed engine source, all six QA updates and inherited regressions
+        id: check
+        shell: bash
+        run: |
+          set +e
+          python projects/swrlz-forge-moba/scripts/verify_v11_528_release.py --output /tmp/se528-release > /tmp/se528-release.log 2>&1
+          RC=$?
+          tail -n 55 /tmp/se528-release.log
+          echo "exit_code=$RC" >> "$GITHUB_OUTPUT"
+          exit 0
+      - name: Record exact validation or blocker
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import json
+          root=Path("projects/swrlz-forge-moba")
+          log=Path("/tmp/se528-release.log").read_text("utf8",errors="replace")
+          m=json.loads((root/"source-manifest.json").read_text("utf8"))
+          if "SE528_SOURCE_VERIFIED" in log:
+              receipt={"version":"v11.528","status":"source-build-verified","patches":len(m["patches"]),
+                "bytes":m["finalBytes"],"sha256":m["finalSha256"],
+                "checks":["generated source integrity","JavaScript syntax","six owner QA conditions",
+                          "Draw","Select","Sculpt","Display","Create","UV","rig","project journal"],
+                "questHeadsetAcceptance":"pending","authenticatedCloudRoundtrip":"pending"}
+              path=root/"reports"/"v11_528_owner_release_validation.json"
+              path.write_text(json.dumps(receipt,indent=2)+"\n","utf8")
+              print("SE528_RELEASE_VALIDATION_PASS",path,flush=True)
+          else:
+              path=root/"reports"/"v11_528_owner_release_failure.log"
+              path.write_text(log[-16000:],"utf8")
+              print("SE528_RELEASE_VALIDATION_FAILED",path,flush=True)
+          PY
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if [ -f projects/swrlz-forge-moba/reports/v11_528_owner_release_validation.json ]; then
+            git add projects/swrlz-forge-moba/reports/v11_528_owner_release_validation.json
+          fi
+          if [ -f projects/swrlz-forge-moba/reports/v11_528_owner_release_failure.log ]; then
+            git add projects/swrlz-forge-moba/reports/v11_528_owner_release_failure.log
+          fi
+          if ! git diff --cached --quiet; then
+            git commit -m "ci(engine): record sealed v11.528 immersive release verification"
+            for attempt in 1 2 3; do
+              if git push origin HEAD:main; then exit 0; fi
+              git fetch origin main
+              git rebase origin/main
+            done
+            exit 1
+          fi
+      - name: Fail when source validation failed
+        if: steps.check.outputs.exit_code != '0'
+        run: exit 1
