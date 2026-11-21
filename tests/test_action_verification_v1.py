@@ -37,6 +37,13 @@ class ActionVerificationTests(unittest.TestCase):
     def test_code_example_not_action(self):
         self.assertFalse(proposed_action("Here is a code sample: \x60\x60\x60text\nYou should build a portfolio.\n\x60\x60\x60"))
 
+    def test_requested_song_does_not_enter_advice_supervisor(self):
+        for prompt in ["Write a song about a castle", "Remix the rap with a new hook"]:
+            events = list(supervise({"prompt": prompt},
+                lambda p: response("We can build a dream tonight, under the stars."),
+                lambda p, q: self.fail("Song text is not advice"), lambda: False))
+            self.assertEqual(answer(events), "We can build a dream tonight, under the stars.")
+
     def test_ordinary_chat_keeps_stream_and_no_lookup(self):
         events = list(supervise({"prompt": "Tell me about the afternoon."},
                                 lambda p: response("It sounds like a busy afternoon. Glad you got everything cleared."),
