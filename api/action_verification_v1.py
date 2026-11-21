@@ -138,6 +138,9 @@ def supervise(
                 if context is None:
                     yield {"type": "STATUS", "phase": "ACTION_VERIFICATION",
                            "reason": "Checking an emerging generated recommendation."}
+                    if _stopped(cancelled):
+                        yield {"type": "CANCELLED", "phase": "CANCELLED"}
+                        return
                     try:
                         value = lookup(payload, proposal)
                         context = value if isinstance(value, dict) else {
