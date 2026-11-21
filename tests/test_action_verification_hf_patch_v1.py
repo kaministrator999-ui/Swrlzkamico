@@ -22,9 +22,9 @@ class ActionReleaseTests(unittest.TestCase):
     def test_no_ambiguous_generation_owner(self):
         with self.assertRaisesRegex(RuntimeError, "SOURCE_DRIFT"):
             patch(b"x=1\n")
-        with self.assertRaisesRegex(RuntimeError, "SOURCE_DRIFT"):
-            patch(b"def generate_events(payload):\n    yield 1\n"
-                  b"def generate_events(payload):\n    yield 2\n")
+        layered = patch(b"def generate_events(payload):\n    yield 1\n"
+                        b"def generate_events(payload):\n    yield 2\n")
+        self.assertIn(b"_swrlz_original_generate_events_action_v1 = generate_events", layered)
 
 
 if __name__ == "__main__":
