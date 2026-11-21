@@ -1,0 +1,5 @@
+TARGET=kamiloki/Swyrlz
+SCOPE=generated-action-check-with-context-only-no-new-access
+MODE=deploy
+APPROVED=yes
+NONCE=action-verification-pilot-20261120-a
