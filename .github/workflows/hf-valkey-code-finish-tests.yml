@@ -1,0 +1,23 @@
+name: §C Valkey bandwidth and HTML-finish regressions
+on:
+  push:
+    branches: [feature/swrlz-valkey-traffic-and-code-finish]
+    paths:
+      - "scripts/hf_valkey_revision_sync_optimization.py"
+      - "scripts/hf_code_finish_and_preview_v1.py"
+      - "scripts/test_hf_valkey_code_finish_v1.py"
+      - ".github/workflows/hf-valkey-code-finish-tests.yml"
+permissions: {contents: read}
+jobs:
+  unit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Compile all patch sources
+        run: python -m py_compile scripts/hf_valkey_revision_sync_optimization.py scripts/hf_code_finish_and_preview_v1.py scripts/test_hf_valkey_code_finish_v1.py
+      - name: Run no-network source regression cases
+        run: python -m unittest discover -s scripts -p test_hf_valkey_code_finish_v1.py -v
