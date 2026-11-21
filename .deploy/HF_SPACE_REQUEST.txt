@@ -1,5 +1,5 @@
 TARGET=kamiloki/Swyrlz
 APPROVED=1
-CHANGE_SCOPE=forge-reference-routing-v1
-SOURCE_REF=ef73c9ed2ddc7382319e517f2b64a2ba7d19714f
-REQUEST_NONCE=forge-reference-routing-20261120-ef73c9ed2d
+CHANGE_SCOPE=forge-creative-stages-v1
+SOURCE_REF=06cac4f917d078826c6469093c4c81a770d5683a
+REQUEST_NONCE=forge-creative-stages-20261121-06cac4f917
