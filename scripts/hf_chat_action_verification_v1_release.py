@@ -58,6 +58,14 @@ def patch(original: bytes) -> bytes:
              if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))
              and node.name == "generate_events"]
     if len(names) != 1 or not isinstance(names[0], ast.FunctionDef):
+        related = [(getattr(node, "name", ""), getattr(node, "lineno", 0),
+                    type(node).__name__)
+                   for node in tree.body
+                   if "generat" in str(getattr(node, "name", "")).lower()]
+        print("ACTION_CHECK_OWNER_DIAGNOSTIC " + json.dumps({
+            "generate_events_defs": len(names),
+            "related_entrypoints": related[:25],
+            "source_bytes": len(original)}), flush=True)
         raise RuntimeError("GENERATION_OWNER_SOURCE_DRIFT")
     output = (text.rstrip() + "\n\n" + APPEND.lstrip()).encode("utf-8")
     compile(output.decode("utf-8"), ENGINE, "exec")
