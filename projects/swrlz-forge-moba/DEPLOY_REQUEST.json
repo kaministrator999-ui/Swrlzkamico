@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT (owner-approved)",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.531",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_531_QUEST_MENU_GIZMO_ACCOUNT",
-  "reason": "Owner Quest 2 screenshots and live QA: left-hand menu followed wrist rotation, floated sideways and overlapped native Sculpt/Push-Pull modifier controls; controller-facing, wrist-independent follow and closer staged layout. Captured X/Y/Z Transform Trigger now accumulates continuous reversible native one-axis hand movement until Trigger release; cancels with B, keeps mesh/history authority. Account project open no longer pre-locks the cloud loader and reveals project list refresh failures while preserving local recovery copies. Append-only 508-patch v11.531 source 10987494 bytes SHA-256 390d5b4b26fcd30cd2a721d3019bc47c00b87b7d8e628b65ff8ad793a10712d9; full sealed v531 regression, old runtime lineage, source parser, native XYZ gesture regression and static delivery checked in GitHub Actions; physical Quest acceptance still pending.",
-  "sourceCommit": "7f7cbb5a79ad27bbe9a6b4a00ccd4de2baf63aa7",
-  "sourceIntegritySha256": "390d5b4b26fcd30cd2a721d3019bc47c00b87b7d8e628b65ff8ad793a10712d9"
+  "releaseVersion": "v11.532",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_532_PROJECT_ACCOUNT_SAVE_RECEIPT",
+  "reason": "Repair the full native project Save to Account facade: durable revision confirmation, persisted project identity and startup linkage; metadata receipt before dispatch; unknown acknowledgements never blindly replay writes; exact-ID/revision/bytes authenticated recovery preserves local autosaves and history. Canonical 509-patch source and composed real save-chain regression verified; live account save/reopen acceptance awaits connected editor and verified account. No user project or model content is modified by deployment.",
+  "sourceCommit": "a630ab214889457536ff50501a1e6acca6229101",
+  "sourceIntegritySha256": "62ac2d3c524a6dd58d6ba4a826cadbb8455a0bd90d2fc2a03aa0c90643c6e382"
 }
