@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT (owner-approved)",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.532",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_532_PROJECT_ACCOUNT_SAVE_RECEIPT",
-  "reason": "Repair the full native project Save to Account facade: durable revision confirmation, persisted project identity and startup linkage; metadata receipt before dispatch; unknown acknowledgements never blindly replay writes; exact-ID/revision/bytes authenticated recovery preserves local autosaves and history. Canonical 509-patch source and composed real save-chain regression verified; live account save/reopen acceptance awaits connected editor and verified account. No user project or model content is modified by deployment.",
-  "sourceCommit": "a630ab214889457536ff50501a1e6acca6229101",
-  "sourceIntegritySha256": "62ac2d3c524a6dd58d6ba4a826cadbb8455a0bd90d2fc2a03aa0c90643c6e382"
+  "releaseVersion": "v11.533",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_533_PROJECT_ACCOUNT_OPEN",
+  "reason": "Restore account project opening by carrying the selected project ID through the composed loader and reporting success after the matching saved revision is imported. Verified the failing and fixed paths in mobile Chrome, and verified the canonical 510-patch source and static package.",
+  "sourceCommit": "ab9eff3f6d249429d4e3d0ee729a71665d8fc9c8",
+  "sourceIntegritySha256": "f1073aab6e0f4619605e0fd3461ae0ba6b77631a04be4bc93b26400b842e50e6"
 }
