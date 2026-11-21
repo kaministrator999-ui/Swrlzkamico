@@ -1,3 +1,7 @@
+## §E v11.533 · Account project open (2026-11-21)
+
+Source candidate fixes the composed My Projects load path that could reject a valid account row before requesting its bytes. The editor now forwards the project ID explicitly and confirms the result of the current import. Publish through the existing Hugging Face workflow, then verify a real signed-in open from another editor session. See [checkpoint and evidence](docs/PROJECT_ACCOUNT_OPEN_V11_533.md).
+
 ## §WYRL§ Engine v11.532 · Verified project account saves and recovery receipts (2026-11-20)
 
 **Project save correction:** Full-project Save to Account uses the existing checked native save facade, preserving account ownership checks, project ID, revision preflight and the persisted account link. Startup restores that link before refreshing the local snapshot. This corrects a path that could commit an account save while reporting it as unconfirmed.

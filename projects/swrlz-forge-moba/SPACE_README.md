@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.532
+title: §wyrl§ Engine v11.533
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,10 @@ fullWidth: true
 header: mini
 short_description: Native projects, verified saves and model creation
 ---
+
+## §E v11.533 · Verified account project opening (2026-11-21)
+
+The native account loader opens the selected project by its confirmed account ID and revision. A rejected open preserves the active project and reports the reason. Full-project saves, native history and the existing revision cache continue to use their established paths. See [the account open checkpoint](docs/PROJECT_ACCOUNT_OPEN_V11_533.md).
 
 ## §WYRL§ Engine v11.532 · Verified project account saves and recovery receipts (2026-11-20)
 

@@ -1,3 +1,7 @@
+## §E v11.533 · Verified account project opening (2026-11-21)
+
+The account project loader fixes an early rejection of valid saved projects. It passes the selected account ID to the existing native importer and reports success when that import confirms the revision. Source, build and live verification are tracked in the [account open checkpoint](projects/swrlz-forge-moba/docs/PROJECT_ACCOUNT_OPEN_V11_533.md).
+
 ## §WYRL§ Engine v11.532 · Verified project account saves and recovery receipts (2026-11-20)
 
 **Project save correction:** Full-project Save to Account uses the existing checked native save facade, preserving account ownership checks, project ID, revision preflight and the persisted account link. Startup restores that link before refreshing the local snapshot. This corrects a path that could commit an account save while reporting it as unconfirmed.

@@ -1,3 +1,7 @@
+## §E v11.533 · Verified account project opening (2026-11-21)
+
+Account project cards and the shared loader pass the exact account project ID through to the authenticated native download. The editor requires a fresh confirmed import and matching revision, and shows the load error if the request fails. The v11.532 save receipts and revision cache stay in place. See [account open checkpoint](docs/PROJECT_ACCOUNT_OPEN_V11_533.md) for source verification and pending publication evidence.
+
 ## §WYRL§ Engine v11.532 · Verified project account saves and recovery receipts (2026-11-20)
 
 **Project save correction:** Full-project Save to Account uses the existing checked native save facade, preserving account ownership checks, project ID, revision preflight and the persisted account link. Startup restores that link before refreshing the local snapshot. This corrects a path that could commit an account save while reporting it as unconfirmed.
