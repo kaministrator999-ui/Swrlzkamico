@@ -49,9 +49,17 @@ def eligible(payload: dict[str, Any]) -> bool:
         "githubSourceChangeTask", "codingTask", "nativeEditorEvidence",
         "sourceChangeIdentity", "privateResearchContext")):
         return False
-    if str(payload.get("presentationIntent") or "").upper() in {"CODE", "SOURCE"}:
+    if str(payload.get("presentationIntent") or "").upper() in {
+        "CODE", "SOURCE", "LYRICS", "SONG", "STORY", "POEM", "CREATIVE",
+        "SCRIPT", "EMAIL", "DOCUMENT"}:
         return False
-    return not _GREETING.fullmatch(str(payload.get("receivedText") or payload.get("prompt") or ""))
+    prompt = str(payload.get("receivedText") or payload.get("prompt") or "")
+    # Generated songs/stories often say "we can build..." as fictional text,
+    # not as advice. Do not let this supervisor hijack a requested artifact.
+    if re.search(r"(?is)\b(?:write|compose|create|make|remix|remaster|generate|continue|draft|rewrite)\b"
+                 r".{0,65}\b(?:song|rap|lyrics|poem|story|verse|chorus|email|letter|memo)\b", prompt):
+        return False
+    return not _GREETING.fullmatch(prompt)
 
 
 def available_context(payload: dict[str, Any], _: str) -> dict[str, Any]:
