@@ -113,6 +113,7 @@ def supervise(
     recent, pending, proposal = "", "", ""
     visible = False
     oversized = False
+    context: dict[str, Any] | None = None
     terminal: dict[str, Any] | None = None
     for event in generate(payload):
         if _stopped(cancelled):
@@ -132,6 +133,20 @@ def supervise(
                 else:
                     proposal = proposed_action(recent[-1600:])
             if proposal:
+                # Perform the read-only check at the detection point, while
+                # the original generation is still in progress.
+                if context is None:
+                    yield {"type": "STATUS", "phase": "ACTION_VERIFICATION",
+                           "reason": "Checking an emerging generated recommendation."}
+                    try:
+                        value = lookup(payload, proposal)
+                        context = value if isinstance(value, dict) else {
+                            "status": "unavailable", "entries": []}
+                    except Exception:
+                        context = {"status": "unavailable", "entries": []}
+                    if _stopped(cancelled):
+                        yield {"type": "CANCELLED", "phase": "CANCELLED"}
+                        return
                 continue
             if len(pending) >= 240 or (
                 len(pending) >= 55 and re.search(r"[.!?](?:\s|$)", pending)):
@@ -151,16 +166,6 @@ def supervise(
             yield {"type": "DELTA", "text": pending}
         yield terminal or {"type": "FAILED", "phase": "ERROR",
                            "reason": "Generation ended without a terminal event."}
-        return
-
-    yield {"type": "STATUS", "phase": "ACTION_VERIFICATION",
-           "reason": "Checking a generated recommendation against available context."}
-    try:
-        context = lookup(payload, proposal)
-    except Exception:
-        context = {"status": "unavailable", "entries": []}
-    if _stopped(cancelled):
-        yield {"type": "CANCELLED", "phase": "CANCELLED"}
         return
 
     second = dict(payload)
