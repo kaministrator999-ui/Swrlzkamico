@@ -1,0 +1,104 @@
+name: §C generic public-source fallback preflight
+on:
+  push:
+    branches: [fix/chat-tagged-research-evidence-v1]
+    paths:
+      - "api/generic_public_source_fallback_v1.py"
+      - "scripts/hf_chat_generic_public_fallback_v1.py"
+      - "tests/test_hf_generic_public_source_fallback_v1.py"
+      - ".github/workflows/hf-chat-generic-source-preflight.yml"
+permissions: {contents: read}
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.11"}
+      - run: python -m pip install --quiet "huggingface_hub>=0.34,<2"
+      - name: Test safe dynamic sources and no guessed claims
+        run: |
+          set -euo pipefail
+          python -m unittest discover -s tests -p 'test_hf_generic_public_source_fallback_v1.py' -v
+          python -m unittest discover -s tests -p 'test_hf_tagged_research_evidence_v1.py' -v
+          python -m py_compile api/generic_public_source_fallback_v1.py scripts/hf_chat_generic_public_fallback_v1.py
+      - name: Stage exact current HF public research source without publishing
+        run: |
+          set -euo pipefail
+          python -u scripts/hf_chat_generic_public_fallback_v1.py --out swrlz-generic-research-source-backup
+      - name: Probe generalized Wikipedia search through existing bounded HF public fetcher
+        run: |
+          python - <<'PY'
+          import importlib.util,sys,json
+          from huggingface_hub import HfApi,hf_hub_download
+          from api.generic_public_source_fallback_v1 import wikipedia_public_fallback
+          space="kamiloki/Swyrlz";rev=HfApi().repo_info(space,repo_type="space").sha
+          path=hf_hub_download(space,"api/online_research.py",repo_type="space",revision=rev)
+          spec=importlib.util.spec_from_file_location("swrlz_generic_safe_fetch_check",path)
+          mod=importlib.util.module_from_spec(spec);sys.modules[spec.name]=mod
+          spec.loader.exec_module(mod)
+          from api.generic_public_source_fallback_v1 import search_terms
+          from urllib.parse import quote
+          prompt="Research: what are the moons of Mars? List their names."
+          topic=search_terms(prompt)
+          search="https://en.wikipedia.org/w/rest.php/v1/search/page?q="+quote(topic,safe="")+"&limit=2"
+          sample=mod._page_fetch(search)
+          try:
+              search_json=json.loads(sample.get("extract") or "{}")
+              titles=[(x.get("title"),x.get("key")) for x in search_json.get("pages",[])[:4]]
+          except (ValueError,TypeError):titles=[]
+          first=mod._page_fetch("https://en.wikipedia.org/w/api.php?action=query&prop=extracts&exintro=1&explaintext=1&exsentences=3&titles=Moons_of_Mars&format=json&formatversion=2")
+          try:
+              summary_json=json.loads(first.get("extract") or "{}")
+              entry=(summary_json.get("query") or {}).get("pages",[{}])[0]
+              summary_title=entry.get("title")
+              summary_excerpt=str(entry.get("extract") or "")[:130]
+          except (ValueError,TypeError,IndexError):
+              summary_title=summary_excerpt="invalid"
+          print("SWRLZ_GENERIC_FALLBACK_DEBUG "+json.dumps({
+              "topic":topic,"searchStatus":sample.get("status"),"searchFinal":sample.get("finalUrl"),
+              "titles":titles,"summaryStatus":first.get("status"),
+              "summaryFinal":first.get("finalUrl"),"summaryTitle":summary_title,
+              "summaryExcerpt":summary_excerpt}),flush=True)
+          found=wikipedia_public_fallback(prompt,mod._page_fetch)
+          summary={"count":len(found),
+                   "sourceTitles":[x.get("title") for x in found],
+                   "urls":[x.get("url") for x in found],
+                   "namesSupported":bool(found and "Phobos" in found[0].get("snippet","")
+                                          and "Deimos" in found[0].get("snippet",""))}
+          print("SWRLZ_GENERIC_SOURCE_REAL_PROBE "+json.dumps(summary),flush=True)
+          assert summary["namesSupported"],summary
+          assert all(x.get("url","").startswith("https://en.wikipedia.org/wiki/") for x in found)
+          # Exercise the actual staged selective-retrieval module with public
+          # search unavailable, not merely the generic source helper.
+          from pathlib import Path
+          context_path=hf_hub_download(space,"api/research_context_v2.py",repo_type="space",revision=rev)
+          Path("api/research_context_v2.py").write_bytes(Path(context_path).read_bytes())
+          path2=Path("swrlz-generic-research-source-backup/candidate/api/selective_retrieval.py")
+          spec2=importlib.util.spec_from_file_location("api.selective_retrieval",path2)
+          selective=importlib.util.module_from_spec(spec2)
+          sys.modules[spec2.name]=selective
+          spec2.loader.exec_module(selective)
+          research=lambda _:{"evidence":[]}
+          enriched,route=selective.enrich_payload({
+              "prompt":"Research: what are the moons of Mars? List their names."
+          },research,fetch_page=mod._page_fetch,enabled=True)
+          record=enriched.get("onlineContext") or {}
+          print("SWRLZ_GENERIC_SOURCE_ENRICHED "+json.dumps({
+              "phase":route.get("phase"),"count":record.get("resultCount"),
+              "evidence":[{"title":x.get("title"),"url":x.get("url"),
+                           "excerpt":x.get("excerpt","")[:160]}
+                          for x in record.get("evidence",[])]
+          }),flush=True)
+          assert route.get("phase")=="RESEARCH_READY",route
+          assert any("Phobos" in x.get("excerpt","") and "Deimos" in x.get("excerpt","")
+                     for x in record.get("evidence",[])),record
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: swrlz-generic-source-staged-backup
+          path: swrlz-generic-research-source-backup/
+          retention-days: 7
+          if-no-files-found: warn
