@@ -57,7 +57,7 @@ def patch(original: bytes) -> bytes:
     names = [node for node in tree.body
              if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))
              and node.name == "generate_events"]
-    if len(names) != 1 or not isinstance(names[0], ast.FunctionDef):
+    if not names or not isinstance(names[-1], ast.FunctionDef):
         related = [(getattr(node, "name", ""), getattr(node, "lineno", 0),
                     type(node).__name__)
                    for node in tree.body
