@@ -45,7 +45,7 @@ The local static-delivery package receipt records:
 | Compact module | 9,479,837 | `4d794e8a05314607acfe2a2ca6355e13a00e3d74a60369b4f8a0ff0e4725616c` |
 | Source module | 10,313,657 | `a8a954815acb83d1b7b9acd71996d917fe8765ed5546a0518ae80823189b7f3e` |
 
-Packaging uses esbuild 0.25.12 with whitespace-only compaction. The local generated receipt is `/dev/shm/dragon-engine532/SOURCE.json`. These local build/package results are distinct from repository publication and the served release. Delivery and live account acceptance remain pending; the release owner will record source/deployment commits and exact hosted receipt verification here when confirmed.
+Packaging uses esbuild 0.25.12 with whitespace-only compaction. The local generated receipt is `/dev/shm/dragon-engine532/SOURCE.json`. These local build/package results are distinct from repository publication and the served release. Publication is verified separately below. The authenticated account save/reopen acceptance remains pending.
 
 ## Verification evidence
 
@@ -60,7 +60,18 @@ The corrected-chain assertions cover:
 - Exact-byte mismatch rejection, local receipt-store failure before dispatch, account/project changes before dispatch, newer autosave preservation and disconnected behavior.
 - Continued reachability of the separate model-asset save dispatcher.
 
-These are source/harness results. They made no live account writes and do not establish a successful authenticated transfer, deployment, browser save/reopen or owner acceptance.
+These source/harness results made no live account writes. They do not establish an authenticated transfer, browser save/reopen or owner acceptance. Publication has its independent evidence below.
+
+## Publication evidence
+
+- Source commit: `a630ab214889457536ff50501a1e6acca6229101`.
+- Separate deployment-request-only commit: `e5214aff814ccd2fa2907df0f61f42b4dea64a71`.
+- [Deployment workflow 44864338893](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/44864338893): **success**.
+- Hugging Face published revision: `0aaad8fc636eb1e6ccf2de12e5dca1aba1be04b4`; Space reports **RUNNING**. The static Space API does not supply a separate serving commit SHA.
+- Published `SOURCE.json`, both HTML entrypoints and the compacted JavaScript module were downloaded from that exact revision and match the locally verified hashes above. The workflow also passed the normal public HTML/JavaScript response-header checks.
+- Readback receipt: [published-receipt.json](../../../reports/project-account-save-v11-532/published-receipt.json).
+
+This verifies deployment and exact published artifacts. Interactive engine access and a real authenticated save/reopen remain blocked; these are not claimed as tested.
 
 ## Runtime and mission status
 
@@ -74,7 +85,7 @@ The separate §Chat native-continuity repair is pending in its own checkpoint. T
 
 ## Acceptance still required
 
-1. Publish the verified source and follow the existing separate `DEPLOY_REQUEST.json` delivery workflow; confirm the served version/hash against the local receipt before claiming deployment.
+1. **Completed:** verified source publication, separate deployment request, successful workflow and exact published artifact readback. Interactive validation remains separate.
 2. In a verified §Chat account, save a deliberately named test project, record its account project ID and revision, make a small native edit, save again and confirm one project with an advancing revision.
 3. Reopen that same account project after a fresh engine session and verify native project content/history and its persisted account link. Save again to confirm the same remote identity survives startup.
 4. Resume the Little Glitch Dragon mission only when the live engine, original six-view image file and verified account are available. Keep §C's modeling and verified account-save checkpoints inspectable.

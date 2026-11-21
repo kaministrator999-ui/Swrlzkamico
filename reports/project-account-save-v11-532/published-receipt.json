@@ -1,0 +1,29 @@
+{
+  "status": "PUBLISHED532_VERIFIED",
+  "version": "\u00a7wyrl\u00a7 Engine v11.532",
+  "spaceRevision": "0aaad8fc636eb1e6ccf2de12e5dca1aba1be04b4",
+  "servingRevision": null,
+  "stage": "RUNNING",
+  "sourceBytes": 10996103,
+  "sourceSha256": "62ac2d3c524a6dd58d6ba4a826cadbb8455a0bd90d2fc2a03aa0c90643c6e382",
+  "files": {
+    "index.html": {
+      "bytes": 682477,
+      "sha256": "2b4e077ff5c73daa39db5bb5ea113db0a519d2a12f9b8cf07d5df7fcca0aac07"
+    },
+    "modeler.html": {
+      "bytes": 682477,
+      "sha256": "2b4e077ff5c73daa39db5bb5ea113db0a519d2a12f9b8cf07d5df7fcca0aac07"
+    },
+    "swrlz-engine-v11.532.js": {
+      "bytes": 9479837,
+      "sha256": "4d794e8a05314607acfe2a2ca6355e13a00e3d74a60369b4f8a0ff0e4725616c"
+    }
+  },
+  "sourceCommit": "a630ab214889457536ff50501a1e6acca6229101",
+  "requestCommit": "e5214aff814ccd2fa2907df0f61f42b4dea64a71",
+  "workflow": 44864338893,
+  "checkedAtUTC": "2026-11-21T04:08:13Z",
+  "interactiveEngineVerified": false,
+  "liveAccountWriteTested": false
+}
