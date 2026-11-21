@@ -46,6 +46,7 @@ jobs:
               noncode-repetition-guard-v1) mode=hotfix-noncode-loop ;;
               forge-reference-routing-v1) mode=hotfix-forge-reference ;;
               forge-creative-stages-v1) mode=hotfix-forge-creative ;;
+              forge-loft-repair-v1) mode=hotfix-forge-loft ;;
               *) echo "::error::Unknown scoped Space release mode."; exit 1 ;;
             esac
           fi

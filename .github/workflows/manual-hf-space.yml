@@ -12,7 +12,7 @@ on:
         description: "Validate package without publishing, or explicitly deploy"
         required: true
         type: choice
-        options: [inspect, benchmark, validate, deploy, hotfix-output-budget, hotfix-music-transform, hotfix-http500-feedback, hotfix-tool-recovery, hotfix-noncode-loop, hotfix-forge-reference, hotfix-forge-creative]
+        options: [inspect, benchmark, validate, deploy, hotfix-output-budget, hotfix-music-transform, hotfix-http500-feedback, hotfix-tool-recovery, hotfix-noncode-loop, hotfix-forge-reference, hotfix-forge-creative, hotfix-forge-loft]
         default: validate
       approved:
         description: "Confirm replacement ONLY of existing kamiloki/Swyrlz after snapshot"
@@ -45,11 +45,11 @@ concurrency:
 
 jobs:
   hotfix_forge_reference:
-    if: ${{ (inputs.mode == 'hotfix-forge-reference' || inputs.mode == 'hotfix-forge-creative') && inputs.approved == 'yes' }}
+    if: ${{ (inputs.mode == 'hotfix-forge-reference' || inputs.mode == 'hotfix-forge-creative' || inputs.mode == 'hotfix-forge-loft') && inputs.approved == 'yes' }}
     runs-on: ubuntu-latest
     timeout-minutes: 35
     env:
-      SWRLZ_FORGE_RELEASE: ${{ inputs.mode == 'hotfix-forge-creative' && 'forge_creative_stages_v1' || 'forge_reference_routing_v1' }}
+      SWRLZ_FORGE_RELEASE: ${{ inputs.mode == 'hotfix-forge-loft' && 'forge_loft_repair_v1' || inputs.mode == 'hotfix-forge-creative' && 'forge_creative_stages_v1' || 'forge_reference_routing_v1' }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -285,7 +285,7 @@ jobs:
         run: python -u scripts/hf_chat_http500_feedback_v1.py publish
 
   prepare:
-    if: ${{ inputs.mode != 'hotfix-output-budget' && inputs.mode != 'hotfix-music-transform' && inputs.mode != 'hotfix-http500-feedback' && inputs.mode != 'hotfix-tool-recovery' && inputs.mode != 'hotfix-noncode-loop' && inputs.mode != 'hotfix-forge-reference' && inputs.mode != 'hotfix-forge-creative' }}
+    if: ${{ inputs.mode != 'hotfix-output-budget' && inputs.mode != 'hotfix-music-transform' && inputs.mode != 'hotfix-http500-feedback' && inputs.mode != 'hotfix-tool-recovery' && inputs.mode != 'hotfix-noncode-loop' && inputs.mode != 'hotfix-forge-reference' && inputs.mode != 'hotfix-forge-creative' && inputs.mode != 'hotfix-forge-loft' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

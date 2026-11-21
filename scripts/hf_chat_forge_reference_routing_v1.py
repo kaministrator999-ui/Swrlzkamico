@@ -15,7 +15,7 @@ from urllib.request import urlopen
 SPACE = "kamiloki/Swyrlz"
 ROOT = Path(__file__).resolve().parents[1]
 RELEASE_NAME = os.getenv("SWRLZ_FORGE_RELEASE", "forge_reference_routing_v1")
-if RELEASE_NAME not in {"forge_reference_routing_v1", "forge_creative_stages_v1"}:
+if RELEASE_NAME not in {"forge_reference_routing_v1", "forge_creative_stages_v1", "forge_loft_repair_v1"}:
     raise RuntimeError("Unknown scoped Forge release")
 RELEASE = ROOT / "scripts/releases" / RELEASE_NAME
 MANIFEST = json.loads(RELEASE.with_suffix(".json").read_text())

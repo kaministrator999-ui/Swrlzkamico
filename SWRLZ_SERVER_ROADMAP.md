@@ -50,3 +50,7 @@ Publication verified by [run 44888179627](https://github.com/kaministrator999-ui
 ### 2026-11-21 — §C editable stages for delegated modeling
 
 The authenticated reference challenge reached native planning and exposed an unnecessary request for exact geometry. The [editable-stage checkpoint](docs/engineering/entries/2026-11-21_FORGE_CREATIVE_STAGES_V1.md) records the general policy repair and its evidence gates.
+
+### 2026-11-21 — §C compact reference reports and loft correction details
+
+The Atelier challenge recorded a token-truncated reference observation and an invalid loft that remained invalid after the bounded correction. The [checkpoint](docs/engineering/entries/2026-11-21_FORGE_LOFT_REPAIR_V1.md) records the compact one-pass vision policy, field-specific repair instructions, and the independent runtime acceptance gates.

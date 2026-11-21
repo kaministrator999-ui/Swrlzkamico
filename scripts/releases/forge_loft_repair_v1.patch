@@ -1,0 +1,74 @@
+--- a/chat_vision.py
++++ b/chat_vision.py
+@@ -42 +42 @@
+-MAX_VISION_OUTPUT_TOKENS = 224
++MAX_VISION_OUTPUT_TOKENS = 384
+@@ -653,3 +653,3 @@
+-            "relevant to the user's question. First distinguish an app screenshot, "
+-            "3D editor or rendered model, photo, drawing, diagram, document, "
+-            "multi-panel character reference, and other image types from one another. "
++            "relevant to the user's question. Identify its image type and subject briefly. "
++            "Use compact complete sentences about the visible details most relevant to the question. "
++            "Give one coherent observation without stock headings or lists of other image types. "
+--- a/forge_chat_actions.py
++++ b/forge_chat_actions.py
+@@ -20 +20 @@
+-                                FRAME_VIEWS, mesh_tools, operation_limit, validate_geometry)
++                                FRAME_VIEWS, mesh_tools, operation_limit, validate_geometry, loft_profile_issue)
+@@ -58 +58 @@
+-    def __init__(self, code: str):
++    def __init__(self, code: str, *, diagnostic: dict[str, Any] | None = None):
+@@ -60,0 +61 @@
++        self.diagnostic = diagnostic
+@@ -239 +240 @@
+-    for proposed in operations:
++    for operation_index, proposed in enumerate(operations, start=1):
+@@ -284,0 +286,4 @@
++            if geometry_error == "FORGE_INVALID_LOFT_PROFILE":
++                issue = loft_profile_issue(op)
++                if issue is not None:
++                    raise ForgePlanError(geometry_error, diagnostic={"operationIndex": operation_index, **issue})
+@@ -607,0 +613,2 @@
++                    if invalid.diagnostic is not None:
++                        repair_data["typedValidationDetail"] = invalid.diagnostic
+--- a/forge_mesh_tools_v2.py
++++ b/forge_mesh_tools_v2.py
+@@ -40 +40 @@
+-def _points(value, count, width, bounds):
++def _point_coordinates(value, count, width, bounds):
+@@ -43,2 +43,28 @@
+-                    and all(_number(n, *bounds[j]) for j, n in enumerate(p)) for p in value)
+-            and all(math.dist(a, b) > 1e-6 for a, b in zip(value, value[1:])))
++                    and all(_number(n, *bounds[j]) for j, n in enumerate(p)) for p in value))
++
++
++def _consecutive_points_are_distinct(value):
++    return all(math.dist(a, b) > 1e-6 for a, b in zip(value, value[1:]))
++
++
++def _points(value, count, width, bounds):
++    return _point_coordinates(value, count, width, bounds) and _consecutive_points_are_distinct(value)
++
++
++def loft_profile_issue(op):
++    """Identify the first failing field without changing the authored geometry."""
++    path = op.get("path")
++    if not _point_coordinates(path, 40, 3, [(-100, 100)] * 3):
++        return {"field": "path", "reason": "point-format",
++                "requirement": "Provide 2 to 40 finite XYZ triples with each coordinate in [-100, 100]."}
++    if not _consecutive_points_are_distinct(path):
++        return {"field": "path", "reason": "adjacent-spacing",
++                "requirement": "Consecutive path points must differ by a distance greater than 1e-6."}
++    radii = op.get("radii")
++    if not isinstance(radii, list) or len(radii) != len(path):
++        return {"field": "radii", "reason": "count-mismatch",
++                "requirement": "Provide exactly one radius per path point."}
++    if not all(_number(radius, .00025, 5) for radius in radii):
++        return {"field": "radii", "reason": "radius-range",
++                "requirement": "Every radius must be finite and in [0.00025, 5], including the final radius."}
++    return None
+@@ -52,3 +78 @@
+-        if (not _points(op.get("path"), 40, 3, [(-100, 100)] * 3)
+-                or not isinstance(op.get("radii"), list) or len(op["radii"]) != len(op["path"])
+-                or not all(_number(n, .00025, 5) for n in op["radii"])):
++        if loft_profile_issue(op):
