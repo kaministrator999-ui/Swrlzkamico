@@ -45,6 +45,7 @@ jobs:
               tool-capability-recovery-v1) mode=hotfix-tool-recovery ;;
               noncode-repetition-guard-v1) mode=hotfix-noncode-loop ;;
               forge-reference-routing-v1) mode=hotfix-forge-reference ;;
+              forge-creative-stages-v1) mode=hotfix-forge-creative ;;
               *) echo "::error::Unknown scoped Space release mode."; exit 1 ;;
             esac
           fi

@@ -12,7 +12,7 @@ on:
         description: "Validate package without publishing, or explicitly deploy"
         required: true
         type: choice
-        options: [inspect, benchmark, validate, deploy, hotfix-output-budget, hotfix-music-transform, hotfix-http500-feedback, hotfix-tool-recovery, hotfix-noncode-loop, hotfix-forge-reference]
+        options: [inspect, benchmark, validate, deploy, hotfix-output-budget, hotfix-music-transform, hotfix-http500-feedback, hotfix-tool-recovery, hotfix-noncode-loop, hotfix-forge-reference, hotfix-forge-creative]
         default: validate
       approved:
         description: "Confirm replacement ONLY of existing kamiloki/Swyrlz after snapshot"
@@ -45,9 +45,11 @@ concurrency:
 
 jobs:
   hotfix_forge_reference:
-    if: ${{ inputs.mode == 'hotfix-forge-reference' && inputs.approved == 'yes' }}
+    if: ${{ (inputs.mode == 'hotfix-forge-reference' || inputs.mode == 'hotfix-forge-creative') && inputs.approved == 'yes' }}
     runs-on: ubuntu-latest
     timeout-minutes: 35
+    env:
+      SWRLZ_FORGE_RELEASE: ${{ inputs.mode == 'hotfix-forge-creative' && 'forge_creative_stages_v1' || 'forge_reference_routing_v1' }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -61,7 +63,7 @@ jobs:
           test "$(git rev-parse HEAD)" = "$REVIEWED_REF"
       - uses: actions/setup-python@v5
         with: {python-version: '3.11'}
-      - name: Inspect exact live source and test image routing
+      - name: Inspect exact live source and run targeted planner tests
         run: |
           python -m pip install --quiet 'huggingface_hub>=0.34,<2'
           python -u scripts/hf_chat_forge_reference_routing_v1.py inspect
@@ -74,7 +76,7 @@ jobs:
         if: always()
         with:
           name: forge-reference-routing-source-and-publication
-          path: reports/forge-reference-routing-v1/
+          path: reports/forge-*/
           retention-days: 30
           if-no-files-found: warn
 
@@ -283,7 +285,7 @@ jobs:
         run: python -u scripts/hf_chat_http500_feedback_v1.py publish
 
   prepare:
-    if: ${{ inputs.mode != 'hotfix-output-budget' && inputs.mode != 'hotfix-music-transform' && inputs.mode != 'hotfix-http500-feedback' && inputs.mode != 'hotfix-tool-recovery' && inputs.mode != 'hotfix-noncode-loop' && inputs.mode != 'hotfix-forge-reference' }}
+    if: ${{ inputs.mode != 'hotfix-output-budget' && inputs.mode != 'hotfix-music-transform' && inputs.mode != 'hotfix-http500-feedback' && inputs.mode != 'hotfix-tool-recovery' && inputs.mode != 'hotfix-noncode-loop' && inputs.mode != 'hotfix-forge-reference' && inputs.mode != 'hotfix-forge-creative' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

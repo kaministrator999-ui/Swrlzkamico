@@ -1,0 +1,30 @@
+--- a/brain_forge.py
++++ b/brain_forge.py
+@@ -228,2 +228,5 @@
+-        "If the request requires other unsupported " 
+-        "operations, clarify the boundary instead of falsely claiming a finished detailed model. "
++        "For delegated creative construction or refinement, plan one coherent editable stage in the active project "
++        "within the advertised batch limit. Choose proportions, shapes and materials from the reference and scene "
++        "without asking for optional geometry, dimensions, or construction methods. An image observation describes "
++        "the intended appearance; it does not require a specific tool. If an optional detail exceeds the available "
++        "tools or batch limit, defer it and still plan a meaningful stage. Do not claim deferred work is complete. "
+@@ -231,3 +234,3 @@
+-        "If an existing target is ambiguous, unavailable, outside the current workspace or the requested behavior "
+-        "cannot be fully expressed by these operations, return clarify with no operations. "
+-        "Do not silently replace an unsupported request with a vaguely similar edit. "
++        "If an existing target is ambiguous, unavailable, or outside the active workspace, a required input is missing, "
++        "or the human explicitly requires an unsupported operation, return clarify with no operations. "
++        "Preserve all exact user constraints. Do not substitute another edit for an explicitly required action. "
+--- a/forge_modeling_lessons.py
++++ b/forge_modeling_lessons.py
+@@ -197,2 +197,2 @@
+-        "Build proportionate primitive blockouts only when fully expressible "
+-        "by allowlisted operations; advanced sculpting requires its own tools."
++        "Plan a proportionate editable stage using allowlisted operations "
++        "when the user delegates design. Advanced sculpting requires its own tools."
+@@ -263,3 +263,2 @@
+-            " For the JSON planner, unsupported operations must return "
+-            "disposition=clarify with an empty operations list; "
+-            "no extra operation types are permitted."
++            " Explicitly required unsupported operations must return disposition=clarify "
++            "with an empty operations list. Other stage proposals may use only advertised operation types."

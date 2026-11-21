@@ -14,11 +14,14 @@ from urllib.request import urlopen
 
 SPACE = "kamiloki/Swyrlz"
 ROOT = Path(__file__).resolve().parents[1]
-RELEASE = ROOT / "scripts/releases/forge_reference_routing_v1"
+RELEASE_NAME = os.getenv("SWRLZ_FORGE_RELEASE", "forge_reference_routing_v1")
+if RELEASE_NAME not in {"forge_reference_routing_v1", "forge_creative_stages_v1"}:
+    raise RuntimeError("Unknown scoped Forge release")
+RELEASE = ROOT / "scripts/releases" / RELEASE_NAME
 MANIFEST = json.loads(RELEASE.with_suffix(".json").read_text())
 BASE = MANIFEST["baseRevision"]
 FILES = MANIFEST["files"]
-RECEIPT = Path("reports/forge-reference-routing-v1")
+RECEIPT = Path("reports") / RELEASE_NAME.replace("_", "-")
 READY = "https://kamiloki-swyrlz.hf.space/api/hf/qwen35-ready"
 
 
@@ -41,7 +44,7 @@ def prepare(download):
         if hashlib.sha256(raw).hexdigest() != expected["after"]:
             raise RuntimeError(f"Candidate source mismatch for {name}")
         compile(raw, name, "exec")
-    subprocess.run(["python", str(ROOT / "tests/test_forge_reference_routing_v1.py"), str(before), str(after)], check=True)
+    subprocess.run(["python", str(ROOT / "tests" / f"test_{RELEASE_NAME}.py"), str(before), str(after)], check=True)
     return before, after
 
 
@@ -95,7 +98,7 @@ def main():
                         for name in FILES],
         ).oid
 
-    revision = commit(after, BASE, "Preserve native modeling intent and verified image evidence")
+    revision = commit(after, BASE, MANIFEST.get("summary", "Preserve native modeling intent and verified image evidence"))
     (RECEIPT / "publication.json").write_text(json.dumps({"base": BASE, "published": revision, "verified": False}))
     print("FORGE_REFERENCE_ROUTING_PUBLISHED", revision, flush=True)
     try:
@@ -105,7 +108,7 @@ def main():
         wait_until_serving(api, revision)
     except Exception:
         if api.repo_info(SPACE, repo_type="space").sha == revision:
-            rollback = commit(before, revision, "Restore source after Forge routing readiness failure")
+            rollback = commit(before, revision, "Restore source after scoped Forge readiness failure")
             print("FORGE_REFERENCE_ROUTING_ROLLBACK", rollback, flush=True)
         raise
     (RECEIPT / "publication.json").write_text(json.dumps({"base": BASE, "published": revision, "verified": True}))

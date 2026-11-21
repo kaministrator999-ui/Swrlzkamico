@@ -1,0 +1,7 @@
+# §C editable stages for delegated modeling requests
+
+The live Atelier accepted the original 1536 × 1152 six-view reference with the exact human brief. The visual model recognized six views of one character. The native planner asked for exact wing geometry, despite explicit delegation in the brief. No mesh changed during that first request. The same instructions that delegate omitted construction details also required clarification if the whole request exceeded the current typed tools. The general modeling lesson repeated that condition.
+
+The scoped change clarifies that §C may choose and propose one coherent editable stage from the reference and current workspace when a user delegates design. Optional finish details can be deferred. Missing required inputs, ambiguous existing targets and explicitly required unsupported actions still need clarification. Existing tool limits, scope, validation, frozen preview approval, host receipts and account saves continue to govern edits. The change contains no character geometry or asset recipe.
+
+The GitHub → Hugging Face workflow applies the two-file patch to the exact serving parent `8b52987d768dd5922bf3de95643b25ed61db4a75`. Exact before/after SHA-256 values, the typed-contract regression, and the release request record the candidate and deployment gates. Actual §C geometry quality, revision readback and multi-view acceptance require the authenticated Atelier retest.

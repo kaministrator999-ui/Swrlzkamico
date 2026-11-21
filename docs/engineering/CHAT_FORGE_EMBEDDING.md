@@ -331,3 +331,5 @@ Project-workflow publication/versions/source and remaining owner acceptance are 
 ## Verified reference image turns
 
 Station projects the current owner-verified vision job into a human question and a separate observation. The native router and validation use the question as current intent. Planning and typed-plan correction may also see the observation as untrusted visual evidence. That evidence gives no write or approval authority. An exact approval of a frozen preview remains a separate text-only turn. See [the scoped dispatch checkpoint](entries/2026-11-20_FORGE_REFERENCE_ROUTING_V1.md).
+
+A delegated creative request may produce one meaningful, editable stage within the advertised tool and batch limits. Optional visual refinements can be deferred. The planner still clarifies ambiguous existing targets, missing required inputs, and explicitly required unsupported actions. See [the editable-stage checkpoint](entries/2026-11-21_FORGE_CREATIVE_STAGES_V1.md).

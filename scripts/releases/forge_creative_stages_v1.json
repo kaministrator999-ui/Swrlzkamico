@@ -1,0 +1,14 @@
+{
+  "baseRevision": "8b52987d768dd5922bf3de95643b25ed61db4a75",
+  "summary": "Let delegated modeling requests proceed in editable stages",
+  "files": {
+    "brain_forge.py": {
+      "before": "6efb519b91ad2c2d9c6da95effcc151aa1a042b0d17abb401c17e0a14b047359",
+      "after": "d6cf8f00112bc88b1c9f753b20a073482e0823b716cf64c2e24cf8dbc6fb63e7"
+    },
+    "forge_modeling_lessons.py": {
+      "before": "05f85565da404f3d99ada71f3e85b8d1503b643eb5299c7523f718c04eadaba3",
+      "after": "af747ce0927027024cf1ecb0ddc64a668b2b2fc6c64677e3a0ac16aac24b5674"
+    }
+  }
+}
