@@ -13,7 +13,7 @@ from typing import Any
 
 MARK = "swrlz-action-verification-v1"
 _TERMINAL = {"COMPLETED", "CANCELLED", "FAILED"}
-_CODE = re.compile(r"(?s)\x60{3}.*?\x60{3}")
+_CODE = re.compile(r"(?s)\x60{3}.*?(?:\x60{3}|$)")
 _INTENT = re.compile(
     r"(?i)\b(?:you\s+(?:should|could|might|need to|can)|"
     r"we\s+(?:should|could|can|need to)|"
@@ -21,10 +21,10 @@ _INTENT = re.compile(
     r"let(?:'|’)s|consider|would you like (?:me|us) to|"
     r"do you want (?:me|us) to|shall i)\b")
 _ACTION = re.compile(
-    r"(?i)\b(?:build|create|make|write|draft|develop|implement|"
+    r"(?i)\b(?:build(?:ing)?|creat(?:e|ing)|mak(?:e|ing)|writ(?:e|ing)|draft(?:ing)?|develop(?:ing)?|implement(?:ing)?|"
     r"install|buy|purchase|apply|replace|upload|send|deploy|"
     r"add|remove|fix|update|set up|hire|design|research|"
-    r"search|book|schedule|generate|start|use|check|look up|"
+    r"search(?:ing)?|book(?:ing)?|schedul(?:e|ing)|generat(?:e|ing)|start(?:ing)?|us(?:e|ing)|check(?:ing)?|look(?:ing)? up|"
     r"put together|prepare|assemble|rebuild|redo)\b")
 _GREETING = re.compile(r"(?i)^\s*(?:hey|hi|hello|yo|sup|thanks|thank you|lol|lmao)[!.\s]*$")
 _MAX_TEXT = 12000
