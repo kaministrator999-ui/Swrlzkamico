@@ -327,3 +327,7 @@ no unrelated game suites or automatic hosted browser marathons.
 Current release/source evidence is authoritative in [the checkpoint](entries/2026-10-29_CHAT_FORGE_INTEGRATION.md#update-finished--publication-and-handoff-receipt). The host clears cloud project IDs/revisions and its visible cloud list on account-change revoke; ordinary thread changes preserve the current account reference.
 
 Project-workflow publication/versions/source and remaining owner acceptance are recorded in [the release checkpoint](entries/2026-10-30_CHAT_FORGE_PROJECT_WORKFLOW.md#update-finished--verified-publication-source-delivery-and-authority). Explicit native orchestration does not erase the recorded rawmodelplanning negatives.
+
+## Verified reference image turns
+
+Station projects the current owner-verified vision job into a human question and a separate observation. The native router and validation use the question as current intent. Planning and typed-plan correction may also see the observation as untrusted visual evidence. That evidence gives no write or approval authority. An exact approval of a frozen preview remains a separate text-only turn. See [the scoped dispatch checkpoint](entries/2026-11-20_FORGE_REFERENCE_ROUTING_V1.md).
