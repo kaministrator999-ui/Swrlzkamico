@@ -1,3 +1,13 @@
+## §WYRL§ Engine v11.532 · Verified project account saves and recovery receipts (2026-11-20)
+
+**Project save correction:** Full-project Save to Account uses the existing checked native save facade, preserving account ownership checks, project ID, revision preflight and the persisted account link. Startup restores that link before refreshing the local snapshot. This corrects a path that could commit an account save while reporting it as unconfirmed.
+
+**Uncertain responses:** A small local receipt is persisted before account write dispatch. A lost acknowledgement blocks blind write replay; recovery requires authenticated reads confirming the exact account project ID, next revision, local identity and SHA-256 of the dispatched project bytes. A first save with an unknown remote ID requires explicitly opening the saved account project; names are never used to guess identity. Local recovery and newer autosaves are preserved.
+
+**Evidence and mission status:** The canonical 509-patch build, inline JavaScript parse, actual assembled save-chain tests, four relevant persistence units and 78-asset integrity checks pass locally. The historical save failure is exercised as a negative control. Delivery status and live verified-account save/reopen acceptance are tracked in the linked audit; local source results do not establish a live account save. The Little Glitch Dragon mission has not started: §C remains the sole modeler, with Codex supervising and fixing general capability gaps. Live engine access, the original six-view reference image file and verified §Chat account access remain unresolved. No new project, model or account write, constructed dragon or model screenshot is claimed. The separate §Chat native-continuity repair is pending.
+
+See [v11.532 save receipts, evidence and acceptance](docs/PROJECT_ACCOUNT_SAVE_RECEIPT_V11_532.md). The existing engine architecture, providers, geometry, UVs, rigging, project history and asset-save path are preserved.
+
 ## §WYRL§ Engine v11.530 · Immersive controller console and continuous gizmos (2026-11-20)
 
 **Continuous transform:** Trigger-grabbing a native Move/Rotate/Scale gizmo updates the native preview continuously as the controller ray moves, with a grip fallback for unstable nearly parallel rays. The existing selected-model direct Trigger drag also supports axis-free movement. Release commits one history edit; B cancels.
