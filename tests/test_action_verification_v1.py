@@ -101,12 +101,32 @@ class ActionVerificationTests(unittest.TestCase):
         count = [0]
         def stopped():
             count[0] += 1
-            return count[0] > 3
+            return count[0] > 2
         events = list(supervise({"prompt": "How's the career plan?"},
                                 lambda p: response("You should build a portfolio."),
                                 lambda p, q: self.fail("Cancelled request must not lookup"),
                                 stopped))
         self.assertEqual(events[-1]["type"], "CANCELLED")
+
+    def test_lookup_happens_while_first_generation_is_active(self):
+        order = []
+        def model(p):
+            if p.get("_actionVerificationPass"):
+                return response("Review available documents first.")
+            def first():
+                yield {"type": "STARTED"}
+                yield {"type": "DELTA", "text": "You should build a portfolio."}
+                order.append("first-generation-continued")
+                yield {"type": "COMPLETED"}
+            return first()
+        def lookup(p, q):
+            self.assertNotIn("first-generation-continued", order)
+            order.append("lookup")
+            return {"status": "context_only", "entries": []}
+        events = list(supervise({"prompt": "I want a different career."},
+                                model, lookup, lambda: False))
+        self.assertEqual(order, ["lookup", "first-generation-continued"])
+        self.assertEqual(answer(events), "Review available documents first.")
 
     def test_context_is_bounded(self):
         p = {"historicalEvidence": [{"source": "test", "excerpt": "x" * 100000}] * 200}
