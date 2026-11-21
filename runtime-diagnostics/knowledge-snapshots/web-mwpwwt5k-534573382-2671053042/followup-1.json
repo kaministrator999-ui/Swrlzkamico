@@ -1,0 +1,15 @@
+{
+  "schema": "swrlz-knowledge-followup-v1",
+  "requestId": "web-mwpwwt5k-534573382-2671053042",
+  "modelId": "coder",
+  "eventType": "KNOWLEDGE_ACQUISITION_FOLLOWUP_1",
+  "sourceRef": "f149dd857e3d9219f5cae7da0286b5dbfec85c42",
+  "persistedAtUnixMs": 1795277900222,
+  "diagnostic": {
+    "schema": "swrlz-knowledge-followup-v1",
+    "parentRequestId": "web-mwpwwt5k-534573382-2671053042",
+    "turnIndex": 1,
+    "userText": "Create a new project from blank-model named \"Little Glitch Dragon — AI Modeling Test\".",
+    "capturedAtUnixMs": 1795277900221
+  }
+}
