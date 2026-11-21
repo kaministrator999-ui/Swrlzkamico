@@ -44,3 +44,5 @@ User explicitly requested continued §C teaching but will test later. PRs [#334]
 ### 2026-11-20 — §C reference-based native modeling dispatch
 
 The Atelier challenge exposed two deterministic native routing errors involving delegated construction methods and visual analysis mixed into the human command. The bounded §C candidate separates those inputs at the verified image handoff and retains the exact preview approval and editor-lease gates. The [checkpoint](docs/engineering/entries/2026-11-20_FORGE_REFERENCE_ROUTING_V1.md) records source lineage, regression coverage and the remaining modeling acceptance test.
+
+Publication verified by [run 44888179627](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/44888179627) and exact readback of serving HF revision `8b52987d768dd5922bf3de95643b25ed61db4a75`. The authenticated reference-to-edit test still requires the original upload and a verified account save.
