@@ -1,0 +1,16 @@
+name: Verify Aiven Valkey TLS on live §C
+on:
+  push:
+    branches: [feature/aiven-valkey-storage-adapter]
+    paths: ["scripts/hf_valkey_probe_verify.py",".github/workflows/hf-valkey-probe-verify.yml"]
+permissions: {contents: read}
+jobs:
+  live-verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.11"}
+      - name: Read sanitized probe result; leave user storage unchanged
+        run: python -u scripts/hf_valkey_probe_verify.py

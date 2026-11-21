@@ -1,0 +1,33 @@
+name: Guarded install dormant Valkey adapter in real §C gateway
+on:
+  push:
+    branches: [feature/aiven-valkey-storage-adapter]
+    paths: ["scripts/hf_valkey_adapter_release.py",".github/workflows/hf-valkey-adapter-release.yml"]
+permissions: {contents: read}
+concurrency:
+  group: swrlz-hf-space-deployment
+  cancel-in-progress: false
+jobs:
+  install:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.11"}
+      - run: python -m pip install "huggingface_hub>=0.34,<2"
+      - name: Verify exact live file, absent switch flag, and restore snapshot
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: python -u scripts/hf_valkey_adapter_release.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: valkey-gateway-exact-upstash-source-backup
+          path: valkey-real-gateway-backup/
+          retention-days: 90
+          if-no-files-found: error
+      - name: Install inactive adapter only, no cutover, no data migration
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          SWRLZ_DEPLOY_DORMANT_VALKEY: "1"
+        run: python -u scripts/hf_valkey_adapter_release.py
