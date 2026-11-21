@@ -1,5 +1,5 @@
 TARGET=kamiloki/Swyrlz
 APPROVED=1
-CHANGE_SCOPE=noncode-repetition-guard-v1
-SOURCE_REF=b2b21a51909df8b84c56bbda90fb4c18e98bdc42
-REQUEST_NONCE=noncode-repetition-20261116-b2b21a51
+CHANGE_SCOPE=forge-reference-routing-v1
+SOURCE_REF=ef73c9ed2ddc7382319e517f2b64a2ba7d19714f
+REQUEST_NONCE=forge-reference-routing-20261120-ef73c9ed2d
