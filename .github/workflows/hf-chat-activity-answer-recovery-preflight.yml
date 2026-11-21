@@ -1,0 +1,64 @@
+name: §C narrated work + factual answer limit preflight
+on:
+  push:
+    branches: [feature/chat-event-backed-work-narration-v1]
+    paths:
+      - "api/response_limit_recovery.py"
+      - "scripts/hf_chat_activity_answer_recovery_v1.py"
+      - "tests/test_hf_chat_activity_output_recovery.py"
+      - ".github/workflows/hf-chat-activity-answer-recovery-preflight.yml"
+permissions: {contents: read}
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.11"}
+      - run: python -m pip install --quiet "huggingface_hub>=0.34,<2"
+      - name: Focused Python and Node regression tests
+        run: |
+          set -euo pipefail
+          python -m unittest discover -s tests -p 'test_hf_chat_activity_output_recovery.py' -v
+          python -m py_compile scripts/hf_chat_activity_answer_recovery_v1.py api/response_limit_recovery.py
+      - name: Stage exact live Hugging Face candidate without publishing
+        run: |
+          set -euo pipefail
+          python -u scripts/hf_chat_activity_answer_recovery_v1.py --out /tmp/swrlz-activity-candidate
+      - name: Verify exact staged engine and browser source syntax
+        run: |
+          python - <<'PY'
+          import ast
+          from html.parser import HTMLParser
+          from pathlib import Path
+          import subprocess,tempfile,os
+          base=Path("/tmp/swrlz-activity-candidate/candidate")
+          engine=(base/"lfm2_700m_engine.py").read_text()
+          ast.parse(engine)
+          assert "swrlz-research-answer-limit-recovery-v1" in engine
+          html=(base/"chat/§wyrlz/index.html").read_text()
+          class ScriptParser(HTMLParser):
+              def __init__(self):super().__init__();self.inside=False;self.items=[]
+              def handle_starttag(self,tag,attrs):
+                  if tag=="script" and not dict(attrs).get("src"):
+                      self.inside=True;self.items.append("")
+              def handle_endtag(self,tag):
+                  if tag=="script":self.inside=False
+              def handle_data(self,data):
+                  if self.inside:self.items[-1]+=data
+          parser=ScriptParser();parser.feed(html)
+          count=0
+          for code in parser.items:
+              if not code.strip():continue
+              with tempfile.NamedTemporaryFile(mode="w",suffix=".js",delete=False) as f:
+                  f.write(code);filename=f.name
+              try:
+                  result=subprocess.run(["node","--check",filename],capture_output=True,text=True)
+                  if result.returncode:
+                      raise RuntimeError("JS syntax failure: "+result.stderr[:1000])
+              finally:os.unlink(filename)
+              count+=1
+          assert count>0
+          print("SWRLZ_ACTIVITY_PREPARE_SYNTAX_PASS",count)
+          PY
