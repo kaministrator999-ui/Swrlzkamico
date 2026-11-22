@@ -1,3 +1,7 @@
+## §E v11.535 · Google sign-in code visible from startup (2026-11-22)
+
+The account-first Sign in with Google action now opens the existing secure §Chat panel above the startup gate, where the established 12-character temporary recovery proof can be copied before selecting Continue to Google. The code remains entirely in the Chat-origin iframe; no §E credential or second OAuth implementation was added. Original native project loading, cloud revisions and local continuation remain unchanged. See [the v11.535 correction and owner-device acceptance](docs/GOOGLE_ACCOUNT_CODE_V11_535.md).
+
 ## §E v11.534 · Native mesh reshape for §Chat (2026-11-22)
 
 The source candidate extends the existing §Chat bridge with one approved native reshape for a plain primitive or loft. The edit preserves mesh identity, transforms, materials and group links through native Undo and project persistence. See [mesh reshape contract and verification](docs/CHAT_MESH_SHAPE_EDIT_V11_534.md).
