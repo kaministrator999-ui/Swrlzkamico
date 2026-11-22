@@ -1,3 +1,7 @@
+## §E v11.538 · Immersive sculpt envelope, responsiveness and VR starter loading (2026-11-22)
+
+Native immersive Model Studio replaces the flat brush cursor with a low-detail strength dome, a precise selector and a bounded real-mesh influence-wire preview. Sculpt processing reduces per-frame update pressure and per-vertex allocation overhead. Existing parameter controls are compacted without duplicate actions. The native immersive project list includes the previously unregistered Smooth Witch Hat and other hat/mannequin starters, and asynchronous project switches retain the WebXR session. Headset acceptance is pending. See [v11.538 owner QA and implementation](docs/IMMERSIVE_SCULPT_PREVIEW_V11_538.md).
+
 ## §E v11.534 · Native mesh reshape for §Chat (2026-11-22)
 
 The source candidate extends the existing §Chat bridge with one approved native reshape for a plain primitive or loft. The edit preserves mesh identity, transforms, materials and group links through native Undo and project persistence. See [mesh reshape contract and verification](docs/CHAT_MESH_SHAPE_EDIT_V11_534.md).
