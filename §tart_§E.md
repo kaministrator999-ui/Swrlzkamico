@@ -1,3 +1,7 @@
+## §E v11.536 · Native Google sign-in code and §Chat modeling references (2026-11-22)
+
+The §E startup card itself displays the temporary Google code with Copy code and Continue to Google, so it no longer requires opening the embedded §Chat panel just to retrieve a code. §Chat continues to own the Google session, verified pair exchange and account synchronization. Users can explicitly import an image uploaded to integrated §Chat into the current Model Atelier project's existing portable reference library, preserving undo, native reference limits and Qwen analysis. Device acceptance for sign-in and image imports remains pending.
+
 ## §E v11.534 · Native mesh reshape for §Chat (2026-11-22)
 
 The source candidate allows a compatible §Chat release to request one approved in-place shape edit on an eligible native mesh. The edit preserves mesh identity and uses the existing project history. See the [mesh reshape checkpoint](projects/swrlz-forge-moba/docs/CHAT_MESH_SHAPE_EDIT_V11_534.md).
