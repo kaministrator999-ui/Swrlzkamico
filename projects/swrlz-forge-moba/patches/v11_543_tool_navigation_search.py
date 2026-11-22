@@ -27,7 +27,11 @@ def apply(html):
                   'SWYRLZ_E_UV_POPUP'):
         assert token in script,token
     assert 'se543-search-dialog' in css
-    html=once(html,'</head>','<style>\n'+css+'\n</style>\n</head>','search styles')
+    # A later runtime literal contains another </head>; edit only the real
+    # document head near the beginning of the assembled HTML, not that string.
+    head=html.find('</head>')
+    assert 0<head<200000 and '<head>' in html[:head],('document head missing',head)
+    html=html[:head]+'<style>\n'+css+'\n</style>\n'+html[head:]
     html=once(html,'window.SWRLZ_FORGE_BUILD=',script+'\nwindow.SWRLZ_FORGE_BUILD=','native search')
     for before,after in (
       (OLD,MARKER),
