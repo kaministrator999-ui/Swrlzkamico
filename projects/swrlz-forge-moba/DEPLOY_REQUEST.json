@@ -1,10 +1,10 @@
 {
   "schema": "swrlz-forge-deploy-request-v1",
-  "requestedBy": "ChatGPT (owner approved fixing §E interface and adding menu search)",
+  "requestedBy": "ChatGPT (owner-approved fix for painted robot face on torso / illustrated hands on sides)",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.543",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_543_TOOL_NAVIGATION_SEARCH",
-  "reason": "Publish global §E Find Tool/area search in workspace and Model Studio headers. Search actual native workspaces, Model Studio category/modes, UV Editor, materials, rigging, starter projects. Distinguish UV wireframe preview from real Export UV wireframe. Reparent original UV export button next to preview with original bound handler and move-state; search highlights original export without executing. Preserve saves, geometry, UV assets and account integrations. All 520 ordered patches and 82 packaged assets source-verified plus static delivery checks.",
-  "sourceCommit": "879d64a002b99e9a24d6b1acd2b36814118cbaff",
-  "sourceIntegritySha256": "c81ad796dfa034b03af02a3f80ad0951fc2c8f065ffa6e6752eac5c6c14e847d"
+  "releaseVersion": "v11.544",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_544_HUMANOID_SURFACE_PAINT",
+  "reason": "Ship real geometry-anchored humanoid robot material baked from actual 3D position/normal into the existing 84 xatlas UV charts, with no incorrect face or hands on torso. Exactly preserves one connected body, 8792 UV vertices, 13932 triangles, UV coords, project identity and account saves. Publish matched 1024px PNG and corrected starter; provide explicit Undo-safe Restore mapped robot texture action for current compatible selected humanoid. CI verified region-mask diagnostic, real front/back/side textured projections, UV/geometry identity, native paint repair, menu/category tests, 521-patch SHA-sealed source and 84 packaged assets.",
+  "sourceCommit": "b920adb89f9f425b685b2f79698ea221e6e63109",
+  "sourceIntegritySha256": "241bf26d44017042171e0796b691a287fbd9bcb79083a3256e784d45630e9e31"
 }
