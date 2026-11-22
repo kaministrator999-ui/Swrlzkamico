@@ -1,0 +1,62 @@
+name: Seal §E v11.537 robotic humanoid mannequin
+on:
+  push:
+    branches: [main]
+    paths:
+      - "projects/swrlz-forge-moba/RELEASE_PREPARE_V11_537.json"
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: se537-source-seal
+  cancel-in-progress: false
+jobs:
+  seal:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - name: Checkout authoritative engine source
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: true
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Validate authored native mannequin geometry
+        run: |
+          node --check projects/swrlz-forge-moba/runtime/robotic_humanoid_mannequin_v11_537.js
+          node projects/swrlz-forge-moba/tests/robotic_humanoid_mannequin_v11_537.cjs
+          python -m py_compile projects/swrlz-forge-moba/patches/v11_537_robotic_humanoid_mannequin.py
+      - name: Assemble exact HTML and write calculated integrity metadata
+        run: python projects/swrlz-forge-moba/scripts/prepare_v11_537_release.py
+      - name: Verify fully rebuilt signed source and release tests
+        run: |
+          python projects/swrlz-forge-moba/scripts/verify_v11_537_release.py --output /tmp/se537-sealed
+          python projects/swrlz-forge-moba/scripts/package_static_delivery_v11_537.py --output /tmp/se537-sealed
+          node --check /tmp/se537-sealed/swrlz-engine-v11.537.js
+      - name: Commit only verified source integrity manifest
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add projects/swrlz-forge-moba/source-manifest.json
+          git diff --cached --quiet && { echo "No verified changes"; exit 1; }
+          git commit -m "seal(§E v11.537): validate robotic humanoid starter against generated HTML"
+          git fetch origin main
+          git rebase origin/main
+          git push origin HEAD:main
+      - name: Retain verified integrity evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: se537-native-mannequin-source-integrity
+          path: |
+            projects/swrlz-forge-moba/source-manifest.json
+          if-no-files-found: error
