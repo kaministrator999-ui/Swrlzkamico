@@ -1,3 +1,7 @@
+## §E v11.539 · Immersive VR sculpt preview and loading improvements (2026-11-22)
+
+Native Model Studio immersive WebXR now displays a pooled translucent displacement dome, a surface selector, and a capped wireframe preview sampled from the **actual source mesh**. Brush updates use reduced allocation overhead and bounded sample cadence; native Undo, editable mesh data, and controller actions remain authoritative. The existing parameter toolbar has less empty area, and the VR project starter library now registers Smooth Witch Hat with a session-safe asynchronous load handoff. This follows and preserves the independent v11.538 single-mesh humanoid release. Physical Quest 2 acceptance of frame time and usability remains outstanding. [Scoped implementation, regression criteria and owner QA](docs/IMMERSIVE_SCULPT_PREVIEW_V11_539.md).
+
 ## §E v11.536 · Native Google login and §Chat image references (2026-11-22)
 
 The **initial §E login screen** now requests the existing Google pairing proof and displays the temporary 12-character code there, with **Copy code** and **Continue to Google** controls. The code is shared only through §C's bound account channel; Google login and PKCE exchange remain verified on §C, and the resulting authenticated session connects the integrated §Chat and account-backed §E projects. The previous full-Chat-panel workaround is no longer necessary.
