@@ -1,51 +1,43 @@
-name: Measure §E v11.535 sign-in code visibility source
+name: Verify §E v11.535 sign-in code source and static delivery
 on:
   push:
     branches: [main]
     paths:
+      - ".github/workflows/measure-engine-v11-535-signin.yml"
       - "projects/swrlz-forge-moba/patches/v11_535_startup_signin_code.py"
+      - "projects/swrlz-forge-moba/source-manifest.json"
+      - "projects/swrlz-forge-moba/scripts/verify_v11_535_release.py"
+      - "projects/swrlz-forge-moba/scripts/package_static_delivery_v11_535.py"
+      - "projects/swrlz-forge-moba/tests/engine_account_signin_v11_535.cjs"
 permissions:
   contents: read
 jobs:
-  calculate:
+  verify:
     runs-on: ubuntu-latest
-    timeout-minutes: 12
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      - name: Rebuild canonical patch chain and calculate v11.535 integrity
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify sealed 512-patch source and focused regressions
+        run: python projects/swrlz-forge-moba/scripts/verify_v11_535_release.py --output /tmp/se535-release
+      - name: Verify lossless static delivery package
+        run: |
+          python projects/swrlz-forge-moba/scripts/package_static_delivery_v11_535.py --output /tmp/se535-release
+          node --check /tmp/se535-release/swrlz-engine-v11.535.js
+      - name: Report exact release receipt
         run: |
           python - <<'PY'
-          import base64,gzip,hashlib,importlib.util,json
+          import json
           from pathlib import Path
-          root=Path('projects/swrlz-forge-moba')
-          m=json.loads((root/'source-manifest.json').read_text('utf8'))
-          assert m['patches'][-1]=='patches/v11_534_chat_mesh_shape_edit.py'
-          patches=m['patches']+['patches/v11_535_startup_signin_code.py']
-          encoded=''.join((root/name).read_text('utf8').strip() for name in m['chunks'])
-          base=gzip.decompress(base64.b64decode(encoded))
-          assert hashlib.sha256(base).hexdigest()==m['baseSha256']
-          html=base.decode('utf8')
-          for n,rel in enumerate(patches,1):
-              path=root/rel
-              spec=importlib.util.spec_from_file_location('se_patch_'+str(n),path)
-              module=importlib.util.module_from_spec(spec)
-              spec.loader.exec_module(module)
-              html=module.apply(html)
-          assert 'signIn:()=>{openPanel();return signIn();},' in html
-          assert '#se476StartupGate:not([hidden]) ~ #seChatAccountPanel:not([hidden])' in html
-          assert 'SWYRL_ENGINE_DEPLOY_MARKER: V11_535_STARTUP_SIGNIN_CODE' in html
-          assert "se177Prepared={pairId:result.pairId" in html
-          assert "window.SWRLZ_FORGE_BUILD={version:'v11.535'" in html
-          assert html.count(" source.engine='§wyrl§ Engine · Maker v11.535';source.version=11.535;")==5
-          data=html.encode('utf8')
-          print('SE535_SEAL_CANDIDATE '+json.dumps({
-              'patches':len(patches),'finalBytes':len(data),
-              'finalSha256':hashlib.sha256(data).hexdigest()
-          }),flush=True)
-          Path('/tmp/se535.html').write_bytes(data)
+          r=json.loads(Path('/tmp/se535-release/SOURCE.json').read_text())
+          print('SE535_RELEASE_READY',json.dumps({
+            'version':r['sourceVersion'],'bytes':r['finalBytes'],
+            'sha256':r['finalSha256'],'assets':len(r['assets']),
+            'delivery':r.get('staticDelivery',{}).get('mode')
+          }))
           PY
-      - name: Check full assembled engine JavaScript syntax
-        run: python projects/swrlz-forge-moba/scripts/check_inline_js_syntax_v11_266.py /tmp/se535.html
