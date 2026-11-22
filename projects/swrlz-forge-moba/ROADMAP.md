@@ -1,3 +1,7 @@
+## §E v11.539 · Immersive VR sculpt preview and loading improvements (2026-11-22)
+
+Native Model Studio immersive WebXR now displays a pooled translucent displacement dome, a surface selector, and a capped wireframe preview sampled from the **actual source mesh**. Brush updates use reduced allocation overhead and bounded sample cadence; native Undo, editable mesh data, and controller actions remain authoritative. The existing parameter toolbar has less empty area, and the VR project starter library now registers Smooth Witch Hat with a session-safe asynchronous load handoff. This follows and preserves the independent v11.538 single-mesh humanoid release. Physical Quest 2 acceptance of frame time and usability remains outstanding. [Scoped implementation, regression criteria and owner QA](docs/IMMERSIVE_SCULPT_PREVIEW_V11_539.md).
+
 ## §E v11.534 · Native mesh reshape for §Chat (2026-11-22)
 
 The source candidate extends the existing §Chat bridge with one approved native reshape for a plain primitive or loft. The edit preserves mesh identity, transforms, materials and group links through native Undo and project persistence. See [mesh reshape contract and verification](docs/CHAT_MESH_SHAPE_EDIT_V11_534.md).
