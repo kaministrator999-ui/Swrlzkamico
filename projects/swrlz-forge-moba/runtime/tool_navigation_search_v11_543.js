@@ -11,7 +11,8 @@
   {id:'workspace-particles',label:'Particle Studio',path:'Workspaces / Particle Studio',aliases:'particles emitters effects vfx',kind:'workspace',target:'particles'},
   {id:'projects',label:'Starter Projects & My Projects',path:'Projects / Library',aliases:'models library load save starter project character',kind:'click',selector:'#se320ModelProjects,#projectBtn'},
   {id:'uv',label:'UV Editor',path:'Model Studio / UV Editor',aliases:'uv map paint texture unwrap',kind:'uv'},
-  {id:'uv-wireframe',label:'UV wireframe',path:'Model Studio / UV Editor',aliases:'current uv guide layout export coordinates',kind:'uv-view',value:'wireframe'},
+  {id:'uv-export',label:'Export UV wireframe',path:'Model Studio / UV Editor / Export',aliases:'current uv guide export actual mesh download png save wireframe coordinate guide',kind:'uv-control'},
+  {id:'uv-wireframe',label:'UV wireframe',path:'Model Studio / UV Editor',aliases:'preview display show uv layout coordinates',kind:'uv-view',value:'wireframe'},
   {id:'uv-texture',label:'Applied texture',path:'Model Studio / UV Editor',aliases:'painted image preview texture',kind:'uv-view',value:'texture'},
   {id:'uv-surface',label:'Surface map',path:'Model Studio / UV Editor',aliases:'surface directions front back top sides',kind:'uv-view',value:'surface'},
   {id:'uv-stretch',label:'Stretch heatmap',path:'Model Studio / UV Editor',aliases:'uv distortion texel density stretching',kind:'uv-view',value:'stretch'},
@@ -54,6 +55,27 @@
   }).filter(Boolean);
   matches.sort((a,b)=>b.score-a.score||a.item.label.localeCompare(b.item.label));
   return matches.slice(0,35).map(x=>x.item);
+ }
+ // Keep ONE native Export UV button and its existing click listener.
+ // The preview should expose that control without forcing the user to scroll.
+ function relocateUVExport(){
+  const action=$('#se336UVExport');
+  const preview=$('#se356UVPreview .se356-uv-preview-actions');
+  if(!action||!preview)return false;
+  if(action.parentElement!==preview){
+   preview.prepend(action);
+   action.title='Export actual selected-mesh UV wireframe PNG';
+  }
+  return true;
+ }
+ function spotlight(button){
+  for(let node=button?.parentElement;node;node=node.parentElement)
+   if(node.tagName==='DETAILS')node.open=true;
+  if(button){
+   button.classList?.add('se543-export-highlight');
+   reveal(button);
+   button.focus?.({preventScroll:true});
+  }
  }
  function activateWorkspace(mode){
   const studios=window.SWYRL_ENGINE_STUDIOS;
@@ -111,12 +133,20 @@
    const api=window.SWYRL_ENGINE_MINI_STUDIOS_496;
    return !!api?.set?.(entry.target);
   }
-  if(entry.kind==='uv'||entry.kind==='uv-view'||entry.kind==='uv-section'){
+  if(entry.kind==='uv'||entry.kind==='uv-view'||entry.kind==='uv-section'||entry.kind==='uv-control'){
    const api=window.SWYRLZ_E_UV_POPUP;
    if(!api?.open)return false;
    api.open();
    const popup=$('#se355UVPopup',panel);
    if(!popup||popup.hidden)return false;
+   relocateUVExport();
+   if(entry.kind==='uv-control'){
+    const actual=$('#se336UVExport',popup);
+    if(!actual)return false;
+    // Navigate/highlight only; file export remains an explicit user click.
+    spotlight(actual);
+    return true;
+   }
    if(entry.kind==='uv-section'){
     return enabledClick('[data-se355-section="'+entry.value+'"]',popup);
    }
@@ -202,6 +232,7 @@
  }
  function install(){
   if(!document.body)return;
+  relocateUVExport();
   if(!$('#se543SearchDialog')){
    const shade=document.createElement('div');shade.id='se543SearchOverlay';
    shade.className='se543-search-overlay';shade.hidden=true;
@@ -259,8 +290,8 @@
   const observer=new MutationObserver(records=>{
    if(mountQueued)return;
    if(!records.some(r=>[...r.addedNodes].some(node=>node.nodeType===1&&
-     (node.matches?.('.se187-workspace-tabs,.se225-studio-tabs,#modelAtelierPanel')||
-      node.querySelector?.('.se187-workspace-tabs,.se225-studio-tabs,#modelAtelierPanel')))))return;
+     (node.matches?.('.se187-workspace-tabs,.se225-studio-tabs,#modelAtelierPanel,#se356UVPreview,#modelAtelierUVLayout,#se355UVPopup')||
+      node.querySelector?.('.se187-workspace-tabs,.se225-studio-tabs,#modelAtelierPanel,#se356UVPreview,#modelAtelierUVLayout,#se355UVPopup')))))return;
    mountQueued=true;queueMicrotask(()=>{mountQueued=false;install();});
   });
   observer.observe(document.body,{childList:true,subtree:true});
@@ -273,7 +304,7 @@
   });
  }
  window.SWYRL_E_TOOL_SEARCH_543=Object.freeze({
-  search,navigate,open:openSearch,close:closeSearch,
+  search,navigate,relocateExport:relocateUVExport,open:openSearch,close:closeSearch,
   status:()=>({open,installed:!!$('#se543SearchDialog')})
  });
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});
