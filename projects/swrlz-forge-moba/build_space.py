@@ -136,6 +136,9 @@ def main():
     media_paths.append("scenes/model-atelier-futuristic-humanoid-v11-538.swyrl.json")
     # v11.540: manifold one-body five-finger hand model; keep v11.538 as historical asset.
     media_paths.append("scenes/model-atelier-futuristic-humanoid-v11-540.swyrl.json")
+    # v11.542: original manifold body with relaxed UVs + diagnostic 2048px paint guide.
+    media_paths.append("scenes/model-atelier-futuristic-humanoid-v11-542.swyrl.json")
+    media_paths.append("assets/models/futuristic-humanoid-v11-542-uv-guide.png")
     media_paths.append("scenes/model-atelier-comet-courier-v11-77.swyrl.json")
     media_paths.extend(p.relative_to(ROOT).as_posix() for p in sorted((ROOT / "assets/models/comet-courier").glob("*")) if p.is_file())
     media_paths.extend(["scenes/sheep-tag-wildwood-v11-79.swyrl.json", "assets/sheep-tag/moonbell-wildwood-ground-4k.jpg"])
