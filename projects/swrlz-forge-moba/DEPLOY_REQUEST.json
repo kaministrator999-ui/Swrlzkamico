@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT (owner-approved)",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.533",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_533_PROJECT_ACCOUNT_OPEN",
-  "reason": "Restore account project opening by carrying the selected project ID through the composed loader and reporting success after the matching saved revision is imported. Verified the failing and fixed paths in mobile Chrome, and verified the canonical 510-patch source and static package.",
-  "sourceCommit": "ab9eff3f6d249429d4e3d0ee729a71665d8fc9c8",
-  "sourceIntegritySha256": "f1073aab6e0f4619605e0fd3461ae0ba6b77631a04be4bc93b26400b842e50e6"
+  "releaseVersion": "v11.534",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_534_CHAT_MESH_SHAPE_EDIT",
+  "reason": "Publish the opt-in native in-place reshape for a single reviewed plain mesh. The verified canonical build covers project open/save, history, stale/replayed actions, protected meshes and existing native edits.",
+  "sourceCommit": "31b0169780a611d8584d42e352c7bdc2a429f41d",
+  "sourceIntegritySha256": "3b084f548df7aa9b241edab7891dac534ced262e8b707de73dad681832042557"
 }
