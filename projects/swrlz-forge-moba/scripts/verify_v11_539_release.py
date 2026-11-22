@@ -19,7 +19,7 @@ def run(*command):
 
 def verify(output, manifest, check_request=False):
     assert manifest["name"] == "§wyrl§ Engine v11.539"
-    assert manifest["finalArtifact"] == "swyrl_engine_v11_537.html"
+    assert manifest["finalArtifact"] == "swyrl_engine_v11_538.html"
     assert len(manifest["patches"]) == 516
     assert manifest["patches"][-2:] == [
         "patches/v11_538_smooth_uv_humanoid.py", "patches/v11_539_immersive_sculpt_load.py",
@@ -35,18 +35,22 @@ def verify(output, manifest, check_request=False):
                   "swrlz-forge-mesh-shape-edit-v1", "RESHAPE_REQUIRES_SEPARATE_BATCH",
                   "SE533_PROJECT_ACCOUNT_OPEN_START", "SE532_PROJECT_ACCOUNT_SAVE_RECEIPT_START",
                   "SE521_PERSISTENT_EDIT_JOURNAL_END",
-                  "SE537_HUMANOID_END", "SE538_SMOOTH_HUMANOID_END", "SE539_IMMERSIVE_SCULPT_REPAIR_END", "smooth-witch-hat", "robotic-humanoid-mannequin",
+                  "SE537_HUMANOID_END", "SE538_SMOOTH_HUMANOID_END", "SE539_IMMERSIVE_SCULPT_REPAIR_END",
+                  "se537OpenMannequin=se538OpenHumanoid", "robotic-humanoid-mannequin",
                   "signIn:()=>se536PrepareLogin(),",
                   "id=\"se536RecoveryCode\"", "host.reference.import", "importFromChat:async offer=>"):
         assert token in html, token
     assert html.count(" source.engine='§wyrl§ Engine · Maker v11.539';source.version=11.539;") == 5
     run("node", "--check", str(ROOT / "runtime/robotic_humanoid_mannequin_v11_537.js"))
+    run("node", str(ROOT / "tests/robotic_humanoid_mannequin_v11_537.cjs"))
     run("node", "--check", str(ROOT / "runtime/model_vr_sculpt_preview_v11_539.js"))
     run("node", str(ROOT / "tests/model_vr_sculpt_preview_v11_539.cjs"))
-    run("node", str(ROOT / "tests/robotic_humanoid_mannequin_v11_537.cjs"))
+    run("node", "--check", str(ROOT / "runtime/smooth_humanoid_starter_v11_538.js"))
+    run(sys.executable, str(ROOT / "scripts/check_futuristic_humanoid_v11_538.py"))
+    run("node", str(ROOT / "tests/smooth_humanoid_starter_v11_538.cjs"))
     run("node", "--check", str(ROOT / "runtime/chat_mesh_shape_edit_v11_534.js"))
     run(sys.executable, str(ROOT / "scripts/check_inline_js_syntax_v11_266.py"), str(index))
-    for name in ("engine_native_login_reference_v11_537.cjs", "chat_mesh_shape_edit_v11_534.cjs", "project_account_receipt_v11_532.cjs", "project_account_open_v11_533.cjs"):
+    for name in ("engine_native_login_reference_v11_538.cjs", "chat_mesh_shape_edit_v11_534.cjs", "project_account_receipt_v11_532.cjs", "project_account_open_v11_533.cjs"):
         run("node", str(ROOT / "tests" / name), str(index))
     for name in ("model_project_edit_journal_v11_521.cjs", "engine_cloud_revision_cache_v11_518.cjs"):
         run("node", str(ROOT / "tests" / name))
@@ -55,7 +59,7 @@ def verify(output, manifest, check_request=False):
     for key, value in (("sourceVersion", manifest["name"]), ("finalBytes", len(raw)),
                        ("finalSha256", manifest["finalSha256"]), ("patches", manifest["patches"])):
         assert receipt[key] == value, key
-    assert len(receipt["assets"]) == 78
+    assert len(receipt["assets"]) == 79
     for rel, expected in receipt["assets"].items():
         asset = (output / rel).read_bytes()
         assert len(asset) == expected["bytes"] and hashlib.sha256(asset).hexdigest() == expected["sha256"], rel
