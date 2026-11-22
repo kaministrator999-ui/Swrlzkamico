@@ -1,7 +1,7 @@
 /* §E v11.543 — responsive Find Tools, accessible native navigation only. */
 .se543-find-button{display:inline-flex;align-items:center;justify-content:center;gap:3px;white-space:nowrap;
  padding:5px 9px;min-height:30px;border:1px solid #576b82;border-radius:6px;
- color:#e0f5ff;background:#234153;cursor:pointer;font:600 12px/1.25 inherit;}
+ color:#e0f5ff;background:#234153;cursor:pointer;font-weight:600;font-size:12px;line-height:1.25;font-family:inherit;}
 .se543-find-button:focus-visible,.se543-search-dialog :focus-visible{outline:2px solid #8de7f1;outline-offset:2px}
 .se543-search-overlay[hidden],.se543-search-dialog[hidden]{display:none!important}
 .se543-search-overlay{position:fixed;inset:0;z-index:2147483010;background:#070e19bc;}
