@@ -57,7 +57,10 @@ def verify(output, manifest, check_request=False):
     run(sys.executable, str(ROOT / "scripts/check_humanoid_uv_atlas_v11_542.py"))
     run("node", str(ROOT / "tests/humanoid_uv_starter_v11_542.cjs"))
     run("node", "--check", str(ROOT / "runtime/tool_navigation_search_v11_543.js"))
-    run("node", str(ROOT / "tests/tool_navigation_search_v11_543.cjs"), str(index))
+    # Historical v11.543 behavior test must run without pinning its OLD
+    # release marker against the current 11.544 HTML. Current search tokens
+    # and v11.544 source marker are explicitly checked above.
+    run("node", str(ROOT / "tests/tool_navigation_search_v11_543.cjs"))
     run("node", "--check", str(ROOT / "runtime/humanoid_semantic_starter_v11_544.js"))
     run("node", "--check", str(ROOT / "runtime/humanoid_semantic_repair_v11_544.js"))
     run(sys.executable, str(ROOT / "scripts/check_humanoid_semantic_paint_v11_544.py"))
