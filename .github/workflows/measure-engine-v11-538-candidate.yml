@@ -49,3 +49,14 @@ jobs:
         run: |
           python projects/swrlz-forge-moba/scripts/check_inline_js_syntax_v11_266.py /tmp/se538-candidate/index.html
           echo SE538_CANDIDATE_JS_CHECK_PASS
+      - name: Verify sealed source, regressions and asset receipts
+        run: |
+          python projects/swrlz-forge-moba/scripts/verify_v11_538_release.py --output /tmp/se538-sealed
+          node projects/swrlz-forge-moba/tests/smooth_witch_hat_v11_504.cjs
+          node projects/swrlz-forge-moba/tests/model_vr_project_library_v11_517.cjs
+          echo SE538_SEALED_VERIFIER_PASS
+      - name: Package static HTML and inspect executable JavaScript
+        run: |
+          python projects/swrlz-forge-moba/scripts/package_static_delivery_v11_538.py --output /tmp/se538-sealed
+          node --check /tmp/se538-sealed/swrlz-engine-v11.538.js
+          echo SE538_DELIVERY_AND_JS_PASS
