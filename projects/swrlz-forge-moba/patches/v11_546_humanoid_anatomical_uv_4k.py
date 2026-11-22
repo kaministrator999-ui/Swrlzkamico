@@ -70,10 +70,11 @@ async function se546ExportUVGuide(){
       'anatomy export controls')
     html=once(html,
        "root.querySelector('#se545AnatomyExport').addEventListener('click',se545Export);",
-       "root.querySelector('#se545AnatomyExport').addEventListener('click',se545Export);\\n root.querySelector('#se546CurrentUVGuide').addEventListener('click',se546ExportUVGuide);".replace('\\\\n','\\n'),
+       "root.querySelector('#se545AnatomyExport').addEventListener('click',se545Export);" + chr(10) +
+       " root.querySelector('#se546CurrentUVGuide').addEventListener('click',se546ExportUVGuide);",
        '4k guide event')
     html=once(html,
-       'window.SWRLZ_FORGE_BUILD=',starter+'\\nwindow.SWRLZ_FORGE_BUILD='.replace('\\\\n','\\n'),
+       'window.SWRLZ_FORGE_BUILD=',starter+chr(10)+'window.SWRLZ_FORGE_BUILD=',
        'starter loader')
     html=once(html,'<strong>Futuristic Humanoid · Surface-Mapped Robot</strong>',
        '<strong>Futuristic Humanoid · Anatomical Robot</strong>','starter card')
@@ -114,4 +115,4 @@ async function se546ExportUVGuide(){
         'The native humanoid UV inspector now exports either 4096px (default) or 2048px, for both actual UV wireframe and body region overlays. Heatmap diagnostic already supports 4K.',
         'Historical starter assets and user projects are preserved. Only new starter instances use the new UV/skin pairing. No geometry sculpting or rigging implied.'
       ])
-    return html[:at]+json.dumps(notes,ensure_ascii=False,separators=(',',':')).replace('</',r'<\\/')+html[at+size:]
+    return html[:at]+json.dumps(notes,ensure_ascii=False,separators=(',',':')).replace('</','<' + chr(92) + '/')+html[at+size:]
