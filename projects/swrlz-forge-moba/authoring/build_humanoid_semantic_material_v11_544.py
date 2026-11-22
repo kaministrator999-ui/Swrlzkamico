@@ -207,7 +207,7 @@ def bake(xyz,uv,faces,normals):
         n/=np.maximum(np.linalg.norm(n,axis=1)[:,None],1e-10)
         rgb,tags=surface_paint(p,n)
         py=yy[valid];px=xx[valid]
-        collisions+=np.count_nonzero(covered[py,px])
+        collisions+=int(np.count_nonzero(covered[py,px]))
         out[py,px]=rgb
         region[py,px]=tags
         covered[py,px]=True
@@ -225,7 +225,7 @@ def bake(xyz,uv,faces,normals):
     return out,region,{
         'coveredPct':round(used/(width*width)*100,2),
         'overlaps':collisions,
-        'regionTexels':{name:counts[i] for i,name in enumerate(ZONES)}
+        'regionTexels':{name:int(counts[i]) for i,name in enumerate(ZONES)}
     }
 
 def export_png(arr,path):
