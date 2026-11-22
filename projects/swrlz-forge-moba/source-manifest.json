@@ -531,8 +531,8 @@
     "patches/v11_537_robotic_humanoid_mannequin.py",
     "patches/v11_538_immersive_sculpt_load.py"
   ],
-  "finalBytes": 11042720,
-  "finalSha256": "62bb79768a45805760b3d8923caa87834e958215dd53fe31c02cb2e5850d4944",
+  "finalBytes": 0,
+  "finalSha256": "",
   "previousFinalSha256": "cb973742cc60bf617678b7015c94a4ccc2e6fd792dcfce73a7580758137aa4ab",
   "previousFinalBytes": 11028230,
   "previousManifestFinalSha256": "cb973742cc60bf617678b7015c94a4ccc2e6fd792dcfce73a7580758137aa4ab",
