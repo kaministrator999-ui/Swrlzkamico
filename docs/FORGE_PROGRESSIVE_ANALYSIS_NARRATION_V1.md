@@ -30,3 +30,7 @@ The existing Station `STATUS`/NDJSON `DELTA` transport, Stop/cancel behavior and
 ## Acceptance criteria
 
 On a real account, open §E with an existing project, enter Model Studio, select a model part, and click **Analyze workspace** in integrated Chat. The conversation should begin displaying verified project facts before the Qwen synthesis finishes, show the selected part's recorded attributes and sample coverage, then end with grounded modeling recommendations and a review card. With nothing selected or with a scene workspace, the response must report those differences without fabricating an object. No scene edit, save, screenshot or model write should occur. Test Stop, project change and inference failure on an actual device; automated tests do not establish device/browser acceptance.
+
+## Verified publication
+
+§C live Hugging Face revision: `e226e3ea4454e8b0e925366673e1324e2ae6f969`, published 2026-11-22 and verified with two consecutive running Qwen readiness checks. [GitHub release receipt](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/44994623078) completed successfully; source regression printed `FORGE_PROGRESSIVE_REVIEW_PASS` and publication printed `FORGE_PROGRESSIVE_REVIEW_LIVE`. Real user-device Analyze Workspace acceptance remains untested.
