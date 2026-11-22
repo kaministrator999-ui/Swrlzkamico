@@ -7,6 +7,8 @@ on:
       - 'projects/swrlz-forge-moba/runtime/model_vr_sculpt_preview_v11_539.js'
       - 'projects/swrlz-forge-moba/source-manifest.json'
       - 'projects/swrlz-forge-moba/tests/model_vr_sculpt_preview_v11_539.cjs'
+      - 'projects/swrlz-forge-moba/tests/engine_native_login_reference_v11_539.cjs'
+      - 'projects/swrlz-forge-moba/scripts/verify_v11_539_release.py'
       - '.github/workflows/measure-engine-v11-539-candidate.yml'
   workflow_dispatch:
 permissions:
