@@ -19,7 +19,7 @@ def run(*command):
 
 def verify(output, manifest, check_request=False):
     assert manifest["name"] == "§wyrl§ Engine v11.544"
-    assert manifest["finalArtifact"] == "swyrl_engine_v11_543.html"
+    assert manifest["finalArtifact"] == "swyrl_engine_v11_544.html"
     assert len(manifest["patches"]) == 521
     assert manifest["patches"][-2:] == [
         "patches/v11_543_tool_navigation_search.py", "patches/v11_544_humanoid_surface_paint.py",
@@ -51,7 +51,7 @@ def verify(output, manifest, check_request=False):
     run("node", "--check", str(ROOT / "runtime/futuristic_humanoid_five_digit_v11_540.js"))
     run(sys.executable, str(ROOT / "scripts/check_futuristic_humanoid_v11_540.py"))
     run("node", str(ROOT / "tests/futuristic_humanoid_five_digit_v11_540.cjs"))
-    run("node", str(ROOT / "tests/humanoid_starter_category_v11_543.cjs"), str(index))
+    run("node", str(ROOT / "tests/humanoid_starter_category_v11_544.cjs"), str(index))
     run("node", "--check", str(ROOT / "runtime/humanoid_uv_starter_v11_542.js"))
     run("node", "--check", str(ROOT / "runtime/humanoid_uv_guard_v11_542.js"))
     run(sys.executable, str(ROOT / "scripts/check_humanoid_uv_atlas_v11_542.py"))
@@ -64,7 +64,7 @@ def verify(output, manifest, check_request=False):
     run("node", str(ROOT / "tests/humanoid_semantic_repair_v11_544.cjs"))
     run("node", "--check", str(ROOT / "runtime/chat_mesh_shape_edit_v11_534.js"))
     run(sys.executable, str(ROOT / "scripts/check_inline_js_syntax_v11_266.py"), str(index))
-    for name in ("engine_native_login_reference_v11_543.cjs", "chat_mesh_shape_edit_v11_534.cjs", "project_account_receipt_v11_532.cjs", "project_account_open_v11_533.cjs"):
+    for name in ("engine_native_login_reference_v11_544.cjs", "chat_mesh_shape_edit_v11_534.cjs", "project_account_receipt_v11_532.cjs", "project_account_open_v11_533.cjs"):
         run("node", str(ROOT / "tests" / name), str(index))
     for name in ("model_project_edit_journal_v11_521.cjs", "engine_cloud_revision_cache_v11_518.cjs"):
         run("node", str(ROOT / "tests" / name))
