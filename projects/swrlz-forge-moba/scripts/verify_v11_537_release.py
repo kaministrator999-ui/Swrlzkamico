@@ -44,7 +44,7 @@ def verify(output, manifest, check_request=False):
     run("node", str(ROOT / "tests/robotic_humanoid_mannequin_v11_537.cjs"))
     run("node", "--check", str(ROOT / "runtime/chat_mesh_shape_edit_v11_534.js"))
     run(sys.executable, str(ROOT / "scripts/check_inline_js_syntax_v11_266.py"), str(index))
-    for name in ("engine_native_login_reference_v11_536.cjs", "chat_mesh_shape_edit_v11_534.cjs", "project_account_receipt_v11_532.cjs", "project_account_open_v11_533.cjs"):
+    for name in ("engine_native_login_reference_v11_537.cjs", "chat_mesh_shape_edit_v11_534.cjs", "project_account_receipt_v11_532.cjs", "project_account_open_v11_533.cjs"):
         run("node", str(ROOT / "tests" / name), str(index))
     for name in ("model_project_edit_journal_v11_521.cjs", "engine_cloud_revision_cache_v11_518.cjs"):
         run("node", str(ROOT / "tests" / name))
