@@ -1,0 +1,41 @@
+name: Seal §E v11.545 Humanoid UV Anatomy
+on:
+  push:
+    branches: [main]
+    paths:
+      - "projects/swrlz-forge-moba/RELEASE_PREPARE_V11_545.json"
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: se545-source-seal
+  cancel-in-progress: false
+jobs:
+  source-seal:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Check read-only UV anatomy source
+        run: |
+          node --check projects/swrlz-forge-moba/runtime/humanoid_uv_anatomy_view_v11_545.js
+          node projects/swrlz-forge-moba/tests/humanoid_uv_anatomy_v11_545.cjs
+      - name: Rebuild actual HTML and seal its byte hash
+        run: python projects/swrlz-forge-moba/scripts/prepare_v11_545_release.py
+      - name: Verify native source, UV, account and packaged assets
+        run: python projects/swrlz-forge-moba/scripts/verify_v11_545_release.py --output /tmp/se545-verified
+      - name: Commit verified source integrity receipt
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add projects/swrlz-forge-moba/source-manifest.json
+          git diff --cached --quiet && exit 0
+          git commit -m "build(modeler): seal v11.545 verified humanoid UV anatomy source"
+          git push origin HEAD:main
