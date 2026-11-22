@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT (owner-approved)",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.536",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_536_NATIVE_ACCOUNT_IMAGE_REFERENCE",
-  "reason": "Publish the native §E startup Google pairing code, Copy code and Continue to Google controls, plus authenticated user-selected §Chat image import into the Model Atelier reference library. Source-sealed 513 patches preserve cloud account project IDs, revision checks, offline editing, Undo, Qwen vision and prior model operations.",
-  "sourceCommit": "8cf725dbe2ac3b92f4d30ab746b61785f68f0046",
-  "sourceIntegritySha256": "11a52e4a2a0e23b369dfb7b870399e7d8a1e6dce6d177f353e35fa95b19e8847"
+  "releaseVersion": "v11.537",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_537_ROBOTIC_HUMANOID_MANNEQUIN",
+  "reason": "Publish original native Robotic Humanoid Mannequin starter: 178 selectable untextured topology parts in horizontal T-pose with organic anatomy, mechanical joints, full hands/feet and Starter Models integration. Verified 514-patch HTML, native geometry/pose tests, account regressions and static delivery integrity.",
+  "sourceCommit": "58d2b8b916e18ede707c32f1d75f0df98f9f9b7b",
+  "sourceIntegritySha256": "cb973742cc60bf617678b7015c94a4ccc2e6fd792dcfce73a7580758137aa4ab"
 }
