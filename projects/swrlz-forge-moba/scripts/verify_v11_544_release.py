@@ -63,7 +63,10 @@ def verify(output, manifest, check_request=False):
     run("node", str(ROOT / "tests/tool_navigation_search_v11_543.cjs"))
     run("node", "--check", str(ROOT / "runtime/humanoid_semantic_starter_v11_544.js"))
     run("node", "--check", str(ROOT / "runtime/humanoid_semantic_repair_v11_544.js"))
-    run(sys.executable, str(ROOT / "scripts/check_humanoid_semantic_paint_v11_544.py"))
+    # The full NumPy/scipy/Pillow 3D bake + semantic validation is mandatory in
+    # the authoring source-seal workflow. Production packaging stays lightweight
+    # but still verifies exact 3D geometry/UV arrays and embedded PNG bytes.
+    run(sys.executable, str(ROOT / "scripts/check_humanoid_semantic_paint_deploy_v11_544.py"))
     run("node", str(ROOT / "tests/humanoid_semantic_repair_v11_544.cjs"))
     run("node", "--check", str(ROOT / "runtime/chat_mesh_shape_edit_v11_534.js"))
     run(sys.executable, str(ROOT / "scripts/check_inline_js_syntax_v11_266.py"), str(index))
