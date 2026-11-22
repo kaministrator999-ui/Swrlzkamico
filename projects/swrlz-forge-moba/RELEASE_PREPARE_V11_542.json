@@ -1,0 +1,16 @@
+{
+  "schema": "swrlz-forge-release-prepare-v1",
+  "requestedBy": "ChatGPT (owner-directed §E UV/geometry improvement)",
+  "releaseVersion": "v11.542",
+  "purpose": "Replace bad cone-like UV candidate for the unified five-finger humanoid with genuine relaxed charts, preserve its existing texture through trianglewise reprojection, prevent destructive front/back/brim candidate for this mesh, verify continuity and source integrity.",
+  "acceptance": [
+    "old and new geometric triangles match exactly",
+    "new indexed UVs within native 9k vertices/16k triangles",
+    "UV layout has non-collapsed area and usable texel density",
+    "paint image remains 1024px and native <360k chars",
+    "accurate matching 2048px cyan diagnostic UV guide",
+    "guard blocks experimental hat projection only for this humanoid",
+    "source integrity and 82 shipped assets validated",
+    "other starter categories, account and VR workflows preserved"
+  ]
+}
