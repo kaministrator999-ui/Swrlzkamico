@@ -51,12 +51,12 @@ jobs:
           echo SE539_CANDIDATE_JS_CHECK_PASS
       - name: Verify sealed source, regressions and asset receipts
         run: |
-          python projects/swrlz-forge-moba/scripts/verify_v11_538_release.py --output /tmp/se539-sealed
+          python projects/swrlz-forge-moba/scripts/verify_v11_539_release.py --output /tmp/se539-sealed
           node projects/swrlz-forge-moba/tests/smooth_witch_hat_v11_504.cjs
           node projects/swrlz-forge-moba/tests/model_vr_project_library_v11_517.cjs
           echo SE539_SEALED_VERIFIER_PASS
       - name: Package static HTML and inspect executable JavaScript
         run: |
-          python projects/swrlz-forge-moba/scripts/package_static_delivery_v11_538.py --output /tmp/se539-sealed
+          python projects/swrlz-forge-moba/scripts/package_static_delivery_v11_539.py --output /tmp/se539-sealed
           node --check /tmp/se539-sealed/swrlz-engine-v11.539.js
           echo SE539_DELIVERY_AND_JS_PASS
