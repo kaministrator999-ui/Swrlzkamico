@@ -1,10 +1,10 @@
 {
   "schema": "swrlz-forge-deploy-request-v1",
-  "requestedBy": "ChatGPT (owner-approved continued mannequin modeling)",
+  "requestedBy": "ChatGPT (owner reports missing mannequin in Starter Projects)",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.540",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_540_HUMANOID_FIVE_DIGIT",
-  "reason": "Release original continuous-body futuristic humanoid with improved shoulders, hips, knees, ankles and true five-digit hands: 4 distinct tapered fingers + opposable thumb each hand. One watertight editable geometry mesh, 7,569 UV vertices, 13,932 triangles, existing six-island PNG atlas and native Starter Models route. Full 517-patch source and 80 assets verified; preserves v11.539 immersive VR fixes and previous project saves.",
-  "sourceCommit": "b519e8b8038bc741522cd3f79f354b4e5f311d24",
-  "sourceIntegritySha256": "9b54592a91ac793061f8b9f9e2eefe46b8a6e753b050e7a9d0eb06c0f0ef8cfd"
+  "releaseVersion": "v11.541",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_541_HUMANOID_STARTER_CATEGORY",
+  "reason": "Restore existing Futuristic Humanoid · Detailed Hands to Projects → Starter Projects → Starter Models. The v11.540 label omitted Starter Model and its project ID was absent from native modelIds, so the category sorter sent the card to Starter Games. Register stable ID, restore semantic label, align VR name. Preserve one-piece five-digit mesh, 80 assets, existing saves, immersive VR fixes. Actual native sorter, release regressions, exact 518-patch source/hash and static package pass.",
+  "sourceCommit": "4fb2778e78efd20a699da02db42b10d57b3b0bde",
+  "sourceIntegritySha256": "9352936db5aec5d43bce95769410a1054eae33c1a5d4069512ba697b8a71bbb1"
 }
