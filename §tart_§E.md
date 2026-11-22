@@ -1,6 +1,6 @@
 ## §E v11.533 · Verified account project opening (2026-11-21)
 
-The account project loader fixes an early rejection of valid saved projects. It passes the selected account ID to the existing native importer and reports success when that import confirms the revision. v11.533 is serving on the existing Hugging Face Space. Build, phone-size browser reproduction and production artifacts are tracked in the [account open checkpoint](projects/swrlz-forge-moba/docs/PROJECT_ACCOUNT_OPEN_V11_533.md). Little Glitch Dragon reached account revision 6 with 13 editable meshes through §C. The actual renders still show a blockout, and the private production reopen awaits renewed account access.
+The account project loader fixes an early rejection of valid saved projects. It passes the selected account ID to the existing native importer and reports success when that import confirms the revision. v11.533 is serving on the existing Hugging Face Space. Build, phone-size browser reproduction and production artifacts are tracked in the [account open checkpoint](projects/swrlz-forge-moba/docs/PROJECT_ACCOUNT_OPEN_V11_533.md). Little Glitch Dragon reached account revision 6 with 13 editable meshes through §C. The actual renders still show a blockout. An authenticated production reopen verified all 13 editable mesh records against the cloud save.
 
 ## §WYRL§ Engine v11.532 · Verified project account saves and recovery receipts (2026-11-20)
 
