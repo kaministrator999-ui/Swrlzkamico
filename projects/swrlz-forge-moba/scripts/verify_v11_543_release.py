@@ -19,7 +19,7 @@ def run(*command):
 
 def verify(output, manifest, check_request=False):
     assert manifest["name"] == "§wyrl§ Engine v11.543"
-    assert manifest["finalArtifact"] == "swyrl_engine_v11_542.html"
+    assert manifest["finalArtifact"] == "swyrl_engine_v11_543.html"
     assert len(manifest["patches"]) == 520
     assert manifest["patches"][-2:] == [
         "patches/v11_542_humanoid_relaxed_uv.py", "patches/v11_543_tool_navigation_search.py",
