@@ -30,3 +30,7 @@
 @media(max-width:600px){.se543-search-dialog{top:6vh;width:calc(100vw - 16px);max-height:80dvh;
  padding:10px;border-radius:10px}.se543-search-results{max-height:52dvh}
  .se543-find-button{padding:5px 7px;font-size:11px;min-height:30px}}
+
+/* The real UV export moves from the buried bottom actions to the preview. */
+#se356UVPreview .se356-uv-preview-actions #se336UVExport{min-height:33px;white-space:normal;flex:1 1 auto;border-color:#6e9fba}
+#se336UVExport.se543-export-highlight{outline:3px solid #ebce83!important;outline-offset:3px;box-shadow:0 0 0 5px #dfb95b44!important}
