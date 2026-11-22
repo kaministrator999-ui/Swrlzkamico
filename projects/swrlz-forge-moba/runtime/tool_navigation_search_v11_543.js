@@ -175,8 +175,11 @@
    const b=buttons.find(x=>norm(x.textContent).startsWith(entry.match));
    if(!b||b.disabled)return false;b.click();return true;
   }
-  if(entry.kind==='click')return enabledClick(entry.selector,panel)||
-    (entry.id==='projects'&&enabledClick('#projectBtn'));
+  if(entry.kind==='click'){
+   if(entry.id==='projects')
+    return enabledClick('#se320ModelProjects',panel)||enabledClick('#projectBtn');
+   return enabledClick(entry.selector,panel);
+  }
   return false;
  }
  function setStatus(message){
