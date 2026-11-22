@@ -11,5 +11,5 @@
     "522-patch SHA-sealed source, static delivery assets intact"
   ],
   "releaseBoundary": "Separate source seal commit before the standalone DEPLOY_REQUEST.json publish commit",
-  "sealTrigger": "Triggered after the dedicated v11.545 source-seal workflow was installed."
+  "sealTrigger": "Re-run after verifier marker correction and rebase-safe workflow update; source and texture unchanged."
 }
