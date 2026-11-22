@@ -38,4 +38,5 @@ jobs:
           git add projects/swrlz-forge-moba/source-manifest.json
           git diff --cached --quiet && exit 0
           git commit -m "build(modeler): seal v11.545 verified humanoid UV anatomy source"
+          git pull --rebase origin main
           git push origin HEAD:main
