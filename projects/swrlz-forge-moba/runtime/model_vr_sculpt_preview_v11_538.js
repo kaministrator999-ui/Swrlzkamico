@@ -174,8 +174,13 @@
   preview.wires.visible=count>0;stats.gridUpdates++;stats.gridEdges=count;
  }
  function surfaceNormal(hit,local){
+  const now=performance.now();
+  if(preview.lastNormal&&preview.lastNormalId===hit.id&&
+     now-(preview.lastNormalAt||0)<55&&preview.lastNormalPoint&&
+     preview.lastNormalPoint.distanceToSquared(local)<.0005)
+   return normal.copy(preview.lastNormal);
   if(hit.face?.normal?.isVector3)normal.copy(hit.face.normal)
-   .transformDirection(hit.mesh.matrixWorld);
+   .applyMatrix3(new T.Matrix3().getNormalMatrix(hit.mesh.matrixWorld)).normalize();
   else if(hit.normal?.isVector3)normal.copy(hit.normal);
   else{
    const attr=hit.mesh.geometry?.getAttribute?.('normal');
@@ -188,12 +193,14 @@
      if(d<min){min=d;best=i;}
     }
     if(best>=0)normal.set(attr.getX(best),attr.getY(best),attr.getZ(best))
-     .transformDirection(hit.mesh.matrixWorld);
+     .applyMatrix3(new T.Matrix3().getNormalMatrix(hit.mesh.matrixWorld)).normalize();
    }
    if(best<0)normal.copy(se340Cast(se350Record('right'))?.ray?.direction||new T.Vector3(0,0,-1)).negate();
   }
   normal.normalize();
   if(!Number.isFinite(normal.x)||normal.lengthSq()<.5)normal.set(0,1,0);
+  preview.lastNormal=normal.clone();preview.lastNormalPoint=local.clone();
+  preview.lastNormalId=hit.id;preview.lastNormalAt=now;
   return normal;
  }
  // Keep the existing physical controller ray. Only replace the legacy flat
@@ -203,7 +210,7 @@
   if(!s.scene||s.mode!=='sculpt'||!se340VisibleSession()){hide();return;}
   const record=s.inputSample?.held?.stroke?.source?.record||se350Record('right'),
    hit=record?.hit;
-  if(!hit?.id||!hit.mesh||!hit.point||hit.ui||hit.gizmo){hide();return;}
+  if(!record?.targetTracked||!hit?.id||!hit.mesh||!hit.point||hit.ui||hit.gizmo){hide();return;}
   build(s);
   const mesh=hit.mesh;
   mesh.updateWorldMatrix(true,false);
@@ -242,6 +249,8 @@
   preview.scene=null;preview.dome=null;preview.selector=null;preview.point=null;
   preview.wires=null;preview.coords=null;preview.colors=null;preview.key=null;
   preview.at=0;preview.mask=null;preview.maskId=null;preview.lastPoint=null;
+  preview.lastNormal=null;preview.lastNormalId=null;preview.lastNormalPoint=null;
+  preview.lastNormalAt=0;
   return nativeCleanup.apply(this,arguments);
  };
  window.SWYRL_ENGINE_IMMERSIVE_SCULPT_538=Object.freeze({
