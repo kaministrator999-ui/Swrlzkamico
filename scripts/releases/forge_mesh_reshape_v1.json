@@ -1,0 +1,30 @@
+{
+  "baseRevision": "68a339494395bf507a3626971ae1839812a1643b",
+  "summary": "Plan and review an in-place native mesh shape edit",
+  "files": {
+    "brain_forge.py": {
+      "before": "d6cf8f00112bc88b1c9f753b20a073482e0823b716cf64c2e24cf8dbc6fb63e7",
+      "after": "f4d911f6a46658308205993b82692a6be21393339a4b2a76e5c997bcd44d55a0"
+    },
+    "forge_chat_actions.py": {
+      "before": "a2bd43d1fd6fdb3fe0a46c9b9095bbe0a58a98b9dd9ffcbcc4676d544432c9d6",
+      "after": "ca62dba77647d8569cb37a8900582058929eea662aaf9864ab6b7a8b4fe3fe3c"
+    },
+    "forge_design_preview_v1.py": {
+      "before": "9ffa806ffd2d6aeab2f2593ef76d149be774d52d13db72ffe1fdbed0562ce79d",
+      "after": "1d61592a4ec654a0f520bf24b59d44b2d7a324bc1501a0239bda55870b314d36"
+    },
+    "forge_embed.py": {
+      "before": "976a5bae9d3d07ab4c73a052d3d917e6bd3ed4f29931d83180b18aba433cea5f",
+      "after": "f3e84b4a64f56e76da1a32687a9388c4f012bc385405604917606afd88fbf739"
+    },
+    "forge_mesh_tools_v2.py": {
+      "before": "ec669c904ed8ebe307dbfd07fbb5032f9634f4f38127ff3bfbdd10ed11a2d29b",
+      "after": "ca416e65a4c4ebd77c57794416d0122f100c7ef0eeb934a84207d92a952f9e40"
+    },
+    "chat/§wyrlz/index.html": {
+      "before": "61bc82f93a020d2ef089f02b30a6a06962f2051ee2bc34bb3b027428f9eaca49",
+      "after": "79b11bcc6bb79535d8ea7cd8803eccbd9398d0536822d139385c9b8d0f16328c"
+    }
+  }
+}

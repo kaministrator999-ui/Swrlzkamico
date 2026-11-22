@@ -48,6 +48,7 @@ jobs:
               forge-creative-stages-v1) mode=hotfix-forge-creative ;;
               forge-loft-repair-v1) mode=hotfix-forge-loft ;;
               forge-preview-readability-v1) mode=hotfix-forge-preview ;;
+              forge-mesh-reshape-v1) mode=hotfix-forge-reshape ;;
               *) echo "::error::Unknown scoped Space release mode."; exit 1 ;;
             esac
           fi

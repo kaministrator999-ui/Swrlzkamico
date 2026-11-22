@@ -20,6 +20,7 @@ if RELEASE_NAME not in {
     "forge_creative_stages_v1",
     "forge_loft_repair_v1",
     "forge_preview_readability_v1",
+    "forge_mesh_reshape_v1",
 }:
     raise RuntimeError("Unknown scoped Forge release")
 RELEASE = ROOT / "scripts/releases" / RELEASE_NAME
