@@ -1,3 +1,7 @@
+## §E v11.538 · Immersive sculpt envelope, responsiveness and VR starter loading (2026-11-22)
+
+Native immersive Model Studio replaces the flat brush cursor with a low-detail strength dome, a precise selector and a bounded real-mesh influence-wire preview. Sculpt processing reduces per-frame update pressure and per-vertex allocation overhead. Existing parameter controls are compacted without duplicate actions. The native immersive project list includes the previously unregistered Smooth Witch Hat and other hat/mannequin starters, and asynchronous project switches retain the WebXR session. Headset acceptance is pending. See [v11.538 owner QA and implementation](docs/IMMERSIVE_SCULPT_PREVIEW_V11_538.md).
+
 ## §E v11.536 · Native Google login and §Chat image references (2026-11-22)
 
 The **initial §E login screen** now requests the existing Google pairing proof and displays the temporary 12-character code there, with **Copy code** and **Continue to Google** controls. The code is shared only through §C's bound account channel; Google login and PKCE exchange remain verified on §C, and the resulting authenticated session connects the integrated §Chat and account-backed §E projects. The previous full-Chat-panel workaround is no longer necessary.
