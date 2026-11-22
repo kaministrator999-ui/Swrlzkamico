@@ -13,6 +13,6 @@
     "stable same starter and saved project/account/VR identity",
     "521-patch SHA and 84 assets static packaging verified"
   ],
-  "retry": 1,
-  "correction": "Baker produced all assets; its receipt serialization needed to cast numpy int64 counters to native Python int before json.dumps."
+  "retry": 2,
+  "correction": "All geometry and color validation passed. Fixed last test receipt's numpy.uint8 JSON encoding and corrected side-view QA proportions using equal screen/world scale."
 }
