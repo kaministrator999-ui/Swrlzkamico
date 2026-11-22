@@ -1,10 +1,10 @@
 {
   "schema": "swrlz-forge-deploy-request-v1",
-  "requestedBy": "ChatGPT (owner-authorized immersive VR improvements)",
+  "requestedBy": "ChatGPT (owner-approved continued mannequin modeling)",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.539",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_539_IMMERSIVE_SCULPT_LOAD",
-  "reason": "Publish verified 516-patch §E immersive VR sculpt update: pooled strength dome, mesh influence preview, reduced per-stroke allocation/frame cadence, compact native parameters, Smooth Witch Hat VR registration and session-safe starter loading. Preserves sealed v11.538 UV humanoid. Targeted runtime, source/hash, 79 assets, regression checks and static delivery passed; physical Quest acceptance pending.",
-  "sourceCommit": "6c03671b9e1439d5d8f03c130d75f11d93a8460c",
-  "sourceIntegritySha256": "3bd6185d2d233d4e54e80eed6a892336a3e1ce3928134e92601df5759fbdf54c"
+  "releaseVersion": "v11.540",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_540_HUMANOID_FIVE_DIGIT",
+  "reason": "Release original continuous-body futuristic humanoid with improved shoulders, hips, knees, ankles and true five-digit hands: 4 distinct tapered fingers + opposable thumb each hand. One watertight editable geometry mesh, 7,569 UV vertices, 13,932 triangles, existing six-island PNG atlas and native Starter Models route. Full 517-patch source and 80 assets verified; preserves v11.539 immersive VR fixes and previous project saves.",
+  "sourceCommit": "b519e8b8038bc741522cd3f79f354b4e5f311d24",
+  "sourceIntegritySha256": "9b54592a91ac793061f8b9f9e2eefe46b8a6e753b050e7a9d0eb06c0f0ef8cfd"
 }
