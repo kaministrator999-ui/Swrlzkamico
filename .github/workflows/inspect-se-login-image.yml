@@ -1,0 +1,58 @@
+name: Inspect current §C broker and embedded image UX (read-only)
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/inspect-se-login-image.yml"]
+  workflow_dispatch:
+permissions: {contents: read}
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - run: python -m pip install --quiet 'huggingface_hub>=0.34,<2'
+      - name: Inspect existing Space source without printing secrets or credentials
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          python - <<'PY'
+          import os,re,hashlib
+          from pathlib import Path
+          from huggingface_hub import HfApi,hf_hub_download
+          api=HfApi(token=os.environ.get('HF_TOKEN',''))
+          space='kamiloki/Swyrlz'
+          info=api.repo_info(repo_id=space,repo_type='space')
+          print('CHAT_REVISION',info.sha,flush=True)
+          files=api.list_repo_files(space,repo_type='space',revision=info.sha)
+          candidates=[p for p in files if p.endswith(('.py','.html','.js')) and ('forge' in p.lower() or 'auth' in p.lower() or 'image' in p.lower() or p in {'app.py','station.py','chat/§wyrlz/index.html','model_router.py'})]
+          print('CANDIDATE_FILES',candidates[:85],flush=True)
+          patterns={
+            'sign_in':re.compile('account\\.signIn|signInRequested|pairId|recovery proof|Copy code|Continue to Google|forge/login|PKCE|popup.ready',re.I),
+            'image':re.compile('type=.file.|attachImage|imageFile|inputImage|uploadImage|imagePreview|image-data|vision|forge.*image|reference.*image',re.I),
+            'bridge':re.compile('forgeEmbed|host\\.hello|host\\.connect|account.status|postMessage|MessageChannel',re.I)
+          }
+          for p in candidates:
+            # Keep output narrowly scoped to dynamic UI and auth bridge, avoid model prompt dumps.
+            if 'chat/§wyrlz/index.html' not in p and not any(k in p.lower() for k in ('forge','auth','image','app.py')):continue
+            try:
+              q=hf_hub_download(space,p,repo_type='space',revision=info.sha,token=os.environ.get('HF_TOKEN',''))
+              s=Path(q).read_text('utf8')
+            except Exception as e:
+              print('FETCH_FAILED',p,type(e).__name__);continue
+            print('FILE',p,'LEN',len(s),'SHA256',hashlib.sha256(s.encode()).hexdigest(),flush=True)
+            lines=s.splitlines()
+            for kind,reg in patterns.items():
+              if kind=='sign_in' and not (p.endswith('.html') or 'forge' in p.lower() or 'auth' in p.lower()):continue
+              if kind=='image' and 'forge' not in p.lower() and 'image' not in p.lower() and not p.endswith('.html'):continue
+              hits=[i for i,l in enumerate(lines) if reg.search(l)]
+              print('HITS',p,kind,len(hits),flush=True)
+              if p.endswith('.html') or kind=='sign_in':
+                for i in hits[:23]:
+                  l=lines[i].strip()
+                  # redact credential-like long strings; no live values should occur in source
+                  l=re.sub(r'([0-9a-zA-Z_-]{48,})',lambda m:m.group(0)[:30]+'[LONG_REDACTED]',l)
+                  print('LINE',p,i+1,kind,l[:380],flush=True)
+          PY
