@@ -75,7 +75,7 @@ def main():
     print('SE544_SURFACE_PAINT_GEOMETRY_AND_UV_OK',json.dumps({
         'geometryAndUVIdentical':True,'materialBytes':len(data),
         'parts':1,'uvVertices':8792,'triangles':13932,
-        'zones':list(zone),'frontBackSideQA':True,'nativeProjectId':b['project']['canonicalId']
+        'zones':[int(x) for x in zone],'frontBackSideQA':True,'nativeProjectId':b['project']['canonicalId']
     }),flush=True)
 
 if __name__=='__main__':main()
