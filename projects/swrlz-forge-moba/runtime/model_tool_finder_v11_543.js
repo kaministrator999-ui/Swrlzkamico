@@ -139,6 +139,12 @@
   }
   const target=targetFor(e);
   if(!target)return false;
+  // Only open harmless navigation targets. Search must never click Export,
+  // Delete, Apply UVs or any other mutating/destructive action.
+  if(e.key==='projects'){target.click();close();return true;}
+  if(e.key==='tools-rail'&&window.SWYRL_ENGINE_TOOL_RAIL_473?.state?.().collapsed){
+   target.click();
+  }
   showDetails(target);
   if(target.closest('.atelier-inspector')){
    p.classList.remove('atelier-tools-closed');
@@ -252,7 +258,10 @@
     '<div id="se543FindResults" aria-live="polite"></div></div>';
   const uv=p.querySelector('#se355UVEditorOpen');
   if(uv)uv.after(root);
-  else head.querySelector('.atelier-actions')?.before(root)||head.append(root);
+  else {
+   const actions=head.querySelector('.atelier-actions');
+   if(actions)actions.before(root);else head.append(root);
+  }
   input=root.querySelector('#se543FindInput');
   results=root.querySelector('#se543FindResults');
   root.querySelector('#se543FindToggle').addEventListener('click',toggle);
@@ -291,7 +300,7 @@
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});
  else queueMicrotask(init);
  window.SWYRL_ENGINE_FIND_TOOLS_543=Object.freeze({
-  search:find,navigate,open:()=>{mount();if(!open)toggle();},
+  search:find,navigate,relocateExport:moveExport,open:()=>{mount();if(!open)toggle();},
   state:()=>({installed:!!root?.isConnected,open,exportNearPreview:
    !!panel()?.querySelector('#se356UVPreview .se356-uv-preview-actions #se336UVExport')})
  });
