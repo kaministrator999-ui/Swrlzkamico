@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT (owner-approved)",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.534",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_534_CHAT_MESH_SHAPE_EDIT",
-  "reason": "Publish the opt-in native in-place reshape for a single reviewed plain mesh. The verified canonical build covers project open/save, history, stale/replayed actions, protected meshes and existing native edits.",
-  "sourceCommit": "31b0169780a611d8584d42e352c7bdc2a429f41d",
-  "sourceIntegritySha256": "3b084f548df7aa9b241edab7891dac534ced262e8b707de73dad681832042557"
+  "releaseVersion": "v11.535",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_535_STARTUP_SIGNIN_CODE",
+  "reason": "Expose the existing Chat-origin 12-character Google sign-in recovery code at the §E startup gate before opening Google. The verified 512-patch source preserves the original Chat OAuth, project ownership, revision checks, model editing and offline access.",
+  "sourceCommit": "ffa21e0f0ca0347c1a5e2500d2856f3473f97430",
+  "sourceIntegritySha256": "cc1f5218bd08a480b2e94a41945029c3d99267be73fe2043908cebe4fbf2fab8"
 }
