@@ -219,8 +219,8 @@
 +++ b/forge_chat_actions.py
 @@ -491,6 +491,22 @@
             "reason": message, "code": code, "forgeStatus": "PARTIAL" if partial else "FAILED"}
- 
- 
+
+
 +def _terminal_validation_message(error: ForgePlanError) -> str | None:
 +    if error.code == "FORGE_INVALID_LOFT_PROFILE":
 +        cause = {
