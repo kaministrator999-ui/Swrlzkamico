@@ -1,0 +1,14 @@
+{
+  "schema": "swrlz-forge-release-prepare-v1",
+  "releaseVersion": "v11.541",
+  "requestedBy": "ChatGPT (owner reports missing mannequin Starter Models card)",
+  "purpose": "Restore model category sorting and label for the existing one-piece five-digit mannequin. Verify actual native sorter behavior rather than treating source presence as UI visibility.",
+  "tests": [
+    "assembled category classifier correctly recognizes stable robotic-humanoid-mannequin ID",
+    "visible card explicitly says STARTER MODEL",
+    "VR library displays current mannequin name",
+    "existing games and other model cards remain correctly sorted",
+    "integrated geometry/UV/account regression and source SHA checked",
+    "static delivery artifact passes under size limits"
+  ]
+}
