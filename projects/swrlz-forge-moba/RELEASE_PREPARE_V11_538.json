@@ -9,5 +9,7 @@
     "native starter open",
     "existing account regression",
     "exact source SHA and compact script packaging"
-  ]
+  ],
+  "retry": 1,
+  "correction": "Measured 4.82m T-pose span: assert x reaches ±2.38m instead of ±2.46m."
 }
