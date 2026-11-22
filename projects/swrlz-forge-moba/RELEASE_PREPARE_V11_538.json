@@ -1,0 +1,13 @@
+{
+  "schema": "swrlz-forge-release-prepare-v1",
+  "releaseVersion": "v11.538",
+  "requestedBy": "ChatGPT (owner-directed)",
+  "purpose": "Bake one connected smooth humanoid native topology mesh with six UV islands, embedded original material atlas, then validate and seal exact HTML source for Hugging Face.",
+  "tests": [
+    "geometric watertightness and single component",
+    "native UV and PNG texture constraints",
+    "native starter open",
+    "existing account regression",
+    "exact source SHA and compact script packaging"
+  ]
+}
