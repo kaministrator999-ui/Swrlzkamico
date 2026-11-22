@@ -32,12 +32,12 @@ REGIONS=['head','chest','back','leftArm','rightArm','leftLeg','rightLeg']
 PALETTE=[(232,167,239),(79,203,234),(150,157,246),
          (253,210,104),(241,143,90),(139,226,154),(75,186,124)]
 RECT={
- 'head':(.020,.035,.235,.470),
- 'chest':(.255,.035,.607,.470),
- 'back':(.628,.035,.980,.470),
- 'torso':(.255,.035,.980,.470),
- 'leftArm':(.020,.493,.490,.720),'rightArm':(.510,.493,.980,.720),
- 'leftLeg':(.020,.745,.490,.980),'rightLeg':(.510,.745,.980,.980)
+ 'head':(.008,.015,.245,.475),
+ 'chest':(.252,.015,.610,.475),
+ 'back':(.616,.015,.992,.475),
+ 'torso':(.252,.015,.992,.475),
+ 'leftArm':(.010,.485,.495,.735),'rightArm':(.505,.485,.990,.735),
+ 'leftLeg':(.010,.745,.495,.990),'rightLeg':(.505,.745,.990,.990)
 }
 VERT_LIMIT=9000
 TRI_COUNT=13932
@@ -138,7 +138,8 @@ def make_atlas(positions,triangles,mode):
 def audit(pos,faces,uv):
     tri=pos[faces];m=uv[faces]
     world=np.linalg.norm(np.cross(tri[:,1]-tri[:,0],tri[:,2]-tri[:,0]),axis=1)*.5
-    area=np.abs(np.cross(m[:,1]-m[:,0],m[:,2]-m[:,0]))*.5
+    uv_a=m[:,1]-m[:,0];uv_b=m[:,2]-m[:,0]
+    area=np.abs(uv_a[:,0]*uv_b[:,1]-uv_a[:,1]*uv_b[:,0])*.5
     assert world.min()>1e-10 and np.count_nonzero(area<1e-10)<14
     uv_total=float(area.sum())
     density=area/world
