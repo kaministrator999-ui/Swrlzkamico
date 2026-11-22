@@ -16,7 +16,7 @@ for(const token of [
  'se350Surface()?.inspect?.()?.selectedRegion','se517ProjectBusy',
  'se340ModelXRFrameCore=function(time,frame)',
  'se340CreateModelVRUI=function(options)',
- 'texture.needsUpdate=true','stats.gridUpdates++'
+ 'tex.needsUpdate=true','stats.gridUpdates++'
 ])assert.ok(vr.includes(token),'Missing native XR implementation: '+token);
 for(const token of [
  'SCULPT', 'const raw = a.array', 'const weights = g.maskWeights',
