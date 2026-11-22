@@ -12,5 +12,7 @@
     "repair must be explicit, Undoable and reject mismatched UV layout",
     "stable same starter and saved project/account/VR identity",
     "521-patch SHA and 84 assets static packaging verified"
-  ]
+  ],
+  "retry": 1,
+  "correction": "Baker produced all assets; its receipt serialization needed to cast numpy int64 counters to native Python int before json.dumps."
 }
