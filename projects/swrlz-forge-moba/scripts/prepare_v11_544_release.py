@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""§E v11.544: seal actual compiled tool-search source from ordered patches.
+"""§E v11.544: seal actual surface-painted mannequin source from ordered patches.
 
 Do not invent checksums. Replay authoritative 519-patch lineage and the
-new navigation patch to calculate actual resulting native HTML and SHA-256.
+new humanoid material patch to calculate actual resulting native HTML and SHA-256.
 """
 from pathlib import Path
 import base64
@@ -11,7 +11,7 @@ import hashlib
 import json
 
 ROOT=Path(__file__).resolve().parents[1]
-PATCH='patches/v11_543_tool_navigation_search.py'
+PATCH='patches/v11_544_humanoid_surface_paint.py'
 MARKER='SWYRL_ENGINE_DEPLOY_MARKER: V11_544_HUMANOID_SURFACE_PAINT'
 
 def main():
@@ -42,7 +42,7 @@ def main():
     sha=hashlib.sha256(encoded).hexdigest()
     manifest.update(
         name='§wyrl§ Engine v11.544',
-        finalArtifact='swyrl_engine_v11_543.html',
+        finalArtifact='swyrl_engine_v11_544.html',
         patches=manifest['patches']+[PATCH],
         previousFinalSha256=manifest['finalSha256'],
         previousFinalBytes=manifest['finalBytes'],
