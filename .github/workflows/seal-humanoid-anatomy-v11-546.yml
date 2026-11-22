@@ -1,0 +1,43 @@
+name: Seal §E v11.546 Anatomical UV Robot + 4K
+on:
+  push:
+    branches: [main]
+    paths:
+      - "projects/swrlz-forge-moba/RELEASE_PREPARE_V11_546.json"
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: se546-anatomy-source-seal
+  cancel-in-progress: false
+jobs:
+  source-seal:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Validate actual geometry, newly painted material and both 4K PNGs
+        run: |
+          python projects/swrlz-forge-moba/scripts/check_humanoid_anatomy_v11_546.py
+          node --check projects/swrlz-forge-moba/runtime/humanoid_anatomical_robot_v11_546.js
+          node projects/swrlz-forge-moba/tests/humanoid_anatomy_starter_v11_546.cjs
+      - name: Rebuild all ordered §E source patches and seal actual HTML bytes
+        run: python projects/swrlz-forge-moba/scripts/prepare_v11_546_release.py
+      - name: Run targeted native asset, model, account, UV and source verification
+        run: python projects/swrlz-forge-moba/scripts/verify_v11_546_release.py --output /tmp/se546-verified
+      - name: Commit source integrity receipt
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add projects/swrlz-forge-moba/source-manifest.json
+          git diff --cached --quiet && exit 0
+          git commit -m "build(modeler): seal verified v11.546 anatomical UV robot and 4K export"
+          git pull --rebase origin main
+          git push origin HEAD:main
