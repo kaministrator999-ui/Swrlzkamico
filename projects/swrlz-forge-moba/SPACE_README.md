@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.534
+title: §wyrl§ Engine v11.535
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,10 @@ fullWidth: true
 header: mini
 short_description: Native projects, verified saves and model creation
 ---
+
+## §E v11.535 · Recovery code accessible at Google sign-in (2026-11-22)
+
+The account startup sign-in control opens the existing §Chat iframe panel above the startup gate. Users can copy the one-time, 12-character Chat-origin recovery proof before choosing Continue to Google. The code is not sent to §E or written to an URL, and the original account/project security checks remain authoritative. [Sign-in code fix and headset acceptance](docs/GOOGLE_ACCOUNT_CODE_V11_535.md).
 
 ## §E v11.534 · Native mesh reshape for §Chat (2026-11-22)
 
