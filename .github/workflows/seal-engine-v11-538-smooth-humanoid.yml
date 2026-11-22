@@ -1,0 +1,69 @@
+name: Seal §E v11.538 smooth UV humanoid
+on:
+  push:
+    branches: [main]
+    paths:
+      - "projects/swrlz-forge-moba/RELEASE_PREPARE_V11_538.json"
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: se538-source-seal
+  cancel-in-progress: false
+jobs:
+  seal:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    steps:
+      - name: Checkout engine source and version lineage
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: true
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Install offline authoring dependencies (never shipped to browser)
+        run: python -m pip install --quiet "numpy>=2,<3" "scikit-image>=0.25,<0.27" "pillow>=11,<13" "scipy>=1.15,<2"
+      - name: Bake a continuous native body with six UV material islands
+        run: python projects/swrlz-forge-moba/authoring/build_futuristic_humanoid_v11_538.py
+      - name: Validate one watertight shell and native loader
+        run: |
+          python projects/swrlz-forge-moba/scripts/check_futuristic_humanoid_v11_538.py
+          node --check projects/swrlz-forge-moba/runtime/smooth_humanoid_starter_v11_538.js
+          node projects/swrlz-forge-moba/tests/smooth_humanoid_starter_v11_538.cjs
+          python -m py_compile projects/swrlz-forge-moba/patches/v11_538_smooth_uv_humanoid.py
+      - name: Rebuild exact native release source and calculate SHA
+        run: python projects/swrlz-forge-moba/scripts/prepare_v11_538_release.py
+      - name: Verify source, native model, account integrations and static packaging
+        run: |
+          python projects/swrlz-forge-moba/scripts/verify_v11_538_release.py --output /tmp/se538-sealed
+          python projects/swrlz-forge-moba/scripts/package_static_delivery_v11_538.py --output /tmp/se538-sealed
+          node --check /tmp/se538-sealed/swrlz-engine-v11.538.js
+      - name: Commit only verified geometry asset and sealed manifest
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add projects/swrlz-forge-moba/scenes/model-atelier-futuristic-humanoid-v11-538.swyrl.json \
+                  projects/swrlz-forge-moba/source-manifest.json
+          git diff --cached --quiet && { echo "No validated changes"; exit 1; }
+          git commit -m "seal(§E v11.538): bake single watertight UV humanoid and hash checked source"
+          git fetch origin main
+          git rebase origin/main
+          git push origin HEAD:main
+      - name: Retain source and geometry evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: se538-smooth-humanoid-and-source-integrity
+          path: |
+            projects/swrlz-forge-moba/scenes/model-atelier-futuristic-humanoid-v11-538.swyrl.json
+            projects/swrlz-forge-moba/source-manifest.json
+          if-no-files-found: warn
