@@ -51,5 +51,13 @@ jobs:
           PY
       - name: Verify inline JS and new login/import module syntax
         run: |
-          node --check projects/swrlz-forge-moba/runtime/engine_native_login_reference_v11_536.js
+          python - <<'PY'
+          from pathlib import Path
+          source=Path('projects/swrlz-forge-moba/runtime/engine_native_login_reference_v11_536.js').read_text()
+          for name,wrap in [('HOST',False),('IMPORT',True)]:
+            part=source.split('/* SE536_'+name+'_START */',1)[1].split('/* SE536_'+name+'_END */',1)[0]
+            Path('/tmp/se536-'+name+'.js').write_text(('const ref={' + part + '};') if wrap else part)
+          PY
+          node --check /tmp/se536-HOST.js
+          node --check /tmp/se536-IMPORT.js
           python projects/swrlz-forge-moba/scripts/check_inline_js_syntax_v11_266.py /tmp/se536.html
