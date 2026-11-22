@@ -1,0 +1,6 @@
+SPACE=kamiloki/Swyrlz
+BASE_REVISION=fa5676e99e7f18adbcc8c0fa4804475400faf067
+SCOPE=only-chat-forge-embed-broker-and-chat-image-reference-ui
+MODE=publish
+APPROVED=yes
+REASON=Native §E startup recovery code and explicit integrated §C image references
