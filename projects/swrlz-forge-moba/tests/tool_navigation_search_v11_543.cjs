@@ -106,7 +106,16 @@ assert.ok(ids('Manual mesh modeling').includes('mode-Topology-Manual mesh modeli
 assert.ok(ids('Rigging').includes('rig'));
 assert.ok(ids('Material').includes('workspace-materials'));
 (async()=>{
- const find=id=>api.search('').find(e=>e.id===id);
+ const names={'uv-wireframe':'UV wireframe','uv-surface':'Surface map',
+   'uv-stretch':'Stretch heatmap','uv-atlas':'Whole model UV atlas',
+   'projects':'Starter Projects','group-Sculpt':'Sculpt',
+   'mode-Topology-Manual mesh modeling':'Manual mesh modeling',
+   'rig':'Rigging','workspace-materials':'Materials & Textures'};
+ const find=id=>{
+   const entry=api.search(names[id]).find(e=>e.id===id);
+   assert.ok(entry,'Search result missing: '+id);
+   return entry;
+ };
  assert.equal(await api.navigate(find('uv-wireframe')),true);
  assert.equal(await api.navigate(find('uv-surface')),true);
  assert.equal(await api.navigate(find('uv-stretch')),true);
