@@ -1,0 +1,55 @@
+name: Measure §E v11.536 native login and reference bridge
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/measure-engine-v11-536-bridge.yml"
+      - "projects/swrlz-forge-moba/patches/v11_536_native_account_image_reference.py"
+      - "projects/swrlz-forge-moba/runtime/engine_native_login_reference_v11_536.js"
+permissions: {contents: read}
+jobs:
+  measure:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - name: Build complete inherited §E source and calculate v11.536 SHA
+        run: |
+          python - <<'PY'
+          import base64,gzip,hashlib,importlib.util,json
+          from pathlib import Path
+          root=Path('projects/swrlz-forge-moba')
+          m=json.loads((root/'source-manifest.json').read_text('utf8'))
+          assert m['name']=='§wyrl§ Engine v11.535'
+          assert m['patches'][-1]=='patches/v11_535_startup_signin_code.py'
+          patches=m['patches']+['patches/v11_536_native_account_image_reference.py']
+          data=gzip.decompress(base64.b64decode(''.join((root/n).read_text('utf8').strip() for n in m['chunks'])))
+          assert hashlib.sha256(data).hexdigest()==m['baseSha256']
+          html=data.decode('utf8')
+          for i,name in enumerate(patches,1):
+            p=root/name
+            spec=importlib.util.spec_from_file_location('patch_'+str(i),p)
+            module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
+            html=module.apply(html)
+          for token in (
+              'SWYRL_ENGINE_DEPLOY_MARKER: V11_536_NATIVE_ACCOUNT_IMAGE_REFERENCE',
+              'signIn:()=>se536PrepareLogin(),',
+              'id="se536RecoveryCode"',
+              'id="se536ContinueGoogle"',
+              'host.reference.import',
+              'importFromChat:async offer=>',
+              "window.SWRLZ_FORGE_BUILD={version:'v11.536'"
+          ): assert token in html,token
+          assert html.count(" source.engine='§wyrl§ Engine · Maker v11.536';source.version=11.536;")==5
+          raw=html.encode('utf8')
+          Path('/tmp/se536.html').write_bytes(raw)
+          print('SE536_SEAL_CANDIDATE',json.dumps({'patches':len(patches),'finalBytes':len(raw),'finalSha256':hashlib.sha256(raw).hexdigest()}),flush=True)
+          PY
+      - name: Verify inline JS and new login/import module syntax
+        run: |
+          node --check projects/swrlz-forge-moba/runtime/engine_native_login_reference_v11_536.js
+          python projects/swrlz-forge-moba/scripts/check_inline_js_syntax_v11_266.py /tmp/se536.html
