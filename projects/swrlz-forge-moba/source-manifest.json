@@ -532,8 +532,8 @@
     "patches/v11_538_smooth_uv_humanoid.py",
     "patches/v11_539_immersive_sculpt_load.py"
   ],
-  "finalBytes": 0,
-  "finalSha256": "",
+  "finalBytes": 11048024,
+  "finalSha256": "3bd6185d2d233d4e54e80eed6a892336a3e1ce3928134e92601df5759fbdf54c",
   "previousFinalSha256": "9f9ec6d2bef1c0516e6b1941c4eab2fbf0707bb10adcb46b0124567fb4aeadf0",
   "previousFinalBytes": 11032916,
   "previousManifestFinalSha256": "9f9ec6d2bef1c0516e6b1941c4eab2fbf0707bb10adcb46b0124567fb4aeadf0",
