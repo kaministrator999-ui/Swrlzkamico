@@ -54,7 +54,8 @@ def apply(html):
        changes=[
         'Added compact Find controls in the native workspace tab strip and Model Studio header with mobile-friendly search, keyboard entry, result labels and Escape dismissal.',
         'Search returns actual native destinations: workspace tabs, model category and operation modes, Meshes, Sculpt, Face, Rigging, Animation, UV Editor, UV wireframe, Applied texture, Surface map and Stretch heatmap.',
-        'Search accepts relevant synonyms such as Current UV Guide and unwrap, while displaying the actual editor label UV wireframe. UI opens native controls instead of pretending to run unsupported actions.',
+        'Search distinguishes the UV wireframe preview from the real Export UV wireframe action. Searching Current UV Guide leads to the real export button, not the preview toggle.',
+        'Moves the one native Export UV wireframe button beside the UV preview, preserving its bound handler, disabled state and original PNG output rather than duplicating the export.',
         'Uses actual Model Studio native APIs to activate categories/modes, mini-studio rigging/animation and UV Editor popup. No mesh, UV, material, save or account mutation occurs from searching.',
         'No persistent indexing of private projects or chat data; navigation-only entries live locally in browser memory. Old model assets, starter project categories and UV editor state are preserved.',
         'Source/runtime validation and destination tests run before release; final owner mobile and Quest menu usability remains device acceptance.'
