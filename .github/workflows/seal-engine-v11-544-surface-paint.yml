@@ -1,0 +1,76 @@
+name: Seal §E v11.544 real humanoid surface paint
+on:
+  push:
+    branches: [main]
+    paths:
+      - "projects/swrlz-forge-moba/RELEASE_PREPARE_V11_544.json"
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: se544-surface-paint-source-seal
+  cancel-in-progress: false
+jobs:
+  seal:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    steps:
+      - name: Checkout governed engine source
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: true
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Install offline geometry and raster dependencies (not in device build)
+        run: python -m pip install --quiet "numpy>=2,<3" "scipy>=1.15,<2" "pillow>=11,<13"
+      - name: Bake paint from 3D position and normals, render actual mannequin
+        run: python projects/swrlz-forge-moba/authoring/build_humanoid_semantic_material_v11_544.py
+      - name: Check anatomical UV mapping, unchanged body and Undo-safe repair
+        run: |
+          python projects/swrlz-forge-moba/scripts/check_humanoid_semantic_paint_v11_544.py
+          node --check projects/swrlz-forge-moba/runtime/humanoid_semantic_starter_v11_544.js
+          node --check projects/swrlz-forge-moba/runtime/humanoid_semantic_repair_v11_544.js
+          node projects/swrlz-forge-moba/tests/humanoid_semantic_repair_v11_544.cjs
+          python -m py_compile projects/swrlz-forge-moba/patches/v11_544_humanoid_surface_paint.py
+      - name: Rebuild exact 521-patch source and calculate true SHA
+        run: python projects/swrlz-forge-moba/scripts/prepare_v11_544_release.py
+      - name: Verify native UI, mannequin, account regressions and final static packaging
+        run: |
+          python projects/swrlz-forge-moba/scripts/verify_v11_544_release.py --output /tmp/se544-release
+          python projects/swrlz-forge-moba/scripts/package_static_delivery_v11_544.py --output /tmp/se544-release
+          node --check /tmp/se544-release/swrlz-engine-v11.544.js
+      - name: Commit only verified authoring artifacts and integrity manifest
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add projects/swrlz-forge-moba/scenes/model-atelier-futuristic-humanoid-v11-544.swyrl.json \
+                  projects/swrlz-forge-moba/assets/models/futuristic-humanoid-v11-544-surface-anchored.png \
+                  projects/swrlz-forge-moba/docs/qa/futuristic-humanoid-v11-544-region-diagnostic.png \
+                  projects/swrlz-forge-moba/docs/qa/futuristic-humanoid-v11-544-front-back-side.png \
+                  projects/swrlz-forge-moba/source-manifest.json
+          git diff --cached --quiet && { echo "No verified changes"; exit 1; }
+          git commit -m "seal(§E v11.544): anatomical 3D-to-UV paint, visual QA and source SHA"
+          git fetch origin main
+          git rebase origin/main
+          git push origin HEAD:main
+      - name: Attach authored source and inspection proof
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: se544-anatomical-texture-and-3d-preview
+          path: |
+            projects/swrlz-forge-moba/scenes/model-atelier-futuristic-humanoid-v11-544.swyrl.json
+            projects/swrlz-forge-moba/assets/models/futuristic-humanoid-v11-544-surface-anchored.png
+            projects/swrlz-forge-moba/docs/qa/futuristic-humanoid-v11-544-region-diagnostic.png
+            projects/swrlz-forge-moba/docs/qa/futuristic-humanoid-v11-544-front-back-side.png
+            projects/swrlz-forge-moba/source-manifest.json
+          if-no-files-found: warn
