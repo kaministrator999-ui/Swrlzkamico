@@ -74,6 +74,11 @@ async function se546ExportUVGuide(){
        " root.querySelector('#se546CurrentUVGuide').addEventListener('click',se546ExportUVGuide);",
        '4k guide event')
     html=once(html,
+       "root.querySelector('#se545AnatomyExport').disabled=!part;",
+       "root.querySelector('#se545AnatomyExport').disabled=!part;" + chr(10) +
+       " root.querySelector('#se546CurrentUVGuide').disabled=!part;",
+       'disable guide without selected humanoid')
+    html=once(html,
        'window.SWRLZ_FORGE_BUILD=',starter+chr(10)+'window.SWRLZ_FORGE_BUILD=',
        'starter loader')
     html=once(html,'<strong>Futuristic Humanoid · Surface-Mapped Robot</strong>',
