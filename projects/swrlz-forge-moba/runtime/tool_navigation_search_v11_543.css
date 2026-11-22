@@ -1,0 +1,32 @@
+/* §E v11.543 — responsive Find Tools, accessible native navigation only. */
+.se543-find-button{display:inline-flex;align-items:center;justify-content:center;gap:3px;white-space:nowrap;
+ padding:5px 9px;min-height:30px;border:1px solid #576b82;border-radius:6px;
+ color:#e0f5ff;background:#234153;cursor:pointer;font:600 12px/1.25 inherit;}
+.se543-find-button:focus-visible,.se543-search-dialog :focus-visible{outline:2px solid #8de7f1;outline-offset:2px}
+.se543-search-overlay[hidden],.se543-search-dialog[hidden]{display:none!important}
+.se543-search-overlay{position:fixed;inset:0;z-index:2147483010;background:#070e19bc;}
+.se543-search-dialog{position:fixed;z-index:2147483011;top:max(65px,10vh);
+ left:50%;transform:translateX(-50%);width:min(92vw,490px);max-height:min(76vh,650px);
+ box-sizing:border-box;display:flex;flex-direction:column;gap:8px;padding:12px;
+ border:1px solid #5b7990;border-radius:12px;background:#172739;color:#ecf8ff;
+ box-shadow:0 16px 45px #000b;font:14px/1.45 system-ui,-apple-system,sans-serif;}
+.se543-search-head{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.se543-search-head strong{font-size:16px}
+.se543-search-head button{background:#343953;color:#fff;border:1px solid #66778b;border-radius:7px;
+ min-height:32px;min-width:34px;cursor:pointer}
+.se543-search-label{font-size:12px;color:#c1d5e5}
+#se543SearchInput{display:block;width:100%;box-sizing:border-box;padding:11px 12px;border:1px solid #527d91;
+ border-radius:8px;background:#0d1c2b;color:#fff;font:inherit;min-height:42px}
+.se543-search-results{overflow:auto;overscroll-behavior:contain;min-height:80px;max-height:min(48vh,430px);
+ display:flex;flex-direction:column;gap:4px}
+.se543-result{display:flex;flex-direction:column;text-align:left;align-items:flex-start;gap:2px;padding:9px 11px;
+ border:1px solid #314b62;border-radius:7px;background:#22374a;color:#f7fcff;cursor:pointer;
+ font:inherit;min-height:44px;}
+.se543-result:hover,.se543-result:focus-visible{background:#34556b;border-color:#71cfda}
+.se543-result-name{font-weight:600}
+.se543-result small{font-size:11px;color:#b2c9d9}
+.se543-empty{color:#c3d7e3;font-size:13px;padding:10px}
+.se543-search-status{font-size:12px;color:#b5cfdc;margin:2px 0;min-height:1em}
+@media(max-width:600px){.se543-search-dialog{top:6vh;width:calc(100vw - 16px);max-height:80dvh;
+ padding:10px;border-radius:10px}.se543-search-results{max-height:52dvh}
+ .se543-find-button{padding:5px 7px;font-size:11px;min-height:30px}}
