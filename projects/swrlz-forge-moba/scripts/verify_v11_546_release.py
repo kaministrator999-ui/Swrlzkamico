@@ -40,7 +40,7 @@ def verify(output, manifest, check_request=False):
                   "signIn:()=>se536PrepareLogin(),",
                   "id=\"se536RecoveryCode\"", "host.reference.import", "importFromChat:async offer=>"):
         assert token in html, token
-    assert html.count(" source.engine='§wyrl§ Engine · Maker v11.546';source.version=11.545;") == 5
+    assert html.count(" source.engine='§wyrl§ Engine · Maker v11.546';source.version=11.546;") == 5
     run("node", "--check", str(ROOT / "runtime/robotic_humanoid_mannequin_v11_537.js"))
     run("node", str(ROOT / "tests/robotic_humanoid_mannequin_v11_537.cjs"))
     run("node", "--check", str(ROOT / "runtime/model_vr_sculpt_preview_v11_539.js"))
@@ -58,7 +58,7 @@ def verify(output, manifest, check_request=False):
     run("node", str(ROOT / "tests/humanoid_uv_starter_v11_542.cjs"))
     run("node", "--check", str(ROOT / "runtime/tool_navigation_search_v11_543.js"))
     # Historical v11.543 behavior test must run without pinning its OLD
-    # release marker against the current 11.545 HTML. Current search tokens
+    # release marker against the current 11.546 HTML. Current search tokens
     # and v11.546 source marker are explicitly checked above.
     run("node", str(ROOT / "tests/tool_navigation_search_v11_543.cjs"))
     run("node", "--check", str(ROOT / "runtime/humanoid_semantic_starter_v11_544.js"))
