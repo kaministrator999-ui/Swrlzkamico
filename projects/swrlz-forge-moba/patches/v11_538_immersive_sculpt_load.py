@@ -128,4 +128,4 @@ def apply(html):
        'Retain model source, UV/paint, native sketch/rig/project undo and cloud ownership; physical Meta Quest performance acceptance remains pending.'
       ])
     return html[:at]+json.dumps(notes,ensure_ascii=False,
-      separators=(',',':')).replace('</',r'<\\/')+html[at+n:]
+      separators=(',',':')).replace('</',r'<\/')+html[at+n:]
