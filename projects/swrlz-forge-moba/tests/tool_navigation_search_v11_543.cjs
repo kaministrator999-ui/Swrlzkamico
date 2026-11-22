@@ -42,11 +42,21 @@ const popupButtons=[
  {textContent:'Surface map (optional)',disabled:false,click(){calls.push('click:surface')}},
  {textContent:'Stretch heatmap',disabled:false,click(){calls.push('click:stretch')}}
 ];
-let uvOpened=false;
+let uvOpened=false,exportClicks=0,exportMoves=0,exportHighlights=0;
+const exportArea={prepend(button){
+ assert.equal(button,nativeUVExport);
+ nativeUVExport.parentElement=this;exportMoves++;
+}};
+const nativeUVExport={
+ id:'se336UVExport',disabled:false,parentElement:{},
+ classList:{add(){exportHighlights++}},focus(){},scrollIntoView(){},
+ click(){exportClicks++}
+};
 const popup={
  get hidden(){return !uvOpened;},
  querySelectorAll(selector){return selector==='button'?popupButtons:[];},
  querySelector(selector){
+  if(selector==='#se336UVExport')return nativeUVExport;
   if(selector==='[data-se355-section="whole"]')
    return {disabled:false,click(){calls.push('click:whole')}};
   return null;
@@ -69,6 +79,8 @@ const document={
  readyState:'loading',body:null,
  querySelector(selector){
   if(selector==='#modelAtelierPanel')return project;
+  if(selector==='#se336UVExport')return nativeUVExport;
+  if(selector==='#se356UVPreview .se356-uv-preview-actions')return exportArea;
   return null;
  },
  addEventListener(){}
@@ -97,7 +109,7 @@ vm.createContext(context);vm.runInContext(script,context,{timeout:1000});
 const api=win.SWYRL_E_TOOL_SEARCH_543;
 const ids=query=>api.search(query).map(x=>x.id);
 assert.ok(ids('UV wireframe').includes('uv-wireframe'));
-assert.ok(ids('Current UV Guide').includes('uv-wireframe'),'old name should be searchable alias');
+assert.ok(ids('Current UV Guide').includes('uv-export'),'old guide wording must lead to the actual export, not the preview toggle');
 assert.ok(ids('UV map').includes('uv'));
 assert.ok(ids('surface map').includes('uv-surface'));
 assert.ok(ids('smoothing').length===0,'unsupported synthetic action must not be fabricated');
@@ -106,7 +118,7 @@ assert.ok(ids('Manual mesh modeling').includes('mode-Topology-Manual mesh modeli
 assert.ok(ids('Rigging').includes('rig'));
 assert.ok(ids('Material').includes('workspace-materials'));
 (async()=>{
- const names={'uv-wireframe':'UV wireframe','uv-surface':'Surface map',
+ const names={'uv-export':'Export UV wireframe','uv-wireframe':'UV wireframe','uv-surface':'Surface map',
    'uv-stretch':'Stretch heatmap','uv-atlas':'Whole model UV atlas',
    'projects':'Starter Projects','group-Sculpt':'Sculpt',
    'mode-Topology-Manual mesh modeling':'Manual mesh modeling',
@@ -116,6 +128,12 @@ assert.ok(ids('Material').includes('workspace-materials'));
    assert.ok(entry,'Search result missing: '+id);
    return entry;
  };
+ assert.equal(await api.navigate(find('uv-export')),true);
+ assert.equal(exportClicks,0,'search must never automatically export files');
+ assert.equal(exportMoves,1,'the real export button must be reparented to the preview');
+ assert.equal(exportHighlights,1,'search must highlight the real button');
+ assert.equal(api.relocateExport(),true);
+ assert.equal(exportMoves,1,'do not duplicate export controls');
  assert.equal(await api.navigate(find('uv-wireframe')),true);
  assert.equal(await api.navigate(find('uv-surface')),true);
  assert.equal(await api.navigate(find('uv-stretch')),true);
@@ -125,6 +143,9 @@ assert.ok(ids('Material').includes('workspace-materials'));
  assert.equal(await api.navigate(find('mode-Topology-Manual mesh modeling')),true);
  assert.equal(await api.navigate(find('rig')),true);
  assert.equal(await api.navigate(find('workspace-materials')),true);
+ assert.equal(exportClicks,0,'preview/search may never trigger an export');
+ nativeUVExport.click();
+ assert.equal(exportClicks,1,'original UV export handler remains directly clickable');
  assert.ok(calls.includes('click:wireframe'));
  assert.ok(calls.includes('click:surface'));
  assert.ok(calls.includes('click:stretch'));
@@ -135,5 +156,6 @@ assert.ok(ids('Material').includes('workspace-materials'));
  assert.ok(calls.includes('mini:rig'));
  assert.ok(calls.includes('workspace:materials'));
  console.log('SE543_NATIVE_SEARCH_OK',JSON.stringify({searchAliases:true,
-  realUV:true,realModelMode:true,realProjects:true,realWorkspace:true,calls:calls.length}));
+  realUV:true,exportNearPreview:true,exportSearchDoesNotDownload:true,
+  realModelMode:true,realProjects:true,realWorkspace:true,calls:calls.length}));
 })().catch(err=>{console.error(err);process.exitCode=1;});
