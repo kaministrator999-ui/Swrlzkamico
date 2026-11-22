@@ -13,5 +13,6 @@
     "searching Current UV Guide highlights true export without initiating a download",
     "original UV export reparented exactly once, preserving bound handler"
   ],
-  "retry": 1
+  "retry": 2,
+  "correction": "CSS integration now targets the first actual document head rather than both occurrences of the literal </head>."
 }
