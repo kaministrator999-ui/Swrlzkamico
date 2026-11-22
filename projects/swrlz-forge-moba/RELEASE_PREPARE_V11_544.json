@@ -1,0 +1,16 @@
+{
+  "schema": "swrlz-forge-release-prepare-v1",
+  "requestedBy": "ChatGPT (owner-authorized correction of mislocated face/hands in mannequin UV texture)",
+  "releaseVersion": "v11.544",
+  "purpose": "Bake robotic material strictly from actual local 3D coordinates and normals into existing 84 xatlas charts. Prevent face painted on chest or hands painted on torso. Preserve exact original geometry/UVs; add reversible UV-editor texture recovery for current user project; verify true front, back, side material placements and deploy only after source integrity checks.",
+  "tests": [
+    "geometry and UV arrays exactly identical to authoritative v11.542",
+    "head face located on head above Y 4.08 and real +Z front, never chest or back",
+    "hands/arm and legs classified by actual X,Y,Z surface coordinates",
+    "exact 1024x1024 PNG output matches native embedded texture, native <=360k chars",
+    "3 independent rendered front back side 3D material previews and body-region diagnostics",
+    "repair must be explicit, Undoable and reject mismatched UV layout",
+    "stable same starter and saved project/account/VR identity",
+    "521-patch SHA and 84 assets static packaging verified"
+  ]
+}
