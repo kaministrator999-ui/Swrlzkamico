@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.533
+title: §wyrl§ Engine v11.534
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,10 @@ fullWidth: true
 header: mini
 short_description: Native projects, verified saves and model creation
 ---
+
+## §E v11.534 · Native mesh reshape for §Chat (2026-11-22)
+
+A compatible §Chat release can propose an approved, in-place edit of a plain primitive or loft. The existing native geometry, history and account project paths retain mesh identity through the edit. See [mesh reshape verification](docs/CHAT_MESH_SHAPE_EDIT_V11_534.md).
 
 ## §E v11.533 · Verified account project opening (2026-11-21)
 

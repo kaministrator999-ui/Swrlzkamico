@@ -1,3 +1,7 @@
+## §E v11.534 · Native mesh reshape for §Chat (2026-11-22)
+
+The source candidate allows a compatible §Chat release to request one approved in-place shape edit on an eligible native mesh. The edit preserves mesh identity and uses the existing project history. See the [mesh reshape checkpoint](projects/swrlz-forge-moba/docs/CHAT_MESH_SHAPE_EDIT_V11_534.md).
+
 ## §E v11.533 · Verified account project opening (2026-11-21)
 
 The account project loader fixes an early rejection of valid saved projects. It passes the selected account ID to the existing native importer and reports success when that import confirms the revision. v11.533 is serving on the existing Hugging Face Space. Build, phone-size browser reproduction and production artifacts are tracked in the [account open checkpoint](projects/swrlz-forge-moba/docs/PROJECT_ACCOUNT_OPEN_V11_533.md). Little Glitch Dragon reached account revision 6 with 13 editable meshes through §C. The actual renders still show a blockout. An authenticated production reopen verified all 13 editable mesh records against the cloud save.

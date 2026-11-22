@@ -1,3 +1,7 @@
+## §E v11.534 · Native mesh reshape for §Chat (2026-11-22)
+
+The source candidate extends the existing §Chat bridge with one approved native reshape for a plain primitive or loft. The edit preserves mesh identity, transforms, materials and group links through native Undo and project persistence. See [mesh reshape contract and verification](docs/CHAT_MESH_SHAPE_EDIT_V11_534.md).
+
 ## §E v11.533 · Verified account project opening (2026-11-21)
 
 Account project cards and the shared loader pass the exact account project ID through to the authenticated native download. The editor requires a fresh confirmed import and matching revision, and shows the load error if the request fails. The v11.532 save receipts and revision cache stay in place. See [account open checkpoint](docs/PROJECT_ACCOUNT_OPEN_V11_533.md) for source verification and pending publication evidence.
