@@ -134,6 +134,8 @@ def main():
     media_paths.append("scenes/model-atelier-sorting-hat.swyrl.json")
     # v11.538: pre-baked one-piece sculpt with embedded native UV material atlas.
     media_paths.append("scenes/model-atelier-futuristic-humanoid-v11-538.swyrl.json")
+    # v11.540: manifold one-body five-finger hand model; keep v11.538 as historical asset.
+    media_paths.append("scenes/model-atelier-futuristic-humanoid-v11-540.swyrl.json")
     media_paths.append("scenes/model-atelier-comet-courier-v11-77.swyrl.json")
     media_paths.extend(p.relative_to(ROOT).as_posix() for p in sorted((ROOT / "assets/models/comet-courier").glob("*")) if p.is_file())
     media_paths.extend(["scenes/sheep-tag-wildwood-v11-79.swyrl.json", "assets/sheep-tag/moonbell-wildwood-ground-4k.jpg"])
