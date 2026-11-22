@@ -1,0 +1,14 @@
+{
+  "schema": "swrlz-forge-release-prepare-v1",
+  "requestedBy": "ChatGPT (owner-approved)",
+  "releaseVersion": "v11.540",
+  "purpose": "Replace pointed mitten-like hand tips with full four-finger plus opposable-thumb silhouettes per hand in one connected organic UV-ready humanoid body. Preserve v11.539 immersive sculpt fixes and existing starter identity.",
+  "acceptance": [
+    "continuous closed manifold and one geometry component",
+    "four distinct fingertips and separate thumb visible on both arms",
+    "<=9000 indexed UV vertices and <=16000 triangles",
+    "six valid UV islands and embedded painted atlas",
+    "native studio route and previous VR/account regressions",
+    "exact SHA sealed release and static browser package"
+  ]
+}
