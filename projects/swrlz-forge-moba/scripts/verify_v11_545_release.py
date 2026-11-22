@@ -35,7 +35,7 @@ def verify(output, manifest, check_request=False):
                   "swrlz-forge-mesh-shape-edit-v1", "RESHAPE_REQUIRES_SEPARATE_BATCH",
                   "SE533_PROJECT_ACCOUNT_OPEN_START", "SE532_PROJECT_ACCOUNT_SAVE_RECEIPT_START",
                   "SE521_PERSISTENT_EDIT_JOURNAL_END",
-                  "SE537_HUMANOID_END", "SE538_SMOOTH_HUMANOID_END", "SE539_IMMERSIVE_SCULPT_REPAIR_END", "SE540_HUMANOID_HANDS_END", "V11_544_HUMANOID_SURFACE_PAINT", "SE545_UV_ANATOMY_VIEW_END", "SWYRL_E_UV_ANATOMY_545",
+                  "SE537_HUMANOID_END", "SE538_SMOOTH_HUMANOID_END", "SE539_IMMERSIVE_SCULPT_REPAIR_END", "SE540_HUMANOID_HANDS_END", "V11_545_HUMANOID_UV_ANATOMY_VIEW", "SE545_UV_ANATOMY_VIEW_END", "SWYRL_E_UV_ANATOMY_545",
                   "se537OpenMannequin=se538OpenHumanoid", "se537OpenMannequin=se540OpenHumanoid", "se537OpenMannequin=se542OpenHumanoid", "SE542_HUMANOID_UV_GUARD_END", "SE544_MAPPED_HUMANOID_STARTER_END", "SE544_MAPPED_MANNEQUIN_REPAIR_END", "se537OpenMannequin=se544OpenHumanoid", "SE543_TOOL_SEARCH_END", "SWYRL_E_TOOL_SEARCH_543", "robotic-humanoid-mannequin",
                   "signIn:()=>se536PrepareLogin(),",
                   "id=\"se536RecoveryCode\"", "host.reference.import", "importFromChat:async offer=>"):
@@ -58,8 +58,8 @@ def verify(output, manifest, check_request=False):
     run("node", str(ROOT / "tests/humanoid_uv_starter_v11_542.cjs"))
     run("node", "--check", str(ROOT / "runtime/tool_navigation_search_v11_543.js"))
     # Historical v11.543 behavior test must run without pinning its OLD
-    # release marker against the current 11.544 HTML. Current search tokens
-    # and v11.544 source marker are explicitly checked above.
+    # release marker against the current 11.545 HTML. Current search tokens
+    # and v11.545 source marker are explicitly checked above.
     run("node", str(ROOT / "tests/tool_navigation_search_v11_543.cjs"))
     run("node", "--check", str(ROOT / "runtime/humanoid_semantic_starter_v11_544.js"))
     run("node", "--check", str(ROOT / "runtime/humanoid_semantic_repair_v11_544.js"))
