@@ -1,3 +1,9 @@
+## §E v11.536 · Native Google login and §Chat image references (2026-11-22)
+
+The **initial §E login screen** now requests the existing Google pairing proof and displays the temporary 12-character code there, with **Copy code** and **Continue to Google** controls. The code is shared only through §C's bound account channel; Google login and PKCE exchange remain verified on §C, and the resulting authenticated session connects the integrated §Chat and account-backed §E projects. The previous full-Chat-panel workaround is no longer necessary.
+
+When a user attaches an image to **integrated §Chat**, the new **Use in §E references** action explicitly sends the original JPEG/PNG/WebP bytes over the trusted native bridge to Model Atelier's existing portable reference studio, which retains native image-size, four-reference, Undo and project-save behavior. It does not silently mutate model geometry or replace Chat's Qwen vision analysis. Real Google/Quest/phone acceptance remains device-tested.
+
 ## §E v11.535 · Google sign-in code visible from startup (2026-11-22)
 
 The account-first Sign in with Google action now opens the existing secure §Chat panel above the startup gate, where the established 12-character temporary recovery proof can be copied before selecting Continue to Google. The code remains entirely in the Chat-origin iframe; no §E credential or second OAuth implementation was added. Original native project loading, cloud revisions and local continuation remain unchanged. See [the v11.535 correction and owner-device acceptance](docs/GOOGLE_ACCOUNT_CODE_V11_535.md).
