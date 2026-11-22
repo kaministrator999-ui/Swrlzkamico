@@ -1,10 +1,10 @@
 {
   "schema": "swrlz-forge-deploy-request-v1",
-  "requestedBy": "ChatGPT (owner-approved §E UV workflow and mannequin quality improvement)",
+  "requestedBy": "ChatGPT (owner approved fixing §E interface and adding menu search)",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.542",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_542_HUMANOID_RELAXED_UV_ATLAS",
-  "reason": "Replace distorted humanoid UV mapping with a verified xatlas chart layout (84 non-overlapping charts, 8,792 UV vertices, 13,932 triangles, 36.4% occupied atlas) and trianglewise reproject the original 1024px satin/graphite/teal painted material. Ship matching 2048px guide. Protect existing one-body, five-digit mannequin from experimental conical front/back/brim UV candidate. Preserve prior game, model, VR and account functionality. CI verified 519-patch source SHA, 82 packaged assets, native mesh/texture, stable starter routing and browser package.",
-  "sourceCommit": "eeb69af1fc2f150538d6d2f692eec31b479ca0b0",
-  "sourceIntegritySha256": "f9d7f2a4b7c96ed710473b408e5b0e5a5955f7035782011ff33d04ad97442977"
+  "releaseVersion": "v11.543",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_543_TOOL_NAVIGATION_SEARCH",
+  "reason": "Publish global §E Find Tool/area search in workspace and Model Studio headers. Search actual native workspaces, Model Studio category/modes, UV Editor, materials, rigging, starter projects. Distinguish UV wireframe preview from real Export UV wireframe. Reparent original UV export button next to preview with original bound handler and move-state; search highlights original export without executing. Preserve saves, geometry, UV assets and account integrations. All 520 ordered patches and 82 packaged assets source-verified plus static delivery checks.",
+  "sourceCommit": "879d64a002b99e9a24d6b1acd2b36814118cbaff",
+  "sourceIntegritySha256": "c81ad796dfa034b03af02a3f80ad0951fc2c8f065ffa6e6752eac5c6c14e847d"
 }
