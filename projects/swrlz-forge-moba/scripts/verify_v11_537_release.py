@@ -39,7 +39,7 @@ def verify(output, manifest, check_request=False):
                   "signIn:()=>se536PrepareLogin(),",
                   "id=\"se536RecoveryCode\"", "host.reference.import", "importFromChat:async offer=>"):
         assert token in html, token
-    assert html.count(" source.engine='§wyrl§ Engine · Maker v11.537';source.version=11.536;") == 5
+    assert html.count(" source.engine='§wyrl§ Engine · Maker v11.537';source.version=11.537;") == 5
     run("node", "--check", str(ROOT / "runtime/robotic_humanoid_mannequin_v11_537.js"))
     run("node", str(ROOT / "tests/robotic_humanoid_mannequin_v11_537.cjs"))
     run("node", "--check", str(ROOT / "runtime/chat_mesh_shape_edit_v11_534.js"))
