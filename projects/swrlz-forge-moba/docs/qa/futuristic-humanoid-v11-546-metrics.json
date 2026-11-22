@@ -1,0 +1,31 @@
+{
+  "version": "v11.546",
+  "strategy": "six",
+  "charts": 108,
+  "vertices": 8902,
+  "triangles": 13932,
+  "originalGeometryUnchanged": true,
+  "regionTriangles": {
+    "head": 1229,
+    "torso": 3608,
+    "leftArm": 2249,
+    "rightArm": 2259,
+    "leftLeg": 2305,
+    "rightLeg": 2282
+  },
+  "paintBytes": 219206,
+  "guideSize": 4096,
+  "legacyCandidatesRejected": [
+    "seven: UV vertex budget exceeded: 9035"
+  ],
+  "uvArea": 0.282,
+  "p95P5Density": 3.46,
+  "coveredPct": 28.15,
+  "overlaps": 0,
+  "regionTexels": {
+    "head": 34095,
+    "arm": 75814,
+    "torso": 120469,
+    "leg": 64847
+  }
+}
