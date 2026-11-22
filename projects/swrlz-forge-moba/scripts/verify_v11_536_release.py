@@ -19,7 +19,7 @@ def run(*command):
 
 def verify(output, manifest, check_request=False):
     assert manifest["name"] == "§wyrl§ Engine v11.536"
-    assert manifest["finalArtifact"] == "swyrl_engine_v11_535.html"
+    assert manifest["finalArtifact"] == "swyrl_engine_v11_536.html"
     assert len(manifest["patches"]) == 513
     assert manifest["patches"][-2:] == [
         "patches/v11_535_startup_signin_code.py", "patches/v11_536_native_account_image_reference.py",
@@ -38,7 +38,7 @@ def verify(output, manifest, check_request=False):
                   "signIn:()=>se536PrepareLogin(),",
                   "id=\"se536RecoveryCode\"", "host.reference.import", "importFromChat:async offer=>"):
         assert token in html, token
-    assert html.count(" source.engine='§wyrl§ Engine · Maker v11.536';source.version=11.535;") == 5
+    assert html.count(" source.engine='§wyrl§ Engine · Maker v11.536';source.version=11.536;") == 5
     run("node", "--check", str(ROOT / "runtime/chat_mesh_shape_edit_v11_534.js"))
     run(sys.executable, str(ROOT / "scripts/check_inline_js_syntax_v11_266.py"), str(index))
     for name in ("engine_native_login_reference_v11_536.cjs", "chat_mesh_shape_edit_v11_534.cjs", "project_account_receipt_v11_532.cjs", "project_account_open_v11_533.cjs"):
