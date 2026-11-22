@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT (owner-approved)",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.535",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_535_STARTUP_SIGNIN_CODE",
-  "reason": "Expose the existing Chat-origin 12-character Google sign-in recovery code at the §E startup gate before opening Google. The verified 512-patch source preserves the original Chat OAuth, project ownership, revision checks, model editing and offline access.",
-  "sourceCommit": "ffa21e0f0ca0347c1a5e2500d2856f3473f97430",
-  "sourceIntegritySha256": "cc1f5218bd08a480b2e94a41945029c3d99267be73fe2043908cebe4fbf2fab8"
+  "releaseVersion": "v11.536",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_536_NATIVE_ACCOUNT_IMAGE_REFERENCE",
+  "reason": "Publish the native §E startup Google pairing code, Copy code and Continue to Google controls, plus authenticated user-selected §Chat image import into the Model Atelier reference library. Source-sealed 513 patches preserve cloud account project IDs, revision checks, offline editing, Undo, Qwen vision and prior model operations.",
+  "sourceCommit": "8cf725dbe2ac3b92f4d30ab746b61785f68f0046",
+  "sourceIntegritySha256": "11a52e4a2a0e23b369dfb7b870399e7d8a1e6dce6d177f353e35fa95b19e8847"
 }
