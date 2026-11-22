@@ -63,7 +63,7 @@ function se545Draw(canvas,data,filter,exporting){
   if(!counts[face.zone])counts[face.zone]=0;
   counts[face.zone]++;
   const highlighted=filter==='all'||filter===face.zone;
-  ctx.globalAlpha=highlighted?.95:.08;
+  ctx.globalAlpha=highlighted ? .95 : .08;
   ctx.fillStyle=palette[face.zone];
   ctx.beginPath();
   face.uv.forEach(([u,v],i)=>{
@@ -147,7 +147,7 @@ function se545Install(){
   '<label>Highlight region <select id="se545AnatomyRegion"><option value="all">All body regions</option>'+
   se545Zones.map(z=>'<option value="'+z.id+'">'+z.name+'</option>').join('')+'</select></label> '+
   '<button type="button" id="se545AnatomyExport">Export anatomy guide · 2048px</button>'+
-  '<canvas id="se545AnatomyCanvas" width="640" height="640" hidden style="display:block;width:100%;max-width:640px;height:auto;margin:8px auto;touch-action:pan-y"></canvas>'+
+  '<canvas id="se545AnatomyCanvas" width="640" height="640" hidden style="width:100%;max-width:640px;height:auto;margin:8px auto;touch-action:pan-y"></canvas>'+
   '<p id="se545AnatomyInfo" role="status">Open to inspect the current selected mannequin UVs.</p>'+
   '<p>Guides are reference overlays, not material textures. Existing UV coordinates, image, sculpt and Undo history remain untouched.</p>';
  host.append(root);
