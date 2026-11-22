@@ -1,0 +1,6 @@
+SPACE=kamiloki/Swyrlz
+BASE_REVISION=e55aa8736a4929d3587652f9894b5d3fb6e2db01
+SCOPE=only-model-router-and-new-readonly-project-analysis-module
+MODE=publish
+APPROVED=yes
+REASON=Stream actual §E editor project inspection observations before read-only Qwen synthesized analysis
