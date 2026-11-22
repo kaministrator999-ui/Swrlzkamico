@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.535
+title: §wyrl§ Engine v11.536
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,10 @@ fullWidth: true
 header: mini
 short_description: Native projects, verified saves and model creation
 ---
+
+## §E v11.536 · Native login code and integrated image references (2026-11-22)
+
+The §E startup card directly displays the temporary Google connection code with **Copy code** and **Continue to Google**, without opening the full integrated Chat panel. The existing §C broker verifies Google identity for both Chat and account projects. An explicitly selected image in integrated §Chat can be added to Model Atelier's persisted image-reference library, while the original Qwen vision workflow and native file/Undo constraints remain unchanged.
 
 ## §E v11.535 · Recovery code accessible at Google sign-in (2026-11-22)
 
