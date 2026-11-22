@@ -19,7 +19,7 @@ def run(*command):
 
 def verify(output, manifest, check_request=False):
     assert manifest["name"] == "§wyrl§ Engine v11.538"
-    assert manifest["finalArtifact"] == "swyrl_engine_v11_537.html"
+    assert manifest["finalArtifact"] == "swyrl_engine_v11_538.html"
     assert len(manifest["patches"]) == 515
     assert manifest["patches"][-2:] == [
         "patches/v11_537_robotic_humanoid_mannequin.py", "patches/v11_538_smooth_uv_humanoid.py",
@@ -40,7 +40,7 @@ def verify(output, manifest, check_request=False):
                   "signIn:()=>se536PrepareLogin(),",
                   "id=\"se536RecoveryCode\"", "host.reference.import", "importFromChat:async offer=>"):
         assert token in html, token
-    assert html.count(" source.engine='§wyrl§ Engine · Maker v11.538';source.version=11.537;") == 5
+    assert html.count(" source.engine='§wyrl§ Engine · Maker v11.538';source.version=11.538;") == 5
     run("node", "--check", str(ROOT / "runtime/robotic_humanoid_mannequin_v11_537.js"))
     run("node", str(ROOT / "tests/robotic_humanoid_mannequin_v11_537.cjs"))
     run("node", "--check", str(ROOT / "runtime/smooth_humanoid_starter_v11_538.js"))
