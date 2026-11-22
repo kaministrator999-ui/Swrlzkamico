@@ -1,0 +1,62 @@
+name: Guarded §C progressive Analyze Workspace release
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/hf-forge-progressive-review-v1.yml"
+      - "scripts/releases/forge_progressive_review_v1.py"
+      - "scripts/hf_forge_progressive_review_v1_release.py"
+      - "tests/test_forge_progressive_review_v1.py"
+      - ".deploy/HF_FORGE_PROGRESSIVE_REVIEW_REQUEST.txt"
+permissions: {contents: read}
+concurrency:
+  group: swrlz-hf-space-deployment
+  cancel-in-progress: false
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 36
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check release authority and exact live source
+        id: gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          mode=inspect
+          file=.deploy/HF_FORGE_PROGRESSIVE_REVIEW_REQUEST.txt
+          if [[ -f "$file" ]]; then
+            value(){ sed -n "s/^$1=//p" "$file" | tail -1; }
+            test "$(value SPACE)" = "kamiloki/Swyrlz"
+            test "$(value BASE_REVISION)" = "e55aa8736a4929d3587652f9894b5d3fb6e2db01"
+            test "$(value SCOPE)" = "only-model-router-and-new-readonly-project-analysis-module"
+            mode="$(value MODE)"
+            [[ "$mode" == inspect || "$mode" == publish ]]
+            if [[ "$mode" == publish ]]; then test "$(value APPROVED)" = yes; fi
+          fi
+          echo "mode=$mode" >> "$GITHUB_OUTPUT"
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - name: Check syntax of scoped source and release verifier
+        run: |
+          python -m py_compile scripts/releases/forge_progressive_review_v1.py
+          python -m py_compile scripts/hf_forge_progressive_review_v1_release.py tests/test_forge_progressive_review_v1.py
+      - run: python -m pip install --quiet 'huggingface_hub>=0.34,<2'
+      - name: Inspect exact production source and progressive stream behavior
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: python -u scripts/hf_forge_progressive_review_v1_release.py inspect
+      - name: Preserve original source, compiled candidate and test receipt
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: forge-progressive-review-v1-source
+          path: reports/forge-progressive-review-v1/
+          retention-days: 21
+          if-no-files-found: ignore
+      - name: Deploy read-only source and verify live Qwen readiness
+        if: ${{ steps.gate.outputs.mode == 'publish' }}
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          SWRLZ_FORGE_REVIEW_APPROVED: 'yes'
+        run: python -u scripts/hf_forge_progressive_review_v1_release.py publish
