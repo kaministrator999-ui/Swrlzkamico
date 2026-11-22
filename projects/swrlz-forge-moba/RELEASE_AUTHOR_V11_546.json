@@ -4,5 +4,6 @@
   "version": "v11.546",
   "goal": "Rebuild humanoid UVs into anatomy-grouped charts; generate independent new robotic material from 3D surface; preserve geometry; provide 4096x4096 reference atlas and anatomy exports; preserve historical scenes and saved copies.",
   "release": "Do not publish until exact geometry/UV texture checks and source-seal tests pass.",
-  "run": 1
+  "run": 2,
+  "correction": "Expand anatomical UV region rectangles and increase coherent texture coverage without relaxing native limits"
 }
