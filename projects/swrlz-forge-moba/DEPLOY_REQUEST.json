@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT (owner-approved)",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.537",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_537_ROBOTIC_HUMANOID_MANNEQUIN",
-  "reason": "Publish original native Robotic Humanoid Mannequin starter: 178 selectable untextured topology parts in horizontal T-pose with organic anatomy, mechanical joints, full hands/feet and Starter Models integration. Verified 514-patch HTML, native geometry/pose tests, account regressions and static delivery integrity.",
-  "sourceCommit": "58d2b8b916e18ede707c32f1d75f0df98f9f9b7b",
-  "sourceIntegritySha256": "cb973742cc60bf617678b7015c94a4ccc2e6fd792dcfce73a7580758137aa4ab"
+  "releaseVersion": "v11.538",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_538_SMOOTH_UV_HUMANOID",
+  "reason": "Ship Futuristic Humanoid · Smooth: one closed connected body surface (7,365 UV vertices / 13,472 triangles), six UV islands, original embedded 1024px graphite/teal sci-fi atlas, stable Starter Models and native project route, no per-device geometry generation. Release verified against existing model editing, account and static delivery tests.",
+  "sourceCommit": "aa8264c2353598ce900a46bff651ffca086ba744",
+  "sourceIntegritySha256": "9f9ec6d2bef1c0516e6b1941c4eab2fbf0707bb10adcb46b0124567fb4aeadf0"
 }
