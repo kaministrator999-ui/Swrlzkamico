@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.536
+title: §wyrl§ Engine v11.539
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,10 @@ fullWidth: true
 header: mini
 short_description: Native projects, verified saves and model creation
 ---
+
+## §E v11.539 · Immersive VR sculpt preview and loading improvements (2026-11-22)
+
+Native Model Studio immersive WebXR now displays a pooled translucent displacement dome, a surface selector, and a capped wireframe preview sampled from the **actual source mesh**. Brush updates use reduced allocation overhead and bounded sample cadence; native Undo, editable mesh data, and controller actions remain authoritative. The existing parameter toolbar has less empty area, and the VR project starter library now registers Smooth Witch Hat with a session-safe asynchronous load handoff. This follows and preserves the independent v11.538 single-mesh humanoid release. Physical Quest 2 acceptance of frame time and usability remains outstanding. [Scoped implementation, regression criteria and owner QA](docs/IMMERSIVE_SCULPT_PREVIEW_V11_539.md).
 
 ## §E v11.536 · Native login code and integrated image references (2026-11-22)
 
