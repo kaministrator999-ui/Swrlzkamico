@@ -1,0 +1,40 @@
+name: Verify §E v11.536 sealed native login and Chat reference release
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/verify-engine-v11-536-login-reference.yml"
+      - "projects/swrlz-forge-moba/source-manifest.json"
+      - "projects/swrlz-forge-moba/scripts/verify_v11_536_release.py"
+      - "projects/swrlz-forge-moba/scripts/package_static_delivery_v11_536.py"
+      - "projects/swrlz-forge-moba/tests/engine_native_login_reference_v11_536.cjs"
+  workflow_dispatch:
+permissions: {contents: read}
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - name: Verify exact 513-patch engine source and regression checks
+        run: python projects/swrlz-forge-moba/scripts/verify_v11_536_release.py --output /tmp/se536-release
+      - name: Verify browser-renderable static delivery
+        run: |
+          python projects/swrlz-forge-moba/scripts/package_static_delivery_v11_536.py --output /tmp/se536-release
+          node --check /tmp/se536-release/swrlz-engine-v11.536.js
+      - name: Record final source and browser delivery digest
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          d=json.loads(Path('/tmp/se536-release/SOURCE.json').read_text('utf8'))
+          print('SE536_RELEASE_READY',json.dumps({
+            'version':d['sourceVersion'],'sha256':d['finalSha256'],
+            'bytes':d['finalBytes'],'patches':len(d['patches']),
+            'assets':len(d['assets']),'static':d['staticDelivery']['mode']
+          }))
+          PY
