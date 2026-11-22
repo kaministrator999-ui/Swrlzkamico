@@ -13,6 +13,6 @@
     "searching Current UV Guide highlights true export without initiating a download",
     "original UV export reparented exactly once, preserving bound handler"
   ],
-  "retry": 2,
-  "correction": "CSS integration now targets the first actual document head rather than both occurrences of the literal </head>."
+  "retry": 3,
+  "correction": "Locate the real </head> after the opening <head> without an arbitrary 200k byte limit; existing engine header is ~589k bytes."
 }
