@@ -1,0 +1,51 @@
+name: Measure §E v11.538 immersive sculpt candidate
+on:
+  push:
+    branches: [feature/immersive-vr-brush-538]
+    paths:
+      - 'projects/swrlz-forge-moba/patches/v11_538_immersive_sculpt_load.py'
+      - 'projects/swrlz-forge-moba/runtime/model_vr_sculpt_preview_v11_538.js'
+      - 'projects/swrlz-forge-moba/source-manifest.json'
+      - 'projects/swrlz-forge-moba/tests/model_vr_sculpt_preview_v11_538.cjs'
+      - '.github/workflows/measure-engine-v11-538-candidate.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  measure:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify targeted runtime and patch contracts
+        run: |
+          node --check projects/swrlz-forge-moba/runtime/model_vr_sculpt_preview_v11_538.js
+          node projects/swrlz-forge-moba/tests/model_vr_sculpt_preview_v11_538.cjs
+          python -m py_compile projects/swrlz-forge-moba/patches/v11_538_immersive_sculpt_load.py
+      - name: Assemble authentic append-only source and measure exact seal
+        run: |
+          python projects/swrlz-forge-moba/build_space.py --output /tmp/se538-candidate
+          python - <<'PY'
+          import json,hashlib
+          from pathlib import Path
+          root=Path('projects/swrlz-forge-moba')
+          manifest=json.loads((root/'source-manifest.json').read_text('utf8'))
+          source=Path('/tmp/se538-candidate/index.html').read_bytes()
+          assert source==Path('/tmp/se538-candidate/modeler.html').read_bytes()
+          assert b'SE538_IMMERSIVE_SCULPT_REPAIR_END' in source
+          assert b'v11.538' in source
+          print('SE538_CANDIDATE_MEASURE',json.dumps({
+            'version':manifest['name'],'patches':len(manifest['patches']),
+            'bytes':len(source),'sha256':hashlib.sha256(source).hexdigest()
+          }),flush=True)
+          PY
+      - name: Check assembled JavaScript syntax
+        run: |
+          python projects/swrlz-forge-moba/scripts/check_inline_js_syntax_v11_266.py /tmp/se538-candidate/index.html
+          echo SE538_CANDIDATE_JS_CHECK_PASS
