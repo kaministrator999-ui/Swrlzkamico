@@ -2,13 +2,16 @@
   "schema": "swrlz-forge-release-prepare-v1",
   "requestedBy": "ChatGPT (user requests menu search and jump-to-tools)",
   "releaseVersion": "v11.543",
-  "purpose": "Add small Find Tool menu to §E with correct actual UI names and aliases, navigate to real native workspaces, model categories/modes, Rigging, UV wireframe, heatmap and project library. No model/edit data change.",
+  "purpose": "Seal one consolidated global Find Tool search; search actual UV Export separately from preview, relocate the original export button next to the UV preview, preserve navigation-only behavior and original source project actions.",
   "tests": [
     "source-grounded UV wireframe naming, synonym Current UV Guide",
     "real workspace / model mode / popup routing",
     "responsive keyboard-accessible menu",
     "existing project starter categories and saves unaffected",
     "actual source integrity and 520 ordered patches",
-    "static delivery package and account, Model Studio regressions"
-  ]
+    "static delivery package and account, Model Studio regressions",
+    "searching Current UV Guide highlights true export without initiating a download",
+    "original UV export reparented exactly once, preserving bound handler"
+  ],
+  "retry": 1
 }
