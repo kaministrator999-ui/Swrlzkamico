@@ -9,7 +9,7 @@ import sys
 import zlib
 
 ROOT=Path(__file__).resolve().parents[1]
-ASSET=ROOT/'scenes/model-atelier-futuristic-humanoid-v11-538.swyrl.json'
+ASSET=ROOT/'scenes/model-atelier-futuristic-humanoid-v11-540.swyrl.json'
 
 
 def check():
