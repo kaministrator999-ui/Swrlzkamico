@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.536
+title: §wyrl§ Engine v11.538
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,10 @@ fullWidth: true
 header: mini
 short_description: Native projects, verified saves and model creation
 ---
+
+## §E v11.538 · Immersive sculpt envelope, responsiveness and VR starter loading (2026-11-22)
+
+Native immersive Model Studio replaces the flat brush cursor with a low-detail strength dome, a precise selector and a bounded real-mesh influence-wire preview. Sculpt processing reduces per-frame update pressure and per-vertex allocation overhead. Existing parameter controls are compacted without duplicate actions. The native immersive project list includes the previously unregistered Smooth Witch Hat and other hat/mannequin starters, and asynchronous project switches retain the WebXR session. Headset acceptance is pending. See [v11.538 owner QA and implementation](docs/IMMERSIVE_SCULPT_PREVIEW_V11_538.md).
 
 ## §E v11.536 · Native login code and integrated image references (2026-11-22)
 
