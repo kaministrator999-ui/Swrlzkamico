@@ -27,7 +27,7 @@ function se537MakeMannequin(){
    }
    for(let j=0;j<rows;j++)for(let i=0;i<detail;i++){
      const a=j*(detail+1)+i,b=a+detail+1;
-     ix.push(a,b,a+1,b,b+1,a+1);
+     ix.push(a,a+1,b,b,a+1,b+1);
    }
    add(name,group,color,p,uv,ix);
  }
