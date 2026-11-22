@@ -253,12 +253,11 @@ def render_view(color,xyz,uv,faces,axis,back):
     else:
         xx=xyz[:,2];depth=xyz[:,0]
     yp=xyz[:,1]
-    # Full T-pose fits; arms are horizontal along X.
-    if axis=='front':
-        sx=(xx+2.95)/5.90*(width-1)
-    else:
-        sx=(xx+.52)/1.04*(width-1)
-    sy=(4.95-yp)/4.95*(height-1)
+    # Equal pixels-per-meter on horizontal and vertical axes. Side camera
+    # may zoom but must NEVER stretch a narrow head/torso into UFO shapes.
+    scale=90 if axis=='front' else 105
+    sx=width/2+xx*scale
+    sy=height/2+(2.425-yp)*scale
     screen=np.column_stack((sx,sy))
     framebuffer=np.full((height,width,3),[19,26,41],dtype=np.uint8)
     zbuf=np.full((height,width),-np.inf,dtype=np.float64)
