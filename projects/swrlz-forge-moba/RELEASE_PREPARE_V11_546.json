@@ -1,0 +1,27 @@
+{
+  "schema": "swrlz-forge-release-prepare-v1",
+  "requestedBy": "ChatGPT (owner-authorized anatomical UV rebuilding and new robotic skin, plus explicit 4K export)",
+  "releaseVersion": "v11.546",
+  "purpose": "Ship anatomy-based UV rewrap for native humanoid without changing the 13,932 original 3D triangles, pair it with an entirely new geometry-baked faceless robotic skin, provide true 4096x4096 wireframe/anatomy guides and switch UV Editor anatomy and current guide exports to selectable 4K default or 2K. Leave historical assets and saved account projects unchanged.",
+  "assetBake": {
+    "workflowRun": 45076117961,
+    "conclusion": "success",
+    "strategy": "six",
+    "uvVertices": 8902,
+    "triangles": 13932,
+    "charts": 108,
+    "uvArea": 0.282,
+    "texelDensityP95P5": 3.46,
+    "rasterOverlaps": 0,
+    "png4096": 2
+  },
+  "tests": [
+    "new geometry equality against original v11.540 and vertex budget",
+    "real 3D-painted robot material and positive anatomy region texels",
+    "4096x4096 independent UV wireframe and colored anatomical atlas assets",
+    "the UI offers 4K default and 2K alternative for both anatomy and current wireframe export",
+    "native starter loads new 546 and keeps old project identity/VR account code",
+    "523 historical source patches replayed with actual byte SHA receipt",
+    "88 static assets packaged and verified and native runtime JS syntax"
+  ]
+}
