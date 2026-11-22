@@ -27,6 +27,8 @@ def apply(html):
           host+'\nfunction mount(){\n  if(document.getElementById(\'seChatAccountPanel\')')
  html=one(html,' signIn:()=>{openPanel();return signIn();},',
           ' signIn:()=>se536PrepareLogin(),')
+ html=one(html,"  note('Copy the one-time code at the top of the secure §Chat panel, then tap Continue to Google there.');",
+          "  note('Preparing the Google connection code on this §E login screen…');")
  html=one(html,"  if(type==='account.status'){\n    revoke('Account changed.');",
           "  if(type==='account.status'){\n    if(payload.authenticated===true)se536Clear();\n    revoke('Account changed.');")
  html=one(html,"  if(type==='host.context'){", """  if(type==='host.reference.import'){
