@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Verify the sealed §E v11.535 mesh reshape host and native persistence paths."""
+"""Verify the sealed §E v11.535 secure sign-in recovery-code access and native persistence."""
 import argparse
 import hashlib
 import json
@@ -19,7 +19,7 @@ def run(*command):
 
 def verify(output, manifest, check_request=False):
     assert manifest["name"] == "§wyrl§ Engine v11.535"
-    assert manifest["finalArtifact"] == "swyrl_engine_v11_534.html"
+    assert manifest["finalArtifact"] == "swyrl_engine_v11_535.html"
     assert len(manifest["patches"]) == 512
     assert manifest["patches"][-2:] == [
         "patches/v11_534_chat_mesh_shape_edit.py", "patches/v11_535_startup_signin_code.py",
@@ -34,10 +34,11 @@ def verify(output, manifest, check_request=False):
                   "<title>§wyrl§ Engine · Maker v11.535</title>",
                   "swrlz-forge-mesh-shape-edit-v1", "RESHAPE_REQUIRES_SEPARATE_BATCH",
                   "SE533_PROJECT_ACCOUNT_OPEN_START", "SE532_PROJECT_ACCOUNT_SAVE_RECEIPT_START",
-                  "SE521_PERSISTENT_EDIT_JOURNAL_END",\n                  "signIn:()=>{openPanel();return signIn();},",\n                  "#se476StartupGate:not([hidden]) ~ #seChatAccountPanel:not([hidden])"):
-
+                  "SE521_PERSISTENT_EDIT_JOURNAL_END",
+                  "signIn:()=>{openPanel();return signIn();},",
+                  "#se476StartupGate:not([hidden]) ~ #seChatAccountPanel:not([hidden])"):
         assert token in html, token
-    assert html.count(" source.engine='§wyrl§ Engine · Maker v11.535';source.version=11.534;") == 5
+    assert html.count(" source.engine='§wyrl§ Engine · Maker v11.535';source.version=11.535;") == 5
     run("node", "--check", str(ROOT / "runtime/chat_mesh_shape_edit_v11_534.js"))
     run(sys.executable, str(ROOT / "scripts/check_inline_js_syntax_v11_266.py"), str(index))
     for name in ("engine_account_signin_v11_535.cjs", "chat_mesh_shape_edit_v11_534.cjs", "project_account_receipt_v11_532.cjs", "project_account_open_v11_533.cjs"):
