@@ -1,10 +1,10 @@
 {
   "schema": "swrlz-forge-deploy-request-v1",
-  "requestedBy": "ChatGPT (owner-approved fix for painted robot face on torso / illustrated hands on sides)",
+  "requestedBy": "ChatGPT (owner-approved UV anatomical presentation improvement)",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.544",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_544_HUMANOID_SURFACE_PAINT",
-  "reason": "Ship real geometry-anchored humanoid robot material baked from actual 3D position/normal into the existing 84 xatlas UV charts, with no incorrect face or hands on torso. Exactly preserves one connected body, 8792 UV vertices, 13932 triangles, UV coords, project identity and account saves. Publish matched 1024px PNG and corrected starter; provide explicit Undo-safe Restore mapped robot texture action for current compatible selected humanoid. CI verified region-mask diagnostic, real front/back/side textured projections, UV/geometry identity, native paint repair, menu/category tests, 521-patch SHA-sealed source and 84 packaged assets. Deployment retry: use dependency-free exact UV/geometry/PNG validation in production packaging while full NumPy anatomy/projection checks remain required and passed in source-seal CI.",
-  "sourceCommit": "b920adb89f9f425b685b2f79698ea221e6e63109",
-  "sourceIntegritySha256": "241bf26d44017042171e0796b691a287fbd9bcb79083a3256e784d45630e9e31"
+  "releaseVersion": "v11.545",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_545_HUMANOID_UV_ANATOMY_VIEW",
+  "reason": "Publish §E v11.545 with a read-only humanoid UV anatomy inspector in the native UV Editor: actual 3D surface-based head/torso/front/back/arms/legs color zones, selectable isolation and 2048px reference export. Keep existing 84-chart xatlas packing and image exactly intact, no destructive repack, no displaced texture or saved-project changes. Verified 13932 mapped triangles, source geometry/UV/PNG unchanged, native JS syntax and account/UV tests, SHA-sealed 522-patch source, and 84 static assets.",
+  "sourceCommit": "51adf3767d9c946edc5c7b6c7b228673b1cdf692",
+  "sourceIntegritySha256": "4d32604a8647ec6c5f9043975a421b947137c52381171312eaeef5dc1798064e"
 }
