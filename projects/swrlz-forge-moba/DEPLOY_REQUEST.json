@@ -1,10 +1,10 @@
 {
   "schema": "swrlz-forge-deploy-request-v1",
-  "requestedBy": "ChatGPT (owner-approved)",
+  "requestedBy": "ChatGPT (owner-authorized immersive VR improvements)",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.538",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_538_SMOOTH_UV_HUMANOID",
-  "reason": "Ship Futuristic Humanoid · Smooth: one closed connected body surface (7,365 UV vertices / 13,472 triangles), six UV islands, original embedded 1024px graphite/teal sci-fi atlas, stable Starter Models and native project route, no per-device geometry generation. Release verified against existing model editing, account and static delivery tests.",
-  "sourceCommit": "aa8264c2353598ce900a46bff651ffca086ba744",
-  "sourceIntegritySha256": "9f9ec6d2bef1c0516e6b1941c4eab2fbf0707bb10adcb46b0124567fb4aeadf0"
+  "releaseVersion": "v11.539",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_539_IMMERSIVE_SCULPT_LOAD",
+  "reason": "Publish verified 516-patch §E immersive VR sculpt update: pooled strength dome, mesh influence preview, reduced per-stroke allocation/frame cadence, compact native parameters, Smooth Witch Hat VR registration and session-safe starter loading. Preserves sealed v11.538 UV humanoid. Targeted runtime, source/hash, 79 assets, regression checks and static delivery passed; physical Quest acceptance pending.",
+  "sourceCommit": "6c03671b9e1439d5d8f03c130d75f11d93a8460c",
+  "sourceIntegritySha256": "3bd6185d2d233d4e54e80eed6a892336a3e1ce3928134e92601df5759fbdf54c"
 }
