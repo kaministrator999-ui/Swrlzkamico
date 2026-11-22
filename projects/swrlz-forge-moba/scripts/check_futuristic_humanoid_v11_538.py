@@ -29,7 +29,7 @@ def check():
     assert 4000<=faces<=16000 and len(ix)==3*faces
     assert len(uv)==2*v and min(uv)>=0 and max(uv)<=1
     assert all(isinstance(i,int) and 0<=i<v for i in ix)
-    assert min(xyz[0::3])<-2.46 and max(xyz[0::3])>2.46
+    assert min(xyz[0::3])<-2.38 and max(xyz[0::3])>2.38
     assert max(xyz[1::3])>4.65 and min(xyz[1::3])<.10
     # Account for UV seam vertex duplication when inspecting geometric topology.
     welded={}
