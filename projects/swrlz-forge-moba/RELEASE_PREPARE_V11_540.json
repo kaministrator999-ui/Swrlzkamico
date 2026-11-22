@@ -10,5 +10,7 @@
     "six valid UV islands and embedded painted atlas",
     "native studio route and previous VR/account regressions",
     "exact SHA sealed release and static browser package"
-  ]
+  ],
+  "retry": 1,
+  "correction": "Verifier now pins swyrl_engine_v11_540.html as the generated native source artifact."
 }
