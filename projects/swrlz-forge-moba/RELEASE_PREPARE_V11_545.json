@@ -1,0 +1,14 @@
+{
+  "schema": "swrlz-forge-release-prepare-v1",
+  "requestedBy": "ChatGPT (owner-approved improvement to native humanoid UV presentation)",
+  "releaseVersion": "v11.545",
+  "purpose": "Add a read-only anatomical view for the real 84-chart UV atlas. Classify mapped UV triangles from 3D positions/directions, allow isolation and 2048px guide export. Preserve current native UV, paid material, saved project, Undo, mobile and VR model studio. No destructive chart repack.",
+  "tests": [
+    "13,932 triangles classified across 8 body regions",
+    "every source mesh/texture byte remains unchanged after inspection",
+    "export uses actual current mesh UV, no fictitious anatomical island assignment",
+    "run JS syntax, model, account, UV and native build checks",
+    "522-patch SHA-sealed source, static delivery assets intact"
+  ],
+  "releaseBoundary": "Separate source seal commit before the standalone DEPLOY_REQUEST.json publish commit"
+}
