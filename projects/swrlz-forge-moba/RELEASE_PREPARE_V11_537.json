@@ -9,6 +9,6 @@
     "legacy editor regression tests",
     "static package JS syntax"
   ],
-  "retry": 2,
-  "correction": "Verify exact v11.537 artifact and numeric source.version=11.537 provenance."
+  "retry": 3,
+  "correction": "Retain original v11.536 historical test, but use release-marker-corrected v11.537 regression harness."
 }
