@@ -1,0 +1,60 @@
+name: Seal §E v11.541 mannequin Starter Models category
+on:
+  push:
+    branches: [main]
+    paths:
+      - "projects/swrlz-forge-moba/RELEASE_PREPARE_V11_541.json"
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: se541-mannequin-category
+  cancel-in-progress: false
+jobs:
+  seal:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - name: Checkout authoritative engine source
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: true
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Check category correction syntax
+        run: |
+          python -m py_compile projects/swrlz-forge-moba/patches/v11_541_humanoid_starter_category.py
+          node --check projects/swrlz-forge-moba/tests/humanoid_starter_category_v11_541.cjs
+      - name: Rebuild exact HTML from ordered patches and calculate integrity
+        run: python projects/swrlz-forge-moba/scripts/prepare_v11_541_release.py
+      - name: Verify actual native category routing and all release checks
+        run: |
+          python projects/swrlz-forge-moba/scripts/verify_v11_541_release.py --output /tmp/se541-sealed
+          python projects/swrlz-forge-moba/scripts/package_static_delivery_v11_541.py --output /tmp/se541-sealed
+          node --check /tmp/se541-sealed/swrlz-engine-v11.541.js
+      - name: Commit only verified source manifest
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add projects/swrlz-forge-moba/source-manifest.json
+          git diff --cached --quiet && { echo "No verified changes"; exit 1; }
+          git commit -m "seal(§E v11.541): mannequin Starter Models visibility and source integrity"
+          git fetch origin main
+          git rebase origin/main
+          git push origin HEAD:main
+      - name: Preserve checksum receipt
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: se541-manifest-and-category-receipt
+          path: projects/swrlz-forge-moba/source-manifest.json
+          if-no-files-found: error
