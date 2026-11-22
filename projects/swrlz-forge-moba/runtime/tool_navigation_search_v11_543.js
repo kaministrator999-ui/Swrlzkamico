@@ -95,6 +95,8 @@
   const panel=$('#modelAtelierPanel');
   if(!panel)return false;
   if(entry.kind==='group'){
+   // Tool categories belong to Model mode, not the Rigging/Animation views.
+   window.SWYRL_ENGINE_MINI_STUDIOS_496?.set?.('model');
    const tools=window.SWYRL_E_UNIFIED_TOOLS,context=window.SWYRL_E_CONTEXT;
    const modes=context?.groups?.()?.[entry.category]||[];
    if(!tools?.select||!modes.length)return false;
@@ -122,7 +124,7 @@
     const names={wireframe:'UV wireframe',texture:'Applied texture',
      surface:'Surface map',stretch:'Stretch heatmap'};
     const button=[...popup.querySelectorAll('button')]
-      .find(b=>norm(b.textContent)===norm(names[entry.value]));
+      .find(b=>norm(b.textContent).startsWith(norm(names[entry.value])));
     if(!button||button.disabled)return false;
     button.click();reveal(button);return true;
    }
