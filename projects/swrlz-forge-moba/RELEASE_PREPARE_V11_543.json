@@ -1,0 +1,14 @@
+{
+  "schema": "swrlz-forge-release-prepare-v1",
+  "requestedBy": "ChatGPT (user requests menu search and jump-to-tools)",
+  "releaseVersion": "v11.543",
+  "purpose": "Add small Find Tool menu to §E with correct actual UI names and aliases, navigate to real native workspaces, model categories/modes, Rigging, UV wireframe, heatmap and project library. No model/edit data change.",
+  "tests": [
+    "source-grounded UV wireframe naming, synonym Current UV Guide",
+    "real workspace / model mode / popup routing",
+    "responsive keyboard-accessible menu",
+    "existing project starter categories and saves unaffected",
+    "actual source integrity and 520 ordered patches",
+    "static delivery package and account, Model Studio regressions"
+  ]
+}
