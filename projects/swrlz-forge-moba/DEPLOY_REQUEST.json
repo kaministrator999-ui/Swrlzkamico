@@ -1,10 +1,10 @@
 {
   "schema": "swrlz-forge-deploy-request-v1",
-  "requestedBy": "ChatGPT (owner reports missing mannequin in Starter Projects)",
+  "requestedBy": "ChatGPT (owner-approved §E UV workflow and mannequin quality improvement)",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.541",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_541_HUMANOID_STARTER_CATEGORY",
-  "reason": "Restore existing Futuristic Humanoid · Detailed Hands to Projects → Starter Projects → Starter Models. The v11.540 label omitted Starter Model and its project ID was absent from native modelIds, so the category sorter sent the card to Starter Games. Register stable ID, restore semantic label, align VR name. Preserve one-piece five-digit mesh, 80 assets, existing saves, immersive VR fixes. Actual native sorter, release regressions, exact 518-patch source/hash and static package pass.",
-  "sourceCommit": "4fb2778e78efd20a699da02db42b10d57b3b0bde",
-  "sourceIntegritySha256": "9352936db5aec5d43bce95769410a1054eae33c1a5d4069512ba697b8a71bbb1"
+  "releaseVersion": "v11.542",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_542_HUMANOID_RELAXED_UV_ATLAS",
+  "reason": "Replace distorted humanoid UV mapping with a verified xatlas chart layout (84 non-overlapping charts, 8,792 UV vertices, 13,932 triangles, 36.4% occupied atlas) and trianglewise reproject the original 1024px satin/graphite/teal painted material. Ship matching 2048px guide. Protect existing one-body, five-digit mannequin from experimental conical front/back/brim UV candidate. Preserve prior game, model, VR and account functionality. CI verified 519-patch source SHA, 82 packaged assets, native mesh/texture, stable starter routing and browser package.",
+  "sourceCommit": "eeb69af1fc2f150538d6d2f692eec31b479ca0b0",
+  "sourceIntegritySha256": "f9d7f2a4b7c96ed710473b408e5b0e5a5955f7035782011ff33d04ad97442977"
 }
