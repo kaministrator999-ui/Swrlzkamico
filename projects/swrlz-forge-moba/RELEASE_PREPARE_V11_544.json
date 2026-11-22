@@ -13,6 +13,6 @@
     "stable same starter and saved project/account/VR identity",
     "521-patch SHA and 84 assets static packaging verified"
   ],
-  "retry": 2,
-  "correction": "All geometry and color validation passed. Fixed last test receipt's numpy.uint8 JSON encoding and corrected side-view QA proportions using equal screen/world scale."
+  "retry": 3,
+  "correction": "All 3D-to-UV texture, invariant geometry/UV, Undo safety and JS syntax tests passed. Full source seal passed. Historical v11.543 search test incorrectly demanded v11.543 deploy marker in current v11.544 HTML; now checks old search behavior in isolation, with v11.544 release independently checking current marker and original search code."
 }
