@@ -19,6 +19,7 @@ function se536Attach(){
  const continueButton=document.getElementById('se536ContinueGoogle');
  if(!copy||!continueButton)return;
  se536Bound=true;
+ window.addEventListener('swrlz:account-assets',event=>{if(event.detail?.authenticated===true)se536Clear();});
  copy.addEventListener('click',async()=>{
    if(!se536Pair||Date.now()>=se536Pair.until){se536Clear();se536Status('Code expired. Generate another code.',true);return;}
    const input=document.getElementById('se536RecoveryCode');
