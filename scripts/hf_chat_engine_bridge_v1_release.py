@@ -34,7 +34,7 @@ def prepare(download):
  js=after/"chat/§wyrlz/assets/forge-embed-v1.js"
  subprocess.run(["node","--check",str(js)],check=True)
  html=(after/"chat/§wyrlz/index.html").read_text("utf8")
- scripts=[x for x in re.findall(r"<script(?:\\s[^>]*)?>([\\s\\S]*?)</script>",html,re.I) if x.strip()]
+ scripts=[x for x in re.findall(r"<script(?:\s[^>]*)?>([\s\S]*?)</script>",html,re.I) if x.strip()]
  if len(scripts)!=1:raise RuntimeError("Chat original inline script ownership changed")
  source=OUT/"chat-inline.js";source.write_text(scripts[0],"utf8")
  subprocess.run(["node","--check",str(source)],check=True)
