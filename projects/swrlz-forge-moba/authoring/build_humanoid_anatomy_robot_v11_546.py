@@ -216,6 +216,7 @@ def normals(pos,faces):
 def export_guides(uv,faces,region_names):
     s=4096;xy=np.rint(np.column_stack((uv[:,0],1-uv[:,1]))*(s-1)).astype(np.int32)
     colors=dict(zip(REGIONS,PALETTE))
+    colors['torso']=(103,178,221)  # six-region native vertex-budget fallback
     for p,anatomical in ((GUIDE,False),(ANATOMY,True)):
         canvas=Image.new('RGB',(s,s),(19,31,48))
         painter=ImageDraw.Draw(canvas)
