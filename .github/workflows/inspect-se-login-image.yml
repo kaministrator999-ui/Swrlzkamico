@@ -56,3 +56,29 @@ jobs:
                   l=re.sub(r'([0-9a-zA-Z_-]{48,})',lambda m:m.group(0)[:30]+'[LONG_REDACTED]',l)
                   print('LINE',p,i+1,kind,l[:380],flush=True)
           PY
+
+      - name: Snapshot live Chat integration source for scoped patch development
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          python - <<'PY'
+          import os,hashlib,json
+          from pathlib import Path
+          from huggingface_hub import HfApi,hf_hub_download
+          repo='kamiloki/Swyrlz';token=os.environ.get('HF_TOKEN','')
+          sha=HfApi(token=token).repo_info(repo_id=repo,repo_type='space').sha
+          root=Path('reports/chat-native-bridge-snapshot');root.mkdir(parents=True,exist_ok=True)
+          files=['chat/§wyrlz/assets/forge-embed-v1.js','chat/§wyrlz/forge-connect.html','chat/§wyrlz/index.html','forge_embed.py','app.py']
+          out={}
+          for name in files:
+            src=Path(hf_hub_download(repo,name,repo_type='space',revision=sha,token=token))
+            data=src.read_bytes();target=root/name;target.parent.mkdir(parents=True,exist_ok=True);target.write_bytes(data)
+            out[name]=hashlib.sha256(data).hexdigest()
+          (root/'SOURCE.json').write_text(json.dumps({'revision':sha,'files':out},indent=2)+'\\n')
+          print('CHAT_BRIDGE_SNAPSHOT_READY',sha)
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: chat-native-bridge-live-source
+          path: reports/chat-native-bridge-snapshot/
+          retention-days: 7
