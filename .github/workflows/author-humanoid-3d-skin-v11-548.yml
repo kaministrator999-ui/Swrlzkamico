@@ -31,19 +31,19 @@ jobs:
           import json,struct,base64,hashlib
           from pathlib import Path
           root=Path('projects/swrlz-forge-moba')
-          proof=json.loads((root/'docs/qa/futuristic-humanoid-v11-548-3d-surface-skin-validation.json').read_text())
+          proof=json.loads((root/'docs/qa/futuristic-humanoid-v11-548-finished-robot-skin-validation.json').read_text())
           assert proof['triangles']==13932 and proof['uvVertices']==8902
           assert not any(proof[k] for k in ['uvCoordinatesModified','geometryModified','oldMaterialOverwritten','triangulationPaintedIntoTexture'])
           for key,res in [('4kMaterial',4096),('2kMaterial',2048),('nativeMaterial',1024)]:
-              name='futuristic-humanoid-v11-548-3d-surface-skin-'+str(res)+'.png'
+              name='futuristic-humanoid-v11-548-finished-robot-skin-'+str(res)+'.png'
               data=(root/'assets/models'/name).read_bytes()
               assert data[:8]==b'\x89PNG\r\n\x1a\n'
               assert struct.unpack('>II',data[16:24])==(res,res)
               assert hashlib.sha256(data).hexdigest()==proof[key]['sha256']
               assert len(data)<10_000_000
-          native=(root/'assets/models/futuristic-humanoid-v11-548-3d-surface-skin-1024.png').read_bytes()
+          native=(root/'assets/models/futuristic-humanoid-v11-548-finished-robot-skin-1024.png').read_bytes()
           assert len(base64.b64encode(native))+22<=360000
-          view=(root/'docs/qa/futuristic-humanoid-v11-548-3d-surface-skin-front-back-side.png').read_bytes()
+          view=(root/'docs/qa/futuristic-humanoid-v11-548-finished-robot-skin-front-back-side.png').read_bytes()
           assert struct.unpack('>II',view[16:24])==(1560,606)
           scene=(root/'scenes/model-atelier-futuristic-humanoid-v11-546.swyrl.json').read_bytes()
           assert hashlib.sha256(scene).hexdigest()==proof['sourceSceneSha256']
@@ -53,11 +53,11 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add projects/swrlz-forge-moba/assets/models/futuristic-humanoid-v11-548-3d-surface-skin-4096.png
-          git add projects/swrlz-forge-moba/assets/models/futuristic-humanoid-v11-548-3d-surface-skin-2048.png
-          git add projects/swrlz-forge-moba/assets/models/futuristic-humanoid-v11-548-3d-surface-skin-1024.png
-          git add projects/swrlz-forge-moba/docs/qa/futuristic-humanoid-v11-548-3d-surface-skin-front-back-side.png
-          git add projects/swrlz-forge-moba/docs/qa/futuristic-humanoid-v11-548-3d-surface-skin-validation.json
+          git add projects/swrlz-forge-moba/assets/models/futuristic-humanoid-v11-548-finished-robot-skin-4096.png
+          git add projects/swrlz-forge-moba/assets/models/futuristic-humanoid-v11-548-finished-robot-skin-2048.png
+          git add projects/swrlz-forge-moba/assets/models/futuristic-humanoid-v11-548-finished-robot-skin-1024.png
+          git add projects/swrlz-forge-moba/docs/qa/futuristic-humanoid-v11-548-finished-robot-skin-front-back-side.png
+          git add projects/swrlz-forge-moba/docs/qa/futuristic-humanoid-v11-548-finished-robot-skin-validation.json
           git diff --cached --quiet && exit 0
           git commit -m "asset(modeler): add registered 4K robotic mannequin UV skin and 3D QA views"
           git pull --rebase origin main
