@@ -1,10 +1,10 @@
 {
   "schema": "swrlz-forge-deploy-request-v1",
-  "requestedBy": "ChatGPT (owner-approved UV anatomical presentation improvement)",
+  "requestedBy": "ChatGPT (owner-approved new anatomy UV mapping and robotic skin; 4K export requested)",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.545",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_545_HUMANOID_UV_ANATOMY_VIEW",
-  "reason": "Publish §E v11.545 with a read-only humanoid UV anatomy inspector in the native UV Editor: actual 3D surface-based head/torso/front/back/arms/legs color zones, selectable isolation and 2048px reference export. Keep existing 84-chart xatlas packing and image exactly intact, no destructive repack, no displaced texture or saved-project changes. Verified 13932 mapped triangles, source geometry/UV/PNG unchanged, native JS syntax and account/UV tests, SHA-sealed 522-patch source, and 84 static assets.",
-  "sourceCommit": "51adf3767d9c946edc5c7b6c7b228673b1cdf692",
-  "sourceIntegritySha256": "4d32604a8647ec6c5f9043975a421b947137c52381171312eaeef5dc1798064e"
+  "releaseVersion": "v11.546",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_546_ANATOMY_ROBOT_UV_4K",
+  "reason": "Publish verified §E v11.546 anatomical humanoid UV rebuild and new white ceramic/graphite/cyan robotic material baked directly from real 3D. Preserve exact 13932 original 3D triangles, 8902 UV vertices, six anatomical atlas regions, 108 UV charts, zero detected raster overlap, 3.46 p95/p5 texel-density ratio, 28.15% coverage. Bundle separate native baked skin and real 4096x4096 UV wireframe/anatomical guide PNGs. UV Editor's anatomy and current UV wireframe export now use 4K default or 2K optional PNG Blob output. Keep historical scenes/account saves unchanged. Source 523 patches verified with 88 asset hashes, native integration and browser delivery checks.",
+  "sourceCommit": "0697d1c8c7319633cca13095b4e4db159aefeb3b",
+  "sourceIntegritySha256": "a5c55df7f8b18a7c60e6572b22b49391e03c128424569bc594e31f858ebeed11"
 }
