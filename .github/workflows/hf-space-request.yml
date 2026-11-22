@@ -47,6 +47,7 @@ jobs:
               forge-reference-routing-v1) mode=hotfix-forge-reference ;;
               forge-creative-stages-v1) mode=hotfix-forge-creative ;;
               forge-loft-repair-v1) mode=hotfix-forge-loft ;;
+              forge-preview-readability-v1) mode=hotfix-forge-preview ;;
               *) echo "::error::Unknown scoped Space release mode."; exit 1 ;;
             esac
           fi

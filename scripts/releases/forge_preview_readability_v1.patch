@@ -1,0 +1,255 @@
+--- a/chat/§wyrlz/index.html
++++ b/chat/§wyrlz/index.html
+@@ -442,8 +442,11 @@
+     .forge-design-shell{padding:12px;display:grid;gap:11px;color:#d9f2ff}
+     .forge-design-kicker{display:flex;align-items:center;flex-wrap:wrap;justify-content:space-between;gap:6px;font:600 10px/1.35 var(--font-telemetry);color:#a1c8da}
+     .forge-design-tag{padding:4px 7px;border:1px solid rgba(255,209,120,.45);border-radius:99px;color:#ffe1a0;background:rgba(85,50,10,.27)}
+-    .forge-design-surface{overflow:hidden;border:1px solid rgba(117,217,255,.28);border-radius:13px;background:radial-gradient(ellipse at 50% 20%,rgba(37,84,123,.4),rgba(3,16,32,.9) 72%);min-height:180px}
+-    .forge-design-surface svg{display:block;width:100%;height:auto;max-height:310px;min-height:170px}
++    .forge-design-surface{min-width:0;overflow:hidden;border:1px solid rgba(117,217,255,.28);border-radius:13px;background:#08192c}
++    .forge-design-surface svg{display:block;width:100%;height:auto;max-height:370px}
++    .forge-design-drawing{color:#bdd8f2}
++    .forge-design-drawing .forge-design-active{color:#ffe09a}
++    .forge-design-current{padding:8px 10px;border-top:1px solid #375472;background:#0b2037;color:#ffe09a;font:700 13px/1.4 var(--font-ui);overflow-wrap:anywhere}
+     .forge-design-controls,.forge-design-actions{display:flex;gap:7px;flex-wrap:wrap;align-items:center}
+     .forge-design-btn{min-height:42px;padding:9px 12px;border-radius:10px;border:1px solid rgba(124,221,255,.38);background:rgba(15,54,81,.88);color:#ecfaff;font:650 12px/1.2 var(--font-ui);cursor:pointer;touch-action:manipulation}
+     .forge-design-btn.primary{background:linear-gradient(112deg,#1a849e,#7451c8);border-color:rgba(212,239,255,.6)}
+@@ -465,9 +468,9 @@
+     .forge-design-message{font:600 11px/1.45 var(--font-ui);color:#a4ecdf}
+     .forge-design-overlay{position:fixed;inset:0;z-index:10000;background:rgba(0,8,20,.91);display:grid;place-items:center;padding:14px}
+     .forge-design-dialog{width:min(100%,950px);max-height:94dvh;overflow:auto;padding:14px;border-radius:16px;background:linear-gradient(155deg,#082239,#161a36);border:1px solid rgba(122,224,255,.42);box-shadow:0 22px 70px rgba(0,0,0,.65)}
+-    .forge-design-dialog .forge-design-surface svg{max-height:60dvh;min-height:240px}
++    .forge-design-dialog .forge-design-surface svg{max-height:60dvh}
+     .forge-design-dialog-head{display:flex;justify-content:space-between;align-items:center;gap:10px;color:#ecfcff;font:750 15px var(--font-ui);margin-bottom:10px}
+-    @media(max-width:520px){.forge-design-shell{padding:9px}.forge-design-btn{flex:1 1 auto}.forge-design-dialog{padding:10px}.forge-design-dialog .forge-design-surface svg{min-height:200px}}
++    @media(max-width:520px){.forge-design-shell{padding:9px}.forge-design-btn{flex:1 1 auto}.forge-design-dialog{padding:10px}}
+     @media(prefers-reduced-motion:reduce){.forge-design-preview *{animation:none!important;transition:none!important}}
+     .swrlz-widget.forge-workspace{border-color:rgba(91,220,249,.35);background:linear-gradient(135deg,rgba(6,34,50,.95),rgba(25,22,58,.90))}
+     .forge-ws-heading{padding:0 11px 9px;font-size:11px;font-weight:770;color:#e8faff;overflow-wrap:anywhere}
+@@ -2796,107 +2799,112 @@
+               return n;
+             };
+             const drawSvg=()=>{
+-              const svg=svgEl("svg",{viewBox:"0 0 640 350",role:"img","aria-label":
++              const width=400,height=300,margin=18;
++              const svg=svgEl("svg",{viewBox:"0 0 "+width+" "+height,role:"img","aria-label":
+                 "Conceptual "+(view==="iso"?"isometric":view)+" view of "+shown+" of "+steps.length+" planned steps"});
+-              const bg=svgEl("rect",{x:0,y:0,width:640,height:350,fill:"transparent"});svg.appendChild(bg);
+-              for(let x=40;x<640;x+=40)svg.appendChild(svgEl("path",{d:"M"+x+" 0V350",stroke:"#28536f","stroke-width":.65,opacity:.45}));
+-              for(let y=15;y<350;y+=40)svg.appendChild(svgEl("path",{d:"M0 "+y+"H640",stroke:"#28536f","stroke-width":.65,opacity:.45}));
+-              svg.appendChild(svgEl("path",{d:"M320 0V350 M0 175H640",stroke:"#5da4bf","stroke-width":1,opacity:.6}));
+-              const active=steps.slice(0,shown).filter(step=>step.op!=="editor.frame");
+-              const pts=active.map(s=>({x:s.position[0],y:s.position[view==="top"?2:1],s}));
+-              const range=Math.max(4,...active.flatMap(s=>s.position.map((v,i)=>Math.abs(v)+s.scale[i])));
+-              const mult=Math.min(38,140/range);
+-              const iso=(x,y,z)=>({x:320+(x-.8*z)*mult,y:185+(.34*x+.48*z-y)*mult});
+-              pts.forEach((p,i)=>{
+-                const cx=320+p.x*mult,cy=175+(view==="top"?p.y:-p.y)*mult;
+-                const sx=Math.max(7,Math.min(80,p.s.scale[0]*mult));
+-                const sy=Math.max(7,Math.min(80,p.s.scale[view==="top"?2:1]*mult));
+-                const color=/^#[0-9a-f]{6}$/i.test(p.s.color)?p.s.color:"#65d9f5";
+-                const kind=String(p.s.kind||"").toLowerCase();
+-                let shape;
+-                const fields=p.s.fields||{};
+-                const localPoint=point=>{
+-                  let [x,y,z]=point.map((v,j)=>v*p.s.scale[j]);
+-                  const rotation=validVector(fields.rotation)?fields.rotation:[0,0,0];
+-                  for(let axis=0;axis<3;axis++){
+-                    const c=Math.cos(rotation[axis]),sn=Math.sin(rotation[axis]);
+-                    if(axis===0)[y,z]=[y*c-z*sn,y*sn+z*c];
+-                    if(axis===1)[x,z]=[x*c+z*sn,-x*sn+z*c];
+-                    if(axis===2)[x,y]=[x*c-y*sn,x*sn+y*c];
+-                  }
+-                  x+=p.s.position[0];y+=p.s.position[1];z+=p.s.position[2];
+-                  return view==="iso"?iso(x,y,z):{x:320+x*mult,y:175+(view==="top"?z:-y)*mult};
++              for(let x=20;x<width;x+=20)svg.appendChild(svgEl("path",{d:"M"+x+" 0V"+height,stroke:"#28536f",opacity:.22}));
++              for(let y=20;y<height;y+=20)svg.appendChild(svgEl("path",{d:"M0 "+y+"H"+width,stroke:"#28536f",opacity:.22}));
++              const drawing=svgEl("g",{"class":"forge-design-drawing"});
++              svg.appendChild(drawing);
++              let minX=Infinity,minY=Infinity,maxX=-Infinity,maxY=-Infinity;
++              const include=(x,y)=>{
++                minX=Math.min(minX,x);maxX=Math.max(maxX,x);
++                minY=Math.min(minY,y);maxY=Math.max(maxY,y);
++              };
++              const project=(x,y,z)=>view==="iso"
++                ?[x-.8*z,.34*x+.48*z-y]
++                :view==="side"?[z,-y]:[x,view==="top"?z:-y];
++              const activeIndex=shown-1;
++              steps.slice(0,shown).forEach((step,index)=>{
++                if(step.op==="editor.frame")return;
++                const color=/^#[0-9a-f]{6}$/i.test(step.color)?step.color:"#65d9f5";
++                const kind=String(step.kind||"").toLowerCase();
++                const fields=step.fields;
++                const rotation=validVector(fields.rotation)?fields.rotation:[0,0,0];
++                const [cosX,cosY,cosZ]=rotation.map(v=>Math.cos(v));
++                const [sinX,sinY,sinZ]=rotation.map(v=>Math.sin(v));
++                const center=project(...step.position);
++                const localVector=point=>{
++                  let [x,y,z]=point.map((v,j)=>v*step.scale[j]);
++                  [y,z]=[y*cosX-z*sinX,y*sinX+z*cosX];
++                  [x,z]=[x*cosY+z*sinY,-x*sinY+z*cosY];
++                  [x,y]=[x*cosZ-y*sinZ,x*sinZ+y*cosZ];
++                  return project(x,y,z);
++                };
++                const localPoint=point=>localVector(point).map((value,axis)=>value+center[axis]);
++                const basis=[[1,0,0],[0,1,0],[0,0,1]].map(localVector);
++                const extents=(radius,axes=basis)=>[0,1].map(axis=>radius*Math.hypot(...axes.map(v=>v[axis])));
++                const active=index===activeIndex;
++                const shape=svgEl("g",{"data-preview-step":index+1,"class":active?"forge-design-active":""});
++                const add=(tag,attrs,fill="none")=>shape.appendChild(svgEl(tag,{
++                  fill,"fill-opacity":.52,stroke:"currentColor","stroke-width":active?2.25:1.4,
++                  "stroke-linejoin":"round","stroke-linecap":"round","vector-effect":"non-scaling-stroke",...attrs
++                }));
++                const line=(points,closed=false,fill="none")=>{
++                  for(const point of points)include(...point);
++                  add(closed?"polygon":"polyline",{points:points.map(q=>q.join(",")).join(" ")},fill);
++                };
++                const ellipse=([cx,cy],[rx,ry],fill)=>{
++                  include(cx-rx,cy-ry);include(cx+rx,cy+ry);
++                  add("ellipse",{cx,cy,rx,ry},fill);
+                 };
+                 if(kind==="loft"&&Array.isArray(fields.path)&&fields.path.length<=40&&fields.path.every(validVector)){
+-                  const projected=fields.path.map(localPoint);
+-                  shape=svgEl("g");
+-                  shape.appendChild(svgEl("polyline",{points:projected.map(q=>q.x+","+q.y).join(" "),fill:"none",stroke:color,"stroke-width":3}));
+-                  projected.forEach((q,j)=>{
++                  const path=fields.path.map(localPoint);
++                  line(path);
++                  path.forEach((point,j)=>{
+                     const radius=Number(fields.radii?.[j]);
+-                    if(Number.isFinite(radius)&&radius>0&&radius<=5)shape.appendChild(svgEl("circle",{cx:q.x,cy:q.y,r:Math.max(1,radius*mult),fill:color,"fill-opacity":.12,stroke:color,"stroke-width":1}));
++                    if(Number.isFinite(radius)&&radius>0&&radius<=5)ellipse(point,extents(radius),color);
+                   });
+                 }else if(kind==="lathe"&&Array.isArray(fields.profile)&&fields.profile.length<=24&&fields.profile.every(q=>Array.isArray(q)&&q.length===2&&q.every(Number.isFinite))){
+-                  shape=svgEl("g");
+-                  const start=Number.isFinite(fields.arcStart)?fields.arcStart:0,length=Number.isFinite(fields.arcLength)?fields.arcLength:Math.PI*2;
++                  const start=Number.isFinite(fields.arcStart)?fields.arcStart:0;
++                  const length=Number.isFinite(fields.arcLength)?fields.arcLength:Math.PI*2;
+                   for(let meridian=0;meridian<=8;meridian++){
+                     const angle=start+length*meridian/8;
+-                    const projected=fields.profile.map(([r,y])=>localPoint([r*Math.sin(angle),y,r*Math.cos(angle)]));
+-                    shape.appendChild(svgEl("polyline",{points:projected.map(q=>q.x+","+q.y).join(" "),fill:"none",stroke:color,"stroke-width":1.5,opacity:.75}));
++                    line(fields.profile.map(([r,y])=>localPoint([r*Math.sin(angle),y,r*Math.cos(angle)])));
+                   }
+-                }else if(view==="iso" && ["box","wall","pedestal","object"].includes(kind)){
+-                  const pos=p.s.position,sc=p.s.scale; // three-dimensional box wireframe
++                }else if(["box","wall","pedestal","object"].includes(kind)){
+                   const corners=[];
+-                  for(const y of [-1,1])for(const z of [-1,1])for(const x of [-1,1])
+-                    corners.push(iso(pos[0]+x*sc[0],pos[1]+y*sc[1],pos[2]+z*sc[2]));
+-                  const g=svgEl("g",{"stroke-linecap":"round"});
+-                  const edges=[[0,1],[1,3],[3,2],[2,0],[4,5],[5,7],[7,6],[6,4],[0,4],[1,5],[2,6],[3,7]];
+-                  for(const [a,b] of edges){
+-                    g.appendChild(svgEl("line",{x1:corners[a].x,y1:corners[a].y,x2:corners[b].x,y2:corners[b].y,
+-                      stroke:color,"stroke-width":2,opacity:.82}));
+-                  }
+-                  shape=g;
+-                }else if(view==="iso"){
+-                  const center=iso(p.s.position[0],p.s.position[1],p.s.position[2]);
+-                  shape=svgEl("ellipse",{cx:center.x,cy:center.y,rx:sx,ry:Math.max(6,sy*.7),
+-                    fill:color,"fill-opacity":.2,stroke:color,"stroke-width":2});
+-                  if(kind==="cone"||kind==="crystal"){
+-                    const peak=iso(p.s.position[0],p.s.position[1]+p.s.scale[1],p.s.position[2]);
+-                    shape=svgEl("path",{d:"M"+(center.x-sx)+" "+center.y+" L"+peak.x+" "+peak.y+
+-                      " L"+(center.x+sx)+" "+center.y+" Z",fill:color,"fill-opacity":.2,
+-                      stroke:color,"stroke-width":2});
+-                  }
+-                }else if(kind==="sphere"||kind==="cylinder"||kind==="rock"||kind==="bush"){
+-                  shape=svgEl("ellipse",{cx,cy,rx:sx,ry:sy,fill:color,"fill-opacity":.22,stroke:color,"stroke-width":2});
++                  for(const y of [-.5,.5])for(const z of [-.5,.5])for(const x of [-.5,.5])corners.push(localPoint([x,y,z]));
++                  for(const face of [[0,1,3,2],[4,5,7,6]])line(face.map(i=>corners[i]),true,color);
++                  for(const i of [0,1,2,3])line([corners[i],corners[i+4]]);
+                 }else if(kind==="cone"||kind==="crystal"){
+-                  shape=svgEl("path",{d:"M"+cx+" "+(cy-sy)+" L"+(cx+sx)+" "+(cy+sy)+" L"+(cx-sx)+" "+(cy+sy)+" Z",
+-                    fill:color,"fill-opacity":.2,stroke:color,"stroke-width":2});
++                  const peak=localPoint([0,.5,0]),base=localPoint([0,-.5,0]);
++                  const radius=extents(.5,[basis[0],basis[2]]);
++                  ellipse(base,radius,color);
++                  line([[base[0]-radius[0],base[1]],peak,[base[0]+radius[0],base[1]]],true,color);
+                 }else{
+-                  shape=svgEl("rect",{x:cx-sx,y:cy-sy,width:sx*2,height:sy*2,rx:3,
+-                    fill:color,"fill-opacity":.18,stroke:color,"stroke-width":2});
++                  ellipse(center,extents(.5),color);
+                 }
+-                const title=svgEl("title");title.textContent=(i+1)+". "+String(p.s.name||p.s.kind||p.s.op).slice(0,100);shape.appendChild(title);
+-                svg.appendChild(shape);
+-                const centerPoint=view==="iso"?iso(p.s.position[0],p.s.position[1],p.s.position[2]):{x:cx,y:cy};
+-                const index=svgEl("text",{x:centerPoint.x,y:centerPoint.y+4,"text-anchor":"middle",fill:"#f4fbff","font-size":12,"font-weight":700});
+-                index.textContent=String(i+1);svg.appendChild(index);
++                const title=svgEl("title");
++                title.textContent=(index+1)+". "+String(step.name||step.kind||step.op).slice(0,100);
++                shape.appendChild(title);
++                drawing.appendChild(shape);
+               });
+-              const axis=svgEl("text",{x:13,y:25,fill:"#bde3ed","font-size":12});
+-              axis.textContent=view==="iso"?"3D BLOCKOUT · X / Y / Z":view==="top"?"TOP · X / Z":"FRONT · X / Y";svg.appendChild(axis);
+-              const note=svgEl("text",{x:13,y:334,fill:"#91b9d0","font-size":10});
+-              note.textContent="Illustrative geometry and positions · not live render";svg.appendChild(note);
++              if(Number.isFinite(minX)&&Number.isFinite(minY)&&Number.isFinite(maxX)&&Number.isFinite(maxY)){
++                const dx=maxX-minX,dy=maxY-minY;
++                if(dx||dy){
++                  const fit=Math.min(dx?(width-2*margin)/dx:Infinity,dy?(height-2*margin)/dy:Infinity);
++                  const tx=(width-dx*fit)/2-minX*fit,ty=(height-dy*fit)/2-minY*fit;
++                  drawing.setAttribute("transform","translate("+tx+" "+ty+") scale("+fit+")");
++                }
++              }
+               return svg;
+             };
+             const surface=make("div","forge-design-surface");
+             const renderViews=()=>{
+               for(const area of [surface,overlay?.querySelector(".forge-design-surface")].filter(Boolean)){
+-                area.replaceChildren(drawSvg());
++                const svg=drawSvg();
++                const step=steps[shown-1];
++                area.replaceChildren(svg);
++                if(step)area.appendChild(make("div","forge-design-current",
++                  "Step "+shown+" · "+String(step.name||step.kind||step.op).slice(0,100)));
+               }
+               for(const b of main.querySelectorAll("[data-forge-view]"))b.setAttribute("aria-pressed",String(b.dataset.forgeView===view));
+               if(overlay)for(const b of overlay.querySelectorAll("[data-forge-view]"))b.setAttribute("aria-pressed",String(b.dataset.forgeView===view));
+             };
+             const viewControls=()=>{
+               const wrap=make("div","forge-design-controls");
+-              for(const [id,label] of [["iso","3D blockout"],["top","Top view"],["front","Front view"]]){
++              for(const [id,label] of [["iso","3D blockout"],["top","Top view"],["front","Front view"],["side","Side view"]]){
+                 const b=button(label,()=>{view=id;renderViews()});b.dataset.forgeView=id;
+                 b.setAttribute("aria-pressed",String(view===id));wrap.appendChild(b);
+               }
+--- a/forge_chat_actions.py
++++ b/forge_chat_actions.py
+@@ -491,6 +491,22 @@
+            "reason": message, "code": code, "forgeStatus": "PARTIAL" if partial else "FAILED"}
+ 
+ 
++def _terminal_validation_message(error: ForgePlanError) -> str | None:
++    if error.code == "FORGE_INVALID_LOFT_PROFILE":
++        cause = {
++            "point-format": "the curve path is invalid",
++            "adjacent-spacing": "consecutive path points are too close together",
++            "count-mismatch": "the number of thickness values does not match the path points",
++            "radius-range": "one or more thickness values are invalid",
++        }.get((error.diagnostic or {}).get("reason"), "the curve profile is invalid")
++        return (f"I couldn't prepare the curved mesh because {cause}. No editor changes were sent. "
++                "Ask me to retry one curved part at a time.")
++    if error.code == "FORGE_UNREQUESTED_NATIVE_ACTION":
++        return ("The proposed edit included an action outside your request. No editor changes were sent. "
++                "Tell me which part to change and what you want done to it.")
++    return None
++
++
+ def generate_events(payload: dict[str, Any], context, register_batch: Callable | None = None,
+                     wait_batch: Callable | None = None, generate_plan: Callable | None = None,
+                     *, stage_proposal: Callable | None = None,
+@@ -601,7 +617,11 @@
+                     # unfinished/invalid JSON stream, transport failure or an
+                     # expired/revoked capability, and never run a failed plan.
+                     if attempt or project_plan is not None:
+-                        raise
++                        message = _terminal_validation_message(invalid)
++                        if message is None:
++                            raise
++                        yield from _failure(message, invalid.code)
++                        return
+                     revalidate(context, require_snapshot=True)
+                     yield {"type": "STATUS", "phase": "FORGE_REPAIRING",
+                            "reason": "Correcting an invalid native plan before preview; no edits have run.",

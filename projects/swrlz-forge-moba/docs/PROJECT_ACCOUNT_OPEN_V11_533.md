@@ -1,6 +1,6 @@
 # §E v11.533 account project opening
 
-Status **source candidate**. The live baseline is v11.532. This checkpoint covers opening a full native project from the Google account library. The §C modeling session and project geometry are outside this release.
+Status **deployed**. The serving version is v11.533. This checkpoint covers opening a full native project from the Google account library. The §C modeling session and project geometry are outside this release.
 
 ## Failure and repair
 
@@ -21,3 +21,9 @@ An isolated mobile Chromium run reproduced the exact My Projects error on the se
 Static packaging and JavaScript syntax checks passed. Each HTML entry is 682,469 bytes with SHA-256 `15bf0073fde5ce761dec89be2555a5be97d2913f25f163681667ed5de8c03e80`. The compact delivery module is 9,480,404 bytes with SHA-256 `be3e59d2fa32b4abb4c1f666690c9f3f8a530da5f5bee85397c6a72a2bcd35f6`. Compaction reported an existing duplicate object key in the world-build relay outside the account-open patch.
 
 The private model fixture stays outside Git and the Hugging Face package. Publication follows the existing GitHub workflow with a separate `DEPLOY_REQUEST.json` commit after the source commit. Verify exact hosted files and a fresh signed-in account load before marking the owner-visible issue resolved. No account writes are required for that acceptance check.
+
+## Production deployment
+
+The [reviewed source commit](https://github.com/kaministrator999-ui/Swrlzkamico/commit/ab9eff3f6d249429d4e3d0ee729a71665d8fc9c8) was published through the [separate request commit](https://github.com/kaministrator999-ui/Swrlzkamico/commit/03396607ee42828c72aad1ae4085a9a1ac1c1c86) and [GitHub Actions run 44950796006](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/44950796006). Space commit `af76155ab24d47993be5446bb98c6f85ec6a4a81` is running. The Hub Modeler HTML and the live static module match the reviewed hashes, and the HTML served from the static domain contains the v11.533 release marker. The account browser showed a renewed Google pairing is needed for the private production readback.
+
+A second phone-size Chromium run loaded the actual served v11.533 assets with a controlled account connection. It issued one project load, reopened all 13 editable meshes, and displayed **Project opened.** with zero page errors.

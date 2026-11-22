@@ -15,7 +15,12 @@ from urllib.request import urlopen
 SPACE = "kamiloki/Swyrlz"
 ROOT = Path(__file__).resolve().parents[1]
 RELEASE_NAME = os.getenv("SWRLZ_FORGE_RELEASE", "forge_reference_routing_v1")
-if RELEASE_NAME not in {"forge_reference_routing_v1", "forge_creative_stages_v1", "forge_loft_repair_v1"}:
+if RELEASE_NAME not in {
+    "forge_reference_routing_v1",
+    "forge_creative_stages_v1",
+    "forge_loft_repair_v1",
+    "forge_preview_readability_v1",
+}:
     raise RuntimeError("Unknown scoped Forge release")
 RELEASE = ROOT / "scripts/releases" / RELEASE_NAME
 MANIFEST = json.loads(RELEASE.with_suffix(".json").read_text())
@@ -34,8 +39,10 @@ def prepare(download):
         raw = download(name, BASE)
         if hashlib.sha256(raw).hexdigest() != expected["before"]:
             raise RuntimeError(f"Pinned live source mismatch for {name}")
-        (before / name).write_bytes(raw)
-        (after / name).write_bytes(raw)
+        for directory in (before, after):
+            destination = directory / name
+            destination.parent.mkdir(parents=True, exist_ok=True)
+            destination.write_bytes(raw)
     patch = ["patch", "-p1", "--fuzz=0", "--batch", "--forward", "-i", str(RELEASE.with_suffix(".patch"))]
     subprocess.run([*patch, "--dry-run"], cwd=after, check=True)
     subprocess.run(patch, cwd=after, check=True)
@@ -43,7 +50,8 @@ def prepare(download):
         raw = (after / name).read_bytes()
         if hashlib.sha256(raw).hexdigest() != expected["after"]:
             raise RuntimeError(f"Candidate source mismatch for {name}")
-        compile(raw, name, "exec")
+        if Path(name).suffix == ".py":
+            compile(raw, name, "exec")
     subprocess.run(["python", str(ROOT / "tests" / f"test_{RELEASE_NAME}.py"), str(before), str(after)], check=True)
     return before, after
 

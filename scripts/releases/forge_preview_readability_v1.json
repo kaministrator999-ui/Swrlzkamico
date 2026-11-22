@@ -1,0 +1,14 @@
+{
+  "baseRevision": "9814fde035db5e1ef1ac7b749a636fb0baadcd93",
+  "summary": "Clarify Forge plan previews and terminal validation feedback",
+  "files": {
+    "chat/§wyrlz/index.html": {
+      "before": "b7523460cecd55ece9025935f44b1b3412111c824491dd7bc43873194cf2865b",
+      "after": "61bc82f93a020d2ef089f02b30a6a06962f2051ee2bc34bb3b027428f9eaca49"
+    },
+    "forge_chat_actions.py": {
+      "before": "dad632f3959e7335a9f80cb349d5336907ab5c75b0839008997e3a954341f7ed",
+      "after": "a2bd43d1fd6fdb3fe0a46c9b9095bbe0a58a98b9dd9ffcbcc4676d544432c9d6"
+    }
+  }
+}
