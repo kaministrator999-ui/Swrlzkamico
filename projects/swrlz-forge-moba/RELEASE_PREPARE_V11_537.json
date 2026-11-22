@@ -9,6 +9,6 @@
     "legacy editor regression tests",
     "static package JS syntax"
   ],
-  "retry": 1,
-  "correction": "Verify the generated swyrl_engine_v11_537.html filename (not v11_536)."
+  "retry": 2,
+  "correction": "Verify exact v11.537 artifact and numeric source.version=11.537 provenance."
 }
