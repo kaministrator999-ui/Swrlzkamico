@@ -1,5 +1,5 @@
 TARGET=kamiloki/Swyrlz
 APPROVED=1
-CHANGE_SCOPE=forge-loft-repair-v1
-SOURCE_REF=be1f3ed81078b0e0e2be653caa6756abb2050067
-REQUEST_NONCE=forge-loft-repair-20261121-be1f3ed810
+CHANGE_SCOPE=forge-preview-readability-v1
+SOURCE_REF=8063fe4327b7fdb4a3c44ccb6e2180e6278eb348
+REQUEST_NONCE=forge-preview-readability-20261122-8063fe4327
