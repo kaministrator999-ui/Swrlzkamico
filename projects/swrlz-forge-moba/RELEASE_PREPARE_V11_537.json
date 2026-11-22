@@ -1,0 +1,12 @@
+{
+  "schema": "swrlz-forge-release-prepare-v1",
+  "releaseVersion": "v11.537",
+  "requestedBy": "ChatGPT (owner-directed §E starter addition)",
+  "purpose": "Validate original untextured robotic humanoid anatomy mannequin native geometry, patch lineage, measured HTML integrity and static packaging before production deploy",
+  "validation": [
+    "node geometry test",
+    "exact build manifest sha256",
+    "legacy editor regression tests",
+    "static package JS syntax"
+  ]
+}
