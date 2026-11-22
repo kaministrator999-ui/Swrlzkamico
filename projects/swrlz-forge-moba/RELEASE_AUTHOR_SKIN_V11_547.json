@@ -1,0 +1,8 @@
+{
+  "schema": "swrlz-humanoid-texture-author-v1",
+  "requestedBy": "ChatGPT, continuing owner-directed mannequin UV skin creation",
+  "sourceScene": "scenes/model-atelier-futuristic-humanoid-v11-546.swyrl.json",
+  "uvPolicy": "Do not change mesh/UV indices/coordinates. Per-texel 3D world-coordinate and normal sampling at the exact native UV triangles.",
+  "target": "Full 4K importable PNG plus 2K and 1K native alternatives; 3D projection QA proof and source identity receipt.",
+  "revision": 1
+}
