@@ -1,1 +1,6 @@
-{"release":"v11.550","feature":"native UV vertex and edge editing","requested":"2026-11-22"}
+{
+  "release": "v11.550",
+  "feature": "native UV vertex and edge editing",
+  "repair": "deduplicate v11.356 editor injection",
+  "attempt": 2
+}
