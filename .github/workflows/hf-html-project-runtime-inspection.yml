@@ -1,0 +1,39 @@
+name: Audit live §C HTML publishing integration points
+on:
+  push:
+    branches: [feature/html-project-completion-v2]
+    paths: ['.github/workflows/hf-html-project-runtime-inspection.yml']
+permissions: {contents: read}
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - run: python -m pip install --quiet 'huggingface_hub>=0.34,<2'
+      - name: Inspect published routing and GitHub action binding
+        run: |
+          python - <<'PY'
+          import re
+          from pathlib import Path
+          from huggingface_hub import HfApi,hf_hub_download
+          space="kamiloki/Swyrlz"
+          api=HfApi()
+          rev=api.repo_info(space,repo_type="space").sha
+          print("LIVE_REVISION",rev)
+          files=set(api.list_repo_files(space,repo_type="space",revision=rev))
+          print("LIVE_CANDIDATES",sorted(x for x in files if any(y in x for y in ("github_conversation","github_review","github_general_create","station.py","chat/§wyrlz/index.html"))))
+          needle=r"StaticFiles|FileResponse|@app\.(get|post)|github|mount\(|/chat|/projects|html|is_file_action|workflow"
+          for name in ("station.py","github_conversation_actions_v264.py","github_general_create_v262.py","chat/§wyrlz/index.html"):
+              if name not in files: continue
+              lines=Path(hf_hub_download(space,name,repo_type="space",revision=rev)).read_text().splitlines()
+              found=[i for i,line in enumerate(lines) if re.search(needle,line,re.I)]
+              if name.endswith("index.html"):found=[i for i in found if re.search(r"github|widget|script|render|/api/",lines[i],re.I)]
+              found=found[:85]
+              print("FILE",name,"LINES",len(lines),"MATCHES",len(found))
+              seen=set()
+              for i in found:
+                  for j in range(max(0,i-3),min(len(lines),i+5)):
+                      if j not in seen:
+                          print(f"{j+1:05d}",lines[j][:300])
+                          seen.add(j)
+          PY
