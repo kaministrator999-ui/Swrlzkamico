@@ -70,6 +70,6 @@
     "  File \"/home/runner/work/Swrlzkamico/Swrlzkamico/projects/swrlz-forge-moba/patches/v11_504_smooth_witch_hat.py\", line 21, in apply",
     "    assert prior == PREVIOUS_SHA256, ('se504 source chain', prior)",
     "           ^^^^^^^^^^^^^^^^^^^^^^^^",
-    "AssertionError: ('se504 source chain', '1f09737673f0591c81074347735b5e3928156baa6ac47e4e126791d9845c9ee8')"
+    "AssertionError: ('se504 source chain', 'd1c7ae34e4cd422a52fb59459a041c964d6149bd3d5f9803f8a0246995d976ae')"
   ]
 }
