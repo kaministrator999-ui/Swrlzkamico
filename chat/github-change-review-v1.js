@@ -111,8 +111,8 @@
         ||!receiptText.includes(wrapper.dataset.reviewPath))continue;
       const path=wrapper.dataset.reviewPath;
       const details=wrapper.querySelectorAll("p");
-      const repo=details[0]?.textContent?.replace(/^Repository:\\s*/,"")||"";
-      const branch=details[1]?.textContent?.replace(/^Branch:\\s*/,"")||"";
+      const repo=details[0]?.textContent?.replace(/^Repository:\s*/,"")||"";
+      const branch=details[1]?.textContent?.replace(/^Branch:\s*/,"")||"";
       if(!repo||!branch||!receiptText.includes(repo.split("/").at(-1)))continue;
       if(typeof root.dispatchEvent==="function"&&typeof root.CustomEvent==="function"){
         root.dispatchEvent(new root.CustomEvent("swrlz-github-write-receipt",{
