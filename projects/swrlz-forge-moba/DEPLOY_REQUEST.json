@@ -1,10 +1,10 @@
 {
   "schema": "swrlz-forge-deploy-request-v1",
-  "requestedBy": "ChatGPT (owner authorized v11.551 UV island workspace deployment)",
+  "requestedBy": "ChatGPT (owner authorized v11.552 dedicated UV texture alignment workspace deployment)",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.551",
+  "releaseVersion": "v11.552",
   "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_546_ANATOMY_ROBOT_UV_4K",
-  "reason": "Deploy sealed 525-patch v11.551 UV island selection, transforms, enlarged UV workspace and visible Undo/Redo to existing Hugging Face Space; verify static delivery.",
-  "sourceCommit": "0d130be126892adedfcb0b1c32d9069ae7bf130b",
-  "sourceIntegritySha256": "76b56ea32bd5526b59bd87d425fc2d82e710249e48231d093d66433ada85ee73"
+  "reason": "Deploy sealed v11.552 UV texture alignment workspace with separate fullscreen editor, readable island boundaries, texture-first canvas, transform tools and visible history. Verify static delivery.",
+  "sourceCommit": "42c55d3e1df23ddda63148dc53d91238986db328",
+  "sourceIntegritySha256": "1dadda16abffe9fc629d2879814e643199e90548960d02c6e081840f3c3315ab"
 }
