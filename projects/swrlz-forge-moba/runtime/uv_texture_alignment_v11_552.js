@@ -40,6 +40,39 @@ function se552Paint(){
   ctx.lineTo(edge.b[0]*size,(1-edge.b[1])*size);ctx.stroke();}
  ctx.restore();
 }
+/* Export the ACTUAL current mesh UVs, not an AI-guessed island arrangement.
+   Transparent guide keeps pixel registration when used as a locked paint layer. */
+function se552ExportExactGuide(){
+ const t=se551Target();
+ if(!t){status('Select a textured mesh before exporting its UV guide.');return;}
+ const uv=t.mesh.geometry.getAttribute('uv'),ix=t.mesh.geometry.getIndex();
+ if(!uv){status('Selected mesh has no UV coordinates.');return;}
+ const size=2048,canvas=document.createElement('canvas');
+ canvas.width=canvas.height=size;
+ const ctx=canvas.getContext('2d');
+ if(!ctx){status('UV export canvas unavailable.');return;}
+ ctx.clearRect(0,0,size,size);
+ ctx.strokeStyle='#161d32';ctx.lineWidth=1.5;ctx.lineJoin='round';
+ const count=ix?ix.count:uv.count;
+ let drawn=0,invalid=0;
+ for(let i=0;i+2<count;i+=3){
+  const ids=[0,1,2].map(j=>ix?ix.getX(i+j):i+j);
+  const points=ids.map(k=>[uv.getX(k),uv.getY(k)]);
+  if(points.some(p=>p.some(v=>!Number.isFinite(v)||v<0||v>1))){invalid++;continue;}
+  ctx.beginPath();
+  points.forEach(([u,v],j)=>j?ctx.lineTo(u*size,(1-v)*size):ctx.moveTo(u*size,(1-v)*size));
+  ctx.closePath();ctx.stroke();drawn++;
+ }
+ if(!drawn){status('No valid UV triangles to export.');return;}
+ canvas.toBlob(blob=>{
+  if(!blob){status('Could not encode UV guide.');return;}
+  const url=URL.createObjectURL(blob),a=document.createElement('a');
+  a.href=url;a.download='se-exact-mesh-uv-guide-2048.png';
+  document.body.append(a);a.click();a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),1000);
+  status('Exact UV guide exported: '+drawn+' triangles'+(invalid?' · '+invalid+' invalid skipped':'')+'. Keep this layer registered; do not reposition islands in image editors.');
+ },'image/png');
+}
 function se552Open(){
  const root=se356UVPreviewRoot();if(!root||se552Portal)return;
  const cv=root.querySelector('#se356UVCanvas'),bar=root.querySelector('[data-se551="expand"]')?.parentElement;
@@ -52,7 +85,8 @@ function se552Open(){
  controls.innerHTML='<label style="display:flex;align-items:center;gap:5px">Tool <select data-se552-tool style="padding:9px;background:#1c3446;color:white;border:1px solid #658797;border-radius:6px"><option value="island">Move island</option><option value="vertex">Vertex</option><option value="edge">Edge</option><option value="off">Inspect</option></select></label>'+
  '<label style="display:flex;align-items:center;gap:5px"><input type="checkbox" data-se552-wires> Wireframe</label>'+
  '<label style="display:flex;align-items:center;gap:5px"><input type="checkbox" data-se552-pan> Pan</label>'+
- '<button type="button" data-se552-texture style="padding:8px;background:#254658;color:white;border:1px solid #537e91;border-radius:6px">Show texture</button>';
+ '<button type="button" data-se552-texture style="padding:8px;background:#254658;color:white;border:1px solid #537e91;border-radius:6px">Show texture</button>'+
+ '<button type="button" data-se552-export style="padding:8px;background:#254658;color:white;border:1px solid #537e91;border-radius:6px">Export exact UV guide</button>';
  const originalMode=root.querySelector('#se356EditMode');
  const viewport=cv.parentElement;
  const originalParent=root.parentNode,originalNext=root.nextSibling;
@@ -93,6 +127,7 @@ function se552Open(){
   originalMode.value=e.target.value;originalMode.dispatchEvent(new Event('change',{bubbles:true}));
  });
  controls.querySelector('[data-se552-wires]').addEventListener('change',e=>{se552ShowWires=e.target.checked;se356UVPreviewSchedule();});
+ controls.querySelector('[data-se552-export]').addEventListener('click',se552ExportExactGuide);
  controls.querySelector('[data-se552-pan]').addEventListener('change',e=>{se552Pan=e.target.checked;cv.style.touchAction=se552Pan?'pan-x pan-y':'none';});
  controls.querySelector('[data-se552-texture]').addEventListener('click',()=>{se356UVMode='paint';se356UVPreviewSchedule();});
  // Pan mode bypasses UV editing and scrolls the enlarged canvas.
