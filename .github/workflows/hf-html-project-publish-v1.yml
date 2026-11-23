@@ -1,5 +1,10 @@
 name: §C approved HTML project → existing Hugging Face Space
 on:
+  pull_request:
+    paths:
+      - 'scripts/hf_html_project_publish_v1.py'
+      - 'tests/test_hf_html_project_publish_v1.py'
+      - '.github/workflows/hf-html-project-publish-v1.yml'
   workflow_dispatch:
     inputs:
       source_sha:
@@ -22,7 +27,19 @@ concurrency:
   group: swrlz-hf-space-deployment
   cancel-in-progress: false
 jobs:
+  check:
+    if: ${{ github.event_name == 'pull_request' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - run: python -m py_compile scripts/hf_html_project_publish_v1.py
+      - run: python -m unittest discover -s tests -p 'test_hf_html_project_publish_v1.py' -v
   publish:
+    if: ${{ github.event_name == 'workflow_dispatch' }}
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
