@@ -51,22 +51,7 @@
    const content=node("textarea",{rows:"7",placeholder:"Enter or paste exact file content"});
    const upload=node("input",{type:"file"});upload.hidden=true;
    const note=node("p",{className:"github-general-note",text:"Binary upload: 1,000,000 bytes maximum; exact bytes preserved."});note.hidden=true;
-   const previewTabs=node("div",{className:"github-review-tabs",role:"tablist","aria-label":"Review proposed GitHub file"});
-   const summaryTab=node("button",{type:"button",role:"tab","aria-selected":"true",text:"Changes"});
-   const codeTab=node("button",{type:"button",role:"tab","aria-selected":"false",text:"File contents"});
-   previewTabs.append(summaryTab,codeTab);
-   const preview=node("pre",{className:"github-general-preview",role:"region","aria-label":"Proposed changes"});
-   const sourcePreview=node("pre",{className:"github-general-preview github-review-source",role:"region","aria-label":"Exact file contents"});
-   sourcePreview.hidden=true;
-   let reviewedText="",reviewedBinary=false;
-   function showTab(which){
-     const code=which==="code";
-     summaryTab.setAttribute("aria-selected",String(!code));
-     codeTab.setAttribute("aria-selected",String(code));
-     preview.hidden=code;sourcePreview.hidden=!code;
-   }
-   summaryTab.addEventListener("click",()=>showTab("summary"));
-   codeTab.addEventListener("click",()=>showTab("code"));
+   const preview=node("pre",{className:"github-general-preview"});
    const status=node("p",{role:"status","aria-live":"polite",className:"github-general-status",text:"Checking authorization…"});
    const grant=node("a",{href:"/api/github/start?access=public-write",text:"Approve GitHub public-repository writing"});grant.hidden=true;
    const prepare=node("button",{type:"button",text:"Prepare preview"});
@@ -77,10 +62,10 @@
    path.value=parsed.path;content.value=parsed.text;
    prepare.disabled=true;confirm.disabled=true;
    form.append(heading,desc,location,pathLabel,path,modeLabel,mode,content,upload,note,
-               previewTabs,preview,sourcePreview,status,grant,buttons);
+               preview,status,grant,buttons);
    document.body.append(form);form.showModal();dialog=form;path.focus();
    let ticket=null,allowed=false;
-   const reset=()=>{ticket=null;confirm.disabled=true;preview.textContent="";sourcePreview.textContent="";reviewedText="";reviewedBinary=false;showTab("summary");};
+   const reset=()=>{ticket=null;confirm.disabled=true;preview.textContent="";};
    [path,content,upload,mode].forEach(x=>x.addEventListener("input",reset));
    mode.addEventListener("change",()=>{
      const binary=mode.value==="binary";
@@ -90,12 +75,7 @@
      if(upload.files?.length&&!path.value)path.value=upload.files[0].name;
      reset();
    });
-   cancel.addEventListener("click",async()=>{
-     const rejected=ticket;reset();cancel.disabled=true;
-     if(rejected){try{await post("confirm-create",{approvalToken:rejected,approved:false});}
-       catch(error){status.textContent="Approval not submitted. The pending proposal will expire; no write was authorized.";}}
-     form.close();
-   });
+   cancel.addEventListener("click",()=>form.close());
    form.addEventListener("close",()=>{form.remove();if(dialog===form)dialog=null;});
    fetch("/api/github/files/create-status",{credentials:"same-origin"})
     .then(async response=>{
@@ -127,24 +107,19 @@
        const result=await post("prepare-create",{path:path.value,contentBase64:toBase64(bytes),mediaType:type});
        if(!form.open)return;
        ticket=result.approvalToken;
-       reviewedBinary=mode.value==="binary";
-       reviewedText=reviewedBinary?"Binary upload: "+(upload.files?.[0]?.name||"selected file")+"\n"+bytes.length+" bytes. Binary content cannot be rendered as source text.":content.value;
-       sourcePreview.textContent=reviewedText;
-       codeTab.textContent=reviewedBinary?"File details":"File contents";
        preview.textContent="Operation: CREATE_FILE\nRepository: "+result.repo+
          "\nBranch: "+result.branch+"\nPath: "+result.path+
          "\nBytes: "+result.bytes+"\nSHA-256: "+result.sha256+
          "\nType: "+result.mediaType+"\nOverwrite: NO"+
          "\n\nConfirm only if this exact file is authorized.";
-       status.textContent="Review the proposed file and choose Confirm or Cancel. No GitHub write has occurred.";
+       status.textContent="Proposal prepared. No file has been written.";
        confirm.disabled=false;
      }catch(error){status.textContent="Cannot prepare: "+error.message;}
      finally{prepare.disabled=!allowed;}
    });
    confirm.addEventListener("click",async()=>{
      if(!ticket)return;
-     const approvalToken=ticket;ticket=null;confirm.disabled=true;prepare.disabled=true;
-     path.disabled=true;content.disabled=true;upload.disabled=true;mode.disabled=true;
+     const approvalToken=ticket;reset();prepare.disabled=true;
      status.textContent="Creating file and verifying exact bytes on GitHub…";
      try{
        const receipt=await post("confirm-create",{approvalToken,approved:true});
@@ -161,7 +136,7 @@
          status.append(node("a",{href:receipt.url,target:"_blank",rel:"noopener noreferrer",text:" View file"}));
        }
      }catch(error){status.textContent="Not verified: "+error.message+". Inspect GitHub before retrying.";}
-     finally{prepare.disabled=!allowed;path.disabled=false;content.disabled=false;upload.disabled=false;mode.disabled=false;}
+     finally{prepare.disabled=!allowed;}
    });
  }
  window.addEventListener("swrlz:github-general-create-proposal",event=>{
