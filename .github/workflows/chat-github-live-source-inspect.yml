@@ -47,3 +47,28 @@ jobs:
                   if line.startswith(('GITHUB_CAPABILITY_STAGE =','GITHUB_SCOPE =','_READ_STAGE_DESCRIPTION =','def _stage_blocks','def start(')):
                     print('CONFIG',line[:180],flush=True)
           PY
+      - name: Locate live GitHub implementation and UI insertion points
+        run: |
+          python - <<'PY'
+          import re
+          from pathlib import Path
+          from huggingface_hub import HfApi,hf_hub_download
+          repo='kamiloki/Swyrlz';api=HfApi();sha=api.repo_info(repo,repo_type='space').sha
+          files=api.list_repo_files(repo,repo_type='space',revision=sha)
+          print('GH_FILES',[p for p in files if 'github' in p.lower() and p.endswith('.py')][:45],flush=True)
+          targets=('station.py','github_connection.py','github_conversation_actions_v264.py','github_general_create_v262.py','chat/§wyrlz/index.html')
+          for p in targets:
+            if p not in files:continue
+            s=Path(hf_hub_download(repo,p,repo_type='space',revision=sha)).read_text()
+            terms={'station.py':('github_chat_files.handle','githubChatFileAction','github_chat_files.has_pending','elif github_chat_files.is_file_action'),
+                   'github_connection.py':('GITHUB_CAPABILITY_STAGE =','def _stage_blocks(','if GITHUB_CAPABILITY_STAGE != "read-repository":','def _authorize','def start('),
+                   'github_conversation_actions_v264.py':('def handle(','def _prepare_create(','def _confirmation('),
+                   'github_general_create_v262.py':('def _authorize(','def prepare(','def confirm('),
+                   'chat/§wyrlz/index.html':('widget.kind==="github-work"','function renderMessageWidgets','function commitDraftFromPrompt','if(widget.kind===','const github','/api/github/start')}[p]
+            print('SOURCE',p,len(s),flush=True)
+            for term in terms:
+              pos=s.find(term)
+              if pos<0:continue
+              start=max(0,pos-280);end=min(len(s),pos+(2200 if term in ('def handle(','def _prepare_create(','def _stage_blocks(','if(widget.kind===') else 580))
+              print('FRAGMENT',p,term,repr(s[start:end]),flush=True)
+          PY
