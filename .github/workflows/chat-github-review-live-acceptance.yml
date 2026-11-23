@@ -1,0 +1,65 @@
+name: Verify deployed §C GitHub review in public live Chat
+
+on:
+  push:
+    branches:
+      - feature/chat-github-live-integration-v1
+    paths:
+      - '.github/workflows/chat-github-review-live-acceptance.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  live-acceptance:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Confirm deployed revision UI JS and anonymous isolation
+        run: |
+          python - <<'PY'
+          import json,time
+          from urllib.error import HTTPError,URLError
+          from urllib.parse import quote
+          from urllib.request import Request,urlopen
+          expected='ea0baddaaadfdd4a87322ced439cc32401dd16cc'
+          base='https://kamiloki-swyrlz.hf.space'
+          def get(path,limit=800000):
+              req=Request(base+path,headers={'User-Agent':'swrlz-github-review-v1-live-check','Cache-Control':'no-cache'})
+              try:
+                  with urlopen(req,timeout=20) as response:
+                      return response.status,response.read(limit).decode('utf-8','replace')
+              except HTTPError as exc:
+                  return exc.code,''
+          for attempt in range(25):
+              try:
+                  status,html=get('/')
+                  js_status,js=get('/chat/'+quote('§wyrlz')+'/assets/github-change-review-v1.js?v=1',100000)
+                  if (status==200 and js_status==200
+                      and 'swrlz-github-review-v1' in html
+                      and 'SwrlzGithubChangeReviewV1' in js):
+                      break
+              except (URLError,TimeoutError,OSError):
+                  status,js_status=0,0
+              time.sleep(6)
+          else:
+              raise AssertionError('LIVE_CHAT_REVIEW_UI_NOT_READY: html='+str(status)+' js='+str(js_status))
+          print('LIVE_CHAT_UI_PASS',status,'GITHUB_REVIEW_JS_PASS',js_status,flush=True)
+          status,_=get('/api/github/status',10000)
+          assert status==401,('ANONYMOUS_GITHUB_ISOLATION_FAILED',status)
+          print('ANONYMOUS_GITHUB_ISOLATION_PASS',status,flush=True)
+          status,raw=get('/api/hf/models',200000)
+          assert status==200 and isinstance(json.loads(raw).get('models'),list),('MODEL_API_UNAVAILABLE',status)
+          print('EXISTING_MODEL_CATALOG_PASS',status,flush=True)
+          req=Request('https://huggingface.co/api/spaces/kamiloki/Swyrlz',
+                      headers={'User-Agent':'swrlz-github-review-v1-live-check'})
+          with urlopen(req,timeout=25) as response:
+              rev=json.load(response).get('sha')
+          assert rev==expected,('SPACE_REVISION_MOVED_SINCE_DEPLOY',rev,expected)
+          print('LIVE_SPACE_REVISION_VERIFIED',rev,flush=True)
+          print('LIMITATION: authenticated owner approval requires user session',flush=True)
+          PY
