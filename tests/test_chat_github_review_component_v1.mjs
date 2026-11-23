@@ -1,0 +1,18 @@
+import assert from "node:assert/strict";
+import fs from "node:fs";
+import vm from "node:vm";
+const source=fs.readFileSync("chat/github-change-review-v1.js","utf8");
+const context={globalThis:{}};
+vm.runInNewContext(source,context);
+const {render}=context.globalThis.SwrlzGithubChangeReviewV1;
+assert.equal(typeof render,"function");
+assert.equal(render(null,{},{}),false);
+assert.equal(render({}, {operation:"DELETE_FILE"},{}),false);
+assert(source.includes("preview.textContent=proposal.content"),"Untrusted source must not become HTML");
+assert(!source.includes("innerHTML"),"No HTML injection path");
+assert(source.includes('["CREATE_FILE","UPDATE_FILE"]'),"Create and edit previews supported");
+assert(source.includes("options.currentThread()"),"Thread identity required");
+assert(source.includes("options.isLatest(wrapper)"),"Stale cards cannot approve");
+assert(source.includes("MAX_AGE_MS=300000"),"Approval card expires");
+assert(source.includes("Await server verification"),"Client cannot claim GitHub write");
+console.log("§C GitHub review component contract PASS");
