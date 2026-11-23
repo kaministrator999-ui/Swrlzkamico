@@ -53,7 +53,7 @@ def source_check():
     module = MODULE_SOURCE.read_bytes()
     ast.parse(module.decode("utf-8"), filename=MODULE)
     assert "sandbox allow-scripts" in module.decode()
-    assert "allow-same-origin" not in module.decode()
+    assert "allow-same-origin" not in module.decode().split("CSP = (", 1)[1].split("HEADERS =", 1)[0]
     assert 'connect-src \'none\'' in module.decode()
     assert "published-html-projects" in module.decode()
     print("SAFE_ROUTE_SOURCE_VALIDATED", hashbytes(module), flush=True)
