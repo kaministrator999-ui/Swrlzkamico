@@ -50,5 +50,12 @@
     "arm": 1215035,
     "torso": 1929983,
     "leg": 1037814
+  },
+  "assets": {
+    "4kMaterial": "assets/models/futuristic-humanoid-v11-548-finished-robot-skin-4096.png",
+    "2kMaterial": "assets/models/futuristic-humanoid-v11-548-finished-robot-skin-2048.png",
+    "nativeMaterial": "assets/models/futuristic-humanoid-v11-548-finished-robot-skin-1024.png",
+    "renderProof": "docs/qa/futuristic-humanoid-v11-548-finished-robot-skin-front-back-side.png",
+    "validation": "docs/qa/futuristic-humanoid-v11-548-finished-robot-skin-validation.json"
   }
 }
