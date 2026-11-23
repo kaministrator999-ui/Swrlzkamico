@@ -38,7 +38,7 @@ jobs:
           run_checks > "$LOG" 2>&1
           result=$?
           mkdir -p projects/swrlz-forge-moba/docs/qa
-          python -c 'import json,sys; from pathlib import Path; code=int(sys.argv[1]); lines=Path(sys.argv[2]).read_text(errors="replace").splitlines(); Path("projects/swrlz-forge-moba/docs/qa/uv-direct-edit-v11-550-build-result.json").write_text(json.dumps({"passed":code==0,"exit_code":code,"log_tail":lines[-90:]},indent=2)+"\\n")' "$result" "$LOG"
+          python -c 'import json,sys; from pathlib import Path; code=int(sys.argv[1]); lines=Path(sys.argv[2]).read_text(errors="replace").splitlines(); Path("projects/swrlz-forge-moba/docs/qa/uv-direct-edit-v11-550-build-result.json").write_text(json.dumps({"passed":code==0,"exit_code":code,"log_tail":lines[-90:]},indent=2))' "$result" "$LOG"
           echo "result=$result" >> "$GITHUB_OUTPUT"
           cat "$LOG"
           exit 0
