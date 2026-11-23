@@ -11,8 +11,8 @@ def handle(user_id,thread_id,prompt,context=None,history=None):
     return None
 def _confirmation(user_id,thread_id,prompt):
     try:
-        if False:
-            pass
+            if False:
+                pass
             elif pending["kind"]=="create":
                 create.confirm(user_id,pending["ticket"],False)
     except Exception:
