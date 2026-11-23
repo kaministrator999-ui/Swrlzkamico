@@ -1460,11 +1460,24 @@
               const actions=document.createElement("div");actions.className="github-review-actions";
               const approve=document.createElement("button"),reject=document.createElement("button");
               approve.type=reject.type="button";approve.textContent="Approve creation";reject.textContent="Reject";
+              // An old review must never approve a newer proposal or another thread.
+              // Server-owned tickets still supply the actual authorization.
+              const reviewThread=String(node.dataset.reviewThread||activeThreadId);
+              const reviewRequest=String(node.dataset.reviewRequest||"");
+              const reviewCreatedAt=Date.now();
               const act=async answer=>{
-                if(sending||approve.disabled)return;
+                const current=String(activeThreadId||"")===reviewThread;
+                const sameRequest=reviewRequest&&String(stationGeneration?.requestId||"")===reviewRequest;
+                const latest=Array.from(messageList.querySelectorAll(".github-review-card"))
+                  .filter(item=>item.isConnected).at(-1)===card;
+                if(sending||approve.disabled||!current||!latest||Date.now()-reviewCreatedAt>300000){
+                  note.textContent="This review is no longer active. Request a fresh proposal; nothing was written.";
+                  approve.disabled=reject.disabled=true;return;
+                }
                 approve.disabled=reject.disabled=true;
                 prompt.value=answer;
-                try{await commitDraftFromPrompt();}catch(error){note.textContent="Could not send decision. No approval confirmed.";approve.disabled=reject.disabled=false;}
+                const sent=await commitDraftFromPrompt();
+                if(!sent){note.textContent="Decision was not confirmed. No GitHub action can be inferred.";approve.disabled=reject.disabled=false;}
               };
               approve.addEventListener("click",()=>act("yes"));
               reject.addEventListener("click",()=>act("no"));
@@ -1541,7 +1554,7 @@
         // Live: widget -> semantic status -> streamed prose. Committed: widget -> final prose.
         if(status)status.before(stack);else if(body)body.before(stack);else node.appendChild(stack);
       };
-      const addWidgetBlock=(node,msg)=>renderWidgetStack(node,widgetsFromMessage(msg));
+      const addWidgetBlock=(node,msg)=>{node.dataset.reviewThread=String(activeThreadId||"");node.dataset.reviewRequest=String(msg?.meta?.requestId||"");renderWidgetStack(node,widgetsFromMessage(msg));};
 
       const addEvidenceBlock=(node,msg)=>{
         const rows=evidenceRowsFromMessage(msg),sources=structuredSourcesFromMessage(msg);
@@ -2654,6 +2667,7 @@
         const liveWidgets=Array.isArray(g.widgets)?g.widgets:[];
         // GitHub file actions are resolved inside Station and answered in
         // this chat. No per-tool popup dialogs or event dispatches.
+        node.dataset.reviewThread=String(g.threadId||"");node.dataset.reviewRequest=String(g.requestId||"");
         renderWidgetStack(node,liveWidgets);
         // Once structured evidence has produced a widget, the retrieval phase is
         // visibly complete. Keep the widget on screen and make the next stage
