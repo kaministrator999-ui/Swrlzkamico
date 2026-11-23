@@ -12,8 +12,8 @@ import re
 from fastapi import HTTPException
 from fastapi.responses import Response
 
-SLUG = re.compile(r"[a-z0-9](?:[a-z0-9-]{0,46}[a-z0-9])?\\Z")
-SAFE_PART = re.compile(r"[A-Za-z0-9][A-Za-z0-9_.-]*\\Z")
+SLUG = re.compile(r"[a-z0-9](?:[a-z0-9-]{0,46}[a-z0-9])?\Z")
+SAFE_PART = re.compile(r"[A-Za-z0-9][A-Za-z0-9_.-]*\Z")
 SUFFIXES = frozenset((".html", ".htm", ".css", ".js", ".mjs", ".json",
                       ".svg", ".png", ".jpg", ".jpeg", ".webp", ".gif",
                       ".ico", ".woff", ".woff2"))
