@@ -70,17 +70,18 @@
         return;
       }
       approve.disabled=reject.disabled=true;
+      pending=accepted;
       note.textContent=accepted?"Submitting approval to §C…":"Submitting rejection to §C…";
       try{
         const result=await options.confirm(accepted);
         if(result){
-          pending=accepted;
-          note.textContent=accepted
+          if(!settled)note.textContent=accepted
             ?"Approval sent. Checking GitHub verification receipt below…"
             :"Rejection submitted. No file change was approved.";
-          wrapper.setAttribute("data-review-state",accepted?"submitted":"rejected");
+          if(!settled)wrapper.setAttribute("data-review-state",accepted?"submitted":"rejected");
           if(!accepted)approve.hidden=reject.hidden=true;
         }else{
+          pending=false;
           note.textContent="Decision not confirmed. No change assumed.";
           approve.disabled=reject.disabled=false;
         }
