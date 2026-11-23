@@ -135,6 +135,43 @@ def make_atlas(positions,triangles,mode):
     assert orig==new, 'Geometrical triangles altered during unwrap'
     return outpos,outfaces,outuv,group_names,charts
 
+def shell_counts(uv,faces,region_names):
+    """Count connected UV face components per anatomical region.
+
+    Connectivity requires matching UV endpoints on a shared geometric edge;
+    touching at a single UV vertex is not enough to join shells.
+    """
+    parent=np.arange(len(faces),dtype=np.int64)
+    def find(i):
+        while parent[i]!=i:
+            parent[i]=parent[parent[i]]
+            i=parent[i]
+        return i
+    def union(a,b):
+        a=find(a);b=find(b)
+        if a!=b:parent[b]=a
+    edges={}
+    for i,(face,name) in enumerate(zip(faces,region_names)):
+        for k in range(3):
+            a,b=(int(face[k]),int(face[(k+1)%3]))
+            key=(name,tuple(sorted((a,b))))
+            if key in edges:union(i,edges[key])
+            else:edges[key]=i
+    counts={}
+    for i,name in enumerate(region_names):
+        counts.setdefault(name,set()).add(find(i))
+    return {name:len(roots) for name,roots in counts.items()}
+
+def continuous_shell_gate(uv,faces,region_names):
+    counts=shell_counts(uv,faces,region_names)
+    # Head must be a single UV shell. Torso is allowed two shells to avoid
+    # severe stretching at shoulders, but no arbitrary fragment explosion.
+    required={'head':1,'torso':2,'chest':1,'back':1,
+              'leftArm':2,'rightArm':2,'leftLeg':2,'rightLeg':2}
+    violations={k:{'actual':v,'maximum':required[k]} for k,v in counts.items()
+                if v>required[k]}
+    return counts,violations
+
 def audit(pos,faces,uv):
     tri=pos[faces];m=uv[faces]
     world=np.linalg.norm(np.cross(tri[:,1]-tri[:,0],tri[:,2]-tri[:,0]),axis=1)*.5
@@ -235,7 +272,9 @@ def main():
         try:
             candidate=make_atlas(positions,faces,kind)
             metrics=audit(*candidate[:3])
-            result=(candidate,metrics,kind);break
+            shells,violations=continuous_shell_gate(candidate[2],candidate[1],candidate[3])
+            if violations:raise ValueError('continuous shell criteria not met: '+str(violations))
+            result=(candidate,dict(metrics,uvShells=shells),kind);break
         except (ValueError,AssertionError) as e:
             errors.append(kind+': '+str(e))
             print('SE546_ATLAS_ATTEMPT_REJECTED',errors[-1],flush=True)
