@@ -1,0 +1,16 @@
+name: §C conversational GitHub edit integration
+on:
+  push:
+    branches: [fix/chat-github-edit-handler-v1]
+    paths: ['scripts/hf_chat_github_edit_handler_release_v1.py','tests/test_chat_github_edit_handler_v1.py','.github/workflows/chat-github-edit-handler-v1.yml']
+permissions: {contents: read}
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - run: python -m pip install --quiet 'huggingface_hub>=0.34,<2'
+      - run: python -m unittest discover -s tests -p test_chat_github_edit_handler_v1.py -v
+      - run: python scripts/hf_chat_github_edit_handler_release_v1.py verify
