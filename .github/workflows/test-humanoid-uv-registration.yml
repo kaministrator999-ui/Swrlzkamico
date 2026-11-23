@@ -1,0 +1,24 @@
+name: Test §E true UV concept registration
+on:
+  push:
+    branches: [main]
+    paths:
+      - "projects/swrlz-forge-moba/authoring/register_concept_uv_to_native.py"
+      - "projects/swrlz-forge-moba/authoring/test_register_concept_uv_to_native.py"
+      - ".github/workflows/test-humanoid-uv-registration.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  registration:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install offline authoring tools
+        run: python -m pip install --quiet "numpy>=1.26,<3" "pillow>=10,<13" "scipy>=1.12,<2" "opencv-python-headless>=4.8,<5"
+      - name: Verify real native UV layout and reject mismatched atlases
+        run: python projects/swrlz-forge-moba/authoring/test_register_concept_uv_to_native.py
