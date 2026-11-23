@@ -5,6 +5,7 @@ import pathlib
 import sys
 import types
 import unittest
+from unittest.mock import patch
 
 class Error(Exception):
     def __init__(self, code, status=400):
@@ -32,7 +33,7 @@ def github(method, auth, path, payload=None):
         state["content"] = base64.b64decode(payload["content"]).decode()
         state["sha"] = "b" * 40
         state["writes"] += 1
-        return 200, {"commit": {"sha": "c" * 40}}
+        return 200, {"commit": {"sha": "c" * 40}, "content": {"sha": "b" * 40}}
     raise AssertionError(method)
 fake._authorize, fake._github = authorize, github
 sys.modules["github_general_create_v262"] = fake
@@ -55,12 +56,37 @@ class TestUpdate(unittest.TestCase):
         self.assertEqual(p["before"], "old\n")
         self.assertIn("+new", p["diff"])
         self.assertEqual(state["writes"], 0)
-        receipt = module.confirm("google:owner", p["approvalToken"], True)
+        with patch.object(module.requests, "get", return_value=types.SimpleNamespace(\n            status_code=200, json=lambda: {"sha": "b" * 40, "encoding": "base64",\n                "content": base64.b64encode(b"new\\n").decode()})):\n            receipt = module.confirm("google:owner", p["approvalToken"], True)
         self.assertTrue(receipt["verified"])
         self.assertEqual(state["content"], "new\n")
         self.assertEqual(state["writes"], 1)
         with self.assertRaises(Error):
             module.confirm("google:owner", p["approvalToken"], True)
+    def test_stale_branch_readback_succeeds_from_committed_blob(self):
+        p = self.proposal()
+        original = fake._github
+        def stale(method, auth, path, payload=None):
+            if method == "GET" and state["writes"]:
+                return 200, {"sha": "a"*40, "type": "file", "encoding": "base64",
+                             "content": base64.b64encode(b"old\\n").decode()}
+            return original(method, auth, path, payload)
+        with patch.object(fake, "_github", side_effect=stale), patch.object(
+            module.requests, "get", return_value=types.SimpleNamespace(
+                status_code=200, json=lambda: {"sha": "b"*40, "encoding": "base64",
+                "content": base64.b64encode(b"new\\n").decode()})):
+            result = module.confirm("google:owner", p["approvalToken"], True)
+        self.assertTrue(result["verified"])
+        self.assertEqual(state["writes"], 1)
+
+    def test_wrong_committed_blob_must_fail(self):
+        p = self.proposal()
+        with patch.object(module.requests, "get", return_value=types.SimpleNamespace(
+            status_code=200, json=lambda: {"sha": "b"*40, "encoding": "base64",
+            "content": base64.b64encode(b"WRONG").decode()})):
+            with self.assertRaises(Error) as ctx:
+                module.confirm("google:owner", p["approvalToken"], True)
+        self.assertEqual(ctx.exception.code, "GITHUB_READBACK_MISMATCH")
+
     def test_reject_no_mutation(self):
         p=self.proposal()
         self.assertFalse(module.confirm("google:owner",p["approvalToken"],False)["ok"])
@@ -70,7 +96,7 @@ class TestUpdate(unittest.TestCase):
         with self.assertRaises(Error):
             module.confirm("google:other",p["approvalToken"],True)
         self.assertEqual(state["writes"],0)
-        self.assertTrue(module.confirm("google:owner",p["approvalToken"],True)["verified"])
+        with patch.object(module.requests, "get", return_value=types.SimpleNamespace(\n            status_code=200, json=lambda: {"sha": "b" * 40, "encoding": "base64",\n                "content": base64.b64encode(b"new\\n").decode()})):\n            self.assertTrue(module.confirm("google:owner",p["approvalToken"],True)["verified"])
     def test_changed_sha_prevents_write(self):
         p=self.proposal()
         state["sha"]="f"*40
