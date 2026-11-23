@@ -95,3 +95,14 @@ def surface_skin(points,normals):
 base.surface_skin=surface_skin
 if __name__=='__main__':
     base.main()
+    # Single source of truth: authoring emits paths for verification and publishing.
+    import json
+    report=json.loads(base.REPORT.read_text('utf8'))
+    report['assets']={
+        '4kMaterial':str(base.FOUR.relative_to(base.ROOT)),
+        '2kMaterial':str(base.TWO.relative_to(base.ROOT)),
+        'nativeMaterial':str(base.NATIVE.relative_to(base.ROOT)),
+        'renderProof':str(base.VIEW.relative_to(base.ROOT)),
+        'validation':str(base.REPORT.relative_to(base.ROOT)),
+    }
+    base.REPORT.write_text(json.dumps(report,indent=2)+'\n','utf8')
