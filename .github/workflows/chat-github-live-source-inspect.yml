@@ -1,0 +1,49 @@
+name: Inspect exact live §C GitHub routing
+
+on:
+  push:
+    branches:
+      - feature/chat-github-live-integration-v1
+    paths:
+      - '.github/workflows/chat-github-live-source-inspect.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m pip install --quiet 'huggingface_hub>=0.34,<2'
+      - name: Inspect current HF source without editing it
+        run: |
+          python - <<'PY'
+          import hashlib,re
+          from pathlib import Path
+          from huggingface_hub import HfApi,hf_hub_download
+          repo='kamiloki/Swyrlz'
+          api=HfApi()
+          sha=api.repo_info(repo,repo_type='space').sha
+          files=api.list_repo_files(repo,repo_type='space',revision=sha)
+          print('LIVE_REVISION',sha,flush=True)
+          for term in ('station.py','github_connection.py','github_conversation_actions','github_general_create','chat/§wyrlz/index.html'):
+            hits=[p for p in files if p.endswith(term)]
+            print('FILE',term,hits,flush=True)
+            for p in hits[:2]:
+              source=Path(hf_hub_download(repo,p,repo_type='space',revision=sha)).read_text()
+              print('DETAIL',p,'bytes',len(source.encode()),'sha256',hashlib.sha256(source.encode()).hexdigest(),flush=True)
+              for needle in ('githubChatFileAction','github_chat_files','GITHUB_CAPABILITY_STAGE','github-change-review','github-review-card','_READ_STAGE_DESCRIPTION','public-write','github-general-create','github_general_create','/api/github/start','commitDraftFromPrompt','/api/github/'):
+                matches=list(re.finditer(re.escape(needle),source))
+                if matches:
+                  print('MARKER',p,needle,'count',len(matches),'first',matches[0].start(),flush=True)
+              if p.endswith('github_connection.py'):
+                for line in source.splitlines():
+                  if line.startswith(('GITHUB_CAPABILITY_STAGE =','GITHUB_SCOPE =','_READ_STAGE_DESCRIPTION =','def _stage_blocks','def start(')):
+                    print('CONFIG',line[:180],flush=True)
+          PY
