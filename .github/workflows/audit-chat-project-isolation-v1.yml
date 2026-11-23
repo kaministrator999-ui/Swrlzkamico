@@ -1,0 +1,37 @@
+name: Audit §C project-serving and routing seams (read-only)
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/audit-chat-project-isolation-v1.yml']
+  workflow_dispatch:
+permissions: {contents: read}
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - run: python -m pip install --quiet 'huggingface_hub>=0.34,<2'
+      - name: Inspect exact live Station route and HTML bindings without modifying Space
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          python - <<'PY'
+          import os,re,ast,json
+          from pathlib import Path
+          from huggingface_hub import HfApi,hf_hub_download
+          api=HfApi(token=os.environ.get('HF_TOKEN') or None)
+          revision=api.repo_info('kamiloki/Swyrlz',repo_type='space').sha
+          paths=set(api.list_repo_files('kamiloki/Swyrlz',repo_type='space',revision=revision))
+          print('REVISION',revision,'HAS_STATION','station.py' in paths)
+          src=Path(hf_hub_download('kamiloki/Swyrlz','station.py',repo_type='space',revision=revision,token=api.token)).read_text()
+          tree=ast.parse(src)
+          print('IMPORTS',[ast.unparse(n)[:170] for n in tree.body if isinstance(n,(ast.Import,ast.ImportFrom))][:55])
+          for i,line in enumerate(src.splitlines()):
+              if re.search(r'(?i)(mount\(|StaticFiles|@app\.(?:get|post)|@(?:router|routes)\.|send_from_directory|FileResponse|HTMLResponse|githubChatFileAction|github_conversation_actions|project.*(publish|deploy))',line):
+                  print(f'LINE {i+1}:',line[:230])
+          print('CHAT_PATHS',[p for p in sorted(paths) if p.startswith('chat/§wyrlz/')][:25])
+          PY
