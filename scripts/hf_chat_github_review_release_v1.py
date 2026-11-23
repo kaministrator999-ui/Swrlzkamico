@@ -323,6 +323,35 @@ def publish():
     }, sort_keys=True), flush=True)
 
 
+
+def verify():
+    """Read-only post-release verification; safe after a successful publish."""
+    from huggingface_hub import HfApi, hf_hub_download
+    api = HfApi()
+    revision = str(api.repo_info(SPACE, repo_type="space").sha)
+    files = set(api.list_repo_files(SPACE, repo_type="space", revision=revision))
+    if not set(EXISTING + GUARDS + (UPDATE, ASSET)).issubset(files):
+        raise RuntimeError("LIVE_GITHUB_REVIEW_FILES_MISSING")
+    data = {
+        p: Path(hf_hub_download(SPACE, p, repo_type="space",
+                                revision=revision)).read_bytes()
+        for p in EXISTING + (UPDATE, ASSET)
+    }
+    action_source = data[ACTIONS].decode("utf-8")
+    html_source = data[HTML].decode("utf-8")
+    ast.parse(action_source, filename=ACTIONS)
+    assert MARK in action_source, "Expected authenticated handler not installed"
+    assert html_source.count('id="swrlz-github-review-v1"') == 1
+    assert html_source.count("github-change-review-v1.js") == 1
+    if data[UPDATE] != SOURCE_UPDATE.read_bytes():
+        raise RuntimeError("LIVE_UPDATE_HELPER_DRIFT")
+    if data[ASSET] != SOURCE_ASSET.read_bytes():
+        raise RuntimeError("LIVE_REVIEW_UI_ASSET_DRIFT")
+    print("GITHUB_REVIEW_LIVE_SOURCE_VERIFIED", json.dumps({
+        "revision": revision, "paths": list(data),
+        "hashes": {p: checksum(v) for p, v in data.items()},
+    }, sort_keys=True), flush=True)
+
 def selftest():
     original_actions = (
         "def handle(a,b,c,d=None,e=None): pass\n"
@@ -350,6 +379,6 @@ def selftest():
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("mode", choices=("selftest", "snapshot", "publish"))
+    parser.add_argument("mode", choices=("selftest", "snapshot", "publish", "verify"))
     args = parser.parse_args()
-    {"selftest": selftest, "snapshot": snapshot, "publish": publish}[args.mode]()
+    {"selftest": selftest, "snapshot": snapshot, "publish": publish, "verify": verify}[args.mode]()
