@@ -17,14 +17,24 @@
     const title=doc.createElement("h3");
     title.textContent=proposal.operation==="CREATE_FILE"?"Review new GitHub file":"Review GitHub file edit";
     wrapper.append(title);
+    const summary=doc.createElement("p");
+    summary.className="swrlz-github-change-summary";
+    summary.textContent=(proposal.operation==="CREATE_FILE"?"Create ":"Update ")+proposal.path+" · "+proposal.branch;
+    wrapper.append(summary);
     for(const [label,value] of [["Repository",proposal.repo],["Branch",proposal.branch],["File",proposal.path],["Action",proposal.operation],["SHA-256",proposal.sha256||""]]){
       const row=doc.createElement("p"),strong=doc.createElement("strong");
       strong.textContent=label+": ";row.append(strong,doc.createTextNode(String(value).slice(0,400)));wrapper.append(row);
     }
+    const reviewDetails=doc.createElement("details");
+    reviewDetails.className="swrlz-github-change-details";
+    const reviewHeading=doc.createElement("summary");
+    reviewHeading.textContent="Inspect proposed file contents";
+    reviewDetails.append(reviewHeading);
     const preview=doc.createElement("pre");
     preview.className="swrlz-github-change-source";
     preview.textContent=proposal.content;
-    wrapper.append(preview);
+    reviewDetails.append(preview);
+    wrapper.append(reviewDetails);
     if(proposal.operation==="UPDATE_FILE"){
       const diff=doc.createElement("pre");
       diff.className="swrlz-github-change-diff";
@@ -32,7 +42,11 @@
       const old=doc.createElement("details"),oldTitle=doc.createElement("summary"),oldSource=doc.createElement("pre");
       oldTitle.textContent="View original file";oldSource.textContent=String(proposal.before||"");
       old.append(oldTitle,oldSource);
-      wrapper.append(diff,old);
+      const diffDetails=doc.createElement("details"),diffHeading=doc.createElement("summary");
+      diffDetails.className="swrlz-github-change-diff-details";
+      diffHeading.textContent="View exact changes (diff)";
+      diffDetails.append(diffHeading,diff);
+      wrapper.append(diffDetails,old);
     }
     const note=doc.createElement("p");
     note.setAttribute("role","status");
@@ -56,6 +70,21 @@
         :"File updated and exact bytes verified by GitHub.";
       wrapper.setAttribute("data-review-state","verified");
       approve.hidden=reject.hidden=true;
+      receiptPanel.hidden=false;
+      const verifiedTitle=doc.createElement("strong");
+      verifiedTitle.textContent=receipt.operation==="CREATE_FILE"?"File created · verified":"File updated · verified";
+      receiptPanel.append(verifiedTitle);
+      const verifiedInfo=doc.createElement("p");
+      verifiedInfo.textContent=proposal.path+" · "+proposal.branch+" · exact bytes verified";
+      receiptPanel.append(verifiedInfo);
+      if(typeof receipt.commitSha==="string"&&/^[0-9a-f]{40}$/i.test(receipt.commitSha)
+         &&/^[a-z0-9_.-]+\/[a-z0-9_.-]+$/i.test(proposal.repo)){
+        const link=doc.createElement("a");
+        link.href="https://github.com/"+proposal.repo+"/commit/"+receipt.commitSha;
+        link.target="_blank";link.rel="noopener noreferrer";
+        link.textContent="View verified commit";
+        receiptPanel.append(link);
+      }
       if(typeof root.removeEventListener==="function")
         root.removeEventListener("swrlz-github-write-receipt",onReceipt);
     };
@@ -96,7 +125,16 @@
     };
     approve.addEventListener("click",()=>act(true));
     reject.addEventListener("click",()=>act(false));
-    wrapper.append(reject,approve);
+    const actions=doc.createElement("div");
+    actions.className="swrlz-github-change-actions";
+    actions.append(reject,approve);
+    wrapper.insertBefore(actions,reviewDetails);
+    wrapper.insertBefore(note,actions);
+    const receiptPanel=doc.createElement("section");
+    receiptPanel.className="swrlz-github-change-receipt";
+    receiptPanel.hidden=true;
+    receiptPanel.setAttribute("role","status");
+    wrapper.append(receiptPanel);
     container.append(wrapper);
     return wrapper;
   }
