@@ -1,10 +1,10 @@
 {
   "schema": "swrlz-forge-deploy-request-v1",
-  "requestedBy": "ChatGPT (owner authorized v11.552 dedicated UV texture alignment workspace deployment)",
+  "requestedBy": "ChatGPT (owner authorized exact mesh UV guide deployment)",
   "target": "kamiloki/swrlz-forge-moba",
   "releaseVersion": "v11.552",
   "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_546_ANATOMY_ROBOT_UV_4K",
-  "reason": "Deploy sealed v11.552 UV texture alignment workspace with separate fullscreen editor, readable island boundaries, texture-first canvas, transform tools and visible history. Verify static delivery.",
-  "sourceCommit": "42c55d3e1df23ddda63148dc53d91238986db328",
-  "sourceIntegritySha256": "1dadda16abffe9fc629d2879814e643199e90548960d02c6e081840f3c3315ab"
+  "reason": "Deploy current sealed v11.552 engine with exact mesh UV guide export; verify public HTML and JS delivery.",
+  "sourceCommit": "main (deploy workflow checkout; verified against sourceIntegritySha256)",
+  "sourceIntegritySha256": "cecffdaa30ddaee6f280175dff23d70fc5e8abc743357537eb597ef173f1a3a6"
 }
