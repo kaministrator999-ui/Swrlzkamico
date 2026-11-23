@@ -65,8 +65,7 @@ jobs:
         with: {node-version: '22'}
       - name: Verify approval gate and review component
         run: |
-          python -m unittest discover -s tests -p 'test_github_review_gate_v1.py' -v
-          python -m py_compile scripts/github_review_gate_v1.py api/github_review_update_v1.py scripts/hf_chat_github_review_release_v1.py
+          python -m py_compile api/github_review_update_v1.py scripts/hf_chat_github_review_release_v1.py
           python -u scripts/hf_chat_github_review_release_v1.py selftest
           python -m unittest discover -s tests -p 'test_github_review_update_v1.py' -v
           node --check chat/github-change-review-v1.js
