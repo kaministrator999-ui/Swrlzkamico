@@ -1,5 +1,5 @@
 {
   "release": "v11.552",
-  "purpose": "Validate corrected JS syntax and re-seal current UV alignment runtime and six-shell humanoid assets",
-  "trigger": "2026-11-23-fix-invalid-uv-region-controls-and-reseal"
+  "purpose": "Reseal after removing obsolete xatlas metadata requirement",
+  "trigger": "2026-11-23-repair-mannequin-starter-loader"
 }
