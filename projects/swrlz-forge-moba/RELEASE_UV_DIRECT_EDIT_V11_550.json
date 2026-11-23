@@ -1,5 +1,5 @@
 {
   "release": "v11.550",
-  "attempt": 5,
-  "repair": "restore historical v11.356 source; append UV edit after checksum-locked chain"
+  "attempt": 6,
+  "repair": "restore exact original v11.356 bytes including blank-line boundary"
 }
