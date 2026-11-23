@@ -1463,11 +1463,9 @@
               // An old review must never approve a newer proposal or another thread.
               // Server-owned tickets still supply the actual authorization.
               const reviewThread=String(node.dataset.reviewThread||activeThreadId);
-              const reviewRequest=String(node.dataset.reviewRequest||"");
               const reviewCreatedAt=Date.now();
               const act=async answer=>{
                 const current=String(activeThreadId||"")===reviewThread;
-                const sameRequest=reviewRequest&&String(stationGeneration?.requestId||"")===reviewRequest;
                 const latest=Array.from(messageList.querySelectorAll(".github-review-card"))
                   .filter(item=>item.isConnected).at(-1)===card;
                 if(sending||approve.disabled||!current||!latest||Date.now()-reviewCreatedAt>300000){
