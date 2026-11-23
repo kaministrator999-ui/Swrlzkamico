@@ -1,5 +1,5 @@
 {
   "release": "v11.550",
-  "attempt": 3,
-  "goal": "capture exact failing step and traceback, seal if valid"
+  "attempt": 4,
+  "repair": "fix workflow shell return and diagnostic JSON output"
 }
