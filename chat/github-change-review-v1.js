@@ -22,6 +22,15 @@
     preview.className="swrlz-github-change-source";
     preview.textContent=proposal.content;
     wrapper.append(preview);
+    if(proposal.operation==="UPDATE_FILE"){
+      const diff=doc.createElement("pre");
+      diff.className="swrlz-github-change-diff";
+      diff.textContent=String(proposal.diff||"No textual differences");
+      const old=doc.createElement("details"),oldTitle=doc.createElement("summary"),oldSource=doc.createElement("pre");
+      oldTitle.textContent="View original file";oldSource.textContent=String(proposal.before||"");
+      old.append(oldTitle,oldSource);
+      wrapper.append(diff,old);
+    }
     const note=doc.createElement("p");
     note.textContent="No repository changes have been made. Review before approval.";
     wrapper.append(note);
