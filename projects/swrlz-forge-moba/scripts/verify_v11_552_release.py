@@ -14,6 +14,8 @@ def main():
     assert m['finalArtifact']=='swyrl_engine_v11_552.html'
     assert m['patches'][-1]=='patches/v11_552_uv_texture_alignment.py'
     assert len(m['patches'])==526
+    # Gate publication on the actual newly authored six-shell humanoid asset.
+    run(sys.executable,str(ROOT/'scripts/check_humanoid_anatomy_v11_546.py'))
     run(sys.executable,str(ROOT/'build_space.py'),'--output',str(args.output))
     page=(args.output/'index.html').read_bytes()
     assert page==(args.output/'modeler.html').read_bytes()
