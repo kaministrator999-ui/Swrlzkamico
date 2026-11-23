@@ -19,8 +19,8 @@ class PublishTests(unittest.TestCase):
     def test_valid_manifest_scoped_and_encoded(self):
         receipt=m.manifest("sample")
         self.assertEqual(receipt["count"],1)
-        self.assertTrue(receipt["destinationPrefix"].startswith("chat/§wyrlz/projects/sample/"))
-        self.assertIn("%C2%A7wyrlz/projects/sample/index.html",receipt["url"])
+        self.assertEqual(receipt["destinationPrefix"], "published-html-projects/sample/")
+        self.assertIn("/api/html-projects/sample/index.html",receipt["url"])
 
     def test_bad_slugs(self):
         for slug in ("../oops","a/b","A", "bad_thing", ".hidden"):
