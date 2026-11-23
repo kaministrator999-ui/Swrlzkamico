@@ -117,6 +117,11 @@ def single_chart_group(pos,faces):
     lo=uv.min(axis=0);span=uv.max(axis=0)-lo
     if np.min(span)<1e-9:raise ValueError('Collapsed single-chart UV')
     uv=(uv-lo)/span.max()
+    # A single parameterization call is not proof of one connected chart.
+    # Verify the returned topology before accepting it.
+    counts=shell_counts(uv,f,['region']*len(f))
+    if counts.get('region')!=1:
+        raise ValueError('Parameterization produced '+str(counts.get('region'))+' disconnected UV shells')
     return coords[vmap],f,uv,1
 
 def fit(uv,rect):
@@ -147,7 +152,7 @@ def make_atlas(positions,triangles,mode):
         if not len(original):raise ValueError('Missing anatomy '+name)
         try:
             p,f,uv,c=single_chart_group(positions,original)
-        except (ValueError,RuntimeError) as exc:
+        except (ValueError,RuntimeError,AssertionError) as exc:
             # Keep a diagnostic fallback, but the shell gate below rejects
             # fragmented output instead of publishing it.
             print('SE546_SINGLE_CHART_REJECTED',name,str(exc),flush=True)
@@ -309,7 +314,10 @@ def main():
         except (ValueError,AssertionError) as e:
             errors.append(kind+': '+str(e))
             print('SE546_ATLAS_ATTEMPT_REJECTED',errors[-1],flush=True)
-    if result is None:raise ValueError('Cannot make safe anatomical atlas: '+str(errors))
+    if result is None:
+        REPORT.parent.mkdir(parents=True,exist_ok=True)
+        REPORT.write_text(json.dumps({'version':'v11.546','status':'rejected','candidateFailures':errors},indent=2)+'\n','utf8')
+        raise ValueError('Cannot make safe anatomical atlas: '+str(errors))
     (xyz,idx,uv,region,charts),metrics,kind=result
     # Native format rounds 3D positions to 5 and UVs to 6 decimal places.
     xyz=np.round(xyz.astype(np.float64),5)
