@@ -1,8 +1,8 @@
 {
   "version": "v11.546",
   "strategy": "six",
-  "charts": 108,
-  "vertices": 8902,
+  "charts": 6,
+  "vertices": 7513,
   "triangles": 13932,
   "originalGeometryUnchanged": true,
   "regionTriangles": {
@@ -13,19 +13,25 @@
     "leftLeg": 2305,
     "rightLeg": 2282
   },
-  "paintBytes": 219206,
+  "paintBytes": 190146,
   "guideSize": 4096,
-  "legacyCandidatesRejected": [
-    "seven: UV vertex budget exceeded: 9035"
-  ],
-  "uvArea": 0.282,
-  "p95P5Density": 3.46,
-  "coveredPct": 28.15,
-  "overlaps": 0,
+  "legacyCandidatesRejected": [],
+  "uvArea": 0.4915,
+  "p95P5Density": 17.02,
+  "uvShells": {
+    "head": 1,
+    "torso": 1,
+    "leftArm": 1,
+    "rightArm": 1,
+    "leftLeg": 1,
+    "rightLeg": 1
+  },
+  "coveredPct": 48.4,
+  "overlaps": 6898,
   "regionTexels": {
-    "head": 34095,
-    "arm": 75814,
-    "torso": 120469,
-    "leg": 64847
+    "head": 53441,
+    "arm": 129148,
+    "torso": 205817,
+    "leg": 119130
   }
 }
