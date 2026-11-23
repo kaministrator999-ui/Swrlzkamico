@@ -10,6 +10,7 @@ permissions:
 jobs:
   seal:
     runs-on: ubuntu-latest
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4
         with:
@@ -20,15 +21,45 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "22"
-      - run: node --check projects/swrlz-forge-moba/runtime/model_atelier_uv_preview_v11_356.js
-      - run: python projects/swrlz-forge-moba/scripts/seal_uv_direct_edit_v11_550.py
-      - run: python projects/swrlz-forge-moba/build_space.py --output /tmp/uv-direct-edit
-      - name: Commit sealed manifest
+      - name: Validate and seal with persisted diagnostic receipt
+        id: validate
+        shell: bash
+        run: |
+          set +e
+          LOG=/tmp/se550-build.log
+          {
+            echo "=== JS syntax ==="
+            node --check projects/swrlz-forge-moba/runtime/model_atelier_uv_preview_v11_356.js || exit $?
+            echo "=== seal source ==="
+            python projects/swrlz-forge-moba/scripts/seal_uv_direct_edit_v11_550.py || exit $?
+            echo "=== build verified source ==="
+            python projects/swrlz-forge-moba/build_space.py --output /tmp/uv-direct-edit || exit $?
+          } > "$LOG" 2>&1
+          result=$?
+          mkdir -p projects/swrlz-forge-moba/docs/qa
+          python - "$result" "$LOG" <<'PY'
+          import json,sys
+          from pathlib import Path
+          result=int(sys.argv[1])
+          lines=Path(sys.argv[2]).read_text(errors='replace').splitlines()
+          Path('projects/swrlz-forge-moba/docs/qa/uv-direct-edit-v11-550-build-result.json').write_text(
+              json.dumps({'passed':result==0,'exit_code':result,'log_tail':lines[-90:]},indent=2)+'\n')
+          PY
+          echo "result=$result" >> "$GITHUB_OUTPUT"
+          cat "$LOG"
+          exit 0
+      - name: Commit build result and sealed manifest if valid
+        shell: bash
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add projects/swrlz-forge-moba/source-manifest.json
-          git diff --cached --quiet && exit 0
-          git commit -m "build(engine): seal native UV direct editing into source"
+          git add projects/swrlz-forge-moba/docs/qa/uv-direct-edit-v11-550-build-result.json
+          if [ "${{ steps.validate.outputs.result }}" = "0" ]; then
+            git add projects/swrlz-forge-moba/source-manifest.json
+          fi
+          git diff --cached --quiet || git commit -m "ci(engine): record UV release build result"
           git pull --rebase origin main
           git push origin HEAD:main
+      - name: Fail job if validation failed
+        if: steps.validate.outputs.result != '0'
+        run: exit 1
