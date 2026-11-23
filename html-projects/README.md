@@ -2,7 +2,7 @@
 
 This folder contains project source, **not** live §C application code.
 Each project is isolated in `html-projects/<slug>/`, with a required `index.html`.
-The existing Hugging Face Chat Space is the initial publication destination.
+The existing Hugging Face Chat Space is the initial publication destination.\nThe project artifacts are kept outside the chat static mount under\n`published-html-projects/<slug>/` and served only through the CSP-sandboxed\n`/api/html-projects/<slug>/index.html` route. The response forces an opaque\norigin (no `allow-same-origin`) and disables network connections and forms.
 
 ## Publishing
 
@@ -15,7 +15,7 @@ The existing Hugging Face Chat Space is the initial publication destination.
 
 No Space or secret setup is added. Publishing uses the existing repository
 `HF_TOKEN` secret. The workflow touches only
-`chat/§wyrlz/projects/<slug>/` in `kamiloki/Swyrlz`; it must not modify Station,
+`published-html-projects/<slug>/` in `kamiloki/Swyrlz`; it must not modify Station,
 §E, the existing chat page, or any other project.
 
 Existing previously published project files cannot be silently deleted. Use a
