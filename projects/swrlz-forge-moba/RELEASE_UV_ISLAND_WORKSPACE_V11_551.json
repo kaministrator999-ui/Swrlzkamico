@@ -1,5 +1,6 @@
 {
   "release": "v11.551",
   "purpose": "UV island selection transforms enlarged workspace and history",
-  "source": "runtime/uv_island_workspace_v11_551.js"
+  "source": "runtime/uv_island_workspace_v11_551.js",
+  "trigger": "retry after workflow path correction"
 }
