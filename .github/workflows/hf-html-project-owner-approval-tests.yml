@@ -32,5 +32,18 @@ jobs:
       - run: python -m unittest discover -s tests -p 'test_html_project_publish_action_v1.py' -v
       - run: python -m unittest discover -s tests -p 'test_hf_html_project_publish_v1.py' -v
       - run: python scripts/hf_chat_html_publish_integration_release_v1.py selftest
+      - name: Verify interactive example and destination use the current CSP project route
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          from scripts.hf_html_project_publish_v1 import manifest
+          html=Path('html-projects/html-publish-check/index.html').read_text()
+          result=manifest('html-publish-check')
+          assert 'addEventListener("click"' in html
+          assert result['url'].endswith('/api/html-projects/html-publish-check/index.html')
+          assert result['destinationPrefix']=='published-html-projects/html-publish-check/'
+          assert result['count']==1
+          print('HTML_PROJECT_ACCEPTANCE_MANIFEST_PASS')
+          PY
       - name: Compare proposed mutation against latest real Space source
         run: python -u scripts/hf_chat_html_publish_integration_release_v1.py preflight
