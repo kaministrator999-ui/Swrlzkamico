@@ -1,0 +1,35 @@
+name: Deploy GitHub review receipt UI v2 to live §C
+on:
+  push:
+    branches: [feature/chat-github-review-receipt-v2]
+    paths: ['.github/workflows/chat-github-review-receipt-deploy-v2.yml']
+permissions:
+  contents: read
+concurrency:
+  group: swrlz-hf-space-deployment
+  cancel-in-progress: false
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - run: node --check chat/github-change-review-v1.js
+      - run: node --test tests/test_chat_github_review_component_v1.mjs
+      - run: python -m pip install --quiet 'huggingface_hub>=0.34,<2'
+      - run: python -u scripts/hf_chat_github_review_receipt_release_v2.py snapshot
+      - uses: actions/upload-artifact@v4
+        with:
+          name: github-review-receipt-before-v2
+          path: reports/github-review-receipt-v2/
+          retention-days: 30
+      - name: Publish scoped UI change
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          SWRLZ_REVIEW_RECEIPT_APPROVED: '1'
+        run: python -u scripts/hf_chat_github_review_receipt_release_v2.py publish
+      - run: python -u scripts/hf_chat_github_review_receipt_release_v2.py verify
