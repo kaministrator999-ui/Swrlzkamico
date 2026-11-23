@@ -137,7 +137,7 @@ def publish(slug: str, approved: str) -> dict:
 def runtime_probe(url: str, expected_sha: str) -> None:
     import time
     request = urllib.request.Request(url, headers={"Cache-Control": "no-cache"})
-    for attempt in range(12):
+    for attempt in range(48):
         try:
             with urllib.request.urlopen(request, timeout=15) as response:
                 mime = response.headers.get("Content-Type", "").lower()
@@ -155,8 +155,8 @@ def runtime_probe(url: str, expected_sha: str) -> None:
                     return
         except (urllib.error.URLError, TimeoutError):
             pass
-        if attempt < 11:
-            time.sleep(5)
+        if attempt < 47:
+            time.sleep(10)
     raise RuntimeError("Browser-facing HTML was not verified; source publication is not runtime success")
 
 
