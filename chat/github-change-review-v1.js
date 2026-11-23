@@ -11,6 +11,9 @@
     const createdAt=Date.now(), thread=String(options.threadId||"");
     const wrapper=doc.createElement("section");
     wrapper.className="swrlz-github-change-review";
+    wrapper.dataset.reviewPath=proposal.path;
+    wrapper.dataset.reviewOperation=proposal.operation;
+    wrapper.dataset.reviewThread=thread;
     const title=doc.createElement("h3");
     title.textContent=proposal.operation==="CREATE_FILE"?"Review new GitHub file":"Review GitHub file edit";
     wrapper.append(title);
@@ -93,5 +96,32 @@
     container.append(wrapper);
     return wrapper;
   }
-  root.SwrlzGithubChangeReviewV1=Object.freeze({render});
+  function reconcileReceipt(card,threadId){
+    if(!card||typeof card.textContent!=="string")return false;
+    const receiptText=card.textContent;
+    if(!/Exact bytes verified/i.test(receiptText))return false;
+    const operation=/File created/i.test(receiptText)?"CREATE_FILE":
+      /File updated/i.test(receiptText)?"UPDATE_FILE":null;
+    if(!operation)return false;
+    const doc=card.ownerDocument;
+    const candidates=doc.querySelectorAll(".swrlz-github-change-review[data-review-state='submitted']");
+    for(const wrapper of candidates){
+      if(wrapper.dataset.reviewThread!==String(threadId||"")
+        ||wrapper.dataset.reviewOperation!==operation
+        ||!receiptText.includes(wrapper.dataset.reviewPath))continue;
+      const path=wrapper.dataset.reviewPath;
+      const details=wrapper.querySelectorAll("p");
+      const repo=details[0]?.textContent?.replace(/^Repository:\\s*/,"")||"";
+      const branch=details[1]?.textContent?.replace(/^Branch:\\s*/,"")||"";
+      if(!repo||!branch||!receiptText.includes(repo.split("/").at(-1)))continue;
+      if(typeof root.dispatchEvent==="function"&&typeof root.CustomEvent==="function"){
+        root.dispatchEvent(new root.CustomEvent("swrlz-github-write-receipt",{
+          detail:{threadId:String(threadId||""),operation,path,repo,branch,verified:true}
+        }));
+        return true;
+      }
+    }
+    return false;
+  }
+  root.SwrlzGithubChangeReviewV1=Object.freeze({render,reconcileReceipt});
 })(typeof window!=="undefined"?window:globalThis);
