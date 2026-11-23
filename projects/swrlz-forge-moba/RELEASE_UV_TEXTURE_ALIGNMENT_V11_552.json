@@ -1,5 +1,5 @@
 {
   "release": "v11.552",
-  "purpose": "Validate numbered color-coded UV region overlay in existing alignment workspace",
-  "trigger": "numbered-uv-regions-2026-11-23"
+  "purpose": "Recompute sealed v11.552 source SHA after numbered UV overlays and verified six-shell humanoid asset fix",
+  "trigger": "2026-11-23-reseal-uv-runtime-and-anatomy-atlas"
 }
