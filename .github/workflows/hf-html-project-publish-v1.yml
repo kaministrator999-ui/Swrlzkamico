@@ -1,4 +1,5 @@
 name: §C approved HTML project → existing Hugging Face Space
+run-name: HTML project ${{ inputs.project }} · ${{ inputs.request_nonce }}
 on:
   pull_request:
     paths:
@@ -13,6 +14,10 @@ on:
         type: string
       project:
         description: Existing html-projects/<slug> directory
+        required: true
+        type: string
+      request_nonce:
+        description: Opaque owner-reviewed deployment receipt ID
         required: true
         type: string
       approved:
@@ -39,7 +44,7 @@ jobs:
       - run: python -m py_compile scripts/hf_html_project_publish_v1.py
       - run: python -m unittest discover -s tests -p 'test_hf_html_project_publish_v1.py' -v
   publish:
-    if: ${{ github.event_name == 'workflow_dispatch' && false }}
+    if: ${{ github.event_name == 'workflow_dispatch' && github.actor == 'kaministrator999-ui' && inputs.approved == 'yes' }}
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
@@ -59,6 +64,7 @@ jobs:
           SOURCE_SHA: ${{ inputs.source_sha }}
           SWRLZ_PROJECT_SOURCE_ROOT: reviewed-source
           PROJECT_SLUG: ${{ inputs.project }}
+          REQUEST_NONCE: ${{ inputs.request_nonce }}
           APPROVED: ${{ inputs.approved }}
         run: |
           set -euo pipefail
@@ -67,6 +73,9 @@ jobs:
           python - <<'PY'
           import os
           from scripts.hf_html_project_publish_v1 import assert_immutable_source, manifest
+          import re
+          if not re.fullmatch(r"[a-f0-9]{24}", os.environ["REQUEST_NONCE"]):
+              raise SystemExit("Invalid deployment receipt ID")
           assert_immutable_source()
           print(manifest(os.environ["PROJECT_SLUG"]))
           if os.environ["APPROVED"] != "yes":
