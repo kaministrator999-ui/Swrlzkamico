@@ -1,0 +1,28 @@
+name: §C request-first GitHub authorization preflight
+on:
+  push:
+    branches: [feature/chat-github-request-first-v1]
+    paths:
+      - 'scripts/hf_chat_github_request_first_release_v1.py'
+      - '.github/workflows/chat-github-request-first-v1.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - run: python -m pip install --quiet 'huggingface_hub>=0.34,<2'
+      - run: python -m py_compile scripts/hf_chat_github_request_first_release_v1.py
+      - run: python scripts/hf_chat_github_request_first_release_v1.py selftest
+      - run: python scripts/hf_chat_github_request_first_release_v1.py snapshot
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: github-request-first-preflight
+          path: reports/github-request-first-v1/
+          retention-days: 14
