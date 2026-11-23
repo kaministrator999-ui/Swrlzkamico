@@ -3,6 +3,8 @@ on:
   pull_request:
     paths:
       - 'chat/github-change-review-v1.js'
+      - 'scripts/github_review_gate_v1.py'
+      - 'tests/test_github_review_gate_v1.py'
       - 'tests/test_chat_github_review_component_v1.mjs'
       - '.github/workflows/chat-github-review-component-v1.yml'
   workflow_dispatch:
@@ -17,5 +19,10 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m py_compile scripts/github_review_gate_v1.py
+      - run: python -m unittest discover -s tests -p 'test_github_review_gate_v1.py' -v
       - run: node --check chat/github-change-review-v1.js
       - run: node --test tests/test_chat_github_review_component_v1.mjs
