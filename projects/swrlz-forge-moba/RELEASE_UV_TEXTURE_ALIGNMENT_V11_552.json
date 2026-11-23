@@ -1,5 +1,5 @@
 {
   "release": "v11.552",
-  "purpose": "Dedicated UV alignment canvas, texture-first display and island boundary outlines",
-  "trigger": "seal-and-build-after-trigger-fix"
+  "purpose": "Re-seal v11.552 with exact current-mesh transparent UV guide export",
+  "trigger": "rebuild-exact-mesh-uv-guide-2026-11-23"
 }
