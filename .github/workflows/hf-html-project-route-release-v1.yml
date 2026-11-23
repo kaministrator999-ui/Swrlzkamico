@@ -1,0 +1,70 @@
+name: §C isolated HTML project route - guarded live release
+on:
+  pull_request:
+    paths:
+      - 'api/html_project_routes_v1.py'
+      - 'scripts/hf_chat_html_project_route_release_v1.py'
+      - 'tests/test_html_project_routes_v1.py'
+      - '.github/workflows/hf-html-project-route-release-v1.yml'
+  push:
+    branches: [main]
+    paths: ['.deploy/HF_CHAT_HTML_PROJECT_ROUTE_REQUEST.txt']
+permissions: {contents: read}
+concurrency:
+  group: swrlz-hf-space-deployment
+  cancel-in-progress: false
+jobs:
+  check:
+    if: ${{ github.event_name == 'pull_request' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - run: python -m pip install --quiet fastapi httpx 'huggingface_hub>=0.34,<2'
+      - run: python -m py_compile api/html_project_routes_v1.py scripts/hf_chat_html_project_route_release_v1.py
+      - run: python -m unittest discover -s tests -p 'test_html_project_routes_v1.py' -v
+      - run: python -u scripts/hf_chat_html_project_route_release_v1.py preflight
+  release:
+    if: ${{ github.event_name == 'push' && github.actor == 'kaministrator999-ui' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false, fetch-depth: 0}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - name: Authorize tightly scoped live Station route change
+        shell: bash
+        run: |
+          set -euo pipefail
+          request='.deploy/HF_CHAT_HTML_PROJECT_ROUTE_REQUEST.txt'
+          test -f "$request"
+          get() { sed -n "s/^$1=//p" "$request" | tail -n 1; }
+          test "$(get TARGET)" = "kamiloki/Swyrlz"
+          test "$(get APPROVED)" = "1"
+          test "$(get CHANGE_SCOPE)" = "sandbox-html-project-route-only"
+          ref="$(get SOURCE_REF)"
+          nonce="$(get REQUEST_NONCE)"
+          [[ "$ref" =~ ^[0-9a-f]{40}$ ]]
+          [[ "$nonce" =~ ^[a-z0-9-]{12,96}$ ]]
+          git merge-base --is-ancestor "$ref" HEAD
+          git diff --exit-code "$ref" HEAD -- api/html_project_routes_v1.py scripts/hf_chat_html_project_route_release_v1.py
+      - run: python -m pip install --quiet fastapi httpx 'huggingface_hub>=0.34,<2'
+      - run: python -m unittest discover -s tests -p 'test_html_project_routes_v1.py' -v
+      - name: Source-of-truth preflight against current live Station
+        run: python -u scripts/hf_chat_html_project_route_release_v1.py preflight
+      - name: Exact scoped CAS release, verify runtime route, rollback on failure
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          SWRLZ_HTML_ROUTE_APPROVED: '1'
+        run: python -u scripts/hf_chat_html_project_route_release_v1.py publish
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: swrlz-html-project-route-live-before-after
+          path: reports/html-project-route-live-backup/
+          if-no-files-found: warn
+          retention-days: 14
