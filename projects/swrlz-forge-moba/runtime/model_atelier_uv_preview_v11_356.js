@@ -222,6 +222,7 @@ function se356UVInstallPreview(){
   viewport.dataset.se356UVPick='true';
   viewport.addEventListener('pointerdown',se356UVPick3D,true);
  }
+ se356EditInstall();
  se356UVPreviewSchedule();
 }
 
