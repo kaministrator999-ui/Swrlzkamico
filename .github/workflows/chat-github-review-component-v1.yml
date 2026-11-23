@@ -31,3 +31,14 @@ jobs:
       - run: python -m unittest discover -s tests -p 'test_github_review_gate_v1.py' -v
       - run: node --check chat/github-change-review-v1.js
       - run: node --test tests/test_chat_github_review_component_v1.mjs
+      - name: Inspect and patch exact current live Station source without writing
+        run: |
+          python -m pip install --quiet 'huggingface_hub>=0.34,<2'
+          python -u scripts/hf_chat_github_review_release_v1.py snapshot
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: github-review-readonly-source-inspection
+          path: reports/github-review-live-v1/
+          retention-days: 14
+          if-no-files-found: warn
