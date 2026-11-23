@@ -71,6 +71,7 @@
       }
       approve.disabled=reject.disabled=true;
       pending=accepted;
+      wrapper.setAttribute("data-review-state",accepted?"submitted":"rejecting");
       note.textContent=accepted?"Submitting approval to §C…":"Submitting rejection to §C…";
       try{
         const result=await options.confirm(accepted);
@@ -82,11 +83,13 @@
           if(!accepted)approve.hidden=reject.hidden=true;
         }else{
           pending=false;
+          wrapper.setAttribute("data-review-state","ready");
           note.textContent="Decision not confirmed. No change assumed.";
           approve.disabled=reject.disabled=false;
         }
       }catch(_){
         pending=false;
+        wrapper.setAttribute("data-review-state","ready");
         note.textContent="Decision failed. No change assumed.";
         approve.disabled=reject.disabled=false;
       }
