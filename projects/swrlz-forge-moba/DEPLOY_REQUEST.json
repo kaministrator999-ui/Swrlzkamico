@@ -4,10 +4,12 @@
   "target": "kamiloki/swrlz-forge-moba",
   "releaseVersion": "v11.552",
   "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_546_ANATOMY_ROBOT_UV_4K",
-  "reason": "Publish verified six-shell continuous humanoid anatomy UV atlas, freshly rebaked robotic skin and numbered 4K guides; verified GitHub Actions authoring run 45289094989.",
+  "reason": "Publish continuous six-shell mannequin UV atlas and corrected numbered-region UI after passing v11.552 source reseal run 45289827937",
   "sourceCommit": "main (deploy workflow checkout; verified against sourceIntegritySha256)",
-  "sourceIntegritySha256": "cecffdaa30ddaee6f280175dff23d70fc5e8abc743357537eb597ef173f1a3a6",
+  "sourceIntegritySha256": "8f7074f54af2db9c96bdb9e1345969842c6e8e5c7c07ba6766a6b357dca856e6",
   "assetBuildRun": 45289094989,
   "assetShells": 6,
-  "assetVertices": 7513
+  "assetVertices": 7513,
+  "resealRun": 45289827937,
+  "deploymentAttempt": 2
 }
