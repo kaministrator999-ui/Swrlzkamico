@@ -21,6 +21,7 @@ AUTH_ACTIONS=r'''
 # Only a provider OAuth grant can supply missing scopes; a chat approval cannot.
 _swrlz_prior_create=_prepare_create
 _swrlz_prior_update=_prepare_update
+_swrlz_prior_rename=_prepare_rename
 
 def _swrlz_authorization_response(user_id, thread_id, result):
     if not isinstance(result,dict):
@@ -50,6 +51,10 @@ def _prepare_create(user_id,thread_id,path,content):
 def _prepare_update(user_id,thread_id,path,content):
     return _swrlz_authorization_response(
         user_id,thread_id,_swrlz_prior_update(user_id,thread_id,path,content))
+
+def _prepare_rename(user_id,thread_id,prompt,context,history):
+    return _swrlz_authorization_response(
+        user_id,thread_id,_swrlz_prior_rename(user_id,thread_id,prompt,context,history))
 '''
 
 HTML_PATCH=r'''}else if(widget.kind==="github-authorization"){
@@ -69,7 +74,7 @@ HTML_PATCH=r'''}else if(widget.kind==="github-authorization"){
 
 def patch_actions(source):
     assert AUTH_MARK not in source
-    assert "def _prepare_update(" in source and "def _prepare_create(" in source
+    assert "def _prepare_update(" in source and "def _prepare_create(" in source and "def _prepare_rename(" in source
     assert "def expire_interrupted(" in source
     result=source.rstrip()+"\n"+AUTH_ACTIONS+"\n"
     ast.parse(result)
@@ -120,7 +125,7 @@ def prepare():
 
 def main(mode):
     if mode=="selftest":
-        sample='def _prepare_update():pass\ndef _prepare_create():pass\ndef expire_interrupted():pass\n'
+        sample='def _prepare_update():pass\ndef _prepare_create():pass\ndef _prepare_rename():pass\ndef expire_interrupted():pass\n'
         assert AUTH_MARK in patch_actions(sample)
         assert "github-authorization" in patch_html('<head></head>}else if(widget.kind==="github-change-review"){')
         print("REQUEST_FIRST_PATCH_SELFTEST_PASS",flush=True);return
