@@ -1,5 +1,5 @@
 {
   "release": "v11.552",
-  "purpose": "Recompute sealed v11.552 source SHA after numbered UV overlays and verified six-shell humanoid asset fix",
-  "trigger": "2026-11-23-reseal-uv-runtime-and-anatomy-atlas"
+  "purpose": "Validate corrected JS syntax and re-seal current UV alignment runtime and six-shell humanoid assets",
+  "trigger": "2026-11-23-fix-invalid-uv-region-controls-and-reseal"
 }
