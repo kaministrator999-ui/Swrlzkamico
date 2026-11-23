@@ -335,7 +335,7 @@ jobs:
         run: python -u scripts/hf_chat_http500_feedback_v1.py publish
 
   prepare:
-    if: ${{ inputs.mode != 'hotfix-output-budget' && inputs.mode != 'hotfix-music-transform' && inputs.mode != 'hotfix-http500-feedback' && inputs.mode != 'hotfix-tool-recovery' && inputs.mode != 'hotfix-noncode-loop' && inputs.mode != 'hotfix-forge-reference' && inputs.mode != 'hotfix-forge-creative' && inputs.mode != 'hotfix-forge-loft' && inputs.mode != 'hotfix-forge-preview' && inputs.mode != 'hotfix-forge-reshape' }}
+    if: ${{ inputs.mode != 'hotfix-output-budget' && inputs.mode != 'hotfix-music-transform' && inputs.mode != 'hotfix-http500-feedback' && inputs.mode != 'hotfix-tool-recovery' && inputs.mode != 'hotfix-noncode-loop' && inputs.mode != 'hotfix-forge-reference' && inputs.mode != 'hotfix-forge-creative' && inputs.mode != 'hotfix-forge-loft' && inputs.mode != 'hotfix-forge-preview' && inputs.mode != 'hotfix-forge-reshape' && inputs.mode != 'hotfix-github-review' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
