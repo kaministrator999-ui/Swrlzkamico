@@ -1,10 +1,10 @@
 {
   "schema": "swrlz-forge-source-v2",
-  "name": "§wyrl§ Engine v11.546",
+  "name": "§wyrl§ Engine v11.550 UV direct edit",
   "baseArtifact": "swrlz_forge_v4.html",
   "baseBytes": 99591,
   "baseSha256": "a8299fe89fbb98d15c6091751b7a66931a66efec8eec5cb464e1286f21895856",
-  "finalArtifact": "swyrl_engine_v11_546.html",
+  "finalArtifact": "swyrl_engine_v11_550.html",
   "encoding": "gzip+base64-chunks",
   "chunks": [
     "payload/part-01.txt",
@@ -537,10 +537,11 @@
     "patches/v11_543_tool_navigation_search.py",
     "patches/v11_544_humanoid_surface_paint.py",
     "patches/v11_545_humanoid_uv_anatomy.py",
-    "patches/v11_546_humanoid_anatomical_uv_4k.py"
+    "patches/v11_546_humanoid_anatomical_uv_4k.py",
+    "patches/v11_550_uv_direct_edit.py"
   ],
-  "finalBytes": 11102749,
-  "finalSha256": "a5c55df7f8b18a7c60e6572b22b49391e03c128424569bc594e31f858ebeed11",
+  "finalBytes": 11107014,
+  "finalSha256": "94ada90dcbb9f517af57187f327e7a55d1dd32bf882abd9c65e38070dacec830",
   "previousFinalSha256": "4d32604a8647ec6c5f9043975a421b947137c52381171312eaeef5dc1798064e",
   "previousFinalBytes": 11097173,
   "previousManifestFinalSha256": "4d32604a8647ec6c5f9043975a421b947137c52381171312eaeef5dc1798064e",
