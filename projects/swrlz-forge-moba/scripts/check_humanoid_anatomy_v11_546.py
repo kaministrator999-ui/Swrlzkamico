@@ -46,6 +46,16 @@ def main():
     assert metric['vertices']<=9000 and metric['triangles']==13932
     assert metric['guideSize']==4096 and metric['originalGeometryUnchanged']
     assert len(metric['regionTriangles'])>=6
+    # Release is invalid unless the actual authored asset reflects the
+    # seam-aware continuous unwrap; never accept an old 108-chart report.
+    required={'head','torso','leftArm','rightArm','leftLeg','rightLeg'}
+    assert metric['strategy']=='six',metric['strategy']
+    assert metric['charts']==6,metric['charts']
+    assert set(metric['uvShells'])==required,metric['uvShells']
+    assert all(metric['uvShells'][name]==1 for name in required),metric['uvShells']
+    assert metric['overlaps']>=0
+    assert metric['coveredPct']>25
+    assert metric['p95P5Density']<110
     assert len(N.read_bytes())<2_000_000
     print('SE546_ANATOMY_ROBOT_ASSETS_PASS',json.dumps({
         'vertices':len(n['positions'])//3,'triangles':13932,
