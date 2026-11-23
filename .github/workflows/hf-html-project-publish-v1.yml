@@ -45,13 +45,19 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
           ref: ${{ inputs.source_sha }}
+          path: reviewed-source
           persist-credentials: false
       - uses: actions/setup-python@v5
         with: {python-version: '3.11'}
       - name: Source pin, static asset checks, and owner approval
         env:
           SOURCE_SHA: ${{ inputs.source_sha }}
+          SWRLZ_PROJECT_SOURCE_ROOT: reviewed-source
           PROJECT_SLUG: ${{ inputs.project }}
           APPROVED: ${{ inputs.approved }}
         run: |
@@ -70,12 +76,14 @@ jobs:
       - name: Scoped, CAS-protected Space publication and source byte readback
         env:
           SOURCE_SHA: ${{ inputs.source_sha }}
+          SWRLZ_PROJECT_SOURCE_ROOT: reviewed-source
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
           SWRLZ_HTML_PROJECT_APPROVED: '1'
           PROJECT_SLUG: ${{ inputs.project }}
         run: python scripts/hf_html_project_publish_v1.py publish --project "$PROJECT_SLUG" --approved yes
       - name: Confirm public browser-facing HTML route
         env:
+          SWRLZ_PROJECT_SOURCE_ROOT: reviewed-source
           PROJECT_SLUG: ${{ inputs.project }}
         run: python scripts/hf_html_project_publish_v1.py probe --project "$PROJECT_SLUG"
       - uses: actions/upload-artifact@v4
