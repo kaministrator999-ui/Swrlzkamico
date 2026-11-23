@@ -17,7 +17,8 @@ import urllib.request
 
 SPACE = "kamiloki/Swyrlz"
 BASE_URL = "https://kamiloki-swyrlz.hf.space"
-PROJECT_ROOT = Path("html-projects")
+SOURCE_ROOT = Path(os.environ.get("SWRLZ_PROJECT_SOURCE_ROOT", "."))
+PROJECT_ROOT = SOURCE_ROOT / "html-projects"
 MAX_FILES = 48
 MAX_TOTAL_BYTES = 1_000_000
 ALLOWED = {".html", ".htm", ".css", ".js", ".mjs", ".json", ".svg",
@@ -33,7 +34,10 @@ def validate_slug(slug: str) -> str:
 
 
 def local_files(slug: str) -> list[tuple[str, bytes]]:
-    root = (PROJECT_ROOT / validate_slug(slug)).resolve()
+    candidate = PROJECT_ROOT / validate_slug(slug)
+    if PROJECT_ROOT.is_symlink() or candidate.is_symlink():
+        raise ValueError("Symlink project root forbidden")
+    root = candidate.resolve()
     parent = PROJECT_ROOT.resolve()
     if root.parent != parent or not root.is_dir():
         raise ValueError("Project directory missing")
@@ -84,7 +88,7 @@ def assert_immutable_source() -> str:
     if not SHA.fullmatch(expected):
         raise ValueError("An immutable 40-character source SHA is mandatory")
     import subprocess
-    actual = subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip()
+    actual = subprocess.check_output(["git", "-C", str(SOURCE_ROOT), "rev-parse", "HEAD"], text=True).strip()
     if actual != expected:
         raise ValueError("Approved source does not match checked-out source")
     return actual
