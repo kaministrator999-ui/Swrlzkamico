@@ -158,6 +158,7 @@
         if(closed)return;
         if(result.code!=="DISPATCH_ACCEPTED")throw new Error("Dispatch was not acknowledged");
         nonce=result.requestNonce;
+        try{sessionStorage.setItem("swrlz-html-project-deployment-v1",nonce)}catch(_){}
         runLink.href=result.actionsUrl;runLink.hidden=false;
         write("Owner approval accepted; deployment requested. Waiting for verified GitHub Actions results.");
         await refresh();
@@ -165,6 +166,12 @@
       }catch(error){write("Publishing not confirmed: "+String(error.message||error))}
       finally{busy=false;reviewButton.disabled=false}
     });
+    try{nonce=sessionStorage.getItem("swrlz-html-project-deployment-v1")}catch(_){}
+    if(nonce && /^[a-f0-9]{24}$/.test(nonce)){
+      write("Recovering previous deployment status from GitHub Actions…");
+      refresh();
+      timer=setInterval(refresh,6500);
+    }else{nonce=null}
     slugInput.focus();
   }
 
