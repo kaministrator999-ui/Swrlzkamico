@@ -84,7 +84,8 @@ def _manifest(token, source, slug):
             continue
         rel = path[len(prefix):]
         if entry.get("type") == "tree":
-            continue\n        if entry.get("type") != "blob" or entry.get("mode") not in {"100644", "100755"}:
+            continue
+        if entry.get("type") != "blob" or entry.get("mode") not in {"100644", "100755"}:
             raise HTTPException(422, "Project contains unsafe Git entries")
         parts = rel.split("/")
         if not 1 <= len(parts) <= 8 or any(not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_.-]*", p) or p.startswith(".") for p in parts):
