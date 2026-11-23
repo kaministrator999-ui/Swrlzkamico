@@ -1,0 +1,20 @@
+name: Deploy approved §C GitHub review to existing live Space
+
+on:
+  push:
+    branches:
+      - feature/chat-github-live-integration-v1
+    paths:
+      - '.github/workflows/chat-github-review-live-release.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    uses: ./.github/workflows/manual-hf-space.yml
+    with:
+      source_ref: ${{ github.sha }}
+      mode: hotfix-github-review
+      approved: 'yes'
+    secrets: inherit
