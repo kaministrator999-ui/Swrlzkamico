@@ -94,6 +94,31 @@ def xatlas_group(pos,faces):
     assert in_keys==out_keys,'The atlas changed source face geometry'
     return coords[vmap],f,uv,atlas.get_mesh_chart_count(0)
 
+def single_chart_group(pos,faces):
+    """Parameterize an anatomical surface as one chart without xatlas chart splitting.
+
+    A disconnected or closed region is rejected rather than silently producing
+    a misleading 'continuous' UV shell.
+    """
+    used,inverse=np.unique(faces,return_inverse=True)
+    coords=np.ascontiguousarray(pos[used],dtype=np.float32)
+    idx=np.ascontiguousarray(inverse.reshape(-1,3),dtype=np.uint32)
+    # Unlike Atlas.generate(), parametrize() does not partition the surface
+    # into arbitrary charts. Boundary/seam design remains explicit.
+    vmap,f,uv=xatlas.parametrize(coords,idx)
+    vmap=np.asarray(vmap,np.int64)
+    f=np.asarray(f,np.uint32).reshape(-1,3)
+    uv=np.asarray(uv,np.float64).reshape(-1,2)
+    if not len(f)==len(faces) or not np.isfinite(uv).all():
+        raise ValueError('Single-chart parameterization invalid')
+    before=Counter(tuple(sorted(map(tuple,coords[tri]))) for tri in idx)
+    after=Counter(tuple(sorted(map(tuple,coords[vmap[tri]]))) for tri in f)
+    if before!=after:raise ValueError('Single-chart parameterization altered geometry')
+    lo=uv.min(axis=0);span=uv.max(axis=0)-lo
+    if np.min(span)<1e-9:raise ValueError('Collapsed single-chart UV')
+    uv=(uv-lo)/span.max()
+    return coords[vmap],f,uv,1
+
 def fit(uv,rect):
     # Isotropic transform: retain xatlas's internal angular/distortion metrics.
     umin=uv.min(axis=0);umax=uv.max(axis=0)
@@ -120,7 +145,13 @@ def make_atlas(positions,triangles,mode):
     for name in (REGIONS if mode=='seven' else ['head','torso','leftArm','rightArm','leftLeg','rightLeg']):
         original=triangles[labels==name]
         if not len(original):raise ValueError('Missing anatomy '+name)
-        p,f,uv,c=xatlas_group(positions,original)
+        try:
+            p,f,uv,c=single_chart_group(positions,original)
+        except (ValueError,RuntimeError) as exc:
+            # Keep a diagnostic fallback, but the shell gate below rejects
+            # fragmented output instead of publishing it.
+            print('SE546_SINGLE_CHART_REJECTED',name,str(exc),flush=True)
+            p,f,uv,c=xatlas_group(positions,original)
         base=count;count+=len(p);charts+=c
         if count>VERT_LIMIT:raise ValueError('UV vertex budget exceeded: '+str(count))
         parts.append(p);faces_out.append(f+base)
