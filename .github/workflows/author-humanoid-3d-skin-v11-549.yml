@@ -1,0 +1,44 @@
+name: Author §E v11.549 True Finished Detailed Robot Skin
+on:
+  push:
+    branches: [main]
+    paths:
+      - "projects/swrlz-forge-moba/RELEASE_AUTHOR_SKIN_V11_549.json"
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: se549-anatomical-skin
+  cancel-in-progress: false
+jobs:
+  paint:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install authoring-only 3D UV bake dependencies
+        run: python -m pip install --quiet "numpy>=1.26,<3" "scipy>=1.12,<2" "pillow>=10,<13" "xatlas>=0.0.9"
+      - name: Bake actual 3D anatomical skin into existing v11.546 UV coordinates
+        run: python projects/swrlz-forge-moba/authoring/bake_humanoid_3d_uv_skin_v11_549.py
+      - name: Verify generator manifest and generated assets
+        run: python projects/swrlz-forge-moba/authoring/verify_skin_manifest.py projects/swrlz-forge-moba/docs/qa/futuristic-humanoid-v11-549-surface-registered-aegis-validation.json
+      - name: Commit texture assets and 3D render receipts
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          python - <<'PY'
+          import json,subprocess
+          from pathlib import Path
+          root=Path('projects/swrlz-forge-moba')
+          proof=json.loads((root/'docs/qa/futuristic-humanoid-v11-549-surface-registered-aegis-validation.json').read_text())
+          subprocess.run(['git','add','--',*[str(root/path) for path in proof['assets'].values()]],check=True)
+          PY
+          git diff --cached --quiet && exit 0
+          git commit -m "asset(modeler): add registered 4K robotic mannequin UV skin and 3D QA views"
+          git pull --rebase origin main
+          git push origin HEAD:main
