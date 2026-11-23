@@ -1,5 +1,5 @@
 /* v11.552: independent mobile UV alignment workspace and readable island overlays. */
-let se552Portal=null,se552ShowWires=false,se552Pan=false,se552Touch=new Map();
+let se552Portal=null,se552ShowWires=false,se552ShowRegions=false,se552Pan=false,se552Touch=new Map();
 function se552Edges(t,ids){
  const topo=se551Topology(t),chosen=new Set(ids),counts=new Map();
  for(const face of topo.faces){
@@ -73,6 +73,39 @@ function se552ExportExactGuide(){
   status('Exact UV guide exported: '+drawn+' triangles'+(invalid?' · '+invalid+' invalid skipped':'')+'. Keep this layer registered; do not reposition islands in image editors.');
  },'image/png');
 }
+/* Deterministic color/number overlay of actual connected UV shells. This does not
+   re-unwrap geometry: labels are based on UV connectivity, not guessed anatomy. */
+function se552RegionOverlay(){
+ const t=se551Target(),root=se356UVPreviewRoot(),cv=root?.querySelector('#se356UVCanvas');
+ if(!t||!cv)return;
+ const topo=se551Topology(t),regions=new Map(),size=cv.width;
+ topo.faces.forEach((face,i)=>{
+  const id=topo.root(i);let group=regions.get(id);
+  if(!group){group={faces:[],sumU:0,sumV:0,n:0};regions.set(id,group);}
+  group.faces.push(face);
+  for(const v of face){group.sumU+=topo.uv.getX(v);group.sumV+=topo.uv.getY(v);group.n++;}
+ });
+ const groups=[...regions.values()].sort((a,b)=>b.faces.length-a.faces.length);
+ const ctx=cv.getContext('2d');ctx.save();
+ groups.forEach((g,i)=>{
+  const hue=(i*137.508)%360;
+  ctx.fillStyle='hsla('+hue+',85%,60%,0.19)';
+  for(const f of g.faces){
+   ctx.beginPath();f.forEach((v,k)=>{
+    const x=topo.uv.getX(v)*size,y=(1-topo.uv.getY(v))*size;
+    if(k)ctx.lineTo(x,y);else ctx.moveTo(x,y);
+   });ctx.closePath();ctx.fill();
+  }
+  const x=g.sumU/g.n*size,y=(1-g.sumV/g.n)*size;
+  if(!Number.isFinite(x)||!Number.isFinite(y))return;
+  ctx.font='bold 15px system-ui';ctx.textAlign='center';ctx.textBaseline='middle';
+  const label=String(i+1),w=Math.max(24,ctx.measureText(label).width+12);
+  ctx.fillStyle='#07101d';ctx.fillRect(x-w/2,y-12,w,24);
+  ctx.strokeStyle='hsl('+hue+',90%,70%)';ctx.lineWidth=2;ctx.strokeRect(x-w/2,y-12,w,24);
+  ctx.fillStyle='#ffffff';ctx.fillText(label,x,y);
+ });
+ ctx.restore();
+}
 function se552Open(){
  const root=se356UVPreviewRoot();if(!root||se552Portal)return;
  const cv=root.querySelector('#se356UVCanvas'),bar=root.querySelector('[data-se551="expand"]')?.parentElement;
@@ -84,7 +117,7 @@ function se552Open(){
  const controls=document.createElement('div');controls.style.cssText='display:flex;flex-wrap:wrap;gap:6px;padding:6px 0';
  controls.innerHTML='<label style="display:flex;align-items:center;gap:5px">Tool <select data-se552-tool style="padding:9px;background:#1c3446;color:white;border:1px solid #658797;border-radius:6px"><option value="island">Move island</option><option value="vertex">Vertex</option><option value="edge">Edge</option><option value="off">Inspect</option></select></label>'+
  '<label style="display:flex;align-items:center;gap:5px"><input type="checkbox" data-se552-wires> Wireframe</label>'+
- '<label style="display:flex;align-items:center;gap:5px"><input type="checkbox" data-se552-pan> Pan</label>'+
+ '<label style="display:flex;align-items:center;gap:5px"><input type="checkbox" data-se552-pan> Pan</label>'+\n '<label style="display:flex;align-items:center;gap:5px"><input type="checkbox" data-se552-regions> Colored numbered UV regions</label>'+
  '<button type="button" data-se552-texture style="padding:8px;background:#254658;color:white;border:1px solid #537e91;border-radius:6px">Show texture</button>'+
  '<button type="button" data-se552-export style="padding:8px;background:#254658;color:white;border:1px solid #537e91;border-radius:6px">Export exact UV guide</button>';
  const originalMode=root.querySelector('#se356EditMode');
@@ -127,6 +160,7 @@ function se552Open(){
   originalMode.value=e.target.value;originalMode.dispatchEvent(new Event('change',{bubbles:true}));
  });
  controls.querySelector('[data-se552-wires]').addEventListener('change',e=>{se552ShowWires=e.target.checked;se356UVPreviewSchedule();});
+ controls.querySelector('[data-se552-regions]').addEventListener('change',e=>{se552ShowRegions=e.target.checked;se356UVPreviewSchedule();});
  controls.querySelector('[data-se552-export]').addEventListener('click',se552ExportExactGuide);
  controls.querySelector('[data-se552-pan]').addEventListener('change',e=>{se552Pan=e.target.checked;cv.style.touchAction=se552Pan?'pan-x pan-y':'none';});
  controls.querySelector('[data-se552-texture]').addEventListener('click',()=>{se356UVMode='paint';se356UVPreviewSchedule();});
@@ -146,4 +180,4 @@ function se552Install(){
 const se552PrevInstall=se356EditInstall;
 se356EditInstall=function(){se552PrevInstall();se552Install();};
 const se552PrevRender=se356UVRender;
-se356UVRender=function(){se552PrevRender();se552Paint();};
+se356UVRender=function(){se552PrevRender();se552Paint();if(se552ShowRegions&&se552Portal)se552RegionOverlay();};
