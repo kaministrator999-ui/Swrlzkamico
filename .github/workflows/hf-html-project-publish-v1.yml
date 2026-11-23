@@ -1,5 +1,5 @@
 name: §C approved HTML project → existing Hugging Face Space
-run-name: HTML project ${{ inputs.project }} · ${{ inputs.request_nonce }}
+run-name: HTML project ${{ inputs.project }} · ${{ inputs.source_sha }} · ${{ inputs.request_nonce }}
 on:
   pull_request:
     paths:
