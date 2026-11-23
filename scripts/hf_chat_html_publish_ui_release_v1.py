@@ -191,7 +191,7 @@ def extras():
 
 def selftest():
     extras()
-    station=("import re\n"+RANCHOR+"\nif True:\n"+SANCHOR+"        pass\n").encode()
+    station=("import re\n"+RANCHOR+"\ndef fake():\n    if False:\n        pass\n"+SANCHOR+"        pass\n").encode()
     actions=("def is_file_action(*a,**k):pass\n"
              "def has_pending(*a):return False\n"
              "def pending_kind(*a):return None\n"
