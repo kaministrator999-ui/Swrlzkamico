@@ -1,0 +1,21 @@
+name: §C GitHub review component safety
+on:
+  pull_request:
+    paths:
+      - 'chat/github-change-review-v1.js'
+      - 'tests/test_chat_github_review_component_v1.mjs'
+      - '.github/workflows/chat-github-review-component-v1.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  review-component:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node --check chat/github-change-review-v1.js
+      - run: node --test tests/test_chat_github_review_component_v1.mjs
