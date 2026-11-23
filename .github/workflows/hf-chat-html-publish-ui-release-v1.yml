@@ -15,6 +15,7 @@ on:
       - 'chat/html-project-publish-review-v1.js'
       - 'scripts/hf_chat_html_publish_ui_release_v1.py'
       - '.github/workflows/hf-chat-html-publish-ui-release-v1.yml'
+      - 'html-projects/README.md'
 permissions: {contents: read}
 concurrency:
   group: swrlz-hf-space-deployment
