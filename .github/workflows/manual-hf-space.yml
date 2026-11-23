@@ -12,7 +12,7 @@ on:
         description: "Validate package without publishing, or explicitly deploy"
         required: true
         type: choice
-        options: [inspect, benchmark, validate, deploy, hotfix-output-budget, hotfix-music-transform, hotfix-http500-feedback, hotfix-tool-recovery, hotfix-noncode-loop, hotfix-forge-reference, hotfix-forge-creative, hotfix-forge-loft, hotfix-forge-preview, hotfix-forge-reshape]
+        options: [inspect, benchmark, validate, deploy, hotfix-output-budget, hotfix-music-transform, hotfix-http500-feedback, hotfix-tool-recovery, hotfix-noncode-loop, hotfix-forge-reference, hotfix-forge-creative, hotfix-forge-loft, hotfix-forge-preview, hotfix-forge-reshape, hotfix-github-review]
         default: validate
       approved:
         description: "Confirm replacement ONLY of existing kamiloki/Swyrlz after snapshot"
@@ -44,6 +44,48 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  hotfix_github_review:
+    if: ${{ inputs.mode == 'hotfix-github-review' && inputs.approved == 'yes' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.source_ref }}
+          fetch-depth: 1
+      - name: Enforce immutable approved source
+        env:
+          REVIEWED_REF: ${{ inputs.source_ref }}
+        run: |
+          [[ "$REVIEWED_REF" =~ ^[0-9a-f]{40}$ ]]
+          test "$(git rev-parse HEAD)" = "$REVIEWED_REF"
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - name: Verify approval gate and review component
+        run: |
+          python -m unittest discover -s tests -p 'test_github_review_gate_v1.py' -v
+          python -m py_compile scripts/github_review_gate_v1.py
+          node --check chat/github-change-review-v1.js
+          node --test tests/test_chat_github_review_component_v1.mjs
+      - name: Inspect exact current live source and refuse unsafe patch
+        run: |
+          python -m pip install --quiet 'huggingface_hub>=0.34,<2'
+          python -u scripts/hf_chat_github_review_release_v1.py snapshot
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: github-review-live-source-preflight
+          path: reports/github-review-live-v1/
+          retention-days: 30
+          if-no-files-found: warn
+      - name: Publish verified scoped changes only
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          SWRLZ_GITHUB_REVIEW_RELEASE_APPROVED: '1'
+        run: python -u scripts/hf_chat_github_review_release_v1.py publish
+
   hotfix_forge_reference:
     if: ${{ (inputs.mode == 'hotfix-forge-reference' || inputs.mode == 'hotfix-forge-creative' || inputs.mode == 'hotfix-forge-loft' || inputs.mode == 'hotfix-forge-preview' || inputs.mode == 'hotfix-forge-reshape') && inputs.approved == 'yes' }}
     runs-on: ubuntu-latest
