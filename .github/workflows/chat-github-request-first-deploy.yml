@@ -1,0 +1,15 @@
+name: Publish §C request-first GitHub authorization
+on:
+  push:
+    branches: [feature/chat-github-request-first-v1]
+    paths: ['.github/workflows/chat-github-request-first-deploy.yml']
+permissions:
+  contents: read
+jobs:
+  deploy:
+    uses: ./.github/workflows/manual-hf-space.yml
+    with:
+      source_ref: ${{ github.sha }}
+      mode: hotfix-github-request-first
+      approved: 'yes'
+    secrets: inherit
