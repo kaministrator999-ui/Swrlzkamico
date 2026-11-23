@@ -16,6 +16,7 @@ def main():
     assert len(m['patches'])==526
     # Gate publication on the actual newly authored six-shell humanoid asset.
     run(sys.executable,str(ROOT/'scripts/check_humanoid_anatomy_v11_546.py'))
+    run('node',str(ROOT/'tests/humanoid_anatomy_starter_v11_546.cjs'))
     run(sys.executable,str(ROOT/'build_space.py'),'--output',str(args.output))
     page=(args.output/'index.html').read_bytes()
     assert page==(args.output/'modeler.html').read_bytes()
