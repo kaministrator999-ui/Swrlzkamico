@@ -86,6 +86,8 @@ function se552RegionOverlay(){
   for(const v of face){group.sumU+=topo.uv.getX(v);group.sumV+=topo.uv.getY(v);group.n++;}
  });
  const groups=[...regions.values()].sort((a,b)=>b.faces.length-a.faces.length);
+ const regionCount=se552Portal?.host?.querySelector('[data-se552-region-count]');
+ if(regionCount)regionCount.textContent=groups.length+' connected UV shells · colors/numbers are shell IDs, not anatomical labels';
  const ctx=cv.getContext('2d');ctx.save();
  groups.forEach((g,i)=>{
   const hue=(i*137.508)%360;
@@ -117,7 +119,7 @@ function se552Open(){
  const controls=document.createElement('div');controls.style.cssText='display:flex;flex-wrap:wrap;gap:6px;padding:6px 0';
  controls.innerHTML='<label style="display:flex;align-items:center;gap:5px">Tool <select data-se552-tool style="padding:9px;background:#1c3446;color:white;border:1px solid #658797;border-radius:6px"><option value="island">Move island</option><option value="vertex">Vertex</option><option value="edge">Edge</option><option value="off">Inspect</option></select></label>'+
  '<label style="display:flex;align-items:center;gap:5px"><input type="checkbox" data-se552-wires> Wireframe</label>'+
- '<label style="display:flex;align-items:center;gap:5px"><input type="checkbox" data-se552-pan> Pan</label>'+\n '<label style="display:flex;align-items:center;gap:5px"><input type="checkbox" data-se552-regions> Colored numbered UV regions</label>'+
+ '<label style="display:flex;align-items:center;gap:5px"><input type="checkbox" data-se552-pan> Pan</label>'+\n '<label style="display:flex;align-items:center;gap:5px"><input type="checkbox" data-se552-regions> Colored numbered UV regions</label>'+\n '<span data-se552-region-count style="font-size:12px;color:#b7d9e9">Enable regions to inspect UV shells</span>'+
  '<button type="button" data-se552-texture style="padding:8px;background:#254658;color:white;border:1px solid #537e91;border-radius:6px">Show texture</button>'+
  '<button type="button" data-se552-export style="padding:8px;background:#254658;color:white;border:1px solid #537e91;border-radius:6px">Export exact UV guide</button>';
  const originalMode=root.querySelector('#se356EditMode');
