@@ -10,10 +10,13 @@ def handle(user_id,thread_id,prompt,context=None,history=None):
         return _prepare_rename(user_id,thread_id,prompt,context,history)
     return None
 def _confirmation(user_id,thread_id,prompt):
-    if False:
-        pass
+    try:
+        if False:
+            pass
             elif pending["kind"]=="create":
                 create.confirm(user_id,pending["ticket"],False)
+    except Exception:
+        pass
     receipt=create.confirm(user_id,pending["ticket"],True)
 '''
   patched=transform(source)
