@@ -14,6 +14,9 @@ assert(chat.includes('await commitDraftFromPrompt()'),"Actions must use authenti
 assert(chat.includes('String(activeThreadId||"")===reviewThread'),"Approval must stay in originating thread");
 assert(chat.includes('Date.now()-reviewCreatedAt>300000'),"Expired review cards cannot submit approval");
 assert(chat.includes('filter(item=>item.isConnected).at(-1)===card'),"Only latest visible review may approve");
+assert(chat.includes("const priorDraft=prompt.value"),"Review action must preserve unfinished user drafts");
+assert(chat.includes("if(!prompt.value)prompt.value=priorDraft"),"Successful approval must restore the user draft");
+assert(chat.includes("if(prompt.value===answer||!prompt.value)prompt.value=priorDraft"),"Failed approval must not strand yes/no in the composer");
 assert(actions.includes('"kind":"github-change-review"'));
 assert(actions.includes('"**Yes** to confirm or **no** to cancel (expires in 5 minutes). Nothing changed yet.",widget)'),"Proposal must return the review widget to the client");
 assert(actions.includes('"content":content'),"Preview must contain complete proposed text");
