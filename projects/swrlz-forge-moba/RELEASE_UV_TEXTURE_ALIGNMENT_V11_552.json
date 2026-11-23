@@ -1,5 +1,5 @@
 {
   "release": "v11.552",
-  "purpose": "Re-seal v11.552 with exact current-mesh transparent UV guide export",
-  "trigger": "rebuild-exact-mesh-uv-guide-2026-11-23"
+  "purpose": "Validate numbered color-coded UV region overlay in existing alignment workspace",
+  "trigger": "numbered-uv-regions-2026-11-23"
 }
