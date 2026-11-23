@@ -17,6 +17,10 @@ def main(mode):
     original=before.decode()
     old='    _, text = _read(auth, item["path"])\n    if text.encode("utf-8") != item["content"]:\n        raise CreateFileError("GITHUB_READBACK_MISMATCH", 502)'
     updated=SOURCE.read_text()
+    if mode=="verify":
+        assert "committed blob SHA" in original
+        print("READBACK_LIVE_VERIFIED",rev,flush=True)
+        return
     assert original.count(old)==1,"Live readback guard differs; reconcile manually"
     assert 'import requests\n' not in original
     assert 'from urllib.parse import quote\n' not in original
@@ -31,10 +35,6 @@ def main(mode):
     print("READBACK_PREFLIGHT",rev,target,hashlib.sha256(before).hexdigest(),
           hashlib.sha256(after).hexdigest(),flush=True)
     if mode=="snapshot":return
-    if mode=="verify":
-        assert "committed blob SHA" in original
-        print("READBACK_LIVE_VERIFIED",rev,flush=True)
-        return
     assert mode=="publish" and os.getenv("HF_TOKEN")
     assert os.getenv("SWRLZ_READBACK_FIX_APPROVED")=="1"
     assert api.repo_info(SPACE,repo_type="space").sha==rev,"Live Space changed"
