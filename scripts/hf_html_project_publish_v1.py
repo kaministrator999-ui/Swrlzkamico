@@ -28,7 +28,7 @@ SHA = re.compile(r"[0-9a-f]{40}\Z")
 
 
 def validate_slug(slug: str) -> str:
-    if not SLUG.fullmatch(slug):
+    if not isinstance(slug, str) or not SLUG.fullmatch(slug):
         raise ValueError("Invalid project slug")
     return slug
 
@@ -79,8 +79,8 @@ def manifest(slug: str) -> dict:
     return {"space": SPACE, "project": slug, "count": len(files),
             "bytes": sum(len(data) for _, data in files),
             "paths": {rel: hashlib.sha256(data).hexdigest() for rel, data in files},
-            "destinationPrefix": "chat/§wyrlz/projects/" + slug + "/",
-            "url": BASE_URL + "/chat/%C2%A7wyrlz/projects/" + slug + "/index.html"}
+            "destinationPrefix": "published-html-projects/" + slug + "/",
+            "url": BASE_URL + "/api/html-projects/" + slug + "/index.html"}
 
 
 def assert_immutable_source() -> str:
@@ -106,7 +106,7 @@ def publish(slug: str, approved: str) -> dict:
     revision = str(api.repo_info(SPACE, repo_type="space").sha)
     if not SHA.fullmatch(revision):
         raise RuntimeError("Live Space revision unavailable")
-    prefix = "chat/§wyrlz/projects/" + slug + "/"
+    prefix = "published-html-projects/" + slug + "/"
     files = local_files(slug)
     existing = set(api.list_repo_files(SPACE, repo_type="space", revision=revision))
     # Preserve every file outside this project's private prefix.
@@ -134,7 +134,7 @@ def publish(slug: str, approved: str) -> dict:
     return receipt
 
 
-def runtime_probe(url: str) -> None:
+def runtime_probe(url: str, expected_sha: str) -> None:
     import time
     request = urllib.request.Request(url, headers={"Cache-Control": "no-cache"})
     for attempt in range(12):
@@ -142,8 +142,16 @@ def runtime_probe(url: str) -> None:
             with urllib.request.urlopen(request, timeout=15) as response:
                 mime = response.headers.get("Content-Type", "").lower()
                 disposition = response.headers.get("Content-Disposition", "").lower()
-                body = response.read(512_000)
-                if response.status == 200 and "text/html" in mime and "attachment" not in disposition and body:
+                body = response.read(MAX_TOTAL_BYTES + 1)
+                csp = response.headers.get("Content-Security-Policy", "")
+                nosniff = response.headers.get("X-Content-Type-Options", "")
+                if (response.status == 200 and "text/html" in mime
+                    and "attachment" not in disposition
+                    and "sandbox allow-scripts" in csp
+                    and "allow-same-origin" not in csp
+                    and "connect-src 'none'" in csp
+                    and nosniff.lower() == "nosniff"
+                    and hashlib.sha256(body).hexdigest() == expected_sha):
                     return
         except (urllib.error.URLError, TimeoutError):
             pass
@@ -164,7 +172,7 @@ def main() -> None:
     elif args.mode == "publish":
         print("HTML_PROJECT_SOURCE_PUBLISHED", json.dumps(publish(args.project, args.approved), sort_keys=True))
     else:
-        runtime_probe(receipt["url"])
+        runtime_probe(receipt["url"], receipt["paths"]["index.html"])
         receipt_path = Path("html-project-receipt.json")
         if receipt_path.exists():
             published_receipt = json.loads(receipt_path.read_text())
