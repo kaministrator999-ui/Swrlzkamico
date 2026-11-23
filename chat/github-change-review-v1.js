@@ -156,9 +156,14 @@
       const repo=details[0]?.textContent?.replace(/^Repository:\s*/,"")||"";
       const branch=details[1]?.textContent?.replace(/^Branch:\s*/,"")||"";
       if(!repo||!branch||!receiptText.includes(repo.split("/").at(-1)))continue;
+      const links=card.querySelectorAll?Array.from(card.querySelectorAll("a[href]")):[];
+      const commitLink=links.map(link=>String(link.href||""))
+        .find(url=>url.startsWith("https://github.com/"+repo+"/commit/") &&
+          /^[0-9a-f]{40}$/i.test(url.split("/").at(-1)))||"";
+      const commitSha=commitLink?commitLink.split("/").at(-1):"";
       if(typeof root.dispatchEvent==="function"&&typeof root.CustomEvent==="function"){
         root.dispatchEvent(new root.CustomEvent("swrlz-github-write-receipt",{
-          detail:{threadId:String(threadId||""),operation,path,repo,branch,verified:true}
+          detail:{threadId:String(threadId||""),operation,path,repo,branch,commitSha,verified:true}
         }));
         return true;
       }
