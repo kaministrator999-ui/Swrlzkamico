@@ -18,3 +18,10 @@ assert(source.includes("Checking GitHub verification receipt below"),"Client can
 assert(source.includes("reconcileReceipt"),"Receipt must reconcile the pending review");
 assert(source.includes("receipt.verified!==true"),"Receipt must be explicitly verified");
 console.log("§C GitHub review component contract PASS");
+
+assert(source.includes('reviewDetails=doc.createElement("details")'),"Source collapses on mobile");
+assert(source.includes('diffDetails=doc.createElement("details")'),"Diff collapses on mobile");
+assert(source.includes('wrapper.insertBefore(actions,reviewDetails)'),"Approval controls precede long source");
+assert(source.includes('receiptPanel.hidden=false'),"Verified result becomes visible");
+assert(source.includes('receipt.commitSha'),"Commit link uses verified receipt only");
+assert(source.includes('noopener noreferrer'),"External commit link must be safe");
