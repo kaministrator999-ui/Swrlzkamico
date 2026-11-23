@@ -1,10 +1,10 @@
 {
   "schema": "swrlz-forge-deploy-request-v1",
-  "requestedBy": "ChatGPT (owner authorized v11.550 UV direct editing deployment)",
+  "requestedBy": "ChatGPT (owner authorized v11.551 UV island workspace deployment)",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.550",
+  "releaseVersion": "v11.551",
   "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_546_ANATOMY_ROBOT_UV_4K",
-  "reason": "Publish checksum-sealed v11.550 UV direct editing with one native editor injection and preserved historical v11.546 geometry and assets. Run source/asset checks, static delivery packaging, Hugging Face upload and public HTTP checks.",
-  "sourceCommit": "4de805cdfae5434683388b47ea47fc6dcfab5f4f",
-  "sourceIntegritySha256": "94ada90dcbb9f517af57187f327e7a55d1dd32bf882abd9c65e38070dacec830"
+  "reason": "Deploy sealed 525-patch v11.551 UV island selection, transforms, enlarged UV workspace and visible Undo/Redo to existing Hugging Face Space; verify static delivery.",
+  "sourceCommit": "0d130be126892adedfcb0b1c32d9069ae7bf130b",
+  "sourceIntegritySha256": "76b56ea32bd5526b59bd87d425fc2d82e710249e48231d093d66433ada85ee73"
 }
