@@ -135,8 +135,7 @@ def prepare(user, slug):
     _, entry = _github("GET", auth["token"], "/repos/" + REPO +
                        "/contents/html-projects/" + slug + "/index.html?ref=" + sha)
     try:
-        source = base64.b64decode(str(entry["content"]).replace("\
-", ""), validate=True).decode("utf-8")
+        source = base64.b64decode("".join(str(entry["content"]).split()), validate=True).decode("utf-8")
     except (KeyError, ValueError, UnicodeDecodeError):
         raise HTTPException(422, "Project index.html preview unavailable") from None
     if len(source.encode("utf-8")) > 260_000:
