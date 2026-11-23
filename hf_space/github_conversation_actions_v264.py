@@ -443,7 +443,7 @@ def _prepare_create(user_id,thread_id,path,content):
     return _out("Ready to create "+_clean_label(path)+" in "+_clean_label(proposal["repo"])+
                 " ("+_clean_label(proposal["branch"])+"), "+
                 str(proposal["bytes"])+" bytes (SHA-256: "+proposal["sha256"][:16]+"…). "+
-                "**Yes** to confirm or **no** to cancel (expires in 5 minutes). Nothing changed yet.")
+                "**Yes** to confirm or **no** to cancel (expires in 5 minutes). Nothing changed yet.",widget)
 
 
 def handle(user_id,thread_id,prompt,context=None,history=None):
