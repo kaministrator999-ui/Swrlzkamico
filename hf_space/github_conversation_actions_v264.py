@@ -398,7 +398,7 @@ def _prepare_rename(user_id,thread_id,prompt,context=None,history=None):
     return _out("Found "+_clean_label(src)+" in "+_clean_label(proposal["repo"])+
                 " ("+_clean_label(proposal["branch"])+"). Ready to rename it to "+
                 _clean_label(dst)+" without changing its contents. "+
-                "**Yes** to confirm or **no** to cancel (expires in 5 minutes). Nothing changed yet.")
+                "**Yes** to confirm or **no** to cancel (expires in 5 minutes). Nothing changed yet.",widget)
 
 
 def _prepare_create(user_id,thread_id,path,content):
@@ -428,6 +428,18 @@ def _prepare_create(user_id,thread_id,path,content):
                 pass
         return _out(_user_friendly_failure(exc))
     _remember(user_id,thread_id,{"kind":"create","ticket":proposal["approvalToken"]})
+    # Display-only metadata. Approval tokens never enter the browser widget.
+    # The user must send a fresh explicit Yes/No turn through the authenticated
+    # chat handler; displaying the proposal never authorizes a write.
+    widget={
+        "contract":"swrlz-widget-v1","kind":"github-change-review",
+        "title":"GitHub · review proposed file","provider":"GitHub",
+        "data":{"operation":"CREATE_FILE","repo":proposal["repo"],
+                "branch":proposal["branch"],"path":proposal["path"],
+                "bytes":proposal["bytes"],"sha256":proposal["sha256"],
+                "content":content[:10000],"expiresInSeconds":proposal["expiresInSeconds"],
+                "overwrite":False}
+    }
     return _out("Ready to create "+_clean_label(path)+" in "+_clean_label(proposal["repo"])+
                 " ("+_clean_label(proposal["branch"])+"), "+
                 str(proposal["bytes"])+" bytes (SHA-256: "+proposal["sha256"][:16]+"…). "+
