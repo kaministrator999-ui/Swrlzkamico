@@ -12,7 +12,7 @@ on:
         description: "Validate package without publishing, or explicitly deploy"
         required: true
         type: choice
-        options: [inspect, benchmark, validate, deploy, hotfix-output-budget, hotfix-music-transform, hotfix-http500-feedback, hotfix-tool-recovery, hotfix-noncode-loop, hotfix-forge-reference, hotfix-forge-creative, hotfix-forge-loft, hotfix-forge-preview, hotfix-forge-reshape, hotfix-github-review]
+        options: [inspect, benchmark, validate, deploy, hotfix-output-budget, hotfix-music-transform, hotfix-http500-feedback, hotfix-tool-recovery, hotfix-noncode-loop, hotfix-forge-reference, hotfix-forge-creative, hotfix-forge-loft, hotfix-forge-preview, hotfix-forge-reshape, hotfix-github-review, hotfix-github-request-first]
         default: validate
       approved:
         description: "Confirm replacement ONLY of existing kamiloki/Swyrlz after snapshot"
@@ -44,6 +44,39 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  hotfix_github_request_first:
+    if: ${{ inputs.mode == 'hotfix-github-request-first' && inputs.approved == 'yes' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.source_ref }}
+          fetch-depth: 1
+      - name: Enforce immutable reviewed source
+        env:
+          REVIEWED_REF: ${{ inputs.source_ref }}
+        run: |
+          [[ "$REVIEWED_REF" =~ ^[0-9a-f]{40}$ ]]
+          test "$(git rev-parse HEAD)" = "$REVIEWED_REF"
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - run: python -m pip install --quiet 'huggingface_hub>=0.34,<2'
+      - run: python -m py_compile scripts/hf_chat_github_request_first_release_v1.py
+      - run: python scripts/hf_chat_github_request_first_release_v1.py selftest
+      - run: python -u scripts/hf_chat_github_request_first_release_v1.py snapshot
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: github-request-first-live-snapshot
+          path: reports/github-request-first-v1/
+          retention-days: 30
+      - name: Publish exact-live scoped request-first UX
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          SWRLZ_GITHUB_REQUEST_FIRST_APPROVED: '1'
+        run: python -u scripts/hf_chat_github_request_first_release_v1.py publish
+
   hotfix_github_review:
     if: ${{ inputs.mode == 'hotfix-github-review' && inputs.approved == 'yes' }}
     runs-on: ubuntu-latest
@@ -334,7 +367,7 @@ jobs:
         run: python -u scripts/hf_chat_http500_feedback_v1.py publish
 
   prepare:
-    if: ${{ inputs.mode != 'hotfix-output-budget' && inputs.mode != 'hotfix-music-transform' && inputs.mode != 'hotfix-http500-feedback' && inputs.mode != 'hotfix-tool-recovery' && inputs.mode != 'hotfix-noncode-loop' && inputs.mode != 'hotfix-forge-reference' && inputs.mode != 'hotfix-forge-creative' && inputs.mode != 'hotfix-forge-loft' && inputs.mode != 'hotfix-forge-preview' && inputs.mode != 'hotfix-forge-reshape' && inputs.mode != 'hotfix-github-review' }}
+    if: ${{ inputs.mode != 'hotfix-output-budget' && inputs.mode != 'hotfix-music-transform' && inputs.mode != 'hotfix-http500-feedback' && inputs.mode != 'hotfix-tool-recovery' && inputs.mode != 'hotfix-noncode-loop' && inputs.mode != 'hotfix-forge-reference' && inputs.mode != 'hotfix-forge-creative' && inputs.mode != 'hotfix-forge-loft' && inputs.mode != 'hotfix-forge-preview' && inputs.mode != 'hotfix-forge-reshape' && inputs.mode != 'hotfix-github-review' && inputs.mode != 'hotfix-github-request-first' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
