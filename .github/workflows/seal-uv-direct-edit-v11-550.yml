@@ -1,0 +1,34 @@
+name: Seal native UV direct editing
+on:
+  push:
+    branches: [main]
+    paths:
+      - "projects/swrlz-forge-moba/RELEASE_UV_DIRECT_EDIT_V11_550.json"
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  seal:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - run: node --check projects/swrlz-forge-moba/runtime/model_atelier_uv_preview_v11_356.js
+      - run: python projects/swrlz-forge-moba/scripts/seal_uv_direct_edit_v11_550.py
+      - run: python projects/swrlz-forge-moba/build_space.py --output /tmp/uv-direct-edit
+      - name: Commit sealed manifest
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add projects/swrlz-forge-moba/source-manifest.json
+          git diff --cached --quiet && exit 0
+          git commit -m "build(engine): seal native UV direct editing into source"
+          git pull --rebase origin main
+          git push origin HEAD:main
