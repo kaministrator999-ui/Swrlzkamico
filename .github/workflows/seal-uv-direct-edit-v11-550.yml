@@ -29,23 +29,16 @@ jobs:
           LOG=/tmp/se550-build.log
           run_checks() {
             echo "=== JS syntax ==="
-            node --check projects/swrlz-forge-moba/runtime/model_atelier_uv_preview_v11_356.js || exit $?
+            node --check projects/swrlz-forge-moba/runtime/model_atelier_uv_preview_v11_356.js || return $?
             echo "=== seal source ==="
-            python projects/swrlz-forge-moba/scripts/seal_uv_direct_edit_v11_550.py || exit $?
+            python projects/swrlz-forge-moba/scripts/seal_uv_direct_edit_v11_550.py || return $?
             echo "=== build verified source ==="
-            python projects/swrlz-forge-moba/build_space.py --output /tmp/uv-direct-edit || exit $?
+            python projects/swrlz-forge-moba/build_space.py --output /tmp/uv-direct-edit || return $?
           }
           run_checks > "$LOG" 2>&1
           result=$?
           mkdir -p projects/swrlz-forge-moba/docs/qa
-          python - "$result" "$LOG" <<'PY'
-          import json,sys
-          from pathlib import Path
-          result=int(sys.argv[1])
-          lines=Path(sys.argv[2]).read_text(errors='replace').splitlines()
-          Path('projects/swrlz-forge-moba/docs/qa/uv-direct-edit-v11-550-build-result.json').write_text(
-              json.dumps({'passed':result==0,'exit_code':result,'log_tail':lines[-90:]},indent=2)+'\n')
-          PY
+          python -c 'import json,sys; from pathlib import Path; code=int(sys.argv[1]); lines=Path(sys.argv[2]).read_text(errors="replace").splitlines(); Path("projects/swrlz-forge-moba/docs/qa/uv-direct-edit-v11-550-build-result.json").write_text(json.dumps({"passed":code==0,"exit_code":code,"log_tail":lines[-90:]},indent=2)+"\\n")' "$result" "$LOG"
           echo "result=$result" >> "$GITHUB_OUTPUT"
           cat "$LOG"
           exit 0
