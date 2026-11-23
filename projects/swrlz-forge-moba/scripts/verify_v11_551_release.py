@@ -12,7 +12,7 @@ def main():
     m=json.loads((ROOT/'source-manifest.json').read_text())
     assert m['name']=='§wyrl§ Engine v11.551 UV island workspace'
     assert m['finalArtifact']=='swyrl_engine_v11_551.html'
-    assert m['patches'][-1]=='patches/v11_551_uv_direct_edit.py'
+    assert m['patches'][-1]=='patches/v11_551_uv_island_workspace.py'
     assert len(m['patches'])==525
     run(sys.executable,str(ROOT/'build_space.py'),'--output',str(args.output))
     page=(args.output/'index.html').read_bytes()
@@ -39,5 +39,5 @@ def main():
         assert req['target']=='kamiloki/swrlz-forge-moba'
         assert req['sourceIntegritySha256']==m['finalSha256']
         assert req['deployMarker']=='SWYRL_ENGINE_DEPLOY_MARKER: V11_546_ANATOMY_ROBOT_UV_4K'
-    print('SE550_RELEASE_VERIFIED',json.dumps({'patches':len(m['patches']),'bytes':len(page),'sha256':m['finalSha256'],'assets':len(receipt['assets'])}),flush=True)
+    print('SE551_RELEASE_VERIFIED',json.dumps({'patches':len(m['patches']),'bytes':len(page),'sha256':m['finalSha256'],'assets':len(receipt['assets'])}),flush=True)
 if __name__=='__main__':main()
