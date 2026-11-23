@@ -7,8 +7,8 @@ Never updates Station, engine files, or an arbitrary Space path.
 from __future__ import annotations
 import argparse
 import hashlib
+import io
 import json
-import mimetypes
 import os
 from pathlib import Path, PurePosixPath
 import re
@@ -92,7 +92,7 @@ def publish(slug: str, approved: str) -> dict:
     token = os.environ.get("HF_TOKEN", "")
     if not token:
         raise PermissionError("HF_TOKEN is missing")
-    from huggingface_hub import HfApi, CommitOperationAdd, CommitOperationDelete, hf_hub_download
+    from huggingface_hub import HfApi, CommitOperationAdd, hf_hub_download
     api = HfApi(token=token)
     revision = str(api.repo_info(SPACE, repo_type="space").sha)
     if not SHA.fullmatch(revision):
@@ -107,7 +107,7 @@ def publish(slug: str, approved: str) -> dict:
     stale = sorted(existing_project - expected)
     if stale:
         raise RuntimeError("Project contains previously published files not in source; explicit deletion workflow required")
-    ops = [CommitOperationAdd(path_in_repo=prefix + rel, path_or_fileobj=__import__("io").BytesIO(data))
+    ops = [CommitOperationAdd(path_in_repo=prefix + rel, path_or_fileobj=io.BytesIO(data))
            for rel, data in files]
     if str(api.repo_info(SPACE, repo_type="space").sha) != revision:
         raise RuntimeError("Space changed during preflight")
@@ -156,6 +156,13 @@ def main() -> None:
         print("HTML_PROJECT_SOURCE_PUBLISHED", json.dumps(publish(args.project, args.approved), sort_keys=True))
     else:
         runtime_probe(receipt["url"])
+        receipt_path = Path("html-project-receipt.json")
+        if receipt_path.exists():
+            published_receipt = json.loads(receipt_path.read_text())
+            if published_receipt.get("url") != receipt["url"]:
+                raise RuntimeError("Receipt URL and probed URL differ")
+            published_receipt["runtimeVerified"] = True
+            receipt_path.write_text(json.dumps(published_receipt, indent=2) + "\n")
         print("HTML_PROJECT_RUNTIME_VERIFIED", receipt["url"])
 
 
