@@ -398,7 +398,7 @@ def _prepare_rename(user_id,thread_id,prompt,context=None,history=None):
     return _out("Found "+_clean_label(src)+" in "+_clean_label(proposal["repo"])+
                 " ("+_clean_label(proposal["branch"])+"). Ready to rename it to "+
                 _clean_label(dst)+" without changing its contents. "+
-                "**Yes** to confirm or **no** to cancel (expires in 5 minutes). Nothing changed yet.",widget)
+                "**Yes** to confirm or **no** to cancel (expires in 5 minutes). Nothing changed yet.")
 
 
 def _prepare_create(user_id,thread_id,path,content):
@@ -435,9 +435,9 @@ def _prepare_create(user_id,thread_id,path,content):
         "contract":"swrlz-widget-v1","kind":"github-change-review",
         "title":"GitHub · review proposed file","provider":"GitHub",
         "data":{"operation":"CREATE_FILE","repo":proposal["repo"],
-                "branch":proposal["branch"],"path":proposal["path"],
-                "bytes":proposal["bytes"],"sha256":proposal["sha256"],
-                "content":content,"expiresInSeconds":proposal["expiresInSeconds"],
+                "branch":proposal["branch"],"path":path,
+                "bytes":proposal.get("bytes",len(content.encode("utf-8"))),"sha256":proposal.get("sha256",""),
+                "content":content,"expiresInSeconds":proposal.get("expiresInSeconds",300),
                 "overwrite":False}
     }
     return _out("Ready to create "+_clean_label(path)+" in "+_clean_label(proposal["repo"])+
