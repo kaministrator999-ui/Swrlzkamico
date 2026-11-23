@@ -1,5 +1,5 @@
 {
   "release": "v11.552",
   "purpose": "Dedicated UV alignment canvas, texture-first display and island boundary outlines",
-  "trigger": "seal-and-build"
+  "trigger": "seal-and-build-after-trigger-fix"
 }
