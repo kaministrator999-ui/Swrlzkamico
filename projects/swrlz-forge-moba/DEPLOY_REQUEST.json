@@ -1,10 +1,13 @@
 {
   "schema": "swrlz-forge-deploy-request-v1",
-  "requestedBy": "ChatGPT (owner authorized exact mesh UV guide deployment)",
+  "requestedBy": "ChatGPT (owner-authorized continuous humanoid UV fix and live deployment)",
   "target": "kamiloki/swrlz-forge-moba",
   "releaseVersion": "v11.552",
   "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_546_ANATOMY_ROBOT_UV_4K",
-  "reason": "Deploy current sealed v11.552 engine with exact mesh UV guide export; verify public HTML and JS delivery.",
+  "reason": "Publish verified six-shell continuous humanoid anatomy UV atlas, freshly rebaked robotic skin and numbered 4K guides; verified GitHub Actions authoring run 45289094989.",
   "sourceCommit": "main (deploy workflow checkout; verified against sourceIntegritySha256)",
-  "sourceIntegritySha256": "cecffdaa30ddaee6f280175dff23d70fc5e8abc743357537eb597ef173f1a3a6"
+  "sourceIntegritySha256": "cecffdaa30ddaee6f280175dff23d70fc5e8abc743357537eb597ef173f1a3a6",
+  "assetBuildRun": 45289094989,
+  "assetShells": 6,
+  "assetVertices": 7513
 }
