@@ -761,6 +761,20 @@
   <script src="https://accounts.google.com/gsi/client" async defer></script>
   <script src="/chat/§wyrlz/assets/github-explorer-v223.js?v=228"></script>
   <script src="/chat/§wyrlz/assets/source-guides-v245.js?v=245"></script>
+<style id="github-review-card-v1">
+.github-review-card{border:1px solid #386c85;border-radius:15px;overflow:hidden}
+.github-review-meta{display:grid;gap:8px;padding:12px;background:rgba(15,61,85,.25)}
+.github-review-meta>div{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font-size:12px}
+.github-review-meta span{color:#9ac9dc}.github-review-meta strong{overflow-wrap:anywhere;text-align:right}
+.github-review-tabs,.github-review-actions{display:flex;gap:8px;padding:10px}
+.github-review-tabs button,.github-review-actions button{flex:1;border:1px solid #48788e;background:#12374c;color:#e7f8ff;border-radius:9px;padding:10px;cursor:pointer}
+.github-review-tabs button[aria-pressed=true]{background:#236282}
+.github-review-code{margin:0 10px;max-height:340px;overflow:auto;white-space:pre;tab-size:2;border:1px solid #315e77;border-radius:9px;padding:12px;font:12px/1.5 ui-monospace,monospace}
+.github-review-note{padding:0 12px;font-size:12px;color:#b6d5df}
+.github-review-actions button:last-child{background:#13645b;border-color:#36b99d}
+.github-review-actions button:disabled{opacity:.5;cursor:default}
+@media(max-width:500px){.github-review-meta>div{display:block}.github-review-meta strong{display:block;text-align:left;margin-top:3px}}
+</style>
 </head>
 <body>
   <header class="top-edge" id="topEdge" data-component="top-edge" data-state="ready" aria-label="Chat status">
@@ -1415,6 +1429,47 @@
           const data=widget.data&&typeof widget.data==="object"?widget.data:{};
           if(["comparison","math-graph","model-3d"].includes(widget.kind)){
             if(!window.SwrlzRichWidgetsV284?.render(card,widget))card.appendChild(Object.assign(document.createElement("div"),{className:"widget-footer",textContent:"Rich widget unavailable — its structured data was not displayable."}));
+          }else if(widget.kind==="github-change-review"){
+            // Server supplies only display data, never the authorization ticket.
+            // The authenticated chat confirmation remains the sole write path.
+            const valid=data.operation==="CREATE_FILE"&&
+              typeof data.repo==="string"&&typeof data.branch==="string"&&
+              typeof data.path==="string"&&typeof data.content==="string"&&
+              data.overwrite===false&&Number.isSafeInteger(data.bytes)&&data.bytes>=0;
+            if(!valid){card.appendChild(Object.assign(document.createElement("p"),{textContent:"Invalid GitHub proposal; no action available."}));}
+            else{
+              card.classList.add("github-review-card");
+              const meta=document.createElement("div");meta.className="github-review-meta";
+              for(const [label,value] of [["Repository",data.repo],["Branch",data.branch],["Action","Create new file · no overwrite"],["Path",data.path],["Size",String(data.bytes)+" bytes"],["SHA-256",String(data.sha256||"")]]){
+                const line=document.createElement("div"),key=document.createElement("span"),val=document.createElement("strong");
+                key.textContent=label;val.textContent=String(value).slice(0,260);line.append(key,val);meta.appendChild(line);
+              }
+              card.appendChild(meta);
+              const tabs=document.createElement("div");tabs.className="github-review-tabs";
+              const details=document.createElement("button"),source=document.createElement("button");
+              details.type=source.type="button";details.textContent="Changes";source.textContent="File contents";
+              tabs.append(details,source);card.appendChild(tabs);
+              const code=document.createElement("pre");code.className="github-review-code";code.textContent=data.content;
+              code.hidden=true;card.appendChild(code);
+              details.addEventListener("click",()=>{meta.hidden=false;code.hidden=true;details.setAttribute("aria-pressed","true");source.setAttribute("aria-pressed","false");});
+              source.addEventListener("click",()=>{meta.hidden=true;code.hidden=false;source.setAttribute("aria-pressed","true");details.setAttribute("aria-pressed","false");});
+              details.setAttribute("aria-pressed","true");
+              const note=document.createElement("p");note.className="github-review-note";
+              note.textContent="Nothing has been written. Approval expires in five minutes. Review the exact file before confirming.";
+              card.appendChild(note);
+              const actions=document.createElement("div");actions.className="github-review-actions";
+              const approve=document.createElement("button"),reject=document.createElement("button");
+              approve.type=reject.type="button";approve.textContent="Approve creation";reject.textContent="Reject";
+              const act=async answer=>{
+                if(sending||approve.disabled)return;
+                approve.disabled=reject.disabled=true;
+                prompt.value=answer;
+                try{await commitDraftFromPrompt();}catch(error){note.textContent="Could not send decision. No approval confirmed.";approve.disabled=reject.disabled=false;}
+              };
+              approve.addEventListener("click",()=>act("yes"));
+              reject.addEventListener("click",()=>act("no"));
+              actions.append(reject,approve);card.appendChild(actions);
+            }
           }else if(widget.kind==="github-work"){
             if(!window.SwrlzGithubWorkView?.render(card,widget)){
               const unavailable=document.createElement("div");
