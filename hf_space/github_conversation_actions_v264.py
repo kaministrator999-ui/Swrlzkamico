@@ -437,7 +437,7 @@ def _prepare_create(user_id,thread_id,path,content):
         "data":{"operation":"CREATE_FILE","repo":proposal["repo"],
                 "branch":proposal["branch"],"path":proposal["path"],
                 "bytes":proposal["bytes"],"sha256":proposal["sha256"],
-                "content":content[:10000],"expiresInSeconds":proposal["expiresInSeconds"],
+                "content":content,"expiresInSeconds":proposal["expiresInSeconds"],
                 "overwrite":False}
     }
     return _out("Ready to create "+_clean_label(path)+" in "+_clean_label(proposal["repo"])+
