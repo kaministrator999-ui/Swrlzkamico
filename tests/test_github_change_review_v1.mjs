@@ -12,6 +12,7 @@ assert(chat.includes('approve.addEventListener("click"'));
 assert(chat.includes('reject.addEventListener("click"'));
 assert(chat.includes('await commitDraftFromPrompt()'),"Actions must use authenticated chat path");
 assert(actions.includes('"kind":"github-change-review"'));
+assert(actions.includes('"**Yes** to confirm or **no** to cancel (expires in 5 minutes). Nothing changed yet.",widget)'),"Proposal must return the review widget to the client");
 assert(actions.includes('"content":content'),"Preview must contain complete proposed text");
 assert(!actions.includes('"approvalToken":proposal["approvalToken"]'),"Never leak approval ticket to widget");
 assert(station.includes('result=github_chat_files.handle'),"Existing server authorization stays authoritative");
