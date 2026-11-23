@@ -26,7 +26,8 @@ def _swrlz_authorization_response(user_id, thread_id, result):
     if not isinstance(result,dict):
         return result
     message=str(result.get("text") or "")
-    if "GITHUB_WRITE_SCOPE_REQUIRED" not in message:
+    if ("GITHUB_WRITE_SCOPE_REQUIRED" not in message and
+        "GitHub hasn\'t authorized writing" not in message):
         return result
     # No pending mutation may survive an OAuth roundtrip.
     expire_interrupted(user_id,thread_id)
