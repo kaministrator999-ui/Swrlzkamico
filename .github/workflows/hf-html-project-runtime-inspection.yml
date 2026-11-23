@@ -15,6 +15,7 @@ jobs:
       - run: python -m py_compile api/html_project_routes_v1.py api/html_project_publish_action_v1.py scripts/hf_html_project_publish_v1.py scripts/hf_chat_html_project_route_release_v1.py
       - run: node --check chat/html-project-publish-v1.js
       - run: python -m unittest discover -s tests -p 'test_html_project_routes_v1.py' -v
+      - run: python -m unittest discover -s tests -p 'test_html_project_publish_action_v1.py' -v
       - run: python -m unittest discover -s tests -p 'test_hf_html_project_publish_v1.py' -v
       - run: python -u scripts/hf_chat_html_project_route_release_v1.py preflight
       - name: Inspect published routing and GitHub action binding
