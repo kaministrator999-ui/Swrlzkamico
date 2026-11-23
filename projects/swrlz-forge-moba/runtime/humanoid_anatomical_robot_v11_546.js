@@ -7,11 +7,11 @@ function se546Verify(scene){
  if(scene?.version!==11.546||scene?.project?.canonicalId!=='robotic-humanoid-mannequin'||
     part?.id!=='humanoid-body-unified'||
     !part?.name?.includes('anatomy-mapped new robotic shell')||
-    !scene?.project?.modelAtelier?.reference?.includes('anatomy-oriented xatlas UV charts')||
+    !/^data:image\/png;base64,/.test(part?.uvPaintPNG||'')||
     mesh?.indices?.length!==13932*3||
     mesh?.uvs?.length!==mesh?.positions?.length/3*2||
     mesh?.positions?.length/3>9000||
-    !/^data:image\/png;base64,/.test(part.uvPaintPNG))
+    !mesh?.uvs?.every(v=>Number.isFinite(v)&&v>=0&&v<=1))
    throw Error('Anatomical UV robot scene failed native structure validation.');
  return metrics;
 }
