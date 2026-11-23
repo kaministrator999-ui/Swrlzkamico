@@ -119,6 +119,8 @@ def _manifest(auth, sha, slug):
         rel = path[len(prefix):]
         if entry.get("type") != "blob":
             continue
+        if entry.get("mode") == "120000":
+            raise PublishActionError("PROJECT_SYMLINK_FORBIDDEN")
         parts = rel.split("/")
         if (len(parts) > 8 or not all(
                 part and not part.startswith(".") and SAFE_PART.fullmatch(part)
