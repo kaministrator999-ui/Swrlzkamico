@@ -187,40 +187,55 @@ def confirm(user, ticket, approved):
 def status(user, nonce):
     if not NONCE.fullmatch(nonce):
         raise HTTPException(400, "Invalid deployment receipt ID")
-    with _LOCK:
-        record = _DEPLOYMENTS.get((user, nonce))
-    if record is None:
-        raise HTTPException(404, "Deployment receipt expired or unavailable; inspect GitHub Actions")
+    # Publishing commits restart the HF Space. Receipts therefore MUST be
+    # recoverable from GitHub Actions, not dependent on Python process memory.
     auth = _authorize(user)
     _, data = _github("GET", auth["token"],
                       "/repos/" + REPO + "/actions/workflows/" + WORKFLOW +
                       "/runs?event=workflow_dispatch&per_page=50")
-    matches = [r for r in data.get("workflow_runs", [])
-               if isinstance(r, dict) and nonce in str(r.get("display_title") or "")]
+    pattern = re.compile(
+        r"HTML project ([a-z0-9](?:[a-z0-9-]{0,46}[a-z0-9])?) · ([a-f0-9]{40}) · (" +
+        re.escape(nonce) + r")\Z")
+    matches = []
+    for run in data.get("workflow_runs", []):
+        if not isinstance(run, dict):
+            continue
+        match = pattern.fullmatch(str(run.get("display_title") or ""))
+        if match:
+            matches.append((run, match))
     if not matches:
+        with _LOCK:
+            known = (user, nonce) in _DEPLOYMENTS
+        if not known:
+            raise HTTPException(404, "No matching owner-approved workflow receipt found")
         return {"code": "QUEUED", "requestNonce": nonce,
                 "actionsUrl": "https://github.com/" + REPO + "/actions/workflows/" + WORKFLOW}
-    run = max(matches, key=lambda r: int(r.get("id") or 0))
+    run, match = max(matches, key=lambda item: int(item[0].get("id") or 0))
+    slug, source_sha, _ = match.groups()
     result = {"requestNonce": nonce, "runId": run["id"],
               "actionsUrl": run.get("html_url"),
               "workflowStatus": run.get("status"),
               "conclusion": run.get("conclusion"),
-              "sourceSha": record["sourceSha"], "project": record["project"]}
+              "sourceSha": source_sha, "project": slug}
     if run.get("status") != "completed":
         return {**result, "code": "RUNNING"}
     if run.get("conclusion") != "success":
         return {**result, "code": "FAILED"}
-    # A successful workflow must have verified exact HF bytes and the live
-    # browser route, including its opaque-origin CSP, before marking success.
-    with urlopen(Request(record["url"], headers={"Cache-Control": "no-cache"}), timeout=15) as page:
-        policy = page.headers.get("Content-Security-Policy", "")
-        mime = page.headers.get("Content-Type", "")
-        if (page.status != 200 or "text/html" not in mime or
-                "connect-src 'none'" not in policy or
-                "sandbox allow-scripts" not in policy or
-                "allow-same-origin" in policy):
-            return {**result, "code": "RUNTIME_SECURITY_NOT_VERIFIED"}
-        return {**result, "code": "PUBLISHED_VERIFIED", "url": record["url"]}
+    url = LIVE_BASE + "/api/html-projects/" + slug + "/index.html"
+    # Action succeeded only after exact HF source readback and safe public
+    # response verification. Independently recheck public isolation here.
+    try:
+        with urlopen(Request(url, headers={"Cache-Control": "no-cache"}), timeout=15) as page:
+            policy = page.headers.get("Content-Security-Policy", "")
+            mime = page.headers.get("Content-Type", "")
+            if (page.status != 200 or "text/html" not in mime or
+                    "sandbox allow-scripts" not in policy or
+                    "allow-same-origin" in policy or
+                    "connect-src 'none'" not in policy):
+                return {**result, "code": "RUNTIME_SECURITY_NOT_VERIFIED"}
+    except (HTTPError, URLError, TimeoutError):
+        return {**result, "code": "RUNTIME_SECURITY_NOT_VERIFIED"}
+    return {**result, "code": "PUBLISHED_VERIFIED", "url": url}
 
 
 def _guard(request):
