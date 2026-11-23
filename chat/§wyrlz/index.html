@@ -1472,10 +1472,22 @@
                   note.textContent="This review is no longer active. Request a fresh proposal; nothing was written.";
                   approve.disabled=reject.disabled=true;return;
                 }
+                // The review action must not erase a user's unfinished chat draft.
+                // Preserve it only if the composer is still empty after send.
+                const priorDraft=prompt.value;
                 approve.disabled=reject.disabled=true;
                 prompt.value=answer;
                 const sent=await commitDraftFromPrompt();
-                if(!sent){note.textContent="Decision was not confirmed. No GitHub action can be inferred.";approve.disabled=reject.disabled=false;}
+                if(sent){
+                  if(!prompt.value)prompt.value=priorDraft;
+                  resizeComposer();
+                }else{
+                  // Never leave a failed approval's "yes" or "no" as a draft.
+                  if(prompt.value===answer||!prompt.value)prompt.value=priorDraft;
+                  resizeComposer();
+                  note.textContent="Decision was not confirmed. No GitHub action can be inferred.";
+                  approve.disabled=reject.disabled=false;
+                }
               };
               approve.addEventListener("click",()=>act("yes"));
               reject.addEventListener("click",()=>act("no"));
