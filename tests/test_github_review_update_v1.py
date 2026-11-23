@@ -58,7 +58,7 @@ class TestUpdate(unittest.TestCase):
         self.assertEqual(state["writes"], 0)
         with patch.object(module.requests, "get", return_value=types.SimpleNamespace(
             status_code=200, json=lambda: {"sha": "b" * 40, "encoding": "base64",
-                "content": base64.b64encode(b"new\\n").decode()})):
+                "content": base64.b64encode(b"new\n").decode()})):
             receipt = module.confirm("google:owner", p["approvalToken"], True)
         self.assertTrue(receipt["verified"])
         self.assertEqual(state["content"], "new\n")
@@ -71,12 +71,12 @@ class TestUpdate(unittest.TestCase):
         def stale(method, auth, path, payload=None):
             if method == "GET" and state["writes"]:
                 return 200, {"sha": "a"*40, "type": "file", "encoding": "base64",
-                             "content": base64.b64encode(b"old\\n").decode()}
+                             "content": base64.b64encode(b"old\n").decode()}
             return original(method, auth, path, payload)
         with patch.object(fake, "_github", side_effect=stale), patch.object(
             module.requests, "get", return_value=types.SimpleNamespace(
                 status_code=200, json=lambda: {"sha": "b"*40, "encoding": "base64",
-                "content": base64.b64encode(b"new\\n").decode()})):
+                "content": base64.b64encode(b"new\n").decode()})):
             result = module.confirm("google:owner", p["approvalToken"], True)
         self.assertTrue(result["verified"])
         self.assertEqual(state["writes"], 1)
@@ -101,7 +101,7 @@ class TestUpdate(unittest.TestCase):
         self.assertEqual(state["writes"],0)
         with patch.object(module.requests, "get", return_value=types.SimpleNamespace(
             status_code=200, json=lambda: {"sha": "b" * 40, "encoding": "base64",
-                "content": base64.b64encode(b"new\\n").decode()})):
+                "content": base64.b64encode(b"new\n").decode()})):
             self.assertTrue(module.confirm("google:owner",p["approvalToken"],True)["verified"])
     def test_changed_sha_prevents_write(self):
         p=self.proposal()
