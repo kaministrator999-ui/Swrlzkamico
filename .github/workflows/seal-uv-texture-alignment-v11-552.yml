@@ -3,7 +3,7 @@ on:
   push:
     branches: [main]
     paths:
-      - "projects/swrlz-forge-moba/RELEASE_UV_ISLAND_WORKSPACE_V11_551.json"
+      - "projects/swrlz-forge-moba/RELEASE_UV_TEXTURE_ALIGNMENT_V11_552.json"
   workflow_dispatch:
 permissions:
   contents: write
