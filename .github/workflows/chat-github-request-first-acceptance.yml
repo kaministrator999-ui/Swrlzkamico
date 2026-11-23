@@ -1,0 +1,45 @@
+name: Verify live §C request-first GitHub UX
+on:
+  push:
+    branches: [feature/chat-github-request-first-v1]
+    paths: ['.github/workflows/chat-github-request-first-acceptance.yml']
+permissions:
+  contents: read
+jobs:
+  live:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - run: python -m pip install --quiet 'huggingface_hub>=0.34,<2'
+      - name: Check exact deployed source
+        run: python scripts/hf_chat_github_request_first_release_v1.py verify
+      - name: Check served chat page and anonymous isolation
+        run: |
+          python - <<'PY'
+          import time
+          from urllib.request import Request,urlopen
+          from urllib.error import HTTPError,URLError
+          base="https://kamiloki-swyrlz.hf.space"
+          for attempt in range(24):
+              try:
+                  with urlopen(Request(base+"/",headers={"Cache-Control":"no-cache"}),timeout=20) as r:
+                      html=r.read(900000).decode("utf-8","replace")
+                  if ('swrlz-request-first-github-v1' in html and
+                      'github-authorization' in html and
+                      'swrlz-github-review-v1' in html):
+                      print("LIVE_REQUEST_FIRST_UI_PASS",flush=True)
+                      break
+              except (URLError,TimeoutError,OSError):
+                  pass
+              time.sleep(5)
+          else:raise AssertionError("REQUEST_FIRST_UI_NOT_SERVED")
+          try:
+              urlopen(base+"/api/github/status",timeout=15)
+          except HTTPError as exc:
+              assert exc.code==401,exc.code
+              print("ANONYMOUS_GITHUB_ACCESS_DENIED_PASS",flush=True)
+          else:raise AssertionError("ANONYMOUS_GITHUB_ACCESS_UNEXPECTED")
+          PY
