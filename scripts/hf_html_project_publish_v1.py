@@ -94,10 +94,26 @@ def assert_immutable_source() -> str:
     return actual
 
 
+def require_live_isolated_route() -> None:
+    """Do not upload browser-executable code before the sandbox is truly live."""
+    url = BASE_URL + "/api/html-projects/unpublished-probe/index.html"
+    request = urllib.request.Request(url, headers={"Cache-Control": "no-cache"})
+    try:
+        with urllib.request.urlopen(request, timeout=15):
+            raise RuntimeError("Unpublished project unexpectedly served")
+    except urllib.error.HTTPError as exc:
+        payload = exc.read(1024).decode("utf-8", "replace")
+        if exc.code != 404 or "Project asset not found" not in payload:
+            raise RuntimeError("Dedicated CSP project route is not verified") from exc
+    except (urllib.error.URLError, TimeoutError) as exc:
+        raise RuntimeError("Dedicated CSP project route is unavailable") from exc
+
+
 def publish(slug: str, approved: str) -> dict:
     if approved != "yes" or os.getenv("SWRLZ_HTML_PROJECT_APPROVED") != "1":
         raise PermissionError("Publication requires explicit owner approval")
     assert_immutable_source()
+    require_live_isolated_route()
     token = os.environ.get("HF_TOKEN", "")
     if not token:
         raise PermissionError("HF_TOKEN is missing")
