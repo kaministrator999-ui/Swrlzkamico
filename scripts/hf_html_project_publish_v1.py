@@ -80,7 +80,7 @@ def manifest(slug: str) -> dict:
             "bytes": sum(len(data) for _, data in files),
             "paths": {rel: hashlib.sha256(data).hexdigest() for rel, data in files},
             "destinationPrefix": "chat/§wyrlz/projects/" + slug + "/",
-            "url": BASE_URL + "/chat/%C2%A7wyrlz/projects/" + slug + "/index.html"}
+            "url": BASE_URL + "/projects/" + slug + "/index.html"}
 
 
 def assert_immutable_source() -> str:
@@ -101,6 +101,15 @@ def publish(slug: str, approved: str) -> dict:
     token = os.environ.get("HF_TOKEN", "")
     if not token:
         raise PermissionError("HF_TOKEN is missing")
+    # A published file without the isolated browser-serving route is not a website.
+    security_url = BASE_URL + "/api/html-projects/security"
+    try:
+        with urllib.request.urlopen(security_url, timeout=15) as check:
+            security = json.loads(check.read(4096))
+    except (urllib.error.URLError, ValueError, TimeoutError) as exc:
+        raise RuntimeError("Isolated project-serving route is unavailable") from exc
+    if security.get("contract") != "swrlz-html-project-isolation-v1" or not security.get("isolated"):
+        raise RuntimeError("Project-serving route does not certify browser isolation")
     from huggingface_hub import HfApi, CommitOperationAdd, hf_hub_download
     api = HfApi(token=token)
     revision = str(api.repo_info(SPACE, repo_type="space").sha)
@@ -134,22 +143,29 @@ def publish(slug: str, approved: str) -> dict:
     return receipt
 
 
-def runtime_probe(url: str) -> None:
+def runtime_probe(url: str, expected_html: bytes) -> None:
     import time
     request = urllib.request.Request(url, headers={"Cache-Control": "no-cache"})
-    for attempt in range(12):
+    wanted = hashlib.sha256(expected_html).hexdigest()
+    for attempt in range(18):
         try:
             with urllib.request.urlopen(request, timeout=15) as response:
                 mime = response.headers.get("Content-Type", "").lower()
                 disposition = response.headers.get("Content-Disposition", "").lower()
-                body = response.read(512_000)
-                if response.status == 200 and "text/html" in mime and "attachment" not in disposition and body:
+                policy = response.headers.get("Content-Security-Policy", "")
+                body = response.read(MAX_TOTAL_BYTES + 1)
+                if (response.status == 200 and "text/html" in mime and
+                        "attachment" not in disposition and
+                        "sandbox allow-scripts" in policy and
+                        "allow-same-origin" not in policy and
+                        "allow-top-navigation" not in policy and
+                        hashlib.sha256(body).hexdigest() == wanted):
                     return
         except (urllib.error.URLError, TimeoutError):
             pass
-        if attempt < 11:
+        if attempt < 17:
             time.sleep(5)
-    raise RuntimeError("Browser-facing HTML was not verified; source publication is not runtime success")
+    raise RuntimeError("HTML route, CSP sandbox, and exact source bytes were not all verified")
 
 
 def main() -> None:
@@ -164,7 +180,7 @@ def main() -> None:
     elif args.mode == "publish":
         print("HTML_PROJECT_SOURCE_PUBLISHED", json.dumps(publish(args.project, args.approved), sort_keys=True))
     else:
-        runtime_probe(receipt["url"])
+        runtime_probe(receipt["url"], dict(local_files(args.project))["index.html"])
         receipt_path = Path("html-project-receipt.json")
         if receipt_path.exists():
             published_receipt = json.loads(receipt_path.read_text())
