@@ -1,10 +1,10 @@
 {
   "schema": "swrlz-forge-deploy-request-v1",
-  "requestedBy": "ChatGPT (owner-approved new anatomy UV mapping and robotic skin; 4K export requested)",
+  "requestedBy": "ChatGPT (owner authorized v11.550 UV direct editing deployment)",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.546",
+  "releaseVersion": "v11.550",
   "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_546_ANATOMY_ROBOT_UV_4K",
-  "reason": "Publish verified §E v11.546 anatomical humanoid UV rebuild and new white ceramic/graphite/cyan robotic material baked directly from real 3D. Preserve exact 13932 original 3D triangles, 8902 UV vertices, six anatomical atlas regions, 108 UV charts, zero detected raster overlap, 3.46 p95/p5 texel-density ratio, 28.15% coverage. Bundle separate native baked skin and real 4096x4096 UV wireframe/anatomical guide PNGs. UV Editor's anatomy and current UV wireframe export now use 4K default or 2K optional PNG Blob output. Keep historical scenes/account saves unchanged. Source 523 patches verified with 88 asset hashes, native integration and browser delivery checks.",
-  "sourceCommit": "0697d1c8c7319633cca13095b4e4db159aefeb3b",
-  "sourceIntegritySha256": "a5c55df7f8b18a7c60e6572b22b49391e03c128424569bc594e31f858ebeed11"
+  "reason": "Publish checksum-sealed v11.550 UV direct editing with one native editor injection and preserved historical v11.546 geometry and assets. Run source/asset checks, static delivery packaging, Hugging Face upload and public HTTP checks.",
+  "sourceCommit": "4de805cdfae5434683388b47ea47fc6dcfab5f4f",
+  "sourceIntegritySha256": "94ada90dcbb9f517af57187f327e7a55d1dd32bf882abd9c65e38070dacec830"
 }
