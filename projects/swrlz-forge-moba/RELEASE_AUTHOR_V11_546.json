@@ -5,5 +5,7 @@
   "goal": "Rebuild humanoid UVs into anatomy-grouped charts; generate independent new robotic material from 3D surface; preserve geometry; provide 4096x4096 reference atlas and anatomy exports; preserve historical scenes and saved copies.",
   "release": "Do not publish until exact geometry/UV texture checks and source-seal tests pass.",
   "run": 3,
-  "correction": "Paint coverage meets threshold; add six-group torso diagnostic color for 4K guide"
+  "correction": "Paint coverage meets threshold; add six-group torso diagnostic color for 4K guide",
+  "rebuild_requested": "2026-11-23-continuous-anatomical-uv",
+  "reason": "Test single-chart anatomical UV authoring with fail-closed shell constraints"
 }
