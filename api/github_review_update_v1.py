@@ -12,6 +12,8 @@ import re
 import secrets
 import threading
 import time
+import requests
+from urllib.parse import quote
 
 from github_general_create_v262 import CreateFileError, safe_path
 import github_general_create_v262 as create
@@ -99,8 +101,49 @@ def confirm(user_id, approval_token, approved):
     commit = str((response or {}).get("commit", {}).get("sha") or "")
     if not re.fullmatch(r"[0-9a-fA-F]{40}", commit):
         raise CreateFileError("GITHUB_COMMIT_NOT_VERIFIED", 502)
-    _, text = _read(auth, item["path"])
-    if text.encode("utf-8") != item["content"]:
+    # GitHub's successful PUT includes the committed blob SHA. Validate that
+    # immutable object first; the branch contents endpoint can lag after PUT.
+    content_meta = (response or {}).get("content") or {}
+    written_sha = str(content_meta.get("sha") or "").lower()
+    if not re.fullmatch(r"[0-9a-f]{40}", written_sha):
+        raise CreateFileError("GITHUB_BLOB_SHA_UNAVAILABLE", 502)
+    blob_url = ("https://api.github.com/repos/" + auth["repo"] +
+                "/git/blobs/" + quote(written_sha, safe=""))
+    headers = {"Authorization": "Bearer " + auth["token"],
+               "Accept": "application/vnd.github+json",
+               "X-GitHub-Api-Version": "2022-11-28",
+               "User-Agent": "swrlz-owner-confirmed-update-v2"}
+    verified = False
+    for attempt in range(4):
+        try:
+            result = requests.get(blob_url, headers=headers, timeout=15)
+            if result.status_code == 200:
+                obj = result.json()
+                if (obj.get("sha", "").lower() == written_sha and
+                    obj.get("encoding") == "base64"):
+                    raw = base64.b64decode(str(obj["content"]).replace("\\n", ""), validate=True)
+                    if raw != item["content"]:
+                        raise CreateFileError("GITHUB_READBACK_MISMATCH", 502)
+                    verified = True
+                    break
+        except (requests.RequestException, ValueError, KeyError, binascii.Error):
+            pass
+        if attempt < 3:
+            time.sleep(0.5 * (attempt + 1))
+    if not verified:
+        # Fallback: branch content may have become consistent while the blob
+        # endpoint was temporarily unavailable. Never report success unverified.
+        for attempt in range(3):
+            try:
+                current_sha, text = _read(auth, item["path"])
+                if current_sha == written_sha and text.encode("utf-8") == item["content"]:
+                    verified = True
+                    break
+            except CreateFileError:
+                pass
+            if attempt < 2:
+                time.sleep(0.5 * (attempt + 1))
+    if not verified:
         raise CreateFileError("GITHUB_READBACK_MISMATCH", 502)
     return {
         "ok": True, "verified": True, "operation": "UPDATE_FILE",
