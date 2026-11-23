@@ -1,0 +1,87 @@
+name: §C approved HTML project → existing Hugging Face Space
+on:
+  pull_request:
+    paths:
+      - 'scripts/hf_html_project_publish_v1.py'
+      - 'tests/test_hf_html_project_publish_v1.py'
+      - '.github/workflows/hf-html-project-publish-v1.yml'
+  workflow_dispatch:
+    inputs:
+      source_sha:
+        description: Immutable reviewed GitHub commit (40-character SHA)
+        required: true
+        type: string
+      project:
+        description: Existing html-projects/<slug> directory
+        required: true
+        type: string
+      approved:
+        description: Owner approved publishing this project to the existing Space
+        required: true
+        type: choice
+        options: ['no', 'yes']
+        default: 'no'
+permissions:
+  contents: read
+concurrency:
+  group: swrlz-hf-space-deployment
+  cancel-in-progress: false
+jobs:
+  check:
+    if: ${{ github.event_name == 'pull_request' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - run: python -m py_compile scripts/hf_html_project_publish_v1.py
+      - run: python -m unittest discover -s tests -p 'test_hf_html_project_publish_v1.py' -v
+  publish:
+    if: ${{ github.event_name == 'workflow_dispatch' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.source_sha }}
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - name: Source pin, static asset checks, and owner approval
+        env:
+          SOURCE_SHA: ${{ inputs.source_sha }}
+          PROJECT_SLUG: ${{ inputs.project }}
+          APPROVED: ${{ inputs.approved }}
+        run: |
+          set -euo pipefail
+          python -m py_compile scripts/hf_html_project_publish_v1.py
+          python -m unittest discover -s tests -p 'test_hf_html_project_publish_v1.py' -v
+          python - <<'PY'
+          import os
+          from scripts.hf_html_project_publish_v1 import assert_immutable_source, manifest
+          assert_immutable_source()
+          print(manifest(os.environ["PROJECT_SLUG"]))
+          if os.environ["APPROVED"] != "yes":
+              raise SystemExit("Owner approval required; nothing published")
+          PY
+      - run: python -m pip install --quiet 'huggingface_hub>=0.34,<2'
+      - name: Scoped, CAS-protected Space publication and source byte readback
+        env:
+          SOURCE_SHA: ${{ inputs.source_sha }}
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          SWRLZ_HTML_PROJECT_APPROVED: '1'
+          PROJECT_SLUG: ${{ inputs.project }}
+        run: python scripts/hf_html_project_publish_v1.py publish --project "$PROJECT_SLUG" --approved yes
+      - name: Confirm public browser-facing HTML route
+        env:
+          PROJECT_SLUG: ${{ inputs.project }}
+        run: python scripts/hf_html_project_publish_v1.py probe --project "$PROJECT_SLUG"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: swrlz-html-project-publish-receipt
+          path: html-project-receipt.json
+          if-no-files-found: warn
+          retention-days: 30
