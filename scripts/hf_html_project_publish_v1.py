@@ -39,6 +39,9 @@ def local_files(slug: str) -> list[tuple[str, bytes]]:
         raise ValueError("Project directory missing")
     output = []
     total = 0
+    for directory in root.rglob("*"):
+        if directory.is_symlink():
+            raise ValueError("Symlink forbidden")
     for file in sorted(root.rglob("*")):
         if file.is_symlink():
             raise ValueError("Symlink forbidden")
@@ -48,6 +51,8 @@ def local_files(slug: str) -> list[tuple[str, bytes]]:
         p = PurePosixPath(rel)
         if len(p.parts) > 8 or any(x.startswith(".") for x in p.parts):
             raise ValueError("Hidden or deeply nested path forbidden")
+        if not all(re.fullmatch(r"[a-zA-Z0-9][a-zA-Z0-9_.-]*", part) for part in p.parts):
+            raise ValueError("Invalid project asset name: " + rel)
         if p.suffix.lower() not in ALLOWED:
             raise ValueError("File extension not approved: " + rel)
         data = file.read_bytes()
