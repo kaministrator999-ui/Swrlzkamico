@@ -83,7 +83,8 @@ def _manifest(token, source, slug):
         if not path.startswith(prefix):
             continue
         rel = path[len(prefix):]
-        if entry.get("type") != "blob" or entry.get("mode") not in {"100644", "100755"}:
+        if entry.get("type") == "tree":
+            continue\n        if entry.get("type") != "blob" or entry.get("mode") not in {"100644", "100755"}:
             raise HTTPException(422, "Project contains unsafe Git entries")
         parts = rel.split("/")
         if not 1 <= len(parts) <= 8 or any(not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_.-]*", p) or p.startswith(".") for p in parts):
@@ -128,7 +129,18 @@ def prepare(user, slug):
         _cleanup()
         _PENDING[ticket] = {"user": user, "sha": sha, "project": slug,
                             "expires": time.monotonic() + TTL}
-    return {**doc, "approvalToken": ticket, "expiresInSeconds": TTL,
+    # Show the pinned entry document inside an opaque-origin iframe. External
+    # relative assets are not previewed until real browser publication.
+    _, entry = _github("GET", auth["token"], "/repos/" + REPO +
+                       "/contents/html-projects/" + slug + "/index.html?ref=" + sha)
+    try:
+        source = base64.b64decode(str(entry["content"]).replace("\
+", ""), validate=True).decode("utf-8")
+    except (KeyError, ValueError, UnicodeDecodeError):
+        raise HTTPException(422, "Project index.html preview unavailable") from None
+    if len(source.encode("utf-8")) > 260_000:
+        raise HTTPException(413, "HTML preview exceeds limit")
+    return {**doc, "previewHtml": source, "approvalToken": ticket, "expiresInSeconds": TTL,
             "approvalRequired": True, "status": "AWAITING_OWNER_APPROVAL"}
 
 
