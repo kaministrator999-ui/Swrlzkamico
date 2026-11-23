@@ -1,6 +1,5 @@
 {
   "release": "v11.550",
-  "feature": "native UV vertex and edge editing",
-  "repair": "deduplicate v11.356 editor injection",
-  "attempt": 2
+  "attempt": 3,
+  "goal": "capture exact failing step and traceback, seal if valid"
 }
