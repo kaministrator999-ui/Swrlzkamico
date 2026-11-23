@@ -12,8 +12,8 @@ def handle(user_id,thread_id,prompt,context=None,history=None):
 def _confirmation(user_id,thread_id,prompt):
     if False:
         pass
-    elif pending["kind"]=="create":
-        create.confirm(user_id,pending["ticket"],False)
+            elif pending["kind"]=="create":
+                create.confirm(user_id,pending["ticket"],False)
     receipt=create.confirm(user_id,pending["ticket"],True)
 '''
   patched=transform(source)
