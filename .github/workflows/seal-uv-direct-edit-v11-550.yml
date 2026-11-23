@@ -27,14 +27,15 @@ jobs:
         run: |
           set +e
           LOG=/tmp/se550-build.log
-          {
+          run_checks() {
             echo "=== JS syntax ==="
             node --check projects/swrlz-forge-moba/runtime/model_atelier_uv_preview_v11_356.js || exit $?
             echo "=== seal source ==="
             python projects/swrlz-forge-moba/scripts/seal_uv_direct_edit_v11_550.py || exit $?
             echo "=== build verified source ==="
             python projects/swrlz-forge-moba/build_space.py --output /tmp/uv-direct-edit || exit $?
-          } > "$LOG" 2>&1
+          }
+          run_checks > "$LOG" 2>&1
           result=$?
           mkdir -p projects/swrlz-forge-moba/docs/qa
           python - "$result" "$LOG" <<'PY'
