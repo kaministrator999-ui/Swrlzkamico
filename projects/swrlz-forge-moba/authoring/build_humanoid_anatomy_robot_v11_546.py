@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """§E v11.546: anatomical humanoid UV atlas and NEW surface-baked robot skin.
 
-Authoring-only: true 3D mesh -> anatomical region charts -> one UV atlas ->
+Authoring-only: true 3D mesh -> seam-aware anatomical shells -> one UV atlas ->
 brand-new robotic paint. Never applies an old texture to changed UVs.
 Preserves 3D triangle geometry and the historical user/project files.
 """
@@ -13,7 +13,7 @@ from pathlib import Path
 import sys
 
 import numpy as np
-from PIL import Image, ImageDraw
+from PIL import Image, ImageDraw, ImageFont
 import xatlas
 
 ROOT=Path(__file__).resolve().parents[1]
@@ -94,6 +94,67 @@ def xatlas_group(pos,faces):
     assert in_keys==out_keys,'The atlas changed source face geometry'
     return coords[vmap],f,uv,atlas.get_mesh_chart_count(0)
 
+def seam_aware_anatomical_group(pos,faces,name):
+    """Unroll a connected anatomical surface using an explicit axial seam.
+
+    Unlike xatlas.parametrize(), this maps the entire region at once. Every
+    triangle unwraps its circular angle around the local face mean; vertices
+    are duplicated ONLY when the angle crosses the chosen back/underside seam.
+    The original 3D positions and triangle winding are never changed.
+    """
+    used,inverse=np.unique(faces,return_inverse=True)
+    coords=np.ascontiguousarray(pos[used],dtype=np.float32)
+    idx=np.ascontiguousarray(inverse.reshape(-1,3),dtype=np.uint32)
+    arm=name in ('leftArm','rightArm')
+    axial=0 if arm else 1
+    if arm:
+        # Underarm seam, avoiding the top and front plates.
+        theta=np.arctan2(coords[:,2],coords[:,1]-3.67)+0.5
+    else:
+        center_x=(-0.28 if name=='leftLeg' else
+                  0.28 if name=='rightLeg' else 0.0)
+        # Back of the head/torso and inner/back side of each leg.
+        theta=np.arctan2(coords[:,0]-center_x,coords[:,2])
+    theta=np.arctan2(np.sin(theta),np.cos(theta))
+    phase=theta[idx]
+    avg=np.arctan2(np.sin(phase).sum(axis=1),
+                   np.cos(phase).sum(axis=1))
+    wind=np.rint((avg[:,None]-phase)/(2*np.pi)).astype(np.int16)
+    lo=float(coords[:,axial].min())
+    length=float(np.ptp(coords[:,axial]))
+    if length<1e-8:
+        raise ValueError('Collapsed anatomical projection '+name)
+    # Stable vertex/phase identity prevents artificial UV cracks caused by
+    # rounding per-face trigonometric results independently.
+    vertex_lookup={}
+    outpos=[];outuv=[];outfaces=[]
+    for tri,wrap in zip(idx,wind):
+        outtri=[]
+        for vertex,turn in zip(tri,wrap):
+            source_vertex=int(vertex)
+            phase_turn=int(turn)
+            key=(source_vertex,phase_turn)
+            mapped=vertex_lookup.get(key)
+            if mapped is None:
+                mapped=len(outpos)
+                vertex_lookup[key]=mapped
+                outpos.append(coords[source_vertex])
+                outuv.append(((theta[source_vertex]+2*np.pi*phase_turn+
+                               np.pi)/(2*np.pi),
+                              (float(coords[source_vertex,axial])-lo)/length))
+            outtri.append(mapped)
+        outfaces.append(outtri)
+    xyz=np.asarray(outpos,np.float32)
+    uv=np.asarray(outuv,np.float64)
+    f=np.asarray(outfaces,np.uint32)
+    counts=shell_counts(uv,f,[name]*len(f))
+    if counts.get(name)!=1:
+        raise ValueError('Anatomical projection fragmented '+name+': '+
+                         str(counts.get(name))+' shells')
+    if len(xyz)>VERT_LIMIT:
+        raise ValueError('Anatomical seam vertex budget exceeded for '+name)
+    return xyz,f,uv,1
+
 def single_chart_group(pos,faces):
     """Parameterize an anatomical surface as one chart without xatlas chart splitting.
 
@@ -150,13 +211,7 @@ def make_atlas(positions,triangles,mode):
     for name in (REGIONS if mode=='seven' else ['head','torso','leftArm','rightArm','leftLeg','rightLeg']):
         original=triangles[labels==name]
         if not len(original):raise ValueError('Missing anatomy '+name)
-        try:
-            p,f,uv,c=single_chart_group(positions,original)
-        except (ValueError,RuntimeError,AssertionError) as exc:
-            # Keep a diagnostic fallback, but the shell gate below rejects
-            # fragmented output instead of publishing it.
-            print('SE546_SINGLE_CHART_REJECTED',name,str(exc),flush=True)
-            p,f,uv,c=xatlas_group(positions,original)
+        p,f,uv,c=seam_aware_anatomical_group(positions,original,name)
         base=count;count+=len(p);charts+=c
         if count>VERT_LIMIT:raise ValueError('UV vertex budget exceeded: '+str(count))
         parts.append(p);faces_out.append(f+base)
@@ -295,8 +350,27 @@ def export_guides(uv,faces,region_names):
         painter=ImageDraw.Draw(canvas)
         for ids,name in zip(faces,region_names):
             pts=[tuple(map(int,xy[k])) for k in ids]
-            if anatomical:painter.polygon(pts,fill=colors[name])
+            shade=colors[name] if anatomical else tuple(int(k*.19) for k in colors[name])
+            painter.polygon(pts,fill=shade)
             painter.line(pts+[pts[0]],fill=(208,238,241) if anatomical else (45,229,225),width=1)
+        # Numbered region legend is drawn onto exported GUIDES, not onto the
+        # robotic material: labels cannot accidentally appear on the model.
+        order=['head','torso','chest','back','leftArm','rightArm','leftLeg','rightLeg']
+        visible=set(region_names)
+        try:font=ImageFont.truetype('DejaVuSans.ttf',52)
+        except OSError:font=ImageFont.load_default()
+        for number,name in enumerate((n for n in order if n in visible),1):
+            x0,y0,x1,y1=RECT[name]
+            cx=int((x0+x1)*s/2);cy=int((y0+y1)*s/2)
+            label=str(number).zfill(2)+' '+name.upper()
+            bounds=painter.textbbox((0,0),label,font=font)
+            w=bounds[2]-bounds[0];h=bounds[3]-bounds[1]
+            painter.rounded_rectangle((cx-w//2-24,cy-h//2-23,
+                                      cx+w//2+24,cy+h//2+23),
+                                     radius=14,fill=(13,21,35),
+                                     outline=colors[name],width=5)
+            painter.text((cx-w/2-bounds[0],cy-h/2-bounds[1]),
+                         label,font=font,fill=(245,249,252))
         p.parent.mkdir(parents=True,exist_ok=True)
         canvas.save(p,format='PNG',optimize=True)
         assert p.stat().st_size<10_000_000,(p,p.stat().st_size)
@@ -304,7 +378,7 @@ def export_guides(uv,faces,region_names):
 def main():
     scene,part,positions,faces=source()
     errors=[];result=None
-    for kind in ('seven','six'):
+    for kind in ('six','seven'):
         try:
             candidate=make_atlas(positions,faces,kind)
             metrics=audit(*candidate[:3])
@@ -348,7 +422,7 @@ def main():
     scene['project']['modelAtelier']['name']='Futuristic Humanoid · Anatomy UV + Robot Skin'
     scene['project']['modelAtelier']['reference']=(
       'One continuous five-digit humanoid, 13,932 original 3D triangles. '
-      'New anatomy-oriented xatlas UV charts organized by '+kind+
+      'Seam-aware continuous UV shells organized by '+kind+
       ' true 3D regions. New ceramic/graphite/cyan robotic skin baked from '
       'actual local 3D positions and normals; no old atlas texture transferred. '
       '4096px UV wireframe and 4096px anatomical UV guide are available. '
