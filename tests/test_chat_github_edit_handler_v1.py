@@ -17,7 +17,8 @@ def _confirmation(user_id,thread_id,prompt):
                 create.confirm(user_id,pending["ticket"],False)
     except Exception:
         pass
-    receipt=create.confirm(user_id,pending["ticket"],True)
+    if True:
+        receipt=create.confirm(user_id,pending["ticket"],True)
 '''
   patched=transform(source)
   self.assertIn('if _EDIT_FILE.match(prompt):',patched)
