@@ -14,5 +14,7 @@ assert(source.includes('["CREATE_FILE","UPDATE_FILE"]'),"Create and edit preview
 assert(source.includes("options.currentThread()"),"Thread identity required");
 assert(source.includes("options.isLatest(wrapper)"),"Stale cards cannot approve");
 assert(source.includes("MAX_AGE_MS=300000"),"Approval card expires");
-assert(source.includes("Await server verification"),"Client cannot claim GitHub write");
+assert(source.includes("Checking GitHub verification receipt below"),"Client cannot claim GitHub write before receipt");
+assert(source.includes("reconcileReceipt"),"Receipt must reconcile the pending review");
+assert(source.includes("receipt.verified!==true"),"Receipt must be explicitly verified");
 console.log("§C GitHub review component contract PASS");
