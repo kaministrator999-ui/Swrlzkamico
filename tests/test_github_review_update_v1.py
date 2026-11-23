@@ -56,7 +56,10 @@ class TestUpdate(unittest.TestCase):
         self.assertEqual(p["before"], "old\n")
         self.assertIn("+new", p["diff"])
         self.assertEqual(state["writes"], 0)
-        with patch.object(module.requests, "get", return_value=types.SimpleNamespace(\n            status_code=200, json=lambda: {"sha": "b" * 40, "encoding": "base64",\n                "content": base64.b64encode(b"new\\n").decode()})):\n            receipt = module.confirm("google:owner", p["approvalToken"], True)
+        with patch.object(module.requests, "get", return_value=types.SimpleNamespace(
+            status_code=200, json=lambda: {"sha": "b" * 40, "encoding": "base64",
+                "content": base64.b64encode(b"new\\n").decode()})):
+            receipt = module.confirm("google:owner", p["approvalToken"], True)
         self.assertTrue(receipt["verified"])
         self.assertEqual(state["content"], "new\n")
         self.assertEqual(state["writes"], 1)
@@ -96,7 +99,10 @@ class TestUpdate(unittest.TestCase):
         with self.assertRaises(Error):
             module.confirm("google:other",p["approvalToken"],True)
         self.assertEqual(state["writes"],0)
-        with patch.object(module.requests, "get", return_value=types.SimpleNamespace(\n            status_code=200, json=lambda: {"sha": "b" * 40, "encoding": "base64",\n                "content": base64.b64encode(b"new\\n").decode()})):\n            self.assertTrue(module.confirm("google:owner",p["approvalToken"],True)["verified"])
+        with patch.object(module.requests, "get", return_value=types.SimpleNamespace(
+            status_code=200, json=lambda: {"sha": "b" * 40, "encoding": "base64",
+                "content": base64.b64encode(b"new\\n").decode()})):
+            self.assertTrue(module.confirm("google:owner",p["approvalToken"],True)["verified"])
     def test_changed_sha_prevents_write(self):
         p=self.proposal()
         state["sha"]="f"*40
