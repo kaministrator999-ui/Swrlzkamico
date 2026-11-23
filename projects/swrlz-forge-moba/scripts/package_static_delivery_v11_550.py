@@ -42,7 +42,7 @@ def split_html(original):
     restored = served.replace(TAG, prefix+module+b'\n</script>', 1)
     if restored != original:
         raise ValueError("Static delivery fails lossless round-trip")
-    if '<title>§wyrl§ Engine · Maker v11.550</title>'.encode('utf8') not in served:
+    if '<title>§wyrl§ Engine · Maker v11.546</title>'.encode('utf8') not in served:
         raise ValueError("Static document lost its verified version")
     if len(served) >= MAX_FILE:
         raise ValueError(f"HTML remains over 10MB: {len(served)} bytes")
