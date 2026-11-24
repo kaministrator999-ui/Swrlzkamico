@@ -66,6 +66,11 @@ def stream(payload, coder, initial):
     twice, an invalid checkpoint, user Stop, or a real platform failure ends
     the turn without claiming completed or validated code.
     """
+    if read_only(payload):
+        yield {"type":"STATUS", "phase":"PROJECT_EVIDENCE_REPORT",
+               "reason":"Synthesizing the verified source and HTTP inspection evidence."}
+        yield from initial
+        return
     if not eligible(payload):
         yield from initial
         return
