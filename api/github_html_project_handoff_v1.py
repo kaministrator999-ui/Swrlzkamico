@@ -64,7 +64,7 @@ def intent(prompt):
 def is_saved_review_request(prompt):
     """Explicit owner request to review the latest stored artifact in this thread."""
     return bool(isinstance(prompt, str) and re.fullmatch(
-        r"\\s*@github\\s+review\\s+saved\\s+html\\s+project\\s*[.!]?\\s*",
+        r"\s*@github\s+review\s+saved\s+html\s+project\s*[.!]?\s*",
         prompt, re.I))
 
 
