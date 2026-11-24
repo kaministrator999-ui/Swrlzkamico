@@ -43,7 +43,7 @@ def _source_files(owner, project):
     source_files = {}
     for info in manifest["files"]:
         rel = info["path"]
-        if not rel.lower().endswith(TEXT_EXTENSIONS):
+        if not rel.lower().endswith(tuple(TEXT_EXTENSIONS)):
             continue
         path = "html-projects/" + project["project"] + "/" + rel
         response = publishing._github(
