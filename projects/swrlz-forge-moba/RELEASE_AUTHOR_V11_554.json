@@ -1,17 +1,16 @@
 {
   "schema": "swrlz-clean-topology-author-v1",
-  "goal": "Replace flat skirt pelvis with anatomical saddle hips groin and leg transitions, and export genuine separate face/head back, torso front/back and pelvis UV charts; preserve original robot",
+  "goal": "Professional anatomy-first UV workflow: Catmull-Rom smooth skull/hip/shoulder model then real xatlas conformal unwrap and packed paintable islands; connect native editor with seam tools.",
   "source": "authoring/build_clean_topology_humanoid_v11_554.py",
   "mode": "do-not-change-existing-robot",
   "verification": [
-    "single watertight quad topology and native mesh limits",
-    "noncoplanar groin and lateral hip geometry",
-    "distinct UV front/back torso head crown and pelvis charts",
-    "no missing quad faces or unstitched 3D edge",
-    "native Starter Models loader remains functional",
-    "original finished robot untouched",
-    "checker texture masks actual UV islands with visible chart gutters",
-    "2048 UV guide labels front/back anatomy without baking labels into material"
+    "real pinned xatlas-wasm 0.1.3 Node and browser shared solver",
+    "watertight anatomical quad mesh with rounded skull and groin",
+    "no change in original 3D triangles during UV generation",
+    "automatically generated 2048 geometry-based UV atlas",
+    "independent manifold and distortion tests",
+    "label-free paint layer and anatomical UV guide",
+    "original completed robot untouched"
   ],
-  "request": "2026-11-24-anatomical-waist-pelvis-uv-chart-actual-silhouettes-v3b"
+  "request": "2026-11-24-real-xatlas-wasm-model-and-editor-v4-initial"
 }
