@@ -50,6 +50,8 @@ class HtmlArtifactHandoffTest(unittest.TestCase):
                    "publish to our existing Hugging Face Space after my approval.")
         self.assertEqual(m.intent(request)["kind"], REQUEST["kind"])
         self.assertIsNone(m.intent("Make a cool HTML page"))
+        self.assertTrue(m.is_saved_review_request("@GitHub review saved HTML project"))
+        self.assertFalse(m.is_saved_review_request("review the old test project please"))
         self.assertIsNone(m.intent("Create a webpage but do not publish it in GitHub"))
         self.assertIsNone(m.intent("Review a deployed HTML page on GitHub"))
 
