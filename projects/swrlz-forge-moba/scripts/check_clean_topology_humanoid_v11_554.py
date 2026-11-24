@@ -50,6 +50,27 @@ def run():
     png(GUIDE,2048,2048)
     assert json.loads(ORIGINAL.read_text('utf8'))['project']['canonicalId']=='robotic-humanoid-mannequin'
     assert r['quadFirst'] and r['originalRobotPreserved']
+    # Independent positional-weld check: UV seams are allowed, mesh cracks are not.
+    from collections import Counter,defaultdict
+    xyz=[tuple(p[k:k+3]) for k in range(0,len(p),3)]
+    idmap={v:i for i,v in enumerate(sorted(set(xyz)))}
+    verts=[idmap[v] for v in xyz]
+    edges=Counter()
+    for k in range(0,len(ix),6):
+        a,b,c,d=ix[k],ix[k+1],ix[k+2],ix[k+5]
+        welded=[verts[n] for n in (a,b,c,d)]
+        assert len(set(welded))==4,('degenerate welded quad',k)
+        for z in range(4):
+            e=tuple(sorted((welded[z],welded[(z+1)%4])))
+            edges[e]+=1
+    assert all(n==2 for n in edges.values()),(
+        'Open or nonmanifold physical seams',Counter(edges.values()))
+    assert r['components']==1,r['components']
+    qa=r['topologyAudit']
+    assert qa['watertight'] and qa['connectedComponents']==1
+    assert qa['openEdges']==qa['nonManifoldEdges']==0
+    assert qa['weldedEdges']==len(edges)
+    assert qa['weldedVertices']==len(idmap)
     print('SE554_CLEAN_TOPOLOGY_NATIVE_ASSET_PASS',json.dumps({
         'vertices':len(p)//3,'quads':sum(r['quads'].values()),
         'triangles':len(ix)//3,'uvRegions':len(bounds),'guide':2048}))
