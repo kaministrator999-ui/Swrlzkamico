@@ -1,37 +1,37 @@
 {
   "schema": "swrlz-forge-deploy-request-v1",
-  "requestedBy": "ChatGPT (owner authorized complete anatomical pelvis and UV repair with successful Hugging Face deployment verification)",
+  "requestedBy": "ChatGPT (owner authorized reusable professional UV unwrap and improved humanoid, verified deployment)",
   "target": "kamiloki/swrlz-forge-moba",
   "releaseVersion": "v11.552",
   "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_546_ANATOMY_ROBOT_UV_4K",
-  "reason": "Deploy clean-topology humanoid v3: sculpted hip-groin saddle, smoother waist/thigh junctions, genuine front/back torso/head and pelvis UV subcharts, masked UV diagnostic texture and annotated guide; preserve original robot",
+  "reason": "Publish geometry-based LSCM anatomical UV starter (22 real conformal charts, padded 2K atlas, distortion ratio ~1.97) and reusable in-browser UV seam marking, true LSCM unwrapping, distortion overlay; preserve existing finished robot",
   "sourceCommit": "main (deploy workflow checkout; verified against sourceIntegritySha256)",
   "sourceIntegritySha256": "3fe29516958ea5af2448352fa238eda121cc3031266c61c746380f092d22232e",
   "resealRun": 45342195310,
-  "deploymentAttempt": 18,
+  "deploymentAttempt": 19,
   "accountStartupRecovery": "v11.553-delivery",
   "accountStartupChecks": [
     "startup_restore_regression_v11_552",
     "startup_delivery_repair_v11_553"
   ],
   "accountStartupHistoricalSources": "restored SHA-identical v11.184 and v11.552",
-  "uvDeliveryVerification": "SHA-256 compare public static scene + painted skin + UV wireframe + anatomical guide against GitHub checkout",
+  "uvDeliveryVerification": "Live SHA256 checks for engine HTML/JS, actual 3D scene, UV texture, anatomy guide, LSCM module, xatlas WASM and core",
   "cleanTopologyStarter": "v11.554",
-  "cleanTopologyAuthorRun": 45509059094,
+  "cleanTopologyAuthorRun": 45513479890,
   "cleanTopologyQuality": {
-    "vertices": 6325,
-    "weldedVertices": 5604,
-    "quads": 5602,
-    "triangles": 11204,
-    "anatomicalRegions": 6,
-    "uvSubcharts": 10,
-    "connectedComponents": 1,
+    "vertices": 6418,
+    "weldedVertices": 5748,
+    "quads": 5746,
+    "triangles": 11492,
+    "uvChartCount": 22,
+    "uvMethod": "LSCM+verified-chart-packing",
+    "uvDensityRatio": 1.9740590764867243,
     "openEdges": 0,
     "nonManifoldEdges": 0,
-    "uvGuideResolution": 2048,
-    "maskedAtlas": true,
-    "anatomyLabelsOnGuideOnly": true
+    "atlasPixels": 2048,
+    "originalRobotPreserved": true
   },
   "cleanTopologyLiveVerification": "Verify new scene and UV assets SHA-256 after static HF upload",
-  "cleanTopologyRevision": "anatomical-pelvis-uv-v3"
+  "cleanTopologyRevision": "lscm-anatomical-conformal-v4",
+  "uvEditorRelease": "v11.555-real-conformal-LSCM-and-seam-marking"
 }
