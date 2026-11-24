@@ -74,7 +74,7 @@ def zone_ids(positions,faces,mode):
         labels[torso&(z<0)]='back'
     return labels
 
-def xatlas_group(pos,faces):
+def xatlas_group(pos,faces,force_one=False):
     used,inverse=np.unique(faces,return_inverse=True)
     coords=np.ascontiguousarray(pos[used],dtype=np.float32)
     idx=np.ascontiguousarray(inverse.reshape(-1,3),dtype=np.uint32)
@@ -83,7 +83,22 @@ def xatlas_group(pos,faces):
     pack=xatlas.PackOptions()
     pack.resolution=1024
     pack.padding=7
-    atlas.generate(pack_options=pack)
+    if force_one:
+        chart=xatlas.ChartOptions()
+        chart.max_cost=100000.
+        chart.max_chart_area=0.
+        chart.max_boundary_length=0.
+        chart.normal_deviation_weight=0.
+        chart.roundness_weight=0.
+        chart.straightness_weight=0.
+        chart.normal_seam_weight=0.
+        chart.texture_seam_weight=0.
+        chart.max_iterations=1
+        pack.rotate_charts=False
+        pack.rotate_charts_to_axis=False
+        atlas.generate(chart_options=chart,pack_options=pack)
+    else:
+        atlas.generate(pack_options=pack)
     vmap,f,uv=atlas[0]
     vmap=np.asarray(vmap,np.int64)
     f=np.asarray(f,np.uint32).reshape(-1,3)
@@ -335,6 +350,30 @@ def make_atlas(positions,triangles,mode):
                               audit_local['conflictingSamples'],ratio)
             except (ValueError,AssertionError,RuntimeError):
                 continue
+        if name in ('leftArm','rightArm','leftLeg','rightLeg'):
+            try:
+                pp,ff,uu,cc=xatlas_group(positions,original,force_one=True)
+                print('SE546_FORCED_CHART_COUNT',name,cc,flush=True)
+                if cc==1:
+                    print('SE546_FORCED_SINGLE_SHELL',name,
+                          shell_counts(uu,ff,[name]*len(ff)),flush=True)
+                    if shell_counts(uu,ff,[name]*len(ff))[name]==1:
+                        tuned=fit(uu,RECT[name],lock_orientation=True)
+                        q=measure_surface_uv_conflicts(pp,tuned,ff,[name]*len(ff),size=256)
+                        tri3=pp[ff];tri2=tuned[ff]
+                        a3=np.linalg.norm(np.cross(tri3[:,1]-tri3[:,0],tri3[:,2]-tri3[:,0]),axis=1)
+                        a2=np.abs((tri2[:,1,0]-tri2[:,0,0])*(tri2[:,2,1]-tri2[:,0,1])-(
+                                tri2[:,1,1]-tri2[:,0,1])*(tri2[:,2,0]-tri2[:,0,0]))
+                        ratio=float(np.percentile(a2/np.maximum(a3,1e-12),95)/
+                                    max(np.percentile(a2/np.maximum(a3,1e-12),5),1e-12))
+                        score=q['conflictingSamples']*10+max(0,ratio-100)*5
+                        print('SE546_FORCE_ONE_QUALITY',name,
+                              {'conflicts256':q['conflictingSamples'],'ratio':ratio},flush=True)
+                        if selected is None or score<selected[0]:
+                            selected=(score,pp,ff,uu,cc,('xatlas-single',),
+                                      q['conflictingSamples'],ratio)
+            except (ValueError,AssertionError,RuntimeError,AttributeError) as exc:
+                print('SE546_FORCE_ONE_UNAVAILABLE',name,str(exc),flush=True)
         if selected is None:raise ValueError('No continuous anatomical unwrap for '+name)
         _,p,f,uv,c,tuning,local_conflicts,local_ratio=selected
         print('SE546_REGION_UNWRAP_TUNED',name,
