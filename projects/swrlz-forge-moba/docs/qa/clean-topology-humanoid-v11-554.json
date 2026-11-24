@@ -1,15 +1,15 @@
 {
   "version": "v11.554",
-  "revision": "welded-quad-loop-v2",
-  "vertices": 6242,
-  "triangles": 11044,
+  "revision": "anatomical-pelvis-uv-v3",
+  "vertices": 6325,
+  "triangles": 11204,
   "quads": {
     "torso": 1388,
     "head": 888,
     "leftArm": 1033,
     "rightArm": 1033,
-    "leftLeg": 590,
-    "rightLeg": 590
+    "leftLeg": 630,
+    "rightLeg": 630
   },
   "components": 1,
   "uvBoxes": {
@@ -50,18 +50,30 @@
       0.965
     ]
   },
+  "uvCharts": {
+    "torsoBack": 648,
+    "torsoFront": 648,
+    "pelvis": 92,
+    "headBack": 432,
+    "headFront": 432,
+    "crown": 24,
+    "leftArm": 1033,
+    "rightArm": 1033,
+    "leftLeg": 630,
+    "rightLeg": 630
+  },
   "textureSize": 1024,
   "guideSize": 2048,
   "originalRobotPreserved": true,
   "quadFirst": true,
   "topologyAudit": {
-    "weldedVertices": 5664,
-    "weldedEdges": 11044,
+    "weldedVertices": 5604,
+    "weldedEdges": 11204,
     "openEdges": 0,
     "nonManifoldEdges": 0,
     "connectedComponents": 1,
     "watertight": true,
     "oriented": true,
-    "signedVolume": 1.10363
+    "signedVolume": 1.11017
   }
 }
