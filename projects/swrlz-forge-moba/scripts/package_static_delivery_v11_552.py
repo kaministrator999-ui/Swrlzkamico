@@ -89,11 +89,14 @@ def main():
     # receipt separately inspectable in SOURCE.json.
     from delivery_account_startup_repair_v11_553 import apply as account_repair
     repaired_module, account_receipt = account_repair(source_module)
-    module = compact_module(repaired_module)
+    from delivery_uv_first_starter_v11_554 import apply as uv_first_starter
+    starter_module, starter_receipt = uv_first_starter(repaired_module)
+    module = compact_module(starter_module)
     (root/"index.html").write_bytes(served)
     (root/"modeler.html").write_bytes(served)
     (root/MODULE).write_bytes(module)
     receipt["accountStartupDeliveryRepair"] = account_receipt
+    receipt["uvFirstHumanoidDelivery"] = starter_receipt
     receipt["staticDelivery"] = {
         "mode": "external-es-module",
         "verifiedSourceSha256": receipt["finalSha256"],
