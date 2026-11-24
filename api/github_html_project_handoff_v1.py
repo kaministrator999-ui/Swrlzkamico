@@ -61,6 +61,13 @@ def intent(prompt):
             "requestedSlug": named.group(1) if named else ""}
 
 
+def is_saved_review_request(prompt):
+    """Explicit owner request to review the latest stored artifact in this thread."""
+    return bool(isinstance(prompt, str) and re.fullmatch(
+        r"\\s*@github\\s+review\\s+saved\\s+html\\s+project\\s*[.!]?\\s*",
+        prompt, re.I))
+
+
 def _source_hash(files):
     normalized = [
         {"path": str(f.get("path") or ""),
