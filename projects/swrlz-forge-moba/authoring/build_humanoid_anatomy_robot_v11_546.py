@@ -251,6 +251,75 @@ def anatomical_silhouette(pos,uv,name,strength=1.):
         q[:,1]=1-t
     return q
 
+def anatomical_limb_projection(pos,faces,name):
+    """Shape-aware front/back chart with real 3D limbs and distal anatomy.
+
+    Maps a limb in its natural elevation rather than treating its total mesh as
+    a cylinder: fingers remain individually separated in the XY projection;
+    feet project forward from ankle in YZ, retaining the actual toe direction.
+    Front and rear surfaces unfold on opposite sides of a geometric side seam.
+    All mapping coordinates are derived from mesh vertex positions.
+    """
+    used,inverse=np.unique(faces,return_inverse=True)
+    coords=np.ascontiguousarray(pos[used],dtype=np.float32)
+    idx=np.ascontiguousarray(inverse.reshape(-1,3),dtype=np.uint32)
+    arm=name in ('leftArm','rightArm')
+    side=-1. if name in ('leftArm','leftLeg') else 1.
+    xyz=coords.astype(np.float64)
+    if arm:
+        # Shoulder-top to fingertips-down, with visible individual fingers.
+        length=side*xyz[:,0]
+        transverse=xyz[:,1]-3.67
+        depth=xyz[:,2]
+        # Front/back fold around the lateral anatomical contour.
+        # Seam near the side keeps each limb in one attached piece.
+        center=np.zeros_like(length)
+        longitudinal=length
+        lateral=transverse
+    else:
+        longitudinal=2.35-xyz[:,1]
+        lateral=xyz[:,0]-(side*.30)
+        depth=xyz[:,2]
+        # As the mesh transitions from ankle to foot, rotate the working
+        # longitudinal axis toward actual toe (+Z), retaining toe projection.
+        foot=np.clip((.36-xyz[:,1])/.25,0,1)
+        foot=foot*foot*(3-2*foot)
+        longitudinal=longitudinal+foot*np.maximum(depth,0)*.95
+    # Separate front/back geometry by signed displacement without erasing the
+    # actual lateral silhouette. Seam neighborhood must remain geometrically
+    # continuous; each face is assigned to the front or back by its 3D normal.
+    points=coords[idx].astype(np.float64)
+    norm=np.cross(points[:,1]-points[:,0],points[:,2]-points[:,0])
+    norm/=np.maximum(np.linalg.norm(norm,axis=1)[:,None],1e-12)
+    # Two facing sides are unfolded as a shared continuous angular surface.
+    # Use an angle determined by physical cross-section, never a rectangular U.
+    angular=np.arctan2(lateral,depth)
+    angles=angular[idx]
+    mean=np.arctan2(np.sin(angles).sum(axis=1),np.cos(angles).sum(axis=1))
+    turns=np.rint((mean[:,None]-angles)/(2*np.pi)).astype(np.int16)
+    lookup={};outpos=[];outuv=[];outfaces=[]
+    for tri,wrap in zip(idx,turns):
+        out=[]
+        for i,turn in zip(tri,wrap):
+            k=(int(i),int(turn))
+            if k not in lookup:
+                lookup[k]=len(outpos)
+                outpos.append(coords[int(i)])
+                # Physical arc displacement from centerline, and true axial
+                # anatomical distance; no axis-wise normalization.
+                ax=float(longitudinal[int(i)])
+                rad=float(np.hypot(lateral[int(i)],depth[int(i)]))
+                u=(float(angular[int(i)])+2*np.pi*int(turn))/np.pi
+                outuv.append((u*max(rad,.025),-ax))
+            out.append(lookup[k])
+        outfaces.append(out)
+    outpos=np.asarray(outpos,np.float32)
+    outuv=np.asarray(outuv,np.float64)
+    outfaces=np.asarray(outfaces,np.uint32)
+    if shell_counts(outuv,outfaces,[name]*len(outfaces)).get(name)!=1:
+        raise ValueError('Projection split the original '+name+' topology')
+    return outpos,outfaces,outuv,1
+
 def make_atlas(positions,triangles,mode):
     labels=zone_ids(positions,triangles,mode)
     parts=[];faces_out=[];uv_out=[];group_names=[];charts=0;count=0
@@ -266,7 +335,9 @@ def make_atlas(positions,triangles,mode):
                      'leftLeg':(0.,0.,0.,0.),
                      'rightLeg':(0.,0.,0.,0.)}
         params=calibration.get(name,(0.,0.,0.,0.))
-        p,f,uv,c=seam_aware_anatomical_group(positions,original,name,*params)
+        p,f,uv,c=(anatomical_limb_projection(positions,original,name)
+                  if name in ('leftArm','rightArm','leftLeg','rightLeg')
+                  else seam_aware_anatomical_group(positions,original,name,*params))
         # Select the strongest usable anatomical taper using actual atlas
         # texel conflicts, rather than applying a global arbitrary strength.
         candidates=[]
