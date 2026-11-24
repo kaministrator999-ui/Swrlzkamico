@@ -23,6 +23,7 @@ def main():
     run(sys.executable,str(ROOT/'scripts/check_clean_topology_humanoid_v11_554.py'))
     run('node',str(ROOT/'tests/clean_topology_starter_v11_554.cjs'))
     run('node',str(ROOT/'tests/uv_atlas_core_v11_555.mjs'))
+    run('node',str(ROOT/'tests/uv_lscm_core_v11_555.mjs'))
     run('node','--check',str(ROOT/'runtime/uv_auto_unwrap_v11_555.js'))
     run(sys.executable,str(ROOT/'build_space.py'),'--output',str(args.output))
     page=(args.output/'index.html').read_bytes()
