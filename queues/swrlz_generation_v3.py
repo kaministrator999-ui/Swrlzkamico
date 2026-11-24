@@ -244,7 +244,8 @@ async def generate_swrlz_response(payload) -> None:
         # BEFORE the generic coding model's failure-evidence fast path.
         from api.durable_project_repair_v1 import route_events
         selected_events = route_events(
-            user_id=user_id, thread_id=thread_id, prompt=prompt_text,
+            user_id=user_id, owner_google_id=str(data.get("ownerGoogleId") or ""),
+            thread_id=thread_id, prompt=prompt_text,
             engine=engine, cancelled=cancelled, base_payload=engine_payload)
         if selected_events is not None:
             _camera("existing-project-repair-route-selected", request_id=request_id)
