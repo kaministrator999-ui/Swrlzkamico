@@ -128,19 +128,13 @@ async function se555AutoUnwrap(){
   const seams=se555FaceGroups(mesh.positions,mesh.indices,marked);
   if(marked.size&&seams.groups===1)
    throw Error('Seams do not divide the surface into charts; complete a seam loop or mark a boundary');
-  let result,failures=[];
-  for(const maxCost of [10,16,24]){
-   try{
-    result=await core.unwrapMesh(createXAtlas,mesh,{
-     weldSeams:true,faceMaterialData:marked.size?seams.materials:null,
-     resolution:1024,padding:8,maxCost,
-     maxVertices:t.part.id==='clean-topology-humanoid-base'?9000:120000,
-     maxCharts:96
-    });
-    break;
-   }catch(error){failures.push(String(error?.message||error));}
-  }
-  if(!result)throw Error('Unable to meet paintable chart/vertex limits: '+failures.join('; '));
+  const result=await core.unwrapMesh(createXAtlas,mesh,{
+    method:'lscm',
+    faceMaterialData:marked.size?seams.materials:null,
+    resolution:1024,padding:8,
+    maxVertices:t.part.id==='clean-topology-humanoid-base'?9000:120000,
+    maxCharts:70
+  });
   if(result.indices.length!==mesh.indices.length||result.charts<1)
    throw Error('UV solver returned an incomplete atlas');
   const checker=se555Checker();
@@ -179,7 +173,7 @@ async function se555AutoUnwrap(){
   }
   se551Selection=null;se552ClearRegionMesh();
   signalEdited();se356UVPreviewSchedule();
-  status('Real xatlas unwrap: '+result.charts+' charts, '+result.positions.length/3+
+  status('Real LSCM + xatlas packing: '+result.charts+' charts, '+result.positions.length/3+
    ' UV vertices. Density P95/P5 '+result.distortion.p95P05.toFixed(2)+
    '. Diagnostic checker applied; undo restores the previous UV and texture.');
   const count=se552Portal?.host?.querySelector('[data-se555-summary]');
@@ -200,7 +194,7 @@ function se555InstallControls(){
   b.style.cssText='padding:8px;background:#254658;color:white;border:1px solid #537e91;border-radius:6px';
   controls.append(b);return b;
  };
- const unwrap=make('Auto unwrap · xatlas','se555Auto');
+ const unwrap=make('UV unwrap · LSCM + xatlas','se555Auto');
  const mark=make('Mark UV seam','se555Seam');
  const clear=make('Clear seams','se555Clear');
  const heat=make('UV distortion','se555Distort');
