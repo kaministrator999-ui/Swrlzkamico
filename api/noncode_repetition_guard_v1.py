@@ -114,13 +114,13 @@ class DecisionStallWatch:
         completed = self.buffer.rsplit("\n", 1)[0] if "\n" in self.buffer else ""
         prose = _CODE_FENCE.sub("", completed)
         headings = list(_PLAN_STEP.finditer(prose))
-        if len(headings) < 5:
+        if len(headings) < 4:
             return None
         sections = []
         for i, match in enumerate(headings):
             end = headings[i + 1].start() if i + 1 < len(headings) else len(prose)
             body = prose[match.end():end]
-            if len(body.strip()) < 35:
+            if len(body.strip()) < 18:
                 continue
             concepts = frozenset(
                 name for expression, name in _CANONICAL if expression.search(body))
