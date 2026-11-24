@@ -24,13 +24,20 @@ const material=Array.from({length:source.indices.length/3},(_,fi)=>{
  return regions.indexOf(type);
 });
 let accepted=null,errors=[];
-for(const maxCost of [8,12,18,28]){
- try{
-  const r=await unwrapMesh(createXAtlas,source,{weldSeams:true,faceMaterialData:material,
-   maxCost,resolution:2048,padding:8,maxVertices:9000,maxCharts:92});
-  if(r.distortion.p95P05>45)throw Error('Excess xatlas texel density ratio '+r.distortion.p95P05);
-  accepted={...r,maxCost};break;
- }catch(e){errors.push(String(e?.message||e));console.log('SE555_UNWRAP_RETRY',maxCost,errors.at(-1));}
+for(const seamMode of ['geometry','anatomical']){
+ for(const maxCost of [8,12,18,28,48]){
+  try{
+   const r=await unwrapMesh(createXAtlas,source,{
+    weldSeams:true,
+    faceMaterialData:seamMode==='anatomical'?material:null,
+    maxCost,resolution:2048,padding:8,maxVertices:9000,maxCharts:92
+   });
+   if(r.distortion.p95P05>45)throw Error('Excess xatlas texel density ratio '+r.distortion.p95P05);
+   accepted={...r,maxCost,seamMode};break;
+  }catch(e){errors.push(seamMode+' cost '+maxCost+': '+String(e?.message||e));
+    console.log('SE555_UNWRAP_RETRY',seamMode,maxCost,errors.at(-1));}
+ }
+ if(accepted)break;
 }
 if(!accepted)throw Error('No qualified anatomy UV unwrap: '+JSON.stringify(errors));
 part.topologyMesh={...source,positions:accepted.positions,
@@ -47,6 +54,7 @@ report.uvChartCount=accepted.charts;
 report.uvTexelDensity=accepted.distortion;
 report.uvAtlasSize=[accepted.width,accepted.height];
 report.uvMaxCost=accepted.maxCost;
+report.uvSeamMode=accepted.seamMode;
 report.uvWeldedInputVertices=accepted.weldedInputVertices;
 report.originalAnatomicalRegions=regions;
 delete report.uvBoxes;delete report.uvCharts;delete report.guideAnatomyLabels;
