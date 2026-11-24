@@ -31,8 +31,10 @@ def run():
     assert len(report['quads'])==6
     assert sum(report['quads'].values())*2==len(ix)//3
     assert report['revision']=='xatlas-anatomical-conformal-v4'
-    assert report['uvAlgorithm']=='seamed-LSCM+xatlas-wasm@0.1.3'
-    assert report['uvMethod']=='LSCM+xatlas-packing'
+    assert report['uvAlgorithm']=='seamed-LSCM+verified-single-atlas-packer'
+    assert report['uvMethod']=='LSCM+verified-chart-packing'
+    assert report['uvPacking']=='deterministic-shelf'
+    assert report['uvPaddingPixels']>=8
     assert report['uvLscmIterations']>=0
     assert report['uvPaintMode']=='xatlas-geometry-mask-true-checker'
     assert report['guideAnatomyLabels'] is True
