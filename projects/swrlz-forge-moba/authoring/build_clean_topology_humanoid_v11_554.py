@@ -287,6 +287,73 @@ def assemble():
     hand_and_arm(1,'rightArm',shoulders['rightArm'])
     leg(-1,'leftLeg',hips['leftLeg'])
     leg(1,'rightLeg',hips['rightLeg'])
+    return anatomy_uv_charts()
+
+def anatomy_uv_charts():
+    """Split UV coordinates, never 3D faces, into paintable anatomical views.
+
+    Six region boxes contain separate front/back torso, pelvis, facial,
+    back-of-head and crown subcharts. UV seams duplicate vertices at the
+    exact same 3D positions, so the mesh remains physically watertight.
+    """
+    global P,UV,Q
+    oldp=P[:];olduv=UV[:];oldq=Q[:]
+    newp=[];newuv=[];newq=[];cache={}
+    counts=Counter()
+    def original(n):
+        return oldp[3*n:3*n+3],olduv[2*n:2*n+2]
+    def normalized(name,n):
+        pos,uv=original(n)
+        a,b,c,d=BOXES[name]
+        return pos,((uv[0]-a)/(c-a),(uv[1]-b)/(d-b))
+    def select(name,quad):
+        if name not in ('torso','head'):return name
+        positions=[original(i)[0] for i in quad]
+        if name=='torso' and all(normalized(name,i)[1][1]<.081 for i in quad):
+            return 'pelvis'
+        if name=='head' and max(p[1] for p in positions)>4.761:
+            return 'crown'
+        avg=sum(normalized(name,i)[1][0] for i in quad)/4
+        return name+('Front' if .25<avg<.75 else 'Back')
+    def remap(name,chart,i):
+        pos,(u,v)=normalized(name,i)
+        if chart in ('torsoFront','torsoBack','headFront','headBack'):
+            if chart.endswith('Front'):
+                col=(u-.25)/.5
+            else:
+                col=(u-.75)/.5 if u>=.75-1.e-6 else (u+.25)/.5
+            col=max(0.,min(1.,col))
+            if name=='head':
+                left,right=(.025,.485) if chart=='headFront' else (.515,.975)
+                row=.045+.86*v
+            else:
+                left,right=(.015,.485) if chart=='torsoFront' else (.515,.985)
+                row=.165+.815*(v-.095)/.355
+            return uvloc(name,left+(right-left)*col,row)
+        if chart=='pelvis':
+            return uvloc(name,.02+.96*u,.015+.115*v/.08)
+        if chart=='crown':
+            x,y,z=pos
+            return uvloc(name,.37+.26*x/.255,.932+.055*z/.23)
+        return original(i)[1]
+    for name,quad in oldq:
+        chart=select(name,quad)
+        counts[chart]+=1
+        indices=[]
+        for i in quad:
+            pos,_=original(i)
+            new=remap(name,chart,i)
+            key=(i,round(new[0],7),round(new[1],7))
+            if key not in cache:
+                cache[key]=len(newp)//3
+                newp.extend(pos);newuv.extend(new)
+            indices.append(cache[key])
+        newq.append((name,tuple(indices)))
+    P[:]=newp;UV[:]=newuv;Q[:]=newq
+    required={'headFront','headBack','crown','torsoFront','torsoBack','pelvis'}
+    if not required.issubset(counts):
+        raise ValueError('Missing UV anatomy charts '+str(required-set(counts)))
+    return dict(counts)
 
 def audit_and_orient():
     """UV seams can duplicate vertices, but the 3D surface has no open edges."""
@@ -374,7 +441,7 @@ def guide():
     GUIDE.parent.mkdir(parents=True,exist_ok=True)
     im.save(GUIDE,optimize=True)
 def main():
-    assemble()
+    charts=assemble()
     assert len(P)//3<=9000 and len(F)==0
     assert len(Q)*2<=16000
     assert len(UV)==len(P)//3*2 and all(0<=x<=1 for x in UV)
@@ -407,7 +474,7 @@ def main():
     report={'version':'v11.554','revision':'anatomical-pelvis-uv-v3',
       'vertices':len(P)//3,'triangles':len(F)//3,
       'quads':dict(QUADS),'components':1,
-      'uvBoxes':BOXES,'textureSize':1024,'guideSize':2048,
+      'uvBoxes':BOXES,'uvCharts':charts,'textureSize':1024,'guideSize':2048,
       'originalRobotPreserved':True,'quadFirst':True,
       'topologyAudit':audit}
     REPORT.parent.mkdir(parents=True,exist_ok=True)
