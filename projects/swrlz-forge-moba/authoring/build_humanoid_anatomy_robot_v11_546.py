@@ -213,10 +213,18 @@ def make_atlas(positions,triangles,mode):
     for name in (REGIONS if mode=='seven' else ['head','torso','leftArm','rightArm','leftLeg','rightLeg']):
         original=triangles[labels==name]
         if not len(original):raise ValueError('Missing anatomy '+name)
-        # All six regions use explicit anatomical U/V axes and back-facing
-        # seam identities. Automatic xatlas rotations and fragmented limbs are
-        # disallowed; quality gates must reject bad continuous projections.
-        p,f,uv,c=seam_aware_anatomical_group(positions,original,name)
+        # A coherent single-chart parameterization can relax the articulated
+        # fingers/toes without xatlas's 31/32/12/14 separate chart fragments.
+        # The deterministic cylindrical projection is only an emergency
+        # fallback. It must still pass the strict collision release gate.
+        if name in ('leftArm','rightArm','leftLeg','rightLeg'):
+            try:
+                p,f,uv,c=single_chart_group(positions,original)
+            except (ValueError,AssertionError,RuntimeError) as exc:
+                print('SE546_SINGLE_CHART_FALLBACK',name,str(exc),flush=True)
+                p,f,uv,c=seam_aware_anatomical_group(positions,original,name)
+        else:
+            p,f,uv,c=seam_aware_anatomical_group(positions,original,name)
         if name=='head':
             # U is circumference, V is crown-to-chin. A horizontal 2:1
             # unrolled head gives a centered front visor at U ~= 0.5.
