@@ -1,0 +1,50 @@
+name: §C tagged research evidence and source results preflight
+on:
+  push:
+    branches: [fix/chat-tagged-research-evidence-v1]
+    paths:
+      - "api/research_evidence_envelope_v1.py"
+      - "scripts/hf_chat_tagged_research_evidence_v1.py"
+      - "tests/test_hf_tagged_research_evidence_v1.py"
+      - ".github/workflows/hf-chat-tagged-evidence-preflight.yml"
+permissions: {contents: read}
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.11"}
+      - name: Install Hugging Face client
+        run: python -m pip install --quiet "huggingface_hub>=0.34,<2"
+      - name: Verify bounded public evidence tags and safe research events
+        run: |
+          set -euo pipefail
+          python -m unittest discover -s tests -p 'test_hf_tagged_research_evidence_v1.py' -v
+          python -m py_compile api/research_evidence_envelope_v1.py scripts/hf_chat_tagged_research_evidence_v1.py
+      - name: Prepare exact live HF source candidate without publishing
+        run: |
+          set -euo pipefail
+          python -u scripts/hf_chat_tagged_research_evidence_v1.py --out swrlz-tagged-research-source-backup
+      - name: Verify candidate source and bounded URLs
+        run: |
+          python - <<'PY'
+          import ast,json
+          from pathlib import Path
+          base=Path("swrlz-tagged-research-source-backup/candidate")
+          engine=(base/"lfm2_700m_engine.py").read_text()
+          ast.parse(engine)
+          assert "swrlz-tagged-evidence-source-receipts-v1" in engine
+          assert "swrlz-verified-public-enumerations-v2" in engine
+          assert "RESEARCH EVIDENCE PACKET" in engine
+          receipt=json.loads(Path("swrlz-tagged-research-source-backup/receipt.json").read_text())
+          print("SWRLZ_TAGGED_EVIDENCE_SOURCE_PREPARED",receipt["before"],receipt["jsBlocksChecked"])
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: swrlz-tagged-research-staged-source-backup
+          path: swrlz-tagged-research-source-backup/
+          retention-days: 7
+          if-no-files-found: warn
