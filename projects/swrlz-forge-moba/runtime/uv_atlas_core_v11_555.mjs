@@ -1,3 +1,4 @@
+import {flattenSeamedMesh} from './uv_lscm_core_v11_555.mjs';
 /* §E v11.555 — reusable geometry-derived UV atlas core.
    xatlas (MIT): real chart segmentation, conformal parameterization and packing.
    Usable from Node authoring and the browser's selected topology mesh.
@@ -66,7 +67,11 @@ export async function unwrapMesh(createXAtlas,source,options={}){
   positions:Array.from(source.positions),
   indices:Array.from(source.indices)
  };
- const input=options.weldSeams?weldPositions(normalized.positions,normalized.indices):
+ const isLSCM=options.method==='lscm';
+ const input=isLSCM?flattenSeamedMesh({
+  ...normalized,uvs:Array.from(source.uvs||[])
+ },options.faceMaterialData):options.weldSeams?
+  weldPositions(normalized.positions,normalized.indices):
   {...normalized,welded:0};
  const materials=options.faceMaterialData
   ?new Uint32Array(Array.from(options.faceMaterialData)):null;
@@ -74,21 +79,28 @@ export async function unwrapMesh(createXAtlas,source,options={}){
  const xatlas=await createXAtlas();
  const atlas=xatlas.createAtlas();
  try{
-  const declaration={positions:new Float32Array(input.positions),
-                     indices:new Uint32Array(input.indices)};
-  if(materials)declaration.faceMaterialData=materials;
-  const error=atlas.addMesh(declaration);
+  const declaration={indices:new Uint32Array(input.indices)};
+  if(isLSCM){
+   declaration.uvs=new Float32Array(input.uvs);
+   declaration.faceMaterialData=input.faceMaterialData;
+  }else{
+   declaration.positions=new Float32Array(input.positions);
+   if(materials)declaration.faceMaterialData=materials;
+  }
+  const error=isLSCM?atlas.addUvMesh(declaration):atlas.addMesh(declaration);
   if(error!==xatlas.AddMeshError.Success)
-   throw Error('xatlas addMesh: '+xatlas.addMeshErrorString(error));
-  atlas.generate({
-    maxCost:options.maxCost||10,maxIterations:2,
-    straightnessWeight:2,normalSeamWeight:4,
-    textureSeamWeight:2,fixWinding:true
-  },{
+   throw Error('xatlas '+(isLSCM?'addUvMesh':'addMesh')+': '+xatlas.addMeshErrorString(error));
+  const pack={
     resolution:options.resolution||1024,
     padding:Math.max(4,Math.min(24,options.padding||8)),
     rotateCharts:true,rotateChartsToAxis:true
-  });
+  };
+  if(isLSCM)atlas.packCharts(pack);
+  else atlas.generate({
+    maxCost:options.maxCost||10,maxIterations:2,
+    straightnessWeight:2,normalSeamWeight:4,
+    textureSeamWeight:2,fixWinding:true
+  },pack);
   if(atlas.atlasCount!==1||!atlas.width||!atlas.height)
    throw Error('UV solver needs more than one atlas; increase resolution or simplify seams');
   const mesh=atlas.getMesh(0);
@@ -106,7 +118,9 @@ export async function unwrapMesh(createXAtlas,source,options={}){
    throw Error('UV atlas contains invalid coordinates');
   const result={positions,indices,uvs:uvs.map(v=>Math.min(1,Math.max(0,v))),
    charts:mesh.chartCount,width:atlas.width,height:atlas.height,
-   weldedInputVertices:input.welded};
+   weldedInputVertices:input.welded||0,
+   method:isLSCM?'LSCM+xatlas-packing':'xatlas-automatic',
+   lscmIterations:isLSCM?input.totalIterations:0};
   validateMesh(result.positions,result.indices);
   assertSameTriangles(normalized,result);
   result.distortion=distortionStats(result.positions,result.uvs,result.indices);
