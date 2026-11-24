@@ -128,12 +128,19 @@ async function se555AutoUnwrap(){
   const seams=se555FaceGroups(mesh.positions,mesh.indices,marked);
   if(marked.size&&seams.groups===1)
    throw Error('Seams do not divide the surface into charts; complete a seam loop or mark a boundary');
-  const result=await core.unwrapMesh(createXAtlas,mesh,{
-   weldSeams:true,faceMaterialData:marked.size?seams.materials:null,
-   resolution:1024,padding:8,maxCost:10,
-   maxVertices:t.part.id==='clean-topology-humanoid-base'?9000:120000,
-   maxCharts:100
-  });
+  let result,failures=[];
+  for(const maxCost of [10,16,24]){
+   try{
+    result=await core.unwrapMesh(createXAtlas,mesh,{
+     weldSeams:true,faceMaterialData:marked.size?seams.materials:null,
+     resolution:1024,padding:8,maxCost,
+     maxVertices:t.part.id==='clean-topology-humanoid-base'?9000:120000,
+     maxCharts:96
+    });
+    break;
+   }catch(error){failures.push(String(error?.message||error));}
+  }
+  if(!result)throw Error('Unable to meet paintable chart/vertex limits: '+failures.join('; '));
   if(result.indices.length!==mesh.indices.length||result.charts<1)
    throw Error('UV solver returned an incomplete atlas');
   const checker=se555Checker();
@@ -145,6 +152,21 @@ async function se555AutoUnwrap(){
   g.setAttribute('position',new THREE.Float32BufferAttribute(result.positions,3));
   g.setAttribute('uv',new THREE.Float32BufferAttribute(result.uvs,2));
   g.setIndex(result.indices);g.computeVertexNormals();
+  // Smooth normals from physical coordinates, not from UV seam-split
+  // indices, so chart boundaries cannot introduce visible shading ridges.
+  const normals=g.getAttribute('normal'),sums=new Map();
+  for(let i=0;i<result.positions.length;i+=3){
+   const key=result.positions.slice(i,i+3).map(v=>v.toFixed(6)).join(',');
+   const n=i/3,old=sums.get(key)||[0,0,0,0];
+   old[0]+=normals.getX(n);old[1]+=normals.getY(n);
+   old[2]+=normals.getZ(n);old[3]++;sums.set(key,old);
+  }
+  for(let i=0;i<result.positions.length;i+=3){
+   const key=result.positions.slice(i,i+3).map(v=>v.toFixed(6)).join(',');
+   const n=i/3,v=sums.get(key),d=Math.hypot(v[0],v[1],v[2])||1;
+   normals.setXYZ(n,v[0]/d,v[1]/d,v[2]/d);
+  }
+  normals.needsUpdate=true;
   const previous=t.mesh.geometry;
   t.part.topologyMesh=newmesh;t.part.uvPaintPNG=checker.data;
   t.mesh.geometry=g;previous.dispose();
