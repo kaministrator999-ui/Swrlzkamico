@@ -52,7 +52,15 @@ def patch_station(source):
     if MARK in source:
         raise RuntimeError("EXECUTION_ROUTER_ALREADY_PRESENT")
     if source.count(IMPORT_ANCHOR) != 1 or source.count(ROUTE_ANCHOR) != 1:
-        raise RuntimeError("LIVE_STATION_ROUTING_SOURCE_DRIFT")
+        candidates = [
+            str(i + 1) + ":" + line.strip()[:150]
+            for i,line in enumerate(source.splitlines())
+            if ("forge_context" in line or "event_source=dispatch(" in line
+                or "event_source=_coder_generate" in line)
+        ][:20]
+        raise RuntimeError("LIVE_STATION_ROUTING_SOURCE_DRIFT anchors=" +
+                           str((source.count(IMPORT_ANCHOR), source.count(ROUTE_ANCHOR))) +
+                           " context=" + repr(candidates))
     source = source.replace(IMPORT_ANCHOR,
          "import execution_continuity_v1 as _swrlz_execution_continuity\n" + IMPORT_ANCHOR, 1)
     source = source.replace(ROUTE_ANCHOR, ROUTE_REPLACEMENT, 1)
