@@ -85,22 +85,27 @@ def torso_geometry():
         for i in range(nx+1):
             u=(i-nx/2)/(nx/2)
             v=(j-nz/2)/(nz/2)
-            x,z=disk(u,v,.49,.27)
-            pelvis[i,j]=(x,2.25,z)
+            x,z=disk(u,v,.415,.237)
+            # Sculpt an anatomical saddle instead of a flat skirt-shaped cap:
+            # raised hip crests and a lowered groin between the thighs.
+            y=2.265+.115*abs(u)**1.5-.155*(1-abs(u))*(1-.27*v*v)
+            pelvis[i,j]=(x,y,z)
     outline=boundary(nx,nz)
     assert len(outline)==48
     start=[pelvis[p] for p in outline]
     angles=[math.atan2(z,x) for x,y,z in start]
     body=controls([
-      [2.25,.49,.27],[2.43,.424,.252],[2.65,.343,.215],
+      [2.265,.415,.237],[2.43,.428,.253],[2.65,.352,.224],
       [2.94,.287,.200],[3.21,.337,.226],[3.44,.432,.256],
       [3.62,.472,.246],[3.77,.403,.220],[3.91,.176,.151],
       [4.08,.127,.117],[4.16,.119,.110]
     ],3)
     tr=[]
     for k,(y,rx,rz) in enumerate(body):
+        blend=max(0.,1.-k/8.)**2
         points=(start if k==0 else
-                [(rx*math.cos(t),y,rz*math.sin(t)) for t in angles])
+                [(rx*math.cos(t),y+(start[n][1]-2.265)*blend,
+                  rz*math.sin(t)) for n,t in enumerate(angles)])
         tr.append(ring('torso',points,.095+.355*k/(len(body)-1)))
     # 12 x 6 quad sockets: exactly 36 surrounding edges, not intersecting
     # cylindrical image seams. Shoulders are true extrusions from the body.
@@ -246,8 +251,9 @@ def leg(side,key,opening):
     theta=[math.atan2(p[2]-center[2],p[0]-center[0])
            for p in opening]
     line=controls([
-      [side*.284,2.18,0,.181,.188],
-      [side*.298,2.05,0,.214,.215],
+      [side*.284,2.235,0,.177,.180],
+      [side*.291,2.15,0,.205,.202],
+      [side*.298,2.05,0,.218,.215],
       [side*.316,1.84,0,.225,.218],
       [side*.325,1.62,0,.177,.183],
       [side*.325,1.42,0,.126,.132],
@@ -384,8 +390,9 @@ def main():
     atelier['reference']=(
       'UV-first sculptable T-pose humanoid with one welded watertight quad '
       'surface. Procedural shoulders, neck, crotch, fingers, thumb, crown '
-      'and toes are topologically connected. The original 3D surface stays '
-      'connected while intentional UV seams use six paintable regions. '
+      'and toes are topologically connected. Sculpted groin, waist and hips '
+      'connect to both upper thighs. Separate front/back torso, face/scalp '
+      'and pelvis UV subcharts remain within six anatomical regions. '
       'Regular checker skin diagnoses stretching. Unrigged test starter.')
     part=atelier['parts'][0]
     part.update(id='clean-topology-humanoid-base',
@@ -397,7 +404,7 @@ def main():
     scene['version']=11.554
     scene['engine']='§wyrl§ Engine · Maker v11.552 / UV-First Starter revision'
     OUTPUT.write_text(json.dumps(scene,separators=(',',':'),ensure_ascii=False),'utf8')
-    report={'version':'v11.554','revision':'welded-quad-loop-v2',
+    report={'version':'v11.554','revision':'anatomical-pelvis-uv-v3',
       'vertices':len(P)//3,'triangles':len(F)//3,
       'quads':dict(QUADS),'components':1,
       'uvBoxes':BOXES,'textureSize':1024,'guideSize':2048,
