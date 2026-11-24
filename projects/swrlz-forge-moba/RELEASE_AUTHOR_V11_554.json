@@ -10,7 +10,8 @@
     "automatically generated 2048 geometry-based UV atlas",
     "independent manifold and distortion tests",
     "label-free paint layer and anatomical UV guide",
-    "original completed robot untouched"
+    "original completed robot untouched",
+    "reject xatlas chart explosion; attempt geometry-only chart growth before forced anatomical boundaries"
   ],
-  "request": "2026-11-24-real-xatlas-wasm-model-and-editor-v4-initial"
+  "request": "2026-11-24-real-xatlas-geometry-first-chart-control-v4b"
 }
