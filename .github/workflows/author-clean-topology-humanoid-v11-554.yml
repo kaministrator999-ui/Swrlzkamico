@@ -41,6 +41,8 @@ jobs:
           node --check projects/swrlz-forge-moba/runtime/clean_topology_humanoid_v11_554.js
           node --check projects/swrlz-forge-moba/runtime/uv_auto_unwrap_v11_555.js
           node --check projects/swrlz-forge-moba/runtime/uv_atlas_core_v11_555.mjs
+          node projects/swrlz-forge-moba/tests/uv_lscm_core_v11_555.mjs
+          node projects/swrlz-forge-moba/tests/uv_atlas_core_v11_555.mjs
       - name: Commit the verified experimental starter files
         run: |
           git config user.name "github-actions[bot]"
