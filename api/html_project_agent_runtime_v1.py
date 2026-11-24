@@ -17,14 +17,12 @@ try:
         verify_source, MAX_ROUNDS
     )
     import html_project_repair_v1 as approval
-    import github_html_publish_action_v1 as publishing
 except ImportError:  # repository-unit-test layout
     from api.html_project_agent_v1 import (
         prompt_messages, apply_proposal, inspect_static, ProposalError,
         verify_source, MAX_ROUNDS
     )
     from api import html_project_repair_v1 as approval
-    from api import github_html_publish_action_v1 as publishing
 
 MAX_GENERATED_CHARS = 52_000
 TEXT_EXTENSIONS = frozenset((".html", ".htm", ".js", ".mjs",
@@ -33,6 +31,10 @@ TEXT_EXTENSIONS = frozenset((".html", ".htm", ".js", ".mjs",
 
 def _source_files(owner, project):
     """Read manifest-pinned files under existing owner's Google/GitHub OAuth."""
+    try:
+        import github_html_publish_action_v1 as publishing
+    except ImportError:
+        from api import github_html_publish_action_v1 as publishing
     auth = publishing._authorized(owner)
     sha = publishing._head(auth)
     manifest = publishing._manifest(auth, sha, project["project"])
@@ -146,6 +148,10 @@ def run(payload, coder_generate):
     yield {"type": "STATUS", "phase": "REPAIR_READING_SOURCE",
            "reason": "Reading immutable owner GitHub project files."}
     try:
+        try:
+            import github_html_publish_action_v1 as publishing
+        except ImportError:
+            from api import github_html_publish_action_v1 as publishing
         sha, files = _source_files(owner, project)
         source_hashes = verify_source(project["project"], files)
         task = str(payload.get("receivedText") or payload.get("prompt") or "")
