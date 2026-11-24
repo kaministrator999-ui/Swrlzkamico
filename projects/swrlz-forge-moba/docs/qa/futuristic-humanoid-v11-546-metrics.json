@@ -13,11 +13,11 @@
     "leftLeg": 2305,
     "rightLeg": 2282
   },
-  "paintBytes": 183043,
+  "paintBytes": 186101,
   "guideSize": 4096,
   "legacyCandidatesRejected": [],
-  "uvArea": 0.4535,
-  "p95P5Density": 20.86,
+  "uvArea": 0.4465,
+  "p95P5Density": 20.08,
   "uvShells": {
     "head": 1,
     "torso": 1,
@@ -26,24 +26,24 @@
     "leftLeg": 1,
     "rightLeg": 1
   },
-  "coveredPct": 44.72,
-  "overlaps": 5655,
+  "coveredPct": 44.04,
+  "overlaps": 5473,
   "regionTexels": {
-    "head": 15085,
-    "arm": 129280,
-    "torso": 205394,
-    "leg": 119130
+    "head": 21499,
+    "arm": 121405,
+    "torso": 199795,
+    "leg": 119129
   },
   "samples": 512,
-  "sharedEdgeSamples": 572,
-  "conflictingSamples": 787,
+  "sharedEdgeSamples": 573,
+  "conflictingSamples": 750,
   "conflictsByRegion": {
-    "torso": 126,
+    "torso": 117,
     "leftArm": 185,
-    "rightArm": 203,
+    "rightArm": 175,
     "leftLeg": 137,
     "rightLeg": 136
   },
   "maxOverlapWorldDistance": 0.4894,
-  "conflictPct": 0.6716
+  "conflictPct": 0.6505
 }
