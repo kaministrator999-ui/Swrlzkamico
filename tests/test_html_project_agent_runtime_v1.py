@@ -58,6 +58,43 @@ class RuntimeTests(unittest.TestCase):
         stage.assert_not_called()
         self.assertEqual(events[-1]["phase"],"PARTIAL")
 
+    def test_manifest_source_files_use_tuple_extensions_and_verify_blobs(self):
+        """Real _source_files with mocked owner GitHub operations, not a stub."""
+        import base64
+        import hashlib
+        from types import ModuleType
+        from unittest.mock import Mock
+        import sys
+
+        body = SRC.encode("utf-8")
+        blob = hashlib.sha1(
+            b"blob " + str(len(body)).encode("ascii") + bytes([0]) + body
+        ).hexdigest()
+        sha = "b" * 40
+        auth = {"repo": PROJECT["repo"], "branch": "main", "token": "test"}
+        fake = ModuleType("github_html_publish_action_v1")
+        fake._authorized = Mock(return_value=auth)
+        fake._head = Mock(return_value=sha)
+        fake._manifest = Mock(return_value={
+            "repo": PROJECT["repo"], "sourceSha": sha,
+            "files": [
+                {"path": "index.html", "bytes": len(body)},
+                {"path": "art.png", "bytes": 9},
+            ],
+        })
+        fake._github = Mock(return_value={
+            "encoding": "base64", "content": base64.b64encode(body).decode("ascii"),
+            "sha": blob,
+        })
+        with patch.dict(sys.modules, {"github_html_publish_action_v1": fake}):
+            head, files = runtime._source_files("google:owner", PROJECT)
+        self.assertEqual(head, sha)
+        self.assertEqual(files, {"index.html": SRC})
+        self.assertEqual(fake._github.call_count, 1)
+        self.assertIn("contents/html-projects/interactive-3d-model-viewer/index.html",
+                      fake._github.call_args.args)
+        self.assertIsInstance(runtime.TEXT_EXTENSIONS, frozenset)
+
     def test_owner_context_required(self):
         p=self.payload()
         del p["htmlRepairOwner"]
