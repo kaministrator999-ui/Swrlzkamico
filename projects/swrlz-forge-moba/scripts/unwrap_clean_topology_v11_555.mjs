@@ -25,19 +25,16 @@ const material=Array.from({length:source.indices.length/3},(_,fi)=>{
 });
 let accepted=null,errors=[];
 for(const seamMode of ['anatomical','geometry']){
- for(const texelsPerUnit of [128,64,32,16]){
-  try{
-   const r=await unwrapMesh(createXAtlas,source,{
-    method:'lscm',faceMaterialData:seamMode==='anatomical'?material:null,
-    resolution:2048,padding:8,texelsPerUnit,maxVertices:9000,maxCharts:70
-   });
-   if(r.distortion.p95P05>45)
-    throw Error('Excess LSCM texel density ratio '+r.distortion.p95P05);
-   accepted={...r,seamMode,texelsPerUnit};break;
-  }catch(e){errors.push(seamMode+' texels '+texelsPerUnit+': '+String(e?.message||e));
-   console.log('SE555_LSCM_RETRY',seamMode,texelsPerUnit,errors.at(-1));}
- }
- if(accepted)break;
+ try{
+  const r=await unwrapMesh(createXAtlas,source,{
+   method:'lscm',faceMaterialData:seamMode==='anatomical'?material:null,
+   resolution:2048,padding:8,maxVertices:9000,maxCharts:70
+  });
+  if(r.distortion.p95P05>45)
+   throw Error('Excess LSCM texel density ratio '+r.distortion.p95P05);
+  accepted={...r,seamMode};break;
+ }catch(e){errors.push(seamMode+': '+String(e?.message||e));
+  console.log('SE555_LSCM_RETRY',seamMode,errors.at(-1));}
 }
 if(!accepted)throw Error('No qualified anatomy UV unwrap: '+JSON.stringify(errors));
 part.topologyMesh={...source,positions:accepted.positions,
@@ -48,7 +45,7 @@ scene.project.modelAtelier.reference='Connected quad-loop humanoid with genuine 
 report.revision='xatlas-anatomical-conformal-v4';
 report.vertices=accepted.positions.length/3;
 report.triangles=accepted.indices.length/3;
-report.uvAlgorithm='seamed-LSCM+xatlas-wasm@0.1.3';
+report.uvAlgorithm='seamed-LSCM+verified-single-atlas-packer';
 report.uvPaintMode='xatlas-actual-geometry-masked-checker';
 report.uvChartCount=accepted.charts;
 report.uvTexelDensity=accepted.distortion;
@@ -57,7 +54,9 @@ report.uvMaxCost=null;
 report.uvMethod=accepted.method;
 report.uvLscmIterations=accepted.lscmIterations;
 report.uvSeamMode=accepted.seamMode;
-report.uvTexelsPerUnit=accepted.texelsPerUnit;
+report.uvPacking=accepted.packing;
+report.uvChartScale=accepted.chartScale;
+report.uvPaddingPixels=accepted.paddingPixels;
 report.uvWeldedInputVertices=accepted.weldedInputVertices;
 report.originalAnatomicalRegions=regions;
 delete report.uvBoxes;delete report.uvCharts;delete report.guideAnatomyLabels;
