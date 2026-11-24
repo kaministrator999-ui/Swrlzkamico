@@ -4,8 +4,8 @@
   "version": "v11.546",
   "goal": "Rebuild humanoid UVs into anatomy-grouped charts; generate independent new robotic material from 3D surface; preserve geometry; provide 4096x4096 reference atlas and anatomy exports; preserve historical scenes and saved copies.",
   "release": "Do not publish until exact geometry/UV texture checks and source-seal tests pass.",
-  "run": 10,
-  "correction": "Try single-chart limb parameterization with strict 6-shell and collision gates; cylindrical fallback is rejected if overlapping",
-  "rebuild_requested": "2026-11-24-harmonic-single-chart-limbs-v10",
+  "run": 11,
+  "correction": "Quantify physically conflicting UV texel overlaps in six coherent wraps before release; keep strict existing gate during diagnostic",
+  "rebuild_requested": "2026-11-24-measure-true-surface-uv-conflicts-v11",
   "reason": "Keep exactly one connected chart per limb while relaxing highly articulated geometry; verify UV collision and centered visor against original 3D model"
 }
