@@ -308,9 +308,13 @@ def anatomical_limb_projection(pos,faces,name):
                 # Physical arc displacement from centerline, and true axial
                 # anatomical distance; no axis-wise normalization.
                 ax=float(longitudinal[int(i)])
-                rad=float(np.hypot(lateral[int(i)],depth[int(i)]))
+                # Integrate a consistent surface coordinate: using each
+                # vertex's independent radius folds triangles over neighbors.
+                # Keep the angular circumference globally monotone and retain
+                # real-world longitudinal offsets for distal anatomy.
+                radius=float(np.percentile(np.hypot(lateral,depth),75))
                 u=(float(angular[int(i)])+2*np.pi*int(turn))/np.pi
-                outuv.append((u*max(rad,.025),-ax))
+                outuv.append((u*max(radius,.025),-ax))
             out.append(lookup[k])
         outfaces.append(out)
     outpos=np.asarray(outpos,np.float32)
