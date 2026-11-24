@@ -18,7 +18,12 @@ loadCloud=async function(projectKey){
  if(cloudBusy)
   return se533AccountOpenFailure('Another account operation is in progress. Try Open again when it finishes.');
  const opened=await se528PriorLoadCloud.call(this,projectId);
- if(opened!==true)return false;
+ if(opened!==true){
+  const diagnostics=window.SWYRL_ENGINE_PROJECT_LOAD_493;
+  const detail=diagnostics?.getError?.()||status?.textContent||
+   'Native account project download was not confirmed.';
+  return se533AccountOpenFailure(detail);
+ }
  const receipt=cloudRefs.get(getProjectId());
  if(receipt?.id!==projectId||!Number.isSafeInteger(receipt.revision)||receipt.revision<1)
   return se533AccountOpenFailure('The editor did not confirm the requested account project revision.');
