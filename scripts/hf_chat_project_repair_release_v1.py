@@ -216,7 +216,7 @@ def health(expected_js_sha=None):
             raise RuntimeError("REPAIR_UI_LIVE_BYTES_DIFFER")
 
 
-def diagnose_live():
+def diagnose_live(source_html=None,source_js=None):
     import re
     url=BASE+"/chat/%C2%A7wyrlz?__repair_probe=1"
     with urllib.request.urlopen(url,timeout=25) as resp:
@@ -228,6 +228,16 @@ def diagnose_live():
             "htmlReviewRefs":re.findall(r"html-project-publish-review[^\"'<>\s]{0,110}",html)[:8],
             "containsApprovedReviewWidget": "github-html-publish-review" in html,
             "head":html[:160]
+        },flush=True)
+    if isinstance(source_html, str):
+        anchor="html-project-publish-review-v1.js"
+        a=source_html.find(anchor)
+        c=html.find(anchor)
+        print("HTML_ASSET_PROVENANCE",{
+            "sourceRef":source_html[max(0,a-70):a+110] if a>=0 else "NOT_FOUND",
+            "liveRef":html[max(0,c-70):c+110] if c>=0 else "NOT_FOUND",
+            "sourceLength":len(source_html),"liveLength":len(html),
+            "sourceEqualsLive":source_html==html
         },flush=True)
     try:
         with urllib.request.urlopen(BASE+"/chat/%C2%A7wyrlz/assets/html-project-publish-review-v1.js?__probe=1",timeout=25) as resp:
@@ -260,7 +270,11 @@ def main(mode):
     print("REPAIR_ROUTING_SOURCE_PREFLIGHT",rev,
           {p:digest(raw) for p,raw in new.items()},flush=True)
     if mode=="preflight":
-        diagnose_live()
+        runtime=api.get_space_runtime(SPACE)
+        print("SPACE_RUNTIME_PROVENANCE",{"stage":str(getattr(runtime,"stage",None)),
+             "hardware":str(getattr(runtime,"hardware",None)),
+             "requested":str(getattr(runtime,"requested_hardware",None))},flush=True)
+        diagnose_live(old[HTML].decode("utf-8"),old[UI].decode("utf-8"))
         return
     if mode!="publish" or os.environ.get("SWRLZ_HTML_REPAIR_APPROVED")!="1" or not token:
         raise PermissionError("SCOPED_RELEASE_NOT_AUTHORIZED")
