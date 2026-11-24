@@ -1,5 +1,5 @@
 {
   "release": "v11.552",
   "purpose": "Seal verified account startup restoration coordination and preserve v11.552 UV alignment",
-  "trigger": "2026-11-24-account-startup-double-load-recovery-v1"
+  "trigger": "2026-11-24-account-startup-double-load-recovery-v2-integrity-pin"
 }
