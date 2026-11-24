@@ -196,7 +196,7 @@ def selftest():
     print("EXISTING_HTML_REPAIR_ROUTING_SELFTEST_PASS", digest(helper.encode()), flush=True)
 
 
-def health():
+def health(expected_js_sha=None):
     req=urllib.request.Request(BASE+"/chat/%C2%A7wyrlz?__existing_repair=1",
          headers={"Cache-Control":"no-cache"})
     with urllib.request.urlopen(req,timeout=25) as resp:
@@ -208,9 +208,12 @@ def health():
     req=urllib.request.Request(BASE+"/chat/%C2%A7wyrlz/assets/"+UNEW,
          headers={"Cache-Control":"no-cache"})
     with urllib.request.urlopen(req,timeout=25) as resp:
-        text=resp.read(200_000).decode("utf-8", errors="replace")
+        raw=resp.read(200_000)
+        text=raw.decode("utf-8", errors="replace")
         if resp.status!=200 or "repairing=data.mode" not in text:
             raise RuntimeError("REPAIR_UI_NOT_LIVE")
+        if expected_js_sha and digest(raw)!=expected_js_sha:
+            raise RuntimeError("REPAIR_UI_LIVE_BYTES_DIFFER")
 
 
 def diagnose_live():
@@ -280,7 +283,7 @@ def main(mode):
                 raise RuntimeError("PUBLISHED_BYTES_MISMATCH_"+p)
         for i in range(30):
             try:
-                health()
+                health(digest(new[UI]))
                 print("REPAIR_ROUTING_LIVE_VERIFIED",committed,flush=True)
                 return
             except (OSError,TimeoutError,RuntimeError) as e:
