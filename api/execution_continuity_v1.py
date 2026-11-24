@@ -14,7 +14,7 @@ READ_ONLY = re.compile(
 NO_MUTATION = re.compile(
     r"\b(?:do\s+not|don't|without|no)\b"
     r".{0,110}\b(?:creat\w*|edit\w*|modif\w*|chang\w*|"
-    r"writ\w*|deploy\w*|publish\w*|repair\w*|mutat\w*)\b", re.I)
+    r"writ\w*|repair\w*|mutat\w*)\b", re.I)
 MAX_BYTES = 240 * 1024  # Existing source-checkpoint storage contract.
 
 
