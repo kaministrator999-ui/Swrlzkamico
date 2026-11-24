@@ -84,16 +84,24 @@ def main():
     if len(page) != receipt["finalBytes"] or digest(page) != receipt["finalSha256"]:
         raise ValueError("Do not transform a source whose original SHA receipt fails")
     served, source_module = split_html(page)
-    module = compact_module(source_module)
+    # Only the public JS delivery changes; the 526-patch source SHA above is
+    # still validated before any transformation. Keep the account-repair
+    # receipt separately inspectable in SOURCE.json.
+    from delivery_account_startup_repair_v11_553 import apply as account_repair
+    repaired_module, account_receipt = account_repair(source_module)
+    module = compact_module(repaired_module)
     (root/"index.html").write_bytes(served)
     (root/"modeler.html").write_bytes(served)
     (root/MODULE).write_bytes(module)
+    receipt["accountStartupDeliveryRepair"] = account_receipt
     receipt["staticDelivery"] = {
         "mode": "external-es-module",
         "verifiedSourceSha256": receipt["finalSha256"],
         "module": MODULE,
         "sourceModuleBytes": len(source_module),
         "sourceModuleSha256": digest(source_module),
+        "repairedModuleBytes": len(repaired_module),
+        "repairedModuleSha256": digest(repaired_module),
         "deliveryTransform": "esbuild-0.25.12-whitespace-only",
         "moduleBytes": len(module),
         "moduleSha256": digest(module),
