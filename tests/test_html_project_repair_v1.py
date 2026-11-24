@@ -34,6 +34,9 @@ class HTMLRepairTest(unittest.TestCase):
            "activeHtmlProject":{"project":SLUG},
            "projectFileEvidence":"Verified Git blob: "+BLOB}
         self.assertTrue(m.should_route(p))
+        # Generic coding/GitHub planning classification must not steal this
+        # already source-verified existing-project repair turn.
+        self.assertTrue(m.should_route({**p, "githubSourceChangeTask": "plan"}))
         events=list(m.events(p))
         text=events[1]["text"]
         self.assertIn("verified",text.lower())
