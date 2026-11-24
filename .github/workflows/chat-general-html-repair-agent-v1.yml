@@ -1,0 +1,32 @@
+name: §C model-proposed HTML repair contract
+on:
+  push:
+    branches: [feat/chat-general-project-repair-agent-v1, main]
+    paths:
+      - api/html_project_agent_v1.py
+      - tests/test_html_project_agent_v1.py
+      - .github/workflows/chat-general-html-repair-agent-v1.yml
+  pull_request:
+    paths:
+      - api/html_project_agent_v1.py
+      - tests/test_html_project_agent_v1.py
+      - .github/workflows/chat-general-html-repair-agent-v1.yml
+permissions: {contents: read}
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - name: Syntax and model-selected repair regression
+        run: |
+          python -m py_compile api/html_project_agent_v1.py scripts/project_code_targeted_repair_v1.py
+          python -m unittest discover -s tests -p 'test_html_project_agent_v1.py' -v
+          python -m unittest discover -s tests -p 'test_html_project_repair_v1.py' -v
+          python -m unittest discover -s tests -p 'test_html_project_context_v1.py' -v
+      - name: Source-preserving repair engine tests
+        run: |
+          PYTHONPATH=scripts python -m unittest scripts/test_project_code_targeted_repair_v1.py -v
