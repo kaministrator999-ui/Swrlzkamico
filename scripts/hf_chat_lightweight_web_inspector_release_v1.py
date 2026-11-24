@@ -56,7 +56,9 @@ def main(mode):
     api=HfApi(token=token)
     revision=str(api.repo_info(SPACE,repo_type="space").sha)
     existing=set(api.list_repo_files(SPACE,repo_type="space",revision=revision))
-    if "lightweight_webpage_inspector_v1.py" in existing:
+    # Existing releases are expected during PR preflight. Never redeploy
+    # this legacy installer over an already-present production helper.
+    if "lightweight_webpage_inspector_v1.py" in existing and mode == "publish":
         raise RuntimeError("LIGHTWEIGHT_HELPER_EXISTS_RECONCILE_BEFORE_REPLACE")
     previous=Path(hf_hub_download(SPACE,"html_project_context_v1.py",
                                   repo_type="space",revision=revision,token=token)).read_bytes()
