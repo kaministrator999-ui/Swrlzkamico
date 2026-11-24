@@ -366,7 +366,7 @@ def audit(pos,faces,uv):
     assert np.isfinite(uv).all() and uv.min()>=0 and uv.max()<=1
     return {'uvArea':round(uv_total,4),'p95P5Density':round(ratio,2)}
 
-def measure_surface_uv_conflicts(pos,uv,faces,size=512,threshold=.035):
+def measure_surface_uv_conflicts(pos,uv,faces,names,size=512,threshold=.035):
     """Count geometrically unrelated surfaces mapped to identical UV texels.
 
     Adjacent triangles in an otherwise valid single UV chart can both rasterize
@@ -375,9 +375,9 @@ def measure_surface_uv_conflicts(pos,uv,faces,size=512,threshold=.035):
     """
     stored=np.zeros((size,size,3),np.float32)
     filled=np.zeros((size,size),np.bool_)
-    repeated=0;separated=0;largest=0.
+    repeated=0;separated=0;largest=0.;by_region=Counter()
     uvp=np.column_stack((uv[:,0],1-uv[:,1]))*(size-1)
-    for f in faces:
+    for f,name in zip(faces,names):
         a=uvp[f]
         cross=(a[1,0]-a[0,0])*(a[2,1]-a[0,1])-(a[2,0]-a[0,0])*(a[1,1]-a[0,1])
         if abs(cross)<1e-8:continue
@@ -396,11 +396,13 @@ def measure_surface_uv_conflicts(pos,uv,faces,size=512,threshold=.035):
         if overlap.any():
             repeated+=int(overlap.sum())
             delta=np.linalg.norm(stored[py[overlap],px[overlap]]-world[overlap],axis=1)
-            separated+=int(np.count_nonzero(delta>threshold))
+            nconflict=int(np.count_nonzero(delta>threshold))
+            separated+=nconflict;by_region[name]+=nconflict
             largest=max(largest,float(delta.max(initial=0)))
         stored[py,px]=world;filled[py,px]=True
     return {'samples':size,'sharedEdgeSamples':repeated-separated,
             'conflictingSamples':separated,
+            'conflictsByRegion':dict(by_region),
             'maxOverlapWorldDistance':round(largest,4),
             'conflictPct':round(100*separated/max(1,int(filled.sum())),4)}
 
@@ -527,7 +529,7 @@ def main():
     bakery.SIZE=1024
     bakery.surface_paint=new_skin
     baked,regions,paint_metrics=bakery.bake(xyz,uv,idx.astype(np.int64),normals(xyz,idx))
-    collision_metrics=measure_surface_uv_conflicts(xyz,uv,idx)
+    collision_metrics=measure_surface_uv_conflicts(xyz,uv,idx,region)
     blob=bakery.export_png(baked,PAINT)
     assert len(base64.b64encode(blob))+22<=PAINT_LIMIT
     export_guides(uv,idx,region)
