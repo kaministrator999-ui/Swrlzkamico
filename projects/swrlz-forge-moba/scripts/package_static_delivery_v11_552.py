@@ -96,46 +96,25 @@ def main():
     (root/"index.html").write_bytes(served)
     (root/"modeler.html").write_bytes(served)
     (root/MODULE).write_bytes(module)
-    # Ship locally hosted, version-pinned open-source xatlas WASM. Never
-    # depend on a CDN or silently fake the UV tool if the binary is absent.
-    with tempfile.TemporaryDirectory(prefix="se555-xatlas-deps-") as depdir:
-        subprocess.run(["npm","install","--prefix",depdir,"--no-save",
-                        "--ignore-scripts","--no-audit","--no-fund",
-                        "xatlas-wasm@0.1.3"],check=True,timeout=180)
-        dist=Path(depdir)/"node_modules/xatlas-wasm/dist"
-        dest=root/"assets/uv-unwrapper"
-        dest.mkdir(parents=True,exist_ok=True)
-        # The production seam-pinned LSCM path is fully self-contained.
-        # Keep the vendor module for optional automatic chart segmentation;
-        # do not require an external .wasm file because this npm release
-        # bundles its WASM payload into index.mjs.
-        name="index.mjs"
-        src=dist/name
-        if not src.is_file() or not src.stat().st_size:
-            raise ValueError("Pinned xatlas module not found")
-        if src.stat().st_size>=MAX_FILE:
-            raise ValueError("Pinned xatlas module exceeds static host limit")
-        shutil.copy2(src,dest/name)
-        shared_root=Path(__file__).resolve().parents[1]/"runtime"
-        shared_files=("uv_atlas_core_v11_555.mjs","uv_lscm_core_v11_555.mjs")
-        for name in shared_files:
-            shutil.copy2(shared_root/name,dest/name)
-        # Preserve the vendor's MIT attribution with the shipped WASM.
-        for name in ("LICENSE","NOTICE"):
-            license_file=dist.parent/name
-            if license_file.is_file():
-                shutil.copy2(license_file,dest/("xatlas-"+name))
-        print("SE555_LOCAL_XATLAS_WASM_BUNDLED",
-              {name:(dest/name).stat().st_size for name in
-               ("index.mjs",*shared_files)},flush=True)
+    # The tested conformal LSCM solver is dependency-free on the web.
+    # xatlas-wasm is retained only in Node authoring, not public static
+    # delivery: its bundled binary was rejected by HF's text-only commit API.
+    dest=root/"assets/uv-unwrapper"
+    dest.mkdir(parents=True,exist_ok=True)
+    shared_root=Path(__file__).resolve().parents[1]/"runtime"
+    shared_files=("uv_atlas_core_v11_555.mjs","uv_lscm_core_v11_555.mjs")
+    for name in shared_files:
+        shutil.copy2(shared_root/name,dest/name)
+    print("SE555_STATIC_LSCM_MODULES_BUNDLED",
+          {name:(dest/name).stat().st_size for name in shared_files},flush=True)
 
     receipt["accountStartupDeliveryRepair"] = account_receipt
     receipt["uvFirstHumanoidDelivery"] = starter_receipt
-    receipt["xatlasWasmDelivery"] = {
-      "version":"xatlas-wasm@0.1.3",
+    receipt["lscmModuleDelivery"] = {
+      "solver":"geometry-based LSCM + verified padded atlas packing",
       "files":{p.name:{"bytes":p.stat().st_size,
-                        "sha256":digest(p.read_bytes())}
-               for p in (root/"assets/uv-unwrapper").iterdir()}
+                       "sha256":digest(p.read_bytes())}
+               for p in dest.iterdir()}
     }
     receipt["staticDelivery"] = {
         "mode": "external-es-module",
