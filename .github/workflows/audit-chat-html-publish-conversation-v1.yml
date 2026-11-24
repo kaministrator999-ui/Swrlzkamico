@@ -25,7 +25,7 @@ jobs:
           rev=api.repo_info('kamiloki/Swyrlz',repo_type='space').sha
           print('AUDIT_HF_REV',rev)
           for path,ranges in (
-              ('station.py',[(1880,2010),(2015,2085),(2260,2350)]),
+              ('station.py',[(1710,1765),(1845,1895),(2075,2120),(2850,2915)]),
               ('chat/§wyrlz/index.html',[(1,80)]),
               ('github_conversation_actions_v264.py',[(10,90),(150,245),(415,455),(645,735)]),
           ):
@@ -33,7 +33,7 @@ jobs:
               print('AUDIT_FILE',path,len(lines))
               if path.endswith('.html'):
                   hits=[i for i,line in enumerate(lines,1) if any(t in line for t in ('scrollTo(', 'scrollTop=', 'scrollTop =', 'scrollIntoView', 'renderWidget', 'renderMessage', 'widget.kind', 'Jump to latest', 'messageList.scroll'))]
-                  ranges=[(max(1,n-3),min(len(lines),n+5)) for n in hits[:100]]
+                  ranges=[(max(1,n-12),min(len(lines),n+16)) for n in hits if (n>=4600 and n<=4800) or (n>=5630 and n<=5800) or (n>=3200 and n<=3260) or (n>=3900 and n<=4100)][:45]
               for lo,hi in ranges:
                   print('AUDIT_RANGE',path,lo,hi)
                   for n in range(lo,min(hi,len(lines))+1):
