@@ -62,6 +62,8 @@
     "leftLeg": 630,
     "rightLeg": 630
   },
+  "uvPaintMode": "actual-UV-quad-island-masking",
+  "guideAnatomyLabels": true,
   "textureSize": 1024,
   "guideSize": 2048,
   "originalRobotPreserved": true,
