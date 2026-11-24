@@ -1,13 +1,15 @@
 {
   "schema": "swrlz-clean-topology-author-v1",
-  "goal": "New and separate UV-first sculptable quad-loop humanoid in native §E Starter Models",
+  "goal": "Rebuild UV-first starter as one connected watertight quad surface: shoulders, neck, pelvis, fingers and feet physically welded, preserving six anatomical UV regions",
   "source": "authoring/build_clean_topology_humanoid_v11_554.py",
   "mode": "do-not-change-existing-robot",
   "verification": [
-    "native quad topology",
-    "UV rectangles",
-    "texture/guide registration",
-    "runtime loader syntax"
+    "quad topology and native mesh limits",
+    "UV islands and exact checker atlas registration",
+    "positional-weld every 3D edge has 2 incident faces",
+    "exactly one connected orientable physical mesh",
+    "native loader unchanged",
+    "original robot unmodified"
   ],
-  "request": "2026-11-24-clean-topology-initial"
+  "request": "2026-11-24-welded-quad-shoulder-pelvis-neck-hand-v2"
 }
