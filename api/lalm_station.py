@@ -14,7 +14,7 @@ from fastapi import Request
 from fastapi.responses import JSONResponse, StreamingResponse
 from api.hf_generation_dispatch import send as queue_send
 
-from api.google_account import AuthenticationError, user_id_from_request
+from api.google_account import AuthenticationError, user_id_from_request, verify_session, SESSION_COOKIE
 from api.chat_state import _read_state, _state_value, _headers
 from api.chat_transcript_store import STORE
 from api.canonical_redis_state import store as canonical_redis_store, _canonical_messages_compatible
@@ -117,6 +117,11 @@ def install(server, chat_extensions) -> None:
         },separators=(",",":")),flush=True)
         try:
             user_id = user_id_from_request(request)
+            # Server-verified identity only. A client-provided GitHub owner is
+            # never accepted as an authorization claim.
+            from api.durable_project_repair_v1 import verified_owner_from_session
+            signed_claims = verify_session(request.cookies.get(SESSION_COOKIE))
+            verified_owner_google_id = verified_owner_from_session(signed_claims, user_id)
             print("SWRLZ_STATION_TRANSPORT "+__import__("json").dumps({
                 "stage":"auth-ok","requestId":request_id,"atUnixMs":int(time.time()*1000)
             },separators=(",",":")),flush=True)
@@ -132,6 +137,7 @@ def install(server, chat_extensions) -> None:
                 "contract": "swrlz-lalm-workstation-job-v1",
                 "requestId": turn.request_id,
                 "userId": turn.user_id,
+                "ownerGoogleId": verified_owner_google_id,
                 "accountScope": turn.account_scope,
                 "threadId": turn.thread_id,
                 "userMessageId": turn.user_message_id,
