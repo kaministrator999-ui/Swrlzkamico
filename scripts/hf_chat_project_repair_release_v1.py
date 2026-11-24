@@ -249,6 +249,7 @@ def main(mode):
     paths=set(api.list_repo_files(SPACE,repo_type="space",revision=rev))
     if HELPER in paths:
         raise RuntimeError("REPAIR_HELPER_EXISTS_UNEXPECTEDLY")
+    print("SPACE_REPO_HTML_SOURCE", {"sha256":digest(old[HTML]),"bytes":len(old[HTML]),"reviewRefs":re.findall(r"html-project-publish-review[^\\\"'<>\\s]{0,120}",old[HTML].decode("utf-8",errors="replace"))[:5]},flush=True)
     patched=patch({path:data.decode("utf-8") for path,data in old.items()})
     new={p:data.encode("utf-8") for p,data in patched.items()}
     new[HELPER]=SOURCE.read_bytes()
