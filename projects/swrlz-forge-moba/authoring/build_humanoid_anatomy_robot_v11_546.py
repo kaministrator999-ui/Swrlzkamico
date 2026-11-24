@@ -111,7 +111,7 @@ def xatlas_group(pos,faces,force_one=False):
     assert in_keys==out_keys,'The atlas changed source face geometry'
     return coords[vmap],f,uv,atlas.get_mesh_chart_count(0)
 
-def seam_aware_anatomical_group(pos,faces,name,hand_spread=0.,hand_depth=0.,foot_stride=0.):
+def seam_aware_anatomical_group(pos,faces,name,hand_spread=0.,hand_depth=0.,foot_stride=0.,foot_angle=0.):
     """Unroll a connected anatomical surface using an explicit axial seam.
 
     Unlike xatlas.parametrize(), this maps the entire region at once. Every
@@ -140,6 +140,7 @@ def seam_aware_anatomical_group(pos,faces,name,hand_spread=0.,hand_depth=0.,foot
             toe=np.clip((.48-coords[:,1])/.40,0,1)
             toe=toe*toe*(3-2*toe)
             axis_values=axis_values+foot_stride*toe*(coords[:,2]-.12)
+            theta=theta+foot_angle*toe*(coords[:,2]-.12)
     theta=np.arctan2(np.sin(theta),np.cos(theta))
     phase=theta[idx]
     avg=np.arctan2(np.sin(phase).sum(axis=1),
@@ -322,17 +323,18 @@ def make_atlas(positions,triangles,mode):
         # Optimize one continuous seam-aware anatomical chart locally, then
         # refuse to publish if the baked atlas still has geometric conflicts.
         if name in ('leftArm','rightArm'):
-            settings=[(spread,depth,0.) for spread in (-8.,-4.,0.,4.,8.)
-                      for depth in (-8.,0.,8.)]
+            settings=[(spread,depth,0.,0.) for spread in (-8.,-6.,-4.,-2.,0.,2.)
+                      for depth in (-20.,-16.,-12.,-8.,-4.,0.)]
         elif name in ('leftLeg','rightLeg'):
-            settings=[(0.,0.,stride) for stride in (-2.,-1.,0.,.5,1.,2.,3.)]
+            settings=[(0.,0.,stride,angle) for stride in (-2.,-1.,0.,1.,2.,3.)
+                      for angle in (-6.,-3.,0.,3.,6.)]
         else:
-            settings=[(0.,0.,0.)]
+            settings=[(0.,0.,0.,0.)]
         selected=None
-        for spread,depth,stride in settings:
+        for spread,depth,stride,angle in settings:
             try:
                 pp,ff,uu,cc=seam_aware_anatomical_group(
-                    positions,original,name,spread,depth,stride)
+                    positions,original,name,spread,depth,stride,angle)
                 fitted=fit(uu,RECT[name],lock_orientation=True)
                 audit_local=measure_surface_uv_conflicts(
                     pp,fitted,ff,[name]*len(ff),size=256)
@@ -346,7 +348,7 @@ def make_atlas(positions,triangles,mode):
                 score=(audit_local['conflictingSamples']*10+
                        max(0,ratio-100)*5)
                 if selected is None or score<selected[0]:
-                    selected=(score,pp,ff,uu,cc,(spread,depth,stride),
+                    selected=(score,pp,ff,uu,cc,(spread,depth,stride,angle),
                               audit_local['conflictingSamples'],ratio)
             except (ValueError,AssertionError,RuntimeError):
                 continue
