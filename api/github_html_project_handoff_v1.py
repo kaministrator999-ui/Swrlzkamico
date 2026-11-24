@@ -19,6 +19,11 @@ import github_html_publish_action_v1 as publishing
 
 REPO = publishing.REPO
 TTL = 300
+# Retain expired decisions briefly so a late approval receives an authoritative
+# refusal rather than falling through to a language-model-generated claim.
+EXPIRED_RECEIPT_TTL = 3600
+_DECISION_YES = re.compile(r"\s*(?:yes|yes please|yep|yup|confirm|approved|approve|go ahead|do it|proceed)\s*[.!]?\s*", re.I)
+_DECISION_NO = re.compile(r"\s*(?:no|nope|cancel|decline|rejected|reject|stop|never mind|nevermind)\s*[.!]?\s*", re.I)
 MAX_FILES = publishing.MAX_FILES
 MAX_BYTES = publishing.MAX_BYTES
 SAFE = re.compile(r"[A-Za-z0-9][A-Za-z0-9_.-]*\Z")
@@ -148,13 +153,32 @@ def stage(user_id, thread_id, artifact, request):
             "title": "Review GitHub HTML project creation", "provider": "GitHub", "data": preview}
 
 
+def is_decision(prompt):
+    return bool(isinstance(prompt, str) and
+                (_DECISION_YES.fullmatch(prompt) or _DECISION_NO.fullmatch(prompt)))
+
+
+def decision_approved(prompt):
+    if not is_decision(prompt):
+        raise HandoffError("EXPLICIT_DECISION_REQUIRED")
+    return bool(_DECISION_YES.fullmatch(prompt))
+
+
+def has_approval_record(user_id, thread_id):
+    with _lock:
+        p = _pending.get((user_id, thread_id))
+        if not p:
+            return False
+        if time.monotonic() - p["expires"] > EXPIRED_RECEIPT_TTL:
+            _pending.pop((user_id, thread_id), None)
+            return False
+        return True
+
+
 def has_pending(user_id, thread_id):
     with _lock:
         p = _pending.get((user_id, thread_id))
-        if p and p["expires"] > time.monotonic():
-            return True
-        _pending.pop((user_id, thread_id), None)
-        return False
+        return bool(p and p["expires"] > time.monotonic())
 
 
 def expire(user_id, thread_id):
