@@ -4,8 +4,8 @@
   "version": "v11.546",
   "goal": "Rebuild humanoid UVs into anatomy-grouped charts; generate independent new robotic material from 3D surface; preserve geometry; provide 4096x4096 reference atlas and anatomy exports; preserve historical scenes and saved copies.",
   "release": "Do not publish until exact geometry/UV texture checks and source-seal tests pass.",
-  "run": 26,
-  "correction": "Reduce toe crossover without relaxing UV geometry collision gate",
-  "rebuild_requested": "toe-transition-reduction-v26",
+  "run": 27,
+  "correction": "Measured axial girth envelope with adaptive collision checks, narrower head and torso chart",
+  "rebuild_requested": "anatomical-contour-envelope-v27",
   "reason": "Author and validate exact original geometry, front-facing helmet UV, one connected shell per region, 4K atlas and baked robot skin before release"
 }
