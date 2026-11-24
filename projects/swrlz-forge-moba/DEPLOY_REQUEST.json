@@ -1,19 +1,30 @@
 {
   "schema": "swrlz-forge-deploy-request-v1",
-  "requestedBy": "ChatGPT (owner authorized verified anatomical UV source repair and live deployment)",
+  "requestedBy": "ChatGPT (owner-authorized clean topology humanoid starter implementation, verification and deploy)",
   "target": "kamiloki/swrlz-forge-moba",
   "releaseVersion": "v11.552",
   "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_546_ANATOMY_ROBOT_UV_4K",
-  "reason": "User requested exact rollback to previous paint-friendly six-region UV layout and matching texture; restored original Git blobs",
+  "reason": "Publish a separate experimental quad-loop UV-first humanoid Starter Models project with neutral grid skin and verified UV guide; preserve existing robot",
   "sourceCommit": "main (deploy workflow checkout; verified against sourceIntegritySha256)",
   "sourceIntegritySha256": "3fe29516958ea5af2448352fa238eda121cc3031266c61c746380f092d22232e",
   "resealRun": 45342195310,
-  "deploymentAttempt": 15,
+  "deploymentAttempt": 16,
   "accountStartupRecovery": "v11.553-delivery",
   "accountStartupChecks": [
     "startup_restore_regression_v11_552",
     "startup_delivery_repair_v11_553"
   ],
   "accountStartupHistoricalSources": "restored SHA-identical v11.184 and v11.552",
-  "uvDeliveryVerification": "SHA-256 compare public static scene + painted skin + UV wireframe + anatomical guide against GitHub checkout"
+  "uvDeliveryVerification": "SHA-256 compare public static scene + painted skin + UV wireframe + anatomical guide against GitHub checkout",
+  "cleanTopologyStarter": "v11.554",
+  "cleanTopologyAuthorRun": 45491916985,
+  "cleanTopologyQuality": {
+    "vertices": 5333,
+    "quads": 4856,
+    "triangles": 9712,
+    "anatomicalRegions": 6,
+    "continuousSurfaceComponents": 16,
+    "uvGuideResolution": 2048
+  },
+  "cleanTopologyLiveVerification": "Verify new scene and UV assets SHA-256 after static HF upload"
 }
