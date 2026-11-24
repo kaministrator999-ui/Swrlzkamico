@@ -32,6 +32,7 @@ FILES = {
     "html_project_agent_v1.py": Path("api/html_project_agent_v1.py"),
     "html_project_agent_runtime_v1.py": Path("api/html_project_agent_runtime_v1.py"),
     "project_code_targeted_repair_v1.py": Path("scripts/project_code_targeted_repair_v1.py"),
+    "chat/§wyrlz/assets/html-project-publish-review-v1.js": Path("chat/html-project-publish-review-v1.js"),
 }
 ROUTE = '''
 # swrlz-general-html-repair-agent-live-v1
@@ -89,7 +90,8 @@ def selftest():
     assert "_swrlz_model_repair.run(payload,_coder_generate)" in patched
     for target, path in FILES.items():
         data = path.read_bytes()
-        ast.parse(data.decode("utf-8"), filename=target)
+        if target.endswith(".py"):
+            ast.parse(data.decode("utf-8"), filename=target)
     assert "def prepare_model(" in FILES[HELPER].read_text()
     assert "def run(payload, coder_generate):" in FILES["html_project_agent_runtime_v1.py"].read_text()
     print("GENERAL_HTML_REPAIR_AGENT_SELFTEST_PASS", flush=True)
