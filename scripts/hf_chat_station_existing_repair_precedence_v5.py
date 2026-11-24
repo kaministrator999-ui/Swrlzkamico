@@ -55,7 +55,7 @@ FAIL_OWNER = '''        except Exception:
                 "session. No replacement HTML, GitHub edit or deployment occurred.")
             payload["projectFileEvidence"]=('''
 HEALTH_ROUTE = '''
-# swrlz-existing-repair-before-html-create-v5
+# swrlz-existing-repair-health-v5
 @app.get("/api/html-existing-repair-v5/route-health",include_in_schema=False)
 def _swrlz_existing_repair_v5_health():
     sample = ("Inspect the existing interactive-3d-model-viewer project on GitHub. "
