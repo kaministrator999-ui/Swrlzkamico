@@ -35,6 +35,7 @@ class _Document(HTMLParser):
         self.canvas = False
         self.buttons = 0
         self.importmaps = []
+        self.module_sources = []
     def handle_starttag(self, tag, attrs):
         a = dict(attrs)
         if tag == "canvas":
@@ -45,6 +46,8 @@ class _Document(HTMLParser):
             kind = a.get("type", "").lower()
             if a.get("src"):
                 self.references.append(("script", a["src"]))
+                if kind == "module":
+                    self.module_sources.append(a["src"])
             self._script = {"kind": kind, "text": ""}
         elif tag == "link" and "stylesheet" in a.get("rel", "").lower().split():
             self.references.append(("style", a.get("href", "")))
@@ -76,7 +79,11 @@ def _resolve(base, uri):
     if not isinstance(uri, str):
         return None, "invalid"
     uri = uri.strip()
-    if not uri or uri.startswith("#") or uri.startswith(("data:", "blob:", "mailto:", "tel:")):
+    if uri.startswith("data:"):
+        return None, "data"
+    if uri.startswith("blob:"):
+        return None, "blob"
+    if not uri or uri.startswith("#") or uri.startswith(("mailto:", "tel:")):
         return None, "embedded"
     parsed = urllib.parse.urlsplit(uri)
     if parsed.scheme or parsed.netloc or uri.startswith("//"):
@@ -108,6 +115,7 @@ def inspect_files(files, *, known_files_complete=True):
     problems, scripts, referenced = [], [], set()
     needs_rendering = False
     import_maps = {}
+    module_sources = set()
     if "index.html" not in clean:
         problems.append(_issue("ENTRY_MISSING", "index.html", "Project has no entry HTML"))
     for path, raw in sorted(clean.items()):
@@ -130,8 +138,14 @@ def inspect_files(files, *, known_files_complete=True):
                 import_maps.update(obj.get("imports", {}))
             except (ValueError, TypeError) as e:
                 problems.append(_issue("IMPORTMAP_INVALID", path, e))
+        for uri in doc.module_sources:
+            module_path, module_kind = _resolve(path, uri)
+            if module_kind == "local":
+                module_sources.add(module_path)
         for category, url in doc.references:
             ref, mode = _resolve(path, url)
+            if mode in ("data", "blob") and category in ("script", "style"):
+                problems.append(_issue("CSP_EMBEDDED_EXECUTABLE_ASSET", path, category + " " + url))
             if mode == "external" and category in ("script", "style", "image"):
                 problems.append(_issue("CSP_EXTERNAL_ASSET", path, category + " " + url))
             elif mode == "absolute" and category in ("script", "style", "image"):
@@ -167,7 +181,10 @@ def inspect_files(files, *, known_files_complete=True):
             problems.append(_issue("SCRIPT_UTF8_INVALID", path, "Invalid UTF-8"))
             continue
         if path.endswith((".js", ".mjs")):
-            scripts.append({"file": path, "scriptIndex": None, "type": "module" if path.endswith(".mjs") else "classic", "text": text})
+            is_module = (path.endswith(".mjs") or path in module_sources or
+                         bool(_IMPORT.findall(text)) or
+                         bool(re.search(r"(?m)^\\s*export\\s+(?:default|const|let|var|function|class|\\{)", text)))
+            scripts.append({"file": path, "scriptIndex": None, "type": "module" if is_module else "classic", "text": text})
     for script in scripts:
         path, body = script["file"], script["text"]
         needs_rendering |= bool(re.search(r"\b(?:WebGLRenderer|WebGLRenderingContext|webgl2?|getContext\s*\(\s*['\"]webgl)\b", body, re.I))
@@ -177,7 +194,7 @@ def inspect_files(files, *, known_files_complete=True):
                 problems.append(_issue("BARE_MODULE_UNRESOLVED", path, spec))
                 continue
             ref, mode = _resolve(path, target)
-            if mode == "external":
+            if mode in ("external", "data", "blob"):
                 problems.append(_issue("CSP_EXTERNAL_MODULE", path, spec + " -> " + target))
             elif mode == "local" and ref not in clean and known_files_complete:
                 problems.append(_issue("LOCAL_MODULE_MISSING", path, spec + " -> " + ref))
