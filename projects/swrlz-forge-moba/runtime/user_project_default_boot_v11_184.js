@@ -54,11 +54,6 @@
    if(reason&&typeof toast==='function')toast(reason.slice(0,150));
   }
   status('');
-  // Release the account gate only after the native default loader has
-  // reached a verified terminal result; never duplicate a cloud load.
-  window.dispatchEvent(new CustomEvent('swrlz:saved-default-complete',{
-   detail:{source:state.source,id:state.id,success:success===true,reason}
-  }));
  }
  async function readLocal(id){
   const db=await new Promise((resolve,reject)=>{
