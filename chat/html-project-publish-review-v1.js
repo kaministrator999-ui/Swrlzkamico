@@ -57,22 +57,22 @@
     if(!container||!data||!okSlug(data.project)||!(data.mode==="create"?/^[a-f0-9]{64}$/.test(data.sourceSha):okSha(data.sourceSha))
       ||data.repo!=="kaministrator999-ui/Swrlzkamico"
       ||!Array.isArray(data.files)||typeof opts.confirm!=="function")return false;
-    const creating=data.mode==="create";
+    const creating=data.mode==="create",repairing=data.mode==="repair";
     const doc=container.ownerDocument,thread=String(opts.threadId||""),created=Date.now();
     const surface=doc.createElement("section");
     surface.className="swrlz-github-change-review swrlz-html-publish-review";
     surface.dataset.reviewThread=thread;
     const heading=doc.createElement("h3");
-    heading.textContent=creating?"HTML project · GitHub creation approval":"HTML project · deployment approval";
+    heading.textContent=creating?"HTML project · GitHub creation approval":repairing?"HTML project · source-preserving repair approval":"HTML project · deployment approval";
     surface.append(heading);
     const subtitle=doc.createElement("p");
-    subtitle.textContent="Project "+data.project+(creating?" · create source in GitHub (no deployment)":" · existing §C Hugging Face Space");
+    subtitle.textContent="Project "+data.project+(creating?" · create source in GitHub (no deployment)":repairing?" · proposed GitHub repair pull request (no deployment)":" · existing §C Hugging Face Space");
     surface.append(subtitle);
     const facts=[
       ["Repository",data.repo],["Branch",data.branch||"main"],
       [creating?"Verified artifact source hash":"Immutable GitHub source",data.sourceSha],["Files",data.files.length],
       ["Total size",String(data.bytes)+" bytes"],
-      [creating?"Proposed GitHub directory":"Published directory",data.destinationPrefix||""],
+      [creating?"Proposed GitHub directory":repairing?"Existing project directory":"Published directory",data.destinationPrefix||""],
     ];
     for(const [label,value] of facts){
       const p=doc.createElement("p"),strong=doc.createElement("strong");
@@ -100,14 +100,14 @@
     const note=doc.createElement("p");
     note.setAttribute("role","status");
     note.setAttribute("aria-live","polite");
-    note.textContent=creating?"No GitHub files have been created. This approval authorizes only the listed commit; deploying requires a second approval within this thread.":"No deployment dispatched. Approval is valid only in this thread for five minutes.";
+    note.textContent=creating?"No GitHub files have been created. This approval authorizes only the listed commit; deploying requires a second approval within this thread.":repairing?"No GitHub changes have been made. Approval runs a pinned dependency build and proposes a review PR only. Deployment requires a separate approval.":"No deployment dispatched. Approval is valid only in this thread for five minutes.";
     surface.append(note);
     const actions=doc.createElement("div");
     actions.className="swrlz-github-change-actions";
     const decline=doc.createElement("button"),approve=doc.createElement("button");
     decline.type=approve.type="button";
-    decline.textContent=creating?"Cancel creation":"Cancel deployment";
-    approve.textContent=creating?"Approve GitHub commit":"Approve publish";
+    decline.textContent=creating?"Cancel creation":repairing?"Cancel repair":"Cancel deployment";
+    approve.textContent=creating?"Approve GitHub commit":repairing?"Approve repair PR build":"Approve publish";
     actions.append(decline,approve);surface.append(actions);
     let decided=false,busy=false;
     async function decide(accepted){
@@ -129,7 +129,7 @@
             ?"Decision submitted. The next server receipt confirms the operation and any following approval."
             :"Cancellation submitted; no GitHub write or publication was authorized.";
           approve.hidden=decline.hidden=true;
-          if(accepted&&!creating){void verifyPublishedSource(surface,note,data,opts,thread);}
+          if(accepted&&!creating&&!repairing){void verifyPublishedSource(surface,note,data,opts,thread);}
         }else{
           note.textContent="Decision was not accepted. No deployment assumed.";
           approve.disabled=decline.disabled=false;
