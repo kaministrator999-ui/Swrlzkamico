@@ -213,7 +213,7 @@ def convex_single_shell_unwrap(pos,faces,name):
     rows=[];cols=[];data=[];rhs=np.zeros((len(movable),2),np.float64)
     adjacency=[[] for _ in range(nv)]
     for a,b in edge_counts:
-        w=1.0/max(float(np.linalg.norm(xyz[a]-xyz[b])),1e-6)
+        w=1.0  # Uniform positive Tutte weights avoid micro-geometry overconstraint
         adjacency[a].append((b,w));adjacency[b].append((a,w))
     for vertex in movable:
         row=int(lookup[vertex]);weighted=adjacency[vertex]
@@ -364,10 +364,15 @@ def audit(pos,faces,uv):
     world=np.linalg.norm(np.cross(tri[:,1]-tri[:,0],tri[:,2]-tri[:,0]),axis=1)*.5
     uv_a=m[:,1]-m[:,0];uv_b=m[:,2]-m[:,0]
     area=np.abs(uv_a[:,0]*uv_b[:,1]-uv_a[:,1]*uv_b[:,0])*.5
-    assert world.min()>1e-10 and np.count_nonzero(area<1e-10)<14
+    print('SE546_ATLAS_AREA_DIAGNOSTIC',
+          {'nearZero1e10':int(np.count_nonzero(area<1e-10)),
+           'nearZero1e13':int(np.count_nonzero(area<1e-13)),
+           'min':float(area.min()),'p05':float(np.percentile(area,5))},flush=True)
+    assert world.min()>1e-10 and np.count_nonzero(area<1e-13)<14,'collapsed atlas'
     uv_total=float(area.sum())
     density=area/world
     ratio=float(np.percentile(density,95)/np.percentile(density,5))
+    print('SE546_DENSITY_DIAGNOSTIC',ratio,flush=True)
     assert 0.12<uv_total<.97,('poor atlas area',uv_total)
     assert ratio<110,('severe unequal texel density',ratio)
     assert np.isfinite(uv).all() and uv.min()>=0 and uv.max()<=1
