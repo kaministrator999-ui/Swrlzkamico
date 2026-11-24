@@ -94,10 +94,11 @@ function se552Regions(t){
 function se552Color(g,i,anatomical){return anatomical?se552Palette[g.id]:se552Palette[i%6];}
 function se552DrawRegions(t,cv,exporting=false){
  const {topo,groups,anatomical}=se552Regions(t),ctx=cv.getContext('2d'),size=cv.width;
+ const selectedIds=new Set(se551Selection?.part===t.part?se551Selection.ids:[]);
  ctx.save();
  groups.forEach((g,i)=>{
-  const color=se552Color(g,i,anatomical),selected=se551Selection?.part===t.part&&[...g.ids].every(v=>se551Selection.ids.includes(v));
-  ctx.fillStyle=color;ctx.globalAlpha=exporting?.85:selected?.85:.48;
+  const color=se552Color(g,i,anatomical),selected=selectedIds.size>0&&[...g.ids].every(v=>selectedIds.has(v));
+  ctx.fillStyle=color;ctx.globalAlpha=exporting?.46:selected?.83:.40;
   let x=0,y=0,n=0;
   for(const f of g.faces){ctx.beginPath();f.forEach((v,k)=>{const u=topo.uv.getX(v)*size,w=(1-topo.uv.getY(v))*size;k?ctx.lineTo(u,w):ctx.moveTo(u,w);x+=u;y+=w;n++;});ctx.closePath();ctx.fill();}
   ctx.globalAlpha=1;ctx.font='bold '+Math.max(15,size/42)+'px system-ui';ctx.textAlign='center';ctx.textBaseline='middle';
