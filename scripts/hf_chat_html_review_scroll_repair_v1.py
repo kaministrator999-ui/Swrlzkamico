@@ -16,7 +16,7 @@ HTML="chat/§wyrlz/index.html"
 HANDOFF="github_html_project_handoff_v1.py"
 MODULE=Path("api/github_html_project_handoff_v1.py")
 FILES=(STATION,ACTIONS,HTML)
-MARK="# swrlz-html-review-scroll-repair-v1"
+MARK="swrlz-html-review-scroll-repair-v1"
 HANDOFF_OLD='''    if _swrlz_html_handoff.has_pending(google_owner,tid) and not github_chat_files.is_reply(prompt):
         _swrlz_html_handoff.expire(google_owner,tid)'''
 HANDOFF_NEW='''    if _swrlz_html_handoff.has_approval_record(google_owner,tid) and not _swrlz_html_handoff.is_decision(prompt):
