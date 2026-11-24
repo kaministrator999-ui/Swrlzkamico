@@ -211,7 +211,22 @@ def make_atlas(positions,triangles,mode):
     for name in (REGIONS if mode=='seven' else ['head','torso','leftArm','rightArm','leftLeg','rightLeg']):
         original=triangles[labels==name]
         if not len(original):raise ValueError('Missing anatomy '+name)
-        p,f,uv,c=seam_aware_anatomical_group(positions,original,name)
+        # A one-piece head and trunk are preferable; articulated fingers,
+        # elbows, knees and feet need chart seams to avoid cylindrical UV folds.
+        # xatlas creates individually non-overlapping limb charts rather than
+        # projecting fingers and hidden back surfaces onto the same pixels.
+        if name in ('head','torso'):
+            try:
+                p,f,uv,c=single_chart_group(positions,original)
+            except (ValueError,AssertionError,RuntimeError):
+                p,f,uv,c=seam_aware_anatomical_group(positions,original,name)
+        else:
+            try:
+                p,f,uv,c=xatlas_group(positions,original)
+                if count+len(p)>VERT_LIMIT:
+                    raise ValueError('Limb atlas would exceed native vertex limit')
+            except (ValueError,AssertionError,RuntimeError):
+                p,f,uv,c=seam_aware_anatomical_group(positions,original,name)
         base=count;count+=len(p);charts+=c
         if count>VERT_LIMIT:raise ValueError('UV vertex budget exceeded: '+str(count))
         parts.append(p);faces_out.append(f+base)
@@ -255,10 +270,10 @@ def shell_counts(uv,faces,region_names):
 
 def continuous_shell_gate(uv,faces,region_names):
     counts=shell_counts(uv,faces,region_names)
-    # Head must be a single UV shell. Torso is allowed two shells to avoid
-    # severe stretching at shoulders, but no arbitrary fragment explosion.
+    # Head and torso remain continuous whenever feasible; limb articulation
+    # permits smaller islands so fingers and joint interiors cannot fold over.
     required={'head':1,'torso':2,'chest':1,'back':1,
-              'leftArm':2,'rightArm':2,'leftLeg':2,'rightLeg':2}
+              'leftArm':120,'rightArm':120,'leftLeg':120,'rightLeg':120}
     violations={k:{'actual':v,'maximum':required[k]} for k,v in counts.items()
                 if v>required[k]}
     return counts,violations
@@ -422,7 +437,7 @@ def main():
     scene['project']['modelAtelier']['name']='Futuristic Humanoid · Anatomy UV + Robot Skin'
     scene['project']['modelAtelier']['reference']=(
       'One continuous five-digit humanoid, 13,932 original 3D triangles. '
-      'Seam-aware continuous UV shells organized by '+kind+
+      'Head and torso authored as coherent UV shells, with xatlas-separated articulated limb islands in '+kind+
       ' true 3D regions. New ceramic/graphite/cyan robotic skin baked from '
       'actual local 3D positions and normals; no old atlas texture transferred. '
       '4096px UV wireframe and 4096px anatomical UV guide are available. '
