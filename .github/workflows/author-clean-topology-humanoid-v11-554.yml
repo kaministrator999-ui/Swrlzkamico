@@ -28,10 +28,19 @@ jobs:
         run: python -m pip install --quiet "pillow>=10,<13"
       - name: Generate real 3D quad-loop topology and matched UV test atlas
         run: python projects/swrlz-forge-moba/authoring/build_clean_topology_humanoid_v11_554.py
-      - name: Validate native geometry, quad loops, UVs and PNG references
+      - name: Install pinned native xatlas geometry UV solver
+        run: |
+          npm install --prefix projects/swrlz-forge-moba/.se555_deps --no-save --ignore-scripts --no-audit --no-fund xatlas-wasm@0.1.3
+      - name: True conformal unwrap of generated anatomical model
+        run: |
+          node projects/swrlz-forge-moba/scripts/unwrap_clean_topology_v11_555.mjs
+          python projects/swrlz-forge-moba/scripts/render_xatlas_humanoid_uv_v11_555.py
+      - name: Validate native geometry, manifold topology and actual UV charts
         run: |
           python projects/swrlz-forge-moba/scripts/check_clean_topology_humanoid_v11_554.py
           node --check projects/swrlz-forge-moba/runtime/clean_topology_humanoid_v11_554.js
+          node --check projects/swrlz-forge-moba/runtime/uv_auto_unwrap_v11_555.js
+          node --check projects/swrlz-forge-moba/runtime/uv_atlas_core_v11_555.mjs
       - name: Commit the verified experimental starter files
         run: |
           git config user.name "github-actions[bot]"
