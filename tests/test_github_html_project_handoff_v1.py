@@ -121,6 +121,16 @@ class HtmlArtifactHandoffTest(unittest.TestCase):
         self.assertEqual(sum(method == "PATCH" for method, path in calls), 1)
         self.assertFalse(m.has_pending("google:owner", "thread"))
 
+    def test_only_last_saved_review_binds_late_approval(self):
+        saved={"messages":[
+            {"role":"assistant","meta":{"htmlProjectHandoff":{"state":"AWAITING_GITHUB_CREATE_APPROVAL"}}}]}
+        self.assertTrue(m.last_assistant_review(saved))
+        saved["messages"].append({"role":"assistant","meta":{},"text":"Different discussion"})
+        self.assertFalse(m.last_assistant_review(saved))
+        saved["messages"][-1]["meta"]["widgets"]=[
+            {"kind":"github-html-publish-review","data":{"project":"sample"}}]
+        self.assertTrue(m.last_assistant_review(saved))
+
     def test_approved_and_expired_review_are_deterministic(self):
         self.assertTrue(m.is_decision("Approved"))
         self.assertTrue(m.is_decision("yes"))
