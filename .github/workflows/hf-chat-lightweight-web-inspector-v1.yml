@@ -21,7 +21,7 @@ on:
       - '.github/workflows/hf-chat-lightweight-web-inspector-v1.yml'
 permissions: {contents: read}
 concurrency:
-  group: swrlz-hf-space-deployment
+  group: swrlz-lightweb-preflight-${{ github.ref }}
   cancel-in-progress: false
 jobs:
   validate:
