@@ -18,7 +18,7 @@ function fixture(defaultState,api){
     addEventListener(type,fn){add(this.listeners,type,fn)},
     replaceChildren(...items){this.options=[...items];this.value=''},
     append(child){this.options.push(child)},
-    focus(){},setAttribute(){},querySelector(){return null}};
+    focus(){},setAttribute(){},getAttribute(name){return this[name]??null},querySelector(){return null}};
    nodes.set(id,el);
   }
   return nodes.get(id);
