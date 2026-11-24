@@ -34,10 +34,21 @@ def lerp(a,b,t):return a+(b-a)*t
 def mix(a,b,t):return [lerp(x,y,t) for x,y in zip(a,b)]
 def smooth(t):return t*t*(3.-2.*t)
 def controls(points,subdiv=3):
+    """C1 continuous Catmull-Rom anatomical profiles.
+
+    The previous smoothstep-per-segment interpolation produced zero slope at
+    every control station, visible as stacked rings on the skull and limbs.
+    """
     out=[]
     for i in range(len(points)-1):
+        p0=points[max(0,i-1)];p1=points[i]
+        p2=points[i+1];p3=points[min(i+2,len(points)-1)]
         for j in range(subdiv):
-            out.append(mix(points[i],points[i+1],smooth(j/subdiv)))
+            t=j/subdiv;t2=t*t;t3=t2*t
+            out.append([.5*((2*b)+(-a+c)*t+
+                         (2*a-5*b+4*c-d)*t2+
+                         (-a+3*b-3*c+d)*t3)
+                        for a,b,c,d in zip(p0,p1,p2,p3)])
     out.append(list(points[-1]))
     return out
 def vertex(xyz,uv):
@@ -88,14 +99,14 @@ def torso_geometry():
             x,z=disk(u,v,.415,.237)
             # Sculpt an anatomical saddle instead of a flat skirt-shaped cap:
             # raised hip crests and a lowered groin between the thighs.
-            y=2.265+.115*abs(u)**1.5-.155*(1-abs(u))*(1-.27*v*v)
+            y=2.24+.055*abs(u)**1.7-.075*(1-abs(u))*(1-.24*v*v)
             pelvis[i,j]=(x,y,z)
     outline=boundary(nx,nz)
     assert len(outline)==48
     start=[pelvis[p] for p in outline]
     angles=[math.atan2(z,x) for x,y,z in start]
     body=controls([
-      [2.265,.415,.237],[2.43,.428,.253],[2.65,.352,.224],
+      [2.24,.415,.237],[2.43,.428,.253],[2.65,.352,.224],
       [2.94,.287,.200],[3.21,.337,.226],[3.44,.432,.256],
       [3.62,.472,.246],[3.77,.403,.220],[3.91,.176,.151],
       [4.08,.127,.117],[4.16,.119,.110]
@@ -104,7 +115,7 @@ def torso_geometry():
     for k,(y,rx,rz) in enumerate(body):
         blend=max(0.,1.-k/8.)**2
         points=(start if k==0 else
-                [(rx*math.cos(t),y+(start[n][1]-2.265)*blend,
+                [(rx*math.cos(t),y+(start[n][1]-2.24)*blend,
                   rz*math.sin(t)) for n,t in enumerate(angles)])
         tr.append(ring('torso',points,.095+.355*k/(len(body)-1)))
     # 12 x 6 quad sockets: exactly 36 surrounding edges, not intersecting
@@ -146,8 +157,8 @@ def cranial_surface(neck):
     profile=controls([
       [4.16,.119,.110],[4.225,.158,.141],
       [4.315,.231,.202],[4.42,.257,.231],
-      [4.56,.233,.213],[4.685,.151,.140],
-      [4.75,.054,.049]
+      [4.56,.236,.210],[4.685,.158,.143],
+      [4.748,.092,.083],[4.785,.040,.036]
     ],3)
     angles=[math.atan2(z,x) for x,y,z in bottom]
     rings=[]
@@ -156,7 +167,7 @@ def cranial_surface(neck):
                                 for t in angles])
         rings.append(ring('head',p,.025+.91*k/(len(profile)-1)))
         if k:strip('head',rings[k-1],rings[k])
-    close_tip('head',rings[-1],(0,4.768,0),.98)
+    close_tip('head',rings[-1],(0,4.803,0),.98)
 
 def close_tip(name,rim,xyz,v=.04,urange=(0.,1.)):
     n=len(rim)-1
@@ -514,7 +525,7 @@ def main():
     scene['version']=11.554
     scene['engine']='§wyrl§ Engine · Maker v11.552 / UV-First Starter revision'
     OUTPUT.write_text(json.dumps(scene,separators=(',',':'),ensure_ascii=False),'utf8')
-    report={'version':'v11.554','revision':'anatomical-pelvis-uv-v3',
+    report={'version':'v11.554','revision':'anatomical-curves-pre-xatlas-v4',
       'vertices':len(P)//3,'triangles':len(F)//3,
       'quads':dict(QUADS),'components':1,
       'uvBoxes':BOXES,'uvCharts':charts,'uvPaintMode':'actual-UV-quad-island-masking',
