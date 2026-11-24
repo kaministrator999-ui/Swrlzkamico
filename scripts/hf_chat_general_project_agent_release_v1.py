@@ -83,7 +83,7 @@ def selftest():
         + MOUNT + "\n"
         + "def run(payload):\n    if True:\n        " + ROUTE_ANCHOR + "\n"
         + "def source(payload,google_owner,tid,html_project_ref):\n"
-        + "    " + OWNER_ANCHOR + "\n"
+        + "        " + OWNER_ANCHOR + "\n"
     )
     patched = patch_station(sample)
     assert MARK in patched and "htmlRepairOwner" in patched
