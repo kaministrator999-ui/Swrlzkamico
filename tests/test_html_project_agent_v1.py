@@ -27,7 +27,7 @@ class AgentContract(unittest.TestCase):
         self.assertTrue(result["readyForOwnerReview"])
         self.assertIn("onclick", result["proposedFiles"]["index.html"])
         self.assertIn("Save", result["proposedFiles"]["index.html"])
-        self.assertIn("+<script>", result["diffs"]["index.html"])
+        self.assertIn("+<!doctype html>", result["diffs"]["index.html"])
         self.assertFalse(result["committed"])
         self.assertFalse(result["deployed"])
 
