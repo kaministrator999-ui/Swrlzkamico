@@ -32,7 +32,7 @@ try:
     mod=ast.parse(router)
     for fn in mod.body:
         if isinstance(fn,(ast.FunctionDef,ast.AsyncFunctionDef)) and fn.name=="dispatch":
-            print("REAL_MODEL_ROUTER_DISPATCH",ast.get_source_segment(router,fn)[9000:30000],flush=True)
+            print("REAL_MODEL_ROUTER_DISPATCH",ast.get_source_segment(router,fn)[0:45000],flush=True)
 except Exception as exc:
     print("REAL_MODEL_ROUTER_UNAVAILABLE",type(exc).__name__,flush=True)
 for name in ("_generate","_stock_generate","_large_generate","_coder_generate","dispatch"):
