@@ -1,0 +1,113 @@
+name: §C approved existing HTML project repair PR
+run-name: Repair ${{ inputs.project }} · ${{ inputs.source_sha }}
+on:
+  pull_request:
+    paths:
+      - scripts/build_html_project_repair_v1.py
+      - api/html_project_repair_v1.py
+      - tests/test_html_project_repair_v1.py
+      - .github/workflows/hf-html-project-repair-pr-v1.yml
+  workflow_dispatch:
+    inputs:
+      source_sha:
+        description: Immutable reviewed main revision
+        required: true
+        type: string
+      project:
+        description: Existing HTML project slug
+        required: true
+        type: string
+      approved:
+        description: Owner explicitly approved building a review PR
+        required: true
+        type: choice
+        options: ['no', 'yes']
+        default: 'no'
+permissions:
+  contents: read
+concurrency:
+  group: swrlz-approved-html-repair-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  test:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - run: python -m py_compile api/html_project_repair_v1.py scripts/build_html_project_repair_v1.py
+      - run: python scripts/build_html_project_repair_v1.py selftest
+      - run: python -m unittest discover -s tests -p test_html_project_repair_v1.py -v
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - name: Install pinned build tools
+        run: |
+          npm install --prefix repair-tools --no-save --no-package-lock --no-audit --no-fund three@0.160.0 esbuild@0.25.12
+      - name: Bundle source without rewriting page and run static gate
+        run: |
+          python scripts/build_html_project_repair_v1.py build --project interactive-3d-model-viewer --source-root . --output-root repair-output --tools-root repair-tools
+          node --check repair-output/interactive-3d-model-viewer/viewer.bundle.js
+  repair:
+    if: ${{ github.event_name == 'workflow_dispatch' && inputs.approved == 'yes' && github.actor == 'kaministrator999-ui' }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.source_sha }}
+          path: reviewed-source
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - name: Validate source pin, owner and input
+        env:
+          SOURCE_SHA: ${{ inputs.source_sha }}
+          PROJECT: ${{ inputs.project }}
+        run: |
+          set -euo pipefail
+          [[ "$SOURCE_SHA" =~ ^[0-9a-f]{40}$ ]]
+          [[ "$PROJECT" =~ ^[a-z0-9]([a-z0-9-]{0,46}[a-z0-9])?$ ]]
+          test "$(git -C reviewed-source rev-parse HEAD)" = "$SOURCE_SHA"
+          test "$(git -C reviewed-source ls-remote origin refs/heads/main | cut -f1)" = "$SOURCE_SHA"
+          python scripts/build_html_project_repair_v1.py selftest
+          python -m unittest discover -s tests -p test_html_project_repair_v1.py -v
+      - name: Install pinned local bundler and compile original existing module
+        run: |
+          npm install --prefix repair-tools --no-save --no-package-lock --no-audit --no-fund three@0.160.0 esbuild@0.25.12
+          python scripts/build_html_project_repair_v1.py build --project "${{ inputs.project }}" --source-root reviewed-source --output-root repair-output --tools-root repair-tools
+          node --check "repair-output/${{ inputs.project }}/viewer.bundle.js"
+      - name: Create only an owner-review pull request (no merge or deployment)
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PROJECT: ${{ inputs.project }}
+          SOURCE_SHA: ${{ inputs.source_sha }}
+          GH_REPO: ${{ github.repository }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          cp "repair-output/$PROJECT/index.html" "reviewed-source/html-projects/$PROJECT/index.html"
+          cp "repair-output/$PROJECT/viewer.bundle.js" "reviewed-source/html-projects/$PROJECT/viewer.bundle.js"
+          cd reviewed-source
+          branch="fix/html-source-bundle-${PROJECT}-${SOURCE_SHA:0:10}"
+          git switch -c "$branch"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add "html-projects/$PROJECT/index.html" "html-projects/$PROJECT/viewer.bundle.js"
+          git diff --cached --check
+          git diff --cached --quiet && { echo "No changes to propose"; exit 1; }
+          git commit -m "fix(html): bundle pinned Three.js without rewriting $PROJECT"
+          test "$(git ls-remote origin refs/heads/main | cut -f1)" = "$SOURCE_SHA"
+          git push origin "HEAD:refs/heads/$branch"
+          gh pr create --repo "$GH_REPO" --base main --head "$branch" \
+            --title "fix(html): source-preserving dependency bundle for $PROJECT" \
+            --body "Approved repair proposal. Preserves existing project HTML and UI, replaces the external Three.js import map/module with a locally compiled esbuild artifact. Source pin: $SOURCE_SHA. Build and static gate passed. **No deployment is performed.** Review the diff and merge separately; then use the existing owner-approved HTML project publishing workflow."
