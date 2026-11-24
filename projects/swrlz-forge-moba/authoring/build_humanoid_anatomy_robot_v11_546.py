@@ -96,7 +96,7 @@ def xatlas_group(pos,faces):
     assert in_keys==out_keys,'The atlas changed source face geometry'
     return coords[vmap],f,uv,atlas.get_mesh_chart_count(0)
 
-def seam_aware_anatomical_group(pos,faces,name):
+def seam_aware_anatomical_group(pos,faces,name,hand_spread=0.,hand_depth=0.,foot_stride=0.):
     """Unroll a connected anatomical surface using an explicit axial seam.
 
     Unlike xatlas.parametrize(), this maps the entire region at once. Every
@@ -109,23 +109,29 @@ def seam_aware_anatomical_group(pos,faces,name):
     idx=np.ascontiguousarray(inverse.reshape(-1,3),dtype=np.uint32)
     arm=name in ('leftArm','rightArm')
     axial=0 if arm else 1
+    axis_values=coords[:,axial].astype(np.float64)
     if arm:
-        # Axial X is horizontal shoulder-to-wrist in 3D. Use front (+Z) as
-        # angular center and the rear (-Z) as the continuous seam.
-        # A face near +Z must never land on the side of the atlas.
-        theta=np.arctan2(coords[:,1]-3.67,coords[:,2])
+        # Shoulder/forearm remain cylindrical. The articulated fingers need
+        # a controlled spread near the hand rather than overlaying each other.
+        distal=np.clip((np.abs(coords[:,0])-2.10)/.50,0,1)
+        distal=distal*distal*(3-2*distal)
+        theta=(np.arctan2(coords[:,1]-3.67,coords[:,2])+
+               distal*(hand_spread*(coords[:,1]-3.67)+hand_depth*coords[:,2]))
     else:
         center_x=(-0.28 if name=='leftLeg' else
                   0.28 if name=='rightLeg' else 0.0)
-        # The front (+Z) is precisely theta=0, back (-Z) is the seam.
         theta=np.arctan2(coords[:,0]-center_x,coords[:,2])
+        if name in ('leftLeg','rightLeg'):
+            toe=np.clip((.48-coords[:,1])/.40,0,1)
+            toe=toe*toe*(3-2*toe)
+            axis_values=axis_values+foot_stride*toe*(coords[:,2]-.12)
     theta=np.arctan2(np.sin(theta),np.cos(theta))
     phase=theta[idx]
     avg=np.arctan2(np.sin(phase).sum(axis=1),
                    np.cos(phase).sum(axis=1))
     wind=np.rint((avg[:,None]-phase)/(2*np.pi)).astype(np.int16)
-    lo=float(coords[:,axial].min())
-    length=float(np.ptp(coords[:,axial]))
+    lo=float(axis_values.min())
+    length=float(np.ptp(axis_values))
     if length<1e-8:
         raise ValueError('Collapsed anatomical projection '+name)
     # Stable vertex/phase identity prevents artificial UV cracks caused by
@@ -145,7 +151,7 @@ def seam_aware_anatomical_group(pos,faces,name):
                 outpos.append(coords[source_vertex])
                 outuv.append(((theta[source_vertex]+2*np.pi*phase_turn+
                                np.pi)/(2*np.pi),
-                              (float(coords[source_vertex,axial])-lo)/length))
+                              (float(axis_values[source_vertex])-lo)/length))
             outtri.append(mapped)
         outfaces.append(outtri)
     xyz=np.asarray(outpos,np.float32)
@@ -298,13 +304,42 @@ def make_atlas(positions,triangles,mode):
     for name in (REGIONS if mode=='seven' else ['head','torso','leftArm','rightArm','leftLeg','rightLeg']):
         original=triangles[labels==name]
         if not len(original):raise ValueError('Missing anatomy '+name)
-        # Arms and legs have one manifold UV-cut boundary apiece, verified
-        # from exact source triangles. Convex harmonic mapping preserves each
-        # as one connected chart without overlapping articulated fingers.
-        if name in ('leftArm','rightArm','leftLeg','rightLeg'):
-            p,f,uv,c=convex_single_shell_unwrap(positions,original,name)
+        # Optimize one continuous seam-aware anatomical chart locally, then
+        # refuse to publish if the baked atlas still has geometric conflicts.
+        if name in ('leftArm','rightArm'):
+            settings=[(spread,depth,0.) for spread in (-8.,-4.,0.,4.,8.)
+                      for depth in (-8.,0.,8.)]
+        elif name in ('leftLeg','rightLeg'):
+            settings=[(0.,0.,stride) for stride in (-2.,-1.,0.,.5,1.,2.,3.)]
         else:
-            p,f,uv,c=seam_aware_anatomical_group(positions,original,name)
+            settings=[(0.,0.,0.)]
+        selected=None
+        for spread,depth,stride in settings:
+            try:
+                pp,ff,uu,cc=seam_aware_anatomical_group(
+                    positions,original,name,spread,depth,stride)
+                fitted=fit(uu,RECT[name],lock_orientation=True)
+                audit_local=measure_surface_uv_conflicts(
+                    pp,fitted,ff,[name]*len(ff),size=256)
+                tri3=pp[ff];tri2=fitted[ff]
+                area3=np.linalg.norm(np.cross(tri3[:,1]-tri3[:,0],
+                                              tri3[:,2]-tri3[:,0]),axis=1)
+                cross2=(tri2[:,1,0]-tri2[:,0,0])*(tri2[:,2,1]-tri2[:,0,1])-(
+                        tri2[:,1,1]-tri2[:,0,1])*(tri2[:,2,0]-tri2[:,0,0])
+                density=np.abs(cross2)/np.maximum(area3,1e-12)
+                ratio=float(np.percentile(density,95)/max(np.percentile(density,5),1e-12))
+                score=(audit_local['conflictingSamples']*10+
+                       max(0,ratio-100)*5)
+                if selected is None or score<selected[0]:
+                    selected=(score,pp,ff,uu,cc,(spread,depth,stride),
+                              audit_local['conflictingSamples'],ratio)
+            except (ValueError,AssertionError,RuntimeError):
+                continue
+        if selected is None:raise ValueError('No continuous anatomical unwrap for '+name)
+        _,p,f,uv,c,tuning,local_conflicts,local_ratio=selected
+        print('SE546_REGION_UNWRAP_TUNED',name,
+              {'parameters':tuning,'conflictingSamples256':local_conflicts,
+               'densityRatio':round(local_ratio,2)},flush=True)
         if name=='head':
             # U is circumference, V is crown-to-chin. A horizontal 2:1
             # unrolled head gives a centered front visor at U ~= 0.5.
