@@ -160,3 +160,85 @@ export function flattenSeamedMesh(source,faceMaterialData=null){
  return {positions:p,uvs:uv,indices,faceMaterialData:materials,
          charts:groups.length,totalIterations};
 }
+
+
+/** Place LSCM charts in one atlas without changing their relative scale.
+ * Deterministic shelf packing with a globally uniform scale and pixel gutters.
+ * Used if xatlas's UV-mesh packing yields no atlas. */
+export function packSeamedCharts(flat,{resolution=2048,padding=8}={}){
+ const groups=new Map();
+ for(let f=0;f<flat.indices.length/3;f++){
+  const id=flat.faceMaterialData[f];
+  if(!groups.has(id))groups.set(id,new Set());
+  for(let j=0;j<3;j++)groups.get(id).add(flat.indices[f*3+j]);
+ }
+ if(groups.size!==flat.charts||groups.size<1)throw Error('LSCM packing chart mismatch');
+ const rects=[...groups].map(([id,ids])=>{
+  const indices=[...ids],coords=indices.map(i=>flat.uvs.slice(2*i,2*i+2));
+  const minU=Math.min(...coords.map(q=>q[0])),maxU=Math.max(...coords.map(q=>q[0]));
+  const minV=Math.min(...coords.map(q=>q[1])),maxV=Math.max(...coords.map(q=>q[1]));
+  const width=maxU-minU,height=maxV-minV;
+  if(!(width>1e-8&&height>1e-8))throw Error('Collapsed LSCM chart '+id);
+  return {id,indices,minU,minV,width,height};
+ });
+ const margin=Math.max(2,Math.min(24,padding))/resolution;
+ function layout(scale){
+  const order=rects.map(r=>({...r,w:r.width*scale+2*margin,h:r.height*scale+2*margin}))
+   .sort((a,b)=>b.h-a.h||b.w-a.w||a.id-b.id);
+  const shelves=[],placement=new Map();
+  let usedHeight=0;
+  for(const r of order){
+   if(r.w>1||r.h>1)return null;
+   let shelf=null;
+   for(const s of shelves){
+    if(r.h<=s.h+1e-10&&s.x+r.w<=1+1e-10){
+     if(!shelf||s.x<shelf.x)shelf=s;
+    }
+   }
+   if(!shelf){
+    if(usedHeight+r.h>1+1e-10)return null;
+    shelf={x:0,y:usedHeight,h:r.h};
+    shelves.push(shelf);usedHeight+=r.h;
+   }
+   placement.set(r.id,{x:shelf.x+margin,y:shelf.y+margin});
+   shelf.x+=r.w;
+  }
+  return placement;
+ }
+ let maxDim=Math.max(...rects.map(r=>Math.max(r.width,r.height)));
+ let lower=0,upper=2/maxDim,best=null;
+ for(let n=0;n<45;n++){
+  const mid=(lower+upper)/2,attempt=layout(mid);
+  if(attempt){lower=mid;best=attempt;}else upper=mid;
+ }
+ if(!best||lower<1e-7)throw Error('Could not pack LSCM seam charts with required padding');
+ const uvs=new Array(flat.uvs.length).fill(NaN);
+ for(const r of rects){
+  const place=best.get(r.id);
+  for(const i of r.indices){
+   uvs[2*i]=place.x+(flat.uvs[2*i]-r.minU)*lower;
+   uvs[2*i+1]=place.y+(flat.uvs[2*i+1]-r.minV)*lower;
+  }
+ }
+ if(uvs.some(v=>!Number.isFinite(v)||v<0||v>1))
+  throw Error('Packed LSCM charts leave UV 0–1 atlas');
+ // Exact rectangle overlap test; do not infer success from a generated PNG.
+ const boxes=rects.map(r=>({
+  id:r.id,x:best.get(r.id).x-margin,
+  y:best.get(r.id).y-margin,
+  w:r.width*lower+2*margin,h:r.height*lower+2*margin
+ }));
+ for(let i=0;i<boxes.length;i++)for(let j=i+1;j<boxes.length;j++){
+  const a=boxes[i],b=boxes[j];
+  if(Math.min(a.x+a.w,b.x+b.w)-Math.max(a.x,b.x)>1e-7&&
+     Math.min(a.y+a.h,b.y+b.h)-Math.max(a.y,b.y)>1e-7)
+     throw Error('Packed chart rectangles overlap: '+a.id+', '+b.id);
+ }
+ return {
+  positions:flat.positions,indices:flat.indices,uvs,
+  charts:flat.charts,width:resolution,height:resolution,
+  lscmIterations:flat.totalIterations,
+  packing:'deterministic-shelf',chartBoxes:boxes,
+  chartScale:lower,paddingPixels:padding
+ };
+}
