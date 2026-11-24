@@ -1,16 +1,17 @@
 {
   "version": "v11.554",
-  "vertices": 5333,
-  "triangles": 9712,
+  "revision": "welded-quad-loop-v2",
+  "vertices": 6242,
+  "triangles": 11044,
   "quads": {
-    "head": 736,
-    "torso": 960,
-    "leftArm": 860,
-    "rightArm": 860,
-    "leftLeg": 720,
-    "rightLeg": 720
+    "torso": 1388,
+    "head": 888,
+    "leftArm": 1033,
+    "rightArm": 1033,
+    "leftLeg": 590,
+    "rightLeg": 590
   },
-  "components": 16,
+  "components": 1,
   "uvBoxes": {
     "head": [
       0.02,
@@ -52,5 +53,15 @@
   "textureSize": 1024,
   "guideSize": 2048,
   "originalRobotPreserved": true,
-  "quadFirst": true
+  "quadFirst": true,
+  "topologyAudit": {
+    "weldedVertices": 5664,
+    "weldedEdges": 11044,
+    "openEdges": 0,
+    "nonManifoldEdges": 0,
+    "connectedComponents": 1,
+    "watertight": true,
+    "oriented": true,
+    "signedVolume": 1.10363
+  }
 }
