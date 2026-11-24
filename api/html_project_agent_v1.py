@@ -12,7 +12,10 @@ import json
 import re
 from pathlib import PurePosixPath
 
-from scripts.project_code_targeted_repair_v1 import apply_patch, source_sha
+try:
+    from scripts.project_code_targeted_repair_v1 import apply_patch, source_sha
+except ImportError:  # Hugging Face root module deployment
+    from project_code_targeted_repair_v1 import apply_patch, source_sha
 
 VERSION = "swrlz-html-repair-agent-v1"
 MAX_FILES = 48
