@@ -1,0 +1,19 @@
+name: Verify §C HTML approval and live source check in simulated browser
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'tests/test_html_publish_review_browser_v1.cjs'
+      - '.github/workflows/test-html-publish-review-browser-v1.yml'
+permissions: {contents: read}
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 4
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - run: node --check chat/html-project-publish-review-v1.js
+      - run: node tests/test_html_publish_review_browser_v1.cjs
