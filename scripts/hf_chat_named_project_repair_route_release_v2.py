@@ -62,7 +62,6 @@ def station_guard(source):
 def selftest():
     from api import html_project_context_v1 as context
     from api import html_project_repair_v1 as repair
-    from tests.test_html_project_context_v1 import ProjectContextTest
 
     sample = (
         "Inspect the existing interactive-3d-model-viewer project on GitHub. "
