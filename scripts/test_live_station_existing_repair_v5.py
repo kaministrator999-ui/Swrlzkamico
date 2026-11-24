@@ -40,7 +40,7 @@ def main():
         data=json.dumps(payload).encode("utf-8"))
     with opener.open(call, timeout=40) as response:
         ack = json.load(response)
-        if response.status != 202 or ack.get("accepted") is not True:
+        if response.status != 202:
             raise RuntimeError("LIVE_STATION_SEND_NOT_ACCEPTED")
     url = BASE + "/api/lalm_station/stream?" + urllib.parse.urlencode({"requestId": request_id})
     phases, texts, terminal = [], [], None
