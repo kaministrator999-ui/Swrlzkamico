@@ -4,8 +4,8 @@
   "version": "v11.546",
   "goal": "Rebuild humanoid UVs into anatomy-grouped charts; generate independent new robotic material from 3D surface; preserve geometry; provide 4096x4096 reference atlas and anatomy exports; preserve historical scenes and saved copies.",
   "release": "Do not publish until exact geometry/UV texture checks and source-seal tests pass.",
-  "run": 5,
-  "correction": "Paint coverage meets threshold; add six-group torso diagnostic color for 4K guide",
-  "rebuild_requested": "2026-11-23-seam-aware-connected-six-region-atlas-v5",
-  "reason": "Generate real continuous UV shells using source geometry and calibrated back/underside seam, re-bake 3D robotic paint, verify six-shell asset"
+  "run": 6,
+  "correction": "Articulated limbs need real non-overlapping xatlas charts; preserve continuous head and torso, enforce collision gate",
+  "rebuild_requested": "2026-11-23-bidirectional-region-uv-and-articulated-limb-atlas-v6",
+  "reason": "Reauthor articulated limbs to reduce UV collisions; add measurable quality release gate and real 3D-to-UV region sync"
 }
