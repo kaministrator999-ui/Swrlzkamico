@@ -86,7 +86,7 @@ def zone_ids(positions,faces,mode):
     assert not np.any(labels=='torso'), 'Unpartitioned torso triangles'
     return labels
 
-def xatlas_group(pos,faces):
+def xatlas_group(pos,faces,max_cost=2.):
     used,inverse=np.unique(faces,return_inverse=True)
     coords=np.ascontiguousarray(pos[used],dtype=np.float32)
     idx=np.ascontiguousarray(inverse.reshape(-1,3),dtype=np.uint32)
@@ -95,7 +95,12 @@ def xatlas_group(pos,faces):
     pack=xatlas.PackOptions()
     pack.resolution=1024
     pack.padding=7
-    atlas.generate(pack_options=pack)
+    chart=xatlas.ChartOptions()
+    # Controlled chart growth avoids hundreds of tiny islands and preserves
+    # the native 9,000-vertex UV cap. xatlas still relaxes each resulting chart.
+    chart.max_cost=float(max_cost)
+    chart.max_iterations=2
+    atlas.generate(chart_options=chart,pack_options=pack)
     vmap,f,uv=atlas[0]
     vmap=np.asarray(vmap,np.int64)
     f=np.asarray(f,np.uint32).reshape(-1,3)
@@ -359,7 +364,7 @@ def contour_width(pos,uv,name,strength):
     q[:,0]=center+(q[:,0]-center)*(1-strength+strength*np.interp(t,grid,profile))
     return q
 
-def make_atlas(positions,triangles,mode):
+def make_atlas(positions,triangles,mode,max_cost):
     """Create genuine relaxed, seam-separated, non-overlapping xatlas charts.
 
     Unlike the original forced cylindrical UV shell, this unwrap is allowed to
@@ -375,7 +380,7 @@ def make_atlas(positions,triangles,mode):
         original=triangles[labels==name]
         if not len(original):
             raise ValueError('Missing anatomical region '+name)
-        p,f,unpacked,chart_count=xatlas_group(positions,original)
+        p,f,unpacked,chart_count=xatlas_group(positions,original,max_cost)
         if chart_count<1 or chart_count>48:
             raise ValueError('Excess atlas fragmentation: '+name+' '+str(chart_count))
         count+=len(p)
@@ -597,9 +602,11 @@ def export_guides(uv,faces,region_names):
 def main():
     scene,part,positions,faces=source()
     errors=[];result=None
-    for kind in ('eight','seven'):
+    selected_max_cost=None
+    for kind,max_cost in (('eight',4.),('eight',8.),('eight',12.),
+                          ('seven',4.),('seven',8.),('seven',12.)):
         try:
-            candidate=make_atlas(positions,faces,kind)
+            candidate=make_atlas(positions,faces,kind,max_cost)
             metrics=audit(*candidate[:3])
             shells,violations=continuous_shell_gate(candidate[2],candidate[1],candidate[3])
             if violations:
@@ -610,9 +617,10 @@ def main():
                                                    candidate[1],candidate[3])
             if conflicts['conflictingSamples']>80 or conflicts['conflictPct']>.15:
                 raise ValueError('Actual overlapping surfaces remain: '+str(conflicts))
+            selected_max_cost=max_cost
             result=(candidate,dict(metrics,uvShells=shells),kind);break
         except (ValueError,AssertionError) as e:
-            errors.append(kind+': '+str(e))
+            errors.append(kind+' maxCost='+str(max_cost)+': '+str(e))
             print('SE546_ATLAS_ATTEMPT_REJECTED',errors[-1],flush=True)
     if result is None:
         REPORT.parent.mkdir(parents=True,exist_ok=True)
@@ -655,7 +663,7 @@ def main():
       '4096px UV wireframe and 4096px anatomical UV guide are available. '
       'No rigging or geometry sculpt applied.')
     OUTPUT.write_text(json.dumps(scene,ensure_ascii=False,separators=(',',':')),'utf8')
-    record={'version':'v11.546','strategy':kind,'charts':charts,
+    record={'version':'v11.546','strategy':kind,'chartMaxCost':selected_max_cost,'charts':charts,
         'vertices':len(xyz),'triangles':len(idx),'originalGeometryUnchanged':True,
         'regionTriangles':dict(Counter(region)),'paintBytes':len(blob),
         'guideSize':4096,'legacyCandidatesRejected':errors,
