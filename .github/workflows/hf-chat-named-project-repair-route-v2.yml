@@ -1,0 +1,57 @@
+name: Repair §C existing named-project intent routing
+on:
+  pull_request:
+    paths:
+      - 'api/html_project_context_v1.py'
+      - 'api/html_project_repair_v1.py'
+      - 'tests/test_html_project_context_v1.py'
+      - 'tests/test_html_project_repair_v1.py'
+      - 'scripts/hf_chat_named_project_repair_route_release_v2.py'
+      - '.github/workflows/hf-chat-named-project-repair-route-v2.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'api/html_project_context_v1.py'
+      - 'api/html_project_repair_v1.py'
+      - 'scripts/hf_chat_named_project_repair_route_release_v2.py'
+      - '.github/workflows/hf-chat-named-project-repair-route-v2.yml'
+permissions: {contents: read}
+concurrency:
+  group: swrlz-named-project-repair-upgrade-v2
+  cancel-in-progress: false
+jobs:
+  validate-and-release:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 17
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - name: Validate exact user-prompt routing and owner approval boundaries
+        run: |
+          python -m pip install --quiet 'requests>=2.31,<3'
+          export PYTHONPATH="$GITHUB_WORKSPACE:$GITHUB_WORKSPACE/api"
+          echo "PYTHONPATH=$PYTHONPATH" >> "$GITHUB_ENV"
+          python -m py_compile api/html_project_context_v1.py api/html_project_repair_v1.py scripts/hf_chat_named_project_repair_route_release_v2.py
+          python -m unittest discover -s tests -p 'test_html_project_context_v1.py' -v
+          python -m unittest discover -s tests -p 'test_html_project_repair_v1.py' -v
+          python -m unittest discover -s tests -p 'test_html_project_agent_runtime_v1.py' -v
+          python scripts/hf_chat_named_project_repair_route_release_v2.py selftest
+      - name: Install Hugging Face source reader
+        run: python -m pip install --quiet 'huggingface_hub>=0.34,<2'
+      - name: Verify real production Station route, source pin, and module drift
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: python -u scripts/hf_chat_named_project_repair_route_release_v2.py preflight
+      - name: Deploy owner-authorized upgrade to Hugging Face
+        if: ${{ github.event_name == 'push' && contains(github.event.head_commit.message, '[release-chat-named-project-repair-v2]') }}
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          SWRLZ_NAMED_REPAIR_APPROVED: '1'
+        run: python -u scripts/hf_chat_named_project_repair_route_release_v2.py publish
+      - name: Verify live source readback and running agent health
+        if: ${{ github.event_name == 'push' && contains(github.event.head_commit.message, '[release-chat-named-project-repair-v2]') }}
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: python -u scripts/hf_chat_named_project_repair_route_release_v2.py verify

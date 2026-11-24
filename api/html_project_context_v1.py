@@ -18,6 +18,8 @@ _SUBJECT = re.compile(
     r"deployed|deployment|published)\b", re.I)
 _COMMAND = re.compile(r"^\s*@github\s+(?:status|publish|review)\b", re.I)
 _EXPLICIT = re.compile(r"\bhtml\s+project\s+([a-z0-9][a-z0-9-]{1,47})\b", re.I)
+_NAMED = re.compile(
+    r"\b([a-z0-9]+(?:-[a-z0-9]+){2,})\s+(?:html\s+)?project\b", re.I)
 
 
 def _valid(slug):
@@ -53,9 +55,13 @@ def resolve(prompt, thread):
         for slug in _from_message(message):
             if slug not in known:
                 known.append(slug)
-    explicit = _EXPLICIT.search(prompt)
+    # An explicit slug in the user's request is valid project selection even
+    # when the thread contains no earlier project handoff. The subsequent
+    # owner-authenticated GitHub source read is mandatory; this is not proof
+    # the project exists and grants no write access.
+    explicit = _NAMED.search(prompt) or _EXPLICIT.search(prompt)
     if explicit and _valid(explicit.group(1)):
-        slug = explicit.group(1)
+        slug = explicit.group(1).lower()
     else:
         mentioned = [slug for slug in known if re.search(
             r"(?<![a-z0-9-])" + re.escape(slug) + r"(?![a-z0-9-])", prompt, re.I)]

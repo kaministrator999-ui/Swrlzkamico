@@ -32,7 +32,11 @@ ROUTE='''    elif (html_project_ref := _swrlz_project_context.resolve(prompt,t))
 '''
 def digest(data):return hashlib.sha256(data).hexdigest()
 def patch(station):
-    if MARK in station:raise RuntimeError("PROJECT_CONTEXT_ALREADY_INSTALLED")
+    if MARK in station:
+        if station.count(MARK) != 1 or 'payload["activeHtmlProject"]=html_project_ref' not in station:
+            raise RuntimeError("PARTIAL_PROJECT_CONTEXT_INSTALLATION")
+        ast.parse(station,filename=STATION)
+        return station
     if station.count(ROOT_ANCHOR)!=1 or station.count(ROUTE_ANCHOR)!=1:
         raise RuntimeError("LIVE_PROJECT_ROUTING_ANCHOR_DRIFT")
     if "projectFileEvidence" not in station:
@@ -57,9 +61,7 @@ def route():
 '''
     out=patch(fake)
     assert MARK in out and out.count(ROUTE_ANCHOR)==1
-    try:patch(out)
-    except RuntimeError:pass
-    else:raise RuntimeError("NON_IDEMPOTENT_ROUTE")
+    assert patch(out) == out
     print("PROJECT_CONTEXT_ROUTING_SELFTEST_PASS",digest(SOURCE.read_bytes()),flush=True)
 def live_health():
     with urllib.request.urlopen(BASE+"/chat/%C2%A7wyrlz?__project_context=1",timeout=20) as r:
@@ -87,7 +89,8 @@ def main(mode):
         live_health()
         print("PROJECT_CONTEXT_LIVE_SOURCE_VERIFIED",current,flush=True)
         return
-    if MODULE in files:raise RuntimeError("EXISTING_HELPER_WOULD_BE_OVERWRITTEN")
+    if MODULE in files and mode=="publish":
+        raise RuntimeError("USE_NAMED_PROJECT_REPAIR_UPGRADE_FOR_EXISTING_HELPER")
     after=patch(code).encode("utf-8")
     print("PROJECT_CONTEXT_PREFLIGHT",current,{STATION:digest(after),MODULE:digest(module)},flush=True)
     if mode=="preflight":return

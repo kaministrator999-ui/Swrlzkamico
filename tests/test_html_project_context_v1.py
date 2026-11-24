@@ -26,6 +26,28 @@ class ProjectContextTest(unittest.TestCase):
         found = m.resolve(request, thread)
         self.assertEqual(found["path"], "html-projects/" + SLUG + "/index.html")
         self.assertNotIn("swrlz-review-test", str(found))
+    def test_user_reported_failure_with_no_prior_handoff(self):
+        prompt = (
+            "Inspect the existing interactive-3d-model-viewer project on GitHub. "
+            "Identify why it fails to render correctly and repair it using your "
+            "own coding model. Retrieve the actual source, generate targeted "
+            "patches, validate them and revise any failed patches until "
+            "validation passes. Preserve the existing functionality and design. "
+            "Do not regenerate the entire HTML page."
+        )
+        project = m.resolve(prompt, {"messages": [
+            {"role": "assistant", "text": "Earlier source: swrlz-review-test.txt"}
+        ]})
+        self.assertEqual(project["project"], SLUG)
+        self.assertEqual(project["path"], "html-projects/" + SLUG + "/index.html")
+        self.assertEqual(project["repo"], "kaministrator999-ui/Swrlzkamico")
+
+    def test_named_project_never_inferred_from_arbitrary_prose(self):
+        self.assertIsNone(m.resolve("Repair my existing project on GitHub", {"messages": []}))
+        self.assertIsNone(m.resolve("Please repair the project", {"messages": []}))
+        self.assertIsNone(m.resolve("Debug swrlz-review-test.txt", {"messages": []}))
+        self.assertIsNone(m.resolve("Summarize interactive-3d-model-viewer project", {"messages": []}))
+
     def test_command_and_unrelated_file_unchanged(self):
         self.assertIsNone(m.resolve("@GitHub status HTML project " + SLUG, thread))
         self.assertIsNone(m.resolve("@GitHub inspect swrlz-review-test.txt", thread))

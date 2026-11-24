@@ -53,7 +53,18 @@ def replace_one(source, old, new, label):
 
 def patch_station(source):
     if MARK in source:
-        raise RuntimeError("AGENT_ALREADY_INSTALLED")
+        # Existing deployments are valid during unrelated source-repair updates.
+        # Refuse partial installations, but do not try to install twice.
+        required = (
+            "event_source=_swrlz_model_repair.run(payload,_coder_generate)",
+            'payload["htmlRepairOwner"]=google_owner',
+            'payload["htmlRepairThreadId"]=tid',
+            '/api/html-project-agent-v1/health',
+        )
+        if any(anchor not in source for anchor in required):
+            raise RuntimeError("PARTIAL_AGENT_INSTALLATION")
+        ast.parse(source, filename=STATION)
+        return source
     source = replace_one(
         source, IMPORT_ANCHOR,
         IMPORT_ANCHOR + "\nimport html_project_agent_runtime_v1 as _swrlz_model_repair",
@@ -130,7 +141,10 @@ def run(mode):
                                 revision=rev, token=token)).read_bytes()
     if STATION not in originals or HELPER not in originals:
         raise RuntimeError("REQUIRED_PRODUCTION_SOURCE_MISSING")
-    if "MODEL_WORKFLOW =" in originals[HELPER].decode("utf-8"):
+    # The installed general agent legitimately adds MODEL_WORKFLOW. Only
+    # reject a pre-existing helper when Station lacks the matching agent.
+    if (MARK not in originals[STATION].decode("utf-8")
+            and "MODEL_WORKFLOW =" in originals[HELPER].decode("utf-8")):
         raise RuntimeError("PRODUCTION_REPAIR_HELPER_ALREADY_CHANGED")
     patched = {
         STATION: patch_station(originals[STATION].decode("utf-8")).encode("utf-8")
