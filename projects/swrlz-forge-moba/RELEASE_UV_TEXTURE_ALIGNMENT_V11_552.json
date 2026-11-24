@@ -1,5 +1,5 @@
 {
   "release": "v11.552",
-  "purpose": "Reseal after removing obsolete xatlas metadata requirement",
-  "trigger": "2026-11-23-shared-anatomical-region-overlay"
+  "purpose": "Seal tested 91-chart clean articulated atlas, six anatomical colors, synchronized 3D-UV region picking and model overlay",
+  "trigger": "2026-11-23-final-anatomical-uv-overlap-quality-and-sync-v8"
 }
