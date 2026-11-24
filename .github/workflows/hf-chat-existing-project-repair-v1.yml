@@ -1,0 +1,57 @@
+name: §C existing project source-preserving repair routing
+on:
+  pull_request:
+    paths:
+      - api/html_project_repair_v1.py
+      - api/html_project_context_v1.py
+      - scripts/hf_chat_project_repair_release_v1.py
+      - scripts/build_html_project_repair_v1.py
+      - tests/test_html_project_repair_v1.py
+      - chat/html-project-publish-review-v1.js
+      - .github/workflows/hf-chat-existing-project-repair-v1.yml
+      - .github/workflows/hf-html-project-repair-pr-v1.yml
+  push:
+    branches: [main]
+    paths:
+      - api/html_project_repair_v1.py
+      - api/html_project_context_v1.py
+      - scripts/hf_chat_project_repair_release_v1.py
+      - scripts/build_html_project_repair_v1.py
+      - tests/test_html_project_repair_v1.py
+      - chat/html-project-publish-review-v1.js
+      - .github/workflows/hf-chat-existing-project-repair-v1.yml
+      - .github/workflows/hf-html-project-repair-pr-v1.yml
+permissions: {contents: read}
+concurrency:
+  group: swrlz-existing-project-repair-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - name: Verify targeted repair builder and owner-approval regression
+        run: |
+          python -m py_compile api/html_project_repair_v1.py scripts/build_html_project_repair_v1.py scripts/hf_chat_project_repair_release_v1.py
+          python scripts/build_html_project_repair_v1.py selftest
+          python -m unittest discover -s tests -p test_html_project_repair_v1.py -v
+          python -m unittest discover -s tests -p test_html_project_context_v1.py -v
+          node --check chat/html-project-publish-review-v1.js
+          python scripts/hf_chat_project_repair_release_v1.py selftest
+      - run: python -m pip install --quiet 'huggingface_hub>=0.34,<2'
+      - name: Preflight patch against actual current production sources
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: python scripts/hf_chat_project_repair_release_v1.py preflight
+      - name: Deploy routing, review UI and project repair helper to live §C
+        if: github.event_name == 'push' && contains(github.event.head_commit.message, '[release-existing-html-repair-v1]')
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          SWRLZ_HTML_REPAIR_APPROVED: '1'
+        run: python -u scripts/hf_chat_project_repair_release_v1.py publish
