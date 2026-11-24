@@ -145,6 +145,10 @@ def main():
     # v11.546: anatomy charted true UVs, newly 3D-baked ceramic robot skin
     # and ORIGINAL 4096x4096 real UV + anatomy painting references.
     media_paths.append("scenes/model-atelier-futuristic-humanoid-v11-546.swyrl.json")
+    # v11.554: separate experimental UV-first quad-loop humanoid starter.
+    media_paths.append("scenes/model-atelier-clean-topology-humanoid-v11-554.swyrl.json")
+    media_paths.append("assets/models/clean-topology-humanoid-v11-554-uv-test.png")
+    media_paths.append("assets/models/clean-topology-humanoid-v11-554-uv-guide-2048.png")
     media_paths.append("assets/models/futuristic-humanoid-v11-546-anatomical-robot.png")
     media_paths.append("assets/models/futuristic-humanoid-v11-546-uv-guide-4096.png")
     media_paths.append("assets/models/futuristic-humanoid-v11-546-anatomy-4096.png")
