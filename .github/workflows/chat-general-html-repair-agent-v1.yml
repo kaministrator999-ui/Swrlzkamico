@@ -5,6 +5,7 @@ on:
     paths:
       - api/html_project_agent_v1.py
       - tests/test_html_project_agent_v1.py
+      - tests/test_html_project_agent_runtime_v1.py
       - .github/workflows/chat-general-html-repair-agent-v1.yml
   pull_request:
     paths:
@@ -23,8 +24,9 @@ jobs:
         with: {python-version: '3.11'}
       - name: Syntax and model-selected repair regression
         run: |
-          python -m py_compile api/html_project_agent_v1.py scripts/project_code_targeted_repair_v1.py
+          python -m py_compile api/html_project_agent_v1.py api/html_project_agent_runtime_v1.py scripts/html_project_agent_pr_v1.py scripts/project_code_targeted_repair_v1.py
           python -m unittest discover -s tests -p 'test_html_project_agent_v1.py' -v
+          python -m unittest discover -s tests -p 'test_html_project_agent_runtime_v1.py' -v
           python -m unittest discover -s tests -p 'test_html_project_repair_v1.py' -v
           python -m unittest discover -s tests -p 'test_html_project_context_v1.py' -v
       - name: Source-preserving repair engine tests
