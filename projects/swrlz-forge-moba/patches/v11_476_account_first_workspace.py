@@ -23,7 +23,7 @@ def apply(html):
     html=once(html,"function mount(){\n  if(document.getElementById('seChatAccountPanel')",
        bridge+"\nfunction mount(){\n  if(document.getElementById('seChatAccountPanel')")
     html=once(html,"se175LocalMessage('Loaded '+wanted.name+'.');",
-       "se175LocalMessage('Loaded '+wanted.name+'.');window.SWYRL_ENGINE_STARTUP_476?.markLoaded?.('local',wanted.id);return true;")
+       "se175LocalMessage('Loaded '+wanted.name+'.');window.SWYRL_ENGINE_STARTUP_476?.markLoaded?.('local',wanted.id);")
     html=once(html,
        "cloudRefs.set(getProjectId(),result.project);setStatus('Loaded '+summaryName(result.project.name)+' · revision '+result.project.revision+'.');",
        "cloudRefs.set(getProjectId(),result.project);setStatus('Loaded '+summaryName(result.project.name)+' · revision '+result.project.revision+'.');window.SWYRL_ENGINE_STARTUP_476?.markLoaded?.('cloud',result.project.id);")
