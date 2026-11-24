@@ -22,15 +22,15 @@ SOURCE = '''from pathlib import Path
 ROOT=Path(".")
 app.mount("/chat/§wyrlz/assets",StaticFiles(directory=ROOT/"chat/§wyrlz/assets"),name="chat-assets")
 def _run(payload):
-    if False:
-        pass
-    elif _swrlz_project_repair.should_route(payload):
-        event_source=iter(({"type":"STATUS","phase":"MODEL_REPAIR_SELECTED"},
-                           {"type":"COMPLETED","phase":"COMPLETE"}))
-    else:
-        event_source=iter(({"type":"STATUS","phase":"GENERIC_CODER_SELECTED"},
-                           {"type":"COMPLETED","phase":"COMPLETE"}))
-    return list(event_source)
+        if False:
+            pass
+        elif _swrlz_project_repair.should_route(payload):
+            event_source=iter(({"type":"STATUS","phase":"MODEL_REPAIR_SELECTED"},
+                               {"type":"COMPLETED","phase":"COMPLETE"}))
+        else:
+            event_source=iter(({"type":"STATUS","phase":"GENERIC_CODER_SELECTED"},
+                               {"type":"COMPLETED","phase":"COMPLETE"}))
+        return list(event_source)
 def incoming(prompt,t,payload,google_owner,tid):
     if False:
         pass
