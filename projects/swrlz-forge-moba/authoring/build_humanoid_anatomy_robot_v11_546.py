@@ -108,12 +108,14 @@ def seam_aware_anatomical_group(pos,faces,name):
     arm=name in ('leftArm','rightArm')
     axial=0 if arm else 1
     if arm:
-        # Underarm seam, avoiding the top and front plates.
-        theta=np.arctan2(coords[:,2],coords[:,1]-3.67)+0.5
+        # Axial X is horizontal shoulder-to-wrist in 3D. Use front (+Z) as
+        # angular center and the rear (-Z) as the continuous seam.
+        # A face near +Z must never land on the side of the atlas.
+        theta=np.arctan2(coords[:,1]-3.67,coords[:,2])
     else:
         center_x=(-0.28 if name=='leftLeg' else
                   0.28 if name=='rightLeg' else 0.0)
-        # Back of the head/torso and inner/back side of each leg.
+        # The front (+Z) is precisely theta=0, back (-Z) is the seam.
         theta=np.arctan2(coords[:,0]-center_x,coords[:,2])
     theta=np.arctan2(np.sin(theta),np.cos(theta))
     phase=theta[idx]
@@ -211,31 +213,18 @@ def make_atlas(positions,triangles,mode):
     for name in (REGIONS if mode=='seven' else ['head','torso','leftArm','rightArm','leftLeg','rightLeg']):
         original=triangles[labels==name]
         if not len(original):raise ValueError('Missing anatomy '+name)
-        # A one-piece head and trunk are preferable; articulated fingers,
-        # elbows, knees and feet need chart seams to avoid cylindrical UV folds.
-        # xatlas creates individually non-overlapping limb charts rather than
-        # projecting fingers and hidden back surfaces onto the same pixels.
+        # All six regions use explicit anatomical U/V axes and back-facing
+        # seam identities. Automatic xatlas rotations and fragmented limbs are
+        # disallowed; quality gates must reject bad continuous projections.
+        p,f,uv,c=seam_aware_anatomical_group(positions,original,name)
         if name=='head':
-            # U follows the skull circumference; V follows anatomical height.
-            # Never let the packing heuristic rotate the face onto its side.
-            p,f,uv,c=seam_aware_anatomical_group(positions,original,name)
+            # U is circumference, V is crown-to-chin. A horizontal 2:1
+            # unrolled head gives a centered front visor at U ~= 0.5.
             uv[:,0]*=2.0
-        elif name=='torso':
-            try:
-                p,f,uv,c=single_chart_group(positions,original)
-            except (ValueError,AssertionError,RuntimeError):
-                p,f,uv,c=seam_aware_anatomical_group(positions,original,name)
-        else:
-            try:
-                p,f,uv,c=xatlas_group(positions,original)
-                if count+len(p)>VERT_LIMIT:
-                    raise ValueError('Limb atlas would exceed native vertex limit')
-            except (ValueError,AssertionError,RuntimeError):
-                p,f,uv,c=seam_aware_anatomical_group(positions,original,name)
         base=count;count+=len(p);charts+=c
         if count>VERT_LIMIT:raise ValueError('UV vertex budget exceeded: '+str(count))
         parts.append(p);faces_out.append(f+base)
-        uv_out.append(fit(uv,RECT[name],lock_orientation=name=='head'))
+        uv_out.append(fit(uv,RECT[name],lock_orientation=True))
         group_names.extend([name]*len(f))
     outpos=np.concatenate(parts,axis=0)
     outfaces=np.concatenate(faces_out,axis=0)
@@ -275,10 +264,9 @@ def shell_counts(uv,faces,region_names):
 
 def continuous_shell_gate(uv,faces,region_names):
     counts=shell_counts(uv,faces,region_names)
-    # Head and torso remain continuous whenever feasible; limb articulation
-    # permits smaller islands so fingers and joint interiors cannot fold over.
-    required={'head':1,'torso':2,'chest':1,'back':1,
-              'leftArm':120,'rightArm':120,'leftLeg':120,'rightLeg':120}
+    # Each of the six anatomical regions is a single connected UV shell.
+    required={'head':1,'torso':1,'chest':1,'back':1,
+              'leftArm':1,'rightArm':1,'leftLeg':1,'rightLeg':1}
     violations={k:{'actual':v,'maximum':required[k]} for k,v in counts.items()
                 if v>required[k]}
     return counts,violations
