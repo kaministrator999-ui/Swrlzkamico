@@ -103,6 +103,14 @@ def install(server, chat_extensions) -> None:
         except Exception as exc:
             return JSONResponse({"ok": False, "contract": CONTRACT, "code": "LALM_STATION_GENERATE_FAILED", "detail": f"{type(exc).__name__}: {exc}"}, status_code=503, headers=_headers())
 
+    @app.get("/api/lalm_station/repair-route-probe-v4", include_in_schema=False)
+    async def station_repair_route_probe_v4():
+        # Fixed request with no account identity; exercises the deployed
+        # repair selector before the generic coder. Never fetches source,
+        # calls a model, creates a project or grants mutation authority.
+        from api.durable_project_repair_v1 import route_probe
+        return JSONResponse(route_probe(), headers={"Cache-Control": "no-store"})
+
     @app.post("/api/lalm_station/send", include_in_schema=False)
     async def station_send(request: Request):
         """Persist one authenticated turn, enqueue generation, and return immediately.
