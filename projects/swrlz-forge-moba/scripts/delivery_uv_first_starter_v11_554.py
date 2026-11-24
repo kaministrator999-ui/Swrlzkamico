@@ -24,13 +24,15 @@ def apply(module):
         "se232ActivateSelectedModelWorkspace()",
         'SE554_UV_FIRST_STARTER_END'):
         if required not in runtime:raise ValueError('UV-first native runtime missing '+required)
-    text=once(text,INSERT,runtime+'\n'+INSERT,'startup runtime')
+    text=once(text,INSERT,runtime+'\n'+(ROOT/'runtime/uv_auto_unwrap_v11_555.js').read_text('utf8')+'\n'+INSERT,'startup runtime and xatlas real UV tools')
     text=once(text,CATEGORY,CATEGORY_NEW,'native Starter Models category')
     if text.count('SE554_UV_FIRST_STARTER_END')!=1:raise ValueError('Starter module duplicated')
+    if text.count('SE555_XATLAS_REAL_UNWRAP_END')!=1:raise ValueError('xatlas UV runtime missing')
     delivered=text.encode('utf8')
     return delivered,{
       'starter':'clean-topology-humanoid',
       'originalModuleSha256':hashlib.sha256(module).hexdigest(),
       'patchedModuleSha256':hashlib.sha256(delivered).hexdigest(),
       'quadBasedStarter':True,'oldRobotChanged':False,
+      'nativeXatlasAutoUnwrap':True,'seamEditor':True,'uvDistortionOverlay':True,
       'newScene':'scenes/model-atelier-clean-topology-humanoid-v11-554.swyrl.json'}
