@@ -214,6 +214,38 @@ def fit(uv,rect,lock_orientation=False):
     return np.column_stack((np.full(len(uv),ax+slack[0]),
                             np.full(len(uv),ay+slack[1])))+(coords-base)*scale
 
+def anatomical_silhouette(pos,uv,name):
+    """Retain cross-sectional girth along the anatomical axis.
+    
+    This is a continuous width deformation of the seam-cut chart, not a
+    rectangular normalization or a change to the source mesh.
+    """
+    q=uv.copy()
+    arm=name in ('leftArm','rightArm')
+    axis=np.abs(pos[:,0]) if arm else pos[:,1]
+    cross=pos[:,1] if arm else pos[:,0]
+    depth=pos[:,2]
+    t=(axis-axis.min())/max(float(np.ptp(axis)),1e-8)
+    grid=np.linspace(0,1,25)
+    widths=[]
+    for v in grid:
+        mask=np.abs(t-v)<.085
+        if mask.sum()<5:
+            mask=np.argsort(np.abs(t-v))[:12]
+        a=cross[mask];b=depth[mask]
+        widths.append(np.hypot(np.ptp(a),np.ptp(b)))
+    widths=np.asarray(widths)
+    widths=np.convolve(np.pad(widths,(2,2),mode='edge'),
+                       np.array([1,2,3,2,1])/9,mode='valid')
+    profile=np.clip(widths/max(widths.max(),1e-8),.38,1.)
+    width=np.interp(t,grid,profile)
+    # Front center remains fixed; both sides fan out with local girth.
+    q[:,0]=.5+(q[:,0]-.5)*width
+    if arm:
+        # Shoulder at top, wrist/fingers at bottom on both sides.
+        q[:,1]=1-t
+    return q
+
 def make_atlas(positions,triangles,mode):
     labels=zone_ids(positions,triangles,mode)
     parts=[];faces_out=[];uv_out=[];group_names=[];charts=0;count=0
@@ -230,6 +262,7 @@ def make_atlas(positions,triangles,mode):
                      'rightLeg':(0.,0.,0.,0.)}
         params=calibration.get(name,(0.,0.,0.,0.))
         p,f,uv,c=seam_aware_anatomical_group(positions,original,name,*params)
+        uv=anatomical_silhouette(p,uv,name)
         if name=='head':
             uv[:,0]*=2.0  # Upright crown/chin, centered face on +Z
         base=count;count+=len(p);charts+=c
@@ -488,7 +521,7 @@ def main():
     scene['project']['modelAtelier']['name']='Futuristic Humanoid · Anatomy UV + Robot Skin'
     scene['project']['modelAtelier']['reference']=(
       'One continuous five-digit humanoid, 13,932 original 3D triangles. '
-      'Head and torso authored as coherent UV shells, with xatlas-separated articulated limb islands in '+kind+
+      'Anatomically tapered continuous UV shells in '+kind+
       ' true 3D regions. New ceramic/graphite/cyan robotic skin baked from '
       'actual local 3D positions and normals; no old atlas texture transferred. '
       '4096px UV wireframe and 4096px anatomical UV guide are available. '
