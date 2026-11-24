@@ -44,7 +44,7 @@ def test_real_router(router_text):
     # heavyweight model machinery or making a network request.
     # Only the model selection AST is executed under its actual source lines.
     route_branch=next((node for node in ast.walk(f)
-        if isinstance(node,ast.If) and ast.unparse(node.test)=='model_id == "stock"'),None)
+        if isinstance(node,ast.If) and ast.unparse(node.test)=='model_id == \'stock\''),None)
     if route_branch is None:raise RuntimeError("REAL_ROUTER_BRANCH_NOT_FOUND")
     # The if/elif chain is the production model backend dispatch section.
     class FakeUnavailable(Exception):pass
