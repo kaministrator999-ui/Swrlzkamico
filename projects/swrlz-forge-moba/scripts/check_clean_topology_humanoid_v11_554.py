@@ -51,6 +51,8 @@ def run():
     assert json.loads(ORIGINAL.read_text('utf8'))['project']['canonicalId']=='robotic-humanoid-mannequin'
     assert r['quadFirst'] and r['originalRobotPreserved']
     assert r['revision']=='anatomical-pelvis-uv-v3'
+    assert r['uvPaintMode']=='actual-UV-quad-island-masking'
+    assert r['guideAnatomyLabels'] is True
     charts=r['uvCharts']
     for key in ('torsoFront','torsoBack','pelvis','headFront','headBack','crown'):
         assert charts.get(key,0)>6,('missing anatomy chart',key)
