@@ -1,0 +1,64 @@
+name: §C Markdown list-numbering preflight
+on:
+  push:
+    branches: [fix/chat-markdown-list-continuity-v1]
+    paths:
+      - "scripts/hf_chat_markdown_list_continuity_v1.py"
+      - "tests/test_hf_chat_markdown_list_continuity_v1.py"
+      - ".github/workflows/hf-chat-markdown-list-preflight.yml"
+permissions: {contents: read}
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.11"}
+      - run: python -m pip install --quiet "huggingface_hub>=0.34,<2"
+      - name: Test actual parser branch on spaced and uninterrupted lists
+        run: |
+          set -euo pipefail
+          python -m unittest discover -s tests -p 'test_hf_chat_markdown_list_continuity_v1.py' -v
+          python -m py_compile scripts/hf_chat_markdown_list_continuity_v1.py
+      - name: Stage exact current HF browser UI without publishing
+        run: |
+          set -euo pipefail
+          python -u scripts/hf_chat_markdown_list_continuity_v1.py --out swrlz-list-continuity-rollback
+      - name: Verify all ordinary inline JavaScript blocks parse
+        run: |
+          python - <<'PY'
+          from html.parser import HTMLParser
+          from pathlib import Path
+          import subprocess,tempfile,os
+          html=(Path("swrlz-list-continuity-rollback/candidate")/"chat/§wyrlz/index.html").read_text()
+          class S(HTMLParser):
+              def __init__(self):super().__init__();self.active=False;self.js=[]
+              def handle_starttag(self,tag,attrs):
+                  attr=dict(attrs)
+                  if tag=="script" and not attr.get("src") and attr.get("type","text/javascript") in ("text/javascript","module"):
+                      self.active=True;self.js.append("")
+              def handle_endtag(self,tag):
+                  if tag=="script":self.active=False
+              def handle_data(self,text):
+                  if self.active:self.js[-1]+=text
+          parser=S();parser.feed(html);count=0
+          for code in parser.js:
+              if not code.strip():continue
+              with tempfile.NamedTemporaryFile(mode="w",suffix=".js",delete=False) as temp:
+                  temp.write(code);name=temp.name
+              try:
+                  check=subprocess.run(["node","--check",name],capture_output=True,text=True)
+                  if check.returncode:raise RuntimeError(check.stderr[:1000])
+              finally:os.unlink(name)
+              count+=1
+          assert count>=1
+          print("SWRLZ_MARKDOWN_LIST_JS_VALID",count)
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: swrlz-markdown-list-ui-source-backup
+          path: swrlz-list-continuity-rollback/
+          retention-days: 7
+          if-no-files-found: warn
