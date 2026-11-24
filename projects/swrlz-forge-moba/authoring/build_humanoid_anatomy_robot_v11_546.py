@@ -229,9 +229,16 @@ def convex_single_shell_unwrap(pos,faces,name):
     # Face orientation must be consistent, without UV fold-overs.
     q=relaxed[f]
     signed=(q[:,1,0]-q[:,0,0])*(q[:,2,1]-q[:,0,1])-(q[:,1,1]-q[:,0,1])*(q[:,2,0]-q[:,0,0])
+    print('SE546_HARMONIC_AREAS',name,
+          {'positive':int(np.count_nonzero(signed>1e-12)),
+           'negative':int(np.count_nonzero(signed< -1e-12)),
+           'tiny_1e10':int(np.count_nonzero(np.abs(signed)<1e-10)),
+           'tiny_1e14':int(np.count_nonzero(np.abs(signed)<1e-14)),
+           'min_abs':float(np.min(np.abs(signed))),
+           'p01_abs':float(np.percentile(np.abs(signed),1))},flush=True)
     if min(np.count_nonzero(signed>1e-12),np.count_nonzero(signed< -1e-12))>0:
         raise ValueError(name+' chart contains flipped faces')
-    if np.count_nonzero(np.abs(signed)<1e-10)>3:
+    if np.count_nonzero(np.abs(signed)<1e-14)>3:
         raise ValueError(name+' harmonic chart has collapsed triangles')
     return xyz,f,relaxed,1
 
