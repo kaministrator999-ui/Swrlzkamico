@@ -36,8 +36,8 @@ RECT={
  'chest':(.252,.015,.610,.475),
  'back':(.616,.015,.992,.475),
  'torso':(.252,.015,.992,.475),
- 'leftArm':(.010,.485,.495,.735),'rightArm':(.505,.485,.990,.735),
- 'leftLeg':(.010,.745,.495,.990),'rightLeg':(.505,.745,.990,.990)
+ 'leftArm':(.010,.485,.245,.990),'rightArm':(.255,.485,.490,.990),
+ 'leftLeg':(.510,.485,.745,.990),'rightLeg':(.755,.485,.990,.990)
 }
 VERT_LIMIT=9000
 TRI_COUNT=13932
@@ -240,7 +240,12 @@ def anatomical_silhouette(pos,uv,name,strength=1.):
     profile=np.clip(widths/max(widths.max(),1e-8),.38,1.)
     width=1-strength+strength*np.interp(t,grid,profile)
     # Front center remains fixed; both sides fan out with local girth.
-    q[:,0]=.5+(q[:,0]-.5)*width
+    # Convert normalized angular U and axial V into comparable world units.
+    # Approximate circumference from the measured transverse diameter.
+    # Preserve length-to-girth ratio before isotropic atlas packing.
+    circumference=np.pi*max(float(widths.max()),1e-8)/np.sqrt(2.)
+    axial_length=max(float(np.ptp(axis)),1e-8)
+    q[:,0]=.5+(q[:,0]-.5)*width*circumference/axial_length
     if arm:
         # Shoulder at top, wrist/fingers at bottom on both sides.
         q[:,1]=1-t
@@ -267,7 +272,7 @@ def make_atlas(positions,triangles,mode):
         candidates=[]
         for strength in (1.,.85,.7,.55,.4,.25,.1,0.):
             q=anatomical_silhouette(p,uv,name,strength)
-            if name=='head':q[:,0]*=2.
+            # Physical aspect ratio already supplied by anatomical_silhouette.
             fitted=fit(q,RECT[name],lock_orientation=True)
             m=measure_surface_uv_conflicts(p,fitted,f,[name]*len(f))
             candidates.append((strength,q,m))
