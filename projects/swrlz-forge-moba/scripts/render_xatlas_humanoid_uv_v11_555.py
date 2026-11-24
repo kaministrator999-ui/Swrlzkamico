@@ -18,7 +18,7 @@ def main():
     report=json.loads(REPORT.read_text('utf8'))
     part=doc['project']['modelAtelier']['parts'][0]
     mesh=part['topologyMesh'];p=mesh['positions'];uv=mesh['uvs'];ix=mesh['indices']
-    assert report['uvAlgorithm']=='xatlas-wasm@0.1.3'
+    assert report['uvAlgorithm']=='seamed-LSCM+xatlas-wasm@0.1.3'
     assert len(ix)//3==report['triangles'] and len(p)//3==report['vertices']
     palette=Image.new('RGB',(1024,1024),BG)
     draw=ImageDraw.Draw(palette)
