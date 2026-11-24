@@ -1,0 +1,45 @@
+name: §C engineering decision stall guard
+on:
+  pull_request:
+    paths:
+      - api/noncode_repetition_guard_v1.py
+      - tests/test_decision_stall_guard_v1.py
+      - scripts/hf_chat_decision_stall_release_v1.py
+      - .github/workflows/hf-chat-decision-stall-v1.yml
+  push:
+    branches: [main]
+    paths:
+      - api/noncode_repetition_guard_v1.py
+      - tests/test_decision_stall_guard_v1.py
+      - scripts/hf_chat_decision_stall_release_v1.py
+      - .github/workflows/hf-chat-decision-stall-v1.yml
+permissions: {contents: read}
+concurrency:
+  group: swrlz-hf-space-deployment
+  cancel-in-progress: false
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - run: python -m pip install --quiet 'huggingface_hub>=0.34,<2'
+      - name: Verify existing and new guard regression
+        run: |
+          python -m py_compile api/noncode_repetition_guard_v1.py scripts/hf_chat_decision_stall_release_v1.py
+          python -m unittest discover -s tests -p test_decision_stall_guard_v1.py -v
+          python -m unittest discover -s tests -p test_hf_chat_noncode_repetition_v1.py -v
+          python scripts/hf_chat_decision_stall_release_v1.py selftest
+      - name: Check live source anchors before release
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: python scripts/hf_chat_decision_stall_release_v1.py preflight
+      - name: Publish scoped HF code
+        if: github.event_name == 'push' && contains(github.event.head_commit.message, '[release-decision-stall-v1]')
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          SWRLZ_DECISION_STALL_APPROVED: '1'
+        run: python -u scripts/hf_chat_decision_stall_release_v1.py publish
