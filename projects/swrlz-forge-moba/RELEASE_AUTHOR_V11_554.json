@@ -9,7 +9,9 @@
     "distinct UV front/back torso head crown and pelvis charts",
     "no missing quad faces or unstitched 3D edge",
     "native Starter Models loader remains functional",
-    "original finished robot untouched"
+    "original finished robot untouched",
+    "checker texture masks actual UV islands with visible chart gutters",
+    "2048 UV guide labels front/back anatomy without baking labels into material"
   ],
-  "request": "2026-11-24-anatomical-waist-pelvis-groin-uv-subcharts-v3"
+  "request": "2026-11-24-anatomical-waist-pelvis-uv-chart-actual-silhouettes-v3b"
 }
