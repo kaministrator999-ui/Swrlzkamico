@@ -157,7 +157,7 @@
    if(entry&&configured?.source===entry.source&&configured.id===entry.id){
     const pending=preferred?.pending?.();
     if(pending?.source===entry.source&&pending.id===entry.id){
-     if(!automatic&&pending.loading!==true){
+     if(!automatic&&entry.source==='cloud'&&pending.loading!==true){
       // A user explicitly choosing Open may retry while authentication is
       // ready. The native default boot owns this load and publishes its receipt.
       note('Opening the saved default through the native project loader…');
