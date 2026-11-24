@@ -146,9 +146,7 @@
  async function openSelected(override,automatic=false){
   if(opening||finished)return;
   opening=true;
-  // A blank selector explicitly means the current workspace, not a stale
-  // remembered default. Automatic startup still uses the saved preference.
-  const entry=automatic?(override||defaults()):(override||chosenRow());
+  const entry=override||chosenRow()||defaults();
   const previous=session?.source===entry?.source&&session?.id===entry?.id?{...session}:null;
   try{
    if(entry?.source==='cloud'&&account!=='connected')throw Error('Sign in to load this Google project.');
@@ -159,22 +157,16 @@
    if(entry&&configured?.source===entry.source&&configured.id===entry.id){
     const pending=preferred?.pending?.();
     if(pending?.source===entry.source&&pending.id===entry.id){
-     if(!automatic&&entry.source==='cloud'&&pending.loading!==true){
-      // A user explicitly choosing Open may retry while authentication is
-      // ready. The native default boot owns this load and publishes its receipt.
-      note('Opening the saved default through the native project loader…');
-      void preferred.openCloud?.(id=>accountAPI()?.loadCloud?.(id)).catch(err=>
-       note(String(err?.message||err)+' Continue with your current workspace.',true));
-     }else note('Restoring the saved default project through the native loader…');
+     note('Restoring the saved default project through the native loader…');
      return;
     }
     const receipt=preferred?.report?.();
-    if(receipt?.attempted&&receipt.source===entry.source&&receipt.id===entry.id&&receipt.success===true){
+    if(receipt?.attempted&&receipt.source===entry.source&&receipt.success===true){
      afterLoad(entry,previous);
      finish();
      return;
     }
-    if(automatic&&receipt?.attempted&&receipt.source===entry.source&&receipt.id===entry.id&&receipt.success===false){
+    if(automatic&&receipt?.attempted&&receipt.source===entry.source&&receipt.success===false){
      note('Automatic project restoration failed: '+String(receipt.reason||'The project was not opened.').slice(0,180)+
       ' Select a project or open the current workspace.',true);
      return;
@@ -257,7 +249,7 @@
   $('se476RetryConnection')?.addEventListener('click',retryConnection);
   $('se476ContinueLocal')?.addEventListener('click',continueLocal);
   $('se476OfflineContinue')?.addEventListener('click',continueLocal);
-  $('se476Open')?.addEventListener('click',()=>void openSelected(chosenRow()||null));
+  $('se476Open')?.addEventListener('click',()=>void openSelected());
   $('se476Remember')?.addEventListener('change',e=>{
    const entry=chosenRow();
    if(e.target.checked&&entry)window.SWYRL_ENGINE_SAVED_DEFAULT?.set?.(entry.source,entry.id);
