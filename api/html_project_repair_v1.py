@@ -52,7 +52,10 @@ def should_route(payload):
             r"(?m)^Verified Git blob: [a-f0-9]{40}$", evidence):
         return False
     prompt = str(payload.get("receivedText") or payload.get("prompt") or "")
-    return repair_intent(prompt) and not payload.get("githubSourceChangeTask")
+    # Verified owner project context takes precedence over generic GitHub planning.
+    # A separate source-change classifier may have labeled the turn "plan",
+    # but that label must not hide the existing-project repair agent.
+    return repair_intent(prompt)
 
 
 def events(payload):
