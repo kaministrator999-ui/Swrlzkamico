@@ -74,10 +74,13 @@ class ExecutionContinuityTests(unittest.TestCase):
         state={"cancel":False}
         def initial():
             yield {"type":"CODE_OUTPUT_CHECKPOINT","checkpoint":checkpoint("draft")}
-            state["cancel"]=True
             yield {"type":"DELTA","text":"should not be shown"}
         p={"prompt":"Build app","_cancelCheck":lambda:state["cancel"]}
-        events=list(stream(p,lambda _:self.fail("must not resume"),initial()))
+        iterator=iter(stream(p,lambda _:self.fail("must not resume"),initial()))
+        first=next(iterator)
+        self.assertEqual(first["type"],"CODE_OUTPUT_CHECKPOINT")
+        state["cancel"]=True
+        events=list(iterator)
         self.assertEqual(events[-1]["type"],"CANCELLED")
     def test_bad_checkpoint_cannot_be_used(self):
         c=checkpoint("real")
