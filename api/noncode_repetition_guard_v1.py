@@ -75,3 +75,78 @@ def guard_eligible(payload) -> bool:
     if re.search(r"(?i)\b(?:repeat|repeating|loop)\b.{0,42}\b(?:times|repetitions|iterations)\b", prompt):
         return False
     return True
+
+
+# Decision-stall detection catches semantically repetitive engineering plans
+# that are not exact-line repetitions. It is a narrow additional signal:
+# no model/tool mutations, no inferred approvals, no unbounded self-retries.
+_PLAN_STEP = re.compile(r"(?im)^\s*(?:#{1,4}\s*)?(?:(?:revised|better|alternative|corrected|final|actual)\s+)*(?:plan|solution|approach|option|correction|wait\b|however\b|but\b)\s*(?:[:.\-]|\b)")
+_CANONICAL = (
+    (re.compile(r"\b(?:cdn|jsdelivr|unpkg|remote|external)\b"), "remote"),
+    (re.compile(r"\b(?:bundle|bundling|bundled|inline|inlining|inlined)\b"), "bundle"),
+    (re.compile(r"\b(?:local|relative|self-host|serve)\b"), "local"),
+    (re.compile(r"\b(?:csp|content security|sandbox|policy)\b"), "policy"),
+)
+_CODE_FENCE = re.compile(r"(?s)^\s*\x60{3}.*?^\s*\x60{3}", re.M)
+
+
+class DecisionStallWatch:
+    """Bounded per-turn monitor for repeated planning with no execution evidence.
+
+    This is deliberately not a general semantic similarity classifier. It only
+    recognizes several successive explicit plan resets covering the same
+    technical alternatives, and only on grounded project repair requests.
+    """
+
+    def __init__(self, max_chars=32000):
+        self.buffer = ""
+        self.max_chars = max_chars
+        self.detected = None
+
+    def reset(self):
+        self.buffer = ""
+        self.detected = None
+
+    def observe(self, fragment):
+        if self.detected:
+            return self.detected
+        self.buffer = (self.buffer + str(fragment or ""))[-self.max_chars:]
+        completed = self.buffer.rsplit("\n", 1)[0] if "\n" in self.buffer else ""
+        prose = _CODE_FENCE.sub("", completed)
+        headings = list(_PLAN_STEP.finditer(prose))
+        if len(headings) < 4:
+            return None
+        sections = []
+        for i, match in enumerate(headings):
+            end = headings[i + 1].start() if i + 1 < len(headings) else len(prose)
+            body = prose[match.end():end]
+            if len(body.strip()) < 18:
+                continue
+            concepts = frozenset(
+                name for expression, name in _CANONICAL if expression.search(body))
+            if len(concepts) >= 2:
+                sections.append((match.start(), concepts))
+        if len(sections) < 4:
+            return None
+        last = sections[-4:]
+        shared = set.intersection(*(set(concepts) for _, concepts in last))
+        coverage = set.union(*(set(concepts) for _, concepts in last))
+        if len(shared) >= 2 and len(coverage) <= 4:
+            self.detected = {
+                "cycles": len(last), "sharedConcepts": sorted(shared),
+                "reason": "Repeated engineering alternatives without execution"}
+        return self.detected
+
+
+def decision_guard_eligible(payload):
+    """Only source-grounded repair discussions; never a code artifact or free prose."""
+    if not guard_eligible(payload):
+        return False
+    prompt = str(payload.get("receivedText") or payload.get("prompt") or "")
+    active = payload.get("activeHtmlProject")
+    source = payload.get("projectFileEvidence")
+    if not isinstance(active, dict) or not isinstance(source, str):
+        return False
+    if "VERIFIED OWNER GITHUB HTML PROJECT SOURCE" not in source:
+        return False
+    return bool(re.search(r"\b(?:fix|repair|debug|diagnos\w*|redeploy|broken|stuck|loading|not work\w*)\b", prompt, re.I))
