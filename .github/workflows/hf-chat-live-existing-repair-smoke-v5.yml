@@ -1,0 +1,21 @@
+name: §C live existing-project repair prompt acceptance
+on:
+  pull_request:
+    paths:
+      - 'scripts/test_live_station_existing_repair_v5.py'
+      - '.github/workflows/hf-chat-live-existing-repair-smoke-v5.yml'
+  workflow_dispatch:
+permissions: {contents: read}
+jobs:
+  live-request:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 7
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - name: Verify live guest Station route for exact user prompt
+        run: |
+          python -m py_compile scripts/test_live_station_existing_repair_v5.py
+          python -u scripts/test_live_station_existing_repair_v5.py
