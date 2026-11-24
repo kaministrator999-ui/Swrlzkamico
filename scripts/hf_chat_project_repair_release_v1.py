@@ -249,6 +249,7 @@ def main(mode):
     paths=set(api.list_repo_files(SPACE,repo_type="space",revision=rev))
     if HELPER in paths:
         raise RuntimeError("REPAIR_HELPER_EXISTS_UNEXPECTEDLY")
+    print("SPACE_REPO_JS_SOURCE", {"sha256":digest(old[UI]),"bytes":len(old[UI])},flush=True)
     print("SPACE_REPO_HTML_SOURCE", {"sha256":digest(old[HTML]),"bytes":len(old[HTML]),"reviewRefs":re.findall(r"html-project-publish-review[^\\\"'<>\\s]{0,120}",old[HTML].decode("utf-8",errors="replace"))[:5]},flush=True)
     patched=patch({path:data.decode("utf-8") for path,data in old.items()})
     new={p:data.encode("utf-8") for p,data in patched.items()}
@@ -267,6 +268,10 @@ def main(mode):
                    for p,raw in new.items()],
        commit_message="fix(§C): preserve existing HTML projects during approved repairs").oid
     print("REPAIR_ROUTING_HF_COMMITTED",committed,flush=True)
+    # Source readback alone is insufficient: this Space can retain an older
+    # served HTML/asset snapshot until its running app is explicitly restarted.
+    api.restart_space(SPACE)
+    print("REPAIR_ROUTING_SPACE_RESTART_REQUESTED",committed,flush=True)
     try:
         for p,raw in new.items():
             got=Path(hf_hub_download(SPACE,p,repo_type="space",
@@ -291,6 +296,8 @@ def main(mode):
                 parent_commit=committed,operations=ops,
                 commit_message="rollback(§C): HTML repair route verification failed").oid
             print("REPAIR_ROUTING_ROLLED_BACK",restored,flush=True)
+            api.restart_space(SPACE)
+            print("REPAIR_ROUTING_ROLLBACK_RESTART_REQUESTED",restored,flush=True)
         raise
 
 
