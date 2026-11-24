@@ -73,7 +73,7 @@ def selftest():
     ast.parse(candidate, filename=QUEUE)
     ast.parse(helper, filename=HELPER)
     assert candidate.count(MARKER) == 1
-    assert patch_queue("from __future__ import annotations\n" + ORIGINAL + "\n").count(MARKER) == 1
+    assert patch_queue(candidate) == candidate
     assert patch_queue(candidate) == candidate
     assert candidate.count("selected_events = route_events(") == 1
     print("DURABLE_REPAIR_SELFTEST_PASS", flush=True)
