@@ -15,6 +15,8 @@ import sys
 import numpy as np
 from PIL import Image, ImageDraw, ImageFont
 import xatlas
+from scipy.sparse import coo_matrix
+from scipy.sparse.linalg import spsolve
 
 ROOT=Path(__file__).resolve().parents[1]
 SOURCE=ROOT/'scenes/model-atelier-futuristic-humanoid-v11-540.swyrl.json'
@@ -157,6 +159,82 @@ def seam_aware_anatomical_group(pos,faces,name):
         raise ValueError('Anatomical seam vertex budget exceeded for '+name)
     return xyz,f,uv,1
 
+def convex_single_shell_unwrap(pos,faces,name):
+    """Unfold an articulated limb as ONE injective disk, not 30+ islands.
+
+    Seam cutting supplies a topological disk. Its ordered border is mapped
+    around a convex ellipse. Positive discrete harmonic weights place internal
+    vertices inside that boundary: unlike cylindrical projection, different
+    fingers/feet cannot fold into one another in UV space on a disk topology.
+    """
+    xyz,f,seed,_=seam_aware_anatomical_group(pos,faces,name)
+    edge_counts=Counter()
+    for tri in f:
+        for i in range(3):
+            a,b=map(int,(tri[i],tri[(i+1)%3]))
+            edge_counts[tuple(sorted((a,b)))]+=1
+    boundary=[edge for edge,n in edge_counts.items() if n==1]
+    around={}
+    for a,b in boundary:
+        around.setdefault(a,[]).append(b)
+        around.setdefault(b,[]).append(a)
+    if not around or any(len(v)!=2 for v in around.values()):
+        raise ValueError(name+' single-chart border is not a manifold loop')
+    start=min(around,key=lambda i:(float(seed[i,1]),float(seed[i,0])))
+    order=[start];previous=-1;current=start
+    for _ in range(len(around)-1):
+        choices=[v for v in around[current] if v!=previous]
+        if not choices:raise ValueError(name+' boundary did not close')
+        nxt=choices[0];order.append(nxt)
+        previous,current=current,nxt
+        if current==start:raise ValueError(name+' boundary loops overlap')
+    if start not in around[current] or len(set(order))!=len(around):
+        raise ValueError(name+' UV cut has multiple boundaries, not one disk')
+    border=np.asarray(order,np.int64)
+    successors=np.roll(border,-1)
+    edge_lengths=np.linalg.norm(xyz[successors]-xyz[border],axis=1)
+    if (edge_lengths<1e-7).any():raise ValueError(name+' collapsed boundary')
+    arc=np.concatenate(([0],np.cumsum(edge_lengths[:-1])))
+    phase=2*np.pi*arc/edge_lengths.sum()
+    # Rotate the strictly convex boundary towards the known cylindrical U/V
+    # directions so existing anatomical frame continuity is preserved.
+    reference=seed[border]-seed[border].mean(axis=0)
+    direction=np.sum((reference[:,0]+1j*reference[:,1])*
+                     np.exp(-1j*phase))
+    angle=float(np.angle(direction))
+    ring=np.column_stack((np.cos(phase+angle),np.sin(phase+angle)))
+    # Long oval (U width > V height), fitted without subsequent UV rotation.
+    targets=np.column_stack((.5+.5*ring[:,0],.5+.29*ring[:,1]))
+    nv=len(xyz)
+    boundary_mask=np.zeros(nv,np.bool_);boundary_mask[border]=True
+    movable=np.where(~boundary_mask)[0]
+    lookup=np.full(nv,-1,np.int64);lookup[movable]=np.arange(len(movable))
+    boundary_uv=np.zeros((nv,2),np.float64);boundary_uv[border]=targets
+    rows=[];cols=[];data=[];rhs=np.zeros((len(movable),2),np.float64)
+    adjacency=[[] for _ in range(nv)]
+    for a,b in edge_counts:
+        w=1.0/max(float(np.linalg.norm(xyz[a]-xyz[b])),1e-6)
+        adjacency[a].append((b,w));adjacency[b].append((a,w))
+    for vertex in movable:
+        row=int(lookup[vertex]);weighted=adjacency[vertex]
+        rows.append(row);cols.append(row);data.append(sum(w for _,w in weighted))
+        for other,weight in weighted:
+            if boundary_mask[other]:rhs[row]+=weight*boundary_uv[other]
+            else:
+                rows.append(row);cols.append(int(lookup[other]));data.append(-weight)
+    L=coo_matrix((data,(rows,cols)),shape=(len(movable),len(movable))).tocsr()
+    relaxed=boundary_uv.copy()
+    relaxed[movable]=np.column_stack((spsolve(L,rhs[:,0]),spsolve(L,rhs[:,1])))
+    if not np.isfinite(relaxed).all():raise ValueError(name+' harmonic solve nonfinite')
+    # Face orientation must be consistent, without UV fold-overs.
+    q=relaxed[f]
+    signed=(q[:,1,0]-q[:,0,0])*(q[:,2,1]-q[:,0,1])-(q[:,1,1]-q[:,0,1])*(q[:,2,0]-q[:,0,0])
+    if min(np.count_nonzero(signed>1e-12),np.count_nonzero(signed< -1e-12))>0:
+        raise ValueError(name+' chart contains flipped faces')
+    if np.count_nonzero(np.abs(signed)<1e-10)>3:
+        raise ValueError(name+' harmonic chart has collapsed triangles')
+    return xyz,f,relaxed,1
+
 def single_chart_group(pos,faces):
     """Parameterize an anatomical surface as one chart without xatlas chart splitting.
 
@@ -213,16 +291,11 @@ def make_atlas(positions,triangles,mode):
     for name in (REGIONS if mode=='seven' else ['head','torso','leftArm','rightArm','leftLeg','rightLeg']):
         original=triangles[labels==name]
         if not len(original):raise ValueError('Missing anatomy '+name)
-        # A coherent single-chart parameterization can relax the articulated
-        # fingers/toes without xatlas's 31/32/12/14 separate chart fragments.
-        # The deterministic cylindrical projection is only an emergency
-        # fallback. It must still pass the strict collision release gate.
+        # Arms and legs have one manifold UV-cut boundary apiece, verified
+        # from exact source triangles. Convex harmonic mapping preserves each
+        # as one connected chart without overlapping articulated fingers.
         if name in ('leftArm','rightArm','leftLeg','rightLeg'):
-            try:
-                p,f,uv,c=single_chart_group(positions,original)
-            except (ValueError,AssertionError,RuntimeError) as exc:
-                print('SE546_SINGLE_CHART_FALLBACK',name,str(exc),flush=True)
-                p,f,uv,c=seam_aware_anatomical_group(positions,original,name)
+            p,f,uv,c=convex_single_shell_unwrap(positions,original,name)
         else:
             p,f,uv,c=seam_aware_anatomical_group(positions,original,name)
         if name=='head':
