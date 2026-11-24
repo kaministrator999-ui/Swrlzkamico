@@ -31,7 +31,10 @@ jobs:
           ):
               lines=Path(hf_hub_download('kamiloki/Swyrlz',path,repo_type='space',revision=rev,token=api.token)).read_text().splitlines()
               print('AUDIT_FILE',path,len(lines))
-              if path.endswith('.html'):\n                  hits=[i for i,line in enumerate(lines,1) if any(t in line for t in ('scrollTo(', 'scrollTop=', 'scrollTop =', 'scrollIntoView', 'renderWidget', 'renderMessage', 'widget.kind', 'Jump to latest', 'messageList.scroll'))]\n                  ranges=[(max(1,n-3),min(len(lines),n+5)) for n in hits[:100]]\n              for lo,hi in ranges:
+              if path.endswith('.html'):
+                  hits=[i for i,line in enumerate(lines,1) if any(t in line for t in ('scrollTo(', 'scrollTop=', 'scrollTop =', 'scrollIntoView', 'renderWidget', 'renderMessage', 'widget.kind', 'Jump to latest', 'messageList.scroll'))]
+                  ranges=[(max(1,n-3),min(len(lines),n+5)) for n in hits[:100]]
+              for lo,hi in ranges:
                   print('AUDIT_RANGE',path,lo,hi)
                   for n in range(lo,min(hi,len(lines))+1):
                       print(f'{n:05d} {lines[n-1][:250]}')
