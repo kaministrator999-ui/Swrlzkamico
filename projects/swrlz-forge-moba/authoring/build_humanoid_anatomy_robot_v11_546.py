@@ -282,9 +282,12 @@ def anatomical_limb_projection(pos,faces,name):
         depth=xyz[:,2]
         # As the mesh transitions from ankle to foot, rotate the working
         # longitudinal axis toward actual toe (+Z), retaining toe projection.
+        # Toe sweep begins at the ankle. Apply the sweep only where the
+        # topological limb approaches its distal boundary, and keep the
+        # centerline derivative monotone across the ankle transition.
         foot=np.clip((.36-xyz[:,1])/.25,0,1)
         foot=foot*foot*(3-2*foot)
-        longitudinal=longitudinal+foot*np.maximum(depth,0)*.95
+        longitudinal=longitudinal+foot*np.maximum(depth,0)*.25
     # Separate front/back geometry by signed displacement without erasing the
     # actual lateral silhouette. Seam neighborhood must remain geometrically
     # continuous; each face is assigned to the front or back by its 3D normal.
