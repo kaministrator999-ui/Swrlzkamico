@@ -342,8 +342,9 @@ def make_atlas(positions,triangles,mode):
         # texel conflicts, rather than applying a global arbitrary strength.
         candidates=[]
         for strength in (1.,.85,.7,.55,.4,.25,.1,0.):
-            q=anatomical_silhouette(p,uv,name,strength)
-            # Physical aspect ratio already supplied by anatomical_silhouette.
+            q=(anatomical_silhouette(p,uv,name,strength)
+               if name in ('head','torso','chest','back') else uv.copy())
+            # Limb UVs are defined in physical coordinates; preserve their geometry.
             fitted=fit(q,RECT[name],lock_orientation=True)
             m=measure_surface_uv_conflicts(p,fitted,f,[name]*len(f))
             candidates.append((strength,q,m))
