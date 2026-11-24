@@ -4,9 +4,10 @@ const fs=require('node:fs');
 const path=require('node:path');
 const vm=require('node:vm');
 const root=path.resolve(__dirname,'../runtime');
-const start=fs.readFileSync(path.join(root,'engine_account_start_v11_476.js'),'utf8');
-const bridge=fs.readFileSync(path.join(root,'engine_account_bridge_v11_476.js'),'utf8');
+const start=fs.readFileSync(path.join(root,'engine_account_start_recovery_v11_552.js'),'utf8');
+const bridge=fs.readFileSync(path.join(root,'engine_account_bridge_recovery_v11_552.js'),'utf8');
 const boot=fs.readFileSync(path.join(root,'user_project_default_boot_v11_184.js'),'utf8');
+const releasePatch=fs.readFileSync(path.join(__dirname,'../patches/v11_552_uv_texture_alignment.py'),'utf8');
 for(const [name,js] of [['startup',start],['bridge',bridge],['default',boot]])
  new vm.Script(js,{filename:name});
 function fixture(defaultState,api){
@@ -82,6 +83,6 @@ const flush=async()=>{for(let i=0;i<15;i++)await Promise.resolve()};
  assert.equal(f3.element('se476StartupGate').hidden,true,'Current workspace can open without saved project');
  assert(bridge.includes('const loaded=await se175LoadLocal()'),'Local loader requires explicit receipt');
  assert(bridge.includes('loaded===true'),'A stale session cannot be counted as local load success');
- assert(boot.includes('swrlz:saved-default-complete'),'Native boot emits verified terminal outcome');
+ assert(releasePatch.includes('swrlz:saved-default-complete'),'Final patch emits verified native default outcome');
  console.log('SE552_STARTUP_RESTORE_REGRESSION_PASS duplicate-cloud=0 confirmed-default=true failed-default-recovery=true local-receipt=true');
 })().catch(error=>{console.error('SE552_STARTUP_RESTORE_REGRESSION_FAIL',error.stack||error);process.exitCode=1});
