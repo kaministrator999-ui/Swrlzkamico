@@ -118,11 +118,9 @@
    queueMicrotask(()=>void loadLocal(state));
   }else{
    status('Opening default account project · Connecting to § Chat…');
-   // Authentication is asynchronous and can take longer than eleven seconds.
-   // Do not declare the user's saved project missing before the native loader
-   // can begin; the first-paint gateway already offers local recovery.
-   // Once an authenticated load begins, the native RPC owns its timeout.
-   state.timeout=null;
+   state.timeout=setTimeout(()=>{
+    complete(state,false,'Account project not available yet. Sign in through § Chat, then load it in My Projects.');
+   },11000);
   }
   return true;
  }
@@ -144,6 +142,6 @@
  }
  window.SWYRL_ENGINE_SAVED_DEFAULT=Object.freeze({read,set,sync,launch,openCloud,
   pending:()=>boot?.pending?{source:boot.source,id:boot.id,loading:boot.loading}:null,
-  report:()=>boot?{attempted:true,source:boot.source,id:boot.id,pending:boot.pending,loading:boot.loading,success:boot.success??null,reason:boot.reason||''}:{attempted:false}
+  report:()=>boot?{attempted:true,source:boot.source,pending:boot.pending,loading:boot.loading,success:boot.success??null,reason:boot.reason||''}:{attempted:false}
  });
 })();
