@@ -38,3 +38,5 @@ jobs:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
           SWRLZ_SAVED_HTML_REVIEW_APPROVED: '1'
         run: python -u scripts/hf_chat_saved_html_review_recovery_v1.py publish
+
+# final release: approved same-thread saved artifact review, below-code UI, explicit Approved handling
