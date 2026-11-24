@@ -28,8 +28,8 @@ window.SWYRL_ENGINE_STARTUP_ACCOUNT_476=Object.freeze({
   if(typeof id!=='string'||id.length>160||!se175LocalList)return false;
   await se175RefreshLocal();
   se175LocalList.value=id;if(se175LocalList.value!==id)return false;
-  await se175LoadLocal();
-  return window.SWYRL_ENGINE_STARTUP_476?.readLast?.()?.id===id&&
+  const loaded=await se175LoadLocal();
+  return loaded===true&&window.SWYRL_ENGINE_STARTUP_476?.readLast?.()?.id===id&&
     window.SWYRL_ENGINE_STARTUP_476.readLast().source==='local';
  },
  async loadCloud(id){
