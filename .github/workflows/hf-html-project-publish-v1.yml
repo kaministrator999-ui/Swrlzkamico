@@ -39,6 +39,8 @@ jobs:
         with: {python-version: '3.11'}
       - run: python -m py_compile scripts/hf_html_project_publish_v1.py
       - run: python -m unittest discover -s tests -p 'test_hf_html_project_publish_v1.py' -v
+      - run: python -m unittest discover -s tests -p 'test_lightweight_webpage_inspector_v1.py' -v
+      - run: python -m unittest discover -s tests -p 'test_lightweight_html_project_gate_v1.py' -v
   publish:
     if: ${{ github.event_name == 'workflow_dispatch' && inputs.approved == 'yes' && github.actor == 'kaministrator999-ui' }}
     runs-on: ubuntu-latest
@@ -73,6 +75,14 @@ jobs:
           if os.environ["APPROVED"] != "yes":
               raise SystemExit("Owner approval required; nothing published")
           PY
+      - name: Browser-free HTML and JavaScript project gate
+        env:
+          SWRLZ_PROJECT_SOURCE_ROOT: reviewed-source
+          PROJECT_SLUG: ${{ inputs.project }}
+        run: |
+          python -m unittest discover -s tests -p 'test_lightweight_webpage_inspector_v1.py' -v
+          python -m unittest discover -s tests -p 'test_lightweight_html_project_gate_v1.py' -v
+          python scripts/verify_html_project_lightweight_v1.py --project "$PROJECT_SLUG" --mode prepublish --output html-lightweight-receipt.json
       - run: python -m pip install --quiet 'huggingface_hub>=0.34,<2'
       - name: Scoped, CAS-protected Space publication and source byte readback
         env:
@@ -87,10 +97,17 @@ jobs:
           SWRLZ_PROJECT_SOURCE_ROOT: reviewed-source
           PROJECT_SLUG: ${{ inputs.project }}
         run: python scripts/hf_html_project_publish_v1.py probe --project "$PROJECT_SLUG"
+      - name: Verify published assets and security without Chromium
+        env:
+          SWRLZ_PROJECT_SOURCE_ROOT: reviewed-source
+          PROJECT_SLUG: ${{ inputs.project }}
+        run: python scripts/verify_html_project_lightweight_v1.py --project "$PROJECT_SLUG" --mode published --output html-lightweight-receipt.json
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: swrlz-html-project-publish-receipt
-          path: html-project-receipt.json
+          path: |
+            html-project-receipt.json
+            html-lightweight-receipt.json
           if-no-files-found: warn
           retention-days: 30

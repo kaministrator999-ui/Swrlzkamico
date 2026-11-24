@@ -1,0 +1,56 @@
+name: §C browser-free webpage testing
+on:
+  pull_request:
+    paths:
+      - 'api/lightweight_webpage_inspector_v1.py'
+      - 'api/html_project_context_v1.py'
+      - 'scripts/verify_html_project_lightweight_v1.py'
+      - 'scripts/hf_chat_lightweight_web_inspector_release_v1.py'
+      - 'tests/test_lightweight_webpage_inspector_v1.py'
+      - 'tests/test_lightweight_html_project_gate_v1.py'
+      - 'tests/test_html_project_context_v1.py'
+      - '.github/workflows/hf-chat-lightweight-web-inspector-v1.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'api/lightweight_webpage_inspector_v1.py'
+      - 'api/html_project_context_v1.py'
+      - 'scripts/verify_html_project_lightweight_v1.py'
+      - 'scripts/hf_chat_lightweight_web_inspector_release_v1.py'
+      - 'tests/test_lightweight_webpage_inspector_v1.py'
+      - 'tests/test_html_project_context_v1.py'
+      - '.github/workflows/hf-chat-lightweight-web-inspector-v1.yml'
+permissions: {contents: read}
+concurrency:
+  group: swrlz-lightweb-preflight-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - run: python -m pip install --quiet 'huggingface_hub>=0.34,<2'
+      - name: Offline inspect and deployment regressions
+        run: |
+          python -m py_compile api/lightweight_webpage_inspector_v1.py api/html_project_context_v1.py scripts/verify_html_project_lightweight_v1.py scripts/hf_chat_lightweight_web_inspector_release_v1.py
+          python -m unittest discover -s tests -p 'test_lightweight_webpage_inspector_v1.py' -v
+          python -m unittest discover -s tests -p 'test_lightweight_html_project_gate_v1.py' -v
+          python -m unittest discover -s tests -p 'test_html_project_context_v1.py' -v
+          python -m unittest discover -s tests -p 'test_hf_html_project_publish_v1.py' -v
+          python scripts/hf_chat_lightweight_web_inspector_release_v1.py selftest
+      - name: Preflight exact live §C helper without mutating production
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: python scripts/hf_chat_lightweight_web_inspector_release_v1.py preflight
+      - name: Deploy same-Space helper with CAS and rollback
+        if: github.event_name == 'push' && contains(github.event.head_commit.message, '[release-lightweight-web-v1]')
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          SWRLZ_LIGHTWEB_DEPLOY_APPROVED: '1'
+        run: python -u scripts/hf_chat_lightweight_web_inspector_release_v1.py publish

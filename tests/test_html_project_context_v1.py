@@ -47,7 +47,10 @@ class ProjectContextTest(unittest.TestCase):
         publisher._authorized = lambda user: {"repo":"kaministrator999-ui/Swrlzkamico","branch":"main"}
         publisher._github = lambda auth, method, path: {"type":"file","encoding":"base64",
             "content":base64.b64encode(raw).decode(),"sha":sha}
-        with patch.dict(sys.modules,{"github_html_publish_action_v1":publisher}):
+        with patch.dict(sys.modules,{"github_html_publish_action_v1":publisher}), \
+             patch("api.lightweight_webpage_inspector_v1.inspect_published", return_value={
+                 "tier":"http", "deployedBytesMatch":False,
+                 "functionalVerified":False, "issues":[{"code":"HTTP_NOT_TESTED"}]}):
             fetched=m.read_project_source("google:user",m.resolve(request,thread))
             self.assertEqual(fetched["blobSha"],sha)
             self.assertIn("external module URLs",m.evidence(m.resolve(request,thread),fetched))
