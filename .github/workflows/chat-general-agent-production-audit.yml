@@ -21,7 +21,7 @@ jobs:
           repo="kamiloki/Swyrlz"
           rev=HfApi().repo_info(repo,repo_type="space").sha
           print("SPACE_REV",rev,flush=True)
-          for name in ("station.py","github_conversation_actions_v264.py","html_project_repair_v1.py"):
+          for name in ("station.py","github_conversation_actions_v264.py","html_project_repair_v1.py","qwen_coder_engine.py"):
               try: data=Path(hf_hub_download(repo,name,repo_type="space",revision=rev)).read_text()
               except Exception as exc:
                   print("SOURCE_UNAVAILABLE",name,type(exc).__name__,flush=True)
@@ -35,6 +35,16 @@ jobs:
               for i,line in enumerate(lines):
                   if any(t in line for t in terms):
                       chosen.update(range(max(0,i-8),min(len(lines),i+11)))
+              if name == "station.py":
+                  chosen.update(range(1415,1457))
+                  chosen.update(range(2740,2770))
+                  chosen.update(range(2940,2970))
+              if name == "github_conversation_actions_v264.py":
+                  chosen.update(range(max(0,len(lines)-150),len(lines)))
+              if name == "qwen_coder_engine.py":
+                  for j, line in enumerate(lines):
+                      if line.startswith(("def generate_events(", "def generate(", "def _candidate_structure_check(")):
+                          chosen.update(range(j,min(len(lines),j+35)))
               for i in sorted(chosen):
                   line=lines[i]
                   if any(s in line.lower() for s in ("token","secret","password","api_key")):
