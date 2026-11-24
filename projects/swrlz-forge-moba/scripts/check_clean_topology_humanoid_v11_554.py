@@ -30,7 +30,7 @@ def run():
     assert all(isinstance(i,int) and 0<=i<len(pos)//3 for i in ix)
     assert len(report['quads'])==6
     assert sum(report['quads'].values())*2==len(ix)//3
-    assert report['revision']=='xatlas-anatomical-conformal-v4'
+    assert report['revision']=='lscm-anatomical-conformal-v4'
     assert report['uvAlgorithm']=='seamed-LSCM+verified-single-atlas-packer'
     assert report['uvMethod']=='LSCM+verified-chart-packing'
     assert report['uvPacking']=='deterministic-shelf'
