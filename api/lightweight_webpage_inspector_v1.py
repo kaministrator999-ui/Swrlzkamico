@@ -183,7 +183,7 @@ def inspect_files(files, *, known_files_complete=True):
         if path.endswith((".js", ".mjs")):
             is_module = (path.endswith(".mjs") or path in module_sources or
                          bool(_IMPORT.findall(text)) or
-                         bool(re.search(r"(?m)^\\s*export\\s+(?:default|const|let|var|function|class|\\{)", text)))
+                         bool(re.search(r"(?m)^\s*export\s+(?:default|const|let|var|function|class|\{)", text)))
             scripts.append({"file": path, "scriptIndex": None, "type": "module" if is_module else "classic", "text": text})
     for script in scripts:
         path, body = script["file"], script["text"]
