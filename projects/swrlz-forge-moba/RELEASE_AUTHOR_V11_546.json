@@ -4,8 +4,8 @@
   "version": "v11.546",
   "goal": "Rebuild humanoid UVs into anatomy-grouped charts; generate independent new robotic material from 3D surface; preserve geometry; provide 4096x4096 reference atlas and anatomy exports; preserve historical scenes and saved copies.",
   "release": "Do not publish until exact geometry/UV texture checks and source-seal tests pass.",
-  "run": 29,
+  "run": 30,
   "correction": "True xatlas relaxed multi-chart anatomical unwrapping. Split chest/back and preferred face/scalp; reject UV overlaps instead of allowing 701 conflicts.",
-  "rebuild_requested": "real-anatomical-xatlas-uv-v29-syntax-repair",
-  "reason": "Repeat verified anatomical xatlas asset rebuild after correcting Python metadata string"
+  "rebuild_requested": "xatlas-relaxed-chart-growth-v30",
+  "reason": "Adaptive chart max_cost 4/8/12 to retain face/scalp and front/back torso while meeting 9000 UV vertex budget"
 }
