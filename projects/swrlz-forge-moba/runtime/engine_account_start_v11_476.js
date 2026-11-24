@@ -143,22 +143,41 @@
   const ok=window.SWYRL_ENGINE_STARTUP_CAMERA_476?.restore?.(cam);
   if(!ok&&count<8)setTimeout(()=>restoreCamera(cam,count+1),250);
  }
- async function openSelected(override){
+ async function openSelected(override,automatic=false){
   if(opening||finished)return;
   opening=true;
   const entry=override||chosenRow()||defaults();
   const previous=session?.source===entry?.source&&session?.id===entry?.id?{...session}:null;
   try{
    if(entry?.source==='cloud'&&account!=='connected')throw Error('Sign in to load this Google project.');
+   // The legacy saved-default startup owns the native first-paint load.
+   // Coordinate with its receipt rather than issuing a duplicate load.
+   const preferred=window.SWYRL_ENGINE_SAVED_DEFAULT;
+   const configured=preferred?.read?.();
+   if(entry&&configured?.source===entry.source&&configured.id===entry.id){
+    const pending=preferred?.pending?.();
+    if(pending?.source===entry.source&&pending.id===entry.id){
+     note('Restoring the saved default project through the native loader…');
+     return;
+    }
+    const receipt=preferred?.report?.();
+    if(receipt?.attempted&&receipt.source===entry.source&&receipt.success===true){
+     afterLoad(entry,previous);
+     finish();
+     return;
+    }
+    if(automatic&&receipt?.attempted&&receipt.source===entry.source&&receipt.success===false){
+     note('Automatic project restoration failed: '+String(receipt.reason||'The project was not opened.').slice(0,180)+
+      ' Select a project or open the current workspace.',true);
+     return;
+    }
+   }
    if(entry){
     note('Opening '+(entry.source==='cloud'?'Google':'on-device')+' project…');
     const api=accountAPI();
     if(!api||entry.source==='cloud'&&!api.ready?.())throw Error('Project loader is not connected.');
-    if(entry.explicit===true&&window.SWYRL_ENGINE_SAVED_DEFAULT?.pending?.()==null&&window.SWYRL_ENGINE_SAVED_DEFAULT?.report?.()?.success===true){
-     afterLoad(entry,previous);finish();return;
-    }
     const ok=entry.source==='cloud'?await api.loadCloud(entry.id):await api.loadLocal(entry.id);
-    if(ok!==true)throw Error('Native project loader did not confirm success.');
+    if(ok!==true)throw Error('Native project loader did not confirm success. No project was replaced.');
     afterLoad(entry,previous);
    }
    finish();
@@ -179,11 +198,13 @@
   api.signIn();
  }
  function continueLocal(){
-  ++epoch;account='offline';updateAccountStatus();
-  const choice=chosenRow();
-  if(choice?.source==='local')void openSelected(choice);
-  else if(session?.source==='local')void openSelected(session);
-  else finish();
+  if(opening){note('A project is opening. Finish that operation before entering the editor.',true);return;}
+  // Enter the existing editor, never silently retry a failed saved session.
+  // The user may open on-device projects through the native library.
+  ++epoch;
+  if(account==='pending')account='offline';
+  updateAccountStatus();
+  finish();
  }
  function onAccount(event){
   if(finished)return;
@@ -196,7 +217,7 @@
     // An explicit default outranks the last successfully opened project.
     // When no default is checked, last session wins.
     const choice=defaults();
-    if(choice)void openSelected(choice);
+    if(choice)void openSelected(choice,true);
     else note('Signed in. Choose a project or enter your current workspace.');
    });
   }else{
@@ -240,6 +261,20 @@
    $('se476Remember').checked=!!chosen&&pref?.source===chosen.source&&pref?.id===chosen.id;
   });
   window.addEventListener('swrlz:account-assets',onAccount);
+  window.addEventListener('swrlz:saved-default-complete',event=>{
+   if(finished)return;
+   const selected=window.SWYRL_ENGINE_SAVED_DEFAULT?.read?.();
+   const detail=event.detail;
+   if(!selected||!detail||selected.source!==detail.source||selected.id!==detail.id)return;
+   if(detail.success===true){
+    const previous=session?.source===detail.source&&session?.id===detail.id?{...session}:null;
+    afterLoad(selected,previous);
+    finish();
+   }else{
+    note('Automatic project restoration failed: '+String(detail.reason||'Project unavailable.').slice(0,180)+
+      ' Select another project or enter the current workspace.',true);
+   }
+  });
   window.addEventListener('swrlz:project-loaded',()=>{
    if(session)queueMicrotask(persist);
   });
