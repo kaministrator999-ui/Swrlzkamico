@@ -13,11 +13,11 @@
     "leftLeg": 2305,
     "rightLeg": 2282
   },
-  "paintBytes": 223223,
+  "paintBytes": 215900,
   "guideSize": 4096,
   "legacyCandidatesRejected": [],
-  "uvArea": 0.3823,
-  "p95P5Density": 8.51,
+  "uvArea": 0.3454,
+  "p95P5Density": 8.22,
   "uvShells": {
     "head": 1,
     "torso": 1,
@@ -26,12 +26,12 @@
     "leftLeg": 12,
     "rightLeg": 14
   },
-  "coveredPct": 38.11,
-  "overlaps": 584,
+  "coveredPct": 34.41,
+  "overlaps": 583,
   "regionTexels": {
-    "head": 53441,
+    "head": 15085,
     "arm": 75726,
-    "torso": 205518,
+    "torso": 205093,
     "leg": 64911
   }
 }
