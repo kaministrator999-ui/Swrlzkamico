@@ -15,8 +15,6 @@ import sys
 import numpy as np
 from PIL import Image, ImageDraw, ImageFont
 import xatlas
-from scipy.sparse import coo_matrix
-from scipy.sparse.linalg import spsolve
 
 ROOT=Path(__file__).resolve().parents[1]
 SOURCE=ROOT/'scenes/model-atelier-futuristic-humanoid-v11-540.swyrl.json'
@@ -74,7 +72,7 @@ def zone_ids(positions,faces,mode):
         labels[torso&(z<0)]='back'
     return labels
 
-def xatlas_group(pos,faces,force_one=False):
+def xatlas_group(pos,faces):
     used,inverse=np.unique(faces,return_inverse=True)
     coords=np.ascontiguousarray(pos[used],dtype=np.float32)
     idx=np.ascontiguousarray(inverse.reshape(-1,3),dtype=np.uint32)
@@ -83,22 +81,7 @@ def xatlas_group(pos,faces,force_one=False):
     pack=xatlas.PackOptions()
     pack.resolution=1024
     pack.padding=7
-    if force_one:
-        chart=xatlas.ChartOptions()
-        chart.max_cost=100000.
-        chart.max_chart_area=0.
-        chart.max_boundary_length=0.
-        chart.normal_deviation_weight=0.
-        chart.roundness_weight=0.
-        chart.straightness_weight=0.
-        chart.normal_seam_weight=0.
-        chart.texture_seam_weight=0.
-        chart.max_iterations=1
-        pack.rotate_charts=False
-        pack.rotate_charts_to_axis=False
-        atlas.generate(chart_options=chart,pack_options=pack)
-    else:
-        atlas.generate(pack_options=pack)
+    atlas.generate(pack_options=pack)
     vmap,f,uv=atlas[0]
     vmap=np.asarray(vmap,np.int64)
     f=np.asarray(f,np.uint32).reshape(-1,3)
@@ -181,89 +164,6 @@ def seam_aware_anatomical_group(pos,faces,name,hand_spread=0.,hand_depth=0.,foot
         raise ValueError('Anatomical seam vertex budget exceeded for '+name)
     return xyz,f,uv,1
 
-def convex_single_shell_unwrap(pos,faces,name):
-    """Unfold an articulated limb as ONE injective disk, not 30+ islands.
-
-    Seam cutting supplies a topological disk. Its ordered border is mapped
-    around a convex ellipse. Positive discrete harmonic weights place internal
-    vertices inside that boundary: unlike cylindrical projection, different
-    fingers/feet cannot fold into one another in UV space on a disk topology.
-    """
-    xyz,f,seed,_=seam_aware_anatomical_group(pos,faces,name)
-    edge_counts=Counter()
-    for tri in f:
-        for i in range(3):
-            a,b=map(int,(tri[i],tri[(i+1)%3]))
-            edge_counts[tuple(sorted((a,b)))]+=1
-    boundary=[edge for edge,n in edge_counts.items() if n==1]
-    around={}
-    for a,b in boundary:
-        around.setdefault(a,[]).append(b)
-        around.setdefault(b,[]).append(a)
-    if not around or any(len(v)!=2 for v in around.values()):
-        raise ValueError(name+' single-chart border is not a manifold loop')
-    start=min(around,key=lambda i:(float(seed[i,1]),float(seed[i,0])))
-    order=[start];previous=-1;current=start
-    for _ in range(len(around)-1):
-        choices=[v for v in around[current] if v!=previous]
-        if not choices:raise ValueError(name+' boundary did not close')
-        nxt=choices[0];order.append(nxt)
-        previous,current=current,nxt
-        if current==start:raise ValueError(name+' boundary loops overlap')
-    if start not in around[current] or len(set(order))!=len(around):
-        raise ValueError(name+' UV cut has multiple boundaries, not one disk')
-    border=np.asarray(order,np.int64)
-    successors=np.roll(border,-1)
-    edge_lengths=np.linalg.norm(xyz[successors]-xyz[border],axis=1)
-    if (edge_lengths<1e-7).any():raise ValueError(name+' collapsed boundary')
-    arc=np.concatenate(([0],np.cumsum(edge_lengths[:-1])))
-    phase=2*np.pi*arc/edge_lengths.sum()
-    # Rotate the strictly convex boundary towards the known cylindrical U/V
-    # directions so existing anatomical frame continuity is preserved.
-    reference=seed[border]-seed[border].mean(axis=0)
-    direction=np.sum((reference[:,0]+1j*reference[:,1])*
-                     np.exp(-1j*phase))
-    angle=float(np.angle(direction))
-    ring=np.column_stack((np.cos(phase+angle),np.sin(phase+angle)))
-    # Long oval (U width > V height), fitted without subsequent UV rotation.
-    targets=np.column_stack((.5+.5*ring[:,0],.5+.29*ring[:,1]))
-    nv=len(xyz)
-    boundary_mask=np.zeros(nv,np.bool_);boundary_mask[border]=True
-    movable=np.where(~boundary_mask)[0]
-    lookup=np.full(nv,-1,np.int64);lookup[movable]=np.arange(len(movable))
-    boundary_uv=np.zeros((nv,2),np.float64);boundary_uv[border]=targets
-    rows=[];cols=[];data=[];rhs=np.zeros((len(movable),2),np.float64)
-    adjacency=[[] for _ in range(nv)]
-    for a,b in edge_counts:
-        w=1.0  # Uniform positive Tutte weights avoid micro-geometry overconstraint
-        adjacency[a].append((b,w));adjacency[b].append((a,w))
-    for vertex in movable:
-        row=int(lookup[vertex]);weighted=adjacency[vertex]
-        rows.append(row);cols.append(row);data.append(sum(w for _,w in weighted))
-        for other,weight in weighted:
-            if boundary_mask[other]:rhs[row]+=weight*boundary_uv[other]
-            else:
-                rows.append(row);cols.append(int(lookup[other]));data.append(-weight)
-    L=coo_matrix((data,(rows,cols)),shape=(len(movable),len(movable))).tocsr()
-    relaxed=boundary_uv.copy()
-    relaxed[movable]=np.column_stack((spsolve(L,rhs[:,0]),spsolve(L,rhs[:,1])))
-    if not np.isfinite(relaxed).all():raise ValueError(name+' harmonic solve nonfinite')
-    # Face orientation must be consistent, without UV fold-overs.
-    q=relaxed[f]
-    signed=(q[:,1,0]-q[:,0,0])*(q[:,2,1]-q[:,0,1])-(q[:,1,1]-q[:,0,1])*(q[:,2,0]-q[:,0,0])
-    print('SE546_HARMONIC_AREAS',name,
-          {'positive':int(np.count_nonzero(signed>1e-12)),
-           'negative':int(np.count_nonzero(signed< -1e-12)),
-           'tiny_1e10':int(np.count_nonzero(np.abs(signed)<1e-10)),
-           'tiny_1e14':int(np.count_nonzero(np.abs(signed)<1e-14)),
-           'min_abs':float(np.min(np.abs(signed))),
-           'p01_abs':float(np.percentile(np.abs(signed),1))},flush=True)
-    if min(np.count_nonzero(signed>1e-12),np.count_nonzero(signed< -1e-12))>0:
-        raise ValueError(name+' chart contains flipped faces')
-    if np.count_nonzero(np.abs(signed)<1e-14)>3:
-        raise ValueError(name+' harmonic chart has collapsed triangles')
-    return xyz,f,relaxed,1
-
 def single_chart_group(pos,faces):
     """Parameterize an anatomical surface as one chart without xatlas chart splitting.
 
@@ -320,71 +220,18 @@ def make_atlas(positions,triangles,mode):
     for name in (REGIONS if mode=='seven' else ['head','torso','leftArm','rightArm','leftLeg','rightLeg']):
         original=triangles[labels==name]
         if not len(original):raise ValueError('Missing anatomy '+name)
-        # Optimize one continuous seam-aware anatomical chart locally, then
-        # refuse to publish if the baked atlas still has geometric conflicts.
-        if name in ('leftArm','rightArm'):
-            settings=[(spread,depth,0.,0.) for spread in (-8.,-6.,-4.,-2.,0.,2.)
-                      for depth in (-20.,-16.,-12.,-8.,-4.,0.)]
-        elif name in ('leftLeg','rightLeg'):
-            settings=[(0.,0.,stride,angle) for stride in (-2.,-1.,0.,1.,2.,3.)
-                      for angle in (-6.,-3.,0.,3.,6.)]
-        else:
-            settings=[(0.,0.,0.,0.)]
-        selected=None
-        for spread,depth,stride,angle in settings:
-            try:
-                pp,ff,uu,cc=seam_aware_anatomical_group(
-                    positions,original,name,spread,depth,stride,angle)
-                fitted=fit(uu,RECT[name],lock_orientation=True)
-                audit_local=measure_surface_uv_conflicts(
-                    pp,fitted,ff,[name]*len(ff),size=256)
-                tri3=pp[ff];tri2=fitted[ff]
-                area3=np.linalg.norm(np.cross(tri3[:,1]-tri3[:,0],
-                                              tri3[:,2]-tri3[:,0]),axis=1)
-                cross2=(tri2[:,1,0]-tri2[:,0,0])*(tri2[:,2,1]-tri2[:,0,1])-(
-                        tri2[:,1,1]-tri2[:,0,1])*(tri2[:,2,0]-tri2[:,0,0])
-                density=np.abs(cross2)/np.maximum(area3,1e-12)
-                ratio=float(np.percentile(density,95)/max(np.percentile(density,5),1e-12))
-                score=(audit_local['conflictingSamples']*10+
-                       max(0,ratio-100)*5)
-                if selected is None or score<selected[0]:
-                    selected=(score,pp,ff,uu,cc,(spread,depth,stride,angle),
-                              audit_local['conflictingSamples'],ratio)
-            except (ValueError,AssertionError,RuntimeError):
-                continue
-        if name in ('leftArm','rightArm','leftLeg','rightLeg'):
-            try:
-                pp,ff,uu,cc=xatlas_group(positions,original,force_one=True)
-                print('SE546_FORCED_CHART_COUNT',name,cc,flush=True)
-                if cc==1:
-                    print('SE546_FORCED_SINGLE_SHELL',name,
-                          shell_counts(uu,ff,[name]*len(ff)),flush=True)
-                    if shell_counts(uu,ff,[name]*len(ff))[name]==1:
-                        tuned=fit(uu,RECT[name],lock_orientation=True)
-                        q=measure_surface_uv_conflicts(pp,tuned,ff,[name]*len(ff),size=256)
-                        tri3=pp[ff];tri2=tuned[ff]
-                        a3=np.linalg.norm(np.cross(tri3[:,1]-tri3[:,0],tri3[:,2]-tri3[:,0]),axis=1)
-                        a2=np.abs((tri2[:,1,0]-tri2[:,0,0])*(tri2[:,2,1]-tri2[:,0,1])-(
-                                tri2[:,1,1]-tri2[:,0,1])*(tri2[:,2,0]-tri2[:,0,0]))
-                        ratio=float(np.percentile(a2/np.maximum(a3,1e-12),95)/
-                                    max(np.percentile(a2/np.maximum(a3,1e-12),5),1e-12))
-                        score=q['conflictingSamples']*10+max(0,ratio-100)*5
-                        print('SE546_FORCE_ONE_QUALITY',name,
-                              {'conflicts256':q['conflictingSamples'],'ratio':ratio},flush=True)
-                        if selected is None or score<selected[0]:
-                            selected=(score,pp,ff,uu,cc,('xatlas-single',),
-                                      q['conflictingSamples'],ratio)
-            except (ValueError,AssertionError,RuntimeError,AttributeError) as exc:
-                print('SE546_FORCE_ONE_UNAVAILABLE',name,str(exc),flush=True)
-        if selected is None:raise ValueError('No continuous anatomical unwrap for '+name)
-        _,p,f,uv,c,tuning,local_conflicts,local_ratio=selected
-        print('SE546_REGION_UNWRAP_TUNED',name,
-              {'parameters':tuning,'conflictingSamples256':local_conflicts,
-               'densityRatio':round(local_ratio,2)},flush=True)
+        # Geometry-derived, measured seam calibration for the native v11.540
+        # mannequin. Fix the back/underside angular seam and spread hands near
+        # the knuckles while preserving the exact original 3D triangles.
+        # Tests reject the asset if source geometry or collision rates change.
+        calibration={'leftArm':(-4.,-8.,0.,0.),
+                     'rightArm':(-4.,-8.,0.,0.),
+                     'leftLeg':(0.,0.,0.,0.),
+                     'rightLeg':(0.,0.,0.,0.)}
+        params=calibration.get(name,(0.,0.,0.,0.))
+        p,f,uv,c=seam_aware_anatomical_group(positions,original,name,*params)
         if name=='head':
-            # U is circumference, V is crown-to-chin. A horizontal 2:1
-            # unrolled head gives a centered front visor at U ~= 0.5.
-            uv[:,0]*=2.0
+            uv[:,0]*=2.0  # Upright crown/chin, centered face on +Z
         base=count;count+=len(p);charts+=c
         if count>VERT_LIMIT:raise ValueError('UV vertex budget exceeded: '+str(count))
         parts.append(p);faces_out.append(f+base)
