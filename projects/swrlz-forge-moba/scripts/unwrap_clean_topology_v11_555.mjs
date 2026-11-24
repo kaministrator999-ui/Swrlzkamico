@@ -39,10 +39,10 @@ for(const seamMode of ['anatomical','geometry']){
 if(!accepted)throw Error('No qualified anatomy UV unwrap: '+JSON.stringify(errors));
 part.topologyMesh={...source,positions:accepted.positions,
                    uvs:accepted.uvs,indices:accepted.indices};
-part.name='Clean Topology Humanoid · xatlas relaxed UV mesh';
-scene.engine='§wyrl§ Engine v11.555 · geometry-derived xatlas UV';
+part.name='Clean Topology Humanoid · seam-preserving LSCM UV mesh';
+scene.engine='§wyrl§ Engine v11.555 · geometry-derived LSCM UV';
 scene.project.modelAtelier.reference='Connected quad-loop humanoid with genuine xatlas conformal UV unwrap, anatomical face/torso/limb chart seams and checker skin. Save as account project before sculpting.';
-report.revision='xatlas-anatomical-conformal-v4';
+report.revision='lscm-anatomical-conformal-v4';
 report.vertices=accepted.positions.length/3;
 report.triangles=accepted.indices.length/3;
 report.uvAlgorithm='seamed-LSCM+verified-single-atlas-packer';
@@ -64,6 +64,6 @@ const meta={regionPerFace:material,regionLabels:regions,charts:accepted.charts};
 fs.writeFileSync(path.join(root,'docs/qa/clean-topology-humanoid-v11-555-region-meta.json'),JSON.stringify(meta));
 fs.writeFileSync(scenePath,JSON.stringify(scene));
 fs.writeFileSync(reportPath,JSON.stringify(report,null,2)+'\n');
-console.log('SE555_XATLAS_CONFORMAL_UNWRAP_PASS',JSON.stringify({
+console.log('SE555_LSCM_CONFORMAL_UNWRAP_PASS',JSON.stringify({
  vertices:report.vertices,triangles:report.triangles,charts:accepted.charts,
  density:accepted.distortion.p95P05,atlas:report.uvAtlasSize}));
