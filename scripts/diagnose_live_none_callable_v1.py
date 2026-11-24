@@ -27,6 +27,14 @@ for f in ast.walk(tree):
             txt=lines[n-1]
             if "prompt" in txt or "token" in txt.lower():continue
             print("DISPATCH_SOURCE",n,txt[:250])
+try:
+    router=Path(hf_hub_download(SPACE,"model_router.py",repo_type="space",revision=rev,token=os.getenv("HF_TOKEN") or None)).read_text()
+    mod=ast.parse(router)
+    for fn in mod.body:
+        if isinstance(fn,(ast.FunctionDef,ast.AsyncFunctionDef)) and fn.name=="dispatch":
+            print("REAL_MODEL_ROUTER_DISPATCH",ast.get_source_segment(router,fn)[:10000],flush=True)
+except Exception as exc:
+    print("REAL_MODEL_ROUTER_UNAVAILABLE",type(exc).__name__,flush=True)
 for name in ("_generate","_stock_generate","_large_generate","_coder_generate","dispatch"):
     occurrences=[]
     for n,line in enumerate(lines,1):
