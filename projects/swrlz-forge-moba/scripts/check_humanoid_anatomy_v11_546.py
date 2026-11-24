@@ -56,7 +56,7 @@ def main():
     assert metric['uvShells']['torso']<=2,metric['uvShells']
     assert all(metric['uvShells'][name]>=1 for name in required),metric['uvShells']
     # Previous version painted 6,898 conflicting pixel samples and passed.
-    assert metric['overlaps']<5000,('UV collisions not sufficiently reduced',metric['overlaps'])
+    assert metric['overlaps']<1000,('UV collisions not sufficiently reduced',metric['overlaps'])
     assert metric['coveredPct']>25
     assert metric['p95P5Density']<110
     assert len(N.read_bytes())<2_000_000
