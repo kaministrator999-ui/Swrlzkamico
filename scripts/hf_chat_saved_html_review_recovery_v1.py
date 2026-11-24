@@ -13,9 +13,10 @@ SPACE="kamiloki/Swyrlz"
 BASE="https://kamiloki-swyrlz.hf.space"
 STATION="station.py"
 HTML="chat/§wyrlz/index.html"
+ACTIONS="github_conversation_actions_v264.py"
 HANDOFF="github_html_project_handoff_v1.py"
 SOURCE=Path("api/github_html_project_handoff_v1.py")
-FILES=(STATION,HTML,HANDOFF)
+FILES=(STATION,HTML,ACTIONS,HANDOFF)
 MARK="# swrlz-saved-html-review-recovery-v1"
 RESUME_ROUTE_ANCHOR='''    elif payload.get("htmlProjectIntent"):
         # Generate first; only a verified, saved code artifact can be reviewed.
@@ -79,6 +80,7 @@ def one(s,old,new,label):
 def patch(original):
     station=original[STATION].decode()
     html=original[HTML].decode()
+    actions=original[ACTIONS].decode()
     if MARK in station or "swrlz-html-review-scroll-repair-v1" not in html:
         raise RuntimeError("LIVE_FIRST_REPAIR_NOT_FOUND_OR_REAPPLIED")
     station=one(station,RESUME_ROUTE_ANCHOR,RESUME_ROUTE_REPLACE,"SAVED_REVIEW_ROUTING")
@@ -90,11 +92,16 @@ def patch(original):
         '''import github_html_project_handoff_v1 as _swrlz_html_handoff
 '''+MARK,1)
     html=one(html,UI_ANCHOR,UI_REPLACE,"REVIEW_AFTER_CODE")
+    html=one(html,'["touchstart","wheel","pointerdown"]',
+             '["touchstart","touchmove","wheel","pointerdown"]',"TOUCH_DRAG_SCROLL")
+    actions=one(actions,"confirm|approve|go ahead",
+                "confirm|approve|approved|go ahead","APPROVED_REPLY_SUPPORT")
     ast.parse(station,filename=STATION)
+    ast.parse(actions,filename=ACTIONS)
     if "is_saved_review_request" not in SOURCE.read_text():
         raise RuntimeError("SAVED_REVIEW_COMMAND_NOT_AVAILABLE")
     ast.parse(SOURCE.read_text(),filename=HANDOFF)
-    return {STATION:station.encode(),HTML:html.encode(),HANDOFF:SOURCE.read_bytes()}
+    return {STATION:station.encode(),HTML:html.encode(),ACTIONS:actions.encode(),HANDOFF:SOURCE.read_bytes()}
 
 
 def local():
