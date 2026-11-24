@@ -15,7 +15,8 @@
     "pinned LSCM Cauchy-Riemann sparse solve per anatomical UV chart",
     "xatlas pack preserves chart seams and 70-chart maximum",
     "independent LSCM planar and seam tests",
-    "real source model and public assets verified after deploy"
+    "real source model and public assets verified after deploy",
+    "tune texelsPerUnit 128/64/32/16 until LSCM UV charts fit one 2048 atlas"
   ],
-  "request": "2026-11-24-true-seam-LSCM-plus-xatlas-pack-v4c"
+  "request": "2026-11-24-LSCM-single-atlas-tpu-fix-v4d"
 }
