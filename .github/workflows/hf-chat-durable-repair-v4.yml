@@ -4,6 +4,7 @@ on:
     paths:
       - 'queues/swrlz_generation_v3.py'
       - 'api/durable_project_repair_v1.py'
+      - 'api/lalm_station.py'
       - 'tests/test_durable_project_repair_v1.py'
       - 'scripts/hf_chat_durable_repair_release_v4.py'
       - '.github/workflows/hf-chat-durable-repair-v4.yml'
@@ -12,6 +13,7 @@ on:
     paths:
       - 'queues/swrlz_generation_v3.py'
       - 'api/durable_project_repair_v1.py'
+      - 'api/lalm_station.py'
       - 'scripts/hf_chat_durable_repair_release_v4.py'
       - '.github/workflows/hf-chat-durable-repair-v4.yml'
 permissions: {contents: read}
@@ -40,13 +42,13 @@ jobs:
         run: python -m pip install --quiet 'huggingface_hub>=0.34,<2'
       - name: Verify exact production durable queue source without mutation
         run: python -u scripts/hf_chat_durable_repair_release_v4.py preflight
-      - name: Publish two scoped files and require live Station/send prompt acceptance
+      - name: Publish three scoped files and require live Workstation route probe
         if: ${{ github.event_name == 'push' && contains(github.event.head_commit.message, '[release-chat-durable-repair-v4]') }}
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
           SWRLZ_DURABLE_REPAIR_APPROVED: '1'
         run: python -u scripts/hf_chat_durable_repair_release_v4.py publish
-      - name: Independently rerun live prompt regression on deployed source
+      - name: Independently rerun live read-only route regression on deployed source
         if: ${{ github.event_name == 'push' && contains(github.event.head_commit.message, '[release-chat-durable-repair-v4]') }}
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
