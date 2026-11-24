@@ -18,19 +18,17 @@ SPACE = "kamiloki/Swyrlz"
 BASE = "https://kamiloki-swyrlz.hf.space"
 STATION = "station.py"
 ACTIONS = "github_conversation_actions_v264.py"
-CONTEXT = "html_project_context_v1.py"
 HELPER = "html_project_repair_v1.py"
 UI = "chat/§wyrlz/assets/html-project-publish-review-v1.js"
 HTML = "chat/§wyrlz/index.html"
-EXISTING = (STATION, ACTIONS, CONTEXT, UI, HTML)
+EXISTING = (STATION, ACTIONS, UI, HTML)
 SOURCE = Path("api/html_project_repair_v1.py")
 SMARK = "swrlz-existing-project-repair-routing-v1"
 AMARK = "swrlz-owner-existing-html-repair-v1"
 SROOT = "ROOT=Path(__file__).resolve().parent"
 SROUTE = "        elif _swrlz_execution_continuity.read_only(payload):"
 SCOMMAND = "    elif _swrlz_explicit_html_publish_command(prompt):"
-COLD = "(?:status|publish|review)"
-CNEW = "(?:status|publish|review|repair)"
+SCTX = "    elif (html_project_ref := _swrlz_project_context.resolve(prompt,t)):"
 UOLD = "html-project-publish-review-v1.js?v=1"
 UNEW = "html-project-publish-review-v1.js?v=2"
 
@@ -108,6 +106,9 @@ def patch_station(source):
         raise RuntimeError("REPAIR_ALREADY_INSTALLED")
     source = one(source, SROOT,
         "import html_project_repair_v1 as _swrlz_project_repair\n"+SROOT, "station_import")
+    source = one(source, SCTX,
+        "    elif not _swrlz_project_repair.is_command(prompt) and (html_project_ref := _swrlz_project_context.resolve(prompt,t)):",
+        "station_explicit_repair_precedence")
     source = one(source, SCOMMAND,
         "    elif _swrlz_explicit_html_publish_command(prompt) or _swrlz_project_repair.is_command(prompt):",
         "station_owner_command")
@@ -160,8 +161,6 @@ def patch(before):
     out = dict(before)
     out[STATION] = patch_station(before[STATION])
     out[ACTIONS] = patch_actions(before[ACTIONS])
-    out[CONTEXT] = one(before[CONTEXT], COLD, CNEW, "context_command")
-    ast.parse(out[CONTEXT], filename=CONTEXT)
     out[UI] = patch_ui(before[UI])
     out[HTML] = one(before[HTML], UOLD, UNEW, "html_ui_asset_cache")
     return out
@@ -176,8 +175,8 @@ def selftest():
     ast.parse(helper, filename=HELPER)
     station = (
         "import re\n"+SROOT+"\ndef worker(payload,prompt):\n"
-        "    if False:\n        pass\n"+SCOMMAND+"        pass\n"
-        "def stream(payload):\n    if False:\n        pass\n"
+        "    if False:\n        pass\n"+SCTX+"        pass\n"+SCOMMAND+"        pass\n"
+        "def stream(payload):\n        if False:\n            pass\n"
         +SROUTE+"            pass\n")
     out = patch_station(station)
     assert SMARK in out and "_swrlz_project_repair.events(payload)" in out
