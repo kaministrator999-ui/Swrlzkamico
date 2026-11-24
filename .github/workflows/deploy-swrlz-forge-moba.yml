@@ -110,7 +110,6 @@ jobs:
               "assets/models/clean-topology-humanoid-v11-554-uv-test.png",
               "assets/models/clean-topology-humanoid-v11-554-uv-guide-2048.png",
               "assets/uv-unwrapper/index.mjs",
-              "assets/uv-unwrapper/xatlas.wasm",
               "assets/uv-unwrapper/uv_atlas_core_v11_555.mjs",
               "assets/uv-unwrapper/uv_lscm_core_v11_555.mjs",
           )
