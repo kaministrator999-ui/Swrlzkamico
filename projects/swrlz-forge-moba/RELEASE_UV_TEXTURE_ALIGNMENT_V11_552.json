@@ -1,5 +1,5 @@
 {
   "release": "v11.552",
   "purpose": "Reseal after removing obsolete xatlas metadata requirement",
-  "trigger": "2026-11-23-repair-mannequin-starter-loader"
+  "trigger": "2026-11-23-shared-anatomical-region-overlay"
 }
