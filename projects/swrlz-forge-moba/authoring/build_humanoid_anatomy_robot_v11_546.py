@@ -238,7 +238,7 @@ def anatomical_silhouette(pos,uv,name):
     widths=np.convolve(np.pad(widths,(2,2),mode='edge'),
                        np.array([1,2,3,2,1])/9,mode='valid')
     profile=np.clip(widths/max(widths.max(),1e-8),.38,1.)
-    width=np.interp(t,grid,profile)
+    width=.65+.35*np.interp(t,grid,profile)
     # Front center remains fixed; both sides fan out with local girth.
     q[:,0]=.5+(q[:,0]-.5)*width
     if arm:
