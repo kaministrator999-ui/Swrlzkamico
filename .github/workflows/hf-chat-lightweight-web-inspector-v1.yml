@@ -7,6 +7,7 @@ on:
       - 'scripts/verify_html_project_lightweight_v1.py'
       - 'scripts/hf_chat_lightweight_web_inspector_release_v1.py'
       - 'tests/test_lightweight_webpage_inspector_v1.py'
+      - 'tests/test_lightweight_html_project_gate_v1.py'
       - 'tests/test_html_project_context_v1.py'
       - '.github/workflows/hf-chat-lightweight-web-inspector-v1.yml'
   push:
@@ -39,6 +40,7 @@ jobs:
         run: |
           python -m py_compile api/lightweight_webpage_inspector_v1.py api/html_project_context_v1.py scripts/verify_html_project_lightweight_v1.py scripts/hf_chat_lightweight_web_inspector_release_v1.py
           python -m unittest discover -s tests -p 'test_lightweight_webpage_inspector_v1.py' -v
+          python -m unittest discover -s tests -p 'test_lightweight_html_project_gate_v1.py' -v
           python -m unittest discover -s tests -p 'test_html_project_context_v1.py' -v
           python -m unittest discover -s tests -p 'test_hf_html_project_publish_v1.py' -v
           python scripts/hf_chat_lightweight_web_inspector_release_v1.py selftest
