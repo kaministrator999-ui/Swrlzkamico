@@ -85,7 +85,9 @@ class PublishApprovalTests(unittest.TestCase):
         def req(auth,method,path,**kwargs):
             return {"tree":{"sha":"c"*40}} if "/commits/" in path else tree
         with patch.object(m,"_github",side_effect=req):
-            self.assertEqual(m._manifest(AUTH,SHA,"sample")["bytes"],20)
+            preview=m._manifest(AUTH,SHA,"sample")
+            self.assertEqual(preview["bytes"],20)
+            self.assertEqual(preview["indexGitBlobSha"],"e"*40)
             tree["tree"][0]["mode"]="120000"
             with self.assertRaises(m.PublishActionError) as error:
                 m._manifest(AUTH,SHA,"sample")
