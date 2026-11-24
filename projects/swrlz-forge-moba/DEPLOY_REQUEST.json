@@ -4,12 +4,19 @@
   "target": "kamiloki/swrlz-forge-moba",
   "releaseVersion": "v11.552",
   "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_546_ANATOMY_ROBOT_UV_4K",
-  "reason": "Deploy regenerated upright horizontal head UV atlas after successful authoring run 45316028516",
+  "reason": "Deploy tested six continuous anatomical UV wraps with +Z centered head, one shell per limb and bounded 3D surface collision diagnostics",
   "sourceCommit": "main (deploy workflow checkout; verified against sourceIntegritySha256)",
   "sourceIntegritySha256": "c0fa1a67b48451b457bbf06ca823dd55886662cabce7ede65c552697764d9cf2",
-  "assetBuildRun": 45289094989,
+  "assetBuildRun": 45322153906,
   "assetShells": 6,
-  "assetVertices": 7513,
+  "assetVertices": 7441,
   "resealRun": 45307367329,
-  "deploymentAttempt": 5
+  "deploymentAttempt": 6,
+  "uvQuality": {
+    "nonadjacentConflictPct": 0.6716,
+    "samplingResolution": 512,
+    "densityRatio": 20.86,
+    "original3DTriangles": 13932,
+    "headCentered": true
+  }
 }
