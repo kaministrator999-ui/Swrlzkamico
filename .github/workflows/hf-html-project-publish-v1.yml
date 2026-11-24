@@ -40,6 +40,7 @@ jobs:
       - run: python -m py_compile scripts/hf_html_project_publish_v1.py
       - run: python -m unittest discover -s tests -p 'test_hf_html_project_publish_v1.py' -v
       - run: python -m unittest discover -s tests -p 'test_lightweight_webpage_inspector_v1.py' -v
+      - run: python -m unittest discover -s tests -p 'test_lightweight_html_project_gate_v1.py' -v
   publish:
     if: ${{ github.event_name == 'workflow_dispatch' && inputs.approved == 'yes' && github.actor == 'kaministrator999-ui' }}
     runs-on: ubuntu-latest
@@ -80,6 +81,7 @@ jobs:
           PROJECT_SLUG: ${{ inputs.project }}
         run: |
           python -m unittest discover -s tests -p 'test_lightweight_webpage_inspector_v1.py' -v
+          python -m unittest discover -s tests -p 'test_lightweight_html_project_gate_v1.py' -v
           python scripts/verify_html_project_lightweight_v1.py --project "$PROJECT_SLUG" --mode prepublish --output html-lightweight-receipt.json
       - run: python -m pip install --quiet 'huggingface_hub>=0.34,<2'
       - name: Scoped, CAS-protected Space publication and source byte readback
