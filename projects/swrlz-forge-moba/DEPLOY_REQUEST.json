@@ -1,21 +1,26 @@
 {
   "schema": "swrlz-forge-deploy-request-v1",
-  "requestedBy": "ChatGPT (owner-authorized continuous humanoid UV fix and live deployment)",
+  "requestedBy": "ChatGPT (owner-authorized repair and verified deployment of account project startup)",
   "target": "kamiloki/swrlz-forge-moba",
   "releaseVersion": "v11.552",
   "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_546_ANATOMY_ROBOT_UV_4K",
-  "reason": "Fix account-first startup duplicate cloud project load; preserve native receipts, explicit failures and accessible local recovery",
+  "reason": "Deliver fingerprinted v11.553 account-startup recovery on sealed v11.552: prevent premature cloud default expiry, preserve native loader receipts and current-workspace escape",
   "sourceCommit": "main (deploy workflow checkout; verified against sourceIntegritySha256)",
   "sourceIntegritySha256": "3fe29516958ea5af2448352fa238eda121cc3031266c61c746380f092d22232e",
   "assetBuildRun": 45337725091,
   "assetShells": 6,
   "assetVertices": 7424,
   "resealRun": 45342195310,
-  "deploymentAttempt": 10,
+  "deploymentAttempt": 11,
   "uvQuality": {
     "nonadjacentConflictPct": 0.5701,
     "samplingResolution": 512,
     "densityRatio": 24.2,
     "original3DTriangles": 13932
-  }
+  },
+  "accountStartupRecovery": "v11.553-delivery",
+  "accountStartupChecks": [
+    "startup_restore_regression_v11_552",
+    "startup_delivery_repair_v11_553"
+  ]
 }
