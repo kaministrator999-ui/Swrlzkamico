@@ -10,7 +10,10 @@ import json
 import os
 import re
 import subprocess
+import sys
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from api.html_project_agent_v1 import (
     apply_proposal, verify_source, inspect_static, safe_path, ProposalError
