@@ -1,0 +1,51 @@
+name: Fix §C HTML project context routing
+on:
+  pull_request:
+    paths:
+      - api/html_project_context_v1.py
+      - tests/test_html_project_context_v1.py
+      - scripts/hf_chat_html_project_context_release_v1.py
+      - .github/workflows/hf-chat-html-project-context-routing-v1.yml
+  push:
+    branches: [main]
+    paths:
+      - api/html_project_context_v1.py
+      - tests/test_html_project_context_v1.py
+      - scripts/hf_chat_html_project_context_release_v1.py
+      - .github/workflows/hf-chat-html-project-context-routing-v1.yml
+  workflow_dispatch:
+permissions: {contents: read}
+concurrency:
+  group: swrlz-hf-space-deployment
+  cancel-in-progress: false
+jobs:
+  repair:
+    if: ${{ github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[release-html-project-context-v1]') }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 16
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - run: python -m pip install --quiet 'huggingface_hub>=0.34,<2'
+      - name: Test project routing and verified source identity
+        run: |
+          python -m py_compile api/html_project_context_v1.py scripts/hf_chat_html_project_context_release_v1.py
+          python -m unittest discover -s tests -p test_html_project_context_v1.py -v
+          python scripts/hf_chat_html_project_context_release_v1.py selftest
+      - name: Inspect exact live Hugging Face routing anchors
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: python scripts/hf_chat_html_project_context_release_v1.py preflight
+      - name: Publish scoped patch and verify live chat
+        if: github.event_name != 'pull_request'
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          SWRLZ_HTML_CONTEXT_RELEASE_APPROVED: '1'
+        run: python -u scripts/hf_chat_html_project_context_release_v1.py publish
+      - name: Re-read published project routing module
+        if: github.event_name != 'pull_request'
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: python scripts/hf_chat_html_project_context_release_v1.py verify
