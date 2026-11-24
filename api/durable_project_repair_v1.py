@@ -13,6 +13,22 @@ from typing import Any
 _DECISION = re.compile(r"^\s*(yes|approve|approved|no|cancel|decline)\s*[.!]?\s*$", re.I)
 
 
+def verified_owner_from_session(claims: dict, user_id: str) -> str:
+    """Derive legacy GitHub owner only from a verified server session.
+
+    Raw request JSON and user-provided GitHub handles cannot grant authority.
+    """
+    if not isinstance(claims, dict) or claims.get("sub") != user_id:
+        return ""
+    identity = claims.get("identity")
+    if not isinstance(identity, dict) or identity.get("provider") != "google":
+        return ""
+    subject = identity.get("providerSubject")
+    if not isinstance(subject, str) or not re.fullmatch(r"[0-9]{6,32}", subject):
+        return ""
+    return "google:" + subject
+
+
 def _components():
     try:
         import html_project_context_v1 as context
@@ -33,10 +49,10 @@ def _finish() -> dict[str, Any]:
     return {"type": "COMPLETED", "phase": "COMPLETE"}
 
 
-def _approval_events(approval, user_id: str, thread_id: str, accept: bool):
+def _approval_events(approval, owner_google_id: str, thread_id: str, accept: bool):
     yield _status("REPAIR_APPROVAL_DECISION", "Processing explicit same-thread decision.")
     try:
-        result = approval.confirm(user_id, thread_id, accept)
+        result = approval.confirm(owner_google_id, thread_id, accept)
     except Exception as exc:
         yield _status("REPAIR_APPROVAL_BLOCKED", type(exc).__name__)
         yield {"type": "DELTA", "text":
@@ -85,11 +101,11 @@ def _review_diff(widget: dict[str, Any]) -> str:
 
 
 def _repair_events(context, approval, runtime, *,
-                   user_id: str, thread_id: str, prompt: str, project: dict,
+                   owner_google_id: str, thread_id: str, prompt: str, project: dict,
                    engine: Any, cancelled, base_payload: dict) -> Iterator[dict]:
     yield _status("EXISTING_PROJECT_REPAIR_SELECTED",
                   "Routing the named existing GitHub project, not creating a new HTML artifact.")
-    if not user_id.startswith("google:"):
+    if not owner_google_id.startswith("google:"):
         yield _status("EXISTING_PROJECT_REPAIR_AUTH_REQUIRED")
         yield {"type": "DELTA", "text":
                "Sign in with Google and connect the owning GitHub repository to repair " +
@@ -102,7 +118,7 @@ def _repair_events(context, approval, runtime, *,
     yield _status("EXISTING_PROJECT_SOURCE_READING",
                   "Reading the project's real GitHub source through owner authorization.")
     try:
-        verified = context.read_project_source(user_id, project)
+        verified = context.read_project_source(owner_google_id, project)
         evidence = context.evidence(project, verified)
         if not isinstance(evidence, str) or not re.search(
                 r"(?m)^Verified Git blob: [0-9a-f]{40}$", evidence):
@@ -123,7 +139,7 @@ def _repair_events(context, approval, runtime, *,
         "receivedText": prompt,
         "activeHtmlProject": project,
         "projectFileEvidence": evidence,
-        "htmlRepairOwner": user_id,
+        "htmlRepairOwner": owner_google_id,
         "htmlRepairThreadId": thread_id,
         "_cancelCheck": cancelled,
     })
@@ -145,21 +161,21 @@ def _repair_events(context, approval, runtime, *,
         yield event
 
 
-def route_events(*, user_id: str, thread_id: str, prompt: str,
+def route_events(*, user_id: str, owner_google_id: str, thread_id: str, prompt: str,
                  engine: Any, cancelled, base_payload: dict) -> Iterator[dict] | None:
     """Return None only for ordinary chat; never fall through after repair selection."""
     if not isinstance(prompt, str) or not prompt.strip():
         return None
     context, approval, runtime = _components()
     decision = _DECISION.fullmatch(prompt)
-    if (decision and user_id.startswith("google:") and
-            approval.has_pending(user_id, thread_id)):
+    if (decision and owner_google_id.startswith("google:") and
+            approval.has_pending(owner_google_id, thread_id)):
         accept = decision.group(1).lower() in {"yes", "approve", "approved"}
-        return _approval_events(approval, user_id, thread_id, accept)
+        return _approval_events(approval, owner_google_id, thread_id, accept)
     project = context.resolve(prompt, {"messages": []})
     if project is None or not approval.repair_intent(prompt):
         return None
     return _repair_events(
-        context, approval, runtime, user_id=user_id, thread_id=thread_id,
+        context, approval, runtime, owner_google_id=owner_google_id, thread_id=thread_id,
         prompt=prompt, project=project, engine=engine,
         cancelled=cancelled, base_payload=base_payload)
