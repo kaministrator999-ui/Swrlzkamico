@@ -4,18 +4,18 @@
   "target": "kamiloki/swrlz-forge-moba",
   "releaseVersion": "v11.552",
   "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_546_ANATOMY_ROBOT_UV_4K",
-  "reason": "Deploy physically proportioned upright anatomical UV atlas v22",
+  "reason": "Deploy geometry-derived mannequin UV atlas with tested toe transition v26",
   "sourceCommit": "main (deploy workflow checkout; verified against sourceIntegritySha256)",
   "sourceIntegritySha256": "c0fa1a67b48451b457bbf06ca823dd55886662cabce7ede65c552697764d9cf2",
-  "assetBuildRun": 45325243433,
+  "assetBuildRun": 45333338428,
   "assetShells": 6,
-  "assetVertices": 7441,
+  "assetVertices": 7424,
   "resealRun": 45307367329,
-  "deploymentAttempt": 7,
+  "deploymentAttempt": 8,
   "uvQuality": {
-    "nonadjacentConflictPct": 0.5549,
+    "nonadjacentConflictPct": 0.6849,
     "samplingResolution": 512,
-    "densityRatio": 27.18,
+    "densityRatio": 21.41,
     "original3DTriangles": 13932
   }
 }
