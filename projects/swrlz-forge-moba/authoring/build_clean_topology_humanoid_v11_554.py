@@ -414,32 +414,69 @@ def audit_and_orient():
     return report
 
 def texture():
-    s=1024;im=Image.new('RGB',(s,s),(18,26,36));d=ImageDraw.Draw(im)
+    """Paint the ACTUAL UV surfaces, not the six bounding rectangles.
+
+    Front/back panels, pelvis, scalp, arm cores and fingers are visible as
+    separate islands on the diagnostic skin. The no-text artwork is genuinely
+    importable as the model texture, without wireframe or region names.
+    """
+    size=1024
+    background=Image.new('RGB',(size,size),(18,26,36))
+    mask=Image.new('L',(size,size),0)
+    dm=ImageDraw.Draw(mask)
+    colors={
+      'head':(181,210,216),'torso':(143,175,189),
+      'leftArm':(147,192,183),'rightArm':(148,187,187),
+      'leftLeg':(155,172,192),'rightLeg':(160,174,196)}
+    for name,quad in Q:
+        polygon=[(round(UV[2*i]*size),round((1-UV[2*i+1])*size))
+                 for i in quad]
+        dm.polygon(polygon,fill=255)
+    grid=Image.new('RGB',(size,size),(18,26,36))
+    dg=ImageDraw.Draw(grid)
     for name,(u0,v0,u1,v1) in BOXES.items():
-        l=int(u0*s);r=int(u1*s);top=int((1-v1)*s);bot=int((1-v0)*s)
-        color=PALETTE[name]
-        d.rectangle((l,top,r,bot),fill=color)
-        for i in range(1,20):
-            x=round(lerp(l,r,i/20))
-            d.line((x,top,x,bot),fill=tuple(max(0,c-22) for c in color),width=1)
-        for i in range(1,22):
-            y=round(lerp(top,bot,i/22))
-            d.line((l,y,r,y),fill=tuple(max(0,c-21) for c in color),width=1)
-        d.rectangle((l,top,r,bot),outline=(55,207,222),width=3)
+        x0=round(u0*size);x1=round(u1*size)
+        y0=round((1-v1)*size);y1=round((1-v0)*size)
+        col=colors[name]
+        dg.rectangle((x0,y0,x1,y1),fill=col)
+        dark=tuple(max(0,c-21) for c in col)
+        for k in range(1,32):
+            x=round(lerp(x0,x1,k/32))
+            dg.line((x,y0,x,y1),fill=dark,width=1)
+        for k in range(1,34):
+            y=round(lerp(y0,y1,k/34))
+            dg.line((x0,y,x1,y),fill=dark,width=1)
+    # No labels are painted into the actual texture; chart boundaries and
+    # empty gutters remain clear after the geometric UV mask is applied.
+    background.paste(grid,(0,0),mask)
     ATLAS.parent.mkdir(parents=True,exist_ok=True)
-    im.save(ATLAS,optimize=True)
+    background.save(ATLAS,optimize=True)
     return ATLAS.read_bytes()
 def guide():
-    size=2048;im=Image.new('RGB',(size,size),(15,23,36));d=ImageDraw.Draw(im)
+    size=2048
+    im=Image.new('RGB',(size,size),(15,23,36));d=ImageDraw.Draw(im)
     colors={'head':(239,95,95),'torso':(87,155,243),
-     'leftArm':(64,197,115),'rightArm':(231,184,63),
-     'leftLeg':(168,110,231),'rightLeg':(244,125,76)}
+      'leftArm':(64,197,115),'rightArm':(231,184,63),
+      'leftLeg':(168,110,231),'rightLeg':(244,125,76)}
     for k in range(0,len(F),3):
         points=[(round(UV[F[k+i]*2]*size),
                  round((1-UV[F[k+i]*2+1])*size)) for i in range(3)]
         d.line(points+[points[0]],fill=colors[GROUP[k//3]],width=1)
+    # Labels and anatomy descriptions belong on the guide, NEVER the painted
+    # skin. Labels identify the view and which direction is the head/waist.
+    labels=[
+      ('FACE',( .029,.40)),('HEAD BACK',(.153,.40)),
+      ('SCALP',(.100,.463)),
+      ('CHEST FRONT',(.317,.431)),('TORSO BACK',(.652,.431)),
+      ('WAIST / GROIN',(.38,.087)),
+      ('LEFT ARM / PALM',(.024,.938)),('RIGHT ARM / PALM',(.269,.938)),
+      ('LEFT LEG / INSTEP',(.515,.938)),('RIGHT LEG / INSTEP',(.759,.938))]
+    for txt,(u,v) in labels:
+        d.text((int(u*size),int((1-v)*size)),txt,fill=(255,255,255),
+               stroke_width=2,stroke_fill=(15,23,36))
     GUIDE.parent.mkdir(parents=True,exist_ok=True)
     im.save(GUIDE,optimize=True)
+
 def main():
     charts=assemble()
     assert len(P)//3<=9000 and len(F)==0
