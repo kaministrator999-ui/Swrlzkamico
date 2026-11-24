@@ -82,7 +82,30 @@ def inspect():
     if not hits:
         raise RuntimeError("NO_ROUTE_EVIDENCE_FOUND")
 
+def sections():
+    from huggingface_hub import HfApi, hf_hub_download
+    api = HfApi()
+    revision = str(api.repo_info(SPACE, repo_type="space").sha)
+    regions = {
+        "station.py": ((1385, 1490), (2740, 2820), (2890, 3030), (3135, 3205)),
+        "brain_programming.py": ((2040, 2165),),
+        "qwen_coder_engine.py": ((1230, 1295),),
+    }
+    print("WORKSTATION_ROUTING_SOURCE_REVISION", revision, flush=True)
+    for filename, windows in regions.items():
+        lines = Path(hf_hub_download(
+            SPACE, filename, repo_type="space", revision=revision)).read_text().splitlines()
+        for first, last in windows:
+            print("WORKSTATION_ROUTING_SOURCE_SECTION", json.dumps({
+                "file": filename, "first": first, "last": last,
+                "lines": [f"{i+1}:{lines[i][:300]}" for i in range(first-1,min(last,len(lines)))]
+            }), flush=True)
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("mode", choices=("inspect",))
-    inspect()
+    parser.add_argument("mode", choices=("inspect", "sections"))
+    if parser.parse_args().mode == "sections":
+        sections()
+    else:
+        inspect()
