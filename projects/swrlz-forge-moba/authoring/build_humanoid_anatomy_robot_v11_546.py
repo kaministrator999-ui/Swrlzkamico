@@ -287,7 +287,7 @@ def anatomical_limb_projection(pos,faces,name):
         # centerline derivative monotone across the ankle transition.
         foot=np.clip((.36-xyz[:,1])/.25,0,1)
         foot=foot*foot*(3-2*foot)
-        longitudinal=longitudinal+foot*np.maximum(depth,0)*.25
+        longitudinal=longitudinal+foot*np.maximum(depth,0)*.12
     # Separate front/back geometry by signed displacement without erasing the
     # actual lateral silhouette. Seam neighborhood must remain geometrically
     # continuous; each face is assigned to the front or back by its 3D normal.
