@@ -213,6 +213,29 @@ def health():
             raise RuntimeError("REPAIR_UI_NOT_LIVE")
 
 
+def diagnose_live():
+    import re
+    url=BASE+"/chat/%C2%A7wyrlz?__repair_probe=1"
+    with urllib.request.urlopen(url,timeout=25) as resp:
+        html=resp.read(3_000_000).decode("utf-8",errors="replace")
+        print("LIVE_HTML_PROBE", {
+            "status":resp.status,"bytes":len(html),
+            "sha256":digest(html.encode()),
+            "cacheControl":resp.headers.get("Cache-Control"),
+            "htmlReviewRefs":re.findall(r"html-project-publish-review[^\"'<>\s]{0,110}",html)[:8],
+            "containsApprovedReviewWidget": "github-html-publish-review" in html,
+            "head":html[:160]
+        },flush=True)
+    try:
+        with urllib.request.urlopen(BASE+"/chat/%C2%A7wyrlz/assets/html-project-publish-review-v1.js?__probe=1",timeout=25) as resp:
+            js=resp.read(250_000).decode("utf-8",errors="replace")
+            print("LIVE_REPAIR_JS_PROBE",{
+                "status":resp.status,"length":len(js),
+                "sha256":digest(js.encode()),"hasRepairMode": "repairing=data.mode" in js
+            },flush=True)
+    except Exception as exc:
+        print("LIVE_REPAIR_JS_PROBE_FAILED",type(exc).__name__,flush=True)
+
 def main(mode):
     selftest()
     if mode=="selftest":
@@ -232,6 +255,7 @@ def main(mode):
     print("REPAIR_ROUTING_SOURCE_PREFLIGHT",rev,
           {p:digest(raw) for p,raw in new.items()},flush=True)
     if mode=="preflight":
+        diagnose_live()
         return
     if mode!="publish" or os.environ.get("SWRLZ_HTML_REPAIR_APPROVED")!="1" or not token:
         raise PermissionError("SCOPED_RELEASE_NOT_AUTHORIZED")
