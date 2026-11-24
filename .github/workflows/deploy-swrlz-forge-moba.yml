@@ -92,3 +92,42 @@ jobs:
               if last is not None: raise SystemExit(f"Browser-delivery check failed: {route or '/'}: {last}")
           print("SE510_PUBLIC_BROWSER_DELIVERY_OK",flush=True)
           PY
+
+      - name: Verify published UV assets match the checked-out geometry and atlas
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          from urllib.request import Request, urlopen
+          import hashlib,time
+          base="https://kamiloki-swrlz-forge-moba.static.hf.space/"
+          root=Path("projects/swrlz-forge-moba")
+          files=(
+              "scenes/model-atelier-futuristic-humanoid-v11-546.swyrl.json",
+              "assets/models/futuristic-humanoid-v11-546-anatomical-robot.png",
+              "assets/models/futuristic-humanoid-v11-546-uv-guide-4096.png",
+              "assets/models/futuristic-humanoid-v11-546-anatomy-4096.png",
+          )
+          for rel in files:
+              expected=hashlib.sha256((root/rel).read_bytes()).hexdigest()
+              error=None
+              for attempt in range(10):
+                  try:
+                      req=Request(base+rel,headers={
+                          "Cache-Control":"no-cache",
+                          "Accept-Encoding":"identity",
+                      })
+                      with urlopen(req,timeout=35) as response:
+                          assert response.status==200, (rel,response.status)
+                          payload=response.read()
+                      actual=hashlib.sha256(payload).hexdigest()
+                      if actual!=expected:
+                          raise ValueError(rel+" published SHA mismatch: "+actual+" != "+expected)
+                      print("SE546_LIVE_UV_ASSET_MATCH",rel,len(payload),actual,flush=True)
+                      error=None
+                      break
+                  except Exception as exc:
+                      error=exc
+                      if attempt<9:time.sleep(6)
+              if error:raise SystemExit("Live UV asset verification failed: "+str(error))
+          print("SE546_ALL_FOUR_PUBLISHED_UV_ASSETS_VERIFIED",flush=True)
+          PY
