@@ -95,6 +95,7 @@ export async function unwrapMesh(createXAtlas,source,options={}){
     padding:Math.max(4,Math.min(24,options.padding||8)),
     rotateCharts:true,rotateChartsToAxis:true
   };
+  if(isLSCM&&options.texelsPerUnit)pack.texelsPerUnit=options.texelsPerUnit;
   if(isLSCM)atlas.packCharts(pack);
   else atlas.generate({
     maxCost:options.maxCost||10,maxIterations:2,
@@ -102,7 +103,9 @@ export async function unwrapMesh(createXAtlas,source,options={}){
     textureSeamWeight:2,fixWinding:true
   },pack);
   if(atlas.atlasCount!==1||!atlas.width||!atlas.height)
-   throw Error('UV solver needs more than one atlas; increase resolution or simplify seams');
+   throw Error('UV packing requires '+atlas.atlasCount+' atlases ('+input.charts+
+     ' source charts, '+atlas.width+'x'+atlas.height+
+     '); lower texelsPerUnit or simplify seam layout');
   const mesh=atlas.getMesh(0);
   if(mesh.indexCount!==input.indices.length)throw Error('xatlas lost triangle indices');
   const positions=[],uvs=[];
