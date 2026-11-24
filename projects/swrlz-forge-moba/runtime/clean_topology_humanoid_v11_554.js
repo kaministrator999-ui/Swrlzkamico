@@ -12,7 +12,7 @@ function se554Validate(data){
     m.indices.length%3||m.indices.length/3>16000||
     m.uvs.length!==m.positions.length/3*2||
     !m.uvs.every(v=>Number.isFinite(v)&&v>=0&&v<=1)||
-    !/^data:image\\/png;base64,/.test(part.uvPaintPNG||''))
+    !part.uvPaintPNG?.startsWith('data:image/png;base64,'))
   throw Error('UV-first starter failed native geometry/UV contract');
  return {vertices:m.positions.length/3,triangles:m.indices.length/3};
 }
