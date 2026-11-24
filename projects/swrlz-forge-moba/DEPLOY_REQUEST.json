@@ -1,14 +1,14 @@
 {
   "schema": "swrlz-forge-deploy-request-v1",
-  "requestedBy": "ChatGPT (owner-authorized welded UV-first humanoid improvement and verified deployment)",
+  "requestedBy": "ChatGPT (owner authorized complete anatomical pelvis and UV repair with successful Hugging Face deployment verification)",
   "target": "kamiloki/swrlz-forge-moba",
   "releaseVersion": "v11.552",
   "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_546_ANATOMY_ROBOT_UV_4K",
-  "reason": "Publish single watertight physical quad humanoid with welded head/neck shoulders pelvis arms hands digits feet; preserve six UV regions and original robot",
+  "reason": "Deploy clean-topology humanoid v3: sculpted hip-groin saddle, smoother waist/thigh junctions, genuine front/back torso/head and pelvis UV subcharts, masked UV diagnostic texture and annotated guide; preserve original robot",
   "sourceCommit": "main (deploy workflow checkout; verified against sourceIntegritySha256)",
   "sourceIntegritySha256": "3fe29516958ea5af2448352fa238eda121cc3031266c61c746380f092d22232e",
   "resealRun": 45342195310,
-  "deploymentAttempt": 17,
+  "deploymentAttempt": 18,
   "accountStartupRecovery": "v11.553-delivery",
   "accountStartupChecks": [
     "startup_restore_regression_v11_552",
@@ -17,18 +17,21 @@
   "accountStartupHistoricalSources": "restored SHA-identical v11.184 and v11.552",
   "uvDeliveryVerification": "SHA-256 compare public static scene + painted skin + UV wireframe + anatomical guide against GitHub checkout",
   "cleanTopologyStarter": "v11.554",
-  "cleanTopologyAuthorRun": 45505808552,
+  "cleanTopologyAuthorRun": 45509059094,
   "cleanTopologyQuality": {
-    "vertices": 6242,
-    "weldedVertices": 5664,
-    "quads": 5522,
-    "triangles": 11044,
+    "vertices": 6325,
+    "weldedVertices": 5604,
+    "quads": 5602,
+    "triangles": 11204,
     "anatomicalRegions": 6,
-    "continuousSurfaceComponents": 1,
+    "uvSubcharts": 10,
+    "connectedComponents": 1,
     "openEdges": 0,
     "nonManifoldEdges": 0,
-    "uvGuideResolution": 2048
+    "uvGuideResolution": 2048,
+    "maskedAtlas": true,
+    "anatomyLabelsOnGuideOnly": true
   },
   "cleanTopologyLiveVerification": "Verify new scene and UV assets SHA-256 after static HF upload",
-  "cleanTopologyRevision": "welded-quad-loop-v2"
+  "cleanTopologyRevision": "anatomical-pelvis-uv-v3"
 }
