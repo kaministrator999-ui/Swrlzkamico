@@ -270,6 +270,26 @@ def main(mode):
     print("REPAIR_ROUTING_SOURCE_PREFLIGHT",rev,
           {p:digest(raw) for p,raw in new.items()},flush=True)
     if mode=="preflight":
+        # Read only exception classifications and startup markers from Space logs.
+        # Never copy arbitrary user/model log lines into public GitHub CI.
+        try:
+            from itertools import islice
+            from huggingface_hub import fetch_space_logs
+            patterns=(
+                r"(?:ModuleNotFoundError|ImportError|SyntaxError|RuntimeError|TypeError|ValueError|"
+                r"NameError|OSError|AttributeError|PermissionError|FileNotFoundError):[^\\n]{0,90}",
+                r"Application startup (?:complete|failed)",
+                r"Failed to (?:start|load|import)[^\\n]{0,80}"
+            )
+            findings=[]
+            for row in islice(fetch_space_logs(SPACE,token=token,follow=False),700):
+                for expression in patterns:
+                    for match in re.findall(expression,str(row),flags=re.I):
+                        if len(findings)<35 and match not in findings:
+                            findings.append(match)
+            print("SPACE_RUNTIME_DIAGNOSTIC_MARKERS",findings,flush=True)
+        except Exception as exc:
+            print("SPACE_RUNTIME_LOG_READ_UNAVAILABLE",type(exc).__name__,flush=True)
         runtime=api.get_space_runtime(SPACE)
         print("SPACE_RUNTIME_PROVENANCE",{"stage":str(getattr(runtime,"stage",None)),
              "hardware":str(getattr(runtime,"hardware",None)),
