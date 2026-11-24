@@ -4,12 +4,12 @@
   "target": "kamiloki/swrlz-forge-moba",
   "releaseVersion": "v11.552",
   "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_546_ANATOMY_ROBOT_UV_4K",
-  "reason": "Deploy repaired mannequin starter loader with mandatory opening regression test",
+  "reason": "Deploy synchronized anatomical region selection and improved UV atlas",
   "sourceCommit": "main (deploy workflow checkout; verified against sourceIntegritySha256)",
-  "sourceIntegritySha256": "b43fd6b7fb80d3d91d07d19b747b07da1f76351f56a0ffdcbb13ca40300c7614",
+  "sourceIntegritySha256": "c0fa1a67b48451b457bbf06ca823dd55886662cabce7ede65c552697764d9cf2",
   "assetBuildRun": 45289094989,
   "assetShells": 6,
   "assetVertices": 7513,
-  "resealRun": 45291652140,
-  "deploymentAttempt": 3
+  "resealRun": 45307367329,
+  "deploymentAttempt": 4
 }
