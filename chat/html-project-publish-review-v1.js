@@ -58,6 +58,7 @@
       ||data.repo!=="kaministrator999-ui/Swrlzkamico"
       ||!Array.isArray(data.files)||typeof opts.confirm!=="function")return false;
     const creating=data.mode==="create",repairing=data.mode==="repair";
+    const modelRepair=repairing&&data.repairStrategy==="model-exact-patch";
     const doc=container.ownerDocument,thread=String(opts.threadId||""),created=Date.now();
     const surface=doc.createElement("section");
     surface.className="swrlz-github-change-review swrlz-html-publish-review";
@@ -90,6 +91,17 @@
       list.append(li);
     }
     files.append(list);surface.append(files);
+    if(modelRepair&&data.repairDiffs&&typeof data.repairDiffs==="object"){
+      const details=doc.createElement("details"),title=doc.createElement("summary");
+      title.textContent="Inspect model-proposed exact source diffs";details.append(title);
+      for(const [path,diff] of Object.entries(data.repairDiffs).slice(0,48)){
+        const heading=doc.createElement("h4"),pre=doc.createElement("pre");
+        heading.textContent=path;pre.textContent=String(diff||"").slice(0,45000);
+        pre.style.cssText="white-space:pre-wrap;overflow-wrap:anywhere;max-height:360px;overflow:auto";
+        details.append(heading,pre);
+      }
+      surface.append(details);
+    }
     const sourceLink=doc.createElement("a");
     sourceLink.href=creating?"https://github.com/"+data.repo+"/tree/main":
       "https://github.com/"+data.repo+"/tree/"+data.sourceSha+
@@ -100,14 +112,14 @@
     const note=doc.createElement("p");
     note.setAttribute("role","status");
     note.setAttribute("aria-live","polite");
-    note.textContent=creating?"No GitHub files have been created. This approval authorizes only the listed commit; deploying requires a second approval within this thread.":repairing?"No GitHub changes have been made. Approval runs a pinned dependency build and proposes a review PR only. Deployment requires a separate approval.":"No deployment dispatched. Approval is valid only in this thread for five minutes.";
+    note.textContent=creating?"No GitHub files have been created. This approval authorizes only the listed commit; deploying requires a second approval within this thread.":modelRepair?"No GitHub files changed. The model-proposed exact patch passed source and static validation. Approval requests a GitHub review PR only; merging and deployment remain separate.":repairing?"No GitHub changes have been made. Approval runs a pinned dependency build and proposes a review PR only. Deployment requires a separate approval.":"No deployment dispatched. Approval is valid only in this thread for five minutes.";
     surface.append(note);
     const actions=doc.createElement("div");
     actions.className="swrlz-github-change-actions";
     const decline=doc.createElement("button"),approve=doc.createElement("button");
     decline.type=approve.type="button";
     decline.textContent=creating?"Cancel creation":repairing?"Cancel repair":"Cancel deployment";
-    approve.textContent=creating?"Approve GitHub commit":repairing?"Approve repair PR build":"Approve publish";
+    approve.textContent=creating?"Approve GitHub commit":modelRepair?"Approve model repair PR":repairing?"Approve repair PR build":"Approve publish";
     actions.append(decline,approve);surface.append(actions);
     let decided=false,busy=false;
     async function decide(accepted){

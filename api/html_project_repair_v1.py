@@ -6,6 +6,7 @@ approval dispatches a pinned GitHub Actions builder that proposes a PR.
 from __future__ import annotations
 import base64
 import hashlib
+import json
 import re
 import threading
 import time
@@ -142,6 +143,100 @@ def prepare(user_id, thread_id, slug):
                      "repairStrategy": "three-0.160.0-esbuild-local"}}
 
 
+
+MODEL_WORKFLOW = "hf-html-project-agent-pr-v1.yml"
+MODEL_WORKFLOW_URL = "https://github.com/kaministrator999-ui/Swrlzkamico/actions/workflows/" + MODEL_WORKFLOW
+
+
+def prepare_model(user_id, thread_id, slug, head, patch_plan, source_hashes, result):
+    """Store a reviewed model patch; no GitHub write until fresh owner YES."""
+    import github_html_publish_action_v1 as publishing
+    if (not isinstance(slug, str) or not SLUG.fullmatch(slug)
+            or not str(user_id or "").startswith("google:")
+            or not isinstance(head, str)
+            or not re.fullmatch(r"[0-9a-f]{40}", head)):
+        raise RepairError("INVALID_REPAIR_OWNER_OR_PROJECT")
+    if not isinstance(result, dict) or result.get("readyForOwnerReview") is not True:
+        raise RepairError("REPAIR_VALIDATION_REQUIRED")
+    try:
+        plan_text = json.dumps(patch_plan, ensure_ascii=False, separators=(",", ":"))
+    except (ValueError, TypeError) as exc:
+        raise RepairError("INVALID_MODEL_PATCH") from exc
+    if len(plan_text.encode("utf-8")) > 48_000:
+        raise RepairError("REPAIR_PLAN_TOO_LARGE_FOR_REVIEW")
+    auth = publishing._authorized(user_id)
+    if publishing._head(auth) != head:
+        raise RepairError("MAIN_CHANGED_REPREPARE")
+    manifest = publishing._manifest(auth, head, slug)
+    if not isinstance(source_hashes, dict) or source_hashes != result.get("beforeHashes"):
+        raise RepairError("SOURCE_HASHES_MISMATCH")
+    files = result.get("changedFiles")
+    if not isinstance(files, list) or not files:
+        raise RepairError("EMPTY_REPAIR")
+    if any(path not in source_hashes for path in files):
+        raise RepairError("REPAIR_PATH_NOT_VERIFIED")
+    with _lock:
+        _pending[(user_id, thread_id)] = {
+            "mode": "model", "expires": time.monotonic() + TTL,
+            "project": slug, "sha": head,
+            "blob": manifest["indexGitBlobSha"],
+            "sourceHashes": dict(source_hashes),
+            "plan": plan_text,
+        }
+    return {
+        "contract": "swrlz-widget-v1", "kind": "github-html-publish-review",
+        "title": "Review model-proposed existing-project repair",
+        "provider": "GitHub",
+        "data": {
+            **manifest, "mode": "repair", "sourceBlob": manifest["indexGitBlobSha"],
+            "repairStrategy": "model-exact-patch",
+            "repairDiffs": result.get("diffs") or {},
+            "changedFiles": files,
+            "workflowUrl": MODEL_WORKFLOW_URL,
+            "expiresInSeconds": TTL,
+            "destinationPrefix": "html-projects/" + slug + "/",
+        },
+    }
+
+
+def _confirm_model(user_id, proposal):
+    import github_html_publish_action_v1 as publishing
+    try:
+        from html_project_agent_runtime_v1 import _source_files
+        from html_project_agent_v1 import verify_source
+    except ImportError:
+        from api.html_project_agent_runtime_v1 import _source_files
+        from api.html_project_agent_v1 import verify_source
+    project = {"project": proposal["project"],
+               "repo": publishing.REPO}
+    try:
+        head, actual_files = _source_files(user_id, project)
+        if head != proposal["sha"]:
+            raise RepairError("MAIN_CHANGED_REPREPARE")
+        if verify_source(proposal["project"], actual_files) != proposal["sourceHashes"]:
+            raise RepairError("SOURCE_CHANGED_REPREPARE")
+    except RepairError:
+        raise
+    except Exception as exc:
+        raise RepairError("REPAIR_SOURCE_RECHECK_FAILED") from exc
+    try:
+        auth = publishing._authorized(user_id)
+        publishing._github(
+            auth, "POST",
+            "actions/workflows/" + MODEL_WORKFLOW + "/dispatches",
+            data={"ref": "main", "inputs": {
+                "source_sha": proposal["sha"],
+                "project": proposal["project"],
+                "proposal_json": proposal["plan"],
+                "approved": "yes",
+            }},
+        )
+    except publishing.PublishActionError as exc:
+        raise RepairError(exc.code) from exc
+    return {"dispatched": True, "project": proposal["project"],
+            "sourceSha": proposal["sha"], "workflowUrl": MODEL_WORKFLOW_URL,
+            "strategy": "model-exact-patch"}
+
 def has_pending(user_id, thread_id):
     with _lock:
         item = _pending.get((user_id, thread_id))
@@ -163,6 +258,8 @@ def confirm(user_id, thread_id, approved):
         raise RepairError("APPROVAL_MISSING_OR_EXPIRED")
     if not approved:
         return {"dispatched": False, "project": proposal["project"]}
+    if proposal.get("mode") == "model":
+        return _confirm_model(user_id, proposal)
     try:
         auth = publishing._authorized(user_id)
         if publishing._head(auth) != proposal["sha"]:

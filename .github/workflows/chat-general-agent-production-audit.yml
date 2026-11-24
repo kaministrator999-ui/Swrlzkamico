@@ -1,0 +1,58 @@
+name: Inspect live §C repair integration seams
+on:
+  push:
+    branches: [feat/chat-general-project-repair-agent-v1]
+    paths: ['.github/workflows/chat-general-agent-production-audit.yml']
+permissions: {contents: read}
+jobs:
+  audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - run: python -m pip install --quiet 'huggingface_hub>=0.34,<2'
+      - name: Inspect source-only function seams of public Space without secrets
+        run: |
+          python - <<'PY'
+          import ast
+          from pathlib import Path
+          from huggingface_hub import HfApi,hf_hub_download
+          repo="kamiloki/Swyrlz"
+          rev=HfApi().repo_info(repo,repo_type="space").sha
+          print("SPACE_REV",rev,flush=True)
+          for name in ("station.py","github_conversation_actions_v264.py","html_project_repair_v1.py","qwen_coder_engine.py"):
+              try: data=Path(hf_hub_download(repo,name,repo_type="space",revision=rev)).read_text()
+              except Exception as exc:
+                  print("SOURCE_UNAVAILABLE",name,type(exc).__name__,flush=True)
+                  continue
+              lines=data.splitlines()
+              print("SOURCE_FILE",name,"lines",len(lines),flush=True)
+              terms=("_swrlz_project_repair","event_source=","_swrlz_execution_continuity",
+                     "def handle(","_YES.fullmatch","_swrlz_owner_html_repair",
+                     "githubSourceChangeTask","projectFileEvidence")
+              chosen=set()
+              for i,line in enumerate(lines):
+                  if any(t in line for t in terms):
+                      chosen.update(range(max(0,i-8),min(len(lines),i+11)))
+              if name == "station.py":
+                  chosen.update(range(1415,1457))
+                  chosen.update(range(2740,2770))
+                  chosen.update(range(2940,2970))
+                  chosen.update(range(2985,3010))
+                  chosen.update(range(1380,1415))
+              if name == "github_conversation_actions_v264.py":
+                  chosen.update(range(max(0,len(lines)-150),len(lines)))
+              if name == "qwen_coder_engine.py":
+                  chosen.update(range(1233,1288))
+                  chosen.update(range(1879,1915))
+                  for j, line in enumerate(lines):
+                      if line.startswith(("def generate_events(", "def generate(", "def _candidate_structure_check(")):
+                          chosen.update(range(j,min(len(lines),j+35)))
+              for i in sorted(chosen):
+                  line=lines[i]
+                  if any(s in line.lower() for s in ("token","secret","password","api_key")):
+                      print("LINE",i+1,"[REDACTED]")
+                  else:
+                      print("LINE",i+1,line[:270])
+          PY

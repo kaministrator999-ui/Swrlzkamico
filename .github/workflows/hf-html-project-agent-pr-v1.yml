@@ -1,0 +1,127 @@
+name: §C owner-approved model-generated existing HTML repair PR
+run-name: Model repair ${{ inputs.project }} · ${{ inputs.source_sha }}
+on:
+  pull_request:
+    paths:
+      - 'api/html_project_agent_v1.py'
+      - 'api/html_project_agent_runtime_v1.py'
+      - 'api/html_project_repair_v1.py'
+      - 'scripts/html_project_agent_pr_v1.py'
+      - 'tests/test_html_project_agent_v1.py'
+      - '.github/workflows/hf-html-project-agent-pr-v1.yml'
+  workflow_dispatch:
+    inputs:
+      source_sha:
+        description: Immutable reviewed main revision
+        required: true
+        type: string
+      project:
+        description: Existing HTML project slug
+        required: true
+        type: string
+      proposal_json:
+        description: Owner-reviewed JSON exact patch plan
+        required: true
+        type: string
+      approved:
+        description: Owner approved one source-pinned repair PR build
+        required: true
+        type: choice
+        options: ['no', 'yes']
+        default: 'no'
+permissions: {contents: read}
+concurrency:
+  group: swrlz-model-html-repair-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  test:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 9
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - run: python -m pip install --quiet 'requests>=2.31,<3'
+      - run: echo "PYTHONPATH=$GITHUB_WORKSPACE/api:$GITHUB_WORKSPACE" >> "$GITHUB_ENV"
+      - name: Source-preserving general patch regression
+        run: |
+          python -m py_compile api/html_project_agent_v1.py api/html_project_agent_runtime_v1.py api/html_project_repair_v1.py scripts/html_project_agent_pr_v1.py
+          python -m unittest discover -s tests -p 'test_html_project_agent_v1.py' -v
+          python -m unittest discover -s tests -p 'test_html_project_agent_runtime_v1.py' -v
+          python -m unittest discover -s tests -p 'test_html_project_repair_v1.py' -v
+  repair:
+    if: ${{ github.event_name == 'workflow_dispatch' && inputs.approved == 'yes' && github.actor == 'kaministrator999-ui' }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.source_sha }}
+          path: reviewed-source
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - run: python -m pip install --quiet 'requests>=2.31,<3'
+      - run: echo "PYTHONPATH=$GITHUB_WORKSPACE/api:$GITHUB_WORKSPACE" >> "$GITHUB_ENV"
+      - name: Source pin and patch preflight
+        env:
+          SOURCE_SHA: ${{ inputs.source_sha }}
+          PROJECT: ${{ inputs.project }}
+          MODEL_PROPOSAL_JSON: ${{ inputs.proposal_json }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          [[ "$SOURCE_SHA" =~ ^[0-9a-f]{40}$ ]]
+          [[ "$PROJECT" =~ ^[a-z0-9]([a-z0-9-]{0,46}[a-z0-9])?$ ]]
+          test "$(git -C reviewed-source rev-parse HEAD)" = "$SOURCE_SHA"
+          test "$(git -C reviewed-source ls-remote origin refs/heads/main | cut -f1)" = "$SOURCE_SHA"
+          python -m unittest discover -s tests -p 'test_html_project_agent_v1.py' -v
+          python scripts/html_project_agent_pr_v1.py --project "$PROJECT" \
+            --source-root reviewed-source --output-root repair-output
+      - name: Commit only verified model patch and open review PR
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PROJECT: ${{ inputs.project }}
+          SOURCE_SHA: ${{ inputs.source_sha }}
+          GH_REPO: ${{ github.repository }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json,os,pathlib,shutil
+          slug=os.environ["PROJECT"]
+          receipt=json.loads((pathlib.Path("repair-output")/slug/"repair-receipt.json").read_text())
+          for rel in receipt["files"]:
+              source=pathlib.Path("repair-output")/slug/rel
+              target=pathlib.Path("reviewed-source/html-projects")/slug/rel
+              assert source.is_file() and target.is_file() and not target.is_symlink()
+              shutil.copyfile(source,target)
+          PY
+          cd reviewed-source
+          branch="fix/model-html-${PROJECT}-${SOURCE_SHA:0:10}"
+          git switch -c "$branch"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add "html-projects/$PROJECT"
+          git -c core.whitespace=-blank-at-eol diff --cached --check
+          git diff --cached --quiet && { echo "No changes proposed"; exit 1; }
+          git commit -m "fix(html): owner-reviewed model-generated exact repair for $PROJECT"
+          test "$(git ls-remote origin refs/heads/main | cut -f1)" = "$SOURCE_SHA"
+          git push origin "HEAD:refs/heads/$branch"
+          gh pr create --repo "$GH_REPO" --base main --head "$branch" \
+            --title "fix(html): model-proposed source repair for $PROJECT" \
+            --body "Owner-approved model-generated existing-project patch. Source pin: $SOURCE_SHA. Exact anchor changes were SHA-verified, and browser-free static checks passed. **No browser execution proof, merge, or Hugging Face deployment is claimed.** Review and merge the diff independently; publish through the existing owner-approved HTML project deployment flow."
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: swrlz-model-html-repair-receipt
+          path: repair-output/**/repair-receipt.json
+          if-no-files-found: warn
+          retention-days: 30
