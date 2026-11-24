@@ -37,7 +37,7 @@ def apply(module):
     if start < 0 or end < start or text.count(START) != 1 or text.count(END) != 1:
         raise ValueError("Account startup section missing or duplicated in sealed JS")
     end += len(END)
-    current = (ROOT / "runtime/engine_account_start_recovery_v11_552.js").read_text("utf-8").strip()
+    current = (ROOT / "runtime/engine_account_start_delivery_v11_553.js").read_text("utf-8").strip()
     if not current.startswith(START) or not current.endswith(END):
         raise ValueError("Repair runtime lacks the exact startup section markers")
     if "const entry=automatic?(override||defaults()):(override||chosenRow());" not in current:
