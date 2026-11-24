@@ -146,7 +146,9 @@
  async function openSelected(override,automatic=false){
   if(opening||finished)return;
   opening=true;
-  const entry=override||chosenRow()||defaults();
+  // A blank selector explicitly means the current workspace, not a stale
+  // remembered default. Automatic startup still uses the saved preference.
+  const entry=automatic?(override||defaults()):(override||chosenRow());
   const previous=session?.source===entry?.source&&session?.id===entry?.id?{...session}:null;
   try{
    if(entry?.source==='cloud'&&account!=='connected')throw Error('Sign in to load this Google project.');
