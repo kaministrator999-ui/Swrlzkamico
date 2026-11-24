@@ -4,8 +4,8 @@
   "version": "v11.546",
   "goal": "Rebuild humanoid UVs into anatomy-grouped charts; generate independent new robotic material from 3D surface; preserve geometry; provide 4096x4096 reference atlas and anatomy exports; preserve historical scenes and saved copies.",
   "release": "Do not publish until exact geometry/UV texture checks and source-seal tests pass.",
-  "run": 14,
-  "correction": "Test uniform-weight convex harmonic disk to address small triangles from length-weighted solver and quantify distortion",
-  "rebuild_requested": "2026-11-24-uniform-harmonic-quality-metrics-v14",
+  "run": 15,
+  "correction": "Smoothly unfold hand fingers and foot toes within six connected anatomical shells; optimize by physical collision and density metrics",
+  "rebuild_requested": "2026-11-24-seam-aware-limb-refinement-v15",
   "reason": "Replace overlapping cylindrical limbs with globally injective positive-weight harmonic disk charts; verify texture collision and front registration"
 }
