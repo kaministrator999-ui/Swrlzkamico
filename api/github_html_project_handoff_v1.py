@@ -61,6 +61,21 @@ def intent(prompt):
             "requestedSlug": named.group(1) if named else ""}
 
 
+def last_assistant_review(thread):
+    """A late decision only binds to the last assistant's actual saved review."""
+    messages=thread.get("messages") if isinstance(thread,dict) else []
+    last=next((m for m in reversed(messages or [])
+               if isinstance(m,dict) and m.get("role")=="assistant"),None)
+    if last is None:
+        return False
+    meta=last.get("meta") or {}
+    if isinstance(meta.get("htmlProjectHandoff"),dict):
+        return True
+    return any(isinstance(item,dict) and
+               item.get("kind")=="github-html-publish-review"
+               for item in (meta.get("widgets") or []))
+
+
 def is_saved_review_request(prompt):
     """Explicit owner request to review the latest stored artifact in this thread."""
     return bool(isinstance(prompt, str) and re.fullmatch(
