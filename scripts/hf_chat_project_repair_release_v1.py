@@ -270,9 +270,9 @@ def main(mode):
     print("REPAIR_ROUTING_HF_COMMITTED",committed,flush=True)
     # Source readback alone is insufficient: this Space can retain an older
     # served HTML/asset snapshot until its running app is explicitly restarted.
-    api.restart_space(SPACE)
-    print("REPAIR_ROUTING_SPACE_RESTART_REQUESTED",committed,flush=True)
     try:
+        api.restart_space(SPACE)
+        print("REPAIR_ROUTING_SPACE_RESTART_REQUESTED",committed,flush=True)
         for p,raw in new.items():
             got=Path(hf_hub_download(SPACE,p,repo_type="space",
                      revision=committed,token=token)).read_bytes()
