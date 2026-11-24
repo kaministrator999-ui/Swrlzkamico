@@ -112,6 +112,7 @@ jobs:
               "assets/uv-unwrapper/index.mjs",
               "assets/uv-unwrapper/xatlas.wasm",
               "assets/uv-unwrapper/uv_atlas_core_v11_555.mjs",
+              "assets/uv-unwrapper/uv_lscm_core_v11_555.mjs",
           )
           for rel in files:
               expected=hashlib.sha256((root/rel).read_bytes()).hexdigest()
