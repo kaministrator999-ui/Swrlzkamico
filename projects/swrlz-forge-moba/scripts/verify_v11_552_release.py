@@ -18,6 +18,7 @@ def main():
     run(sys.executable,str(ROOT/'scripts/check_humanoid_anatomy_v11_546.py'))
     run('node',str(ROOT/'tests/humanoid_anatomy_starter_v11_546.cjs'))
     run('node',str(ROOT/'tests/anatomical_region_sync_v11_552.cjs'))
+    run('node',str(ROOT/'tests/startup_restore_regression_v11_552.cjs'))
     run(sys.executable,str(ROOT/'build_space.py'),'--output',str(args.output))
     page=(args.output/'index.html').read_bytes()
     assert page==(args.output/'modeler.html').read_bytes()
