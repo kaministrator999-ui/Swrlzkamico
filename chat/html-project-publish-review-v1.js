@@ -5,6 +5,54 @@
   const MAX_AGE_MS=300000;
   const okSlug=s=>typeof s==="string"&&/^[a-z0-9](?:[a-z0-9-]{0,46}[a-z0-9])?$/.test(s);
   const okSha=s=>typeof s==="string"&&/^[a-f0-9]{40}$/.test(s);
+  async function gitBlobSha256Compatibility(raw){
+    // GitHub's repository uses SHA-1 Git blob object IDs; hash the exact
+    // downloaded bytes with Git's "blob <length>\0" framing.
+    const prefix=new TextEncoder().encode("blob "+raw.length+"\0");
+    const full=new Uint8Array(prefix.length+raw.length);
+    full.set(prefix);full.set(raw,prefix.length);
+    const result=new Uint8Array(await crypto.subtle.digest("SHA-1",full));
+    return Array.from(result,b=>b.toString(16).padStart(2,"0")).join("");
+  }
+  async function verifyPublishedSource(surface,note,data,opts,thread){
+    const doc=surface.ownerDocument,view=doc.defaultView;
+    if(!view||!view.crypto?.subtle||!okSha(data.indexGitBlobSha)){
+      note.textContent="Deployment submitted. Exact browser-side verification is unavailable; use GitHub status.";
+      return;
+    }
+    let url;
+    try{url=new URL(data.url,view.location.origin);}catch(_){return;}
+    if(url.origin!==view.location.origin||
+       url.pathname!=="/api/html-projects/"+data.project+"/index.html"){
+      note.textContent="Deployment submitted. Live URL could not be verified from this origin.";
+      return;
+    }
+    note.textContent="Deployment approval submitted. Checking the live page against the committed GitHub source…";
+    for(let attempt=0;attempt<70;attempt++){
+      if(!surface.isConnected||!opts.currentThread||String(opts.currentThread())!==thread)return;
+      try{
+        const response=await view.fetch(url.href,{cache:"no-store",credentials:"omit"});
+        const csp=response.headers.get("content-security-policy")||"";
+        if(response.ok && csp.includes("sandbox allow-scripts") &&
+           !csp.includes("allow-same-origin") &&
+           csp.includes("connect-src 'none'") &&
+           (response.headers.get("x-content-type-options")||"").toLowerCase()==="nosniff"){
+          const raw=new Uint8Array(await response.arrayBuffer());
+          if(await gitBlobSha256Compatibility(raw)===data.indexGitBlobSha){
+            note.textContent="LIVE · Exact committed HTML source and sandbox headers verified.";
+            const link=doc.createElement("a");
+            link.href=url.href;link.target="_blank";link.rel="noopener noreferrer";
+            link.textContent="Open verified website";
+            surface.append(link);
+            return;
+          }
+          note.textContent="Website responds, but published source differs from the approved GitHub commit. Verification still pending.";
+        }
+      }catch(_){/* A deployment may temporarily restart the Space. */}
+      await new Promise(resolve=>view.setTimeout(resolve,5000));
+    }
+    note.textContent="Live verification is still pending. Check GitHub Actions or request the HTML project status.";
+  }
   function render(container,data,opts={}){
     if(!container||!data||!okSlug(data.project)||!(data.mode==="create"?/^[a-f0-9]{64}$/.test(data.sourceSha):okSha(data.sourceSha))
       ||data.repo!=="kaministrator999-ui/Swrlzkamico"
@@ -81,6 +129,7 @@
             ?"Decision submitted. The next server receipt confirms the operation and any following approval."
             :"Cancellation submitted; no GitHub write or publication was authorized.";
           approve.hidden=decline.hidden=true;
+          if(accepted&&!creating){void verifyPublishedSource(surface,note,data,opts,thread);}
         }else{
           note.textContent="Decision was not accepted. No deployment assumed.";
           approve.disabled=decline.disabled=false;
