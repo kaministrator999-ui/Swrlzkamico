@@ -11,6 +11,7 @@ import hashlib
 import json
 import subprocess
 import tempfile
+import shutil
 from pathlib import Path
 
 SOURCE_START = b'<script type="module">\n(async()=>{\nconst app=document.getElementById'
@@ -95,8 +96,36 @@ def main():
     (root/"index.html").write_bytes(served)
     (root/"modeler.html").write_bytes(served)
     (root/MODULE).write_bytes(module)
+    # Ship locally hosted, version-pinned open-source xatlas WASM. Never
+    # depend on a CDN or silently fake the UV tool if the binary is absent.
+    with tempfile.TemporaryDirectory(prefix="se555-xatlas-deps-") as depdir:
+        subprocess.run(["npm","install","--prefix",depdir,"--no-save",
+                        "--ignore-scripts","--no-audit","--no-fund",
+                        "xatlas-wasm@0.1.3"],check=True,timeout=180)
+        dist=Path(depdir)/"node_modules/xatlas-wasm/dist"
+        dest=root/"assets/uv-unwrapper"
+        dest.mkdir(parents=True,exist_ok=True)
+        for name in ("index.mjs","xatlas.wasm"):
+            src=dist/name
+            if not src.is_file() or not src.stat().st_size:
+                raise ValueError("xatlas package missing required runtime "+name)
+            if src.stat().st_size>=MAX_FILE:
+                raise ValueError("xatlas "+name+" exceeds static host file limit")
+            shutil.copy2(src,dest/name)
+        shared=Path(__file__).resolve().parents[1]/"runtime/uv_atlas_core_v11_555.mjs"
+        shutil.copy2(shared,dest/shared.name)
+        print("SE555_LOCAL_XATLAS_WASM_BUNDLED",
+              {name:(dest/name).stat().st_size for name in
+               ("index.mjs","xatlas.wasm",shared.name)},flush=True)
+
     receipt["accountStartupDeliveryRepair"] = account_receipt
     receipt["uvFirstHumanoidDelivery"] = starter_receipt
+    receipt["xatlasWasmDelivery"] = {
+      "version":"xatlas-wasm@0.1.3",
+      "files":{p.name:{"bytes":p.stat().st_size,
+                        "sha256":digest(p.read_bytes())}
+               for p in (root/"assets/uv-unwrapper").iterdir()}
+    }
     receipt["staticDelivery"] = {
         "mode": "external-es-module",
         "verifiedSourceSha256": receipt["finalSha256"],
