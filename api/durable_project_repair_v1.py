@@ -29,6 +29,15 @@ def verified_owner_from_session(claims: dict, user_id: str) -> str:
     return "google:" + subject
 
 
+PROBE_PROMPT = (
+    "Inspect the existing interactive-3d-model-viewer project on GitHub. "
+    "Identify why it fails to render correctly and repair it using your own coding model. "
+    "Retrieve the actual source, generate targeted patches, validate them, and revise any failed patches until validation passes. "
+    "Preserve the existing functionality and design. Do not regenerate the entire HTML page or rely on a predetermined repair script. "
+    "Present the actual changes, validation results, and approval request. Once approved, commit, deploy, and verify that the project works."
+)
+
+
 def _components():
     try:
         import html_project_context_v1 as context
@@ -179,3 +188,29 @@ def route_events(*, user_id: str, owner_google_id: str, thread_id: str, prompt: 
         context, approval, runtime, owner_google_id=owner_google_id, thread_id=thread_id,
         prompt=prompt, project=project, engine=engine,
         cancelled=cancelled, base_payload=base_payload)
+
+
+def route_probe():
+    """No-auth production routing self-test; NO GitHub read, model call or write.
+
+    This is not an authenticated end-to-end repair test.
+    """
+    class NoModel:
+        def generate_events(self, *args, **kwargs):
+            raise AssertionError("GENERIC_MODEL_ROUTE_REACHED")
+
+    selected = route_events(
+        user_id="probe:guest", owner_google_id="", thread_id="probe",
+        prompt=PROBE_PROMPT, engine=NoModel(),
+        cancelled=lambda: False, base_payload={})
+    events = list(selected or ())
+    phases = [str(item.get("phase") or "") for item in events]
+    return {
+        "schema": "swrlz-durable-project-repair-route-v4",
+        "selectedRepair": "EXISTING_PROJECT_REPAIR_SELECTED" in phases,
+        "authGuard": "EXISTING_PROJECT_REPAIR_AUTH_REQUIRED" in phases,
+        "genericEvidenceGate": "EVIDENCE_REQUIRED" in phases,
+        "terminal": bool(events and events[-1].get("type") == "COMPLETED"),
+        "githubMutation": False,
+        "modelCalled": False,
+    }
