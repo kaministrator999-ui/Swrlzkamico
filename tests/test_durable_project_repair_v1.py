@@ -50,15 +50,15 @@ class DurableRepairRouteTests(unittest.TestCase):
         self.patch.start()
         self.addCleanup(self.patch.stop)
 
-    def route(self, text=FULL_PROMPT, user_id="google:owner"):
+    def route(self, text=FULL_PROMPT, user_id="acct:durable-owner", owner_google_id="google:owner"):
         return bridge.route_events(
-            user_id=user_id, thread_id="thread-a", prompt=text,
+            user_id=user_id, owner_google_id=owner_google_id, thread_id="thread-a", prompt=text,
             engine=self.engine, cancelled=lambda: False,
             base_payload={"prompt": text, "history": []})
 
     def test_exact_user_prompt_enters_existing_project_not_coder_evidence_gate(self):
         self.assertTrue(approval_code.repair_intent(FULL_PROMPT))
-        stream = self.route(user_id="guest:unverified")
+        stream = self.route(user_id="guest:unverified", owner_google_id="")
         self.assertIsNotNone(stream)
         events = list(stream)
         phases = [e.get("phase") for e in events]
@@ -119,6 +119,27 @@ class DurableRepairRouteTests(unittest.TestCase):
         self.approval.confirm.assert_called_once_with("google:owner", "thread-a", False)
         self.assertEqual(events[-1]["type"], "COMPLETED")
 
+    def test_server_signed_google_subject_is_required(self):
+        claims = {"sub": "acct:durable-owner",
+                  "identity": {"provider": "google",
+                               "providerSubject": "123456789012345678901"}}
+        self.assertEqual(bridge.verified_owner_from_session(
+            claims, "acct:durable-owner"), "google:123456789012345678901")
+        self.assertEqual(bridge.verified_owner_from_session(
+            claims, "acct:someone-else"), "")
+        self.assertEqual(bridge.verified_owner_from_session(
+            {"sub": "acct:durable-owner", "identity": {
+                "provider": "github", "providerSubject": "123456789012345678901"}},
+            "acct:durable-owner"), "")
+        self.assertEqual(bridge.verified_owner_from_session(
+            {"sub": "acct:durable-owner"}, "acct:durable-owner"), "")
+
+    def test_ingress_binds_only_verified_session_owner(self):
+        source = (Path(__file__).parents[1] / "api/lalm_station.py").read_text()
+        self.assertIn("verify_session(request.cookies.get(SESSION_COOKIE))", source)
+        self.assertIn("verified_owner_from_session(signed_claims, user_id)", source)
+        self.assertIn('"ownerGoogleId": verified_owner_google_id', source)
+
     def test_other_chat_and_prohibited_repair_is_unchanged(self):
         self.assertIsNone(self.route("Hello"))
         self.assertIsNone(self.route("Inspect the project but do not repair it"))
@@ -131,6 +152,7 @@ class DurableRepairRouteTests(unittest.TestCase):
         self.assertIn("from api.durable_project_repair_v1 import route_events", source)
         self.assertIn('prompt=prompt_text,', source)
         self.assertIn("if selected_events is not None", source)
+        self.assertIn('owner_google_id=str(data.get("ownerGoogleId") or "")', source)
         self.assertIn("else engine.generate_events(engine_payload, cancelled)", source)
         self.assertLess(source.index("selected_events = route_events("),
                         source.index("for raw in (selected_events"))
