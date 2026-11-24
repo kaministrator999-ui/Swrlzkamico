@@ -22,12 +22,12 @@ SOURCE = Path("api/execution_continuity_v1.py")
 MARK = "swrlz-execution-continuity-router-v1"
 IMPORT_ANCHOR = "ROOT=Path(__file__).resolve().parent"
 ROUTE_ANCHOR = (
-    "        if forge_context is not None:\n"
+    "        elif forge_context is not None:\n"
     "            event_source=dispatch(model_id,payload,_generate,"
     "_stock_generate,_large_generate,_coder_generate,forge_context=forge_context)"
 )
 ROUTE_REPLACEMENT = (
-    "        if _swrlz_execution_continuity.read_only(payload):\n"
+    "        elif _swrlz_execution_continuity.read_only(payload):\n"
     "            # swrlz-execution-continuity-router-v1: owner-grounded\n"
     "            # inspection must never silently enter code generation.\n"
     "            payload['presentationIntent']='PROSE'\n"
@@ -88,7 +88,9 @@ def selftest():
     test_source = '''from pathlib import Path
 ROOT=Path(__file__).resolve().parent
 def worker(payload,forge_context,model_id):
-        if forge_context is not None:
+        if False:
+            pass
+        elif forge_context is not None:
             event_source=dispatch(model_id,payload,_generate,_stock_generate,_large_generate,_coder_generate,forge_context=forge_context)
         elif isinstance(payload.get("codeContinuation"),dict):
             event_source=_coder_generate(payload)
