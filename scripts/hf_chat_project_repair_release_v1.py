@@ -196,7 +196,7 @@ def selftest():
     print("EXISTING_HTML_REPAIR_ROUTING_SELFTEST_PASS", digest(helper.encode()), flush=True)
 
 
-def health():
+def health(expected_js_sha=None):
     req=urllib.request.Request(BASE+"/chat/%C2%A7wyrlz?__existing_repair=1",
          headers={"Cache-Control":"no-cache"})
     with urllib.request.urlopen(req,timeout=25) as resp:
@@ -208,10 +208,36 @@ def health():
     req=urllib.request.Request(BASE+"/chat/%C2%A7wyrlz/assets/"+UNEW,
          headers={"Cache-Control":"no-cache"})
     with urllib.request.urlopen(req,timeout=25) as resp:
-        text=resp.read(200_000).decode("utf-8", errors="replace")
+        raw=resp.read(200_000)
+        text=raw.decode("utf-8", errors="replace")
         if resp.status!=200 or "repairing=data.mode" not in text:
             raise RuntimeError("REPAIR_UI_NOT_LIVE")
+        if expected_js_sha and digest(raw)!=expected_js_sha:
+            raise RuntimeError("REPAIR_UI_LIVE_BYTES_DIFFER")
 
+
+def diagnose_live():
+    import re
+    url=BASE+"/chat/%C2%A7wyrlz?__repair_probe=1"
+    with urllib.request.urlopen(url,timeout=25) as resp:
+        html=resp.read(3_000_000).decode("utf-8",errors="replace")
+        print("LIVE_HTML_PROBE", {
+            "status":resp.status,"bytes":len(html),
+            "sha256":digest(html.encode()),
+            "cacheControl":resp.headers.get("Cache-Control"),
+            "htmlReviewRefs":re.findall(r"html-project-publish-review[^\"'<>\s]{0,110}",html)[:8],
+            "containsApprovedReviewWidget": "github-html-publish-review" in html,
+            "head":html[:160]
+        },flush=True)
+    try:
+        with urllib.request.urlopen(BASE+"/chat/%C2%A7wyrlz/assets/html-project-publish-review-v1.js?__probe=1",timeout=25) as resp:
+            js=resp.read(250_000).decode("utf-8",errors="replace")
+            print("LIVE_REPAIR_JS_PROBE",{
+                "status":resp.status,"length":len(js),
+                "sha256":digest(js.encode()),"hasRepairMode": "repairing=data.mode" in js
+            },flush=True)
+    except Exception as exc:
+        print("LIVE_REPAIR_JS_PROBE_FAILED",type(exc).__name__,flush=True)
 
 def main(mode):
     selftest()
@@ -226,12 +252,15 @@ def main(mode):
     paths=set(api.list_repo_files(SPACE,repo_type="space",revision=rev))
     if HELPER in paths:
         raise RuntimeError("REPAIR_HELPER_EXISTS_UNEXPECTEDLY")
+    print("SPACE_REPO_JS_SOURCE", {"sha256":digest(old[UI]),"bytes":len(old[UI])},flush=True)
+    print("SPACE_REPO_HTML_SOURCE", {"sha256":digest(old[HTML]),"bytes":len(old[HTML]),"reviewRefs":re.findall(r"html-project-publish-review[^\\\"'<>\\s]{0,120}",old[HTML].decode("utf-8",errors="replace"))[:5]},flush=True)
     patched=patch({path:data.decode("utf-8") for path,data in old.items()})
     new={p:data.encode("utf-8") for p,data in patched.items()}
     new[HELPER]=SOURCE.read_bytes()
     print("REPAIR_ROUTING_SOURCE_PREFLIGHT",rev,
           {p:digest(raw) for p,raw in new.items()},flush=True)
     if mode=="preflight":
+        diagnose_live()
         return
     if mode!="publish" or os.environ.get("SWRLZ_HTML_REPAIR_APPROVED")!="1" or not token:
         raise PermissionError("SCOPED_RELEASE_NOT_AUTHORIZED")
@@ -242,7 +271,11 @@ def main(mode):
                    for p,raw in new.items()],
        commit_message="fix(§C): preserve existing HTML projects during approved repairs").oid
     print("REPAIR_ROUTING_HF_COMMITTED",committed,flush=True)
+    # Source readback alone is insufficient: this Space can retain an older
+    # served HTML/asset snapshot until its running app is explicitly restarted.
     try:
+        api.restart_space(SPACE)
+        print("REPAIR_ROUTING_SPACE_RESTART_REQUESTED",committed,flush=True)
         for p,raw in new.items():
             got=Path(hf_hub_download(SPACE,p,repo_type="space",
                      revision=committed,token=token)).read_bytes()
@@ -250,7 +283,7 @@ def main(mode):
                 raise RuntimeError("PUBLISHED_BYTES_MISMATCH_"+p)
         for i in range(30):
             try:
-                health()
+                health(digest(new[UI]))
                 print("REPAIR_ROUTING_LIVE_VERIFIED",committed,flush=True)
                 return
             except (OSError,TimeoutError,RuntimeError) as e:
@@ -266,6 +299,8 @@ def main(mode):
                 parent_commit=committed,operations=ops,
                 commit_message="rollback(§C): HTML repair route verification failed").oid
             print("REPAIR_ROUTING_ROLLED_BACK",restored,flush=True)
+            api.restart_space(SPACE)
+            print("REPAIR_ROUTING_ROLLBACK_RESTART_REQUESTED",restored,flush=True)
         raise
 
 
