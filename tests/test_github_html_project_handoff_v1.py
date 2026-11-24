@@ -119,6 +119,20 @@ class HtmlArtifactHandoffTest(unittest.TestCase):
         self.assertEqual(sum(method == "PATCH" for method, path in calls), 1)
         self.assertFalse(m.has_pending("google:owner", "thread"))
 
+    def test_approved_and_expired_review_are_deterministic(self):
+        self.assertTrue(m.is_decision("Approved"))
+        self.assertTrue(m.is_decision("yes"))
+        self.assertFalse(m.is_decision("Deploy it somewhere else"))
+        m.stage("google:owner", "thread-expired", artifact(), REQUEST)
+        with m._lock:
+            m._pending[("google:owner", "thread-expired")]["expires"] -= m.TTL + 1
+        self.assertFalse(m.has_pending("google:owner", "thread-expired"))
+        self.assertTrue(m.has_approval_record("google:owner", "thread-expired"))
+        with patch.object(publisher, "_github", side_effect=AssertionError("Expired approval touched GitHub")):
+            with self.assertRaisesRegex(m.HandoffError, "APPROVAL_EXPIRED"):
+                m.confirm("google:owner", "thread-expired", m.decision_approved("Approved"))
+        self.assertFalse(m.has_approval_record("google:owner", "thread-expired"))
+
     def test_existing_project_is_never_overwritten(self):
         calls = []
         def request(auth, method, path, **kw):
