@@ -17,7 +17,7 @@ _SUBJECT = re.compile(
     r"\b(?:html|3d|model viewer|viewer|website|webpage|web app|project|"
     r"deployed|deployment|published)\b", re.I)
 _COMMAND = re.compile(r"^\s*@github\s+(?:status|publish|review)\b", re.I)
-_EXPLICIT = re.compile(r"\b(?:html\s+)?project\s+(?:named\s+|called\s+)?([a-z0-9][a-z0-9-]{1,47})\b", re.I)
+_EXPLICIT = re.compile(r"\bhtml\s+project\s+([a-z0-9][a-z0-9-]{1,47})\b", re.I)
 _NAMED = re.compile(
     r"\b([a-z0-9]+(?:-[a-z0-9]+){2,})\s+(?:html\s+)?project\b", re.I)
 
