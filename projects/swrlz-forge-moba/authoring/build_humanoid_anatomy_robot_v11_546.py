@@ -380,7 +380,24 @@ def make_atlas(positions,triangles,mode,max_cost):
         original=triangles[labels==name]
         if not len(original):
             raise ValueError('Missing anatomical region '+name)
-        p,f,unpacked,chart_count=xatlas_group(positions,original,max_cost)
+        p=f=unpacked=chart_count=None
+        if name in ('headFront','headBack','head','chest','back'):
+            # Large paint-friendly front/rear surfaces should remain one chart
+            # when valid LSCM parameterization can flatten them without
+            # self-intersection. A surface that cannot do that uses xatlas.
+            try:
+                q,g,uv_one,single_count=single_chart_group(positions,original)
+                qfit=fit(uv_one,RECT[name])
+                collisions=measure_surface_uv_conflicts(
+                    q,qfit,g,[name]*len(g),size=512)
+                if collisions['conflictingSamples']>5 or collisions['conflictPct']>.02:
+                    raise ValueError('Single chart folds over: '+str(collisions))
+                p,f,unpacked,chart_count=q,g,uv_one,single_count
+                print('SE546_SINGLE_ANATOMICAL_PANEL',name,len(q),flush=True)
+            except (ValueError,AssertionError,RuntimeError) as e:
+                print('SE546_SINGLE_PANEL_FALLBACK',name,str(e)[:180],flush=True)
+        if p is None:
+            p,f,unpacked,chart_count=xatlas_group(positions,original,max_cost)
         if chart_count<1 or chart_count>48:
             raise ValueError('Excess atlas fragmentation: '+name+' '+str(chart_count))
         count+=len(p)
