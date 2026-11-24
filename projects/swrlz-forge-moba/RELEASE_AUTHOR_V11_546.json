@@ -4,8 +4,8 @@
   "version": "v11.546",
   "goal": "Rebuild humanoid UVs into anatomy-grouped charts; generate independent new robotic material from 3D surface; preserve geometry; provide 4096x4096 reference atlas and anatomy exports; preserve historical scenes and saved copies.",
   "release": "Do not publish until exact geometry/UV texture checks and source-seal tests pass.",
-  "run": 18,
-  "correction": "Final deterministic 6 connected anatomical shells. Correct centered front of head, unfragmented arms/legs, strict measured 3D collision rate below 0.70% and density ratio below 50. No former harmonic/chart experiments.",
-  "rebuild_requested": "2026-11-24-verified-six-anatomical-wraps-final-v18",
+  "run": 19,
+  "correction": "Geometry-derived local girth taper, centered fan-out and upright shoulder-to-finger arm charts; preserve six-shell and collision checks",
+  "rebuild_requested": "anatomical-silhouette-taper-v19",
   "reason": "Author and validate exact original geometry, front-facing helmet UV, one connected shell per region, 4K atlas and baked robot skin before release"
 }
