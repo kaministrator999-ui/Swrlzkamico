@@ -68,7 +68,7 @@ class RuntimeTests(unittest.TestCase):
 
         body = SRC.encode("utf-8")
         blob = hashlib.sha1(
-            b"blob " + str(len(body)).encode("ascii") + b"\\0" + body
+            b"blob " + str(len(body)).encode("ascii") + bytes([0]) + body
         ).hexdigest()
         sha = "b" * 40
         auth = {"repo": PROJECT["repo"], "branch": "main", "token": "test"}
