@@ -52,8 +52,16 @@ def main():
     assert metric['charts']==6,metric['charts']
     assert set(metric['uvShells'])==required,metric['uvShells']
     assert all(metric['uvShells'][name]==1 for name in required),metric['uvShells']
-    # Continuous projection must still meet an explicit bounded-overlap gate.
-    assert metric['overlaps']<1000,('Continuous UV atlas has excessive collisions',metric['overlaps'])
+    # The rasterizer counts shared triangle-edge pixels as "overlaps" even
+    # when both triangles resolve to the same physical surface point. Require
+    # the independently measured 3D-position conflict rate instead; do not
+    # conflate valid shared-edge pixels with geometric UV interference.
+    assert metric['sharedEdgeSamples']>=0
+    assert metric['conflictingSamples']<800,('Excess UV surface collisions',metric['conflictingSamples'])
+    assert metric['conflictPct']<.70,('UV conflict rate exceeds quality budget',metric['conflictPct'])
+    assert metric['maxOverlapWorldDistance']<.50
+    assert set(metric['conflictsByRegion']).issubset(required)
+    assert all(0<=v<=210 for v in metric['conflictsByRegion'].values())
     # Ground front-face placement in actual vertex positions + UV coordinates.
     pos=[n['positions'][i:i+3] for i in range(0,len(n['positions']),3)]
     uv=[n['uvs'][i:i+2] for i in range(0,len(n['uvs']),2)]
@@ -65,7 +73,7 @@ def main():
     center=(lo+hi)/2
     assert abs(sum(head_front)/len(head_front)-center)<.018,('Head front not centered in UV',center,head_front[:5])
     assert metric['coveredPct']>25
-    assert metric['p95P5Density']<110
+    assert metric['p95P5Density']<50
     assert len(N.read_bytes())<2_000_000
     print('SE546_ANATOMY_ROBOT_ASSETS_PASS',json.dumps({
         'vertices':len(n['positions'])//3,'triangles':13932,
