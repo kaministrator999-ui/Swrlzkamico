@@ -4,8 +4,8 @@
   "version": "v11.546",
   "goal": "Rebuild humanoid UVs into anatomy-grouped charts; generate independent new robotic material from 3D surface; preserve geometry; provide 4096x4096 reference atlas and anatomy exports; preserve historical scenes and saved copies.",
   "release": "Do not publish until exact geometry/UV texture checks and source-seal tests pass.",
-  "run": 8,
-  "correction": "Explicit back-seam head projection, horizontal circumference, upright crown and chin; rebake skin",
-  "rebuild_requested": "2026-11-24-horizontal-head-uv",
-  "reason": "Reauthor articulated limbs to reduce UV collisions; add measurable quality release gate and real 3D-to-UV region sync"
+  "run": 9,
+  "correction": "Six exact continuous anatomical shells including arms and legs; front +Z head visor centered, all regions keep U/V orientation and rear seams; enforce overlaps and alignment",
+  "rebuild_requested": "2026-11-24-six-coherent-anatomical-wraps-front-registered-v9",
+  "reason": "Rebuild six single-shell atlas from actual mesh geometry with strict front registration and 1024px texture-collision gate"
 }
