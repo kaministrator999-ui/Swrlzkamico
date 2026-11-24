@@ -46,17 +46,24 @@ def main():
     assert metric['vertices']<=9000 and metric['triangles']==13932
     assert metric['guideSize']==4096 and metric['originalGeometryUnchanged']
     assert len(metric['regionTriangles'])>=6
-    # Preserve a coherent head and trunk while allowing articulated fingers,
-    # hands and feet to receive separate nonoverlapping UV charts.
+    # Six anatomical shells; do not silently accept xatlas-split limbs.
     required={'head','torso','leftArm','rightArm','leftLeg','rightLeg'}
     assert metric['strategy']=='six',metric['strategy']
-    assert 6<=metric['charts']<=120,metric['charts']
+    assert metric['charts']==6,metric['charts']
     assert set(metric['uvShells'])==required,metric['uvShells']
-    assert metric['uvShells']['head']==1,metric['uvShells']
-    assert metric['uvShells']['torso']<=2,metric['uvShells']
-    assert all(metric['uvShells'][name]>=1 for name in required),metric['uvShells']
-    # Previous version painted 6,898 conflicting pixel samples and passed.
-    assert metric['overlaps']<1000,('UV collisions not sufficiently reduced',metric['overlaps'])
+    assert all(metric['uvShells'][name]==1 for name in required),metric['uvShells']
+    # Continuous projection must still meet an explicit bounded-overlap gate.
+    assert metric['overlaps']<1000,('Continuous UV atlas has excessive collisions',metric['overlaps'])
+    # Ground front-face placement in actual vertex positions + UV coordinates.
+    pos=[n['positions'][i:i+3] for i in range(0,len(n['positions']),3)]
+    uv=[n['uvs'][i:i+2] for i in range(0,len(n['uvs']),2)]
+    head_front=[uv[i][0] for i,(x,y,z) in enumerate(pos)
+                if y>4.2 and z>.14 and abs(x)<.08]
+    assert len(head_front)>20,'Missing frontal helmet geometry'
+    lo=min(v[0] for v in uv if v[0]>.008 and v[0]<.245)
+    hi=max(v[0] for v in uv if v[0]>.008 and v[0]<.245)
+    center=(lo+hi)/2
+    assert abs(sum(head_front)/len(head_front)-center)<.018,('Head front not centered in UV',center,head_front[:5])
     assert metric['coveredPct']>25
     assert metric['p95P5Density']<110
     assert len(N.read_bytes())<2_000_000
