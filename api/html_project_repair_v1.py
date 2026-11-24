@@ -14,7 +14,12 @@ import time
 SLUG = re.compile(r"[a-z0-9](?:[a-z0-9-]{0,46}[a-z0-9])?\Z")
 COMMAND = re.compile(r"^\s*@github\s+repair\s+(?:html\s+)?project\s+([a-z0-9][a-z0-9-]{1,47})\s*[.!]?\s*$", re.I)
 REPAIR = re.compile(r"\b(?:fix|repair|patch|bundle|resolve|correct|update|modify|redeploy|make\s+(?:it|this)\s+work)\b", re.I)
-NO_CHANGES = re.compile(r"\b(?:do not|don't|without|no)\b.{0,100}\b(?:edit|modify|change|write|repair|commit)\b", re.I)
+NO_CHANGES = re.compile(
+    r"\b(?:do not|don't|without|never)\s+(?:actually\s+|make\s+any\s+)?"
+    r"(?:edit(?:ing|s)?|modify(?:ing)?|chang(?:e|es|ing)|writ(?:e|ing)|repair(?:ing|s)?|commit(?:ting|s)?)\b"
+    r"(?!\s+(?:the\s+)?(?:entire|whole|unrelated|other)\b)"
+    r"(?!\s+(?:until|before|without|unless)\b)"
+    r"|\bno\s+(?:edits|changes|writes|repairs|commits)\b", re.I)
 WORKFLOW = "hf-html-project-repair-pr-v1.yml"
 WORKFLOW_URL = "https://github.com/kaministrator999-ui/Swrlzkamico/actions/workflows/" + WORKFLOW
 TTL = 300
