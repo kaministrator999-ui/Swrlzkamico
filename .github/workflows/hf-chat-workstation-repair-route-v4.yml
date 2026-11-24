@@ -17,4 +17,4 @@ jobs:
         with: {python-version: '3.11'}
       - run: python -m pip install --quiet 'huggingface_hub>=0.34,<2'
       - name: Inspect actual deployed Station and Workstation source (read-only)
-        run: python -u scripts/audit_hf_workstation_project_repair_v4.py inspect
+        run: python -u scripts/audit_hf_workstation_project_repair_v4.py sections
