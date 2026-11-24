@@ -1,6 +1,6 @@
 {
   "schema": "swrlz-clean-topology-author-v1",
-  "goal": "Conformal LSCM relaxation on actual 3D anatomy with deliberate UV seams, xatlas chart packing and usable UV Editor controls; preserve finished robot",
+  "goal": "LSCM geometry-based UV unwrap with bounded 22 anatomical charts, deterministic overlap-checked single-atlas packing and improved anatomy; preserve finished robot",
   "source": "authoring/build_clean_topology_humanoid_v11_554.py",
   "mode": "do-not-change-existing-robot",
   "verification": [
@@ -16,7 +16,8 @@
     "xatlas pack preserves chart seams and 70-chart maximum",
     "independent LSCM planar and seam tests",
     "real source model and public assets verified after deploy",
-    "tune texelsPerUnit 128/64/32/16 until LSCM UV charts fit one 2048 atlas"
+    "tune texelsPerUnit 128/64/32/16 until LSCM UV charts fit one 2048 atlas",
+    "independent chart rectangle no-overlap and min 8px gutter checks"
   ],
-  "request": "2026-11-24-LSCM-single-atlas-tpu-fix-v4d"
+  "request": "2026-11-24-LSCM-verified-single-atlas-packer-v4e"
 }
