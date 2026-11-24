@@ -542,8 +542,8 @@
     "patches/v11_551_uv_island_workspace.py",
     "patches/v11_552_uv_texture_alignment.py"
   ],
-  "finalBytes": 11127321,
-  "finalSha256": "b43fd6b7fb80d3d91d07d19b747b07da1f76351f56a0ffdcbb13ca40300c7614",
+  "finalBytes": 11129336,
+  "finalSha256": "4f13fe819c66aacf388b03a521e77a50ef03177894ecfb0d169d25bfbbb89f4e",
   "previousFinalSha256": "4d32604a8647ec6c5f9043975a421b947137c52381171312eaeef5dc1798064e",
   "previousFinalBytes": 11097173,
   "previousManifestFinalSha256": "4d32604a8647ec6c5f9043975a421b947137c52381171312eaeef5dc1798064e",
