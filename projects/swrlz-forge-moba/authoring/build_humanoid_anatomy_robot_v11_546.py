@@ -185,7 +185,7 @@ def single_chart_group(pos,faces):
         raise ValueError('Parameterization produced '+str(counts.get('region'))+' disconnected UV shells')
     return coords[vmap],f,uv,1
 
-def fit(uv,rect):
+def fit(uv,rect,lock_orientation=False):
     # Isotropic transform: retain xatlas's internal angular/distortion metrics.
     umin=uv.min(axis=0);umax=uv.max(axis=0)
     length=np.maximum(umax-umin,1e-8)
@@ -194,7 +194,7 @@ def fit(uv,rect):
     # Choose orientation that fits most tightly without anisotropic stretch.
     a=min(rw/length[0],rh/length[1])
     b=min(rw/length[1],rh/length[0])
-    if b>a:
+    if b>a and not lock_orientation:
         coords=np.column_stack((uv[:,1],1-uv[:,0]))
         bounds=np.array([length[1],length[0]])
         base=coords.min(axis=0)
@@ -215,7 +215,12 @@ def make_atlas(positions,triangles,mode):
         # elbows, knees and feet need chart seams to avoid cylindrical UV folds.
         # xatlas creates individually non-overlapping limb charts rather than
         # projecting fingers and hidden back surfaces onto the same pixels.
-        if name in ('head','torso'):
+        if name=='head':
+            # U follows the skull circumference; V follows anatomical height.
+            # Never let the packing heuristic rotate the face onto its side.
+            p,f,uv,c=seam_aware_anatomical_group(positions,original,name)
+            uv[:,0]*=2.0
+        elif name=='torso':
             try:
                 p,f,uv,c=single_chart_group(positions,original)
             except (ValueError,AssertionError,RuntimeError):
@@ -230,7 +235,7 @@ def make_atlas(positions,triangles,mode):
         base=count;count+=len(p);charts+=c
         if count>VERT_LIMIT:raise ValueError('UV vertex budget exceeded: '+str(count))
         parts.append(p);faces_out.append(f+base)
-        uv_out.append(fit(uv,RECT[name]))
+        uv_out.append(fit(uv,RECT[name],lock_orientation=name=='head'))
         group_names.extend([name]*len(f))
     outpos=np.concatenate(parts,axis=0)
     outfaces=np.concatenate(faces_out,axis=0)
