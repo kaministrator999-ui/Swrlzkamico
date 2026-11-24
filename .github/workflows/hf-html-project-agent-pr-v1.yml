@@ -47,6 +47,7 @@ jobs:
         run: |
           python -m py_compile api/html_project_agent_v1.py api/html_project_agent_runtime_v1.py api/html_project_repair_v1.py scripts/html_project_agent_pr_v1.py
           python -m unittest discover -s tests -p 'test_html_project_agent_v1.py' -v
+          python -m unittest discover -s tests -p 'test_html_project_agent_runtime_v1.py' -v
           python -m unittest discover -s tests -p 'test_html_project_repair_v1.py' -v
   repair:
     if: ${{ github.event_name == 'workflow_dispatch' && inputs.approved == 'yes' && github.actor == 'kaministrator999-ui' }}
