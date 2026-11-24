@@ -1,4 +1,4 @@
-import {flattenSeamedMesh} from './uv_lscm_core_v11_555.mjs';
+import {flattenSeamedMesh,packSeamedCharts} from './uv_lscm_core_v11_555.mjs';
 /* §E v11.555 — reusable geometry-derived UV atlas core.
    xatlas (MIT): real chart segmentation, conformal parameterization and packing.
    Usable from Node authoring and the browser's selected topology mesh.
@@ -76,6 +76,26 @@ export async function unwrapMesh(createXAtlas,source,options={}){
  const materials=options.faceMaterialData
   ?new Uint32Array(Array.from(options.faceMaterialData)):null;
  if(materials&&materials.length!==input.indices.length/3)throw Error('Face seam groups must match triangles');
+ // Preserve deliberately marked anatomical cuts instead of allowing automatic
+ // segmentation to fracture the model into hundreds of charts. Conformal
+ // coordinates are computed from actual XYZ; deterministic, independently
+ // audited packing is used because xatlas-wasm@0.1.3 returned zero UV-mesh
+ // atlases for this model in CI. Automatic xatlas remains available separately.
+ if(isLSCM){
+  const result=packSeamedCharts(input,{
+    resolution:options.resolution||2048,padding:options.padding||8
+  });
+  result.method='LSCM+verified-chart-packing';
+  result.weldedInputVertices=0;
+  validateMesh(result.positions,result.indices);
+  assertSameTriangles(normalized,result);
+  result.distortion=distortionStats(result.positions,result.uvs,result.indices);
+  if(options.maxVertices&&result.positions.length/3>options.maxVertices)
+   throw Error('LSCM UV seam vertex budget exceeded: '+result.positions.length/3);
+  if(options.maxCharts&&result.charts>options.maxCharts)
+   throw Error('LSCM chart budget exceeded: '+result.charts);
+  return result;
+ }
  const xatlas=await createXAtlas();
  const atlas=xatlas.createAtlas();
  try{
