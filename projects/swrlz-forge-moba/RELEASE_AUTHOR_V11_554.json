@@ -1,15 +1,15 @@
 {
   "schema": "swrlz-clean-topology-author-v1",
-  "goal": "Rebuild UV-first starter as one connected watertight quad surface: shoulders, neck, pelvis, fingers and feet physically welded, preserving six anatomical UV regions",
+  "goal": "Replace flat skirt pelvis with anatomical saddle hips groin and leg transitions, and export genuine separate face/head back, torso front/back and pelvis UV charts; preserve original robot",
   "source": "authoring/build_clean_topology_humanoid_v11_554.py",
   "mode": "do-not-change-existing-robot",
   "verification": [
-    "quad topology and native mesh limits",
-    "UV islands and exact checker atlas registration",
-    "positional-weld every 3D edge has 2 incident faces",
-    "exactly one connected orientable physical mesh",
-    "native loader unchanged",
-    "original robot unmodified"
+    "single watertight quad topology and native mesh limits",
+    "noncoplanar groin and lateral hip geometry",
+    "distinct UV front/back torso head crown and pelvis charts",
+    "no missing quad faces or unstitched 3D edge",
+    "native Starter Models loader remains functional",
+    "original finished robot untouched"
   ],
-  "request": "2026-11-24-welded-quad-shoulder-pelvis-neck-hand-v2"
+  "request": "2026-11-24-anatomical-waist-pelvis-groin-uv-subcharts-v3"
 }
