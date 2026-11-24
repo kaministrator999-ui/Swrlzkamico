@@ -5,7 +5,7 @@
   const MAX_AGE_MS=300000;
   const okSlug=s=>typeof s==="string"&&/^[a-z0-9](?:[a-z0-9-]{0,46}[a-z0-9])?$/.test(s);
   const okSha=s=>typeof s==="string"&&/^[a-f0-9]{40}$/.test(s);
-  async function gitBlobSha256Compatibility(raw){
+  async function gitBlobObjectId(raw){
     // GitHub's repository uses SHA-1 Git blob object IDs; hash the exact
     // downloaded bytes with Git's "blob <length>\0" framing.
     const prefix=new TextEncoder().encode("blob "+raw.length+"\0");
@@ -38,7 +38,7 @@
            csp.includes("connect-src 'none'") &&
            (response.headers.get("x-content-type-options")||"").toLowerCase()==="nosniff"){
           const raw=new Uint8Array(await response.arrayBuffer());
-          if(await gitBlobSha256Compatibility(raw)===data.indexGitBlobSha){
+          if(await gitBlobObjectId(raw)===data.indexGitBlobSha){
             note.textContent="LIVE · Exact committed HTML source and sandbox headers verified.";
             const link=doc.createElement("a");
             link.href=url.href;link.target="_blank";link.rel="noopener noreferrer";
