@@ -64,6 +64,7 @@ function se552ExportExactGuide(){
   ctx.closePath();ctx.stroke();drawn++;
  }
  if(!drawn){status('No valid UV triangles to export.');return;}
+ if(se552ShowRegions)se552DrawRegions(t,canvas,true);
  canvas.toBlob(blob=>{
   if(!blob){status('Could not encode UV guide.');return;}
   const url=URL.createObjectURL(blob),a=document.createElement('a');
@@ -75,38 +76,54 @@ function se552ExportExactGuide(){
 }
 /* Deterministic color/number overlay of actual connected UV shells. This does not
    re-unwrap geometry: labels are based on UV connectivity, not guessed anatomy. */
-function se552RegionOverlay(){
- const t=se551Target(),root=se356UVPreviewRoot(),cv=root?.querySelector('#se356UVCanvas');
- if(!t||!cv)return;
- const topo=se551Topology(t),regions=new Map(),size=cv.width;
+const se552Palette=['#ef4444','#3b82f6','#22c55e','#eab308','#a855f7','#f97316'];
+const se552Names=['Head','Neck / torso','Left arm','Right arm','Left leg','Right leg'];
+let se552RegionMesh=null,se552RegionSource=null;
+function se552Regions(t){
+ const topo=se551Topology(t),pos=t.mesh.geometry.getAttribute('position'),groups=new Map();
+ const anatomical=t.part.id==='humanoid-body-unified';
  topo.faces.forEach((face,i)=>{
-  const id=topo.root(i);let group=regions.get(id);
-  if(!group){group={faces:[],sumU:0,sumV:0,n:0};regions.set(id,group);}
-  group.faces.push(face);
-  for(const v of face){group.sumU+=topo.uv.getX(v);group.sumV+=topo.uv.getY(v);group.n++;}
+  let id=topo.root(i);
+  if(anatomical){const x=face.reduce((s,v)=>s+pos.getX(v),0)/3,y=face.reduce((s,v)=>s+pos.getY(v),0)/3;
+   id=y>=4.08?0:Math.abs(x)>.69&&y>3.30?(x<0?2:3):y<=2.35?(x<0?4:5):1;}
+  if(!groups.has(id))groups.set(id,{id,faces:[],ids:new Set()});
+  const g=groups.get(id);g.faces.push(face);face.forEach(v=>g.ids.add(v));
  });
- const groups=[...regions.values()].sort((a,b)=>b.faces.length-a.faces.length);
- const regionCount=se552Portal?.host?.querySelector('[data-se552-region-count]');
- if(regionCount)regionCount.textContent=groups.length+' connected UV shells · colors/numbers are shell IDs, not anatomical labels';
- const ctx=cv.getContext('2d');ctx.save();
+ return {topo,groups:[...groups.values()].sort((a,b)=>a.id-b.id),anatomical};
+}
+function se552Color(g,i,anatomical){return anatomical?se552Palette[g.id]:se552Palette[i%6];}
+function se552DrawRegions(t,cv,exporting=false){
+ const {topo,groups,anatomical}=se552Regions(t),ctx=cv.getContext('2d'),size=cv.width;
+ ctx.save();
  groups.forEach((g,i)=>{
-  const hue=(i*137.508)%360;
-  ctx.fillStyle='hsla('+hue+',85%,60%,0.19)';
-  for(const f of g.faces){
-   ctx.beginPath();f.forEach((v,k)=>{
-    const x=topo.uv.getX(v)*size,y=(1-topo.uv.getY(v))*size;
-    if(k)ctx.lineTo(x,y);else ctx.moveTo(x,y);
-   });ctx.closePath();ctx.fill();
-  }
-  const x=g.sumU/g.n*size,y=(1-g.sumV/g.n)*size;
-  if(!Number.isFinite(x)||!Number.isFinite(y))return;
-  ctx.font='bold 15px system-ui';ctx.textAlign='center';ctx.textBaseline='middle';
-  const label=String(i+1),w=Math.max(24,ctx.measureText(label).width+12);
-  ctx.fillStyle='#07101d';ctx.fillRect(x-w/2,y-12,w,24);
-  ctx.strokeStyle='hsl('+hue+',90%,70%)';ctx.lineWidth=2;ctx.strokeRect(x-w/2,y-12,w,24);
-  ctx.fillStyle='#ffffff';ctx.fillText(label,x,y);
- });
- ctx.restore();
+  const color=se552Color(g,i,anatomical),selected=se551Selection?.part===t.part&&[...g.ids].every(v=>se551Selection.ids.includes(v));
+  ctx.fillStyle=color;ctx.globalAlpha=exporting?.85:selected?.85:.48;
+  let x=0,y=0,n=0;
+  for(const f of g.faces){ctx.beginPath();f.forEach((v,k)=>{const u=topo.uv.getX(v)*size,w=(1-topo.uv.getY(v))*size;k?ctx.lineTo(u,w):ctx.moveTo(u,w);x+=u;y+=w;n++;});ctx.closePath();ctx.fill();}
+  ctx.globalAlpha=1;ctx.font='bold '+Math.max(15,size/42)+'px system-ui';ctx.textAlign='center';ctx.textBaseline='middle';
+  const label=String(anatomical?g.id+1:i+1)+(exporting&&anatomical?' '+se552Names[g.id]:'');
+  const w=ctx.measureText(label).width+12,h=Math.max(24,size/32);ctx.fillStyle='#07101d';ctx.fillRect(x/n-w/2,y/n-h/2,w,h);ctx.fillStyle='#fff';ctx.fillText(label,x/n,y/n);
+ });ctx.restore();
+ return groups;
+}
+function se552ClearRegionMesh(){
+ if(se552RegionMesh){se552RegionMesh.removeFromParent();se552RegionMesh.geometry.dispose();se552RegionMesh.material.dispose();}
+ se552RegionMesh=null;se552RegionSource=null;
+}
+function se552ModelRegions(t){
+ if(!se552ShowRegions||!t){se552ClearRegionMesh();return;}
+ if(se552RegionSource!==t.mesh){se552ClearRegionMesh();
+  const {groups,anatomical}=se552Regions(t),pos=t.mesh.geometry.getAttribute('position'),xyz=[],colors=[];
+  groups.forEach((g,i)=>{const c=new THREE.Color(se552Color(g,i,anatomical));for(const f of g.faces)for(const v of f){xyz.push(pos.getX(v),pos.getY(v),pos.getZ(v));colors.push(c.r,c.g,c.b);}});
+  const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.Float32BufferAttribute(xyz,3));geo.setAttribute('color',new THREE.Float32BufferAttribute(colors,3));
+  se552RegionMesh=new THREE.Mesh(geo,new THREE.MeshBasicMaterial({vertexColors:true,side:THREE.DoubleSide,polygonOffset:true,polygonOffsetFactor:-2,polygonOffsetUnits:-2}));
+  se552RegionMesh.raycast=()=>{};se552RegionMesh.userData.se552Diagnostic=true;t.mesh.add(se552RegionMesh);se552RegionSource=t.mesh;
+ }
+}
+function se552RegionOverlay(){
+ const t=se551Target(),cv=se356UVPreviewRoot()?.querySelector('#se356UVCanvas');if(!t||!cv)return;
+ const groups=se552DrawRegions(t,cv);se552ModelRegions(t);
+ const el=se552Portal?.host?.querySelector('[data-se552-region-count]');if(el)el.textContent=groups.length+' regions · shared model and export colors';
 }
 function se552Open(){
  const root=se356UVPreviewRoot();if(!root||se552Portal)return;
@@ -164,7 +181,8 @@ function se552Open(){
   originalMode.value=e.target.value;originalMode.dispatchEvent(new Event('change',{bubbles:true}));
  });
  controls.querySelector('[data-se552-wires]').addEventListener('change',e=>{se552ShowWires=e.target.checked;se356UVPreviewSchedule();});
- controls.querySelector('[data-se552-regions]').addEventListener('change',e=>{se552ShowRegions=e.target.checked;se356UVPreviewSchedule();});
+ controls.querySelector('[data-se552-regions]').checked=se552ShowRegions;
+ controls.querySelector('[data-se552-regions]').addEventListener('change',e=>{se552ShowRegions=e.target.checked;se552ModelRegions(se551Target());se356UVPreviewSchedule();});
  controls.querySelector('[data-se552-export]').addEventListener('click',se552ExportExactGuide);
  controls.querySelector('[data-se552-pan]').addEventListener('change',e=>{se552Pan=e.target.checked;cv.style.touchAction=se552Pan?'pan-x pan-y':'none';});
  controls.querySelector('[data-se552-texture]').addEventListener('click',()=>{se356UVMode='paint';se356UVPreviewSchedule();});
@@ -184,4 +202,4 @@ function se552Install(){
 const se552PrevInstall=se356EditInstall;
 se356EditInstall=function(){se552PrevInstall();se552Install();};
 const se552PrevRender=se356UVRender;
-se356UVRender=function(){se552PrevRender();se552Paint();if(se552ShowRegions&&se552Portal)se552RegionOverlay();};
+se356UVRender=function(){se552PrevRender();se552Paint();if(se552ShowRegions)se552RegionOverlay();else se552ClearRegionMesh();};
