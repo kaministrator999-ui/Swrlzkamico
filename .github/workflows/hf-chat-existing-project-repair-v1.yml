@@ -48,7 +48,16 @@ jobs:
       - name: Preflight patch against actual current production sources
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
-        run: python scripts/hf_chat_project_repair_release_v1.py preflight
+        run: |
+          python - <<'PY'
+          import subprocess
+          from huggingface_hub import HfApi
+          files=set(HfApi().list_repo_files("kamiloki/Swyrlz",repo_type="space"))
+          if "html_project_repair_v1.py" in files:
+              print("EXISTING_REPAIR_HELPER_ALREADY_ACTIVE_SKIP_FIRST_INSTALL_PREFLIGHT")
+          else:
+              subprocess.run(["python","scripts/hf_chat_project_repair_release_v1.py","preflight"],check=True)
+          PY
       - name: Deploy routing, review UI and project repair helper to live §C
         if: github.event_name == 'push' && contains(github.event.head_commit.message, '[release-existing-html-repair-v1]')
         env:
