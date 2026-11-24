@@ -39,7 +39,7 @@ class SharedTranscriptStore:
             "contract": "shared-redis-transcript-v1",
             "configured": self.configured,
             "access": "private",
-            "authKind": "redis-rest" if self.configured else "unconfigured",
+            "authKind": RedisRestChatStore.backend_kind() if self.configured else "unconfigured",
             "ttlSeconds": TTL_SECONDS,
             "ownerId": OWNER_ID,
         }
