@@ -449,6 +449,12 @@ def texture():
     # No labels are painted into the actual texture; chart boundaries and
     # empty gutters remain clear after the geometric UV mask is applied.
     background.paste(grid,(0,0),mask)
+    # Front and rear panels have an actual empty UV gutter, unlike the old
+    # misleading six full colored rectangles.
+    for u,v in ((.145,.29),(.6425,.29)):
+        pixel=background.getpixel((round(u*size),round((1-v)*size)))
+        if pixel!=(18,26,36):
+            raise ValueError(('Actual anatomical UV chart gutter missing',u,v,pixel))
     ATLAS.parent.mkdir(parents=True,exist_ok=True)
     background.save(ATLAS,optimize=True)
     return ATLAS.read_bytes()
@@ -511,7 +517,8 @@ def main():
     report={'version':'v11.554','revision':'anatomical-pelvis-uv-v3',
       'vertices':len(P)//3,'triangles':len(F)//3,
       'quads':dict(QUADS),'components':1,
-      'uvBoxes':BOXES,'uvCharts':charts,'textureSize':1024,'guideSize':2048,
+      'uvBoxes':BOXES,'uvCharts':charts,'uvPaintMode':'actual-UV-quad-island-masking',
+      'guideAnatomyLabels':True,'textureSize':1024,'guideSize':2048,
       'originalRobotPreserved':True,'quadFirst':True,
       'topologyAudit':audit}
     REPORT.parent.mkdir(parents=True,exist_ok=True)
