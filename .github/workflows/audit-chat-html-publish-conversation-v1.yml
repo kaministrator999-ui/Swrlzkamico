@@ -1,4 +1,4 @@
-name: Audit live §C GitHub HTML publish conversation routing (read-only)
+name: Audit live §C artifact completion and GitHub handoff (read-only)
 on:
   push:
     branches: [main]
@@ -6,7 +6,7 @@ on:
 permissions: {contents: read}
 jobs:
   inspect:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 7
     steps:
       - uses: actions/checkout@v4
@@ -18,24 +18,20 @@ jobs:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: |
           python - <<'PY'
-          import os
+          import os,re
           from pathlib import Path
           from huggingface_hub import HfApi,hf_hub_download
           api=HfApi(token=os.environ.get('HF_TOKEN') or None)
           rev=api.repo_info('kamiloki/Swyrlz',repo_type='space').sha
-          print('CHAT_PUBLISH_AUDIT_REVISION',rev)
+          print('AUDIT_HF_REV',rev)
           for path,ranges in (
-             ('station.py',[(1460,1510),(2810,2880)]),
-             ('github_conversation_actions_v264.py',[(1,55),(270,310),(440,510),(585,660)])):
-              text=Path(hf_hub_download('kamiloki/Swyrlz',path,repo_type='space',revision=rev,token=api.token)).read_text().splitlines()
-              print('FILE',path,'LINES',len(text))
-              if path=='station.py':
-                  hits=[i for i,line in enumerate(text,1) if any(k in line for k in ('_artifact_source_hash(', 'codeArtifacts', 'githubChatFileAction', 'assistant_message', 'completion_validation'))]
-                  ranges=[(max(1,i-5),i+9) for i in hits]
-              else:
-                  hits=[i for i,line in enumerate(text,1) if any(k in line for k in ('def ', 'create_commit', 'pending['))]
-                  ranges=[(max(1,i-1),i+5) for i in hits]
-              for low,high in ranges:
-                  for n in range(low,min(high,len(text))+1):
-                      print(f'{n:05d} {text[n-1][:290]}')
+              ('station.py',[(1015,1070),(1370,1550),(1780,1870),(2390,2445),(2460,2520),(2750,2895)]),
+              ('github_conversation_actions_v264.py',[(10,90),(150,245),(415,455),(645,735)]),
+          ):
+              lines=Path(hf_hub_download('kamiloki/Swyrlz',path,repo_type='space',revision=rev,token=api.token)).read_text().splitlines()
+              print('AUDIT_FILE',path,len(lines))
+              for lo,hi in ranges:
+                  print('AUDIT_RANGE',path,lo,hi)
+                  for n in range(lo,min(hi,len(lines))+1):
+                      print(f'{n:05d} {lines[n-1][:250]}')
           PY
