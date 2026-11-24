@@ -17,7 +17,8 @@
     "independent LSCM planar and seam tests",
     "real source model and public assets verified after deploy",
     "tune texelsPerUnit 128/64/32/16 until LSCM UV charts fit one 2048 atlas",
-    "independent chart rectangle no-overlap and min 8px gutter checks"
+    "independent chart rectangle no-overlap and min 8px gutter checks",
+    "final scene and diagnostics identify LSCM rather than claiming failed xatlas chart pack"
   ],
-  "request": "2026-11-24-LSCM-verified-single-atlas-packer-v4e"
+  "request": "2026-11-24-LSCM-final-naming-and-mobile-asset-verify-v4f"
 }
