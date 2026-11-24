@@ -141,7 +141,10 @@ def run(mode):
                                 revision=rev, token=token)).read_bytes()
     if STATION not in originals or HELPER not in originals:
         raise RuntimeError("REQUIRED_PRODUCTION_SOURCE_MISSING")
-    if "MODEL_WORKFLOW =" in originals[HELPER].decode("utf-8"):
+    # The installed general agent legitimately adds MODEL_WORKFLOW. Only
+    # reject a pre-existing helper when Station lacks the matching agent.
+    if (MARK not in originals[STATION].decode("utf-8")
+            and "MODEL_WORKFLOW =" in originals[HELPER].decode("utf-8")):
         raise RuntimeError("PRODUCTION_REPAIR_HELPER_ALREADY_CHANGED")
     patched = {
         STATION: patch_station(originals[STATION].decode("utf-8")).encode("utf-8")
