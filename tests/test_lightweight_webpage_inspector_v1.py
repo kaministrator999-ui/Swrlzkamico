@@ -50,7 +50,7 @@ class InspectionTests(unittest.TestCase):
             def read(self,n):return self.body[:n]
             def __enter__(self):return self
             def __exit__(self,*args):return False
-        def fake_open(self,req,timeout=0):
+        def fake_open(opener,req,timeout=0):
             self.assertTrue(req.full_url.startswith("https://kamiloki-swyrlz.hf.space/api/html-projects/example/"))
             return Response(b"<html></html>")
         with patch("urllib.request.OpenerDirector.open",autospec=True,side_effect=fake_open):
