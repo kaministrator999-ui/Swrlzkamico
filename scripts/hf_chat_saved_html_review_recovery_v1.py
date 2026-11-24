@@ -83,6 +83,9 @@ def patch(original):
         raise RuntimeError("LIVE_FIRST_REPAIR_NOT_FOUND_OR_REAPPLIED")
     station=one(station,RESUME_ROUTE_ANCHOR,RESUME_ROUTE_REPLACE,"SAVED_REVIEW_ROUTING")
     station=one(station,RUN_ANCHOR,RUN_REPLACE,"SAVED_REVIEW_EVENT_DISPATCH")
+    station=one(station,'payload.get("verifiedPrivateAnswer") or',
+                'payload.get("verifiedPrivateAnswer") or payload.get("verifiedHtmlReview") or',
+                "STOCK_MODEL_SAFE_DISPATCH")
     station=station.replace('''import github_html_project_handoff_v1 as _swrlz_html_handoff''',
         '''import github_html_project_handoff_v1 as _swrlz_html_handoff
 '''+MARK,1)
