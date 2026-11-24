@@ -4,8 +4,8 @@
   "version": "v11.546",
   "goal": "Rebuild humanoid UVs into anatomy-grouped charts; generate independent new robotic material from 3D surface; preserve geometry; provide 4096x4096 reference atlas and anatomy exports; preserve historical scenes and saved copies.",
   "release": "Do not publish until exact geometry/UV texture checks and source-seal tests pass.",
-  "run": 21,
-  "correction": "Select strongest per-region taper with measured collision constraints",
-  "rebuild_requested": "adaptive-region-taper-v21",
+  "run": 22,
+  "correction": "World-derived axial-to-girth ratio before isotropic packing, tall upright limb slots and adaptive anatomical taper",
+  "rebuild_requested": "physical-anatomical-proportions-v22",
   "reason": "Author and validate exact original geometry, front-facing helmet UV, one connected shell per region, 4K atlas and baked robot skin before release"
 }
