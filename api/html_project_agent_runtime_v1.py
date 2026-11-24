@@ -148,10 +148,6 @@ def run(payload, coder_generate):
     yield {"type": "STATUS", "phase": "REPAIR_READING_SOURCE",
            "reason": "Reading immutable owner GitHub project files."}
     try:
-        try:
-            import github_html_publish_action_v1 as publishing
-        except ImportError:
-            from api import github_html_publish_action_v1 as publishing
         sha, files = _source_files(owner, project)
         source_hashes = verify_source(project["project"], files)
         task = str(payload.get("receivedText") or payload.get("prompt") or "")
@@ -193,7 +189,8 @@ def run(payload, coder_generate):
                 yield {"type": "STATUS", "phase": "REPAIR_PATCH_REJECTED",
                        "reason": str(exc)[:240], "attempt": attempt + 1}
         raise ProposalError("MAX_REPAIR_ATTEMPTS_EXHAUSTED: " + ", ".join(failures[-3:]))
-    except (ProposalError, publishing.PublishActionError, approval.RepairError) as exc:
+    except Exception as exc:
+        # Never misreport a runtime, GitHub or validation exception as a repair success.
         reason = str(exc)[:500]
         yield {"type": "DELTA", "text": (
             "The repair did not pass source, model-output and static validation: "
