@@ -83,6 +83,7 @@ def patch(original):
     actions=original[ACTIONS].decode()
     if MARK in station or "swrlz-html-review-scroll-repair-v1" not in html:
         raise RuntimeError("LIVE_FIRST_REPAIR_NOT_FOUND_OR_REAPPLIED")
+    station=one(station,"          and any(isinstance((m.get(\"meta\") or {}).get(\"htmlProjectHandoff\"),dict)\n                  for m in reversed((t.get(\"messages\") or [])[-6:])\n                  if m.get(\"role\")==\"assistant\")):","          and _swrlz_html_handoff.last_assistant_review(t)):","EXPIRED_REVIEW_PROVENANCE")
     station=one(station,RESUME_ROUTE_ANCHOR,RESUME_ROUTE_REPLACE,"SAVED_REVIEW_ROUTING")
     station=one(station,RUN_ANCHOR,RUN_REPLACE,"SAVED_REVIEW_EVENT_DISPATCH")
     station=one(station,'payload.get("verifiedPrivateAnswer") or',
