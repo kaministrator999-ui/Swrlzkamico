@@ -1,17 +1,16 @@
 #!/usr/bin/env python3
-"""Author a separate UV-first quad-loop humanoid starter for the native §E Modeler.
+"""§E UV-first humanoid revision: quad-constructed, welded anatomical branches.
 
-One editable topologyMesh with deliberately distinct structural components. Ring
-surfaces are laid out as regular quads before triangulation; the UV coordinates
-follow those loops instead of being reprojected from triangulated geometry.
-The older robotic humanoid and all account projects remain byte-for-byte intact.
+Build the actual connected surface before assigning the six readable UV regions.
+Every torso/neck/shoulder/pelvis/palm/finger/toe junction is topologically
+attached after positional UV-seam welding. UV seams duplicate coordinates but
+never tear the physical surface. The original robotic humanoid is untouched.
 """
 import base64
-from collections import Counter
-from io import BytesIO
-import json, math
+from collections import Counter,defaultdict,deque
+import json,math
 from pathlib import Path
-from PIL import Image, ImageDraw
+from PIL import Image,ImageDraw
 
 ROOT=Path(__file__).resolve().parents[1]
 BASE=ROOT/'scenes/model-atelier-futuristic-humanoid-v11-546.swyrl.json'
@@ -30,183 +29,381 @@ BOXES={
 PALETTE={'head':(169,199,209),'torso':(144,175,187),
  'leftArm':(149,185,183),'rightArm':(153,187,188),
  'leftLeg':(151,169,191),'rightLeg':(151,174,195)}
-P=[];UV=[];F=[];GROUP=[];QUADS=Counter()
-def clamp(v):return min(1.,max(0.,v))
-def interp(a,b,t):return [x*(1-t)+y*t for x,y in zip(a,b)]
-def sample_controls(controls,subdiv=3):
-    rows=[]
-    for k in range(len(controls)-1):
+P=[];UV=[];Q=[];F=[];GROUP=[];QUADS=Counter()
+def lerp(a,b,t):return a+(b-a)*t
+def mix(a,b,t):return [lerp(x,y,t) for x,y in zip(a,b)]
+def smooth(t):return t*t*(3.-2.*t)
+def controls(points,subdiv=3):
+    out=[]
+    for i in range(len(points)-1):
         for j in range(subdiv):
-            t=j/subdiv
-            # Geometry is smooth and deterministic; UV order is independent
-            # of the resulting vertices' positions.
-            t=t*t*(3-2*t)
-            rows.append(interp(controls[k],controls[k+1],t))
-    rows.append(list(controls[-1]))
-    return rows
-def ring_surface(name,rows,sides,box,orient,flip=False):
-    """Uniform all-quad rings, with one intentional U seam per component."""
-    xmin,ymin,xmax,ymax=box
-    start=len(P)//3
-    for k,row in enumerate(rows):
-        cx,cy,cz,r1,r2=row
-        for n in range(sides+1):
-            ang=math.tau*n/sides
-            ca,sa=math.cos(ang),math.sin(ang)
-            if orient=='vertical':
-                xyz=(cx+ca*r1,cy,cz+sa*r2)
-            elif orient=='horizontal':
-                xyz=(cx,cy+ca*r1,cz+sa*r2)
-            else:raise ValueError(orient)
-            P.extend(round(float(x),5) for x in xyz)
-            UV.extend((round(xmin+(xmax-xmin)*n/sides,6),
-                       round(ymax-(ymax-ymin)*k/(len(rows)-1),6)))
-    for k in range(len(rows)-1):
-        for n in range(sides):
-            a=start+k*(sides+1)+n;b=a+sides+1
-            if flip:F.extend((a,b,a+1,a+1,b,b+1))
-            else:F.extend((a,a+1,b,a+1,b+1,b))
-            GROUP.extend((name,name));QUADS[name]+=1
-def head():
-    # A sphere is sculpted into a head without modifying its longitude/latitude
-    # topology or rectangular, uninterrupted sphere UV chart.
-    rows=[]
-    for k in range(1,25):
-        theta=math.pi*k/25
-        sn,cs=math.sin(theta),math.cos(theta)
-        y=4.415+.345*cs
-        taper=1-.22*max(0.,-cs)
-        rows.append([0,y,0,.245*sn*taper,.225*sn])
-    # Slightly fuller cheeks + a narrower sculpted chin: rings remain regular.
-    ring_surface('head',rows,32,BOXES['head'],'vertical',False)
-def torso():
-    controls=[
-      [0,2.25,0,.304,.195],[0,2.45,0,.357,.230],
-      [0,2.65,0,.306,.205],[0,2.94,0,.287,.200],
-      [0,3.21,0,.334,.227],[0,3.44,0,.429,.255],
-      [0,3.62,0,.472,.245],[0,3.77,0,.408,.223],
-      [0,3.91,0,.175,.152],[0,4.08,0,.127,.118],
-      [0,4.16,0,.119,.110]
-    ]
-    ring_surface('torso',sample_controls(controls,3),32,BOXES['torso'],'vertical',True)
-def arms(side):
-    key='leftArm' if side<0 else 'rightArm'
-    controls=[
-      [side*.46,3.64,0,.19,.191],[side*.60,3.65,0,.208,.191],
-      [side*.83,3.65,0,.176,.164],[side*1.08,3.65,0,.147,.139],
-      [side*1.34,3.65,0,.105,.105],[side*1.43,3.65,0,.100,.095],
-      [side*1.69,3.65,0,.139,.132],[side*1.95,3.65,0,.082,.080],
-      [side*2.08,3.65,0,.076,.086],[side*2.18,3.65,0,.072,.119],
-      [side*2.31,3.65,0,.050,.135],[side*2.36,3.65,0,.036,.127]
-    ]
-    b=BOXES[key]
-    main=(b[0],b[1],b[0]+(b[2]-b[0])*.74,b[3])
-    ring_surface(key,sample_controls(controls,3),20,main,'horizontal',side<0)
-    # Five individually selectable-in-UV finger strips, including thumb.
-    # The fingers are separate surface components, not distorted torso charts.
-    for digit in range(5):
-        thumb=digit==4
-        z=(.145 if thumb else -.106+digit*.072)
-        y=(3.57 if thumb else 3.65)
-        length=(.145 if thumb else [.180,.234,.223,.173][digit])
-        x0=(2.17 if thumb else 2.34)
-        rows=[]
-        for k in range(6):
-            t=k/5
-            rows.append([side*(x0+length*t),y+(t*.035 if thumb else 0),
-                        z+(t*.074 if thumb else 0),
-                        .036*(1-.52*t),.028*(1-.50*t)])
-        x0uv=b[0]+(b[2]-b[0])*(.77+digit*.042)
-        x1uv=b[0]+(b[2]-b[0])*(.802+digit*.042)
-        ring_surface(key,rows,8,(x0uv,b[1]+.045*(b[3]-b[1]),
-                                   x1uv,b[3]-.065*(b[3]-b[1])),
-                     'horizontal',side<0)
-def legs(side):
-    key='leftLeg' if side<0 else 'rightLeg'
-    x=side*.315
-    controls=[
-        [x,2.36,0,.160,.175],[x,2.25,0,.204,.208],
-        [x,2.05,0,.222,.225],[x,1.86,0,.220,.214],
-        [x,1.62,0,.177,.182],[x,1.44,0,.133,.129],
-        [x,1.32,0,.119,.121],[x,1.10,-.005,.157,.160],
-        [x,.92,-.021,.161,.161],[x,.70,-.008,.122,.128],
-        [x,.43,0,.087,.090],[x,.30,.015,.090,.098],
-        [x,.21,.13,.112,.118],[x,.16,.27,.115,.120],
-        [x,.13,.37,.106,.105],[x,.125,.46,.063,.072],
-    ]
-    # Leg skin follows ankle-to-toe sweep with one predictable longitudinal
-    # UV direction and NO procedural sawtooth boundary cuts.
-    ring_surface(key,sample_controls(controls,2),24,BOXES[key],'vertical',False)
+            out.append(mix(points[i],points[i+1],smooth(j/subdiv)))
+    out.append(list(points[-1]))
+    return out
+def vertex(xyz,uv):
+    assert len(xyz)==3 and len(uv)==2
+    P.extend(round(float(x),6) for x in xyz)
+    UV.extend(round(float(x),7) for x in uv)
+    return len(P)//3-1
+def face(name,a,b,c,d):
+    assert len({a,b,c,d})==4,('index-degenerate quad',name)
+    Q.append((name,(a,b,c,d)));QUADS[name]+=1
+def uvloc(name,u,v):
+    a,b,c,d=BOXES[name]
+    return (lerp(a,c,u),lerp(b,d,v))
+def ring(name,points,v,urange=(0.,1.)):
+    n=len(points)
+    return [vertex(points[i%n],uvloc(name,lerp(urange[0],urange[1],i/n),v))
+            for i in range(n+1)]
+def strip(name,a,b,reverse=False):
+    n=len(a)-1
+    assert len(b)==n+1
+    for i in range(n):
+        if reverse:face(name,a[i],a[i+1],b[i+1],b[i])
+        else:face(name,a[i],b[i],b[i+1],a[i+1])
+def gridloop(i0,i1,j0,j1):
+    """A rectangular hole's actual ordered perimeter, with no corner repeats."""
+    return ([(i,j0) for i in range(i0,i1)]+
+            [(i1,j) for j in range(j0,j1)]+
+            [(i,j1) for i in range(i1,i0,-1)]+
+            [(i0,j) for j in range(j1,j0,-1)])
+def boundary(nx,nz):
+    # Start on posterior midline so the body UV seam is behind the mannequin.
+    h=nx//2
+    return ([(i,0) for i in range(h,nx)]+
+            [(nx,j) for j in range(0,nz)]+
+            [(i,nz) for i in range(nx,0,-1)]+
+            [(0,j) for j in range(nz,0,-1)]+
+            [(i,0) for i in range(0,h)])
+def disk(u,v,rx,rz):
+    return (rx*u*math.sqrt(max(0.,1.-v*v/2)),
+            rz*v*math.sqrt(max(0.,1.-u*u/2)))
+def torso_geometry():
+    nx,nz=14,10
+    pelvis={}
+    for j in range(nz+1):
+        for i in range(nx+1):
+            u=(i-nx/2)/(nx/2)
+            v=(j-nz/2)/(nz/2)
+            x,z=disk(u,v,.49,.27)
+            pelvis[i,j]=(x,2.25,z)
+    outline=boundary(nx,nz)
+    assert len(outline)==48
+    start=[pelvis[p] for p in outline]
+    angles=[math.atan2(z,x) for x,y,z in start]
+    body=controls([
+      [2.25,.49,.27],[2.43,.424,.252],[2.65,.343,.215],
+      [2.94,.287,.200],[3.21,.337,.226],[3.44,.432,.256],
+      [3.62,.472,.246],[3.77,.403,.220],[3.91,.176,.151],
+      [4.08,.127,.117],[4.16,.119,.110]
+    ],3)
+    tr=[]
+    for k,(y,rx,rz) in enumerate(body):
+        points=(start if k==0 else
+                [(rx*math.cos(t),y,rz*math.sin(t)) for t in angles])
+        tr.append(ring('torso',points,.095+.355*k/(len(body)-1)))
+    # 12 x 6 quad sockets: exactly 36 surrounding edges, not intersecting
+    # cylindrical image seams. Shoulders are true extrusions from the body.
+    sockets={'rightArm':(6,18,16,22),'leftArm':(30,42,16,22)}
+    for k in range(len(tr)-1):
+        for n in range(48):
+            hidden=any(a<=n<b and lo<=k<hi for a,b,lo,hi in sockets.values())
+            if not hidden:face('torso',tr[k][n],tr[k+1][n],
+                               tr[k+1][n+1],tr[k][n+1])
+    shoulder={}
+    for key,(a,b,lo,hi) in sockets.items():
+        outline=gridloop(a,b,lo,hi)
+        shoulder[key]=[tuple(P[3*tr[k][n]:3*tr[k][n]+3])
+                       for n,k in outline]
+        assert len(shoulder[key])==36
+    # Bottom pelvis patch shares exact 3D positions with the body tube,
+    # with two real 4 x 6 quad holes feeding the legs.
+    openings={'leftLeg':(2,6,2,8),'rightLeg':(8,12,2,8)}
+    idx={}
+    b=BOXES['torso']
+    for (i,j),p in pelvis.items():
+        idx[i,j]=vertex(p,(lerp(b[0],b[2],.02+.96*i/nx),
+                          lerp(b[1],b[3],.01+.06*j/nz)))
+    for j in range(nz):
+        for i in range(nx):
+            hidden=any(x0<=i<x1 and y0<=j<y1
+                       for x0,x1,y0,y1 in openings.values())
+            if not hidden:face('torso',idx[i,j],idx[i+1,j],
+                               idx[i+1,j+1],idx[i,j+1])
+    hips={}
+    for key,(a,b,c,d) in openings.items():
+        hips[key]=[pelvis[p] for p in gridloop(a,b,c,d)]
+        assert len(hips[key])==20
+    return tr[-1],shoulder,hips
+
+def cranial_surface(neck):
+    bottom=[tuple(P[3*i:3*i+3]) for i in neck[:-1]]
+    profile=controls([
+      [4.16,.119,.110],[4.225,.158,.141],
+      [4.315,.231,.202],[4.42,.257,.231],
+      [4.56,.233,.213],[4.685,.151,.140],
+      [4.75,.054,.049]
+    ],3)
+    angles=[math.atan2(z,x) for x,y,z in bottom]
+    rings=[]
+    for k,(y,rx,rz) in enumerate(profile):
+        p=(bottom if k==0 else [(rx*math.cos(t),y,rz*math.sin(t))
+                                for t in angles])
+        rings.append(ring('head',p,.025+.91*k/(len(profile)-1)))
+        if k:strip('head',rings[k-1],rings[k])
+    close_tip('head',rings[-1],(0,4.768,0),.98)
+
+def close_tip(name,rim,xyz,v=.04,urange=(0.,1.)):
+    n=len(rim)-1
+    assert n%2==0
+    center=vertex(xyz,uvloc(name,lerp(*urange,.5),v))
+    for i in range(0,n,2):
+        face(name,rim[i],rim[i+1],rim[i+2],center)
+
+def capgrid(name,nx,nz,position,rect,holes):
+    """Quadrangulated end of a tube with true openings for outgoing digits."""
+    a,b,c,d=rect
+    indices={}
+    for j in range(nz+1):
+        for i in range(nx+1):
+            xyz=position(i,j)
+            indices[i,j]=vertex(xyz,uvloc(name,lerp(a,c,i/nx),
+                                          lerp(b,d,j/nz)))
+    for j in range(nz):
+        for i in range(nx):
+            hidden=any(x0<=i<x1 and y0<=j<y1
+                       for x0,x1,y0,y1 in holes.values())
+            if not hidden:face(name,indices[i,j],indices[i+1,j],
+                               indices[i+1,j+1],indices[i,j+1])
+    per=boundary(nx,nz)
+    assert len(per)==2*(nx+nz)
+    return ([position(*p) for p in per],
+            {key:[position(*p) for p in gridloop(*spec)]
+             for key,spec in holes.items()})
+
+def hand_and_arm(side,key,socket):
+    arm_box=BOXES[key]
+    cx=3.65
+    # Hand cap has four independent finger apertures and one thumb aperture.
+    holes={str(i):(1+2*i,2+2*i,4,7) for i in range(4)}
+    holes['thumb']=(7,9,1,2)
+    def handpos(i,j):
+        u=(i-5)/5;v=(j-4)/4
+        z,y=disk(u,v,.137,.089)
+        return (side*2.337,cx+y,z)
+    endloop,digits=capgrid(key,10,8,handpos,(.672,.045,.822,.95),holes)
+    assert len(endloop)==36
+    source_angles=[math.atan2(p[2],p[1]-cx) for p in socket]
+    # Smooth shoulder/biceps/elbow/forearm transition, preserving 36 quad
+    # longitudinal loops. Do not create a separate floating shoulder sphere.
+    armprofile=controls([
+      [.60,.200,.194],[.78,.198,.185],[.99,.167,.157],
+      [1.25,.121,.117],[1.39,.108,.102],[1.59,.140,.134],
+      [1.79,.122,.115],[2.00,.088,.088],[2.16,.078,.101],
+      [2.26,.075,.121]
+    ],2)
+    rings=[ring(key,socket,.94,(.01,.654))]
+    for k,(x,ry,rz) in enumerate(armprofile):
+        points=[(side*x,cx+ry*math.cos(t),rz*math.sin(t))
+                for t in source_angles]
+        rings.append(ring(key,points,.94-(k+1)*.87/(len(armprofile)+1),
+                          (.01,.654)))
+        strip(key,rings[-2],rings[-1])
+    terminal=ring(key,endloop,.055,(.01,.654))
+    strip(key,rings[-1],terminal)
+    # Separate cap vertices are exact coincident positions: physically
+    # welded by construction, UV boundaries remain properly distinct.
+    for digit,perimeter in digits.items():
+        thumb=(digit=='thumb')
+        index=4 if thumb else int(digit)
+        center=[sum(p[d] for p in perimeter)/len(perimeter)
+                for d in range(3)]
+        n=len(perimeter)
+        center_y=center[1];center_z=center[2]
+        angle=[math.atan2(p[2]-center_z,p[1]-center_y)
+               for p in perimeter]
+        strip_u=(.834+.032*index,.861+.032*index)
+        digit_rings=[ring(key,perimeter,.91,strip_u)]
+        length=(.153 if thumb else (.174,.216,.212,.175)[index])
+        for k in range(1,7):
+            t=k/6
+            rad_y=.032*(1-.68*t)
+            rad_z=.026*(1-.63*t)
+            p=[(side*(2.337+length*t),
+                center_y-(.056*t if thumb else 0)+rad_y*math.cos(a),
+                center_z+(.084*t if thumb else 0)+rad_z*math.sin(a))
+                for a in angle]
+            digit_rings.append(ring(key,p,.91-.81*t,strip_u))
+            strip(key,digit_rings[-2],digit_rings[-1])
+        final=(side*(2.337+length+.012),
+               center_y-(.061 if thumb else 0),
+               center_z+(.09 if thumb else 0))
+        close_tip(key,digit_rings[-1],final,.055,strip_u)
+
+def leg(side,key,opening):
+    center=[sum(p[d] for p in opening)/len(opening)
+            for d in range(3)]
+    theta=[math.atan2(p[2]-center[2],p[0]-center[0])
+           for p in opening]
+    line=controls([
+      [side*.284,2.18,0,.181,.188],
+      [side*.298,2.05,0,.214,.215],
+      [side*.316,1.84,0,.225,.218],
+      [side*.325,1.62,0,.177,.183],
+      [side*.325,1.42,0,.126,.132],
+      [side*.325,1.31,0,.116,.120],
+      [side*.327,1.12,-.012,.150,.159],
+      [side*.327,.91,-.020,.158,.163],
+      [side*.326,.71,-.004,.120,.128],
+      [side*.326,.43,0,.086,.093],
+      [side*.326,.29,.015,.089,.097],
+      [side*.326,.205,.13,.105,.119],
+      [side*.326,.151,.285,.115,.115],
+      [side*.326,.130,.425,.068,.072],
+      [side*.326,.128,.471,.035,.040]
+    ],2)
+    rings=[ring(key,opening,.955)]
+    for k,(x,y,z,rx,rz) in enumerate(line):
+        last=line[max(0,k-1)];following=line[min(len(line)-1,k+1)]
+        ty=following[1]-last[1];tz=following[2]-last[2]
+        length=math.hypot(ty,tz) or 1
+        by=tz/length;bz=-ty/length
+        p=[(x+rx*math.cos(a),y+rz*math.sin(a)*by,
+            z+rz*math.sin(a)*bz) for a in theta]
+        rings.append(ring(key,p,.955-(k+1)*.875/(len(line)+1)))
+        strip(key,rings[-2],rings[-1],reverse=True)
+    close_tip(key,rings[-1],(side*.326,.125,.513),.055)
+
+def assemble():
+    end,shoulders,hips=torso_geometry()
+    cranial_surface(end)
+    hand_and_arm(-1,'leftArm',shoulders['leftArm'])
+    hand_and_arm(1,'rightArm',shoulders['rightArm'])
+    leg(-1,'leftLeg',hips['leftLeg'])
+    leg(1,'rightLeg',hips['rightLeg'])
+
+def audit_and_orient():
+    """UV seams can duplicate vertices, but the 3D surface has no open edges."""
+    positions=[tuple(P[i:i+3]) for i in range(0,len(P),3)]
+    weld={}
+    geometry=[]
+    for p in positions:
+        if p not in weld:weld[p]=len(weld)
+        geometry.append(weld[p])
+    edge_faces=defaultdict(list)
+    for fi,(group,face_ids) in enumerate(Q):
+        physical=[geometry[n] for n in face_ids]
+        if len(set(physical))!=4:
+            raise ValueError(('Degenerate quad in welded 3D geometry',group,fi))
+        for k in range(4):
+            a=physical[k];b=physical[(k+1)%4]
+            edge_faces[tuple(sorted((a,b)))].append((fi,a,b))
+    boundary=[(edge,len(inc)) for edge,inc in edge_faces.items() if len(inc)!=2]
+    if boundary:raise ValueError('Non-manifold/open 3D edges: '+repr(boundary[:12])+
+                                  ' count='+str(len(boundary)))
+    adj=defaultdict(list)
+    for records in edge_faces.values():
+        (i,a,b),(j,c,d)=records
+        # Shared physical edges must be traversed in opposite directions.
+        same=(a==c and b==d)
+        adj[i].append((j,int(same)))
+        adj[j].append((i,int(same)))
+    flips={0:0};todo=deque([0])
+    while todo:
+        i=todo.popleft()
+        for j,parity in adj[i]:
+            wanted=flips[i]^parity
+            if j in flips:
+                if flips[j]!=wanted:raise ValueError('Non-orientable quad junction')
+            else:flips[j]=wanted;todo.append(j)
+    if len(flips)!=len(Q):
+        raise ValueError('Disconnected 3D surface components: '+str(len(Q)-len(flips)))
+    triangles=[]
+    for fi,(name,quad_ids) in enumerate(Q):
+        a,b,c,d=quad_ids
+        if flips[fi]:a,b,c,d=a,d,c,b
+        triangles.append((name,(a,b,c)))
+        triangles.append((name,(a,c,d)))
+    volume=0.
+    for name,(a,b,c) in triangles:
+        A=positions[a];B=positions[b];C=positions[c]
+        volume+=(A[0]*(B[1]*C[2]-B[2]*C[1])+
+                 A[1]*(B[2]*C[0]-B[0]*C[2])+
+                 A[2]*(B[0]*C[1]-B[1]*C[0]))/6.
+    if abs(volume)<.1:raise ValueError('Degenerate welded volume '+str(volume))
+    if volume<0:
+        triangles=[(name,(a,c,b)) for name,(a,b,c) in triangles]
+    for name,t in triangles:
+        F.extend(t);GROUP.append(name)
+    report={'weldedVertices':len(weld),'weldedEdges':len(edge_faces),
+            'openEdges':0,'nonManifoldEdges':0,'connectedComponents':1,
+            'watertight':True,'oriented':True,'signedVolume':round(abs(volume),5)}
+    return report
+
 def texture():
-    s=1024
-    img=Image.new('RGB',(s,s),(20,28,38))
-    d=ImageDraw.Draw(img)
+    s=1024;im=Image.new('RGB',(s,s),(18,26,36));d=ImageDraw.Draw(im)
     for name,(u0,v0,u1,v1) in BOXES.items():
-        l=int(u0*s);r=int(u1*s);top=int((1-v1)*s);bottom=int((1-v0)*s)
-        base=PALETTE[name]
-        d.rectangle((l,top,r,bottom),fill=base)
-        # Regular twenty-cell grid is intentional distortion diagnostic. No
-        # text or UV wireframe is baked into the model's material.
+        l=int(u0*s);r=int(u1*s);top=int((1-v1)*s);bot=int((1-v0)*s)
+        color=PALETTE[name]
+        d.rectangle((l,top,r,bot),fill=color)
         for i in range(1,20):
-            x=round(l+(r-l)*i/20)
-            d.line((x,top,x,bottom),fill=tuple(max(0,c-19) for c in base),width=1)
+            x=round(lerp(l,r,i/20))
+            d.line((x,top,x,bot),fill=tuple(max(0,c-22) for c in color),width=1)
         for i in range(1,22):
-            y=round(top+(bottom-top)*i/22)
-            d.line((l,y,r,y),fill=tuple(max(0,c-18) for c in base),width=1)
-        d.rectangle((l,top,r,bottom),outline=(55,207,222),width=3)
+            y=round(lerp(top,bot,i/22))
+            d.line((l,y,r,y),fill=tuple(max(0,c-21) for c in color),width=1)
+        d.rectangle((l,top,r,bot),outline=(55,207,222),width=3)
     ATLAS.parent.mkdir(parents=True,exist_ok=True)
-    img.save(ATLAS,optimize=True)
+    im.save(ATLAS,optimize=True)
     return ATLAS.read_bytes()
 def guide():
-    s=2048
-    im=Image.new('RGB',(s,s),(15,23,36));draw=ImageDraw.Draw(im)
-    pal={'head':(239,95,95),'torso':(87,155,243),
-         'leftArm':(64,197,115),'rightArm':(231,184,63),
-         'leftLeg':(168,110,231),'rightLeg':(244,125,76)}
-    for t in range(0,len(F),3):
-        inds=F[t:t+3]
-        pts=[(round(UV[i*2]*s),round((1-UV[i*2+1])*s)) for i in inds]
-        draw.line(pts+[pts[0]],fill=pal[GROUP[t//3]],width=1)
+    size=2048;im=Image.new('RGB',(size,size),(15,23,36));d=ImageDraw.Draw(im)
+    colors={'head':(239,95,95),'torso':(87,155,243),
+     'leftArm':(64,197,115),'rightArm':(231,184,63),
+     'leftLeg':(168,110,231),'rightLeg':(244,125,76)}
+    for k in range(0,len(F),3):
+        points=[(round(UV[F[k+i]*2]*size),
+                 round((1-UV[F[k+i]*2+1])*size)) for i in range(3)]
+        d.line(points+[points[0]],fill=colors[GROUP[k//3]],width=1)
     GUIDE.parent.mkdir(parents=True,exist_ok=True)
     im.save(GUIDE,optimize=True)
 def main():
-    head();torso();arms(-1);arms(1);legs(-1);legs(1)
-    assert len(P)//3<9000 and len(F)//3<16000
-    assert len(UV)==len(P)//3*2 and all(0<=v<=1 for v in UV)
+    assemble()
+    assert len(P)//3<=9000 and len(F)==0
+    assert len(Q)*2<=16000
+    assert len(UV)==len(P)//3*2 and all(0<=x<=1 for x in UV)
+    audit=audit_and_orient()
     assert all(0<=i<len(P)//3 for i in F)
     assert len(QUADS)==6
-    # UV edges are predictable rectangular ring coordinates, with no
-    # image-derived sawtooth or variable triangle density in UV space.
-    blob=texture();guide()
+    paint=texture();guide()
     scene=json.loads(BASE.read_text('utf8'))
-    project=scene['project']
-    project['name']='Clean Topology Humanoid · UV-First'
-    project['canonicalId']='clean-topology-humanoid'
-    project['template']='clean-topology-humanoid'
+    project=scene['project'];project['name']='Clean Topology Humanoid · UV-First'
+    project['canonicalId']=project['template']='clean-topology-humanoid'
     atelier=project['modelAtelier']
-    atelier['name']='Clean Topology Humanoid · Quad-Loop Sculpt Base'
+    atelier['name']='Clean Topology Humanoid · Welded Quad-Loop Sculpt Base'
     atelier['reference']=(
-        'Experimental UV-first T-pose humanoid. Quad-indexed contour rings define '
-        'an ellipsoid head, torso, two arms, five digits per hand and two legs '
-        'with curved feet. Original UV seam locations remain stable when '
-        'sculpting vertices. Separate surface components at anatomical junctions '
-        'are intentional; this is not a single welded manifold and is unrigged. '
-        'Neutral checker diagnostic skin reveals stretching; replace it freely.')
+      'UV-first sculptable T-pose humanoid with one welded watertight quad '
+      'surface. Procedural shoulders, neck, crotch, fingers, thumb, crown '
+      'and toes are topologically connected. The original 3D surface stays '
+      'connected while intentional UV seams use six paintable regions. '
+      'Regular checker skin diagnoses stretching. Unrigged test starter.')
     part=atelier['parts'][0]
     part.update(id='clean-topology-humanoid-base',
-        name='Clean Topology Humanoid · uniform quad-loop UV mesh',
-        group='Humanoid · UV-first',kind='topologyMesh',
-        color='#b0c3d0',material='matte',
-        topologyMesh={'positions':P,'uvs':UV,'indices':F},
-        uvPaintPNG='data:image/png;base64,'+base64.b64encode(blob).decode('ascii'))
+      name='Clean Topology Humanoid · connected quad-loop UV mesh',
+      group='Humanoid · UV-first',kind='topologyMesh',
+      color='#b0c3d0',material='matte',
+      topologyMesh={'positions':P,'uvs':UV,'indices':F},
+      uvPaintPNG='data:image/png;base64,'+base64.b64encode(paint).decode('ascii'))
     scene['version']=11.554
-    scene['engine']='§wyrl§ Engine · Maker v11.552 / UV-First Starter v11.554'
+    scene['engine']='§wyrl§ Engine · Maker v11.552 / UV-First Starter revision'
     OUTPUT.write_text(json.dumps(scene,separators=(',',':'),ensure_ascii=False),'utf8')
-    report={'version':'v11.554','vertices':len(P)//3,'triangles':len(F)//3,
-            'quads':dict(QUADS),'components':6+10,
-            'uvBoxes':BOXES,'textureSize':1024,'guideSize':2048,
-            'originalRobotPreserved':True,'quadFirst':True}
+    report={'version':'v11.554','revision':'welded-quad-loop-v2',
+      'vertices':len(P)//3,'triangles':len(F)//3,
+      'quads':dict(QUADS),'components':1,
+      'uvBoxes':BOXES,'textureSize':1024,'guideSize':2048,
+      'originalRobotPreserved':True,'quadFirst':True,
+      'topologyAudit':audit}
     REPORT.parent.mkdir(parents=True,exist_ok=True)
     REPORT.write_text(json.dumps(report,indent=2)+'\n','utf8')
-    print('SE554_UV_FIRST_AUTHOR_PASS',json.dumps(report),flush=True)
+    print('SE554_UV_FIRST_WELDED_AUTHOR_PASS',json.dumps(report),flush=True)
 if __name__=='__main__':main()
