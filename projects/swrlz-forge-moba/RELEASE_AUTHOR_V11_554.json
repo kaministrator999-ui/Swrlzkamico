@@ -1,0 +1,13 @@
+{
+  "schema": "swrlz-clean-topology-author-v1",
+  "goal": "New and separate UV-first sculptable quad-loop humanoid in native §E Starter Models",
+  "source": "authoring/build_clean_topology_humanoid_v11_554.py",
+  "mode": "do-not-change-existing-robot",
+  "verification": [
+    "native quad topology",
+    "UV rectangles",
+    "texture/guide registration",
+    "runtime loader syntax"
+  ],
+  "request": "2026-11-24-clean-topology-initial"
+}
