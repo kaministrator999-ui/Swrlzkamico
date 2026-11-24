@@ -282,12 +282,22 @@ def main(mode):
                 r"Failed to (?:start|load|import)[^\\n]{0,80}"
             )
             findings=[]
+            stackfiles=[]
+            exception_classes=[]
             for row in islice(fetch_space_logs(SPACE,token=token,follow=False),700):
+                value=str(row)
+                for filename,line in re.findall(r'File ["\\x27]([^"\\x27]+)["\\x27], line (\\d+)',value):
+                    item=(filename.split("/")[-1],line)
+                    if item not in stackfiles: stackfiles.append(item)
+                for match in re.findall(r'\\b(?:ModuleNotFoundError|ImportError|SyntaxError|RuntimeError|TypeError|ValueError|NameError|OSError|AttributeError|PermissionError|FileNotFoundError)\\b',value):
+                    if match not in exception_classes: exception_classes.append(match)
                 for expression in patterns:
                     for match in re.findall(expression,str(row),flags=re.I):
                         if len(findings)<35 and match not in findings:
                             findings.append(match)
             print("SPACE_RUNTIME_DIAGNOSTIC_MARKERS",findings,flush=True)
+            print("SPACE_RUNTIME_TRACE_PATHS",stackfiles[-25:],flush=True)
+            print("SPACE_RUNTIME_EXCEPTION_TYPES",exception_classes,flush=True)
         except Exception as exc:
             print("SPACE_RUNTIME_LOG_READ_UNAVAILABLE",type(exc).__name__,flush=True)
         runtime=api.get_space_runtime(SPACE)
