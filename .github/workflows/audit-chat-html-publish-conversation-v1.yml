@@ -25,12 +25,13 @@ jobs:
           rev=api.repo_info('kamiloki/Swyrlz',repo_type='space').sha
           print('AUDIT_HF_REV',rev)
           for path,ranges in (
-              ('station.py',[(1015,1070),(1615,1705),(2010,2175),(2380,2445),(2445,2520)]),
+              ('station.py',[(1880,2010),(2015,2085),(2260,2350)]),
+              ('chat/§wyrlz/index.html',[(1,80)]),
               ('github_conversation_actions_v264.py',[(10,90),(150,245),(415,455),(645,735)]),
           ):
               lines=Path(hf_hub_download('kamiloki/Swyrlz',path,repo_type='space',revision=rev,token=api.token)).read_text().splitlines()
               print('AUDIT_FILE',path,len(lines))
-              for lo,hi in ranges:
+              if path.endswith('.html'):\n                  hits=[i for i,line in enumerate(lines,1) if any(t in line for t in ('scrollTo(', 'scrollTop=', 'scrollTop =', 'scrollIntoView', 'renderWidget', 'renderMessage', 'widget.kind', 'Jump to latest', 'messageList.scroll'))]\n                  ranges=[(max(1,n-3),min(len(lines),n+5)) for n in hits[:100]]\n              for lo,hi in ranges:
                   print('AUDIT_RANGE',path,lo,hi)
                   for n in range(lo,min(hi,len(lines))+1):
                       print(f'{n:05d} {lines[n-1][:250]}')
