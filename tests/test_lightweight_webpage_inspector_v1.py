@@ -58,6 +58,18 @@ class InspectionTests(unittest.TestCase):
         self.assertTrue(res["deployedBytesMatch"])
         self.assertFalse(res["functionalVerified"])
 
+    def test_local_es_module_classification(self):
+        files={"index.html":'<script type="module" src="./app.js"></script>',
+               "app.js":'import {value} from "./helper.js"; console.log(value);',
+               "helper.js":'export const value=42;'}
+        report=inspect_files(files)
+        self.assertTrue(report["staticPass"])
+        modes={item["file"]:item["type"] for item in report["scripts"]}
+        self.assertEqual(modes["app.js"],"module")
+        self.assertEqual(modes["helper.js"],"module")
+    def test_data_script_not_mistaken_for_allowed_inline_script(self):
+        report=inspect_files({"index.html":'<script src="data:text/javascript,alert(1)"></script>'})
+        self.assertIn("CSP_EMBEDDED_EXECUTABLE_ASSET",{x["code"] for x in report["issues"]})
     def test_redirects_rejected(self):
         from api.lightweight_webpage_inspector_v1 import _NoRedirect
         with self.assertRaises(ValueError):
