@@ -29,8 +29,8 @@ import build_humanoid_semantic_material_v11_544 as bakery
 assert SOURCE.exists()
 
 REGIONS=['head','chest','back','leftArm','rightArm','leftLeg','rightLeg']
-PALETTE=[(232,167,239),(79,203,234),(150,157,246),
-         (253,210,104),(241,143,90),(139,226,154),(75,186,124)]
+PALETTE=[(239,68,68),(59,130,246),(59,130,246),
+         (34,197,94),(234,179,8),(168,85,247),(249,115,22)]
 RECT={
  'head':(.008,.015,.245,.475),
  'chest':(.252,.015,.610,.475),
@@ -359,7 +359,7 @@ def normals(pos,faces):
 def export_guides(uv,faces,region_names):
     s=4096;xy=np.rint(np.column_stack((uv[:,0],1-uv[:,1]))*(s-1)).astype(np.int32)
     colors=dict(zip(REGIONS,PALETTE))
-    colors['torso']=(103,178,221)  # six-region native vertex-budget fallback
+    colors['torso']=(59,130,246)  # same blue as app's region 2
     for p,anatomical in ((GUIDE,False),(ANATOMY,True)):
         canvas=Image.new('RGB',(s,s),(19,31,48))
         painter=ImageDraw.Draw(canvas)
