@@ -1,6 +1,6 @@
 {
   "schema": "swrlz-clean-topology-author-v1",
-  "goal": "Professional anatomy-first UV workflow: Catmull-Rom smooth skull/hip/shoulder model then real xatlas conformal unwrap and packed paintable islands; connect native editor with seam tools.",
+  "goal": "Conformal LSCM relaxation on actual 3D anatomy with deliberate UV seams, xatlas chart packing and usable UV Editor controls; preserve finished robot",
   "source": "authoring/build_clean_topology_humanoid_v11_554.py",
   "mode": "do-not-change-existing-robot",
   "verification": [
@@ -11,7 +11,11 @@
     "independent manifold and distortion tests",
     "label-free paint layer and anatomical UV guide",
     "original completed robot untouched",
-    "reject xatlas chart explosion; attempt geometry-only chart growth before forced anatomical boundaries"
+    "reject xatlas chart explosion; attempt geometry-only chart growth before forced anatomical boundaries",
+    "pinned LSCM Cauchy-Riemann sparse solve per anatomical UV chart",
+    "xatlas pack preserves chart seams and 70-chart maximum",
+    "independent LSCM planar and seam tests",
+    "real source model and public assets verified after deploy"
   ],
-  "request": "2026-11-24-real-xatlas-geometry-first-chart-control-v4b"
+  "request": "2026-11-24-true-seam-LSCM-plus-xatlas-pack-v4c"
 }
