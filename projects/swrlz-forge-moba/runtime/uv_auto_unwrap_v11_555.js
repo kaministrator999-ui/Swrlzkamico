@@ -41,10 +41,7 @@ async function se555Imports(){
  if(!se555Modules){
   const base=new URL('assets/uv-unwrapper/',document.baseURI).href;
   se555Modules=import(base+'uv_atlas_core_v11_555.mjs')
-   .then(core=>({core,createXAtlas:async()=>{
-     const wasm=await import(base+'index.mjs');
-     return wasm.default();
-   }}));
+   .then(core=>({core,createXAtlas:null}));
  }
  return se555Modules;
 }
