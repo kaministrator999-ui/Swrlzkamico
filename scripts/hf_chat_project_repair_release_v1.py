@@ -10,6 +10,7 @@ import ast
 import hashlib
 import io
 import os
+import re
 import time
 import urllib.request
 from pathlib import Path
@@ -29,8 +30,7 @@ SROOT = "ROOT=Path(__file__).resolve().parent"
 SROUTE = "        elif _swrlz_execution_continuity.read_only(payload):"
 SCOMMAND = "    elif _swrlz_explicit_html_publish_command(prompt):"
 SCTX = "    elif (html_project_ref := _swrlz_project_context.resolve(prompt,t)):"
-UOLD = "html-project-publish-review-v1.js?v=1"
-UNEW = "html-project-publish-review-v1.js?v=2"
+UNEW = "html-project-publish-review-v1.js?v=repair2"
 
 ACTION_WRAPPER = r'''
 
@@ -162,7 +162,12 @@ def patch(before):
     out[STATION] = patch_station(before[STATION])
     out[ACTIONS] = patch_actions(before[ACTIONS])
     out[UI] = patch_ui(before[UI])
-    out[HTML] = one(before[HTML], UOLD, UNEW, "html_ui_asset_cache")
+    pattern = r"html-project-publish-review-v1\.js(?:\?v=[A-Za-z0-9_.-]+)?"
+    matches = list(re.finditer(pattern, before[HTML]))
+    if len(matches) != 1:
+        snippets = [before[HTML][max(0,m.start()-45):m.end()+50] for m in re.finditer("html-project-publish-review", before[HTML])][:5]
+        raise RuntimeError("LIVE_HTML_ASSET_DRIFT_" + str(len(matches)) + "_" + repr(snippets))
+    out[HTML] = before[HTML][:matches[0].start()] + UNEW + before[HTML][matches[0].end():]
     return out
 
 
