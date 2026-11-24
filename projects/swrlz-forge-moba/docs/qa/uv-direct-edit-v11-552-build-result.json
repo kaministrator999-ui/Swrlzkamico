@@ -68,9 +68,9 @@
     "  File \"/home/runner/work/Swrlzkamico/Swrlzkamico/projects/swrlz-forge-moba/scripts/seal_uv_texture_alignment_v11_552.py\", line 18, in <module>",
     "    html=load_patch(ROOT/p)(html)",
     "         ^^^^^^^^^^^^^^^^^^^^^^^^",
-    "  File \"/home/runner/work/Swrlzkamico/Swrlzkamico/projects/swrlz-forge-moba/patches/v11_504_smooth_witch_hat.py\", line 21, in apply",
-    "    assert prior == PREVIOUS_SHA256, ('se504 source chain', prior)",
-    "           ^^^^^^^^^^^^^^^^^^^^^^^^",
-    "AssertionError: ('se504 source chain', '1843a45824ef6daee5a311770ca68e94dd4cbccbe8c69b5707ff80e98f6cf77d')"
+    "  File \"/home/runner/work/Swrlzkamico/Swrlzkamico/projects/swrlz-forge-moba/patches/v11_505_action_prerequisites.py\", line 12, in apply",
+    "    assert hashlib.sha256(html.encode('utf8')).hexdigest()==PREVIOUS_SHA256,'v11.504 source changed'",
+    "           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^",
+    "AssertionError: v11.504 source changed"
   ]
 }
