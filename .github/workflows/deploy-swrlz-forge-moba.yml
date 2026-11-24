@@ -93,7 +93,7 @@ jobs:
           print("SE510_PUBLIC_BROWSER_DELIVERY_OK",flush=True)
           PY
 
-      - name: Verify published UV assets match the checked-out geometry and atlas
+      - name: Verify both humanoid starters and UV guides match the GitHub assets
         run: |
           python - <<'PY'
           from pathlib import Path
@@ -106,6 +106,9 @@ jobs:
               "assets/models/futuristic-humanoid-v11-546-anatomical-robot.png",
               "assets/models/futuristic-humanoid-v11-546-uv-guide-4096.png",
               "assets/models/futuristic-humanoid-v11-546-anatomy-4096.png",
+              "scenes/model-atelier-clean-topology-humanoid-v11-554.swyrl.json",
+              "assets/models/clean-topology-humanoid-v11-554-uv-test.png",
+              "assets/models/clean-topology-humanoid-v11-554-uv-guide-2048.png",
           )
           for rel in files:
               expected=hashlib.sha256((root/rel).read_bytes()).hexdigest()
