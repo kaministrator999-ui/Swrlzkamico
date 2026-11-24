@@ -327,6 +327,24 @@ def anatomical_limb_projection(pos,faces,name):
         raise ValueError('Projection split the original '+name+' topology')
     return outpos,outfaces,outuv,1
 
+def contour_width(pos,uv,name,strength):
+    """Smooth axial cross-section envelope, preserving physical UV units."""
+    q=uv.copy()
+    axis=np.abs(pos[:,0]) if name.endswith('Arm') else pos[:,1]
+    cross=pos[:,1] if name.endswith('Arm') else pos[:,0]
+    t=(axis-axis.min())/max(float(np.ptp(axis)),1e-8)
+    grid=np.linspace(0,1,33)
+    widths=[]
+    for v in grid:
+        mask=np.abs(t-v)<.055
+        if mask.sum()<12: mask=np.argsort(np.abs(t-v))[:12]
+        widths.append(np.hypot(np.ptp(cross[mask]),np.ptp(pos[mask,2])))
+    widths=np.convolve(np.pad(widths,(2,2),mode='edge'),[1/9,2/9,3/9,2/9,1/9],mode='valid')
+    profile=np.clip(widths/max(widths.max(),1e-8),.45,1.)
+    center=(q[:,0].min()+q[:,0].max())*.5
+    q[:,0]=center+(q[:,0]-center)*(1-strength+strength*np.interp(t,grid,profile))
+    return q
+
 def make_atlas(positions,triangles,mode):
     labels=zone_ids(positions,triangles,mode)
     parts=[];faces_out=[];uv_out=[];group_names=[];charts=0;count=0
@@ -350,8 +368,10 @@ def make_atlas(positions,triangles,mode):
         candidates=[]
         for strength in (1.,.85,.7,.55,.4,.25,.1,0.):
             q=(anatomical_silhouette(p,uv,name,strength)
-               if name in ('head','torso','chest','back') else uv.copy())
-            # Limb UVs are defined in physical coordinates; preserve their geometry.
+               if name in ('head','torso','chest','back') else contour_width(p,uv,name,strength))
+            # Preserve limb length and choose measured cross-section taper.
+            if name=='head': q[:,0]*=.60
+            if name=='torso': q[:,0]*=.85
             fitted=fit(q,RECT[name],lock_orientation=True)
             m=measure_surface_uv_conflicts(p,fitted,f,[name]*len(f))
             candidates.append((strength,q,m))
