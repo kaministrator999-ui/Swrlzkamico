@@ -103,7 +103,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add "html-projects/$PROJECT/index.html" "html-projects/$PROJECT/viewer.bundle.js"
-          git diff --cached --check
+          git -c core.whitespace=-blank-at-eol diff --cached --check
           git diff --cached --quiet && { echo "No changes to propose"; exit 1; }
           git commit -m "fix(html): bundle pinned Three.js without rewriting $PROJECT"
           test "$(git ls-remote origin refs/heads/main | cut -f1)" = "$SOURCE_SHA"
