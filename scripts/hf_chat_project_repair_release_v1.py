@@ -1,354 +1,251 @@
 #!/usr/bin/env python3
-"""Scoped CAS release: route existing project repair to owner-approved PR builder.
+"""CAS-scoped §C existing HTML repair backend release.
 
-Updates only live Station, existing GitHub action wrapper, existing project
-resolver/UI, and one isolated helper. No model, decoder, security or §E changes.
+Only production Station routing, owner action handler, and isolated repair helper.
+No cached browser HTML/JS changes, model changes, project writes or deployment.
 """
 from __future__ import annotations
 import argparse
 import ast
 import hashlib
 import io
+import json
 import os
-import re
 import time
 import urllib.request
 from pathlib import Path
 
-SPACE = "kamiloki/Swyrlz"
-BASE = "https://kamiloki-swyrlz.hf.space"
-STATION = "station.py"
-ACTIONS = "github_conversation_actions_v264.py"
-HELPER = "html_project_repair_v1.py"
-UI = "chat/§wyrlz/assets/html-project-publish-review-v1.js"
-HTML = "chat/§wyrlz/index.html"
-EXISTING = (STATION, ACTIONS, UI, HTML)
-SOURCE = Path("api/html_project_repair_v1.py")
-SMARK = "swrlz-existing-project-repair-routing-v1"
-AMARK = "swrlz-owner-existing-html-repair-v1"
-SROOT = "ROOT=Path(__file__).resolve().parent"
-SROUTE = "        elif _swrlz_execution_continuity.read_only(payload):"
-SCOMMAND = "    elif _swrlz_explicit_html_publish_command(prompt):"
-SCTX = "    elif (html_project_ref := _swrlz_project_context.resolve(prompt,t)):"
-UNEW = "html-project-publish-review-v1.js?v=repair2"
+SPACE="kamiloki/Swyrlz"
+BASE="https://kamiloki-swyrlz.hf.space"
+STATION="station.py"
+ACTIONS="github_conversation_actions_v264.py"
+HELPER="html_project_repair_v1.py"
+SOURCE=Path("api/html_project_repair_v1.py")
+MARK="swrlz-existing-project-repair-routing-v2"
+AMARK="swrlz-owner-existing-html-repair-v2"
+SROOT="ROOT=Path(__file__).resolve().parent"
+PROJECT_CONTEXT="    elif (html_project_ref := _swrlz_project_context.resolve(prompt,t)):"
+OWNER_COMMAND="    elif _swrlz_explicit_html_publish_command(prompt):"
+READ_ONLY="        elif _swrlz_execution_continuity.read_only(payload):"
+MOUNT='app.mount("/chat/§wyrlz/assets",StaticFiles(directory=ROOT/"chat/§wyrlz/assets"),name="chat-assets")'
+HEALTH_PATH="/api/html-project-repair-v1/health"
+HEALTH_MARK="swrlz-existing-project-repair-live-v2"
+HEALTH_ROUTE=r'''
+@app.get("/api/html-project-repair-v1/health",include_in_schema=False)
+def _swrlz_existing_html_repair_health():
+    return {"schema":"swrlz-existing-project-repair-live-v2",
+            "approval":"required","mutation":"none"}
+'''
+ACTION_WRAPPER=r'''
 
-ACTION_WRAPPER = r'''
-
-# swrlz-owner-existing-html-repair-v1
+# swrlz-owner-existing-html-repair-v2
 import html_project_repair_v1 as _swrlz_owner_html_repair
-_html_repair_prev_is_action = is_file_action
-_html_repair_prev_has_pending = has_pending
-_html_repair_prev_pending_kind = pending_kind
-_html_repair_prev_expire = expire_interrupted
-_html_repair_prev_handle = handle
+_html_repair_prev_is_action=is_file_action
+_html_repair_prev_has_pending=has_pending
+_html_repair_prev_pending_kind=pending_kind
+_html_repair_prev_expire=expire_interrupted
+_html_repair_prev_handle=handle
 
-def is_file_action(prompt, context=None, history=None):
+def is_file_action(prompt,context=None,history=None):
     return (_swrlz_owner_html_repair.is_command(prompt)
-            or _html_repair_prev_is_action(prompt, context, history))
+            or _html_repair_prev_is_action(prompt,context,history))
 
-def has_pending(user_id, thread_id):
-    return (_swrlz_owner_html_repair.has_pending(user_id, thread_id)
-            or _html_repair_prev_has_pending(user_id, thread_id))
+def has_pending(user_id,thread_id):
+    return (_swrlz_owner_html_repair.has_pending(user_id,thread_id)
+            or _html_repair_prev_has_pending(user_id,thread_id))
 
-def pending_kind(user_id, thread_id):
-    if _swrlz_owner_html_repair.has_pending(user_id, thread_id):
+def pending_kind(user_id,thread_id):
+    if _swrlz_owner_html_repair.has_pending(user_id,thread_id):
         return "review-existing-html-repair"
-    return _html_repair_prev_pending_kind(user_id, thread_id)
+    return _html_repair_prev_pending_kind(user_id,thread_id)
 
-def expire_interrupted(user_id, thread_id):
-    _swrlz_owner_html_repair.expire(user_id, thread_id)
-    return _html_repair_prev_expire(user_id, thread_id)
+def expire_interrupted(user_id,thread_id):
+    _swrlz_owner_html_repair.expire(user_id,thread_id)
+    return _html_repair_prev_expire(user_id,thread_id)
 
-def handle(user_id, thread_id, prompt, context=None, history=None):
-    if _swrlz_owner_html_repair.has_pending(user_id, thread_id):
+def handle(user_id,thread_id,prompt,context=None,history=None):
+    if _swrlz_owner_html_repair.has_pending(user_id,thread_id):
         if _YES.fullmatch(prompt or "") or _NO.fullmatch(prompt or ""):
-            accepted = bool(_YES.fullmatch(prompt or ""))
+            accepted=bool(_YES.fullmatch(prompt or ""))
             try:
-                receipt = _swrlz_owner_html_repair.confirm(user_id, thread_id, accepted)
+                receipt=_swrlz_owner_html_repair.confirm(user_id,thread_id,accepted)
             except _swrlz_owner_html_repair.RepairError as exc:
-                return _out("Repair PR NOT dispatched (" + exc.code +
-                            "). No repository write or deployment verified.")
+                return _out("Repair workflow NOT dispatched ("+exc.code+
+                    "). No project mutation or deployment verified.")
             if not accepted:
-                return _out("Repair proposal rejected. No GitHub workflow dispatched.")
-            return _out("Repair approved for " + _clean_label(receipt["project"]) +
-                " at immutable source " + _clean_label(receipt["sourceSha"]) +
-                ". GitHub accepted the build-and-PR workflow dispatch. " +
-                "PR creation is NOT verified yet; inspect the workflow before merging. " +
-                "[Repair workflow](" + receipt["workflowUrl"] + "). " +
-                "No Hugging Face deployment was authorized.")
-        _swrlz_owner_html_repair.expire(user_id, thread_id)
-    match = _swrlz_owner_html_repair.COMMAND.fullmatch(prompt or "")
-    if match:
-        _html_repair_prev_expire(user_id, thread_id)
-        slug = match.group(1).lower()
+                return _out("Repair proposal rejected. No GitHub operation dispatched.")
+            return _out("Source-pinned repair build approved for "+
+                _clean_label(receipt["project"])+" at "+
+                _clean_label(receipt["sourceSha"])+". GitHub accepted "+
+                "a build-and-review-PR workflow dispatch. PR creation is not "+
+                "yet verified; [view Actions]("+receipt["workflowUrl"]+"). "+
+                "The existing project is not merged or deployed.")
+        _swrlz_owner_html_repair.expire(user_id,thread_id)
+    command=_swrlz_owner_html_repair.COMMAND.fullmatch(prompt or "")
+    if command:
+        _html_repair_prev_expire(user_id,thread_id)
+        slug=command.group(1).lower()
         try:
-            widget = _swrlz_owner_html_repair.prepare(user_id, thread_id, slug)
+            review=_swrlz_owner_html_repair.prepare(user_id,thread_id,slug)
         except _swrlz_owner_html_repair.RepairError as exc:
-            return _out("Existing project repair cannot be staged (" + exc.code +
+            return _out("Source-preserving repair cannot be staged ("+exc.code+
                 "). No generic HTML rewrite, GitHub mutation or deployment attempted.")
-        return _out("Review pinned repair proposal for " + _clean_label(slug) +
-            ". Approve to build from the existing source and open an independent " +
-            "GitHub PR. This does NOT merge the PR or publish the project. " +
-            "The approval expires in five minutes.", widget)
-    return _html_repair_prev_handle(user_id, thread_id, prompt, context, history)
+        data=review["data"]
+        return _out("Review existing project "+_clean_label(slug)+
+            " at immutable GitHub revision "+_clean_label(data["sourceSha"])+
+            ", current index blob "+_clean_label(data["indexGitBlobSha"])+
+            ". Proposed action: bundle pinned local Three.js dependencies "+
+            "using the existing module, run static checks and open a GitHub "+
+            "pull request for review. No merge or deployment. "+
+            "Reply YES to authorize this build-and-PR workflow, or NO to "+
+            "reject it, in this same chat within five minutes.")
+    return _html_repair_prev_handle(user_id,thread_id,prompt,context,history)
 '''
 
 
-def one(text, old, new, label):
-    count = text.count(old)
-    if count != 1:
-        raise RuntimeError("LIVE_SOURCE_DRIFT_"+label+"_"+str(count))
-    return text.replace(old, new, 1)
+def one(source,old,new,label):
+    if source.count(old)!=1:
+        raise RuntimeError("SOURCE_DRIFT_"+label+"_"+str(source.count(old)))
+    return source.replace(old,new,1)
 
 
-def patch_station(source):
-    if SMARK in source:
-        raise RuntimeError("REPAIR_ALREADY_INSTALLED")
-    source = one(source, SROOT,
-        "import html_project_repair_v1 as _swrlz_project_repair\n"+SROOT, "station_import")
-    source = one(source, SCTX,
+def patch_station(code):
+    if MARK in code:
+        raise RuntimeError("ROUTING_ALREADY_INSTALLED")
+    code=one(code,SROOT,"import html_project_repair_v1 as _swrlz_project_repair\n"+SROOT,"import")
+    code=one(code,PROJECT_CONTEXT,
         "    elif not _swrlz_project_repair.is_command(prompt) and (html_project_ref := _swrlz_project_context.resolve(prompt,t)):",
-        "station_explicit_repair_precedence")
-    source = one(source, SCOMMAND,
+        "owner_command_precedence")
+    code=one(code,OWNER_COMMAND,
         "    elif _swrlz_explicit_html_publish_command(prompt) or _swrlz_project_repair.is_command(prompt):",
-        "station_owner_command")
-    source = one(source, SROUTE,
+        "owner_action")
+    code=one(code,READ_ONLY,
         "        elif _swrlz_project_repair.should_route(payload):\n"
-        "            # "+SMARK+": no generated HTML for existing-project repair.\n"
-        "            event_source=_swrlz_project_repair.events(payload)\n"+SROUTE,
-        "station_model_route")
-    ast.parse(source, filename=STATION)
-    return source
+        "            # "+MARK+": preserve verified project source.\n"
+        "            event_source=_swrlz_project_repair.events(payload)\n"+READ_ONLY,
+        "read_only_precedence")
+    code=one(code,MOUNT,MOUNT+"\n# "+HEALTH_MARK+"\n"+HEALTH_ROUTE,"health")
+    ast.parse(code,filename=STATION)
+    return code
 
 
-def patch_actions(source):
-    if AMARK in source:
-        raise RuntimeError("ACTION_ALREADY_INSTALLED")
-    for name in ("def is_file_action(", "def has_pending(", "def pending_kind(",
-                 "def expire_interrupted(", "def handle(", "def _out("):
-        if name not in source:
-            raise RuntimeError("MISSING_OWNER_ACTION_CONTRACT_"+name)
-    result = source.rstrip()+"\n"+ACTION_WRAPPER
-    ast.parse(result, filename=ACTIONS)
+def patch_actions(code):
+    if AMARK in code:
+        raise RuntimeError("HANDLER_ALREADY_INSTALLED")
+    for field in ("def handle(","def is_file_action(","def has_pending(",
+                  "def pending_kind(","def expire_interrupted(","def _out("):
+        if field not in code:
+            raise RuntimeError("ACTION_HANDLER_DRIFT_"+field)
+    result=code.rstrip()+"\n"+ACTION_WRAPPER
+    ast.parse(result,filename=ACTIONS)
     return result
 
 
-def patch_ui(source):
-    pairs = [
-      ('    const creating=data.mode==="create";',
-       '    const creating=data.mode==="create",repairing=data.mode==="repair";'),
-      ('heading.textContent=creating?"HTML project · GitHub creation approval":"HTML project · deployment approval";',
-       'heading.textContent=creating?"HTML project · GitHub creation approval":repairing?"HTML project · source-preserving repair approval":"HTML project · deployment approval";'),
-      ('subtitle.textContent="Project "+data.project+(creating?" · create source in GitHub (no deployment)":" · existing §C Hugging Face Space");',
-       'subtitle.textContent="Project "+data.project+(creating?" · create source in GitHub (no deployment)":repairing?" · proposed GitHub repair pull request (no deployment)":" · existing §C Hugging Face Space");'),
-      ('[creating?"Proposed GitHub directory":"Published directory",data.destinationPrefix||""]',
-       '[creating?"Proposed GitHub directory":repairing?"Existing project directory":"Published directory",data.destinationPrefix||""]'),
-      ('note.textContent=creating?"No GitHub files have been created. This approval authorizes only the listed commit; deploying requires a second approval within this thread.":"No deployment dispatched. Approval is valid only in this thread for five minutes.";',
-       'note.textContent=creating?"No GitHub files have been created. This approval authorizes only the listed commit; deploying requires a second approval within this thread.":repairing?"No GitHub changes have been made. Approval runs a pinned dependency build and proposes a review PR only. Deployment requires a separate approval.":"No deployment dispatched. Approval is valid only in this thread for five minutes.";'),
-      ('decline.textContent=creating?"Cancel creation":"Cancel deployment";',
-       'decline.textContent=creating?"Cancel creation":repairing?"Cancel repair":"Cancel deployment";'),
-      ('approve.textContent=creating?"Approve GitHub commit":"Approve publish";',
-       'approve.textContent=creating?"Approve GitHub commit":repairing?"Approve repair PR build":"Approve publish";'),
-      ('if(accepted&&!creating){void verifyPublishedSource(surface,note,data,opts,thread);}',
-       'if(accepted&&!creating&&!repairing){void verifyPublishedSource(surface,note,data,opts,thread);}')
-    ]
-    for i, (old, new) in enumerate(pairs):
-        source = one(source, old, new, "ui_"+str(i))
-    return source
-
-
-def patch(before):
-    out = dict(before)
-    out[STATION] = patch_station(before[STATION])
-    out[ACTIONS] = patch_actions(before[ACTIONS])
-    out[UI] = patch_ui(before[UI])
-    pattern = r"html-project-publish-review-v1\.js(?:\?v=[A-Za-z0-9_.-]+)?"
-    matches = list(re.finditer(pattern, before[HTML]))
-    if len(matches) != 1:
-        snippets = [before[HTML][max(0,m.start()-45):m.end()+50] for m in re.finditer("html-project-publish-review", before[HTML])][:5]
-        raise RuntimeError("LIVE_HTML_ASSET_DRIFT_" + str(len(matches)) + "_" + repr(snippets))
-    out[HTML] = before[HTML][:matches[0].start()] + UNEW + before[HTML][matches[0].end():]
-    return out
-
-
-def digest(raw):
+def checksum(raw):
     return hashlib.sha256(raw).hexdigest()
 
 
 def selftest():
-    helper = SOURCE.read_text(encoding="utf-8")
-    ast.parse(helper, filename=HELPER)
-    station = (
-        "import re\n"+SROOT+"\ndef worker(payload,prompt):\n"
-        "    if False:\n        pass\n"+SCTX+"        pass\n"+SCOMMAND+"        pass\n"
-        "def stream(payload):\n        if False:\n            pass\n"
-        +SROUTE+"            pass\n")
-    out = patch_station(station)
-    assert SMARK in out and "_swrlz_project_repair.events(payload)" in out
-    assert "or _swrlz_project_repair.is_command(prompt)" in out
-    fake = ("def is_file_action(*a,**k): pass\n"
-            "def has_pending(*a): pass\n"
-            "def pending_kind(*a): pass\n"
-            "def expire_interrupted(*a): pass\n"
-            "def _out(*a): pass\n"
-            "def handle(*a,**k): pass\n")
+    ast.parse(SOURCE.read_text(encoding="utf-8"),filename=HELPER)
+    station=("from pathlib import Path\n"+SROOT+"\n"+MOUNT+
+            "\ndef user(payload,prompt):\n"
+            "    if False:\n        pass\n"+PROJECT_CONTEXT+"        pass\n"+
+            OWNER_COMMAND+"        pass\n"
+            "def stream(payload):\n        if False:\n            pass\n"+
+            READ_ONLY+"            pass\n")
+    patched=patch_station(station)
+    assert MARK in patched and HEALTH_MARK in patched
+    assert "_swrlz_project_repair.events(payload)" in patched
+    fake=("def is_file_action(*a,**k): pass\n"
+          "def has_pending(*a): pass\n"
+          "def pending_kind(*a): pass\n"
+          "def expire_interrupted(*a): pass\n"
+          "def _out(*a): pass\n"
+          "def handle(*a,**k): pass\n")
     assert AMARK in patch_actions(fake)
-    print("EXISTING_HTML_REPAIR_ROUTING_SELFTEST_PASS", digest(helper.encode()), flush=True)
+    print("EXISTING_REPAIR_BACKEND_SELFTEST_PASS",checksum(SOURCE.read_bytes()),flush=True)
 
 
-def health(expected_js_sha=None):
-    req=urllib.request.Request(BASE+"/chat/%C2%A7wyrlz?__existing_repair=1",
+def health():
+    req=urllib.request.Request(BASE+HEALTH_PATH,
          headers={"Cache-Control":"no-cache"})
     with urllib.request.urlopen(req,timeout=25) as resp:
-        if resp.status!=200 or "text/html" not in resp.headers.get("Content-Type",""):
-            raise RuntimeError("LIVE_CHAT_HEALTH_FAILED")
-        page = resp.read(3_000_000).decode("utf-8", errors="replace")
-        if UNEW not in page:
-            raise RuntimeError("REPAIR_UI_CACHE_BUST_UNVERIFIED")
-    req=urllib.request.Request(BASE+"/chat/%C2%A7wyrlz/assets/"+UNEW,
-         headers={"Cache-Control":"no-cache"})
-    with urllib.request.urlopen(req,timeout=25) as resp:
-        raw=resp.read(200_000)
-        text=raw.decode("utf-8", errors="replace")
-        if resp.status!=200 or "repairing=data.mode" not in text:
-            raise RuntimeError("REPAIR_UI_NOT_LIVE")
-        if expected_js_sha and digest(raw)!=expected_js_sha:
-            raise RuntimeError("REPAIR_UI_LIVE_BYTES_DIFFER")
+        body=resp.read(1000)
+        if resp.status!=200 or resp.headers.get("content-type","").split(";")[0].lower()!="application/json":
+            raise RuntimeError("LIVE_REPAIR_HEALTH_INVALID")
+        try: value=json.loads(body)
+        except ValueError as exc:
+            raise RuntimeError("LIVE_REPAIR_HEALTH_NOT_JSON") from exc
+        if value!={"schema":HEALTH_MARK,"approval":"required","mutation":"none"}:
+            raise RuntimeError("LIVE_REPAIR_REVISION_NOT_ACTIVE")
 
-
-def diagnose_live(source_html=None,source_js=None):
-    import re
-    url=BASE+"/chat/%C2%A7wyrlz?__repair_probe=1"
-    with urllib.request.urlopen(url,timeout=25) as resp:
-        html=resp.read(3_000_000).decode("utf-8",errors="replace")
-        print("LIVE_HTML_PROBE", {
-            "status":resp.status,"bytes":len(html),
-            "sha256":digest(html.encode()),
-            "cacheControl":resp.headers.get("Cache-Control"),
-            "htmlReviewRefs":re.findall(r"html-project-publish-review[^\"'<>\s]{0,110}",html)[:8],
-            "containsApprovedReviewWidget": "github-html-publish-review" in html,
-            "head":html[:160]
-        },flush=True)
-    if isinstance(source_html, str):
-        anchor="html-project-publish-review-v1.js"
-        a=source_html.find(anchor)
-        c=html.find(anchor)
-        print("HTML_ASSET_PROVENANCE",{
-            "sourceRef":source_html[max(0,a-70):a+110] if a>=0 else "NOT_FOUND",
-            "liveRef":html[max(0,c-70):c+110] if c>=0 else "NOT_FOUND",
-            "sourceLength":len(source_html),"liveLength":len(html),
-            "sourceEqualsLive":source_html==html
-        },flush=True)
-    try:
-        with urllib.request.urlopen(BASE+"/chat/%C2%A7wyrlz/assets/html-project-publish-review-v1.js?__probe=1",timeout=25) as resp:
-            js=resp.read(250_000).decode("utf-8",errors="replace")
-            print("LIVE_REPAIR_JS_PROBE",{
-                "status":resp.status,"length":len(js),
-                "sha256":digest(js.encode()),"hasRepairMode": "repairing=data.mode" in js
-            },flush=True)
-    except Exception as exc:
-        print("LIVE_REPAIR_JS_PROBE_FAILED",type(exc).__name__,flush=True)
 
 def main(mode):
     selftest()
     if mode=="selftest":
         return
     from huggingface_hub import HfApi,hf_hub_download,CommitOperationAdd,CommitOperationDelete
-    token=os.environ.get("HF_TOKEN") or None
+    token=os.getenv("HF_TOKEN") or None
     api=HfApi(token=token)
-    rev=str(api.repo_info(SPACE,repo_type="space").sha)
-    old={p:Path(hf_hub_download(SPACE,p,repo_type="space",
-             revision=rev,token=token)).read_bytes() for p in EXISTING}
-    paths=set(api.list_repo_files(SPACE,repo_type="space",revision=rev))
-    if HELPER in paths:
-        raise RuntimeError("REPAIR_HELPER_EXISTS_UNEXPECTEDLY")
-    print("SPACE_REPO_JS_SOURCE", {"sha256":digest(old[UI]),"bytes":len(old[UI])},flush=True)
-    print("SPACE_REPO_HTML_SOURCE", {"sha256":digest(old[HTML]),"bytes":len(old[HTML]),"reviewRefs":re.findall(r"html-project-publish-review[^\\\"'<>\\s]{0,120}",old[HTML].decode("utf-8",errors="replace"))[:5]},flush=True)
-    patched=patch({path:data.decode("utf-8") for path,data in old.items()})
-    new={p:data.encode("utf-8") for p,data in patched.items()}
-    new[HELPER]=SOURCE.read_bytes()
-    print("REPAIR_ROUTING_SOURCE_PREFLIGHT",rev,
-          {p:digest(raw) for p,raw in new.items()},flush=True)
+    revision=str(api.repo_info(SPACE,repo_type="space").sha)
+    original={p:Path(hf_hub_download(SPACE,p,repo_type="space",
+              revision=revision,token=token)).read_bytes()
+              for p in (STATION,ACTIONS)}
+    if HELPER in set(api.list_repo_files(SPACE,repo_type="space",revision=revision)):
+        raise RuntimeError("REPAIR_HELPER_ALREADY_EXISTS")
+    patched={
+        STATION:patch_station(original[STATION].decode("utf-8")).encode("utf-8"),
+        ACTIONS:patch_actions(original[ACTIONS].decode("utf-8")).encode("utf-8"),
+        HELPER:SOURCE.read_bytes()
+    }
+    print("SOURCE_PRESERVING_REPAIR_PREFLIGHT",revision,
+          {p:checksum(data) for p,data in patched.items()},flush=True)
     if mode=="preflight":
-        # Read only exception classifications and startup markers from Space logs.
-        # Never copy arbitrary user/model log lines into public GitHub CI.
-        try:
-            from itertools import islice
-            from huggingface_hub import fetch_space_logs
-            patterns=(
-                r"(?:ModuleNotFoundError|ImportError|SyntaxError|RuntimeError|TypeError|ValueError|"
-                r"NameError|OSError|AttributeError|PermissionError|FileNotFoundError):[^\\n]{0,90}",
-                r"Application startup (?:complete|failed)",
-                r"Failed to (?:start|load|import)[^\\n]{0,80}"
-            )
-            findings=[]
-            stackfiles=[]
-            exception_classes=[]
-            for row in islice(fetch_space_logs(SPACE,token=token,follow=False),700):
-                value=str(row)
-                for filename,line in re.findall(r'File ["\\x27]([^"\\x27]+)["\\x27], line (\\d+)',value):
-                    item=(filename.split("/")[-1],line)
-                    if item not in stackfiles: stackfiles.append(item)
-                for match in re.findall(r'\\b(?:ModuleNotFoundError|ImportError|SyntaxError|RuntimeError|TypeError|ValueError|NameError|OSError|AttributeError|PermissionError|FileNotFoundError)\\b',value):
-                    if match not in exception_classes: exception_classes.append(match)
-                for expression in patterns:
-                    for match in re.findall(expression,str(row),flags=re.I):
-                        if len(findings)<35 and match not in findings:
-                            findings.append(match)
-            print("SPACE_RUNTIME_DIAGNOSTIC_MARKERS",findings,flush=True)
-            print("SPACE_RUNTIME_TRACE_PATHS",stackfiles[-25:],flush=True)
-            print("SPACE_RUNTIME_EXCEPTION_TYPES",exception_classes,flush=True)
-        except Exception as exc:
-            print("SPACE_RUNTIME_LOG_READ_UNAVAILABLE",type(exc).__name__,flush=True)
-        runtime=api.get_space_runtime(SPACE)
-        print("SPACE_RUNTIME_PROVENANCE",{"stage":str(getattr(runtime,"stage",None)),
-             "hardware":str(getattr(runtime,"hardware",None)),
-             "requested":str(getattr(runtime,"requested_hardware",None))},flush=True)
-        diagnose_live(old[HTML].decode("utf-8"),old[UI].decode("utf-8"))
         return
-    if mode!="publish" or os.environ.get("SWRLZ_HTML_REPAIR_APPROVED")!="1" or not token:
-        raise PermissionError("SCOPED_RELEASE_NOT_AUTHORIZED")
-    if str(api.repo_info(SPACE,repo_type="space").sha)!=rev:
+    if mode!="publish" or not token or os.getenv("SWRLZ_HTML_REPAIR_APPROVED")!="1":
+        raise PermissionError("RELEASE_NOT_AUTHORIZED")
+    if str(api.repo_info(SPACE,repo_type="space").sha)!=revision:
         raise RuntimeError("CONCURRENT_SPACE_EDIT")
-    committed=api.create_commit(repo_id=SPACE,repo_type="space",parent_commit=rev,
-       operations=[CommitOperationAdd(path_in_repo=p,path_or_fileobj=io.BytesIO(raw))
-                   for p,raw in new.items()],
-       commit_message="fix(§C): preserve existing HTML projects during approved repairs").oid
-    print("REPAIR_ROUTING_HF_COMMITTED",committed,flush=True)
-    # Source readback alone is insufficient: this Space can retain an older
-    # served HTML/asset snapshot until its running app is explicitly restarted.
+    commit=api.create_commit(repo_id=SPACE,repo_type="space",parent_commit=revision,
+          operations=[CommitOperationAdd(path_in_repo=p,path_or_fileobj=io.BytesIO(data))
+                      for p,data in patched.items()],
+          commit_message="fix(§C): route existing HTML repair through approved source patches").oid
+    print("SOURCE_PRESERVING_REPAIR_COMMITTED",commit,flush=True)
     try:
-        api.restart_space(SPACE)
-        print("REPAIR_ROUTING_SPACE_RESTART_REQUESTED",committed,flush=True)
-        for p,raw in new.items():
+        for p,data in patched.items():
             got=Path(hf_hub_download(SPACE,p,repo_type="space",
-                     revision=committed,token=token)).read_bytes()
-            if got != raw:
-                raise RuntimeError("PUBLISHED_BYTES_MISMATCH_"+p)
-        for i in range(30):
+                     revision=commit,token=token)).read_bytes()
+            if got!=data:
+                raise RuntimeError("SOURCE_READBACK_FAILED_"+p)
+        api.restart_space(SPACE)
+        print("REPAIR_BACKEND_RESTART_REQUESTED",commit,flush=True)
+        for attempt in range(60):
             try:
-                health(digest(new[UI]))
-                print("REPAIR_ROUTING_LIVE_VERIFIED",committed,flush=True)
+                health()
+                print("REPAIR_BACKEND_LIVE_ROUTE_VERIFIED",commit,flush=True)
                 return
-            except (OSError,TimeoutError,RuntimeError) as e:
-                if i==29:
-                    raise RuntimeError("LIVE_REPAIR_UI_UNVERIFIED") from e
+            except Exception as exc:
+                if attempt%10==0:
+                    print("REPAIR_BACKEND_LIVE_CHECK_PENDING",attempt,
+                          type(exc).__name__,flush=True)
+                if attempt==59:
+                    raise RuntimeError("LIVE_ROUTE_NOT_VERIFIED") from exc
                 time.sleep(10)
     except Exception:
-        if str(api.repo_info(SPACE,repo_type="space").sha)==committed:
-            ops=[CommitOperationAdd(path_in_repo=p,path_or_fileobj=io.BytesIO(raw))
-                 for p,raw in old.items()]
+        if str(api.repo_info(SPACE,repo_type="space").sha)==commit:
+            ops=[CommitOperationAdd(path_in_repo=p,path_or_fileobj=io.BytesIO(data))
+                 for p,data in original.items()]
             ops.append(CommitOperationDelete(path_in_repo=HELPER))
-            restored=api.create_commit(repo_id=SPACE,repo_type="space",
-                parent_commit=committed,operations=ops,
-                commit_message="rollback(§C): HTML repair route verification failed").oid
-            print("REPAIR_ROUTING_ROLLED_BACK",restored,flush=True)
+            reverted=api.create_commit(repo_id=SPACE,repo_type="space",
+                parent_commit=commit,operations=ops,
+                commit_message="rollback(§C): unverified existing HTML repair route").oid
+            print("REPAIR_BACKEND_ROLLED_BACK",reverted,flush=True)
             api.restart_space(SPACE)
-            print("REPAIR_ROUTING_ROLLBACK_RESTART_REQUESTED",restored,flush=True)
+            print("REPAIR_BACKEND_ROLLBACK_RESTART_REQUESTED",reverted,flush=True)
         raise
 
 
 if __name__=="__main__":
-    p=argparse.ArgumentParser()
-    p.add_argument("mode",choices=("selftest","preflight","publish"))
-    main(p.parse_args().mode)
+    parser=argparse.ArgumentParser()
+    parser.add_argument("mode",choices=("selftest","preflight","publish"))
+    main(parser.parse_args().mode)
