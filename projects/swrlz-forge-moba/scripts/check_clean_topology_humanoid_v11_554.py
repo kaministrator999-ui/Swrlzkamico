@@ -50,6 +50,20 @@ def run():
     png(GUIDE,2048,2048)
     assert json.loads(ORIGINAL.read_text('utf8'))['project']['canonicalId']=='robotic-humanoid-mannequin'
     assert r['quadFirst'] and r['originalRobotPreserved']
+    assert r['revision']=='anatomical-pelvis-uv-v3'
+    charts=r['uvCharts']
+    for key in ('torsoFront','torsoBack','pelvis','headFront','headBack','crown'):
+        assert charts.get(key,0)>6,('missing anatomy chart',key)
+    assert sum(charts.values())==sum(r['quads'].values())
+    # A real groin saddle is not a coplanar lower cap; verify the inner
+    # pelvic geometry descends from the lateral hip crests.
+    pelvis=[p[k:k+3] for k in range(0,len(p),3)
+            if 2.02<p[k+1]<2.49 and abs(p[k])<.56]
+    central=[v[1] for v in pelvis if abs(v[0])<.08 and abs(v[2])<.10]
+    lateral=[v[1] for v in pelvis if .28<abs(v[0])<.44 and abs(v[2])<.20]
+    assert central and lateral and max(lateral)-min(central)>.19,(
+        'pelvic height variation missing',min(central or [0]),max(lateral or [0]))
+
     # Independent positional-weld check: UV seams are allowed, mesh cracks are not.
     from collections import Counter,defaultdict
     xyz=[tuple(p[k:k+3]) for k in range(0,len(p),3)]
