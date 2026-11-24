@@ -27,6 +27,14 @@ class ExecutionContinuityTests(unittest.TestCase):
         self.assertFalse(eligible(p))
         self.assertFalse(read_only({"prompt":PROMPT}))
         self.assertFalse(read_only({"prompt":"Fix this viewer and deploy it","activeHtmlProject":PROJECT}))
+    def test_read_only_emits_real_report_phase_and_preserves_answer(self):
+        p={"prompt":PROMPT,"activeHtmlProject":PROJECT}
+        events=list(stream(p,lambda _:self.fail("must not code"),
+                           [{"type":"DELTA","text":"Verified source findings."},
+                            {"type":"COMPLETED","phase":"COMPLETE"}]))
+        self.assertEqual(events[0]["phase"],"PROJECT_EVIDENCE_REPORT")
+        self.assertEqual(events[1]["text"],"Verified source findings.")
+        self.assertEqual(events[-1]["phase"],"COMPLETE")
     def test_project_write_path_preserves_approval_gates(self):
         self.assertFalse(eligible({"githubSourceChangeTask":True}))
         self.assertFalse(eligible({"sourceChangeMode":True}))
