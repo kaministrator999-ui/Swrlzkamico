@@ -39,9 +39,13 @@ jobs:
                   chosen.update(range(1415,1457))
                   chosen.update(range(2740,2770))
                   chosen.update(range(2940,2970))
+                  chosen.update(range(2985,3010))
+                  chosen.update(range(1380,1415))
               if name == "github_conversation_actions_v264.py":
                   chosen.update(range(max(0,len(lines)-150),len(lines)))
               if name == "qwen_coder_engine.py":
+                  chosen.update(range(1233,1288))
+                  chosen.update(range(1879,1915))
                   for j, line in enumerate(lines):
                       if line.startswith(("def generate_events(", "def generate(", "def _candidate_structure_check(")):
                           chosen.update(range(j,min(len(lines),j+35)))
