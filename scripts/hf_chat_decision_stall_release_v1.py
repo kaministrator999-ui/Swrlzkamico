@@ -63,7 +63,7 @@ def selftest():
         continue
 '''
     try:
-        patched(fixture)
+        patched(fixture.encode("utf-8"))
     except (SyntaxError,RuntimeError):
         # The synthetic fragment is not executable as-is, so use the actual
         # installed wrapper as the unit-tested deployment source.
