@@ -1,0 +1,42 @@
+name: Release §C automatic HTML deployment verification
+on:
+  push:
+    branches: [main]
+    paths:
+      - api/github_html_publish_action_v1.py
+      - chat/html-project-publish-review-v1.js
+      - scripts/hf_chat_html_postdeploy_status_release_v1.py
+      - tests/test_github_html_publish_action_v1.py
+      - .github/workflows/hf-chat-html-postdeploy-status-release-v1.yml
+  workflow_dispatch:
+permissions: {contents: read}
+concurrency:
+  group: swrlz-hf-space-deployment
+  cancel-in-progress: false
+jobs:
+  release:
+    if: ${{ github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[release-html-postdeploy-v1]') }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - name: Install Hugging Face release dependencies
+        run: python -m pip install --quiet 'huggingface_hub>=0.34,<2' 'requests>=2.31,<3'
+      - name: Validate GitHub manifest source identity and browser status UI
+        run: |
+          python -m py_compile api/github_html_publish_action_v1.py scripts/hf_chat_html_postdeploy_status_release_v1.py
+          python -m unittest discover -s tests -p 'test_github_html_publish_action_v1.py' -v
+          node --check chat/html-project-publish-review-v1.js
+          python scripts/hf_chat_html_postdeploy_status_release_v1.py selftest
+      - name: Check exact existing live §C publisher before patch
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: python scripts/hf_chat_html_postdeploy_status_release_v1.py preflight
+      - name: Publish source-verifying status UI to existing §C Space
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          SWRLZ_HTML_POSTDEPLOY_APPROVED: '1'
+        run: python -u scripts/hf_chat_html_postdeploy_status_release_v1.py publish
