@@ -89,7 +89,7 @@ def _resolve(base, uri):
     return path, "local"
 
 
-def inspect_files(files, *, expected_csp=True):
+def inspect_files(files, *, known_files_complete=True):
     """Inspect bytes/dict of project-local files. No network, JS execution, or writes."""
     if not isinstance(files, dict) or not files or len(files) > 48:
         raise ValueError("PROJECT_FILE_COUNT_INVALID")
@@ -142,7 +142,7 @@ def inspect_files(files, *, expected_csp=True):
                 if category == "link" and ref.endswith("/"):
                     ref += "index.html"
                 referenced.add(ref)
-                if ref not in clean and category != "link":
+                if ref not in clean and category != "link" and known_files_complete:
                     problems.append(_issue("LOCAL_ASSET_MISSING", path, ref))
         for idx, script in enumerate(doc.inline_scripts):
             if script["text"].strip():
@@ -156,7 +156,7 @@ def inspect_files(files, *, expected_csp=True):
             problems.append(_issue("CSP_EXTERNAL_MODULE", "index.html", key + " -> " + value))
         elif kind in ("absolute", "escape"):
             problems.append(_issue("IMPORTMAP_TARGET_UNVERIFIED", "index.html", key + " -> " + value))
-        elif kind == "local" and target not in clean:
+        elif kind == "local" and target not in clean and known_files_complete:
             problems.append(_issue("LOCAL_MODULE_MISSING", "index.html", target))
     for path, raw in sorted(clean.items()):
         if not path.endswith((".js", ".mjs", ".css")):
@@ -179,7 +179,7 @@ def inspect_files(files, *, expected_csp=True):
             ref, mode = _resolve(path, target)
             if mode == "external":
                 problems.append(_issue("CSP_EXTERNAL_MODULE", path, spec + " -> " + target))
-            elif mode == "local" and ref not in clean:
+            elif mode == "local" and ref not in clean and known_files_complete:
                 problems.append(_issue("LOCAL_MODULE_MISSING", path, spec + " -> " + ref))
             elif mode in ("absolute", "escape"):
                 problems.append(_issue("MODULE_TARGET_UNVERIFIED", path, spec + " -> " + target))
@@ -191,7 +191,7 @@ def inspect_files(files, *, expected_csp=True):
             ref, mode = _resolve(path, spec)
             if mode == "external":
                 problems.append(_issue("CSP_EXTERNAL_STYLE_RESOURCE", path, spec))
-            elif mode == "local" and ref not in clean:
+            elif mode == "local" and ref not in clean and known_files_complete:
                 problems.append(_issue("LOCAL_ASSET_MISSING", path, ref))
     errors = [p for p in problems if p["severity"] == "error"]
     return {
@@ -199,7 +199,7 @@ def inspect_files(files, *, expected_csp=True):
         "renderingRequiredForFullVerification": needs_rendering,
         "functionalVerified": False, "syntaxVerified": False,
         "sourceSha256": hashlib.sha256(clean.get("index.html", b"")).hexdigest(),
-        "fileCount": len(clean), "issues": problems[:35],
+        "fileCount": len(clean), "completeFileInventory": bool(known_files_complete), "issues": problems[:35],
         "scripts": scripts, "referencedFiles": sorted(referenced)[:60],
         "note": ("Static analysis only: no JavaScript execution, interaction, "
                  "graphics rendering, or deployment is verified."),
