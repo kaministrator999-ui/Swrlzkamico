@@ -16,7 +16,7 @@ _REPAIR = re.compile(
 _SUBJECT = re.compile(
     r"\b(?:html|3d|model viewer|viewer|website|webpage|web app|project|"
     r"deployed|deployment|published)\b", re.I)
-_COMMAND = re.compile(r"^\s*@github\s+(?:status|publish|review)\b", re.I)
+_COMMAND = re.compile(r"^\s*@github\s+(?:status|publish|review|repair)\b", re.I)
 _EXPLICIT = re.compile(r"\bhtml\s+project\s+([a-z0-9][a-z0-9-]{1,47})\b", re.I)
 
 
