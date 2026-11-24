@@ -105,13 +105,17 @@ def main():
         dist=Path(depdir)/"node_modules/xatlas-wasm/dist"
         dest=root/"assets/uv-unwrapper"
         dest.mkdir(parents=True,exist_ok=True)
-        for name in ("index.mjs","xatlas.wasm"):
-            src=dist/name
-            if not src.is_file() or not src.stat().st_size:
-                raise ValueError("xatlas package missing required runtime "+name)
-            if src.stat().st_size>=MAX_FILE:
-                raise ValueError("xatlas "+name+" exceeds static host file limit")
-            shutil.copy2(src,dest/name)
+        # The production seam-pinned LSCM path is fully self-contained.
+        # Keep the vendor module for optional automatic chart segmentation;
+        # do not require an external .wasm file because this npm release
+        # bundles its WASM payload into index.mjs.
+        name="index.mjs"
+        src=dist/name
+        if not src.is_file() or not src.stat().st_size:
+            raise ValueError("Pinned xatlas module not found")
+        if src.stat().st_size>=MAX_FILE:
+            raise ValueError("Pinned xatlas module exceeds static host limit")
+        shutil.copy2(src,dest/name)
         shared_root=Path(__file__).resolve().parents[1]/"runtime"
         shared_files=("uv_atlas_core_v11_555.mjs","uv_lscm_core_v11_555.mjs")
         for name in shared_files:
@@ -123,7 +127,7 @@ def main():
                 shutil.copy2(license_file,dest/("xatlas-"+name))
         print("SE555_LOCAL_XATLAS_WASM_BUNDLED",
               {name:(dest/name).stat().st_size for name in
-               ("index.mjs","xatlas.wasm",*shared_files)},flush=True)
+               ("index.mjs",*shared_files)},flush=True)
 
     receipt["accountStartupDeliveryRepair"] = account_receipt
     receipt["uvFirstHumanoidDelivery"] = starter_receipt
