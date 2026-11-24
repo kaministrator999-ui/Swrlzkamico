@@ -239,7 +239,17 @@ async def generate_swrlz_response(payload) -> None:
     )
     last_resource_phase = ""
     try:
-        for raw in engine.generate_events(engine_payload, cancelled):
+        # The browser's /api/lalm_station/send uses this durable queue, not
+        # the legacy station.py _run selector. Route verified project repairs
+        # BEFORE the generic coding model's failure-evidence fast path.
+        from api.durable_project_repair_v1 import route_events
+        selected_events = route_events(
+            user_id=user_id, thread_id=thread_id, prompt=prompt_text,
+            engine=engine, cancelled=cancelled, base_payload=engine_payload)
+        if selected_events is not None:
+            _camera("existing-project-repair-route-selected", request_id=request_id)
+        for raw in (selected_events if selected_events is not None
+                    else engine.generate_events(engine_payload, cancelled)):
             if not isinstance(raw, dict):
                 continue
             if is_structured_proposal_event(raw):
