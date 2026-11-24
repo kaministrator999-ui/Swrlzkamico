@@ -214,7 +214,7 @@ def fit(uv,rect,lock_orientation=False):
     return np.column_stack((np.full(len(uv),ax+slack[0]),
                             np.full(len(uv),ay+slack[1])))+(coords-base)*scale
 
-def anatomical_silhouette(pos,uv,name):
+def anatomical_silhouette(pos,uv,name,strength=1.):
     """Retain cross-sectional girth along the anatomical axis.
     
     This is a continuous width deformation of the seam-cut chart, not a
@@ -238,7 +238,7 @@ def anatomical_silhouette(pos,uv,name):
     widths=np.convolve(np.pad(widths,(2,2),mode='edge'),
                        np.array([1,2,3,2,1])/9,mode='valid')
     profile=np.clip(widths/max(widths.max(),1e-8),.38,1.)
-    width=.65+.35*np.interp(t,grid,profile)
+    width=1-strength+strength*np.interp(t,grid,profile)
     # Front center remains fixed; both sides fan out with local girth.
     q[:,0]=.5+(q[:,0]-.5)*width
     if arm:
@@ -262,9 +262,24 @@ def make_atlas(positions,triangles,mode):
                      'rightLeg':(0.,0.,0.,0.)}
         params=calibration.get(name,(0.,0.,0.,0.))
         p,f,uv,c=seam_aware_anatomical_group(positions,original,name,*params)
-        uv=anatomical_silhouette(p,uv,name)
-        if name=='head':
-            uv[:,0]*=2.0  # Upright crown/chin, centered face on +Z
+        # Select the strongest usable anatomical taper using actual atlas
+        # texel conflicts, rather than applying a global arbitrary strength.
+        candidates=[]
+        for strength in (1.,.85,.7,.55,.4,.25,.1,0.):
+            q=anatomical_silhouette(p,uv,name,strength)
+            if name=='head':q[:,0]*=2.
+            fitted=fit(q,RECT[name],lock_orientation=True)
+            m=measure_surface_uv_conflicts(p,fitted,f,[name]*len(f))
+            candidates.append((strength,q,m))
+        baseline=candidates[-1][2]
+        allowed=min(200,baseline['conflictingSamples'])
+        valid=[v for v in candidates if v[2]['conflictingSamples']<=allowed
+               and v[2]['conflictPct']<=baseline['conflictPct']
+               and v[2]['maxOverlapWorldDistance']<.50]
+        if not valid:
+            valid=sorted(candidates,key=lambda v:v[2]['conflictingSamples'])
+        strength,uv,quality=valid[0]
+        print('SE546_TAPER_SELECTED',name,strength,quality,flush=True)
         base=count;count+=len(p);charts+=c
         if count>VERT_LIMIT:raise ValueError('UV vertex budget exceeded: '+str(count))
         parts.append(p);faces_out.append(f+base)
