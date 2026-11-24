@@ -29,6 +29,12 @@ jobs:
              ('github_conversation_actions_v264.py',[(1,55),(270,310),(440,510),(585,660)])):
               text=Path(hf_hub_download('kamiloki/Swyrlz',path,repo_type='space',revision=rev,token=api.token)).read_text().splitlines()
               print('FILE',path,'LINES',len(text))
+              if path=='station.py':
+                  hits=[i for i,line in enumerate(text,1) if any(k in line for k in ('_artifact_source_hash(', 'codeArtifacts', 'githubChatFileAction', 'assistant_message', 'completion_validation'))]
+                  ranges=[(max(1,i-5),i+9) for i in hits]
+              else:
+                  hits=[i for i,line in enumerate(text,1) if any(k in line for k in ('def ', 'create_commit', 'pending['))]
+                  ranges=[(max(1,i-1),i+5) for i in hits]
               for low,high in ranges:
                   for n in range(low,min(high,len(text))+1):
                       print(f'{n:05d} {text[n-1][:290]}')
