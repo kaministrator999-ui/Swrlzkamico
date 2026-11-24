@@ -20,9 +20,9 @@ MAX_PROJECT_BYTES = 1_000_000
 MAX_PATCHES = 12
 MAX_ROUNDS = 3
 MAX_PATCH_BYTES = 16_000
-SLUG = re.compile(r"[a-z0-9](?:[a-z0-9-]{0,46}[a-z0-9])?\\Z")
+SLUG = re.compile(r"[a-z0-9](?:[a-z0-9-]{0,46}[a-z0-9])?\Z")
 VALID_EXT = frozenset({".html", ".htm", ".js", ".mjs", ".css", ".json", ".svg"})
-FORBIDDEN = re.compile(r"(?:^|/)(?:\\.|__pycache__|node_modules)(?:/|$)")
+FORBIDDEN = re.compile(r"(?:^|/)(?:\.|__pycache__|node_modules)(?:/|$)")
 
 
 class ProposalError(ValueError):
@@ -32,7 +32,7 @@ class ProposalError(ValueError):
 
 
 def safe_path(path):
-    if not isinstance(path, str) or not path or len(path) > 180 or "\\\\" in path:
+    if not isinstance(path, str) or not path or len(path) > 180 or "\\" in path:
         raise ProposalError("INVALID_PATH")
     pp = PurePosixPath(path)
     if (pp.is_absolute() or path != pp.as_posix() or len(pp.parts) > 8
@@ -56,7 +56,7 @@ def verify_source(project, files, *, expected_hashes=None):
     hashes = {}
     for path, contents in files.items():
         safe_path(path)
-        if not isinstance(contents, str) or "\\x00" in contents:
+        if not isinstance(contents, str) or "\x00" in contents:
             raise ProposalError("NON_TEXT_FILE")
         total += len(contents.encode("utf-8"))
         hashes[path] = source_sha(contents)
@@ -74,7 +74,7 @@ def prompt_messages(project, files, diagnostics, task, *, prior_failures=()):
         raise ProposalError("MISSING_TASK")
     excerpts = [{
         "path": path, "sourceSha256": hashes[path], "bytes": len(src.encode("utf-8")),
-        "source": src if len(src) <= 20000 else src[:9500] + "\\n[TRUNCATED]\n" + src[-9500:]
+        "source": src if len(src) <= 20000 else src[:9500] + "\n[TRUNCATED]\n" + src[-9500:]
     } for path, src in sorted(files.items())]
     context = {
         "schema": VERSION, "project": project, "task": task[:2500],
