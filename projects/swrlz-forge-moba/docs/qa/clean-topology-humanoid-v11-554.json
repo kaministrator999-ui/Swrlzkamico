@@ -1,81 +1,61 @@
 {
   "version": "v11.554",
-  "revision": "anatomical-pelvis-uv-v3",
-  "vertices": 6325,
-  "triangles": 11204,
+  "revision": "xatlas-anatomical-conformal-v4",
+  "vertices": 6418,
+  "triangles": 11492,
   "quads": {
     "torso": 1388,
-    "head": 888,
+    "head": 1032,
     "leftArm": 1033,
     "rightArm": 1033,
     "leftLeg": 630,
     "rightLeg": 630
   },
   "components": 1,
-  "uvBoxes": {
-    "head": [
-      0.02,
-      0.035,
-      0.27,
-      0.465
-    ],
-    "torso": [
-      0.305,
-      0.035,
-      0.98,
-      0.465
-    ],
-    "leftArm": [
-      0.02,
-      0.525,
-      0.245,
-      0.965
-    ],
-    "rightArm": [
-      0.265,
-      0.525,
-      0.49,
-      0.965
-    ],
-    "leftLeg": [
-      0.51,
-      0.525,
-      0.735,
-      0.965
-    ],
-    "rightLeg": [
-      0.755,
-      0.525,
-      0.98,
-      0.965
-    ]
-  },
-  "uvCharts": {
-    "torsoBack": 648,
-    "torsoFront": 648,
-    "pelvis": 92,
-    "headBack": 432,
-    "headFront": 432,
-    "crown": 24,
-    "leftArm": 1033,
-    "rightArm": 1033,
-    "leftLeg": 630,
-    "rightLeg": 630
-  },
-  "uvPaintMode": "actual-UV-quad-island-masking",
-  "guideAnatomyLabels": true,
+  "uvPaintMode": "xatlas-geometry-mask-true-checker",
   "textureSize": 1024,
   "guideSize": 2048,
   "originalRobotPreserved": true,
   "quadFirst": true,
   "topologyAudit": {
-    "weldedVertices": 5604,
-    "weldedEdges": 11204,
+    "weldedVertices": 5748,
+    "weldedEdges": 11492,
     "openEdges": 0,
     "nonManifoldEdges": 0,
     "connectedComponents": 1,
     "watertight": true,
     "oriented": true,
-    "signedVolume": 1.11017
-  }
+    "signedVolume": 1.1174
+  },
+  "uvAlgorithm": "seamed-LSCM+verified-single-atlas-packer",
+  "uvChartCount": 22,
+  "uvTexelDensity": {
+    "p05": 0.13104359796097306,
+    "p95": 0.2586878039703361,
+    "p95P05": 1.9740590764867243,
+    "trianglesChecked": 11492
+  },
+  "uvAtlasSize": [
+    2048,
+    2048
+  ],
+  "uvMaxCost": null,
+  "uvMethod": "LSCM+verified-chart-packing",
+  "uvLscmIterations": 4899,
+  "uvSeamMode": "anatomical",
+  "uvPacking": "deterministic-shelf",
+  "uvChartScale": 0.2045716055512738,
+  "uvPaddingPixels": 8,
+  "uvWeldedInputVertices": 0,
+  "originalAnatomicalRegions": [
+    "head",
+    "torso",
+    "leftArm",
+    "rightArm",
+    "leftLeg",
+    "rightLeg"
+  ],
+  "guideAnatomyLabels": true,
+  "uvDegenerateTriangles": 0,
+  "uvWindingNegativeTriangles": 0
 }
