@@ -29,6 +29,7 @@ class HTMLRepairTest(unittest.TestCase):
         self.assertTrue(m.repair_intent("Repair the existing interactive 3D model viewer"))
         self.assertFalse(m.repair_intent("Inspect the viewer without editing or repairing"))
         self.assertFalse(m.repair_intent("@GitHub repair HTML project "+SLUG))
+        self.assertTrue(m.repair_intent("Repair the viewer but do not deploy it"))
         p={"receivedText":"Repair the existing interactive 3D model viewer",
            "activeHtmlProject":{"project":SLUG},
            "projectFileEvidence":"Verified Git blob: "+BLOB}
