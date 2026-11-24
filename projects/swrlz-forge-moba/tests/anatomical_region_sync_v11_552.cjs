@@ -22,7 +22,7 @@ vm.runInContext(read('runtime/uv_island_workspace_v11_551.js'),ctx);
 vm.runInContext(read('runtime/uv_texture_alignment_v11_552.js'),ctx);
 const r=vm.runInContext('se552Regions(se551Target())',ctx);
 assert.equal(r.anatomical,true);
-assert.deepEqual(r.groups.map(g=>g.id),[0,1,2,3,4,5]);
+assert.deepEqual(Array.from(r.groups,g=>g.id),[0,1,2,3,4,5]);
 assert.equal(r.groups.reduce((n,g)=>n+g.faces.length,0),13932);
 for(const g of r.groups)assert.ok(g.faces.length>900);
 const palette=Array.from(vm.runInContext('se552Palette',ctx));
