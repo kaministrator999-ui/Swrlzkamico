@@ -4,8 +4,8 @@
   "version": "v11.546",
   "goal": "Rebuild humanoid UVs into anatomy-grouped charts; generate independent new robotic material from 3D surface; preserve geometry; provide 4096x4096 reference atlas and anatomy exports; preserve historical scenes and saved copies.",
   "release": "Do not publish until exact geometry/UV texture checks and source-seal tests pass.",
-  "run": 7,
-  "correction": "Align exported anatomical guide palette to exactly match interactive 3D and UV legend; collision cap below 1000",
-  "rebuild_requested": "2026-11-23-rebake-final-verified-six-color-anatomical-atlas-v7",
+  "run": 8,
+  "correction": "Explicit back-seam head projection, horizontal circumference, upright crown and chin; rebake skin",
+  "rebuild_requested": "2026-11-24-horizontal-head-uv",
   "reason": "Reauthor articulated limbs to reduce UV collisions; add measurable quality release gate and real 3D-to-UV region sync"
 }
