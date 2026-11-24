@@ -64,7 +64,7 @@ const flush=async()=>{for(let i=0;i<15;i++)await Promise.resolve()};
  assert.equal(f.element('se476StartupGate').hidden,true,'Successful native default releases gate');
  assert.equal(loads,0,'No duplicate cloud request after default completes');
  assert.equal(f.window.SWYRL_ENGINE_STARTUP_476.inspect().finished,true);
- const failed={attempted:true,source:'cloud',pending:false,success:false,reason:'Account temporarily unavailable'};
+ const failed={attempted:true,source:'cloud',id:'cloud-B',pending:false,success:false,reason:'Account temporarily unavailable'};
  const f2=fixture({read:()=>({source:'cloud',id:'cloud-B'}),pending:()=>null,report:()=>failed},{
   ready:()=>true,list:async()=>({local:[],cloud:[{id:'cloud-B',name:'Saved B'}]}),
   loadCloud:async()=>{throw Error('Should not auto-retry failed default')}
