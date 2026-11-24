@@ -28,8 +28,9 @@ jobs:
           set +e
           LOG=/tmp/se550-build.log
           run_checks() {
-            echo "=== JS syntax ==="
+            echo "=== JS syntax and startup regression ==="
             node --check projects/swrlz-forge-moba/runtime/uv_texture_alignment_v11_552.js || return $?
+            node projects/swrlz-forge-moba/tests/startup_restore_regression_v11_552.cjs || return $?
             echo "=== seal source ==="
             python projects/swrlz-forge-moba/scripts/seal_uv_texture_alignment_v11_552.py || return $?
             echo "=== build verified source ==="
