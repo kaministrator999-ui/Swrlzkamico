@@ -650,8 +650,8 @@ def main():
     scene['project']['modelAtelier']['reference']=(
       'One continuous five-digit humanoid, 13,932 original 3D triangles. '
       'Physically separated non-overlapping xatlas-relaxed anatomical UV charts in '+kind+
-      ' 3D regions (separate front/back torso, face/scalp when possible). New ceramic/graphite/cyan robotic skin baked from 
-      'actual local 3D positions and normals; no old atlas texture transferred. '
+      ' 3D regions (separate front/back torso, face/scalp when possible). '
+      'New ceramic/graphite/cyan robotic skin baked from actual local 3D positions and normals; no old atlas texture transferred. '
       '4096px UV wireframe and 4096px anatomical UV guide are available. '
       'No rigging or geometry sculpt applied.')
     OUTPUT.write_text(json.dumps(scene,ensure_ascii=False,separators=(',',':')),'utf8')
