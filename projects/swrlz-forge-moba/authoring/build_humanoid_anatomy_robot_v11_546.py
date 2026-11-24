@@ -293,6 +293,45 @@ def audit(pos,faces,uv):
     assert np.isfinite(uv).all() and uv.min()>=0 and uv.max()<=1
     return {'uvArea':round(uv_total,4),'p95P5Density':round(ratio,2)}
 
+def measure_surface_uv_conflicts(pos,uv,faces,size=512,threshold=.035):
+    """Count geometrically unrelated surfaces mapped to identical UV texels.
+
+    Adjacent triangles in an otherwise valid single UV chart can both rasterize
+    their shared edge pixel, so a raw duplicate-pixel count is NOT a valid UV
+    overlap detector. Compare interpolated 3D positions at coincident texels.
+    """
+    stored=np.zeros((size,size,3),np.float32)
+    filled=np.zeros((size,size),np.bool_)
+    repeated=0;separated=0;largest=0.
+    uvp=np.column_stack((uv[:,0],1-uv[:,1]))*(size-1)
+    for f in faces:
+        a=uvp[f]
+        cross=(a[1,0]-a[0,0])*(a[2,1]-a[0,1])-(a[2,0]-a[0,0])*(a[1,1]-a[0,1])
+        if abs(cross)<1e-8:continue
+        lo=np.maximum(np.floor(a.min(axis=0)).astype(int)-1,0)
+        hi=np.minimum(np.ceil(a.max(axis=0)).astype(int)+1,size-1)
+        xx,yy=np.meshgrid(np.arange(lo[0],hi[0]+1),np.arange(lo[1],hi[1]+1))
+        b=((xx-a[0,0])*(a[2,1]-a[0,1])-(yy-a[0,1])*(a[2,0]-a[0,0]))/cross
+        c=((yy-a[0,1])*(a[1,0]-a[0,0])-(xx-a[0,0])*(a[1,1]-a[0,1]))/cross
+        d=1-b-c
+        valid=(b>=-1e-6)&(c>=-1e-6)&(d>=-1e-6)
+        if not valid.any():continue
+        py=yy[valid];px=xx[valid]
+        world=(b[valid,None]*pos[f[1]]+c[valid,None]*pos[f[2]]+
+               d[valid,None]*pos[f[0]])
+        overlap=filled[py,px]
+        if overlap.any():
+            repeated+=int(overlap.sum())
+            delta=np.linalg.norm(stored[py[overlap],px[overlap]]-world[overlap],axis=1)
+            separated+=int(np.count_nonzero(delta>threshold))
+            largest=max(largest,float(delta.max(initial=0)))
+        stored[py,px]=world;filled[py,px]=True
+    return {'samples':size,'sharedEdgeSamples':repeated-separated,
+            'conflictingSamples':separated,
+            'maxOverlapWorldDistance':round(largest,4),
+            'conflictPct':round(100*separated/max(1,int(filled.sum())),4)}
+
+
 def new_skin(p,n):
     x,y,z=p.T;nx,ny,nz=n.T;ax=np.abs(x)
     smooth=bakery.smooth;band=bakery.band;ellipse=bakery.ellipse
@@ -415,6 +454,7 @@ def main():
     bakery.SIZE=1024
     bakery.surface_paint=new_skin
     baked,regions,paint_metrics=bakery.bake(xyz,uv,idx.astype(np.int64),normals(xyz,idx))
+    collision_metrics=measure_surface_uv_conflicts(xyz,uv,idx)
     blob=bakery.export_png(baked,PAINT)
     assert len(base64.b64encode(blob))+22<=PAINT_LIMIT
     export_guides(uv,idx,region)
@@ -448,7 +488,7 @@ def main():
         'vertices':len(xyz),'triangles':len(idx),'originalGeometryUnchanged':True,
         'regionTriangles':dict(Counter(region)),'paintBytes':len(blob),
         'guideSize':4096,'legacyCandidatesRejected':errors,
-        **metrics,**paint_metrics}
+        **metrics,**paint_metrics,**collision_metrics}
     REPORT.write_text(json.dumps(record,indent=2)+'\n','utf8')
     print('SE546_ANATOMICAL_ROBOT_BAKED',json.dumps(record),flush=True)
 
