@@ -1,8 +1,8 @@
 {
   "version": "v11.546",
   "strategy": "six",
-  "charts": 91,
-  "vertices": 8613,
+  "charts": 6,
+  "vertices": 7441,
   "triangles": 13932,
   "originalGeometryUnchanged": true,
   "regionTriangles": {
@@ -13,25 +13,37 @@
     "leftLeg": 2305,
     "rightLeg": 2282
   },
-  "paintBytes": 215900,
+  "paintBytes": 183043,
   "guideSize": 4096,
   "legacyCandidatesRejected": [],
-  "uvArea": 0.3454,
-  "p95P5Density": 8.22,
+  "uvArea": 0.4535,
+  "p95P5Density": 20.86,
   "uvShells": {
     "head": 1,
     "torso": 1,
-    "leftArm": 31,
-    "rightArm": 32,
-    "leftLeg": 12,
-    "rightLeg": 14
+    "leftArm": 1,
+    "rightArm": 1,
+    "leftLeg": 1,
+    "rightLeg": 1
   },
-  "coveredPct": 34.41,
-  "overlaps": 583,
+  "coveredPct": 44.72,
+  "overlaps": 5655,
   "regionTexels": {
     "head": 15085,
-    "arm": 75726,
-    "torso": 205093,
-    "leg": 64911
-  }
+    "arm": 129280,
+    "torso": 205394,
+    "leg": 119130
+  },
+  "samples": 512,
+  "sharedEdgeSamples": 572,
+  "conflictingSamples": 787,
+  "conflictsByRegion": {
+    "torso": 126,
+    "leftArm": 185,
+    "rightArm": 203,
+    "leftLeg": 137,
+    "rightLeg": 136
+  },
+  "maxOverlapWorldDistance": 0.4894,
+  "conflictPct": 0.6716
 }
