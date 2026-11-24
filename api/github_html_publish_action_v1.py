@@ -137,8 +137,15 @@ def _manifest(auth, sha, slug):
             raise PublishActionError("PROJECT_EXCEEDS_LIMIT")
     if not any(entry["path"] == "index.html" for entry in files):
         raise PublishActionError("PROJECT_INDEX_HTML_MISSING")
+    index_entry = next((item for item in (tree.get("tree") or [])
+                        if item.get("path") == prefix + "index.html" and
+                           item.get("type") == "blob"), None)
+    index_sha = str((index_entry or {}).get("sha") or "").lower()
+    if not re.fullmatch(r"[0-9a-f]{40}", index_sha):
+        raise PublishActionError("PROJECT_INDEX_BLOB_UNVERIFIED")
     return {"repo": REPO, "branch": auth["branch"], "project": slug, "sourceSha": sha,
             "files": sorted(files, key=lambda x: x["path"]), "bytes": total,
+            "indexGitBlobSha": index_sha,
             "url": _url(slug), "workflowUrl": WORKFLOW_URL,
             "destinationPrefix": "published-html-projects/" + slug + "/"}
 
