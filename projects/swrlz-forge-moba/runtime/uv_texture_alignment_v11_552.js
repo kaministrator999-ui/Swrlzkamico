@@ -210,6 +210,9 @@ se356UVRender=function(){se552PrevRender();se552Paint();if(se552ShowRegions)se55
  * A separate non-pickable diagnostic mesh preserves the model's real material.
  */
 let se552RegionSelected=-1,se552PickingModel=false,se552PickViewport=null;
+let se552FirstRegionOpen=true,se552PickPopup=null,se552PickPopupVisibility='';
+function se552RestorePopup(){if(se552PickPopup){se552PickPopup.style.visibility=se552PickPopupVisibility;se552PickPopup=null;}}
+function se552LeaveModelPick(){se552PickingModel=false;se552RestorePopup();if(se552Portal)se552Portal.host.style.display='flex';}
 function se552PickFaceUV(t,cv,e){
  const rect=cv.getBoundingClientRect();
  const q=[(e.clientX-rect.left)/rect.width,1-(e.clientY-rect.top)/rect.height];
@@ -266,7 +269,7 @@ function se552PickFromModel(e){
    1-(e.clientY-rect.top)/rect.height*2),camera);
  const hit=ray.intersectObject(t.mesh,false)[0];
  e.preventDefault();e.stopImmediatePropagation();
- se552PickingModel=false;se552Portal.host.style.display='flex';
+ se552LeaveModelPick();
  if(!hit)return;
  const topo=se551Topology(t),f=topo.faces[hit.faceIndex],pos=t.mesh.geometry.getAttribute('position');
  if(!f)return;
@@ -288,6 +291,9 @@ se552Install=function(){
 };
 const se552OriginalOpen=se552Open;
 se552Open=function(){
+ if(se552FirstRegionOpen&&se551Target()?.part?.id==='humanoid-body-unified'){
+  se552ShowRegions=true;se552FirstRegionOpen=false;
+ }
  se552OriginalOpen();
  const host=se552Portal?.host,controls=host?.children?.[1];
  if(!host||!controls||controls.querySelector('[data-se552-pick3d]'))return;
@@ -297,11 +303,14 @@ se552Open=function(){
  controls.append(button);
  button.addEventListener('click',()=>{
   if(!se551Target()||!camera||!se552PickViewport){status('Select an editable model first.');return;}
-  se552PickingModel=true;host.style.display='none';
+  se552PickingModel=true;
+  se552PickPopup=document.getElementById('se355UVPopup');
+  if(se552PickPopup){se552PickPopupVisibility=se552PickPopup.style.visibility;se552PickPopup.style.visibility='hidden';}
+  host.style.display='none';
   status('Tap the model to select an anatomical region.');
  });
  const close=se552Portal.close;
- se552Portal.close=()=>{se552PickingModel=false;close();};
+ se552Portal.close=()=>{se552LeaveModelPick();close();};
  host.addEventListener('pointerdown',e=>{
   const cv=se356UVPreviewRoot()?.querySelector('#se356UVCanvas'),t=se551Target();
   if(e.target!==cv||!t||!se552ShowRegions||se552Pan)return;
