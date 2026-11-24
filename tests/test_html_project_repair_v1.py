@@ -46,6 +46,21 @@ class HTMLRepairTest(unittest.TestCase):
         self.assertFalse(m.should_route({**p,"projectFileEvidence":"Source unavailable"}))
         self.assertFalse(m.should_route({**p,"receivedText":"Just inspect it without changes"}))
 
+    def test_full_reported_prompt(self):
+        prompt = ("Inspect the existing interactive-3d-model-viewer project on GitHub. "
+                  "Identify why it fails to render correctly and repair it using your own coding model. "
+                  "Retrieve the actual source, generate targeted patches, validate them, and revise any failed patches until validation passes. "
+                  "Preserve the existing functionality and design. Do not regenerate the entire HTML page or rely on a predetermined repair script. "
+                  "Present the actual changes, validation results, and approval request. Once approved, commit, deploy, and verify that the project works.")
+        self.assertTrue(m.repair_intent(prompt))
+        self.assertTrue(m.should_route({"receivedText": prompt,
+            "activeHtmlProject": {"project": SLUG},
+            "projectFileEvidence": "Verified Git blob: "+BLOB,
+            "githubSourceChangeTask": "plan"}))
+        self.assertFalse(m.repair_intent("Inspect the project but do not repair it"))
+        self.assertFalse(m.repair_intent("Inspect without changes"))
+        self.assertTrue(m.repair_intent("Repair the project but do not commit until approved"))
+
     def test_approval_and_source_pin(self):
         received=[]
         publisher=types.ModuleType("github_html_publish_action_v1")
