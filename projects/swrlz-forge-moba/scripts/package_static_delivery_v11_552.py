@@ -112,11 +112,18 @@ def main():
             if src.stat().st_size>=MAX_FILE:
                 raise ValueError("xatlas "+name+" exceeds static host file limit")
             shutil.copy2(src,dest/name)
-        shared=Path(__file__).resolve().parents[1]/"runtime/uv_atlas_core_v11_555.mjs"
-        shutil.copy2(shared,dest/shared.name)
+        shared_root=Path(__file__).resolve().parents[1]/"runtime"
+        shared_files=("uv_atlas_core_v11_555.mjs","uv_lscm_core_v11_555.mjs")
+        for name in shared_files:
+            shutil.copy2(shared_root/name,dest/name)
+        # Preserve the vendor's MIT attribution with the shipped WASM.
+        for name in ("LICENSE","NOTICE"):
+            license_file=dist.parent/name
+            if license_file.is_file():
+                shutil.copy2(license_file,dest/("xatlas-"+name))
         print("SE555_LOCAL_XATLAS_WASM_BUNDLED",
               {name:(dest/name).stat().st_size for name in
-               ("index.mjs","xatlas.wasm",shared.name)},flush=True)
+               ("index.mjs","xatlas.wasm",*shared_files)},flush=True)
 
     receipt["accountStartupDeliveryRepair"] = account_receipt
     receipt["uvFirstHumanoidDelivery"] = starter_receipt
