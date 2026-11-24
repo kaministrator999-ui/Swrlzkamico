@@ -1,27 +1,31 @@
 {
   "schema": "swrlz-forge-deploy-request-v1",
-  "requestedBy": "ChatGPT (owner-authorized repair and verified deployment of account project startup)",
+  "requestedBy": "ChatGPT (owner authorized verified anatomical UV source repair and live deployment)",
   "target": "kamiloki/swrlz-forge-moba",
   "releaseVersion": "v11.552",
   "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_546_ANATOMY_ROBOT_UV_4K",
-  "reason": "Deploy v11.553 post-seal account recovery while preserving all historical source SHA and final v11.552 artifact identity",
+  "reason": "Deploy collision-free xatlas anatomical humanoid UV charts with separate torso front/back and matching 4K UV guides; verify live static bytes",
   "sourceCommit": "main (deploy workflow checkout; verified against sourceIntegritySha256)",
   "sourceIntegritySha256": "3fe29516958ea5af2448352fa238eda121cc3031266c61c746380f092d22232e",
-  "assetBuildRun": 45337725091,
-  "assetShells": 6,
-  "assetVertices": 7424,
+  "assetBuildRun": 45434797764,
+  "assetShells": 117,
+  "assetVertices": 8990,
   "resealRun": 45342195310,
-  "deploymentAttempt": 13,
+  "deploymentAttempt": 14,
   "uvQuality": {
-    "nonadjacentConflictPct": 0.5701,
+    "nonadjacentConflictPct": 0,
     "samplingResolution": 512,
-    "densityRatio": 24.2,
-    "original3DTriangles": 13932
+    "densityRatio": 4.58,
+    "original3DTriangles": 13932,
+    "anatomicalGroups": 7,
+    "uvCharts": 117,
+    "uvVertices": 8990
   },
   "accountStartupRecovery": "v11.553-delivery",
   "accountStartupChecks": [
     "startup_restore_regression_v11_552",
     "startup_delivery_repair_v11_553"
   ],
-  "accountStartupHistoricalSources": "restored SHA-identical v11.184 and v11.552"
+  "accountStartupHistoricalSources": "restored SHA-identical v11.184 and v11.552",
+  "uvDeliveryVerification": "SHA-256 compare public static scene + painted skin + UV wireframe + anatomical guide against GitHub checkout"
 }
