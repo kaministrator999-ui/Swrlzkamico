@@ -28,11 +28,13 @@ sys.path.insert(0,str(ROOT/'authoring'))
 import build_humanoid_semantic_material_v11_544 as bakery
 assert SOURCE.exists()
 
-REGIONS=['head','chest','back','leftArm','rightArm','leftLeg','rightLeg']
-PALETTE=[(239,68,68),(59,130,246),(59,130,246),
+REGIONS=['headFront','headBack','chest','back','leftArm','rightArm','leftLeg','rightLeg']
+PALETTE=[(239,68,68),(225,100,75),(59,130,246),(41,103,198),
          (34,197,94),(234,179,8),(168,85,247),(249,115,22)]
 RECT={
  'head':(.008,.015,.245,.475),
+ 'headFront':(.008,.015,.122,.475),
+ 'headBack':(.128,.015,.245,.475),
  'chest':(.252,.015,.610,.475),
  'back':(.616,.015,.992,.475),
  'torso':(.252,.015,.992,.475),
@@ -55,21 +57,33 @@ def source():
     return scene,part,welded,tris
 
 def zone_ids(positions,faces,mode):
+    """Partition by original 3D anatomy, not by the UV image.
+
+    The front face/helmet and scalp are distinct in the preferred eight-region
+    candidate. A seven-region candidate may combine only the head; front and
+    rear torso are always separate, never a cylindrical torso fallback.
+    """
     centers=positions[faces].mean(axis=1)
     x,y,z=centers.T
     head=y>=4.08
     arms=(np.abs(x)>.69)&(y>3.30)&(~head)
     legs=y<=2.35
     labels=np.full(len(faces),'torso',dtype='<U12')
-    labels[head]='head'
+    if mode=='eight':
+        labels[head&(z>=0)]='headFront'
+        labels[head&(z<0)]='headBack'
+    elif mode=='seven':
+        labels[head]='head'
+    else:
+        raise ValueError('Unknown anatomical atlas mode '+mode)
     labels[arms&(x<0)]='leftArm'
     labels[arms&(x>=0)]='rightArm'
     labels[legs&(x<0)]='leftLeg'
     labels[legs&(x>=0)]='rightLeg'
-    if mode=='seven':
-        torso=labels=='torso'
-        labels[torso&(z>=0)]='chest'
-        labels[torso&(z<0)]='back'
+    torso=labels=='torso'
+    labels[torso&(z>=0)]='chest'
+    labels[torso&(z<0)]='back'
+    assert not np.any(labels=='torso'), 'Unpartitioned torso triangles'
     return labels
 
 def xatlas_group(pos,faces):
@@ -346,57 +360,45 @@ def contour_width(pos,uv,name,strength):
     return q
 
 def make_atlas(positions,triangles,mode):
+    """Create genuine relaxed, seam-separated, non-overlapping xatlas charts.
+
+    Unlike the original forced cylindrical UV shell, this unwrap is allowed to
+    cut at actual anatomical seams (especially the wrists/fingers, feet,
+    back-of-skull, shoulder openings, and left/right side of the torso).
+    No UV-only vertex split modifies the underlying 3D triangle geometry.
+    """
     labels=zone_ids(positions,triangles,mode)
-    parts=[];faces_out=[];uv_out=[];group_names=[];charts=0;count=0
-    for name in (REGIONS if mode=='seven' else ['head','torso','leftArm','rightArm','leftLeg','rightLeg']):
+    groups=(REGIONS if mode=='eight'
+            else ['head','chest','back','leftArm','rightArm','leftLeg','rightLeg'])
+    parts=[];faces_out=[];uv_out=[];names=[];charts=0;count=0
+    for name in groups:
         original=triangles[labels==name]
-        if not len(original):raise ValueError('Missing anatomy '+name)
-        # Geometry-derived, measured seam calibration for the native v11.540
-        # mannequin. Fix the back/underside angular seam and spread hands near
-        # the knuckles while preserving the exact original 3D triangles.
-        # Tests reject the asset if source geometry or collision rates change.
-        calibration={'leftArm':(-4.,-8.,0.,0.),
-                     'rightArm':(-4.,-8.,0.,0.),
-                     'leftLeg':(0.,0.,0.,0.),
-                     'rightLeg':(0.,0.,0.,0.)}
-        params=calibration.get(name,(0.,0.,0.,0.))
-        p,f,uv,c=(anatomical_limb_projection(positions,original,name)
-                  if name in ('leftArm','rightArm','leftLeg','rightLeg')
-                  else seam_aware_anatomical_group(positions,original,name,*params))
-        # Select the strongest usable anatomical taper using actual atlas
-        # texel conflicts, rather than applying a global arbitrary strength.
-        candidates=[]
-        for strength in (1.,.85,.7,.55,.4,.25,.1,0.):
-            q=(anatomical_silhouette(p,uv,name,strength)
-               if name in ('head','torso','chest','back') else contour_width(p,uv,name,strength))
-            # Preserve limb length and choose measured cross-section taper.
-            if name=='head': q[:,0]*=.60
-            if name=='torso': q[:,0]*=.85
-            fitted=fit(q,RECT[name],lock_orientation=True)
-            m=measure_surface_uv_conflicts(p,fitted,f,[name]*len(f))
-            candidates.append((strength,q,m))
-        baseline=candidates[-1][2]
-        allowed=min(200,baseline['conflictingSamples'])
-        valid=[v for v in candidates if v[2]['conflictingSamples']<=allowed
-               and v[2]['conflictPct']<=baseline['conflictPct']
-               and v[2]['maxOverlapWorldDistance']<.50]
-        if not valid:
-            valid=sorted(candidates,key=lambda v:v[2]['conflictingSamples'])
-        strength,uv,quality=valid[0]
-        print('SE546_TAPER_SELECTED',name,strength,quality,flush=True)
-        base=count;count+=len(p);charts+=c
-        if count>VERT_LIMIT:raise ValueError('UV vertex budget exceeded: '+str(count))
-        parts.append(p);faces_out.append(f+base)
-        uv_out.append(fit(uv,RECT[name],lock_orientation=True))
-        group_names.extend([name]*len(f))
+        if not len(original):
+            raise ValueError('Missing anatomical region '+name)
+        p,f,unpacked,chart_count=xatlas_group(positions,original)
+        if chart_count<1 or chart_count>48:
+            raise ValueError('Excess atlas fragmentation: '+name+' '+str(chart_count))
+        count+=len(p)
+        if count>VERT_LIMIT:
+            raise ValueError('UV-only vertex budget exceeded: '+str(count))
+        parts.append(p)
+        faces_out.append(f+(count-len(p)))
+        # Isotropic placement preserves xatlas relaxation; the regions cannot
+        # overlap because their packing rectangles never intersect.
+        uv_out.append(fit(unpacked,RECT[name]))
+        names.extend([name]*len(f))
+        charts+=chart_count
+        print('SE546_RELAXED_REGION',name,'charts',chart_count,
+              'UV vertices',len(p),flush=True)
     outpos=np.concatenate(parts,axis=0)
     outfaces=np.concatenate(faces_out,axis=0)
     outuv=np.concatenate(uv_out,axis=0)
     assert len(outfaces)==len(triangles)
-    orig=Counter(tuple(sorted(map(tuple,positions[tri]))) for tri in triangles)
-    new=Counter(tuple(sorted(map(tuple,outpos[tri]))) for tri in outfaces)
-    assert orig==new, 'Geometrical triangles altered during unwrap'
-    return outpos,outfaces,outuv,group_names,charts
+    before=Counter(tuple(sorted(map(tuple,positions[tri]))) for tri in triangles)
+    after=Counter(tuple(sorted(map(tuple,outpos[tri]))) for tri in outfaces)
+    assert before==after,'UV unwrap changed geometry triangles'
+    assert np.isfinite(outuv).all() and outuv.min()>=0 and outuv.max()<=1
+    return outpos,outfaces,outuv,names,charts
 
 def shell_counts(uv,faces,region_names):
     """Count connected UV face components per anatomical region.
@@ -426,12 +428,12 @@ def shell_counts(uv,faces,region_names):
     return {name:len(roots) for name,roots in counts.items()}
 
 def continuous_shell_gate(uv,faces,region_names):
+    """Count physical UV charts rather than force a cylinder per body region."""
     counts=shell_counts(uv,faces,region_names)
-    # Each of the six anatomical regions is a single connected UV shell.
-    required={'head':1,'torso':1,'chest':1,'back':1,
-              'leftArm':1,'rightArm':1,'leftLeg':1,'rightLeg':1}
-    violations={k:{'actual':v,'maximum':required[k]} for k,v in counts.items()
-                if v>required[k]}
+    violations={name:{'charts':count,'maximum':48}
+                for name,count in counts.items() if not 1<=count<=48}
+    if sum(counts.values())>120:
+        violations['total']={'charts':sum(counts.values()),'maximum':120}
     return counts,violations
 
 def audit(pos,faces,uv):
@@ -561,7 +563,7 @@ def normals(pos,faces):
 def export_guides(uv,faces,region_names):
     s=4096;xy=np.rint(np.column_stack((uv[:,0],1-uv[:,1]))*(s-1)).astype(np.int32)
     colors=dict(zip(REGIONS,PALETTE))
-    colors['torso']=(59,130,246)  # same blue as app's region 2
+    colors['head']=(239,68,68)   # seven-region fallback
     for p,anatomical in ((GUIDE,False),(ANATOMY,True)):
         canvas=Image.new('RGB',(s,s),(19,31,48))
         painter=ImageDraw.Draw(canvas)
@@ -572,7 +574,7 @@ def export_guides(uv,faces,region_names):
             painter.line(pts+[pts[0]],fill=(208,238,241) if anatomical else (45,229,225),width=1)
         # Numbered region legend is drawn onto exported GUIDES, not onto the
         # robotic material: labels cannot accidentally appear on the model.
-        order=['head','torso','chest','back','leftArm','rightArm','leftLeg','rightLeg']
+        order=['head','headFront','headBack','chest','back','leftArm','rightArm','leftLeg','rightLeg']
         visible=set(region_names)
         try:font=ImageFont.truetype('DejaVuSans.ttf',52)
         except OSError:font=ImageFont.load_default()
@@ -595,12 +597,19 @@ def export_guides(uv,faces,region_names):
 def main():
     scene,part,positions,faces=source()
     errors=[];result=None
-    for kind in ('six','seven'):
+    for kind in ('eight','seven'):
         try:
             candidate=make_atlas(positions,faces,kind)
             metrics=audit(*candidate[:3])
             shells,violations=continuous_shell_gate(candidate[2],candidate[1],candidate[3])
-            if violations:raise ValueError('continuous shell criteria not met: '+str(violations))
+            if violations:
+                raise ValueError('UV chart budget exceeded: '+str(violations))
+            if sum(shells.values())!=candidate[4]:
+                raise ValueError('UV chart connectivity does not match atlas chart count')
+            conflicts=measure_surface_uv_conflicts(candidate[0],candidate[2],
+                                                   candidate[1],candidate[3])
+            if conflicts['conflictingSamples']>80 or conflicts['conflictPct']>.15:
+                raise ValueError('Actual overlapping surfaces remain: '+str(conflicts))
             result=(candidate,dict(metrics,uvShells=shells),kind);break
         except (ValueError,AssertionError) as e:
             errors.append(kind+': '+str(e))
@@ -640,8 +649,8 @@ def main():
     scene['project']['modelAtelier']['name']='Futuristic Humanoid · Anatomy UV + Robot Skin'
     scene['project']['modelAtelier']['reference']=(
       'One continuous five-digit humanoid, 13,932 original 3D triangles. '
-      'Anatomically tapered continuous UV shells in '+kind+
-      ' true 3D regions. New ceramic/graphite/cyan robotic skin baked from '
+      'Physically separated non-overlapping xatlas-relaxed anatomical UV charts in '+kind+
+      ' 3D regions (separate front/back torso, face/scalp when possible). New ceramic/graphite/cyan robotic skin baked from 
       'actual local 3D positions and normals; no old atlas texture transferred. '
       '4096px UV wireframe and 4096px anatomical UV guide are available. '
       'No rigging or geometry sculpt applied.')
