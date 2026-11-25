@@ -173,6 +173,8 @@ def isolation_probe():
                 "mountNamespace": False, "filesystemIsolation": False,
                 "processIsolation": False, "candidateExecutionEnabled": False,
                 "isolationVerified": False, "status": "BLOCKED", "reasons": []}
+    from pathlib import Path
+    evidence["probeSourceSha256"] = hashlib.sha256(Path(__file__).read_bytes()).hexdigest()
     if not _probe_lock.acquire(blocking=False):
         evidence["status"] = "BUSY"
         return evidence
