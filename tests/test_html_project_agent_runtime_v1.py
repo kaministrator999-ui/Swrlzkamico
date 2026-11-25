@@ -159,6 +159,45 @@ class RuntimeTests(unittest.TestCase):
         self.assertFalse(runtime.requested_publish_after_approval(
             "Once approved, commit and deploy. Never deploy."))
     
+    def test_dependency_recovery_from_missing_node_modules_and_real_user_prompt(self):
+        from pathlib import Path
+        from api.html_project_dependency_tool_v1 import localize_imports, DependencyError
+        from api import html_project_agent_v1 as agent
+        source='<html><head><script type="importmap">{"imports":{"tiny":"https://unpkg.com/tiny@1.2.3/main.js"}}</script></head><body><script type="module">import {x} from "tiny"; document.body.textContent=x;</script></body></html>'
+        members={"main.js":"export const x=1;","LICENSE":"MIT"}
+        def reader(pkg,version,member):
+            if (pkg,version)!=("tiny","1.2.3") or member not in members:
+                raise DependencyError("DEPENDENCY_MODULE_MISSING: "+member)
+            return members[member],"sha512-test"
+        payload=self.payload()
+        payload["receivedText"]="Inspect the existing project on GitHub. Identify why it fails to render correctly and repair it using your own coding model. Retrieve the actual source, generate targeted patches, validate them, and revise any failed patches until validation passes. Preserve the existing functionality and design. Do not regenerate the entire HTML page or rely on a predetermined repair script. Present the actual changes, validation results, and approval request. Once approved, commit, deploy, and verify that the project works."
+        calls=[]
+        def wrong_model(p):
+            calls.append(p)
+            self.assertEqual(p["modelId"],"coder")
+            self.assertIn("availableToolCalls",p["prompt"])
+            yield {"type":"DELTA","text":json.dumps({"patches":[{"path":"index.html","op":"replace_once","anchor":"https://unpkg.com/tiny@1.2.3/main.js","code":"./node_modules/tiny/main.js"}]})}
+            yield {"type":"COMPLETED","phase":"COMPLETE"}
+        with patch.object(runtime.approval,"should_route",return_value=True), \
+             patch.object(runtime,"_source_files",return_value=("b"*40,{"index.html":source})), \
+             patch.object(agent,"localize_imports",side_effect=lambda *a:localize_imports(*a,reader=reader)), \
+             patch.object(runtime.approval,"prepare_model",return_value={"kind":"review"}) as stage:
+            events=list(runtime.run(payload,wrong_model))
+        self.assertEqual(len(calls),1)
+        stage.assert_called_once()
+        self.assertTrue(stage.call_args.kwargs["publish_after_validation"])
+        self.assertEqual(stage.call_args.args[4]["patches"][0]["op"],"localize_imports")
+        self.assertTrue(any("executor recovered" in e.get("text","") for e in events))
+        self.assertEqual(events[-1]["phase"],"COMPLETE")
+
+    def test_no_dependency_recovery_for_feature_or_explicit_restriction(self):
+        baseline={"issues":[{"code":"CSP_EXTERNAL_MODULE","file":"index.html"}]}
+        actions=[{"op":"localize_imports"}]
+        for task in ("Repair rendering and add a new feature","Fix the save button",
+                     "Fix rendering but do not download dependencies"):
+            self.assertFalse(runtime.dependency_only_recovery(task,baseline,actions))
+        self.assertTrue(runtime.dependency_only_recovery("Repair the rendering failure",baseline,actions))
+
     def test_owner_context_required(self):
         p=self.payload()
         del p["htmlRepairOwner"]
