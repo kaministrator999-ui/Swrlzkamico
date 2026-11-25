@@ -1,0 +1,73 @@
+name: §X isolation capability v0.3
+on:
+  push:
+    branches: [feat/swrlz-x-isolation-v03]
+    paths:
+      - 'projects/swrlz-execution/app.py'
+      - '.github/workflows/swrlz-x-isolation-v03.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  probe:
+    if: github.ref == 'refs/heads/feat/swrlz-x-isolation-v03'
+    concurrency:
+      group: swrlz-execution-publish
+      cancel-in-progress: false
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - run: python -m pip install --quiet 'huggingface_hub>=0.34,<2' 'requests>=2.31,<3'
+      - name: Deploy only §X isolation probe; collect actual runtime evidence
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          python -m py_compile projects/swrlz-execution/app.py
+          python -u - <<'PY'
+          import os, json, time, re
+          from pathlib import Path
+          import requests
+          from huggingface_hub import HfApi, CommitOperationAdd, hf_hub_download
+          target="kamiloki/swrlz-execution"
+          api=HfApi(token=os.environ["HF_TOKEN"])
+          old=api.repo_info(target,repo_type="space").sha
+          local=Path("projects/swrlz-execution/app.py")
+          current=Path(hf_hub_download(target,"app.py",repo_type="space",revision=old,token=os.environ["HF_TOKEN"])).read_bytes()
+          if b"def remote_probe(" not in current:
+              raise RuntimeError("X_SOURCE_DRIFT")
+          if current != local.read_bytes():
+              revision=api.create_commit(repo_id=target,repo_type="space",revision="main",parent_commit=old,operations=[CommitOperationAdd(path_in_repo="app.py",path_or_fileobj=local)],commit_message="§X v0.3 fixed isolation capability probe").oid
+          else:
+              revision=old
+          assert Path(hf_hub_download(target,"app.py",repo_type="space",revision=revision,token=os.environ["HF_TOKEN"])).read_bytes()==local.read_bytes()
+          print("X_PROBE_SOURCE_READBACK_PASS",revision,flush=True)
+          url="https://kamiloki-swrlz-execution.hf.space/gradio_api/call/swrlz_isolation_v03"
+          for attempt in range(30):
+              try:
+                  r=requests.post(url,json={"data":[]},timeout=15,allow_redirects=False)
+                  if r.status_code!=200: raise RuntimeError("HTTP_"+str(r.status_code))
+                  event=r.json()["event_id"]
+                  assert re.fullmatch(r"[0-9a-f]{32}",event)
+                  with requests.get(url+"/"+event,timeout=(10,65),stream=True,allow_redirects=False) as stream:
+                      stream.raise_for_status()
+                      kind=""
+                      for line in stream.iter_lines():
+                          if line.startswith(b"event:"):kind=line[6:].strip().decode()
+                          elif line.startswith(b"data:") and kind=="complete":
+                              data=json.loads(line[5:].strip())[0]
+                              assert data["schema"]=="swrlz-x-isolation-v03"
+                              assert data["candidateExecutionEnabled"] is False and data["isolationVerified"] is False
+                              if data["status"]=="BUSY":raise RuntimeError("BUSY")
+                              print("X_ISOLATION_CAPABILITY_EVIDENCE",json.dumps(data,sort_keys=True),flush=True)
+                              print("CANDIDATE_EXECUTION_REMAINS_DISABLED",flush=True)
+                              raise SystemExit(0)
+                  raise RuntimeError("NO_RECEIPT")
+              except Exception as exc:
+                  if attempt==29:raise RuntimeError("X_ISOLATION_PROBE_UNVERIFIED") from exc
+                  if attempt%4==0:print("X_PROBE_PENDING",type(exc).__name__,flush=True)
+                  time.sleep(8)
+          PY
