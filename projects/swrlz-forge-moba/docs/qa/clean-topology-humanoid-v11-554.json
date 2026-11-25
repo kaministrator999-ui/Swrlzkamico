@@ -19,6 +19,7 @@
   "quadFirst": true,
   "junctionSmoothing": "welded-local-eight-pass",
   "limbSocketBlend": true,
+  "hipThighProfile": "continuous-outer-contour-v6",
   "topologyAudit": {
     "weldedVertices": 5748,
     "weldedEdges": 11492,
@@ -27,14 +28,14 @@
     "connectedComponents": 1,
     "watertight": true,
     "oriented": true,
-    "signedVolume": 1.05183
+    "signedVolume": 1.043
   },
   "uvAlgorithm": "seamed-LSCM+verified-single-atlas-packer",
   "uvChartCount": 22,
   "uvTexelDensity": {
-    "p05": 0.11199164730532389,
-    "p95": 0.2464125723277615,
-    "p95P05": 2.200276344323828,
+    "p05": 0.09038512242974084,
+    "p95": 0.2502444369538722,
+    "p95P05": 2.768646323938931,
     "trianglesChecked": 11492
   },
   "uvAtlasSize": [
@@ -43,10 +44,10 @@
   ],
   "uvMaxCost": null,
   "uvMethod": "LSCM+verified-chart-packing",
-  "uvLscmIterations": 4730,
+  "uvLscmIterations": 4749,
   "uvSeamMode": "anatomical",
   "uvPacking": "deterministic-shelf",
-  "uvChartScale": 0.19966064094996727,
+  "uvChartScale": 0.20137177469059064,
   "uvPaddingPixels": 8,
   "uvWeldedInputVertices": 0,
   "originalAnatomicalRegions": [
