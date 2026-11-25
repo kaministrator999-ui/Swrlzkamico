@@ -180,19 +180,36 @@ def isolation_probe():
         with tempfile.TemporaryDirectory(prefix="swrlz-isolation-probe-") as home:
             env = {"PATH": "/usr/local/bin:/usr/bin:/bin", "HOME": home,
                    "TMPDIR": home, "LANG": "C.UTF-8", "PYTHONDONTWRITEBYTECODE": "1"}
+            evidence["effectiveUserIsRoot"] = os.geteuid() == 0
+            evidence["probeDetails"] = {}
             def invoke(command, timeout=10):
                 p = subprocess.Popen(command, cwd=home, env=env, stdout=subprocess.PIPE,
-                                     stderr=subprocess.DEVNULL, start_new_session=True)
+                                     stderr=subprocess.PIPE, start_new_session=True)
                 try:
-                    out, _ = p.communicate(timeout=timeout)
-                    return p.returncode == 0, out[:4096]
+                    out, err = p.communicate(timeout=timeout)
+                    msg = err.decode(errors="replace").lower()
+                    # Expose only predefined categories, never raw paths, environment or logs.
+                    category = "OK" if p.returncode == 0 else "NONZERO_EXIT"
+                    for needle, label in (
+                        ("running as root without --no-sandbox", "ROOT_SANDBOX_UNSUPPORTED"),
+                        ("no usable sandbox", "NO_USABLE_SANDBOX"),
+                        ("operation not permitted", "OPERATION_NOT_PERMITTED"),
+                        ("permission denied", "PERMISSION_DENIED"),
+                        ("modulenotfounderror", "PYTHON_DEPENDENCY_MISSING"),
+                        ("not supported", "NOT_SUPPORTED"),
+                        ("no such file or directory", "MISSING_PATH_OR_EXECUTABLE"),
+                    ):
+                        if needle in msg and p.returncode != 0:
+                            category = label
+                            break
+                    return p.returncode == 0, out[:4096], {"category": category, "exitCode": p.returncode}
                 except subprocess.TimeoutExpired:
                     try:
                         os.killpg(p.pid, signal.SIGKILL)
                     except ProcessLookupError:
                         pass
                     p.communicate()
-                    return False, b""
+                    return False, b"", {"category": "TIMEOUT", "exitCode": None}
             unshare = shutil.which("unshare")
             if unshare:
                 for name, flag, ns in (
@@ -206,7 +223,8 @@ def isolation_probe():
                     if flag != "--user":
                         args += [flag]
                     args += ["--fork", "--", "/usr/bin/readlink", "/proc/self/ns/" + ns]
-                    ok, out = invoke(args)
+                    ok, out, detail = invoke(args)
+                    evidence["probeDetails"][name] = detail
                     evidence[name] = bool(ok and out.strip() and out.decode(errors="replace").strip() != parent)
             else:
                 evidence["reasons"].append("UNSHARE_UNAVAILABLE")
@@ -228,7 +246,8 @@ with sync_playwright() as p:
     finally:
         b.close()
 """
-                ok, out = invoke([sys.executable, "-I", "-c", code, chromium], timeout=20)
+                ok, out, detail = invoke([sys.executable, "-I", "-c", code, chromium], timeout=20)
+                evidence["probeDetails"]["browserSandbox"] = detail
                 evidence["browserSandbox"] = bool(ok and b"SANDBOX_LAUNCH_OK" in out)
             # A changed mount namespace is NOT proof of a restricted filesystem.
             # No production sandbox runner exists yet, so always fail closed.
