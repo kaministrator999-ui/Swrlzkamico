@@ -453,6 +453,168 @@ with sync_playwright() as p:
         _probe_lock.release()
 
 
+# Trusted fixed browser fixture only. This is NOT a replacement for Chromium's native sandbox.
+_COMBINED_CHILD = r'''
+import ctypes as C
+import errno, hashlib, json, os, platform, shutil, socket, struct, sys, time
+from pathlib import Path
+from playwright.sync_api import sync_playwright
+
+out={"schema":"swrlz-x-combined-v04","status":"UNVERIFIED","abi":None,
+     "landlockEnforced":False,"unprivileged":os.geteuid()!=0,"nativeChromiumSandbox":False,
+     "candidateExecutionEnabled":False,"isolationVerified":False,"checks":{}}
+libc=C.CDLL(None,use_errno=True)
+libc.syscall.restype=C.c_long
+libc.prctl.restype=C.c_int
+def syscall(n,*args):
+    C.set_errno(0)
+    v=libc.syscall(C.c_long(n),*args)
+    if v<0: raise OSError(C.get_errno(),"landlock syscall")
+    return v
+def test(name,fn,deny=False):
+    try:
+        fn()
+        out["checks"][name]={"pass":not deny,"result":"ALLOWED"}
+    except OSError as e:
+        out["checks"][name]={"pass":deny and e.errno in (errno.EACCES,errno.EPERM),"result":"ERRNO_"+str(e.errno)}
+def main():
+    if not out["unprivileged"] or platform.machine() not in ("x86_64","aarch64","riscv64"):
+        out["status"]="UNSUPPORTED_RUNTIME";return
+    home=Path(os.environ["HOME"])
+    work=home/"work";work.mkdir()
+    outside=home/"canary.txt";outside.write_text("synthetic only")
+    allowed=work/"canary.txt";allowed.write_text("inside")
+    chromium=shutil.which("chromium") or shutil.which("chromium-browser")
+    if not chromium:out["status"]="CHROMIUM_MISSING";return
+    abi=syscall(444,C.c_void_p(),C.c_size_t(0),C.c_uint(1));out["abi"]=abi
+    if abi<4:out["status"]="LANDLOCK_ABI_TOO_OLD";return
+    fs=(1<<15)-1
+    read_exec=(1<<0)|(1<<2)|(1<<3)
+    def read(p):p.read_bytes()
+    def write(p):p.write_text("probe")
+    def bind():
+        with socket.socket(socket.AF_INET,socket.SOCK_STREAM) as s:s.bind(("127.0.0.1",0))
+    # Positive controls are performed before restrictions. No real secret is read.
+    test("baselineOutsideRead",lambda:read(outside))
+    test("baselineOutsideWrite",lambda:write(outside))
+    test("baselineTcpBind",bind)
+    listener=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+    try:
+        listener.bind(("127.0.0.1",0));listener.listen(2)
+        port=listener.getsockname()[1]
+        def connect():
+            with socket.socket(socket.AF_INET,socket.SOCK_STREAM) as s:
+                s.settimeout(1);s.connect(("127.0.0.1",port))
+        test("baselineTcpConnect",connect)
+        if out["checks"]["baselineTcpConnect"]["pass"]:
+            conn,_=listener.accept();conn.close()
+        fd=syscall(444,C.byref(C.create_string_buffer(struct.pack("=QQ",fs,3))),C.c_size_t(16),C.c_uint(0))
+        try:
+            # Only a disposable working directory is writable. System runtime
+            # paths are read/execute allowlisted for this fixed compatibility test.
+            # These broad runtime read rules are NOT a production credential boundary.
+            def allow(path,rights):
+                if not Path(path).exists():return
+                d=os.open(path,os.O_PATH|os.O_CLOEXEC)
+                try:
+                    if not Path(path).is_dir():rights&=~(1<<3)
+                    rule=C.create_string_buffer(struct.pack("=Qi",rights,d))
+                    syscall(445,C.c_int(fd),C.c_int(1),C.byref(rule),C.c_uint(0))
+                finally:os.close(d)
+            allow(str(work),fs)
+            for p in ("/usr","/bin","/lib","/lib64","/etc/fonts","/etc/ld.so.cache",
+                      "/etc/localtime","/etc/nsswitch.conf","/etc/passwd","/etc/group",
+                      "/etc/os-release","/dev/null","/dev/zero","/dev/urandom","/dev/random",
+                      "/sys/devices/system/cpu"):
+                allow(p,read_exec if Path(p).is_dir() else (1<<2))
+            if libc.prctl(C.c_int(38),C.c_ulong(1),C.c_ulong(0),C.c_ulong(0),C.c_ulong(0))!=0:
+                raise OSError(C.get_errno(),"no_new_privs")
+            out["noNewPrivileges"]=libc.prctl(C.c_int(39),C.c_ulong(0),C.c_ulong(0),C.c_ulong(0),C.c_ulong(0))==1
+            syscall(446,C.c_int(fd),C.c_uint(0));out["landlockEnforced"]=True
+        finally:os.close(fd)
+        test("workspaceRead",lambda:read(allowed))
+        test("workspaceWrite",lambda:write(allowed))
+        test("outsideReadDenied",lambda:read(outside),True)
+        test("outsideWriteDenied",lambda:write(outside),True)
+        test("outsideTruncateDenied",lambda:os.truncate(outside,0),True)
+        test("tcpBindDenied",bind,True)
+        test("tcpConnectDenied",connect,True)
+    finally:listener.close()
+    needed=("baselineOutsideRead","baselineOutsideWrite","baselineTcpBind","baselineTcpConnect","workspaceRead","workspaceWrite","outsideReadDenied","outsideWriteDenied","outsideTruncateDenied","tcpBindDenied","tcpConnectDenied")
+    out["boundaryChecksPassed"]=all(out["checks"].get(n,{}).get("pass") is True for n in needed)
+    if not out["boundaryChecksPassed"]:out["status"]="BOUNDARY_TEST_FAILED";return
+    os.environ.update({"HOME":str(work),"TMPDIR":str(work),"XDG_CACHE_HOME":str(work/"cache"),"XDG_CONFIG_HOME":str(work/"config")})
+    # Fixed fixture only: no external assets, URLs, candidate bytes or credentials.
+    # Native Chromium sandbox is still unavailable on this host.
+    with sync_playwright() as p:
+        browser=p.chromium.launch(executable_path=chromium,headless=True,chromium_sandbox=False,timeout=12000,
+            args=["--disable-dev-shm-usage","--use-gl=angle","--use-angle=swiftshader","--enable-unsafe-swiftshader",
+                  "--disable-background-networking","--disable-sync","--disable-component-update"])
+        try:
+            out["chromiumLaunch"]=True
+            context=browser.new_context(viewport={"width":640,"height":480},service_workers="block")
+            context.route("**/*",lambda route:route.abort())
+            page=context.new_page();page.set_default_timeout(4000)
+            errors=[];page.on("pageerror",lambda e:errors.append("PAGE_ERROR"))
+            page.set_content("<button id='go' onclick=\"this.textContent='Clicked'\">Go</button><canvas id='c' width='64' height='64'></canvas>")
+            out["javascriptPassed"]=page.evaluate("6*7")==42
+            page.locator("#go").click();out["interactionPassed"]=page.locator("#go").inner_text()=="Clicked"
+            out["webglPassed"]=page.evaluate("""() => {const g=document.querySelector('#c').getContext('webgl2',{preserveDrawingBuffer:true});if(!g)return false;g.clearColor(0.36,0.19,0.76,1);g.clear(g.COLOR_BUFFER_BIT);let p=new Uint8Array(4);g.readPixels(0,0,1,1,g.RGBA,g.UNSIGNED_BYTE,p);return [92,48,194,255].every((v,i)=>Math.abs(v-p[i])<=2)&&g.getError()===g.NO_ERROR;}""")
+            shot=page.screenshot(timeout=4000);out["screenshotSha256"]=hashlib.sha256(shot).hexdigest()
+            out["pageErrors"]=errors
+            context.close()
+            out["browserChecksPassed"]=all(out.get(k) is True for k in ("chromiumLaunch","javascriptPassed","interactionPassed","webglPassed")) and not errors and bool(shot)
+            out["status"]="FIXTURE_COMPATIBLE" if out["browserChecksPassed"] else "FIXTURE_FAILED"
+        finally:browser.close()
+try:main()
+except OSError as e:out["status"]="OS_ERRNO_"+str(e.errno)
+except Exception as e:
+    msg=str(e).lower()
+    out["status"]="BROWSER_OR_RUNTIME_FAILED"
+    out["failureCategory"]="PERMISSION_DENIED" if ("permission denied" in msg or "eacces" in msg) else ("TIMEOUT" if "timeout" in msg else ("BROWSER_CLOSED" if "closed" in msg else type(e).__name__))
+print(json.dumps(out),flush=True)
+'''
+
+
+def combined_probe():
+    import subprocess, tempfile, sys, pwd, signal
+    result={"schema":"swrlz-x-combined-v04","status":"UNVERIFIED","candidateExecutionEnabled":False,"isolationVerified":False}
+    if not _probe_lock.acquire(blocking=False):
+        result["status"]="BUSY";return result
+    try:
+        with tempfile.TemporaryDirectory(prefix="swrlz-combined-") as home:
+            kwargs={}
+            if os.geteuid()==0:
+                account=pwd.getpwnam("nobody")
+                if account.pw_uid==0:return result
+                os.chown(home,account.pw_uid,account.pw_gid)
+                kwargs={"user":account.pw_uid,"group":account.pw_gid,"extra_groups":[]}
+            env={"PATH":"/usr/bin:/bin:/usr/local/bin","HOME":home,"TMPDIR":home,
+                 "LANG":"C.UTF-8","PYTHONDONTWRITEBYTECODE":"1"}
+            proc=subprocess.Popen([sys.executable,"-I","-c",_COMBINED_CHILD],
+                cwd=home,env=env,stdout=subprocess.PIPE,stderr=subprocess.DEVNULL,start_new_session=True,**kwargs)
+            try:
+                raw,_=proc.communicate(timeout=35)
+                if proc.returncode or len(raw)>16000:
+                    result.update(status="CHILD_FAILED",exitCode=proc.returncode)
+                else:
+                    data=json.loads(raw)
+                    if data.get("schema")==result["schema"]:result=data
+            except subprocess.TimeoutExpired:
+                result["status"]="TIMEOUT"
+            finally:
+                # Best-effort process group cleanup; not proof against arbitrary child escapes.
+                try:os.killpg(proc.pid,signal.SIGKILL)
+                except ProcessLookupError:pass
+                proc.communicate()
+    except Exception as exc:
+        result["status"]="PROBE_INFRASTRUCTURE_"+type(exc).__name__
+    finally:_probe_lock.release()
+    from pathlib import Path
+    result["probeSourceSha256"]=hashlib.sha256(Path(__file__).read_bytes()).hexdigest()
+    return result
+
+
 with gr.Blocks(title='§Execution — diagnostics', analytics_enabled=False) as demo:
     gr.Markdown('# §Execution — browser diagnostics\nFixed local test fixture only. No user-supplied code, URLs, credentials or network requests.')
     run = gr.Button('Run Chromium diagnostics', variant='primary')
@@ -468,6 +630,10 @@ with gr.Blocks(title='§Execution — diagnostics', analytics_enabled=False) as 
     isolation_button = gr.Button("Test execution isolation")
     isolation_result = gr.JSON(label="Isolation capability results")
     isolation_button.click(isolation_probe, outputs=isolation_result, api_name="swrlz_isolation_v03", concurrency_limit=1)
+    gr.Markdown("## Combined Landlock browser test v0.4\nTrusted fixture only. This is a compatibility test, not approval for arbitrary project execution.")
+    combined_button = gr.Button("Test Chromium under Landlock")
+    combined_result = gr.JSON(label="Combined browser restriction results")
+    combined_button.click(combined_probe, outputs=combined_result, api_name="swrlz_combined_v04", concurrency_limit=1)
     gr.Markdown("## GPU visual regression\nCompare two screenshots of the same dimensions. This optional CUDA diagnostic uses the caller's ZeroGPU quota. Do not upload private images to this public Space.")
     with gr.Row():
         reference = gr.Image(label="Reference screenshot", type="numpy", image_mode="RGB", sources=["upload"])
