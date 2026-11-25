@@ -228,6 +228,19 @@ def isolation_probe():
                     evidence[name] = bool(ok and out.strip() and out.decode(errors="replace").strip() != parent)
             else:
                 evidence["reasons"].append("UNSHARE_UNAVAILABLE")
+            # Independently test each namespace without first requiring a user namespace.
+            evidence["independentNamespaceChecks"] = {}
+            if unshare:
+                for name, flag, ns in (
+                    ("userNamespace", "--user", "user"),
+                    ("networkNamespace", "--net", "net"),
+                    ("mountNamespace", "--mount", "mnt"),
+                    ("processIsolation", "--pid", "pid"),
+                ):
+                    parent = os.readlink("/proc/self/ns/" + ns)
+                    ok, out, detail = invoke([unshare, flag, "--fork", "--", "/usr/bin/readlink", "/proc/self/ns/" + ns])
+                    evidence["independentNamespaceChecks"][name] = {
+                        **detail, "namespaceChanged": bool(ok and out.strip() and out.decode(errors="replace").strip() != parent)}
             # Chromium must launch with its own sandbox explicitly enabled.
             # A separate child receives no application credentials.
             chromium = shutil.which("chromium") or shutil.which("chromium-browser")
@@ -249,6 +262,35 @@ with sync_playwright() as p:
                 ok, out, detail = invoke([sys.executable, "-I", "-c", code, chromium], timeout=20)
                 evidence["probeDetails"]["browserSandbox"] = detail
                 evidence["browserSandbox"] = bool(ok and b"SANDBOX_LAUNCH_OK" in out)
+            # Test native Chromium sandbox under an existing unprivileged account.
+            # This is a fixed trusted fixture; no user-controlled source or command.
+            evidence["nonRootBrowserSandbox"] = False
+            if chromium and os.geteuid() == 0:
+                import pwd
+                setpriv = shutil.which("setpriv")
+                try:
+                    account = pwd.getpwnam("nobody")
+                except KeyError:
+                    account = None
+                if setpriv and account is not None and account.pw_uid != 0:
+                    os.chown(home, account.pw_uid, account.pw_gid)
+                    env["USER"] = account.pw_name
+                    env["LOGNAME"] = account.pw_name
+                    # Use the installed Chromium directly to distinguish sandbox
+                    # startup from Python package accessibility under this account.
+                    command = [setpriv, "--reuid", str(account.pw_uid),
+                               "--regid", str(account.pw_gid), "--clear-groups",
+                               chromium, "--headless", "--disable-dev-shm-usage",
+                               "--disable-background-networking",
+                               "--no-first-run", "--user-data-dir=" + home + "/profile",
+                               "--dump-dom", "data:text/html,<p>swrlz-sandbox-probe</p>"]
+                    ok, out, detail = invoke(command, timeout=20)
+                    evidence["probeDetails"]["nonRootBrowserSandbox"] = detail
+                    evidence["nonRootBrowserSandbox"] = bool(ok and b"<p>swrlz-sandbox-probe</p>" in out)
+                else:
+                    evidence["probeDetails"]["nonRootBrowserSandbox"] = {"category": "UNPRIVILEGED_USER_OR_SETPRIV_UNAVAILABLE", "exitCode": None}
+            elif chromium:
+                evidence["nonRootBrowserSandbox"] = evidence["browserSandbox"]
             # A changed mount namespace is NOT proof of a restricted filesystem.
             # No production sandbox runner exists yet, so always fail closed.
             for name in ("browserSandbox","userNamespace","networkNamespace","mountNamespace","processIsolation"):
