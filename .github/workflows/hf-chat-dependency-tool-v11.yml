@@ -1,0 +1,89 @@
+name: Release §C model-selected pinned dependencies v11
+on:
+  pull_request:
+    paths:
+      - 'api/html_project_agent_v1.py'
+      - 'api/html_project_dependency_tool_v1.py'
+      - 'api/html_project_repair_v1.py'
+      - 'tests/test_html_project_dependency_tool_v1.py'
+      - 'api/html_project_agent_runtime_v1.py'
+      - 'tests/test_html_project_agent_v1.py'
+      - 'tests/test_html_project_agent_runtime_v1.py'
+      - 'tests/test_server_owned_patch_release_v8.py'
+      - 'scripts/hf_chat_dependency_tool_release_v11.py'
+      - 'scripts/verify_html_project_browser_v1.py'
+      - '.github/workflows/hf-chat-dependency-tool-v11.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'api/html_project_agent_v1.py'
+      - 'api/html_project_dependency_tool_v1.py'
+      - 'api/html_project_repair_v1.py'
+      - 'tests/test_html_project_dependency_tool_v1.py'
+      - 'api/html_project_agent_runtime_v1.py'
+      - 'scripts/hf_chat_dependency_tool_release_v11.py'
+      - 'scripts/verify_html_project_browser_v1.py'
+      - '.github/workflows/hf-chat-dependency-tool-v11.yml'
+permissions: {contents: read}
+concurrency:
+  group: swrlz-dependency-tool-v11
+  cancel-in-progress: false
+jobs:
+  validate-and-release:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - name: Validate dedicated repair grammar and unchanged write boundaries
+        run: |
+          python -m pip install --quiet 'requests>=2.31,<3'
+          export PYTHONPATH="$GITHUB_WORKSPACE:$GITHUB_WORKSPACE/api"
+          echo "PYTHONPATH=$PYTHONPATH" >> "$GITHUB_ENV"
+          python -m py_compile api/html_project_agent_v1.py api/html_project_agent_runtime_v1.py scripts/hf_chat_dependency_tool_release_v11.py
+          python -m unittest discover -s tests -p 'test_html_project_dependency_tool_v1.py' -v
+          python -m unittest discover -s tests -p 'test_html_project_agent_v1.py' -v
+          python -m unittest discover -s tests -p 'test_html_project_agent_runtime_v1.py' -v
+          python -m unittest discover -s tests -p 'test_html_project_repair_v1.py' -v
+          python -m unittest discover -s tests -p 'test_server_owned_patch_release_v8.py' -v
+          python scripts/hf_chat_dependency_tool_release_v11.py selftest
+      - name: Verify real existing viewer dependency tool with pinned npm registry
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          from api.html_project_agent_v1 import bind_model_edits,apply_proposal,inspect_static
+          src=Path("html-projects/interactive-3d-model-viewer/index.html").read_text()
+          files={"index.html":src}
+          plan=bind_model_edits("interactive-3d-model-viewer",files,{"patches":[{"path":"index.html","op":"localize_imports","anchor":'<script type="importmap">',"code":""}]})
+          result=apply_proposal("interactive-3d-model-viewer",files,plan,validation=inspect_static)
+          assert result["readyForOwnerReview"] and len(result["changedFiles"])>=4
+          print("REAL_VIEWER_DEPENDENCIES_STATIC_PASS",result["afterHashes"],flush=True)
+          root=Path("browser-candidate/interactive-3d-model-viewer")
+          for path,body in result["proposedFiles"].items():
+              target=root/path
+              target.parent.mkdir(parents=True,exist_ok=True)
+              target.write_text(body,encoding="utf-8")
+          PY
+      - name: Install credential-free Chromium harness
+        run: |
+          python -m pip install --quiet 'playwright==1.51.0' 'fastapi>=0.115,<1'
+          python -m playwright install --with-deps chromium
+      - name: Render real existing viewer with production-equivalent sandbox
+        run: python scripts/verify_html_project_browser_v1.py --project interactive-3d-model-viewer --root browser-candidate/interactive-3d-model-viewer --viewer-fixture
+      - name: Install Hugging Face source reader
+        run: python -m pip install --quiet 'huggingface_hub>=0.34,<2'
+      - name: Check real production source against exact v11 upgrade
+        run: python -u scripts/hf_chat_dependency_tool_release_v11.py preflight
+      - name: CAS-publish v11 to Hugging Face
+        if: ${{ github.event_name == 'push' && contains(github.event.head_commit.message, '[release-chat-dependency-tool-v11]') }}
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          SWRLZ_DEPENDENCY_TOOL_V11_APPROVED: '1'
+        run: python -u scripts/hf_chat_dependency_tool_release_v11.py publish
+      - name: Independently verify actual model-selected dependency repair on real viewer
+        if: ${{ github.event_name == 'push' && contains(github.event.head_commit.message, '[release-chat-dependency-tool-v11]') }}
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: python -u scripts/hf_chat_dependency_tool_release_v11.py verify

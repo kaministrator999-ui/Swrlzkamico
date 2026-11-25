@@ -142,6 +142,10 @@ def release(mode):
         return Path(hf_hub_download(SPACE,name,repo_type="space",revision=revision,token=token)).read_bytes()
     original={n:read(n,rev) for n in (AGENT,RUNTIME,CODER,STATION)}
     candidate={n:p.read_bytes() for n,p in LOCAL.items()}
+    if mode=="preflight" and b"from html_project_dependency_tool_v1 import" in candidate[AGENT]:
+        if b"repairPatchProtocol" not in original[RUNTIME] or b"bind_model_edits" not in original[AGENT]:
+            raise RuntimeError("LIVE_V10_SOURCE_DRIFT")
+        print("V10_NEWER_DEPENDENCY_TOOL_PREFLIGHT",rev,flush=True);return
     for n in LOCAL:
         if original[n]!=candidate[n] and blob(original[n])!=PINS[n]:
             raise RuntimeError("LIVE_SOURCE_DRIFT: "+n)
