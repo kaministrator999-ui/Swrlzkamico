@@ -335,10 +335,30 @@ se552Open=function(){
   se556ShowModel=true;check.checked=true;
   if(regions){regions.checked=true;regions.dispatchEvent(new Event('change'));}
   se552ModelRegions(se551Target());se552Portal?.close();
+  document.getElementById('se355UVClose')?.click();
   status('Numbered UV overlay active. Reopen expanded UV Editor to toggle it off.');
  });
 };
 window.SWYRL_ENGINE_UV_NUMBERING=Object.freeze({
  inspect:()=>({enabled:se552ShowRegions,model:se556ShowModel,labels:se556Labels?.children.length||0})
 });
+// On native starter load, compute the same area-weighted normal on every
+// coincident physical vertex, even where the UV chart has split its index.
+const se556GeometryBase=atelierTopologyGeometry;
+atelierTopologyGeometry=function(part){
+ const geo=se556GeometryBase(part);
+ if(part?.id!=='clean-topology-humanoid-base')return geo;
+ const p=geo.getAttribute('position'),ix=geo.getIndex(),n=geo.getAttribute('normal');
+ if(!p||!ix||!n)return geo;
+ const keys=Array.from({length:p.count},(_,i)=>[p.getX(i),p.getY(i),p.getZ(i)].map(v=>v.toFixed(6)).join(','));
+ const sums=new Map(),a=new THREE.Vector3(),b=new THREE.Vector3(),c=new THREE.Vector3();
+ for(let k=0;k<ix.count;k+=3){
+  const ids=[ix.getX(k),ix.getX(k+1),ix.getX(k+2)];
+  a.fromBufferAttribute(p,ids[0]);b.fromBufferAttribute(p,ids[1]);c.fromBufferAttribute(p,ids[2]);
+  b.sub(a);c.sub(a);b.cross(c);
+  for(const id of ids){let v=sums.get(keys[id]);if(!v){v=new THREE.Vector3();sums.set(keys[id],v);}v.add(b);}
+ }
+ for(let i=0;i<p.count;i++){const v=sums.get(keys[i]);if(v&&v.lengthSq()>1e-20){v.normalize();n.setXYZ(i,v.x,v.y,v.z);}}
+ n.needsUpdate=true;return geo;
+};
 /* SE556_NUMBERED_MODEL_UV_END */
