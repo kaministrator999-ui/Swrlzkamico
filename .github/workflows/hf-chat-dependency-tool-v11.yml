@@ -11,6 +11,7 @@ on:
       - 'tests/test_html_project_agent_runtime_v1.py'
       - 'tests/test_server_owned_patch_release_v8.py'
       - 'scripts/hf_chat_dependency_tool_release_v11.py'
+      - 'scripts/verify_html_project_browser_v1.py'
       - '.github/workflows/hf-chat-dependency-tool-v11.yml'
   push:
     branches: [main]
@@ -21,6 +22,7 @@ on:
       - 'tests/test_html_project_dependency_tool_v1.py'
       - 'api/html_project_agent_runtime_v1.py'
       - 'scripts/hf_chat_dependency_tool_release_v11.py'
+      - 'scripts/verify_html_project_browser_v1.py'
       - '.github/workflows/hf-chat-dependency-tool-v11.yml'
 permissions: {contents: read}
 concurrency:
@@ -58,7 +60,18 @@ jobs:
           result=apply_proposal("interactive-3d-model-viewer",files,plan,validation=inspect_static)
           assert result["readyForOwnerReview"] and len(result["changedFiles"])>=4
           print("REAL_VIEWER_DEPENDENCIES_STATIC_PASS",result["afterHashes"],flush=True)
+          root=Path("browser-candidate/interactive-3d-model-viewer")
+          for path,body in result["proposedFiles"].items():
+              target=root/path
+              target.parent.mkdir(parents=True,exist_ok=True)
+              target.write_text(body,encoding="utf-8")
           PY
+      - name: Install credential-free Chromium harness
+        run: |
+          python -m pip install --quiet 'playwright==1.51.1' 'fastapi>=0.115,<1'
+          python -m playwright install --with-deps chromium
+      - name: Render real existing viewer with production-equivalent sandbox
+        run: python scripts/verify_html_project_browser_v1.py --project interactive-3d-model-viewer --root browser-candidate/interactive-3d-model-viewer --viewer-fixture
       - name: Install Hugging Face source reader
         run: python -m pip install --quiet 'huggingface_hub>=0.34,<2'
       - name: Check real production source against exact v11 upgrade
