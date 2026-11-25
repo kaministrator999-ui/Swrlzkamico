@@ -113,7 +113,13 @@ jobs:
               "assets/uv-unwrapper/uv_lscm_core_v11_555.mjs",
           )
           for rel in files:
-              expected=hashlib.sha256((root/rel).read_bytes()).hexdigest()
+              # The two shared .mjs modules are copied into the deployment
+              # package from runtime/, not committed as duplicated assets/.
+              filename=rel.rsplit("/",1)[-1]
+              source=(root/"runtime"/filename
+                      if rel.startswith("assets/uv-unwrapper/")
+                      else root/rel)
+              expected=hashlib.sha256(source.read_bytes()).hexdigest()
               error=None
               for attempt in range(10):
                   try:
@@ -134,5 +140,5 @@ jobs:
                       error=exc
                       if attempt<9:time.sleep(6)
               if error:raise SystemExit("Live UV asset verification failed: "+str(error))
-          print("SE546_ALL_FOUR_PUBLISHED_UV_ASSETS_VERIFIED",flush=True)
+          print("SE555_ALL_NINE_PUBLIC_HUMANOID_AND_LSCM_ASSETS_VERIFIED",flush=True)
           PY
