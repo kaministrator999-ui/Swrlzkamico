@@ -13,10 +13,13 @@ CODER = "qwen_coder_engine.py"
 STATION = "station.py"
 APPROVAL = "html_project_repair_v1.py"
 DEPENDENCY = "html_project_dependency_tool_v1.py"
+UI = "chat/§wyrlz/assets/html-project-publish-review-v1.js"
 LOCAL = {n:Path("api")/n for n in (AGENT,RUNTIME,APPROVAL,DEPENDENCY)}
+LOCAL[UI] = Path("chat/html-project-publish-review-v1.js")
 PINS = {AGENT:"8decc712ca9650a04dcf2a2f76108e5b26870ee1",
         RUNTIME:"33fe6bec44711fb82f92cdd7cad59f4113617c17",
-        APPROVAL:"e1d59f426e110492017a1ebc7276315c674abc6e"}
+        APPROVAL:"e1d59f426e110492017a1ebc7276315c674abc6e",
+        UI:"1155ca701ce0ffd09c940bc1e09b93b864949e8c"}
 PROTOCOL = "swrlz-exact-patches-v11"
 SCHEMA = {"type":"object","required":["patches"],"additionalProperties":False,
           "properties":{"patches":{"type":"array","minItems":1,"maxItems":12,

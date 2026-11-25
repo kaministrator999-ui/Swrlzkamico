@@ -145,6 +145,13 @@ def _model_patch(coder_generate, base_payload, messages):
     return parsed
 
 
+def requested_publish_after_approval(task):
+    """Approval scope is derived only from the user's explicit instruction."""
+    text=str(task or "")
+    if re.search(r"\b(?:do not|don't|never|without|no)\s+(?:deploy|publish|deployment|publication)\b",text,re.I):
+        return False
+    return bool(re.search(r"\b(?:once|after|upon)\s+(?:you\s+)?(?:approved|approval|approve)\b[^.!?]{0,100}\b(?:deploy|publish)\b",text,re.I))
+
 def run(payload, coder_generate):
     """Finite verify/revise loop. Return owner approval widget, never a write."""
     if not approval.should_route(payload):
@@ -178,8 +185,8 @@ def run(payload, coder_generate):
                 prior_failures=failures)
             try:
                 model_edits = _model_patch(coder_generate, payload, messages)
-                if any(isinstance(p,dict) and p.get("op")=="localize_imports"
-                       for p in (model_edits.get("patches") or []) if isinstance(model_edits.get("patches"),list)):
+                edits=model_edits.get("patches")
+                if isinstance(edits,list) and any(isinstance(p,dict) and p.get("op")=="localize_imports" for p in edits):
                     yield {"type":"STATUS","phase":"REPAIR_DEPENDENCIES",
                            "reason":"Model selected pinned npm dependency localization; fetching and verifying assets."}
                 proposal = bind_model_edits(project["project"], files, model_edits)
@@ -189,9 +196,11 @@ def run(payload, coder_generate):
                     validation=inspect_static)
                 if not result["readyForOwnerReview"]:
                     raise ProposalError("VALIDATION_NOT_VERIFIED")
+                full_delivery=requested_publish_after_approval(task)
                 review = approval.prepare_model(
                     owner, thread, project["project"], sha,
-                    proposal, source_hashes, result)
+                    proposal, source_hashes, result,
+                    publish_after_validation=full_delivery)
                 yield {"type": "WIDGET", "widget": review}
                 yield {"type": "STATUS", "phase": "REPAIR_REVIEW_READY",
                        "reason": "Exact patches passed the browser-free static validator."}
@@ -199,9 +208,11 @@ def run(payload, coder_generate):
                     "The coding model proposed a source-preserving repair to "
                     + ", ".join(result["changedFiles"])
                     + ". Exact source hashes and static checks passed. "
-                    "Review the proposed diff and reply YES to request a GitHub "
-                    "repair PR, or NO to cancel. No GitHub write, browser run "
-                    "or Hugging Face deployment has occurred.")}
+                    + ("Review the diff and reply YES to authorize browser validation, "
+                       "the source-pinned GitHub commit, Hugging Face deployment, and live browser verification. "
+                       if full_delivery else
+                       "Review the diff and reply YES to authorize browser validation and a GitHub repair PR only. ")
+                    + "Reply NO to cancel. No GitHub write, browser run or Hugging Face deployment has occurred.")}
                 yield {"type": "COMPLETED", "phase": "COMPLETE"}
                 return
             except (ProposalError, ValueError, TypeError) as exc:

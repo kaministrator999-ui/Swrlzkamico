@@ -150,6 +150,15 @@ class RuntimeTests(unittest.TestCase):
                       fake._github.call_args.args)
         self.assertIsInstance(runtime.TEXT_EXTENSIONS, frozenset)
 
+    def test_deploy_scope_requires_explicit_user_request(self):
+        self.assertTrue(runtime.requested_publish_after_approval(
+            "Present the approval request. Once approved, commit, deploy, and verify it works."))
+        self.assertFalse(runtime.requested_publish_after_approval("Repair the existing viewer."))
+        self.assertFalse(runtime.requested_publish_after_approval(
+            "Once approved, commit the change. Do not deploy."))
+        self.assertFalse(runtime.requested_publish_after_approval(
+            "Once approved, commit and deploy. Never deploy."))
+    
     def test_owner_context_required(self):
         p=self.payload()
         del p["htmlRepairOwner"]

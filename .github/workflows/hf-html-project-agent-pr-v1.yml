@@ -23,8 +23,14 @@ on:
         description: Owner-reviewed JSON exact patch plan
         required: true
         type: string
+      publish_after_validation:
+        description: Owner explicitly approved commit and deployment after browser validation
+        required: false
+        type: choice
+        options: ['no', 'yes']
+        default: 'no'
       approved:
-        description: Owner approved one source-pinned repair PR build
+        description: Owner approved the listed source-pinned repair scope
         required: true
         type: choice
         options: ['no', 'yes']
@@ -51,13 +57,58 @@ jobs:
           python -m unittest discover -s tests -p 'test_html_project_agent_v1.py' -v
           python -m unittest discover -s tests -p 'test_html_project_agent_runtime_v1.py' -v
           python -m unittest discover -s tests -p 'test_html_project_repair_v1.py' -v
-  repair:
+  validate:
     if: ${{ github.event_name == 'workflow_dispatch' && inputs.approved == 'yes' && github.actor == 'kaministrator999-ui' }}
     runs-on: ubuntu-24.04
     timeout-minutes: 15
+    permissions: {contents: read}
+    outputs:
+      repair_hash: ${{ steps.stage.outputs.repair_hash }}
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.source_sha }}
+          path: reviewed-source
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - run: python -m pip install --quiet 'requests>=2.31,<3' 'fastapi>=0.115,<1' 'playwright==1.51.0'
+      - run: python -m playwright install --with-deps chromium
+      - name: Reconstruct reviewed exact patch in isolated checkout
+        id: stage
+        env:
+          SOURCE_SHA: ${{ inputs.source_sha }}
+          PROJECT: ${{ inputs.project }}
+          MODEL_PROPOSAL_JSON: ${{ inputs.proposal_json }}
+          PYTHONPATH: ${{ github.workspace }}/api:${{ github.workspace }}
+        run: |
+          set -euo pipefail
+          [[ "$SOURCE_SHA" =~ ^[0-9a-f]{40}$ ]]
+          [[ "$PROJECT" =~ ^[a-z0-9]([a-z0-9-]{0,46}[a-z0-9])?$ ]]
+          python scripts/html_project_agent_pr_v1.py --project "$PROJECT" --stage
+      - name: Real Chromium candidate smoke under opaque-origin sandbox (no write credentials)
+        env:
+          PROJECT: ${{ inputs.project }}
+        run: python scripts/verify_html_project_browser_v1.py --project "$PROJECT" --root "reviewed-source/html-projects/$PROJECT" --receipt browser-candidate-receipt.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: browser-candidate-receipt
+          path: |
+            browser-candidate-receipt.json
+            repair-output/**/repair-receipt.json
+          if-no-files-found: warn
+  repair:
+    needs: validate
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
     permissions:
       contents: write
       pull-requests: write
+    outputs:
+      commit_sha: ${{ steps.commit.outputs.commit_sha }}
     steps:
       - uses: actions/checkout@v4
         with: {persist-credentials: false}
@@ -69,45 +120,29 @@ jobs:
       - uses: actions/setup-python@v5
         with: {python-version: '3.11'}
       - run: python -m pip install --quiet 'requests>=2.31,<3'
-      - run: echo "PYTHONPATH=$GITHUB_WORKSPACE/api:$GITHUB_WORKSPACE" >> "$GITHUB_ENV"
-      - name: Source pin and patch preflight
+      - name: Reconstruct exactly the browser-validated patch without executing project code
         env:
           SOURCE_SHA: ${{ inputs.source_sha }}
           PROJECT: ${{ inputs.project }}
           MODEL_PROPOSAL_JSON: ${{ inputs.proposal_json }}
-        shell: bash
+          EXPECTED_REPAIR_HASH: ${{ needs.validate.outputs.repair_hash }}
+          PYTHONPATH: ${{ github.workspace }}/api:${{ github.workspace }}
         run: |
           set -euo pipefail
-          [[ "$SOURCE_SHA" =~ ^[0-9a-f]{40}$ ]]
-          [[ "$PROJECT" =~ ^[a-z0-9]([a-z0-9-]{0,46}[a-z0-9])?$ ]]
-          test "$(git -C reviewed-source rev-parse HEAD)" = "$SOURCE_SHA"
+          test -n "$EXPECTED_REPAIR_HASH"
           test "$(git -C reviewed-source ls-remote origin refs/heads/main | cut -f1)" = "$SOURCE_SHA"
-          python -m unittest discover -s tests -p 'test_html_project_agent_v1.py' -v
-          python scripts/html_project_agent_pr_v1.py --project "$PROJECT" \
-            --source-root reviewed-source --output-root repair-output
-      - name: Commit only verified model patch and open review PR
+          python scripts/html_project_agent_pr_v1.py --project "$PROJECT" --stage
+      - name: Commit browser-tested repair in explicitly approved scope
+        id: commit
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PROJECT: ${{ inputs.project }}
           SOURCE_SHA: ${{ inputs.source_sha }}
           GH_REPO: ${{ github.repository }}
+          PUBLISH_AFTER_VALIDATION: ${{ inputs.publish_after_validation }}
         shell: bash
         run: |
           set -euo pipefail
-          python - <<'PY'
-          import json,os,pathlib,shutil
-          slug=os.environ["PROJECT"]
-          receipt=json.loads((pathlib.Path("repair-output")/slug/"repair-receipt.json").read_text())
-          for rel in receipt["files"]:
-              source=pathlib.Path("repair-output")/slug/rel
-              target=pathlib.Path("reviewed-source/html-projects")/slug/rel
-              assert source.is_file() and not target.is_symlink()
-              if not target.is_file():
-                  assert rel.startswith("vendor/") and rel in receipt["resultHashes"] and rel not in receipt["sourceHashes"]
-                  assert not target.exists()
-                  target.parent.mkdir(parents=True,exist_ok=True)
-              shutil.copyfile(source,target)
-          PY
           cd reviewed-source
           branch="fix/model-html-${PROJECT}-${SOURCE_SHA:0:10}"
           git switch -c "$branch"
@@ -116,16 +151,86 @@ jobs:
           git add "html-projects/$PROJECT"
           git -c core.whitespace=-blank-at-eol diff --cached --check
           git diff --cached --quiet && { echo "No changes proposed"; exit 1; }
-          git commit -m "fix(html): owner-reviewed model-generated exact repair for $PROJECT"
+          git commit -m "fix(html): owner-approved model-generated exact repair for $PROJECT"
           test "$(git ls-remote origin refs/heads/main | cut -f1)" = "$SOURCE_SHA"
-          git push origin "HEAD:refs/heads/$branch"
-          gh pr create --repo "$GH_REPO" --base main --head "$branch" \
-            --title "fix(html): model-proposed source repair for $PROJECT" \
-            --body "Owner-approved model-generated existing-project patch. Source pin: $SOURCE_SHA. Exact anchor changes were SHA-verified, and browser-free static checks passed. **No browser execution proof, merge, or Hugging Face deployment is claimed.** Review and merge the diff independently; publish through the existing owner-approved HTML project deployment flow."
+          if [[ "$PUBLISH_AFTER_VALIDATION" == yes ]]; then
+            git push origin HEAD:refs/heads/main
+            echo "commit_sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+            echo "OWNER_APPROVED_REPAIR_COMMITTED $(git rev-parse HEAD)"
+          else
+            git push origin "HEAD:refs/heads/$branch"
+            gh pr create --repo "$GH_REPO" --base main --head "$branch" \
+              --title "fix(html): model-proposed source repair for $PROJECT" \
+              --body "Owner-approved exact repair. Source-pinned and browser-smoke-tested. No merge or deployment authorized."
+          fi
+  publish:
+    needs: repair
+    if: ${{ inputs.publish_after_validation == 'yes' && needs.repair.outputs.commit_sha != '' }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    permissions: {contents: read}
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.repair.outputs.commit_sha }}
+          path: reviewed-source
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - run: python -m pip install --quiet 'huggingface_hub>=0.34,<2'
+      - name: Scoped Hugging Face publication of exact approved commit
+        env:
+          SOURCE_SHA: ${{ needs.repair.outputs.commit_sha }}
+          PROJECT: ${{ inputs.project }}
+          SWRLZ_PROJECT_SOURCE_ROOT: reviewed-source
+          SWRLZ_HTML_PROJECT_APPROVED: '1'
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: python scripts/hf_html_project_publish_v1.py publish --project "$PROJECT" --approved yes
+      - name: Verify exact public entry bytes and sandbox headers
+        env:
+          PROJECT: ${{ inputs.project }}
+          SWRLZ_PROJECT_SOURCE_ROOT: reviewed-source
+        run: python scripts/hf_html_project_publish_v1.py probe --project "$PROJECT"
+      - name: Check every public asset and static security boundary
+        env:
+          PROJECT: ${{ inputs.project }}
+          SWRLZ_PROJECT_SOURCE_ROOT: reviewed-source
+          PYTHONPATH: ${{ github.workspace }}
+        run: python scripts/verify_html_project_lightweight_v1.py --project "$PROJECT" --mode published --output html-lightweight-receipt.json
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: swrlz-model-html-repair-receipt
-          path: repair-output/**/repair-receipt.json
+          name: approved-model-repair-publication-receipt
+          path: |
+            html-project-receipt.json
+            html-lightweight-receipt.json
           if-no-files-found: warn
-          retention-days: 30
+  verify:
+    needs: [repair,publish]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    permissions: {contents: read}
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.repair.outputs.commit_sha }}
+          path: reviewed-source
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - run: python -m pip install --quiet 'fastapi>=0.115,<1' 'playwright==1.51.0'
+      - run: python -m playwright install --with-deps chromium
+      - name: Verify deployed project in actual Chromium with no credentials
+        env:
+          PROJECT: ${{ inputs.project }}
+        run: python scripts/verify_html_project_browser_v1.py --project "$PROJECT" --root "reviewed-source/html-projects/$PROJECT" --live --receipt browser-live-receipt.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: browser-live-receipt
+          path: browser-live-receipt.json
+          if-no-files-found: warn

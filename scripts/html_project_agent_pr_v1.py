@@ -25,6 +25,7 @@ def main():
     p.add_argument("--project", required=True)
     p.add_argument("--source-root", default="reviewed-source")
     p.add_argument("--output-root", default="repair-output")
+    p.add_argument("--stage", action="store_true", help="Stage exact changes in isolated reviewed checkout")
     args = p.parse_args()
     sha = os.environ.get("SOURCE_SHA", "")
     if not re.fullmatch(r"[0-9a-f]{40}", sha):
@@ -63,7 +64,15 @@ def main():
     for rel, content in result["proposedFiles"].items():
         path = output / rel
         path.parent.mkdir(parents=True, exist_ok=True)
-        path.write_text(content, encoding="utf-8")
+        path.write_bytes(content.encode("utf-8"))
+        if args.stage:
+            target=folder/rel
+            if target.is_symlink() or any(parent.is_symlink() for parent in target.parents if parent!=folder.parent):
+                raise ProposalError("PROJECT_SYMLINK_FORBIDDEN")
+            if rel not in sources and (not rel.startswith("vendor/") or target.exists()):
+                raise ProposalError("UNREVIEWED_NEW_FILE")
+            target.parent.mkdir(parents=True,exist_ok=True)
+            target.write_bytes(content.encode("utf-8"))
     receipt = {
         "schema": "swrlz-html-repair-agent-pr-v1",
         "sourceSha": sha, "project": args.project,
@@ -78,6 +87,13 @@ def main():
     }
     (output / "repair-receipt.json").write_text(
         json.dumps(receipt, indent=2), encoding="utf-8")
+    import hashlib
+    receipt_hash=hashlib.sha256(json.dumps(receipt["resultHashes"],sort_keys=True,separators=(",",":")).encode()).hexdigest()
+    if os.environ.get("EXPECTED_REPAIR_HASH") and os.environ["EXPECTED_REPAIR_HASH"]!=receipt_hash:
+        raise ProposalError("BROWSER_VALIDATED_RESULT_HASH_MISMATCH")
+    if os.environ.get("GITHUB_OUTPUT"):
+        with open(os.environ["GITHUB_OUTPUT"],"a") as out:
+            out.write("repair_hash="+receipt_hash+"\n")
     print("MODEL_REPAIR_PR_STATIC_GATE_PASS", json.dumps(receipt), flush=True)
 
 

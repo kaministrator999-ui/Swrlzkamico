@@ -156,7 +156,7 @@ MODEL_WORKFLOW = "hf-html-project-agent-pr-v1.yml"
 MODEL_WORKFLOW_URL = "https://github.com/kaministrator999-ui/Swrlzkamico/actions/workflows/" + MODEL_WORKFLOW
 
 
-def prepare_model(user_id, thread_id, slug, head, patch_plan, source_hashes, result):
+def prepare_model(user_id, thread_id, slug, head, patch_plan, source_hashes, result, *, publish_after_validation=False):
     """Store a reviewed model patch; no GitHub write until fresh owner YES."""
     import github_html_publish_action_v1 as publishing
     if (not isinstance(slug, str) or not SLUG.fullmatch(slug)
@@ -197,6 +197,7 @@ def prepare_model(user_id, thread_id, slug, head, patch_plan, source_hashes, res
             "blob": manifest["indexGitBlobSha"],
             "sourceHashes": dict(source_hashes),
             "plan": plan_text,
+            "publishAfterValidation": publish_after_validation is True,
         }
     return {
         "contract": "swrlz-widget-v1", "kind": "github-html-publish-review",
@@ -207,6 +208,7 @@ def prepare_model(user_id, thread_id, slug, head, patch_plan, source_hashes, res
             "repairStrategy": "model-exact-patch",
             "repairDiffs": result.get("diffs") or {},
             "repairValidation": result.get("validation") or {},
+            "publishAfterValidation": publish_after_validation is True,
             "dependencyAssets": assets,
             "changedFiles": files,
             "workflowUrl": MODEL_WORKFLOW_URL,
@@ -245,6 +247,7 @@ def _confirm_model(user_id, proposal):
                 "source_sha": proposal["sha"],
                 "project": proposal["project"],
                 "proposal_json": proposal["plan"],
+                "publish_after_validation": "yes" if proposal.get("publishAfterValidation") is True else "no",
                 "approved": "yes",
             }},
         )
@@ -252,7 +255,8 @@ def _confirm_model(user_id, proposal):
         raise RepairError(exc.code) from exc
     return {"dispatched": True, "project": proposal["project"],
             "sourceSha": proposal["sha"], "workflowUrl": MODEL_WORKFLOW_URL,
-            "strategy": "model-exact-patch"}
+            "strategy": "model-exact-patch",
+            "publishAfterValidation": proposal.get("publishAfterValidation") is True}
 
 def has_pending(user_id, thread_id):
     with _lock:

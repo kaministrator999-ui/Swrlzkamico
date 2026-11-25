@@ -59,6 +59,7 @@
       ||!Array.isArray(data.files)||typeof opts.confirm!=="function")return false;
     const creating=data.mode==="create",repairing=data.mode==="repair";
     const modelRepair=repairing&&data.repairStrategy==="model-exact-patch";
+    const fullRepair=modelRepair&&data.publishAfterValidation===true;
     const doc=container.ownerDocument,thread=String(opts.threadId||""),created=Date.now();
     const surface=doc.createElement("section");
     surface.className="swrlz-github-change-review swrlz-html-publish-review";
@@ -67,7 +68,7 @@
     heading.textContent=creating?"HTML project · GitHub creation approval":repairing?"HTML project · source-preserving repair approval":"HTML project · deployment approval";
     surface.append(heading);
     const subtitle=doc.createElement("p");
-    subtitle.textContent="Project "+data.project+(creating?" · create source in GitHub (no deployment)":repairing?" · proposed GitHub repair pull request (no deployment)":" · existing §C Hugging Face Space");
+    subtitle.textContent="Project "+data.project+(creating?" · create source in GitHub (no deployment)":repairing?(fullRepair?" · browser validation, GitHub commit, Hugging Face deployment":" · proposed GitHub repair pull request (no deployment)"):" · existing §C Hugging Face Space");
     surface.append(subtitle);
     const facts=[
       ["Repository",data.repo],["Branch",data.branch||"main"],
@@ -112,14 +113,14 @@
     const note=doc.createElement("p");
     note.setAttribute("role","status");
     note.setAttribute("aria-live","polite");
-    note.textContent=creating?"No GitHub files have been created. This approval authorizes only the listed commit; deploying requires a second approval within this thread.":modelRepair?"No GitHub files changed. The model-proposed exact patch passed source and static validation. Approval requests a GitHub review PR only; merging and deployment remain separate.":repairing?"No GitHub changes have been made. Approval runs a pinned dependency build and proposes a review PR only. Deployment requires a separate approval.":"No deployment dispatched. Approval is valid only in this thread for five minutes.";
+    note.textContent=creating?"No GitHub files have been created. This approval authorizes only the listed commit; deploying requires a second approval within this thread.":modelRepair?(fullRepair?"No GitHub files changed. Source and static validation passed. This approval authorizes browser validation, committing the exact verified repair, deploying to Hugging Face, and checking the live browser. A failed gate blocks the next step.":"No GitHub files changed. The model-proposed exact patch passed source and static validation. Approval requests a browser-validated GitHub review PR only; merging and deployment remain separate."):repairing?"No GitHub changes have been made. Approval runs a pinned dependency build and proposes a review PR only. Deployment requires a separate approval.":"No deployment dispatched. Approval is valid only in this thread for five minutes.";
     surface.append(note);
     const actions=doc.createElement("div");
     actions.className="swrlz-github-change-actions";
     const decline=doc.createElement("button"),approve=doc.createElement("button");
     decline.type=approve.type="button";
     decline.textContent=creating?"Cancel creation":repairing?"Cancel repair":"Cancel deployment";
-    approve.textContent=creating?"Approve GitHub commit":modelRepair?"Approve model repair PR":repairing?"Approve repair PR build":"Approve publish";
+    approve.textContent=creating?"Approve GitHub commit":modelRepair?(fullRepair?"Approve repair and deploy":"Approve model repair PR"):repairing?"Approve repair PR build":"Approve publish";
     actions.append(decline,approve);surface.append(actions);
     let decided=false,busy=false;
     async function decide(accepted){
