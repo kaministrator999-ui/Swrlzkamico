@@ -20,14 +20,7 @@
             font-size: 24px; color: #fff; pointer-events: none;
         }
     </style>
-    <script type="importmap">
-    {
-        "imports": {
-            "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
-            "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
-        }
-    }
-    </script>
+    
 </head>
 <body>
     <div id="loading">Loading 3D Viewer...</div>
@@ -48,8 +41,8 @@
     </div>
 
     <script type="module">
-        import * as THREE from 'three';
-        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+        import * as THREE from './vendor/three-0.160.0-d97b175de6715fa3dc.mjs';
+        import { OrbitControls } from './vendor/three-0.160.0-3590c2b4166de7e1f8.mjs';
 
         // --- Scene Setup ---
         const container = document.getElementById('canvas-container');
