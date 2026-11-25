@@ -90,7 +90,10 @@ def selftest():
     agent=LOCAL[AGENT].read_text()
     runtime=LOCAL[RUNTIME].read_text()
     if (BASE_AGENT not in agent or AFTER_AGENT not in agent
-            or BASE_RUNTIME in runtime or AFTER_RUNTIME not in runtime):
+            or BASE_RUNTIME in runtime or not (AFTER_RUNTIME in runtime or (
+                "swrlz-evidence-tool-loop-v12" in runtime
+                and "binder=bind_model_edits)" in runtime
+                and "proposal=binder(project,files,raw)" in runtime))):
         raise RuntimeError("SERVER_OWNED_PATCH_SOURCE_INTEGRITY")
     print("SERVER_PATCH_V8_SELFTEST_PASS",flush=True)
 

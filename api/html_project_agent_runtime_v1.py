@@ -215,7 +215,7 @@ def _cancel(payload):
     if callable(payload.get("_cancelCheck")) and payload["_cancelCheck"]():
         raise ProposalError("CANCELLED")
 
-def repair_candidate(payload, coder_generate, project, files, task, diagnostics):
+def repair_candidate(payload, coder_generate, project, files, task, diagnostics, *, binder=bind_model_edits):
     """Shared production/probe repair loop; does not stage, commit or deploy."""
     source_hashes=verify_source(project,files)
     _cancel(payload)
@@ -243,7 +243,7 @@ def repair_candidate(payload, coder_generate, project, files, task, diagnostics)
             if isinstance(edits,list) and any(isinstance(p,dict) and p.get("op")=="localize_imports" for p in edits):
                 yield {"type":"STATUS","phase":"REPAIR_DEPENDENCIES",
                        "reason":"Coding model selected pinned dependency localization."}
-            proposal=bind_model_edits(project,files,raw)
+            proposal=binder(project,files,raw)
             result=apply_proposal(project,files,proposal,expected_hashes=source_hashes,validation=inspect_static)
             _cancel(payload)
             if not result["readyForOwnerReview"]:
@@ -266,7 +266,7 @@ def repair_candidate(payload, coder_generate, project, files, task, diagnostics)
                 try:
                     _cancel(payload)
                     raw={"patches":actions,"rationale":"Evidence-driven executor recovery of pinned dependency assets after rejected model patch."}
-                    proposal=bind_model_edits(project,files,raw)
+                    proposal=binder(project,files,raw)
                     result=apply_proposal(project,files,proposal,expected_hashes=source_hashes,validation=inspect_static)
                     _cancel(payload)
                     if not result["readyForOwnerReview"]:
@@ -304,7 +304,8 @@ def run(payload, coder_generate):
         task=str(payload.get("receivedText") or payload.get("prompt") or "")
         diagnostics=[str(payload.get("projectFileEvidence") or "")[:1200]]
         proposal,result,origin,failures=yield from repair_candidate(
-            payload,coder_generate,project["project"],files,task,diagnostics)
+            payload,coder_generate,project["project"],files,task,diagnostics,
+            binder=bind_model_edits)
         _cancel(payload)
         full_delivery=requested_publish_after_approval(task)
         review=approval.prepare_model(owner,thread,project["project"],sha,proposal,
