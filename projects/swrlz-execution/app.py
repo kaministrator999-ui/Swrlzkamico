@@ -555,6 +555,30 @@ def main():
                 out["baselineBrowserLaunch"]=page.locator("p").inner_text(timeout=3000)=="trusted baseline"
             finally:b.close()
     except Exception as e:out["baselineBrowserFailureCategories"]=browser_failure(e)
+    out["stage"]="stage_trusted_driver"
+    staged_cli=None
+    try:
+        from playwright._impl._driver import compute_driver_executable
+        installed_node,installed_cli=compute_driver_executable()
+        package=Path(installed_cli).resolve().parent
+        # Copy only the installed Playwright package, never application files.
+        # Bound staging size and avoid following symlinks.
+        if package.name!="package" or package.parent.name!="driver":
+            out["driverStaging"]="UNEXPECTED_PACKAGE_LAYOUT"
+        else:
+            total=0;count=0
+            for folder,dirs,files in os.walk(package,followlinks=False):
+                for name in files:
+                    f=Path(folder)/name
+                    if not f.is_symlink():
+                        total+=f.stat().st_size;count+=1
+                    if total>100*1024*1024 or count>12000:raise ValueError("staging limit")
+            staged=work/"trusted-playwright-package"
+            shutil.copytree(package,staged,symlinks=True)
+            staged_cli=str(staged/Path(installed_cli).name)
+            out["driverStaging"]="COPIED"
+    except Exception as e:
+        out["driverStaging"]="FAILED_"+type(e).__name__
     out["stage"]="landlock_boundary"
     fs=(1<<15)-1
     read_exec=(1<<0)|(1<<2)|(1<<3)
@@ -651,7 +675,29 @@ def main():
                                  ("SYSTEM_RUNTIME","/usr/"),("TEMP","/tmp/")):
                 if needle in msg:labels.append(label)
             return {"operations":sorted(ops),"pathClasses":labels}
-        for label,cmd in (("node",[node,"--version"]),("cli",[node,cli,"--version"])):
+        commands=[("node",[node,"--version"]),("cli",[node,cli,"--version"])]
+        if staged_cli:commands.append(("stagedCli",[node,staged_cli,"--version"]))
+        # Fixed JS checks exercise Node's resolver rather than just Python reads.
+        js="""const fs=require('fs'),path=require('path');const result={};
+const p=process.argv[1];function test(k,fn){try{fn();result[k]={pass:true}}catch(e){result[k]={pass:false,code:typeof e.code==='string'?e.code:'UNKNOWN',syscall:['open','readlink','realpath','stat','lstat','scandir','access','uv_cwd'].includes(e.syscall)?e.syscall:'OTHER'}}}
+test('cwd',()=>process.cwd());test('cliRead',()=>fs.readFileSync(p));
+test('realpath',()=>fs.realpathSync(p));test('nativeRealpath',()=>fs.realpathSync.native(p));
+test('resolveCli',()=>require.resolve(p));test('packageJson',()=>require(path.join(path.dirname(p),'package.json')));
+console.log(JSON.stringify(result));"""
+        out["nodeModuleChecks"]={}
+        for label,target in [("installed",cli),("staged",staged_cli)]:
+            if not target:continue
+            try:
+                run=subprocess.run([node,"-e",js,target],stdin=subprocess.DEVNULL,stdout=subprocess.PIPE,
+                                   stderr=subprocess.PIPE,timeout=5,check=False)
+                if run.returncode==0 and len(run.stdout)<4096:
+                    out["nodeModuleChecks"][label]=json.loads(run.stdout)
+                else:
+                    out["nodeModuleChecks"][label]={"exitCode":run.returncode,
+                       "failureCategories":browser_failure(RuntimeError(run.stderr.decode(errors="replace"))),
+                       "errorDetails":classify_driver_error(run.stderr)}
+            except Exception as e:out["nodeModuleChecks"][label]={"failureCategories":browser_failure(e)}
+        for label,cmd in commands:
             try:
                 completed=subprocess.run(cmd,stdin=subprocess.DEVNULL,stdout=subprocess.PIPE,
                     stderr=subprocess.PIPE,timeout=5,check=False)
@@ -717,7 +763,7 @@ def combined_probe():
             proc=subprocess.Popen([sys.executable,"-I","-c",_COMBINED_CHILD],
                 cwd=home,env=env,stdout=subprocess.PIPE,stderr=subprocess.DEVNULL,start_new_session=True,**kwargs)
             try:
-                raw,_=proc.communicate(timeout=65)
+                raw,_=proc.communicate(timeout=85)
                 if proc.returncode or len(raw)>16000:
                     result.update(status="CHILD_FAILED",exitCode=proc.returncode)
                 else:
