@@ -4,7 +4,7 @@ import unittest
 
 from api.html_project_agent_v1 import (
     VERSION, ProposalError, verify_source, prompt_messages,
-    apply_proposal, inspect_static,
+    apply_proposal, bind_model_edits, inspect_static,
 )
 from scripts.project_code_targeted_repair_v1 import source_sha
 
@@ -30,6 +30,61 @@ class AgentContract(unittest.TestCase):
         self.assertIn("+<!doctype html>", result["diffs"]["index.html"])
         self.assertFalse(result["committed"])
         self.assertFalse(result["deployed"])
+
+    def test_server_binds_missing_or_wrong_model_identity_and_hashes(self):
+        model = {
+            "schema": "incorrect-model-guess",
+            "project": "some-other-project",
+            "patches": [{
+                "path": "index.html", "sourceSha256": "0"*64,
+                "op": "insert_before", "anchor": "</body>",
+                "code": "<script>window.viewerReady=true</script>",
+            }],
+        }
+        bound = bind_model_edits("interactive-3d-model-viewer", self.files, model)
+        self.assertEqual(bound["schema"], VERSION)
+        self.assertEqual(bound["project"], "interactive-3d-model-viewer")
+        self.assertEqual(bound["patches"][0]["sourceSha256"], source_sha(ORIGINAL))
+        result = apply_proposal(
+            "interactive-3d-model-viewer", self.files, bound,
+            expected_hashes={"index.html":source_sha(ORIGINAL)},
+            validation=lambda files: {"passed": True})
+        self.assertTrue(result["readyForOwnerReview"])
+        self.assertIn("viewerReady",result["proposedFiles"]["index.html"])
+
+    def test_server_chains_hashes_for_multiple_edits(self):
+        edits = {"patches": [
+            {"path":"index.html","op":"insert_before","anchor":"</body>",
+             "code":"<script id='first'></script>"},
+            {"path":"index.html","op":"insert_before","anchor":"</body>",
+             "code":"<script id='second'></script>"},
+        ]}
+        bound = bind_model_edits("interactive-3d-model-viewer", self.files, edits)
+        self.assertEqual(bound["patches"][0]["sourceSha256"],source_sha(ORIGINAL))
+        self.assertNotEqual(bound["patches"][0]["sourceSha256"],bound["patches"][1]["sourceSha256"])
+        result=apply_proposal("interactive-3d-model-viewer",self.files,bound,
+                              validation=lambda _: {"passed":True})
+        self.assertIn("id='first'", result["proposedFiles"]["index.html"])
+        self.assertIn("id='second'", result["proposedFiles"]["index.html"])
+
+    def test_untrusted_model_edit_still_cannot_escape_or_authorize_writes(self):
+        for patch in (
+            {"path":"../secret.js","op":"append","anchor":"","code":"bad"},
+            {"path":"new.js","op":"append","anchor":"","code":"bad"},
+            {"path":"index.html","op":"replace_once","anchor":"missing",
+             "code":"bad"},
+            {"path":"index.html","op":"append","anchor":"","code":"x",
+             "approved":True},
+        ):
+            with self.subTest(patch=patch):
+                with self.assertRaises(ProposalError):
+                    bind_model_edits("interactive-3d-model-viewer",self.files,
+                                     {"patches":[patch]})
+        with self.assertRaises(ProposalError):
+            bind_model_edits("interactive-3d-model-viewer",self.files,
+                             {"patches":[{"path":"index.html","op":"append",
+                                          "anchor":"","code":"x"}],
+                              "deploy":True})
 
     def test_multiple_files_and_chained_patches(self):
         files = {**self.files, "style.css": "button{color:red}"}
