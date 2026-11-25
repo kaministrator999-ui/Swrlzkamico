@@ -17,7 +17,7 @@ def validate(project,files,canvas=False,checks=None,*,key=None):
                 "project":project,"files":files,"canvas":bool(canvas),"checks":checks or []})
     if len(raw)>MAX_BODY:raise BrowserUnavailable("BROWSER_REQUEST_TOO_LARGE")
     req=urllib.request.Request(URL,data=raw,headers={"Content-Type":"application/json",
-        "X-Swrlz-Signature":mac(key,"request",raw)},method="POST")
+        "X-Swrlz-Admission":mac(key,"admission",b""),"X-Swrlz-Signature":mac(key,"request",raw)},method="POST")
     try:
         with urllib.request.build_opener(NoRedirect()).open(req,timeout=65) as response:
             body=response.read(80_001)

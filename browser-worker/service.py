@@ -24,7 +24,8 @@ class Handler(BaseHTTPRequestHandler):
         else:self.reply(404,{"error":"NOT_FOUND"})
     def do_POST(self):
         if self.path!="/v1/render":self.reply(404,{"error":"NOT_FOUND"});return
-        if not self.headers.get("X-Swrlz-Signature"):self.reply(401,{"error":"AUTH_REQUIRED"});return
+        if not hmac.compare_digest(mac(KEY,"admission",b""),self.headers.get("X-Swrlz-Admission","")) or not self.headers.get("X-Swrlz-Signature"):
+            self.reply(401,{"error":"AUTH_REQUIRED"});return
         if not BUSY.acquire(blocking=False):self.reply(429,{"error":"BROWSER_BUSY"});return
         try:
             try:length=int(self.headers.get("Content-Length","0"))

@@ -20,16 +20,33 @@ MARK="# swrlz-server-browser-route-v13"
 CHECK="https://kamiloki-swyrlz.hf.space/api/html-project-agent-v13/runtime-check"
 PROBE='''
 # swrlz-server-browser-route-v13
+import threading as _swrlz_v13_threading
+_swrlz_v13_probe_lock=_swrlz_v13_threading.Lock()
+_swrlz_v13_probe_receipt=None
 @app.get("/api/html-project-agent-v13/runtime-check",include_in_schema=False)
 def _swrlz_server_browser_v13_health():
+    global _swrlz_v13_probe_receipt
+    if _swrlz_v13_probe_receipt is not None:return _swrlz_v13_probe_receipt
+    if not _swrlz_v13_probe_lock.acquire(blocking=False):return {"state":"running"}
+    try:
+        return _swrlz_v13_probe_once()
+    finally:_swrlz_v13_probe_lock.release()
+
+def _swrlz_v13_probe_once():
+    global _swrlz_v13_probe_receipt
     import html_project_browser_client_v1 as browser
     active=_swrlz_verified_repair_runtime_v7()
     import inspect
     if "browser_validator" not in inspect.signature(active.run).parameters:
         raise RuntimeError("SERVER_BROWSER_ROUTE_NOT_ACTIVE")
-    return {"schema":"swrlz-server-browser-v13","routeActive":True,
+    # Fixed, credential-free source fixture; no caller-controlled execution.
+    receipt=browser.validate("route-smoke",{"index.html":"<html><body><p>Server browser ready</p></body></html>"})["receipt"]
+    if receipt.get("browserVerified") is not True or receipt.get("sandbox") is not True:
+        raise RuntimeError("SERVER_BROWSER_ROUNDTRIP_FAILED")
+    _swrlz_v13_probe_receipt={"schema":"swrlz-server-browser-v13","routeActive":True,
             "browserConfigured":bool(__import__("os").environ.get("SWRLZ_BROWSER_WORKER_KEY")),
-            "approvalRequired":True}
+            "browserRoundtrip":True,"approvalRequired":True}
+    return _swrlz_v13_probe_receipt
 '''
 def blob(raw):return hashlib.sha1(b"blob "+str(len(raw)).encode()+b"\0"+raw).hexdigest()
 def patch_station(s):
@@ -46,7 +63,7 @@ def worker_files():
     root=Path("browser-worker")
     return {n:(root/n).read_bytes() for n in ("README.md","Dockerfile","render.py","render_entry.py","service.py")}|{PROTOCOL:LOCAL[PROTOCOL].read_bytes()}
 def worker_test(key):
-    fixture={"index.html":'<html><body><button id="go" onclick="document.querySelector(\\'#out\\').textContent=\\'ok\\'">Go</button><p id="out">old</p></body></html>'}
+    fixture={"index.html": """<html><body><button id="go" onclick="document.querySelector('#out').textContent='ok'">Go</button><p id="out">old</p></body></html>"""}
     good=validate("worker-smoke",fixture,False,[{"op":"click","selector":"#go"},{"op":"text","selector":"#out","text":"ok"}],key=key)["receipt"]
     if good.get("browserVerified") is not True or len(good.get("checks",[]))!=2:raise RuntimeError("SERVER_BROWSER_INTERACTION_FAILED")
     bad=validate("worker-smoke",{"index.html":"<html><body><script>throw new Error('v13 fixture')</script></body></html>"},False,key=key)["receipt"]
@@ -93,7 +110,7 @@ def main(mode):
         api.create_repo(WORKER,repo_type="space",space_sdk="docker",private=False,exist_ok=True)
         info=api.repo_info(WORKER,repo_type="space")
     status=api.get_space_runtime(WORKER)
-    if str(status.hardware or "").lower() not in ("cpu-basic","spacehardware.cpu_basic","none") or str(status.requested_hardware or "").lower() not in ("cpu-basic","spacehardware.cpu_basic","none"):
+    if str(status.hardware or "").lower() not in ("cpu-basic","spacehardware.cpu_basic","none","") or str(getattr(status,"requested_hardware",None) or "").lower() not in ("cpu-basic","spacehardware.cpu_basic","none",""):
         raise RuntimeError("WORKER_FREE_CPU_REQUIRED")
     wr=str(info.sha)
     files=worker_files()
@@ -125,8 +142,8 @@ def main(mode):
             if read(SPACE,n,new)!=v:raise RuntimeError("V13_READBACK_MISMATCH:"+n)
         for i in range(75):
             try:
-                with urllib.request.urlopen(CHECK,timeout=12) as r:rec=json.load(r)
-                if rec!={"schema":"swrlz-server-browser-v13","routeActive":True,"browserConfigured":True,"approvalRequired":True}:raise RuntimeError("V13_NOT_READY")
+                with urllib.request.urlopen(CHECK,timeout=70) as r:rec=json.load(r)
+                if rec!={"schema":"swrlz-server-browser-v13","routeActive":True,"browserConfigured":True,"browserRoundtrip":True,"approvalRequired":True}:raise RuntimeError("V13_NOT_READY")
                 print("V13_DEPLOYED_VERIFIED",new,json.dumps(rec),flush=True);return
             except (OSError,ValueError,RuntimeError):
                 if i==74:raise
