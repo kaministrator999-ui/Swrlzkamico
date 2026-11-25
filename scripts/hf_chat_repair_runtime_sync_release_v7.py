@@ -109,7 +109,7 @@ def patch_station(source):
     handoff = source.index(HANDOFF_COMMENT)
     if HANDOFF_OLD not in source[handoff:handoff+320]:
         raise RuntimeError("REPAIR_V7_HANDOFF_CONDITION_DRIFT")
-    if source.count('if payload.get("htmlProjectIntent"):') != 1:
+    if source.count(HANDOFF_OLD) != 1:
         raise RuntimeError("REPAIR_V7_HANDOFF_NOT_UNIQUE")
     source = source.replace(OLD_ROUTE, NEW_ROUTE, 1)
     source = source.replace(OWNER_ANCHOR, OWNER_NEW, 1)
