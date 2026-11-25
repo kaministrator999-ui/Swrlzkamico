@@ -4,11 +4,11 @@
   "target": "kamiloki/swrlz-forge-moba",
   "releaseVersion": "v11.552",
   "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_546_ANATOMY_ROBOT_UV_4K",
-  "reason": "Retry smoother humanoid and numbered UV overlay with single-mesh target resolution and actual UI diagnostics",
+  "reason": "Publish continuous pelvis-to-thigh sculpt, remove connector pinch and excessive thigh flare; preserve knee/foot geometry and numbered conformal UV workflow",
   "sourceCommit": "main (deploy workflow checkout; verified against sourceIntegritySha256)",
   "sourceIntegritySha256": "3fe29516958ea5af2448352fa238eda121cc3031266c61c746380f092d22232e",
   "resealRun": 45342195310,
-  "deploymentAttempt": 27,
+  "deploymentAttempt": 28,
   "accountStartupRecovery": "v11.553-delivery",
   "accountStartupChecks": [
     "startup_restore_regression_v11_552",
@@ -17,14 +17,15 @@
   "accountStartupHistoricalSources": "restored SHA-identical v11.184 and v11.552",
   "uvDeliveryVerification": "Compare 7 humanoid source files and 2 runtime LSCM source modules against deployed static assets",
   "cleanTopologyStarter": "v11.554",
-  "cleanTopologyAuthorRun": 45558280172,
+  "cleanTopologyAuthorRun": 45566668483,
   "cleanTopologyQuality": {
     "vertices": 6418,
     "triangles": 11492,
     "charts": 22,
-    "density": 2.200276344323828,
+    "density": 2.768646323938931,
     "openEdges": 0,
-    "nonManifoldEdges": 0
+    "nonManifoldEdges": 0,
+    "hipThighProfile": "continuous-outer-contour-v6"
   },
   "cleanTopologyLiveVerification": "Verify new scene and UV assets SHA-256 after static HF upload",
   "cleanTopologyRevision": "lscm-anatomical-conformal-v4",
