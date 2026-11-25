@@ -24,7 +24,13 @@ def apply(module):
         "se232ActivateSelectedModelWorkspace()",
         'SE554_UV_FIRST_STARTER_END'):
         if required not in runtime:raise ValueError('UV-first native runtime missing '+required)
-    text=once(text,INSERT,runtime+'\n'+(ROOT/'runtime/uv_auto_unwrap_v11_555.js').read_text('utf8')+'\n'+INSERT,'startup runtime and xatlas real UV tools')
+    text=once(text,INSERT,runtime+'\n'+INSERT,'root starter runtime')
+    # UV controls require the private ModelAtelier lexical scope: se552Open,
+    # se551Target, checkpoint, status, and signalEdited are not root globals.
+    # Install after the existing UV hooks but before the ModelAtelier wrapper.
+    uv_anchor='/* SE552_BIDIRECTIONAL_REGIONS_END */'
+    uv_runtime=(ROOT/'runtime/uv_auto_unwrap_v11_555.js').read_text('utf8')
+    text=once(text,uv_anchor,uv_anchor+'\n'+uv_runtime+'\n','ModelAtelier-scoped conformal UV tools')
     text=once(text,CATEGORY,CATEGORY_NEW,'native Starter Models category')
     if text.count('SE554_UV_FIRST_STARTER_END')!=1:raise ValueError('Starter module duplicated')
     if text.count('SE555_XATLAS_REAL_UNWRAP_END')!=1:raise ValueError('xatlas UV runtime missing')
@@ -34,5 +40,5 @@ def apply(module):
       'originalModuleSha256':hashlib.sha256(module).hexdigest(),
       'patchedModuleSha256':hashlib.sha256(delivered).hexdigest(),
       'quadBasedStarter':True,'oldRobotChanged':False,
-      'nativeXatlasAutoUnwrap':True,'seamEditor':True,'uvDistortionOverlay':True,
+      'nativeConformalUnwrap':True,'uvRuntimeScope':'ModelAtelier','seamEditor':True,'uvDistortionOverlay':True,
       'newScene':'scenes/model-atelier-clean-topology-humanoid-v11-554.swyrl.json'}
