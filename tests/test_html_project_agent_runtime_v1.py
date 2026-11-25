@@ -160,9 +160,10 @@ class RuntimeTests(unittest.TestCase):
             "Once approved, commit and deploy. Never deploy."))
     
     def test_dependency_recovery_from_missing_node_modules_and_real_user_prompt(self):
-        from pathlib import Path
-        from api.html_project_dependency_tool_v1 import localize_imports, DependencyError
-        from api import html_project_agent_v1 as agent
+        import importlib
+        agent=importlib.import_module(runtime.bind_model_edits.__module__)
+        dependency=importlib.import_module(agent.localize_imports.__module__)
+        localize_imports,DependencyError=dependency.localize_imports,dependency.DependencyError
         source='<html><head><script type="importmap">{"imports":{"tiny":"https://unpkg.com/tiny@1.2.3/main.js"}}</script></head><body><script type="module">import {x} from "tiny"; document.body.textContent=x;</script></body></html>'
         members={"main.js":"export const x=1;","LICENSE":"MIT"}
         def reader(pkg,version,member):
