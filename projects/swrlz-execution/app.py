@@ -481,6 +481,12 @@ def browser_failure(exc):
     msg=str(exc).lower()
     # Fixed categories only: never expose exception text, environment or paths.
     patterns=(
+        ("openssl configuration error", "OPENSSL_CONFIG_ERROR"),
+        ("openssl.cnf", "OPENSSL_CONFIG_PATH"),
+        ("calling fopen", "FOPEN"),
+        ("openssl", "OPENSSL"),
+        ("node:internal", "NODE_INTERNAL"),
+        ("uv_get", "LIBUV_INIT"),
         ("crashpad", "CRASHPAD"),
         ("--database is required", "CRASH_REPORTER_DATABASE"),
         ("permission denied", "PERMISSION_DENIED"),
@@ -515,7 +521,12 @@ def runtime_paths():
            "procMemInfo":("/proc/meminfo",os.O_RDONLY),
            "devUrandom":("/dev/urandom",os.O_RDONLY),
            "loaderCache":("/etc/ld.so.cache",os.O_RDONLY),
-           "fontConfig":("/etc/fonts/fonts.conf",os.O_RDONLY)}
+           "fontConfig":("/etc/fonts/fonts.conf",os.O_RDONLY),
+           "opensslConfig":("/etc/ssl/openssl.cnf",os.O_RDONLY),
+           "opensslRuntimeConfig":("/usr/lib/ssl/openssl.cnf",os.O_RDONLY),
+           "opensslCertificateBundle":("/etc/ssl/certs/ca-certificates.crt",os.O_RDONLY),
+           "procSelfExe":("/proc/self/exe",os.O_RDONLY),
+           "procSelfAuxv":("/proc/self/auxv",os.O_RDONLY)}
     result={}
     for name,(path,mode) in paths.items():
         try:
@@ -545,7 +556,33 @@ def main():
     os.environ.update({"HOME":str(work),"TMPDIR":str(work),"XDG_CACHE_HOME":str(work/"cache"),"XDG_CONFIG_HOME":str(work/"config")})
     launch_args=["--disable-dev-shm-usage","--use-gl=angle","--use-angle=swiftshader","--enable-unsafe-swiftshader",
                  "--disable-background-networking","--disable-sync","--disable-component-update"]
+    def node_startup_checks():
+        from playwright._impl._driver import compute_driver_executable
+        node,_=compute_driver_executable()
+        result={}
+        for label,args in (("version",["--version"]),("pureJavaScript",["-e","console.log(42)"]),
+                           ("builtinFs",["-e","require('fs');console.log(42)"]),
+                           ("builtinCrypto",["-e","require('crypto');console.log(42)"])):
+            try:
+                run=subprocess.run([node,*args],stdin=subprocess.DEVNULL,stdout=subprocess.PIPE,
+                                   stderr=subprocess.PIPE,timeout=4,check=False)
+                msg=run.stderr.decode(errors="replace")
+                # Fixed markers rather than raw stderr; preserve exact known public
+                # configuration dependency names without exposing private paths.
+                markers=[label for label,needle in (
+                    ("OPENSSL_CONFIG_ERROR","openssl configuration error"),
+                    ("OPENSSL_CONFIG_FILE","openssl.cnf"),
+                    ("FOPEN","fopen("),("PERMISSION_DENIED","permission denied"),
+                    ("SYSTEM_LIB_SSL","/usr/lib/ssl/"),
+                    ("ETC_SSL","/etc/ssl/"),("PROC_SELF","/proc/self/"),
+                    ("NODE_INTERNAL","node:internal"),("LIBUV","uv_"),
+                    ("EACCES","eacces"),("ERRNO_13","errno: -13")) if needle in msg.lower()]
+                result[label]={"exitCode":run.returncode,"pass":run.returncode==0,
+                               "markers":markers}
+            except Exception as e:result[label]={"pass":False,"failureCategories":browser_failure(e)}
+        return result
     out["baselineRuntimeAccess"]=runtime_paths()
+    out["baselineNodeStartup"]=node_startup_checks()
     out["baselineBrowserLaunch"]=False
     try:
         with sync_playwright() as baseline:
@@ -648,6 +685,7 @@ def main():
     if not out["boundaryChecksPassed"]:out["status"]="BOUNDARY_TEST_FAILED";return
     os.environ.update({"HOME":str(work),"TMPDIR":str(work),"XDG_CACHE_HOME":str(work/"cache"),"XDG_CONFIG_HOME":str(work/"config")})
     out["restrictedRuntimeAccess"]=runtime_paths()
+    out["restrictedNodeStartup"]=node_startup_checks()
     out["stage"]="restricted_driver_diagnostics"
     # Probe the installed driver's own runtime using only fixed version commands.
     # Do not emit stdout/stderr or filesystem paths in the public receipt.
@@ -763,7 +801,7 @@ def combined_probe():
             proc=subprocess.Popen([sys.executable,"-I","-c",_COMBINED_CHILD],
                 cwd=home,env=env,stdout=subprocess.PIPE,stderr=subprocess.DEVNULL,start_new_session=True,**kwargs)
             try:
-                raw,_=proc.communicate(timeout=85)
+                raw,_=proc.communicate(timeout=110)
                 if proc.returncode or len(raw)>16000:
                     result.update(status="CHILD_FAILED",exitCode=proc.returncode)
                 else:
