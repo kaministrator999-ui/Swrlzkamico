@@ -54,7 +54,7 @@ jobs:
           python - <<'PY'
           from pathlib import Path
           from api.html_project_agent_v1 import bind_model_edits,apply_proposal,inspect_static
-          src=Path("html-projects/interactive-3d-model-viewer/index.html").read_text()
+          src=Path("tests/fixtures/interactive-3d-model-viewer-before-repair.html").read_text()
           files={"index.html":src}
           plan=bind_model_edits("interactive-3d-model-viewer",files,{"patches":[{"path":"index.html","op":"localize_imports","anchor":'<script type="importmap">',"code":""}]})
           result=apply_proposal("interactive-3d-model-viewer",files,plan,validation=inspect_static)

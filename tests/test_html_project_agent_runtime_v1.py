@@ -199,6 +199,28 @@ class RuntimeTests(unittest.TestCase):
             self.assertFalse(runtime.dependency_only_recovery(task,baseline,actions))
         self.assertTrue(runtime.dependency_only_recovery("Repair the rendering failure",baseline,actions))
 
+    def test_browser_error_reaches_model_before_owner_review(self):
+        responses=[]
+        def model(p):
+            responses.append(p)
+            if len(responses)>1:self.assertIn("BROWSER_PAGE_ERROR",p["prompt"])
+            yield from self.coder(p)
+        browser_calls=[]
+        def browser(project,files,canvas):
+            browser_calls.append(files)
+            ok=len(browser_calls)>1
+            return {"receipt":{"browserVerified":ok,"issues":[] if ok else [{"code":"BROWSER_PAGE_ERROR","detail":"fixture runtime failure"}],"scope":"test"}}
+        with patch.object(runtime.approval,"should_route",return_value=True), \
+             patch.object(runtime,"_source_files",return_value=("b"*40,{"index.html":SRC})), \
+             patch.object(runtime,"inspect_static",return_value={"passed":True}), \
+             patch.object(runtime.approval,"prepare_model",return_value={"kind":"review"}) as stage:
+            events=list(runtime.run(self.payload(),model,browser_validator=browser))
+        self.assertEqual(len(browser_calls),2)
+        self.assertEqual(len(responses),2)
+        stage.assert_called_once()
+        self.assertTrue(stage.call_args.args[6]["validation"]["browserVerified"])
+        self.assertEqual(events[-1]["phase"],"COMPLETE")
+
     def test_owner_context_required(self):
         p=self.payload()
         del p["htmlRepairOwner"]

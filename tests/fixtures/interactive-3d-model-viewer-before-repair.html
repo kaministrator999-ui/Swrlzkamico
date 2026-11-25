@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive 3D Model Viewer</title>
+    <style>
+        body { margin: 0; overflow: hidden; background-color: #1a1a1a; font-family: sans-serif; }
+        #canvas-container { width: 100vw; height: 100vh; display: block; }
+        #ui-panel {
+            position: absolute; top: 10px; right: 10px; background: rgba(0, 0, 0, 0.8);
+            padding: 15px; border-radius: 8px; color: #fff; box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            display: flex; flex-direction: column; gap: 10px;
+        }
+        .control-group { display: flex; align-items: center; justify-content: space-between; }
+        label { font-size: 14px; color: #ccc; }
+        input[type="checkbox"] { transform: scale(1.2); cursor: pointer; }
+        #loading {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            font-size: 24px; color: #fff; pointer-events: none;
+        }
+    </style>
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+            "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+        }
+    }
+    </script>
+</head>
+<body>
+    <div id="loading">Loading 3D Viewer...</div>
+    <div id="canvas-container"></div>
+    <div id="ui-panel">
+        <div class="control-group">
+            <label for="wireframe-toggle">Wireframe Mode</label>
+            <input type="checkbox" id="wireframe-toggle">
+        </div>
+        <div class="control-group">
+            <label for="light-toggle">Ambient Light</label>
+            <input type="checkbox" id="light-toggle" checked>
+        </div>
+        <div class="control-group">
+            <label for="reset-btn">Reset View</label>
+            <button id="reset-btn">Reset</button>
+        </div>
+    </div>
+
+    <script type="module">
+        import * as THREE from 'three';
+        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+        // --- Scene Setup ---
+        const container = document.getElementById('canvas-container');
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x1a1a1a);
+        scene.fog = new THREE.Fog(0x1a1a1a, 20, 100);
+
+        // --- Camera ---
+        const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.set(5, 5, 5);
+
+        // --- Renderer ---
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(window.devicePixelRatio);
+        renderer.shadowMap.enabled = true;
+        renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+        container.appendChild(renderer.domElement);
+
+        // --- Controls ---
+        const controls = new OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.05;
+        controls.minDistance = 1;
+        controls.maxDistance = 50;
+
+        // --- Lighting ---
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+        scene.add(ambientLight);
+
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+        directionalLight.position.set(5, 10, 7);
+        directionalLight.castShadow = true;
+        directionalLight.shadow.mapSize.width = 1024;
+        directionalLight.shadow.mapSize.height = 1024;
+        scene.add(directionalLight);
+
+        // --- Objects ---
+        // Create a sample geometry (a complex shape)
+        const geometry = new THREE.IcosahedronGeometry(1.5, 1);
+        
+        // Material for solid view
+        const material = new THREE.MeshStandardMaterial({
+            color: 0x00ff88,
+            roughness: 0.4,
+            metalness: 0.3,
+            flatShading: false
+        });
+
+        const mesh = new THREE.Mesh(geometry, material);
+        mesh.castShadow = true;
+        mesh.receiveShadow = true;
+        scene.add(mesh);
+
+        // Wireframe overlay
+        const wireframeMaterial = new THREE.MeshBasicMaterial({
+            color: 0x00ff88,
+            wireframe: true,
+            transparent: true,
+            opacity: 0.5
+        });
+        const wireframeMesh = new THREE.Mesh(geometry, wireframeMaterial);
+        scene.add(wireframeMesh);
+
+        // --- UI Logic ---
+        const wireframeToggle = document.getElementById('wireframe-toggle');
+        const lightToggle = document.getElementById('light-toggle');
+        const resetBtn = document.getElementById('reset-btn');
+
+        // Toggle Wireframe
+        wireframeToggle.addEventListener('change', (e) => {
+            const isWireframe = e.target.checked;
+            mesh.material.wireframe = isWireframe;
+            wireframeMesh.visible = isWireframe;
+        });
+
+        // Toggle Lighting
+        lightToggle.addEventListener('change', (e) => {
+            if (e.target.checked) {
+                ambientLight.intensity = 0.5;
+                directionalLight.intensity = 1;
+            } else {
+                ambientLight.intensity = 0;
+                directionalLight.intensity = 0;
+            }
+        });
+
+        // Reset View
+        resetBtn.addEventListener('click', () => {
+            camera.position.set(5, 5, 5);
+            camera.lookAt(0, 0, 0);
+            controls.target.set(0, 0, 0);
+            controls.update();
+            wireframeToggle.checked = false;
+            lightToggle.checked = true;
+            mesh.material.wireframe = false;
+            wireframeMesh.visible = false;
+        });
+
+        // --- Resize Handler ---
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        // --- Animation Loop ---
+        function animate() {
+            requestAnimationFrame(animate);
+            controls.update();
+            renderer.render(scene, camera);
+        }
+
+        // Hide loading text
+        document.getElementById('loading').style.display = 'none';
+        animate();
+    </script>
+</body>
+</html>

@@ -60,6 +60,7 @@
     const creating=data.mode==="create",repairing=data.mode==="repair";
     const modelRepair=repairing&&data.repairStrategy==="model-exact-patch";
     const fullRepair=modelRepair&&data.publishAfterValidation===true;
+    const serverBrowser=modelRepair&&data.repairValidation?.browserVerified===true;
     const doc=container.ownerDocument,thread=String(opts.threadId||""),created=Date.now();
     const surface=doc.createElement("section");
     surface.className="swrlz-github-change-review swrlz-html-publish-review";
@@ -120,6 +121,9 @@
     const decline=doc.createElement("button"),approve=doc.createElement("button");
     decline.type=approve.type="button";
     decline.textContent=creating?"Cancel creation":repairing?"Cancel repair":"Cancel deployment";
+    if(serverBrowser){
+      note.textContent=fullRepair?"§C server Chromium rendering and static validation passed before approval. Approval authorizes the exact GitHub commit, deployment and live verification.":"§C server Chromium rendering and static validation passed. Approval authorizes only the reviewed repair PR.";
+    }
     approve.textContent=creating?"Approve GitHub commit":modelRepair?(fullRepair?"Approve repair and deploy":"Approve model repair PR"):repairing?"Approve repair PR build":"Approve publish";
     actions.append(decline,approve);surface.append(actions);
     let decided=false,busy=false;

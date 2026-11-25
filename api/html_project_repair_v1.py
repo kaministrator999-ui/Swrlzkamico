@@ -198,6 +198,7 @@ def prepare_model(user_id, thread_id, slug, head, patch_plan, source_hashes, res
             "sourceHashes": dict(source_hashes),
             "plan": plan_text,
             "publishAfterValidation": publish_after_validation is True,
+            "browserReceipt": result.get("validation",{}).get("browserReceipt"),
         }
     return {
         "contract": "swrlz-widget-v1", "kind": "github-html-publish-review",
@@ -240,17 +241,12 @@ def _confirm_model(user_id, proposal):
         raise RepairError("REPAIR_SOURCE_RECHECK_FAILED") from exc
     try:
         auth = publishing._authorized(user_id)
-        publishing._github(
-            auth, "POST",
-            "actions/workflows/" + MODEL_WORKFLOW + "/dispatches",
-            data={"ref": "main", "inputs": {
-                "source_sha": proposal["sha"],
-                "project": proposal["project"],
-                "proposal_json": proposal["plan"],
-                "publish_after_validation": "yes" if proposal.get("publishAfterValidation") is True else "no",
-                "approved": "yes",
-            }},
-        )
+        inputs={"source_sha":proposal["sha"],"project":proposal["project"],"proposal_json":proposal["plan"],
+                "publish_after_validation":"yes" if proposal.get("publishAfterValidation") is True else "no","approved":"yes"}
+        if proposal.get("browserReceipt"):
+            inputs["browser_receipt_json"]=json.dumps(proposal["browserReceipt"],separators=(",",":"))
+        publishing._github(auth,"POST","actions/workflows/"+MODEL_WORKFLOW+"/dispatches",
+                           data={"ref":"main","inputs":inputs})
     except publishing.PublishActionError as exc:
         raise RepairError(exc.code) from exc
     return {"dispatched": True, "project": proposal["project"],
