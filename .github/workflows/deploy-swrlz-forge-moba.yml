@@ -1,7 +1,6 @@
 name: Deploy §wyrl§ Engine to Hugging Face
 
-# Deliberately minimal: build the release package and upload it.
-# No browser tests, asset-fetch audit, live polling, or separate verification.
+# Build, execute the actual browser runtime, deploy, and verify the public bridge.
 on:
   workflow_dispatch:
   push:
@@ -39,6 +38,13 @@ jobs:
           SCRIPT="${RELEASE//./_}"
           python "projects/swrlz-forge-moba/scripts/package_static_delivery_${SCRIPT}.py" --output dist/swrlz-forge-moba
           node --check "dist/swrlz-forge-moba/swrlz-engine-${RELEASE}.js"
+      - name: Install Chromium runtime test
+        run: |
+          npm install --prefix "$RUNNER_TEMP/se555-browser" --no-audit --no-fund playwright@1.51.1
+          "$RUNNER_TEMP/se555-browser/node_modules/.bin/playwright" install chromium
+      - name: Boot actual packaged engine in mobile Chromium before upload
+        run: |
+          NODE_PATH="$RUNNER_TEMP/se555-browser/node_modules" node projects/swrlz-forge-moba/tests/delivery_browser_startup_v11_555.cjs dist/swrlz-forge-moba
       - name: Upload to the existing static HF Space
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
@@ -142,3 +148,7 @@ jobs:
               if error:raise SystemExit("Live UV asset verification failed: "+str(error))
           print("SE555_ALL_NINE_PUBLIC_HUMANOID_AND_LSCM_ASSETS_VERIFIED",flush=True)
           PY
+
+      - name: Verify live engine JavaScript startup and Chat bridge
+        run: |
+          NODE_PATH="$RUNNER_TEMP/se555-browser/node_modules" node projects/swrlz-forge-moba/tests/delivery_browser_startup_v11_555.cjs dist/swrlz-forge-moba --live
