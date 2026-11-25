@@ -95,7 +95,11 @@ def prompt_messages(project, files, diagnostics, task, *, prior_failures=()):
         "NOT invent identity fields or calculate hashes. Never return a whole "
         "rewritten file, new files, deletion, shell commands, approval or deployment "
         "instructions. No hardcoded strategy; select the smallest evidence-supported "
-        "repair. Explain only via optional rationale (max 1000 characters). "
+        "repair. Output shape: {\"patches\":[{\"path\":\"index.html\","
+        "\"op\":\"replace_once\",\"anchor\":\"exact source text\","
+        "\"code\":\"replacement text\"}]}. Example values are illustrative only. "
+        "Never include approval, commit, deploy, or command fields. "
+        "Explain only via optional rationale (max 1000 characters). "
         "Do not claim execution or deployment."
     )
     return [{"role": "system", "content": system},
