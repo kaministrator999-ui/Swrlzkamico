@@ -55,13 +55,17 @@ def patch_station(source):
     if MARK in source:
         # Existing deployments are valid during unrelated source-repair updates.
         # Refuse partial installations, but do not try to install twice.
-        required = (
+        routes = (
             "event_source=_swrlz_model_repair.run(payload,_coder_generate)",
+            "event_source=_swrlz_execute_model_repair_v7(payload,_coder_generate)",
+        )
+        required = (
             'payload["htmlRepairOwner"]=google_owner',
             'payload["htmlRepairThreadId"]=tid',
             '/api/html-project-agent-v1/health',
         )
-        if any(anchor not in source for anchor in required):
+        if (not any(route in source for route in routes)
+                or any(anchor not in source for anchor in required)):
             raise RuntimeError("PARTIAL_AGENT_INSTALLATION")
         ast.parse(source, filename=STATION)
         return source
