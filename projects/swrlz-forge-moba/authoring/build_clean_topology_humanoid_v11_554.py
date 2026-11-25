@@ -209,7 +209,9 @@ def hand_and_arm(side,key,socket):
         return (side*2.337,cx+y,z)
     endloop,digits=capgrid(key,10,8,handpos,(.672,.045,.822,.95),holes)
     assert len(endloop)==36
-    source_angles=[math.atan2(p[2],p[1]-cx) for p in socket]
+    socket_y=sum(p[1] for p in socket)/len(socket)
+    socket_z=sum(p[2] for p in socket)/len(socket)
+    source_angles=[math.atan2(p[2]-socket_z,p[1]-socket_y) for p in socket]
     # Smooth shoulder/biceps/elbow/forearm transition, preserving 36 quad
     # longitudinal loops. Do not create a separate floating shoulder sphere.
     armprofile=controls([
@@ -220,8 +222,11 @@ def hand_and_arm(side,key,socket):
     ],2)
     rings=[ring(key,socket,.94,(.01,.654))]
     for k,(x,ry,rz) in enumerate(armprofile):
-        points=[(side*x,cx+ry*math.cos(t),rz*math.sin(t))
+        blend=smooth(min(1.,(k+1)/6.))
+        target=[(side*x,lerp(socket_y,cx,blend)+ry*math.cos(t),rz*math.sin(t))
                 for t in source_angles]
+        points=[mix([a[0]+side*.045*(k+1),a[1],a[2]],b,blend)
+                for a,b in zip(socket,target)]
         rings.append(ring(key,points,.94-(k+1)*.87/(len(armprofile)+1),
                           (.01,.654)))
         strip(key,rings[-2],rings[-1])
@@ -262,9 +267,9 @@ def leg(side,key,opening):
     theta=[math.atan2(p[2]-center[2],p[0]-center[0])
            for p in opening]
     line=controls([
-      [side*.284,2.235,0,.177,.180],
-      [side*.291,2.15,0,.205,.202],
-      [side*.298,2.05,0,.218,.215],
+      [side*.235,2.185,0,.177,.180],
+      [side*.255,2.09,0,.196,.202],
+      [side*.278,1.99,0,.212,.215],
       [side*.316,1.84,0,.225,.218],
       [side*.325,1.62,0,.177,.183],
       [side*.325,1.42,0,.126,.132],
@@ -287,6 +292,9 @@ def leg(side,key,opening):
         by=tz/length;bz=-ty/length
         p=[(x+rx*math.cos(a),y+rz*math.sin(a)*by,
             z+rz*math.sin(a)*bz) for a in theta]
+        blend=smooth(min(1.,(k+1)/7.))
+        p=[mix([a[0],a[1]-.045*(k+1),a[2]],b,blend)
+           for a,b in zip(opening,p)]
         rings.append(ring(key,p,.955-(k+1)*.875/(len(line)+1)))
         strip(key,rings[-2],rings[-1],reverse=True)
     close_tip(key,rings[-1],(side*.326,.125,.513),.055)
@@ -298,7 +306,36 @@ def assemble():
     hand_and_arm(1,'rightArm',shoulders['rightArm'])
     leg(-1,'leftLeg',hips['leftLeg'])
     leg(1,'rightLeg',hips['rightLeg'])
+    smooth_welded_junctions()
     return anatomy_uv_charts()
+
+def smooth_welded_junctions():
+    # Smooth the shared physical mesh, NOT its duplicated UV seam vertices.
+    # Localized passes blend the armpit, hip and groin surfaces into the limbs.
+    # Preserve fingers, feet and the overall torso silhouette.
+    coords=[tuple(P[i:i+3]) for i in range(0,len(P),3)]
+    unique={p:i for i,p in enumerate(dict.fromkeys(coords))}
+    verts=list(unique);ids=[unique[p] for p in coords]
+    adj=[set() for p in verts]
+    for _,q in Q:
+        for a,b in zip(q,q[1:]+q[:1]):
+            a,b=ids[a],ids[b];adj[a].add(b);adj[b].add(a)
+    def weight(p):
+        x,y,z=p;x=abs(x)
+        hip=math.exp(-((y-2.24)/.31)**4)*math.exp(-((x-.26)/.32)**4)
+        shoulder=math.exp(-((y-3.54)/.35)**4)*math.exp(-((x-.48)/.35)**4)
+        head=.40*math.exp(-((y-4.52)/.34)**4)
+        return max(hip,shoulder,head)
+    weights=[weight(p) for p in verts]
+    for iteration in range(8):
+        updated=[]
+        for i,p in enumerate(verts):
+            near=adj[i]
+            if not near:updated.append(p);continue
+            avg=[sum(verts[j][d] for j in near)/len(near) for d in range(3)]
+            updated.append(tuple(mix(p,avg,.46*weights[i])))
+        verts=updated
+    P[:]=[round(v,6) for i in ids for v in verts[i]]
 
 def anatomy_uv_charts():
     """Split UV coordinates, never 3D faces, into paintable anatomical views.
@@ -531,6 +568,7 @@ def main():
       'uvBoxes':BOXES,'uvCharts':charts,'uvPaintMode':'actual-UV-quad-island-masking',
       'guideAnatomyLabels':True,'textureSize':1024,'guideSize':2048,
       'originalRobotPreserved':True,'quadFirst':True,
+      'junctionSmoothing':'welded-local-eight-pass','limbSocketBlend':True,
       'topologyAudit':audit}
     REPORT.parent.mkdir(parents=True,exist_ok=True)
     REPORT.write_text(json.dumps(report,indent=2)+'\n','utf8')
