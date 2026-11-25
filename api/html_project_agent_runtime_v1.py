@@ -215,7 +215,7 @@ def _cancel(payload):
     if callable(payload.get("_cancelCheck")) and payload["_cancelCheck"]():
         raise ProposalError("CANCELLED")
 
-def repair_candidate(payload, coder_generate, project, files, task, diagnostics, *, binder=bind_model_edits):
+def repair_candidate(payload, coder_generate, project, files, task, diagnostics, *, browser_validator=None, binder=bind_model_edits):
     """Shared production/probe repair loop; does not stage, commit or deploy."""
     source_hashes=verify_source(project,files)
     _cancel(payload)
@@ -232,6 +232,22 @@ def repair_candidate(payload, coder_generate, project, files, task, diagnostics,
     evidence.extend(list(diagnostics or [])[:4])
     failures=[]
     recover=dependency_only_recovery(task,baseline,actions)
+    def browser_gate(result):
+        if browser_validator is None:return result
+        combined={**files,**result["proposedFiles"]}
+        try:
+            from api.lightweight_webpage_inspector_v1 import inspect_files
+        except ImportError:
+            from lightweight_webpage_inspector_v1 import inspect_files
+        rendering=inspect_files(combined,known_files_complete=True).get("renderingRequiredForFullVerification") is True
+        envelope=browser_validator(project,combined,rendering)
+        receipt=envelope.get("receipt") or {}
+        _cancel(payload)
+        if receipt.get("browserVerified") is not True:
+            raise ProposalError("BROWSER_VALIDATION_FAILED: "+json.dumps(receipt.get("issues") or [],ensure_ascii=False)[:1600])
+        result["validation"]={**result["validation"],"browserVerified":True,
+                              "browserReceipt":envelope,"browserScope":receipt.get("scope")}
+        return result
     for attempt in range(MAX_ROUNDS):
         _cancel(payload)
         yield {"type":"STATUS","phase":"REPAIR_MODEL_PATCH",
@@ -248,6 +264,10 @@ def repair_candidate(payload, coder_generate, project, files, task, diagnostics,
             _cancel(payload)
             if not result["readyForOwnerReview"]:
                 raise ProposalError("VALIDATION_NOT_VERIFIED")
+            if browser_validator is not None:
+                yield {"type":"STATUS","phase":"REPAIR_BROWSER_VALIDATION","reason":"§C server browser rendering exact proposed project bytes."}
+                recover=False
+                result=browser_gate(result)
             return proposal,result,"model",failures
         except (ProposalError,ValueError,TypeError) as exc:
             _cancel(payload)
@@ -271,6 +291,9 @@ def repair_candidate(payload, coder_generate, project, files, task, diagnostics,
                     _cancel(payload)
                     if not result["readyForOwnerReview"]:
                         raise ProposalError("DEPENDENCY_RECOVERY_NOT_VERIFIED")
+                    if browser_validator is not None:
+                        yield {"type":"STATUS","phase":"REPAIR_BROWSER_VALIDATION","reason":"§C server browser testing dependency recovery."}
+                        result=browser_gate(result)
                     return proposal,result,"executor-dependency-recovery",failures
                 except (ProposalError,ValueError,TypeError) as fallback_error:
                     _cancel(payload)
@@ -284,7 +307,7 @@ def repair_candidate(payload, coder_generate, project, files, task, diagnostics,
     raise ProposalError("MAX_REPAIR_ATTEMPTS_EXHAUSTED:\n"+"\n".join(
         "Attempt evidence "+str(i+1)+": "+reason[:500] for i,reason in enumerate(failures[-5:])))
 
-def run(payload, coder_generate):
+def run(payload, coder_generate, *, browser_validator=None):
     """Owner-authenticated source -> shared candidate loop -> owner review."""
     if not approval.should_route(payload):
         raise ProposalError("INVALID_REPAIR_CONTEXT")
@@ -305,24 +328,30 @@ def run(payload, coder_generate):
         diagnostics=[str(payload.get("projectFileEvidence") or "")[:1200]]
         proposal,result,origin,failures=yield from repair_candidate(
             payload,coder_generate,project["project"],files,task,diagnostics,
-            binder=bind_model_edits)
+            browser_validator=browser_validator,binder=bind_model_edits)
         _cancel(payload)
         full_delivery=requested_publish_after_approval(task)
         review=approval.prepare_model(owner,thread,project["project"],sha,proposal,
                                      source_hashes,result,publish_after_validation=full_delivery)
         yield {"type":"WIDGET","widget":review}
+        browser_pass=result["validation"].get("browserVerified") is True
         yield {"type":"STATUS","phase":"REPAIR_REVIEW_READY",
-               "reason":"Exact patches passed the browser-free static validator; origin: "+origin}
+               "reason":("Exact patches passed server Chromium and static validation; origin: " if browser_pass else
+                         "Exact patches passed the browser-free static validator; origin: ")+origin}
         lead=("The coding model proposed a source-preserving repair to " if origin=="model"
               else "The coding model's patch was rejected; the repair executor recovered the verified dependency assets. The source-preserving candidate changes ")
         yield {"type":"DELTA","text":lead+", ".join(result["changedFiles"])+
-               ". Exact source hashes and static checks passed. "+
-               ("Review the diff and reply YES to authorize browser validation, the source-pinned GitHub commit, Hugging Face deployment, and live browser verification. "
-                if full_delivery else "Review the diff and reply YES to authorize browser validation and a GitHub repair PR only. ")+
-               "Reply NO to cancel. No GitHub write, browser run or Hugging Face deployment has occurred."}
+               (". Exact source hashes, static checks and §C server Chromium rendering passed. " if browser_pass else
+                ". Exact source hashes and static checks passed. ")+
+               ("Review the diff and reply YES to authorize the source-pinned GitHub commit, Hugging Face deployment and live verification. "
+                if full_delivery and browser_pass else
+                "Review the diff and reply YES to authorize browser validation, the source-pinned GitHub commit, Hugging Face deployment, and live browser verification. "
+                if full_delivery else "Review the diff and reply YES to authorize a GitHub repair PR only. ")+
+               ("Reply NO to cancel. No GitHub write or Hugging Face deployment has occurred." if browser_pass else
+                "Reply NO to cancel. No GitHub write, browser run or Hugging Face deployment has occurred.")}
         yield {"type":"COMPLETED","phase":"COMPLETE"}
     except Exception as exc:
         reason=str(exc)[:3500]
-        yield {"type":"DELTA","text":"The repair did not pass source, model-output and static validation:\n\n"+reason+
+        yield {"type":"DELTA","text":"The repair did not pass source, model-output or execution validation:\n\n"+reason+
                "\n\nNo GitHub change or deployment is verified."}
         yield {"type":"COMPLETED","phase":"PARTIAL","blocker":"UNVERIFIED_REPAIR"}

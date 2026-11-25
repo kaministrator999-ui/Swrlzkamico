@@ -98,6 +98,9 @@ def run(mode):
     def read(name,revision):
         return Path(hf_hub_download(SPACE,name,repo_type="space",revision=revision,token=os.getenv("HF_TOKEN") or None)).read_bytes()
     original={n:read(n,rev) for n in (RUNTIME,STATION)}
+    if mode=="preflight" and b"browser_validator=None" in raw:
+        if b"swrlz-evidence-tool-loop-v12" not in original[RUNTIME]:raise RuntimeError("V13_LINEAGE_MISMATCH")
+        print("V12_HISTORICAL_PREFLIGHT_SERVER_BROWSER_OWNS_RELEASE",rev,flush=True);return
     if original[RUNTIME]!=raw and blob(original[RUNTIME])!=PIN:raise RuntimeError("V12_RUNTIME_SOURCE_DRIFT")
     candidate={RUNTIME:raw,STATION:patch_station(original[STATION].decode()).encode()}
     changed={n:v for n,v in candidate.items() if original[n]!=v}

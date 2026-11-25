@@ -48,7 +48,9 @@ jobs:
           npm install --prefix repair-tools --no-save --no-package-lock --no-audit --no-fund three@0.160.0 esbuild@0.25.12
       - name: Bundle source without rewriting page and run static gate
         run: |
-          python scripts/build_html_project_repair_v1.py build --project interactive-3d-model-viewer --source-root . --output-root repair-output --tools-root repair-tools
+          mkdir -p legacy-fixture/html-projects/interactive-3d-model-viewer
+          cp tests/fixtures/interactive-3d-model-viewer-before-repair.html legacy-fixture/html-projects/interactive-3d-model-viewer/index.html
+          python scripts/build_html_project_repair_v1.py build --project interactive-3d-model-viewer --source-root legacy-fixture --output-root repair-output --tools-root repair-tools
           node --check repair-output/interactive-3d-model-viewer/viewer.bundle.js
   repair:
     if: ${{ github.event_name == 'workflow_dispatch' && inputs.approved == 'yes' && github.actor == 'kaministrator999-ui' }}
