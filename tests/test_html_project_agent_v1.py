@@ -86,6 +86,36 @@ class AgentContract(unittest.TestCase):
                                           "anchor":"","code":"x"}],
                               "deploy":True})
 
+    def test_extra_metadata_never_reaches_strict_patch_contract(self):
+        raw = propose(summary="Repair viewer", diagnosis={"reason":"missing import"},
+                      deploymentNotes="No deployment performed", confidence=0.8)
+        raw["patches"][0]["explanation"] = "Insert missing handler"
+        raw["patches"][0]["lineNumber"] = 1
+        raw["rationale"] = {"explanation":"optional metadata"}
+        bound = bind_model_edits("interactive-3d-model-viewer", self.files, raw)
+        self.assertEqual(set(bound), {"schema","project","patches","rationale"})
+        self.assertEqual(set(bound["patches"][0]),
+                         {"path","op","anchor","code","sourceSha256"})
+        self.assertEqual(bound["rationale"], "")
+        result = apply_proposal("interactive-3d-model-viewer", self.files, bound,
+                                validation=lambda _: {"passed":True})
+        self.assertTrue(result["readyForOwnerReview"])
+        self.assertFalse(result["committed"])
+        self.assertFalse(result["deployed"])
+
+    def test_missing_fields_and_action_keys_report_specific_errors(self):
+        raw = propose()
+        del raw["patches"][0]["anchor"]
+        with self.assertRaisesRegex(ProposalError, "missing anchor"):
+            bind_model_edits("interactive-3d-model-viewer", self.files, raw)
+        raw = propose(deploy=True)
+        with self.assertRaisesRegex(ProposalError, r"proposal\.deploy"):
+            bind_model_edits("interactive-3d-model-viewer", self.files, raw)
+        raw = propose()
+        raw["patches"][0]["approved"] = True
+        with self.assertRaisesRegex(ProposalError, r"patch\.approved"):
+            bind_model_edits("interactive-3d-model-viewer", self.files, raw)
+
     def test_multiple_files_and_chained_patches(self):
         files = {**self.files, "style.css": "button{color:red}"}
         first = {"path":"style.css", "sourceSha256":source_sha(files["style.css"]),
