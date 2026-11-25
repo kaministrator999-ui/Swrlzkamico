@@ -162,6 +162,88 @@ def remote_probe(request_json, signature):
     return {"receipt":receipt, "signature":_mac(key, "receipt", _wire(receipt))}
 
 
+def isolation_probe():
+    """Trusted fixed probes only; never accepts candidate bytes or commands."""
+    import subprocess
+    import tempfile
+    import signal
+    import sys
+    evidence = {"schema": "swrlz-x-isolation-v03", "browserSandbox": False,
+                "userNamespace": False, "networkNamespace": False,
+                "mountNamespace": False, "filesystemIsolation": False,
+                "processIsolation": False, "candidateExecutionEnabled": False,
+                "isolationVerified": False, "status": "BLOCKED", "reasons": []}
+    if not _probe_lock.acquire(blocking=False):
+        evidence["status"] = "BUSY"
+        return evidence
+    try:
+        with tempfile.TemporaryDirectory(prefix="swrlz-isolation-probe-") as home:
+            env = {"PATH": "/usr/local/bin:/usr/bin:/bin", "HOME": home,
+                   "TMPDIR": home, "LANG": "C.UTF-8", "PYTHONDONTWRITEBYTECODE": "1"}
+            def invoke(command, timeout=10):
+                p = subprocess.Popen(command, cwd=home, env=env, stdout=subprocess.PIPE,
+                                     stderr=subprocess.DEVNULL, start_new_session=True)
+                try:
+                    out, _ = p.communicate(timeout=timeout)
+                    return p.returncode == 0, out[:4096]
+                except subprocess.TimeoutExpired:
+                    try:
+                        os.killpg(p.pid, signal.SIGKILL)
+                    except ProcessLookupError:
+                        pass
+                    p.communicate()
+                    return False, b""
+            unshare = shutil.which("unshare")
+            if unshare:
+                for name, flag, ns in (
+                    ("userNamespace", "--user", "user"),
+                    ("networkNamespace", "--net", "net"),
+                    ("mountNamespace", "--mount", "mnt"),
+                    ("processIsolation", "--pid", "pid"),
+                ):
+                    parent = os.readlink("/proc/self/ns/" + ns)
+                    args = [unshare, "--user", "--map-root-user"]
+                    if flag != "--user":
+                        args += [flag]
+                    args += ["--fork", "--", "/usr/bin/readlink", "/proc/self/ns/" + ns]
+                    ok, out = invoke(args)
+                    evidence[name] = bool(ok and out.strip() and out.decode(errors="replace").strip() != parent)
+            else:
+                evidence["reasons"].append("UNSHARE_UNAVAILABLE")
+            # Chromium must launch with its own sandbox explicitly enabled.
+            # A separate child receives no application credentials.
+            chromium = shutil.which("chromium") or shutil.which("chromium-browser")
+            if chromium:
+                code = """
+from playwright.sync_api import sync_playwright
+import sys
+with sync_playwright() as p:
+    b=p.chromium.launch(executable_path=sys.argv[1],headless=True,chromium_sandbox=True,
+        args=['--disable-dev-shm-usage','--use-angle=swiftshader'],timeout=12000)
+    try:
+        page=b.new_page()
+        page.set_content('<p>trusted sandbox probe</p>')
+        assert page.locator('p').inner_text()=='trusted sandbox probe'
+        print('SANDBOX_LAUNCH_OK',flush=True)
+    finally:
+        b.close()
+"""
+                ok, out = invoke([sys.executable, "-I", "-c", code, chromium], timeout=20)
+                evidence["browserSandbox"] = bool(ok and b"SANDBOX_LAUNCH_OK" in out)
+            # A changed mount namespace is NOT proof of a restricted filesystem.
+            # No production sandbox runner exists yet, so always fail closed.
+            for name in ("browserSandbox","userNamespace","networkNamespace","mountNamespace","processIsolation"):
+                if not evidence[name]:
+                    evidence["reasons"].append(name + "_UNVERIFIED")
+            evidence["reasons"].append("FILESYSTEM_BOUNDARY_AND_COMBINED_SANDBOX_NOT_VERIFIED")
+            return evidence
+    except Exception:
+        evidence["reasons"].append("PROBE_INFRASTRUCTURE_ERROR")
+        return evidence
+    finally:
+        _probe_lock.release()
+
+
 with gr.Blocks(title='§Execution — diagnostics', analytics_enabled=False) as demo:
     gr.Markdown('# §Execution — browser diagnostics\nFixed local test fixture only. No user-supplied code, URLs, credentials or network requests.')
     run = gr.Button('Run Chromium diagnostics', variant='primary')
@@ -173,6 +255,10 @@ with gr.Blocks(title='§Execution — diagnostics', analytics_enabled=False) as 
     remote_result = gr.JSON(visible=False)
     remote_button = gr.Button(visible=False)
     remote_button.click(remote_probe, inputs=[request_json, request_signature], outputs=remote_result, api_name="swrlz_diagnostics_v1", concurrency_limit=1)
+    gr.Markdown("## Isolation capability probe\nFixed host capability tests only. Candidate execution remains disabled.")
+    isolation_button = gr.Button("Test execution isolation")
+    isolation_result = gr.JSON(label="Isolation capability results")
+    isolation_button.click(isolation_probe, outputs=isolation_result, api_name="swrlz_isolation_v03", concurrency_limit=1)
     gr.Markdown("## GPU visual regression\nCompare two screenshots of the same dimensions. This optional CUDA diagnostic uses the caller's ZeroGPU quota. Do not upload private images to this public Space.")
     with gr.Row():
         reference = gr.Image(label="Reference screenshot", type="numpy", image_mode="RGB", sources=["upload"])
