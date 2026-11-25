@@ -477,6 +477,53 @@ def test(name,fn,deny=False):
         out["checks"][name]={"pass":not deny,"result":"ALLOWED"}
     except OSError as e:
         out["checks"][name]={"pass":deny and e.errno in (errno.EACCES,errno.EPERM),"result":"ERRNO_"+str(e.errno)}
+def browser_failure(exc):
+    msg=str(exc).lower()
+    # Fixed categories only: never expose exception text, environment or paths.
+    patterns=(
+        ("crashpad", "CRASHPAD"),
+        ("--database is required", "CRASH_REPORTER_DATABASE"),
+        ("permission denied", "PERMISSION_DENIED"),
+        ("eacces", "PERMISSION_DENIED"),
+        ("operation not permitted", "OPERATION_NOT_PERMITTED"),
+        ("no such file or directory", "MISSING_RUNTIME_PATH"),
+        ("error while loading shared libraries", "SHARED_LIBRARY"),
+        ("cannot open shared object", "SHARED_LIBRARY"),
+        ("failed to move to new namespace", "NAMESPACE_DENIED"),
+        ("no usable sandbox", "NATIVE_SANDBOX_UNAVAILABLE"),
+        ("running as root", "ROOT_BROWSER"),
+        ("devtoolsactiveport", "DEVTOOLS_PORT"),
+        ("/dev/null", "DEV_NULL"),
+        ("/proc/", "PROC_ACCESS"),
+        ("dbus", "DBUS"),
+        ("zygote", "ZYGOTE"),
+        ("sigtrap", "SIGTRAP"),
+        ("sigsegv", "SIGSEGV"),
+        ("sigabrt", "SIGABRT"),
+        ("timeout", "TIMEOUT"),
+        ("closed", "BROWSER_CLOSED"),
+    )
+    return sorted({label for needle,label in patterns if needle in msg}) or [type(exc).__name__]
+
+def runtime_paths():
+    # Check only known public system resources. No file content is returned.
+    paths={"devNullRead":("/dev/null",os.O_RDONLY),
+           "devNullWrite":("/dev/null",os.O_WRONLY),
+           "procSelfStatus":("/proc/self/status",os.O_RDONLY),
+           "procSelfMaps":("/proc/self/maps",os.O_RDONLY),
+           "procCpuInfo":("/proc/cpuinfo",os.O_RDONLY),
+           "procMemInfo":("/proc/meminfo",os.O_RDONLY),
+           "devUrandom":("/dev/urandom",os.O_RDONLY),
+           "loaderCache":("/etc/ld.so.cache",os.O_RDONLY),
+           "fontConfig":("/etc/fonts/fonts.conf",os.O_RDONLY)}
+    result={}
+    for name,(path,mode) in paths.items():
+        try:
+            fd=os.open(path,mode|os.O_CLOEXEC);os.close(fd)
+            result[name]="ALLOWED"
+        except OSError as e:result[name]="ERRNO_"+str(e.errno)
+    return result
+
 def main():
     if not out["unprivileged"] or platform.machine() not in ("x86_64","aarch64","riscv64"):
         out["status"]="UNSUPPORTED_RUNTIME";return
@@ -488,6 +535,23 @@ def main():
     if not chromium:out["status"]="CHROMIUM_MISSING";return
     abi=syscall(444,C.c_void_p(),C.c_size_t(0),C.c_uint(1));out["abi"]=abi
     if abi<4:out["status"]="LANDLOCK_ABI_TOO_OLD";return
+    out["stage"]="baseline_browser"
+    # Same UID, clean environment and same arguments, before applying Landlock.
+    # Both launches are trusted fixtures, not candidate execution.
+    os.environ.update({"HOME":str(work),"TMPDIR":str(work),"XDG_CACHE_HOME":str(work/"cache"),"XDG_CONFIG_HOME":str(work/"config")})
+    launch_args=["--disable-dev-shm-usage","--use-gl=angle","--use-angle=swiftshader","--enable-unsafe-swiftshader",
+                 "--disable-background-networking","--disable-sync","--disable-component-update"]
+    out["baselineRuntimeAccess"]=runtime_paths()
+    out["baselineBrowserLaunch"]=False
+    try:
+        with sync_playwright() as baseline:
+            b=baseline.chromium.launch(executable_path=chromium,headless=True,chromium_sandbox=False,timeout=10000,args=launch_args)
+            try:
+                page=b.new_page();page.set_content("<p>trusted baseline</p>",timeout=3000)
+                out["baselineBrowserLaunch"]=page.locator("p").inner_text(timeout=3000)=="trusted baseline"
+            finally:b.close()
+    except Exception as e:out["baselineBrowserFailureCategories"]=browser_failure(e)
+    out["stage"]="landlock_boundary"
     fs=(1<<15)-1
     read_exec=(1<<0)|(1<<2)|(1<<3)
     def read(p):p.read_bytes()
@@ -544,34 +608,39 @@ def main():
     out["boundaryChecksPassed"]=all(out["checks"].get(n,{}).get("pass") is True for n in needed)
     if not out["boundaryChecksPassed"]:out["status"]="BOUNDARY_TEST_FAILED";return
     os.environ.update({"HOME":str(work),"TMPDIR":str(work),"XDG_CACHE_HOME":str(work/"cache"),"XDG_CONFIG_HOME":str(work/"config")})
+    out["restrictedRuntimeAccess"]=runtime_paths()
+    out["stage"]="restricted_driver_start"
     # Fixed fixture only: no external assets, URLs, candidate bytes or credentials.
     # Native Chromium sandbox is still unavailable on this host.
     with sync_playwright() as p:
-        browser=p.chromium.launch(executable_path=chromium,headless=True,chromium_sandbox=False,timeout=12000,
-            args=["--disable-dev-shm-usage","--use-gl=angle","--use-angle=swiftshader","--enable-unsafe-swiftshader",
-                  "--disable-background-networking","--disable-sync","--disable-component-update"])
+        out["stage"]="restricted_browser_launch"
+        browser=p.chromium.launch(executable_path=chromium,headless=True,chromium_sandbox=False,timeout=12000,args=launch_args)
         try:
             out["chromiumLaunch"]=True
+            out["stage"]="browser_context"
             context=browser.new_context(viewport={"width":640,"height":480},service_workers="block")
             context.route("**/*",lambda route:route.abort())
             page=context.new_page();page.set_default_timeout(4000)
             errors=[];page.on("pageerror",lambda e:errors.append("PAGE_ERROR"))
+            out["stage"]="fixture_execution"
             page.set_content("<button id='go' onclick=\"this.textContent='Clicked'\">Go</button><canvas id='c' width='64' height='64'></canvas>")
             out["javascriptPassed"]=page.evaluate("6*7")==42
             page.locator("#go").click();out["interactionPassed"]=page.locator("#go").inner_text()=="Clicked"
             out["webglPassed"]=page.evaluate("""() => {const g=document.querySelector('#c').getContext('webgl2',{preserveDrawingBuffer:true});if(!g)return false;g.clearColor(0.36,0.19,0.76,1);g.clear(g.COLOR_BUFFER_BIT);let p=new Uint8Array(4);g.readPixels(0,0,1,1,g.RGBA,g.UNSIGNED_BYTE,p);return [92,48,194,255].every((v,i)=>Math.abs(v-p[i])<=2)&&g.getError()===g.NO_ERROR;}""")
+            out["stage"]="screenshot"
             shot=page.screenshot(timeout=4000);out["screenshotSha256"]=hashlib.sha256(shot).hexdigest()
             out["pageErrors"]=errors
             context.close()
             out["browserChecksPassed"]=all(out.get(k) is True for k in ("chromiumLaunch","javascriptPassed","interactionPassed","webglPassed")) and not errors and bool(shot)
+            out["stage"]="complete"
             out["status"]="FIXTURE_COMPATIBLE" if out["browserChecksPassed"] else "FIXTURE_FAILED"
         finally:browser.close()
 try:main()
 except OSError as e:out["status"]="OS_ERRNO_"+str(e.errno)
 except Exception as e:
-    msg=str(e).lower()
     out["status"]="BROWSER_OR_RUNTIME_FAILED"
-    out["failureCategory"]="PERMISSION_DENIED" if ("permission denied" in msg or "eacces" in msg) else ("TIMEOUT" if "timeout" in msg else ("BROWSER_CLOSED" if "closed" in msg else type(e).__name__))
+    out["failureCategories"]=browser_failure(e)
+    out["failureCategory"]=out["failureCategories"][0]
 print(json.dumps(out),flush=True)
 '''
 
@@ -594,7 +663,7 @@ def combined_probe():
             proc=subprocess.Popen([sys.executable,"-I","-c",_COMBINED_CHILD],
                 cwd=home,env=env,stdout=subprocess.PIPE,stderr=subprocess.DEVNULL,start_new_session=True,**kwargs)
             try:
-                raw,_=proc.communicate(timeout=35)
+                raw,_=proc.communicate(timeout=55)
                 if proc.returncode or len(raw)>16000:
                     result.update(status="CHILD_FAILED",exitCode=proc.returncode)
                 else:
