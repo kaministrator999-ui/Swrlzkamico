@@ -661,7 +661,8 @@ def main():
             out["runtimeRuleResults"]={}
             for label,path,rights in (("devNullWrite","/dev/null",(1<<1)|(1<<2)),
                                       ("procCpuInfo","/proc/cpuinfo",1<<2),
-                                      ("procMemInfo","/proc/meminfo",1<<2)):
+                                      ("procMemInfo","/proc/meminfo",1<<2),
+                                      ("opensslConfig","/etc/ssl/openssl.cnf",1<<2)):
                 try:
                     allow(path,rights)
                     out["runtimeRuleResults"][label]="RULE_ADDED" if Path(path).exists() else "MISSING"
@@ -686,6 +687,13 @@ def main():
     os.environ.update({"HOME":str(work),"TMPDIR":str(work),"XDG_CACHE_HOME":str(work/"cache"),"XDG_CONFIG_HOME":str(work/"config")})
     out["restrictedRuntimeAccess"]=runtime_paths()
     out["restrictedNodeStartup"]=node_startup_checks()
+    # Confirm the exact runtime exception did not introduce write access.
+    def open_for_write(path):
+        fd=os.open(path,os.O_WRONLY|os.O_CLOEXEC)
+        os.close(fd)
+    test("opensslConfigWriteDenied",lambda:open_for_write("/etc/ssl/openssl.cnf"),True)
+    out["opensslReadOnlyVerified"]=(out["restrictedRuntimeAccess"].get("opensslConfig")=="ALLOWED"
+        and out["checks"]["opensslConfigWriteDenied"]["pass"])
     out["stage"]="restricted_driver_diagnostics"
     # Probe the installed driver's own runtime using only fixed version commands.
     # Do not emit stdout/stderr or filesystem paths in the public receipt.
