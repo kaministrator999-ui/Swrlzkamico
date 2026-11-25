@@ -456,7 +456,7 @@ with sync_playwright() as p:
 # Trusted fixed browser fixture only. This is NOT a replacement for Chromium's native sandbox.
 _COMBINED_CHILD = r'''
 import ctypes as C
-import errno, hashlib, json, os, platform, shutil, socket, struct, sys, time
+import errno, hashlib, json, os, platform, shutil, socket, struct, subprocess, sys, time
 from pathlib import Path
 from playwright.sync_api import sync_playwright
 
@@ -591,6 +591,17 @@ def main():
                       "/etc/os-release","/dev/null","/dev/zero","/dev/urandom","/dev/random",
                       "/sys/devices/system/cpu"):
                 allow(p,read_exec if Path(p).is_dir() else (1<<2))
+            # /dev/null discards writes; allow this exact device, not /dev.
+            # The two proc entries are public system metadata, never other PIDs.
+            out["runtimeRuleResults"]={}
+            for label,path,rights in (("devNullWrite","/dev/null",(1<<1)|(1<<2)),
+                                      ("procCpuInfo","/proc/cpuinfo",1<<2),
+                                      ("procMemInfo","/proc/meminfo",1<<2)):
+                try:
+                    allow(path,rights)
+                    out["runtimeRuleResults"][label]="RULE_ADDED" if Path(path).exists() else "MISSING"
+                except OSError as e:
+                    out["runtimeRuleResults"][label]="ERRNO_"+str(e.errno)
             if libc.prctl(C.c_int(38),C.c_ulong(1),C.c_ulong(0),C.c_ulong(0),C.c_ulong(0))!=0:
                 raise OSError(C.get_errno(),"no_new_privs")
             out["noNewPrivileges"]=libc.prctl(C.c_int(39),C.c_ulong(0),C.c_ulong(0),C.c_ulong(0),C.c_ulong(0))==1
@@ -609,6 +620,24 @@ def main():
     if not out["boundaryChecksPassed"]:out["status"]="BOUNDARY_TEST_FAILED";return
     os.environ.update({"HOME":str(work),"TMPDIR":str(work),"XDG_CACHE_HOME":str(work/"cache"),"XDG_CONFIG_HOME":str(work/"config")})
     out["restrictedRuntimeAccess"]=runtime_paths()
+    out["stage"]="restricted_driver_diagnostics"
+    # Probe the installed driver's own runtime using only fixed version commands.
+    # Do not emit stdout/stderr or filesystem paths in the public receipt.
+    try:
+        from playwright._impl._driver import compute_driver_executable
+        node,cli=compute_driver_executable()
+        out["driverVersionChecks"]={}
+        for label,cmd in (("node",[node,"--version"]),("cli",[node,cli,"--version"])):
+            try:
+                completed=subprocess.run(cmd,stdin=subprocess.DEVNULL,stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE,timeout=5,check=False)
+                out["driverVersionChecks"][label]={"exitCode":completed.returncode,
+                    "pass":completed.returncode==0,
+                    "failureCategories":browser_failure(RuntimeError(completed.stderr.decode(errors="replace"))) if completed.returncode else []}
+            except Exception as e:
+                out["driverVersionChecks"][label]={"pass":False,"failureCategories":browser_failure(e)}
+    except Exception as e:
+        out["driverVersionChecks"]={"status":"UNAVAILABLE","failureCategories":browser_failure(e)}
     out["stage"]="restricted_driver_start"
     # Fixed fixture only: no external assets, URLs, candidate bytes or credentials.
     # Native Chromium sandbox is still unavailable on this host.
@@ -663,7 +692,7 @@ def combined_probe():
             proc=subprocess.Popen([sys.executable,"-I","-c",_COMBINED_CHILD],
                 cwd=home,env=env,stdout=subprocess.PIPE,stderr=subprocess.DEVNULL,start_new_session=True,**kwargs)
             try:
-                raw,_=proc.communicate(timeout=55)
+                raw,_=proc.communicate(timeout=65)
                 if proc.returncode or len(raw)>16000:
                     result.update(status="CHILD_FAILED",exitCode=proc.returncode)
                 else:
