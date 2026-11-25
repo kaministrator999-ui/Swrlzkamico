@@ -244,6 +244,19 @@ window.SWYRL_ENGINE_UV_UNWRAP=Object.freeze({
 
 /* SE556: one region identity, one color and number on UV and 3D. */
 let se556Labels=null,se556LabelsSource=null,se556ShowModel=true;
+// A new single-mesh starter may be opened before its part is selected.
+// Use the native selection path, not a synthetic preview-only mesh.
+const se556TargetBase=se551Target;
+se551Target=function(){
+ const current=se556TargetBase();if(current)return current;
+ const parts=model()?.parts;
+ if(parts?.length===1&&parts[0].id==='clean-topology-humanoid-base'){
+  const part=parts[0],mesh=modelRoot?.children.find(x=>x.isMesh&&x.userData.atelierId===part.id);
+  if(mesh?.geometry?.getAttribute('uv')?.count*2===part.topologyMesh?.uvs?.length)
+   return {part,mesh};
+ }
+ return null;
+};
 const se556BaseColor=se552Color;
 se552Color=function(g,i,anatomical){
  if(anatomical)return se556BaseColor(g,i,anatomical);
@@ -319,6 +332,8 @@ se552Open=function(){
  const host=se552Portal?.host,controls=host?.children?.[1];
  if(!controls||controls.querySelector('[data-se556-model]'))return;
  const regions=controls.querySelector('[data-se552-regions]');
+ const t=se551Target();if(t&&selection!==t.part.id)select(t.part.id);
+ regions?.addEventListener('change',()=>{if(regions.checked){se552ShowRegions=true;se552ModelRegions(se551Target());}else{se552ShowRegions=false;se552ClearRegionMesh();}se356UVPreviewSchedule();});
  if(regions?.parentNode?.lastChild?.nodeType===3)regions.parentNode.lastChild.textContent=' UV colors + numbers';
  const label=document.createElement('label');label.style.cssText='display:flex;align-items:center;gap:5px';
  label.innerHTML='<input type="checkbox" data-se556-model> Show colors + numbers on 3D model';
@@ -340,7 +355,7 @@ se552Open=function(){
  });
 };
 window.SWYRL_ENGINE_UV_NUMBERING=Object.freeze({
- inspect:()=>({enabled:se552ShowRegions,model:se556ShowModel,labels:se556Labels?.children.length||0})
+ inspect:()=>({enabled:se552ShowRegions,model:se556ShowModel,labels:se556Labels?.children.length||0,target:se551Target()?.part?.id||null,selected:selection,meshCount:modelRoot?.children?.length||0,attached:!!se556Labels?.parent})
 });
 // On native starter load, compute the same area-weighted normal on every
 // coincident physical vertex, even where the UV chart has split its index.
