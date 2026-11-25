@@ -50,7 +50,12 @@ const mime={'.html':'text/html; charset=utf-8','.js':'text/javascript','.mjs':'t
   await page.locator('#se355UVEditorOpen').click({timeout:20000});
   await page.locator('[data-se551="expand"]').click({timeout:20000});
   await page.locator('#se552UVHost [data-se552-regions]').check({timeout:20000});
-  await page.waitForFunction(()=>window.SWYRL_ENGINE_UV_NUMBERING.inspect().labels>=1,null,{timeout:20000});
+  try{
+   await page.waitForFunction(()=>window.SWYRL_ENGINE_UV_NUMBERING.inspect().labels>=1,null,{timeout:20000});
+  }catch(e){
+   console.log('SE556_OVERLAY_STATE',JSON.stringify(await page.evaluate(()=>({state:window.SWYRL_ENGINE_UV_NUMBERING.inspect(),info:document.getElementById('se356UVInfo')?.textContent,host:!!document.getElementById('se552UVHost'),checkbox:document.querySelector('[data-se552-regions]')?.checked}))));
+   throw e;
+  }
   const labels=await page.evaluate(()=>window.SWYRL_ENGINE_UV_NUMBERING.inspect());
   assert(labels.enabled&&labels.model&&labels.labels>=1,JSON.stringify(labels));
   await page.locator('[data-se556-model]').uncheck();
