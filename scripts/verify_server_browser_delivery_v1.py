@@ -32,7 +32,7 @@ def main():
                 actual[name]=body.decode()
         envelope=validate(args.project,actual,inspect_files(actual,known_files_complete=True).get("renderingRequiredForFullVerification") is True,key=key)
     receipt=verify_envelope(key,envelope,project=args.project,hashes=hashes)
-    if receipt.get("browserVerified") is not True or receipt.get("sandbox") is not True:
+    if receipt.get("browserVerified") is not True or receipt.get("sandbox") is not True or receipt.get("isolationVerified") is not True:
         raise RuntimeError("SERVER_BROWSER_VERIFICATION_FAILED:"+repr(receipt.get("issues")))
     name="browser-candidate-receipt.json" if args.mode=="receipt" else "browser-live-receipt.json"
     Path(name).write_text(json.dumps(envelope,indent=2))

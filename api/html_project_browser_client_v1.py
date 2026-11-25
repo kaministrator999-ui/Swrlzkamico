@@ -5,7 +5,7 @@ try:
     from browser_worker_protocol_v1 import VERSION,MAX_BODY,encode,mac,file_hashes,verify_envelope
 except ImportError:
     from api.browser_worker_protocol_v1 import VERSION,MAX_BODY,encode,mac,file_hashes,verify_envelope
-URL="https://kamiloki-swrlz-browser-worker.hf.space/v1/render"
+URL="https://kamiloki-swyrlz.hf.space/api/html-project-browser-v14/render"
 class BrowserUnavailable(RuntimeError):pass
 class NoRedirect(urllib.request.HTTPRedirectHandler):
     def redirect_request(self,*args,**kwargs):raise BrowserUnavailable("BROWSER_WORKER_REDIRECT")
@@ -26,6 +26,6 @@ def validate(project,files,canvas=False,checks=None,*,key=None):
         result=verify_envelope(key,envelope,project=project,hashes=file_hashes(files),nonce=nonce,max_age=180)
     except (OSError,ValueError,TypeError) as exc:
         raise BrowserUnavailable("BROWSER_WORKER_UNAVAILABLE: "+type(exc).__name__) from exc
-    if result.get("infrastructureError") or result.get("sandbox") is not True:
+    if result.get("infrastructureError") or result.get("sandbox") is not True or result.get("isolationVerified") is not True:
         raise BrowserUnavailable(str(result.get("infrastructureError") or "BROWSER_SANDBOX_UNVERIFIED"))
     return envelope
