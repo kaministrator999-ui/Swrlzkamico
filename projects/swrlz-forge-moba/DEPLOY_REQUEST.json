@@ -4,11 +4,11 @@
   "target": "kamiloki/swrlz-forge-moba",
   "releaseVersion": "v11.552",
   "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_546_ANATOMY_ROBOT_UV_4K",
-  "reason": "Smoothed clean humanoid hip and shoulder sockets, seam-safe area-weighted normals, synchronized numbered UV island colors and 3D labels, expanded editor toggles, actual browser regression",
+  "reason": "Retry smoother humanoid and numbered UV overlay with single-mesh target resolution and actual UI diagnostics",
   "sourceCommit": "main (deploy workflow checkout; verified against sourceIntegritySha256)",
   "sourceIntegritySha256": "3fe29516958ea5af2448352fa238eda121cc3031266c61c746380f092d22232e",
   "resealRun": 45342195310,
-  "deploymentAttempt": 26,
+  "deploymentAttempt": 27,
   "accountStartupRecovery": "v11.553-delivery",
   "accountStartupChecks": [
     "startup_restore_regression_v11_552",
