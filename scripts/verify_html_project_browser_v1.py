@@ -52,7 +52,10 @@ def smoke(root,url,viewer_fixture=False):
     errors=[];blocked=[]
     with sync_playwright() as pw:
         browser=pw.chromium.launch(headless=True,args=["--use-angle=swiftshader","--enable-unsafe-swiftshader"])
-        context=browser.new_context(viewport={"width":960,"height":720},service_workers="block")
+        # The opaque-origin CSP already forbids service workers. Playwright
+        # service_workers="block" injects a navigator.serviceWorker access
+        # that itself throws inside this sandbox. Preserve the real policy.
+        context=browser.new_context(viewport={"width":960,"height":720})
         def route(r):
             target=r.request.url
             if target.startswith(base) and r.request.method in ("GET","HEAD"):
