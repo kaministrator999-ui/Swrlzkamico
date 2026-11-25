@@ -31,7 +31,12 @@ class RuntimeTests(unittest.TestCase):
         self.assertIn("SOURCE-PRESERVING",incoming["prompt"])
         self.assertEqual(incoming["history"],[])
         yield {"type":"STATUS","phase":"GENERATING"}
-        yield {"type":"DELTA","text":json.dumps(proposal())}
+        self.assertIn("server binds", incoming["responseDirective"])
+        generated = {"patches": [
+            {"path":"index.html","op":"insert_before","anchor":"</body>",
+             "code":"<script>document.querySelector('#go').onclick=()=>{}</script>"}
+        ]}
+        yield {"type":"DELTA","text":json.dumps(generated)}
         yield {"type":"COMPLETED","phase":"COMPLETE"}
 
     def test_model_selected_repair_calls_approval_only_after_validation(self):
@@ -46,6 +51,26 @@ class RuntimeTests(unittest.TestCase):
         self.assertTrue(any(e.get("type")=="WIDGET" for e in events))
         self.assertTrue(any("No GitHub write" in e.get("text","") for e in events))
         self.assertEqual(events[-1]["phase"],"COMPLETE")
+
+    def test_runtime_normalizes_wrong_identity_and_hash_before_review(self):
+        def model(incoming):
+            incorrect = proposal()
+            incorrect["schema"] = "model-invented-schema"
+            incorrect["project"] = "wrong-project-name"
+            incorrect["patches"][0]["sourceSha256"] = "f"*64
+            yield {"type":"DELTA","text":json.dumps(incorrect)}
+            yield {"type":"COMPLETED","phase":"COMPLETE"}
+        with patch.object(runtime.approval,"should_route",return_value=True),\
+             patch.object(runtime,"_source_files",return_value=("b"*40,{"index.html":SRC})),\
+             patch.object(runtime,"inspect_static",return_value={"passed":True}),\
+             patch.object(runtime.approval,"prepare_model",return_value={"kind":"review"}) as stage:
+            events = list(runtime.run(self.payload(),model))
+        self.assertEqual(events[-1]["phase"],"COMPLETE")
+        self.assertTrue(any(e.get("type")=="WIDGET" for e in events))
+        bound = stage.call_args.args[4]
+        self.assertEqual(bound["schema"],VERSION)
+        self.assertEqual(bound["project"],PROJECT["project"])
+        self.assertEqual(bound["patches"][0]["sourceSha256"],source_sha(SRC))
 
     def test_bad_model_output_never_stages(self):
         def bad_model(p):

@@ -13,13 +13,13 @@ from urllib.parse import quote
 
 try:
     from html_project_agent_v1 import (
-        prompt_messages, apply_proposal, inspect_static, ProposalError,
+        prompt_messages, apply_proposal, bind_model_edits, inspect_static, ProposalError,
         verify_source, MAX_ROUNDS
     )
     import html_project_repair_v1 as approval
 except ImportError:  # repository-unit-test layout
     from api.html_project_agent_v1 import (
-        prompt_messages, apply_proposal, inspect_static, ProposalError,
+        prompt_messages, apply_proposal, bind_model_edits, inspect_static, ProposalError,
         verify_source, MAX_ROUNDS
     )
     from api import html_project_repair_v1 as approval
@@ -96,9 +96,10 @@ def _model_patch(coder_generate, base_payload, messages):
     }
     model_payload["githubSourceChangeTask"] = "plan"
     model_payload["responseDirective"] = (
-        "Return only a single exact JSON patch proposal conforming to the "
-        "swrlz-html-repair-agent-v1 contract. Never return a replacement page, "
-        "review instructions, prose, or approval claims."
+        "Return a single JSON object containing patches [{path, op, anchor, code}]. "
+        "Do not calculate source hashes or supply schema/project identity; the trusted "
+        "server binds those. Never return a replacement page, review instructions, "
+        "prose, or approval claims."
     )
     model_payload.pop("codeContinuation", None)
     output = []
@@ -162,7 +163,8 @@ def run(payload, coder_generate):
                 project["project"], files, diagnostics, task,
                 prior_failures=failures)
             try:
-                proposal = _model_patch(coder_generate, payload, messages)
+                model_edits = _model_patch(coder_generate, payload, messages)
+                proposal = bind_model_edits(project["project"], files, model_edits)
                 result = apply_proposal(
                     project["project"], files, proposal,
                     expected_hashes=source_hashes,

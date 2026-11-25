@@ -74,6 +74,14 @@ def run(mode):
     source = candidate.decode("utf-8")
     expected_old = source.replace(AFTER, BEFORE, 1).encode("utf-8")
     if original not in (expected_old, candidate):
+        # This historical release remains a read-only compatibility preflight
+        # for later repair-agent upgrades. The v8 release owns all source
+        # pinning and deployment checks; never overwrite it via v6.
+        if (mode == "preflight" and AFTER.encode("utf-8") in original
+                and AFTER.encode("utf-8") in candidate):
+            ast.parse(original.decode("utf-8"), filename=TARGET)
+            print("TUPLE_FIX_V6_NEWER_RUNTIME_COMPATIBLE", rev, flush=True)
+            return
         raise RuntimeError("PRODUCTION_RUNTIME_SOURCE_DRIFT")
     changed = original != candidate
     print("TUPLE_FIX_PREFLIGHT", json.dumps({
