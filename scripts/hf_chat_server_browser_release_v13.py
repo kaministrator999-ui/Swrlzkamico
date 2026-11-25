@@ -91,6 +91,10 @@ def main(mode):
         return Path(hf_hub_download(space,name,repo_type="space",revision=revision,token=token)).read_bytes()
     original={n:read(SPACE,n,rev) for n in (*LOCAL,STATION) if n in names}
     candidate={n:p.read_bytes() for n,p in LOCAL.items()}
+    if mode=="preflight" and b"/api/html-project-browser-v14/render" in candidate[CLIENT]:
+        if b"swrlz-evidence-tool-loop-v12" not in original[RUNTIME]:
+            raise RuntimeError("V14_LINEAGE_MISMATCH")
+        print("V13_HISTORICAL_PREFLIGHT_LOCAL_BROWSER_OWNS_RELEASE",rev,flush=True);return
     for n in LOCAL:
         if n not in original:
             if n not in (CLIENT,PROTOCOL):raise RuntimeError("V13_SOURCE_MISSING:"+n)
