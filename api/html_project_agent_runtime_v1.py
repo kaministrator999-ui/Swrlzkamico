@@ -232,7 +232,7 @@ def repair_candidate(payload, coder_generate, project, files, task, diagnostics,
     evidence.extend(list(diagnostics or [])[:4])
     failures=[]
     recover=dependency_only_recovery(task,baseline,actions)
-    def browser_gate(result):
+    def browser_gate(result,proposal):
         if browser_validator is None:return result
         combined={**files,**result["proposedFiles"]}
         try:
@@ -240,7 +240,10 @@ def repair_candidate(payload, coder_generate, project, files, task, diagnostics,
         except ImportError:
             from lightweight_webpage_inspector_v1 import inspect_files
         rendering=inspect_files(combined,known_files_complete=True).get("renderingRequiredForFullVerification") is True
-        envelope=browser_validator(project,combined,rendering)
+        if callable(getattr(browser_validator,"validate_candidate",None)):
+            envelope=browser_validator.validate_candidate(project,combined,rendering,proposal)
+        else:
+            envelope=browser_validator(project,combined,rendering)
         receipt=envelope.get("receipt") or {}
         _cancel(payload)
         if receipt.get("browserVerified") is not True:
@@ -265,9 +268,9 @@ def repair_candidate(payload, coder_generate, project, files, task, diagnostics,
             if not result["readyForOwnerReview"]:
                 raise ProposalError("VALIDATION_NOT_VERIFIED")
             if browser_validator is not None:
-                yield {"type":"STATUS","phase":"REPAIR_BROWSER_VALIDATION","reason":"§C server browser rendering exact proposed project bytes."}
+                yield {"type":"STATUS","phase":"REPAIR_BROWSER_VALIDATION","reason":"§C browser worker executing exact proposed project bytes; no source write."}
                 recover=False
-                result=browser_gate(result)
+                result=browser_gate(result,proposal)
             return proposal,result,"model",failures
         except (ProposalError,ValueError,TypeError) as exc:
             _cancel(payload)
@@ -292,8 +295,8 @@ def repair_candidate(payload, coder_generate, project, files, task, diagnostics,
                     if not result["readyForOwnerReview"]:
                         raise ProposalError("DEPENDENCY_RECOVERY_NOT_VERIFIED")
                     if browser_validator is not None:
-                        yield {"type":"STATUS","phase":"REPAIR_BROWSER_VALIDATION","reason":"§C server browser testing dependency recovery."}
-                        result=browser_gate(result)
+                        yield {"type":"STATUS","phase":"REPAIR_BROWSER_VALIDATION","reason":"§C browser worker testing dependency recovery."}
+                        result=browser_gate(result,proposal)
                     return proposal,result,"executor-dependency-recovery",failures
                 except (ProposalError,ValueError,TypeError) as fallback_error:
                     _cancel(payload)
@@ -324,6 +327,8 @@ def run(payload, coder_generate, *, browser_validator=None):
     try:
         sha,files=_source_files(owner,project)
         source_hashes=verify_source(project["project"],files)
+        if callable(getattr(browser_validator,"for_source",None)):
+            browser_validator=browser_validator.for_source(owner,sha,payload)
         task=str(payload.get("receivedText") or payload.get("prompt") or "")
         diagnostics=[str(payload.get("projectFileEvidence") or "")[:1200]]
         proposal,result,origin,failures=yield from repair_candidate(
@@ -336,12 +341,12 @@ def run(payload, coder_generate, *, browser_validator=None):
         yield {"type":"WIDGET","widget":review}
         browser_pass=result["validation"].get("browserVerified") is True
         yield {"type":"STATUS","phase":"REPAIR_REVIEW_READY",
-               "reason":("Exact patches passed server Chromium and static validation; origin: " if browser_pass else
+               "reason":("Exact patches passed browser worker and static validation; origin: " if browser_pass else
                          "Exact patches passed the browser-free static validator; origin: ")+origin}
         lead=("The coding model proposed a source-preserving repair to " if origin=="model"
               else "The coding model's patch was rejected; the repair executor recovered the verified dependency assets. The source-preserving candidate changes ")
         yield {"type":"DELTA","text":lead+", ".join(result["changedFiles"])+
-               (". Exact source hashes, static checks and §C server Chromium rendering passed. " if browser_pass else
+               (". Exact source hashes, static checks and §C-controlled Chromium rendering passed. " if browser_pass else
                 ". Exact source hashes and static checks passed. ")+
                ("Review the diff and reply YES to authorize the source-pinned GitHub commit, Hugging Face deployment and live verification. "
                 if full_delivery and browser_pass else

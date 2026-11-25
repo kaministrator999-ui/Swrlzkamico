@@ -1,0 +1,58 @@
+name: §C read-only browser execution worker v16
+run-name: Browser candidate ${{ inputs.nonce }} · ${{ inputs.project }}
+on:
+  workflow_dispatch:
+    inputs:
+      source_sha:
+        description: Exact existing public project source revision
+        required: true
+        type: string
+      project:
+        description: Existing HTML project
+        required: true
+        type: string
+      proposal_json:
+        description: Bounded exact patch selected by §C (no chat transcript)
+        required: true
+        type: string
+      nonce:
+        description: Server-generated execution correlation
+        required: true
+        type: string
+permissions:
+  contents: read
+jobs:
+  browser:
+    if: ${{ github.ref == 'refs/heads/main' && (github.actor == 'kaministrator999-ui' || github.actor == 'github-actions[bot]') }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 7
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.source_sha }}
+          path: reviewed-source
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - run: python -m pip install --quiet 'requests>=2.31,<3' 'fastapi>=0.115,<1' 'playwright==1.51.0'
+      - uses: actions/cache@v4
+        id: browser-cache
+        with:
+          path: ~/.cache/ms-playwright
+          key: swrlz-worker-chromium-1.51.0-ubuntu24-v1
+      - run: python -m playwright install --with-deps chromium
+      - name: Execute exact candidate in temporary read-only project scope
+        env:
+          PROJECT: ${{ inputs.project }}
+          SOURCE_SHA: ${{ inputs.source_sha }}
+          NONCE: ${{ inputs.nonce }}
+          MODEL_PROPOSAL_JSON: ${{ inputs.proposal_json }}
+        run: python scripts/run_browser_worker_v16.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: swrlz-browser-${{ inputs.nonce }}
+          path: browser-receipt.json
+          retention-days: 1
+          if-no-files-found: error

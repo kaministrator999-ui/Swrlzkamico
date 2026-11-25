@@ -34,6 +34,11 @@ on:
         required: false
         type: string
         default: ''
+      github_browser_receipt_json:
+        description: Exact preapproval §C GitHub browser worker receipt
+        required: false
+        type: string
+        default: ''
       approved:
         description: Owner approved the listed source-pinned repair scope
         required: true
@@ -66,7 +71,7 @@ jobs:
     if: ${{ github.event_name == 'workflow_dispatch' && inputs.approved == 'yes' && github.actor == 'kaministrator999-ui' }}
     runs-on: ubuntu-24.04
     timeout-minutes: 15
-    permissions: {contents: read}
+    permissions: {contents: read, actions: read}
     outputs:
       repair_hash: ${{ steps.stage.outputs.repair_hash }}
     steps:
@@ -80,7 +85,7 @@ jobs:
       - uses: actions/setup-python@v5
         with: {python-version: '3.11'}
       - run: python -m pip install --quiet 'requests>=2.31,<3' 'fastapi>=0.115,<1'
-      - if: ${{ inputs.browser_receipt_json == '' }}
+      - if: ${{ inputs.browser_receipt_json == '' && inputs.github_browser_receipt_json == '' }}
         run: |
           python -m pip install --quiet 'playwright==1.51.0'
           python -m playwright install --with-deps chromium
@@ -103,8 +108,16 @@ jobs:
           BROWSER_RECEIPT_JSON: ${{ inputs.browser_receipt_json }}
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: python scripts/verify_server_browser_delivery_v1.py receipt --project "$PROJECT" --root "reviewed-source/html-projects/$PROJECT"
+      - name: Verify independently retrieved preapproval GitHub browser worker receipt
+        if: ${{ inputs.github_browser_receipt_json != '' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PROJECT: ${{ inputs.project }}
+          SOURCE_SHA: ${{ inputs.source_sha }}
+          GITHUB_BROWSER_RECEIPT_JSON: ${{ inputs.github_browser_receipt_json }}
+        run: python scripts/verify_github_browser_receipt_v16.py --project "$PROJECT" --root "reviewed-source/html-projects/$PROJECT"
       - name: Legacy Chromium candidate smoke under opaque-origin sandbox (no write credentials)
-        if: ${{ inputs.browser_receipt_json == '' }}
+        if: ${{ inputs.browser_receipt_json == '' && inputs.github_browser_receipt_json == '' }}
         env:
           PROJECT: ${{ inputs.project }}
         run: python scripts/verify_html_project_browser_v1.py --project "$PROJECT" --root "reviewed-source/html-projects/$PROJECT" --receipt browser-candidate-receipt.json
