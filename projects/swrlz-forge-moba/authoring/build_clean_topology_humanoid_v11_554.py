@@ -307,6 +307,7 @@ def assemble():
     leg(-1,'leftLeg',hips['leftLeg'])
     leg(1,'rightLeg',hips['rightLeg'])
     smooth_welded_junctions()
+    sculpt_continuous_hip_thigh()
     return anatomy_uv_charts()
 
 def smooth_welded_junctions():
@@ -336,6 +337,55 @@ def smooth_welded_junctions():
             updated.append(tuple(mix(p,avg,.46*weights[i])))
         verts=updated
     P[:]=[round(v,6) for i in ids for v in verts[i]]
+
+
+def sculpt_continuous_hip_thigh():
+    """Sculpt the physical front silhouette after welding, before UV solving.
+
+    The prior inset hip socket and subsequent thigh flare made a false
+    connector below the pelvis. Remove that waist/thigh hourglass by
+    redistributing lateral tissue, with the groin midline and lower legs fixed.
+    Every duplicated UV vertex receives the same XYZ transformation.
+    """
+    levels=[1.35+i*.025 for i in range(49)]
+    # Measured planar cross-sections, not the extrema of arbitrary vertex rings.
+    edges=set()
+    for _,q in Q:
+        for a,b in zip(q,q[1:]+q[:1]):
+            edges.add(tuple(sorted((a,b))))
+        edges.add(tuple(sorted((q[0],q[2]))))
+    points=[tuple(P[i:i+3]) for i in range(0,len(P),3)]
+    outer=[]
+    for y in levels:
+        values=[]
+        for a,b in edges:
+            p,r=points[a],points[b]
+            if min(p[1],r[1])<=y<max(p[1],r[1]):
+                t=(y-p[1])/(r[1]-p[1])
+                values.append(abs(lerp(p[0],r[0],t)))
+        if not values:raise ValueError('Missing hip silhouette slice '+str(y))
+        outer.append(max(values))
+    # Continuous outer edge from pelvis to upper thigh, with gentle natural
+    # taper into the unchanged knee. The upper/lower end displacement is zero.
+    desired=[(1.35,outer[0]),(1.50,.445),(1.75,.443),
+             (2.00,.434),(2.25,.424),(2.40,.418),
+             (2.45,.416),(2.50,.406),(2.55,outer[-1])]
+    def interpolate(samples,y):
+        for (lo,a),(hi,b) in zip(samples,samples[1:]):
+            if lo<=y<=hi:return lerp(a,b,(y-lo)/(hi-lo))
+        return samples[0][1] if y<samples[0][0] else samples[-1][1]
+    source=list(zip(levels,outer))
+    for i,(x,y,z) in enumerate(points):
+        if not levels[0]<y<levels[-1]:continue
+        width=interpolate(source,y)
+        target=interpolate(desired,y)
+        # Keep the crotch and inner thigh stable. The smooth monotonic lateral
+        # warp widens the pinched connector and reduces the exaggerated bulge.
+        t=max(0.,min(1.,(abs(x)-.10)/max(.01,width-.10)))
+        delta=(target-width)*smooth(t)
+        P[3*i]=round(x+math.copysign(delta, x) if delta>=0
+                     else x-math.copysign(-delta,x),6)
+
 
 def anatomy_uv_charts():
     """Split UV coordinates, never 3D faces, into paintable anatomical views.
@@ -569,6 +619,7 @@ def main():
       'guideAnatomyLabels':True,'textureSize':1024,'guideSize':2048,
       'originalRobotPreserved':True,'quadFirst':True,
       'junctionSmoothing':'welded-local-eight-pass','limbSocketBlend':True,
+      'hipThighProfile':'continuous-outer-contour-v6',
       'topologyAudit':audit}
     REPORT.parent.mkdir(parents=True,exist_ok=True)
     REPORT.write_text(json.dumps(report,indent=2)+'\n','utf8')
