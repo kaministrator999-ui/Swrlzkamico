@@ -535,6 +535,10 @@ def main():
     if not chromium:out["status"]="CHROMIUM_MISSING";return
     abi=syscall(444,C.c_void_p(),C.c_size_t(0),C.c_uint(1));out["abi"]=abi
     if abi<4:out["status"]="LANDLOCK_ABI_TOO_OLD";return
+    # The original child cwd was the parent of the permitted workspace.
+    # Keep cwd inside the workspace for both baseline and restricted runs.
+    os.chdir(work)
+    out["cwdInsideWorkspace"]=Path.cwd()==work
     out["stage"]="baseline_browser"
     # Same UID, clean environment and same arguments, before applying Landlock.
     # Both launches are trusted fixtures, not candidate execution.
@@ -627,13 +631,34 @@ def main():
         from playwright._impl._driver import compute_driver_executable
         node,cli=compute_driver_executable()
         out["driverVersionChecks"]={}
+        out["driverPathChecks"]={}
+        for label,path in (("node",node),("cli",cli),("cliDirectory",str(Path(cli).parent)),("cwd",os.getcwd())):
+            try:
+                if Path(path).is_dir():
+                    with os.scandir(path) as entries:next(entries,None)
+                else:
+                    with open(path,"rb") as stream:stream.read(1)
+                out["driverPathChecks"][label]="ALLOWED"
+            except OSError as e:out["driverPathChecks"][label]="ERRNO_"+str(e.errno)
+        # Return only operation and path classes, never raw stderr or path values.
+        def classify_driver_error(raw):
+            import re
+            msg=raw.decode(errors="replace")
+            ops=set(re.findall(r"\b(?:open|readlink|realpath|stat|lstat|scandir|uv_cwd|chdir|access|mkdir|execve)\b",msg,re.I))
+            labels=[]
+            for label,needle in (("WORKSPACE_PARENT",str(home)+"/"),("PLAYWRIGHT_PACKAGE",str(Path(cli).parent)),
+                                 ("PROC_SELF","/proc/self/"),("PROC","/proc/"),("DEV","/dev/"),
+                                 ("SYSTEM_RUNTIME","/usr/"),("TEMP","/tmp/")):
+                if needle in msg:labels.append(label)
+            return {"operations":sorted(ops),"pathClasses":labels}
         for label,cmd in (("node",[node,"--version"]),("cli",[node,cli,"--version"])):
             try:
                 completed=subprocess.run(cmd,stdin=subprocess.DEVNULL,stdout=subprocess.PIPE,
                     stderr=subprocess.PIPE,timeout=5,check=False)
                 out["driverVersionChecks"][label]={"exitCode":completed.returncode,
                     "pass":completed.returncode==0,
-                    "failureCategories":browser_failure(RuntimeError(completed.stderr.decode(errors="replace"))) if completed.returncode else []}
+                    "failureCategories":browser_failure(RuntimeError(completed.stderr.decode(errors="replace"))) if completed.returncode else [],
+                    "errorDetails":classify_driver_error(completed.stderr) if completed.returncode else {}}
             except Exception as e:
                 out["driverVersionChecks"][label]={"pass":False,"failureCategories":browser_failure(e)}
     except Exception as e:
