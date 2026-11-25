@@ -162,6 +162,151 @@ def remote_probe(request_json, signature):
     return {"receipt":receipt, "signature":_mac(key, "receipt", _wire(receipt))}
 
 
+# Fixed child script. It tests only synthetic files and loopback sockets.
+_LANDLOCK_CHILD = r'''
+import ctypes as C
+import errno, json, os, platform, socket, struct, tempfile
+from pathlib import Path
+
+out = {"schema":"swrlz-landlock-probe-v1","abi":None,"enforced":False,
+       "unprivileged":os.geteuid()!=0,"noNewPrivileges":False,
+       "checks":{},"status":"UNVERIFIED"}
+libc=C.CDLL(None,use_errno=True)
+libc.syscall.restype=C.c_long
+libc.prctl.restype=C.c_int
+def syscall(n,*args):
+    C.set_errno(0)
+    v=libc.syscall(C.c_long(n),*args)
+    if v<0: raise OSError(C.get_errno(), "landlock syscall")
+    return v
+def record(name,fn,deny=False):
+    try:
+        fn()
+        out["checks"][name]={"pass":not deny,"result":"ALLOWED"}
+    except OSError as e:
+        out["checks"][name]={"pass":deny and e.errno in (errno.EACCES,errno.EPERM),
+                             "result":"ERRNO_"+str(e.errno)}
+def main():
+    if platform.machine() not in ("x86_64","aarch64","riscv64"):
+        out["status"]="ARCH_UNSUPPORTED";return
+    try: abi=syscall(444,C.c_void_p(),C.c_size_t(0),C.c_uint(1))
+    except OSError as e:
+        out["status"]="ABI_QUERY_ERRNO_"+str(e.errno);return
+    out["abi"]=abi
+    if abi<1: return
+    # ABI 1 filesystem rights; ABI 2 refer; ABI 3 truncate.
+    fs=(1<<13)-1
+    if abi>=2: fs|=1<<13
+    if abi>=3: fs|=1<<14
+    net=3 if abi>=4 else 0
+    out["tcpSupported"]=bool(net)
+    root=Path(tempfile.mkdtemp(dir=os.environ["HOME"]))
+    inside=root/"allowed";outside=root/"denied"
+    inside.mkdir();outside.mkdir()
+    a=inside/"fixture.txt"; b=outside/"fixture.txt"
+    a.write_text("allowed");b.write_text("synthetic canary")
+    def read(p): p.read_bytes()
+    def write(p): p.write_text("test")
+    def truncate(p): os.truncate(p,0)
+    # Prove both canaries were accessible before restriction.
+    record("baselineAllowedRead",lambda:read(a))
+    record("baselineOutsideRead",lambda:read(b))
+    record("baselineOutsideWrite",lambda:write(b))
+    record("baselineOutsideTruncate",lambda:truncate(b))
+    listener=None
+    def bind():
+        with socket.socket(socket.AF_INET,socket.SOCK_STREAM) as s:
+            s.bind(("127.0.0.1",0))
+    def connect():
+        with socket.socket(socket.AF_INET,socket.SOCK_STREAM) as s:
+            s.settimeout(1);s.connect(("127.0.0.1",port))
+    try:
+        if net:
+            listener=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+            try:
+                listener.bind(("127.0.0.1",0));listener.listen(2)
+                port=listener.getsockname()[1]
+                record("baselineTcpBind",bind)
+                record("baselineTcpConnect",connect)
+                if out["checks"]["baselineTcpConnect"]["pass"]:
+                    peer,_=listener.accept();peer.close()
+            except OSError as e:
+                out["tcpBaselineError"]="ERRNO_"+str(e.errno)
+        # Ruleset attributes use only fields supported by the detected ABI.
+        attr=C.create_string_buffer(struct.pack("=QQ",fs,net) if net else struct.pack("=Q",fs))
+        fd=syscall(444,C.byref(attr),C.c_size_t(16 if net else 8),C.c_uint(0))
+        try:
+            d=os.open(inside,os.O_PATH|os.O_CLOEXEC)
+            try:
+                rule=C.create_string_buffer(struct.pack("=Qi",fs,d))
+                syscall(445,C.c_int(fd),C.c_int(1),C.byref(rule),C.c_uint(0))
+            finally: os.close(d)
+            if libc.prctl(C.c_int(38),C.c_ulong(1),C.c_ulong(0),C.c_ulong(0),C.c_ulong(0))!=0:
+                raise OSError(C.get_errno(),"no_new_privs")
+            out["noNewPrivileges"]=libc.prctl(C.c_int(39),C.c_ulong(0),C.c_ulong(0),C.c_ulong(0),C.c_ulong(0))==1
+            syscall(446,C.c_int(fd),C.c_uint(0))
+            out["enforced"]=True
+        finally: os.close(fd)
+        record("allowedRead",lambda:read(a))
+        record("allowedWrite",lambda:write(a))
+        record("outsideReadDenied",lambda:read(b),True)
+        record("outsideWriteDenied",lambda:write(b),True)
+        record("outsideCreateDenied",lambda:write(outside/"new.txt"),True)
+        record("outsideUnlinkDenied",lambda:b.unlink(),True)
+        if abi>=3: record("outsideTruncateDenied",lambda:truncate(b),True)
+        if net and listener is not None and out["checks"].get("baselineTcpBind",{}).get("pass") and out["checks"].get("baselineTcpConnect",{}).get("pass"):
+            record("tcpBindDenied",bind,True)
+            record("tcpConnectDenied",connect,True)
+        expected=["baselineAllowedRead","baselineOutsideRead","baselineOutsideWrite","baselineOutsideTruncate","allowedRead","allowedWrite","outsideReadDenied","outsideWriteDenied","outsideCreateDenied","outsideUnlinkDenied"]
+        out["filesystemChecksPassed"]=all(out["checks"].get(k,{}).get("pass") for k in expected)
+        out["truncateProtectionPassed"]=out["checks"].get("outsideTruncateDenied",{}).get("pass",False)
+        out["tcpChecksPassed"]=all(out["checks"].get(k,{}).get("pass") for k in ("baselineTcpBind","baselineTcpConnect","tcpBindDenied","tcpConnectDenied"))
+        out["status"]="CAPABILITY_TESTED"
+    finally:
+        if listener is not None: listener.close()
+try: main()
+except OSError as e: out["status"]="ENFORCEMENT_ERRNO_"+str(e.errno)
+except Exception as e: out["status"]="PROBE_ERROR_"+type(e).__name__
+print(json.dumps(out),flush=True)
+'''
+
+
+def landlock_probe():
+    import subprocess
+    import tempfile
+    import sys
+    import pwd
+    import signal
+    result={"schema":"swrlz-landlock-probe-v1","status":"UNVERIFIED","enforced":False}
+    try:
+        with tempfile.TemporaryDirectory(prefix="swrlz-landlock-") as home:
+            kwargs={}
+            if os.geteuid()==0:
+                account=pwd.getpwnam("nobody")
+                if account.pw_uid==0: return result
+                os.chown(home,account.pw_uid,account.pw_gid)
+                kwargs={"user":account.pw_uid,"group":account.pw_gid,"extra_groups":[]}
+            env={"PATH":"/usr/bin:/bin:/usr/local/bin","HOME":home,"TMPDIR":home,
+                 "LANG":"C.UTF-8","PYTHONDONTWRITEBYTECODE":"1"}
+            proc=subprocess.Popen([sys.executable,"-I","-c",_LANDLOCK_CHILD],
+                cwd=home,env=env,stdout=subprocess.PIPE,stderr=subprocess.DEVNULL,
+                start_new_session=True,**kwargs)
+            try: raw,_=proc.communicate(timeout=12)
+            except subprocess.TimeoutExpired:
+                try: os.killpg(proc.pid,signal.SIGKILL)
+                except ProcessLookupError: pass
+                proc.communicate()
+                result["status"]="TIMEOUT";return result
+            if proc.returncode!=0 or len(raw)>12000:
+                result["status"]="CHILD_FAILED";result["exitCode"]=proc.returncode;return result
+            data=json.loads(raw)
+            if data.get("schema")!="swrlz-landlock-probe-v1":return result
+            return data
+    except Exception as exc:
+        result["status"]="PROBE_INFRASTRUCTURE_"+type(exc).__name__
+        return result
+
+
 def isolation_probe():
     """Trusted fixed probes only; never accepts candidate bytes or commands."""
     import subprocess
@@ -184,6 +329,7 @@ def isolation_probe():
                    "TMPDIR": home, "LANG": "C.UTF-8", "PYTHONDONTWRITEBYTECODE": "1"}
             evidence["effectiveUserIsRoot"] = os.geteuid() == 0
             evidence["probeDetails"] = {}
+            evidence["landlock"] = landlock_probe()
             def invoke(command, timeout=10):
                 p = subprocess.Popen(command, cwd=home, env=env, stdout=subprocess.PIPE,
                                      stderr=subprocess.PIPE, start_new_session=True)
@@ -318,7 +464,7 @@ with gr.Blocks(title='§Execution — diagnostics', analytics_enabled=False) as 
     remote_result = gr.JSON(visible=False)
     remote_button = gr.Button(visible=False)
     remote_button.click(remote_probe, inputs=[request_json, request_signature], outputs=remote_result, api_name="swrlz_diagnostics_v1", concurrency_limit=1)
-    gr.Markdown("## Isolation capability probe\nFixed host capability tests only. Candidate execution remains disabled.")
+    gr.Markdown("## Isolation capability probe\nFixed host capability tests, including Landlock file and TCP restrictions. Candidate execution remains disabled.")
     isolation_button = gr.Button("Test execution isolation")
     isolation_result = gr.JSON(label="Isolation capability results")
     isolation_button.click(isolation_probe, outputs=isolation_result, api_name="swrlz_isolation_v03", concurrency_limit=1)
