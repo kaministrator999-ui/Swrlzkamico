@@ -139,8 +139,13 @@ def bind_model_edits(project, original_files, model_proposal):
     # Metadata is not needed in the model protocol. If it is present, it is
     # untrusted and ignored; only the source-verified owner context is bound.
     edits = model_proposal.get("patches")
-    if not isinstance(edits, list) or not 1 <= len(edits) <= MAX_PATCHES:
-        raise ProposalError("INVALID_PATCH_COUNT")
+    if "patches" not in model_proposal:
+        raise ProposalError("INVALID_PATCH_COUNT: missing patches array")
+    if not isinstance(edits, list):
+        raise ProposalError("INVALID_PATCH_COUNT: patches must be an array, got " + type(edits).__name__)
+    if not 1 <= len(edits) <= MAX_PATCHES:
+        raise ProposalError("INVALID_PATCH_COUNT: expected 1-" + str(MAX_PATCHES) +
+                            " patches, got " + str(len(edits)))
     # Rationale is optional presentation metadata, not part of the edit.
     rationale = model_proposal.get("rationale", "")
     rationale = rationale[:1000] if isinstance(rationale, str) else ""

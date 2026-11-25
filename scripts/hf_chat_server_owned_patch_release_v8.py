@@ -156,7 +156,9 @@ def release(mode):
                 or originals[RUNTIME]!=candidate[RUNTIME]):
             # Later normalization release owns its exact source pin and writes.
             # The historical v8 check is read-only for that upgrade.
-            if (mode == "preflight" and originals[RUNTIME] == candidate[RUNTIME]
+            if (mode == "preflight" and (originals[RUNTIME] == candidate[RUNTIME]
+                    or (b"swrlz-exact-patches-v10" in candidate[RUNTIME]
+                        and b'githubSourceChangeTask' in originals[RUNTIME]))
                     and b"def _check_model_metadata(" in candidate[AGENT]
                     and AFTER_AGENT in current_agent):
                 ast.parse(current_agent, filename=AGENT)

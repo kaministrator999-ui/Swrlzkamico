@@ -30,6 +30,10 @@ class RuntimeTests(unittest.TestCase):
     def coder(self, incoming):
         self.assertIn("SOURCE-PRESERVING",incoming["prompt"])
         self.assertEqual(incoming["history"],[])
+        self.assertEqual(incoming["repairPatchProtocol"], "swrlz-exact-patches-v10")
+        self.assertNotIn("githubSourceChangeTask", incoming)
+        self.assertNotIn("githubAction", incoming)
+        self.assertNotIn("htmlRepairOwner", incoming)
         yield {"type":"STATUS","phase":"GENERATING"}
         self.assertIn("server binds", incoming["responseDirective"])
         generated = {"patches": [
@@ -71,6 +75,32 @@ class RuntimeTests(unittest.TestCase):
         self.assertEqual(bound["schema"],VERSION)
         self.assertEqual(bound["project"],PROJECT["project"])
         self.assertEqual(bound["patches"][0]["sourceSha256"],source_sha(SRC))
+
+    def test_conflicting_plan_payload_is_isolated_and_retry_is_specific(self):
+        p = self.payload()
+        p.update(githubSourceChangeTask="plan", githubAction={"mode":"plan"},
+                 sourceChangeIdentity={"repo":"wrong"}, htmlProjectIntent={"create":True},
+                 history=[{"role":"assistant","text":"old plan"}])
+        received = []
+        def model(incoming):
+            received.append(incoming)
+            self.assertNotIn("githubSourceChangeTask", incoming)
+            self.assertNotIn("sourceChangeIdentity", incoming)
+            self.assertNotIn("htmlProjectIntent", incoming)
+            if len(received) == 1:
+                yield {"type":"DELTA","text":json.dumps({"plan":[]})}
+                yield {"type":"COMPLETED","phase":"COMPLETE"}
+            else:
+                self.assertIn("missing patches array", incoming["prompt"])
+                yield from self.coder(incoming)
+        with patch.object(runtime.approval,"should_route",return_value=True),\
+             patch.object(runtime,"_source_files",return_value=("b"*40,{"index.html":SRC})),\
+             patch.object(runtime,"inspect_static",return_value={"passed":True}),\
+             patch.object(runtime.approval,"prepare_model",return_value={"kind":"review"}) as stage:
+            events=list(runtime.run(p,model))
+        self.assertEqual(len(received),2)
+        stage.assert_called_once()
+        self.assertEqual(events[-1]["phase"],"COMPLETE")
 
     def test_bad_model_output_never_stages(self):
         def bad_model(p):

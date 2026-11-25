@@ -116,6 +116,13 @@ def release(mode):
     candidate={name:path.read_bytes() for name,path in LOCAL.items()}
     raw=originals[AGENT]
     blob=hashlib.sha1(b"blob "+str(len(raw)).encode()+bytes([0])+raw).hexdigest()
+    if (mode=="preflight" and b"swrlz-exact-patches-v10" in candidate[RUNTIME]
+            and (originals[AGENT]!=candidate[AGENT] or originals[RUNTIME]!=candidate[RUNTIME])):
+        # Only v10 owns the guarded upgrade; this historical release is read-only.
+        if b"def _check_model_metadata(" not in originals[AGENT] or b"bind_model_edits" not in originals[RUNTIME]:
+            raise RuntimeError("LIVE_V9_SOURCE_DRIFT")
+        print("V9_NEWER_PATCH_PROTOCOL_PREFLIGHT",rev,flush=True)
+        return
     if raw!=candidate[AGENT] and blob!=BASE_BLOB:
         raise RuntimeError("LIVE_AGENT_SOURCE_DRIFT")
     if originals[RUNTIME]!=candidate[RUNTIME]:
