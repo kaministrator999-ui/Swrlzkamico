@@ -108,7 +108,7 @@ def selftest():
         if target.endswith(".py"):
             ast.parse(data.decode("utf-8"), filename=target)
     assert "def prepare_model(" in FILES[HELPER].read_text()
-    assert "def run(payload, coder_generate):" in FILES["html_project_agent_runtime_v1.py"].read_text()
+    assert any(signature in FILES["html_project_agent_runtime_v1.py"].read_text() for signature in ("def run(payload, coder_generate):", "def run(payload, coder_generate, *, browser_validator=None):"))
     print("GENERAL_HTML_REPAIR_AGENT_SELFTEST_PASS", flush=True)
 
 
