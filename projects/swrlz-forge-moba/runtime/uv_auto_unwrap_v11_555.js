@@ -241,3 +241,104 @@ window.SWYRL_ENGINE_UV_UNWRAP=Object.freeze({
    seamMode:se555Mode,markedSeams:se555SeamKeys.size})
 });
 /* SE555_XATLAS_REAL_UNWRAP_END */
+
+/* SE556: one region identity, one color and number on UV and 3D. */
+let se556Labels=null,se556LabelsSource=null,se556ShowModel=true;
+const se556BaseColor=se552Color;
+se552Color=function(g,i,anatomical){
+ if(anatomical)return se556BaseColor(g,i,anatomical);
+ return '#'+new THREE.Color().setHSL((i*.61803398875+.08)%1,.72,.56).getHexString();
+};
+function se556Representative(t,topo,g){
+ // Select a real face near the UV centroid, not an empty island bounding box.
+ const uv=topo.uv;
+ let u=0,v=0,n=0;
+ for(const f of g.faces)for(const i of f){u+=uv.getX(i);v+=uv.getY(i);n++;}
+ u/=n;v/=n;let best=null,score=Infinity;
+ for(const f of g.faces){
+  const x=f.reduce((a,i)=>a+uv.getX(i),0)/3,y=f.reduce((a,i)=>a+uv.getY(i),0)/3;
+  const d=(x-u)**2+(y-v)**2;
+  if(d<score){best={f,u:x,v:y};score=d;}
+ }
+ return best;
+}
+se552DrawRegions=function(t,cv,exporting=false){
+ const {topo,groups,anatomical}=se552Regions(t),ctx=cv.getContext('2d'),size=cv.width;
+ const selected=new Set(se551Selection?.part===t.part?se551Selection.ids:[]);
+ ctx.save();
+ groups.forEach((g,i)=>{
+  const color=se552Color(g,i,anatomical);
+  ctx.fillStyle=color;ctx.globalAlpha=exporting?.60:selected.size&&[...g.ids].every(v=>selected.has(v))?.85:.55;
+  for(const f of g.faces){ctx.beginPath();f.forEach((v,k)=>{const x=topo.uv.getX(v)*size,y=(1-topo.uv.getY(v))*size;k?ctx.lineTo(x,y):ctx.moveTo(x,y);});ctx.closePath();ctx.fill();}
+  const p=se556Representative(t,topo,g);if(!p)return;
+  const label=String(anatomical?g.id+1:i+1)+(exporting&&anatomical?' '+se552Names[g.id]:'');
+  ctx.globalAlpha=1;ctx.font='bold '+Math.max(11,size/55)+'px system-ui';ctx.textAlign='center';ctx.textBaseline='middle';
+  const w=ctx.measureText(label).width+8,h=Math.max(17,size/44),x=p.u*size,y=(1-p.v)*size;
+  ctx.fillStyle='#07101d';ctx.fillRect(x-w/2,y-h/2,w,h);ctx.fillStyle=color;ctx.fillRect(x-w/2,y-h/2,3,h);ctx.fillStyle='#fff';ctx.fillText(label,x,y);
+ });ctx.restore();return groups;
+};
+function se556ClearLabels(){
+ if(se556Labels){se556Labels.removeFromParent();for(const child of se556Labels.children){child.material.map?.dispose();child.material.dispose();}}
+ se556Labels=null;se556LabelsSource=null;
+}
+const se556ClearBase=se552ClearRegionMesh;
+se552ClearRegionMesh=function(){se556ClearLabels();se556ClearBase();};
+const se556ModelBase=se552ModelRegions;
+se552ModelRegions=function(t){
+ if(!se556ShowModel||!se552ShowRegions||!t){se552ClearRegionMesh();return;}
+ if(se556LabelsSource!==t.mesh.geometry&&se552RegionMesh)se552ClearRegionMesh();
+ se556ModelBase(t);
+ if(!se552RegionMesh||se556Labels)return;
+ const {topo,groups,anatomical}=se552Regions(t);
+ const pos=t.mesh.geometry.getAttribute('position');
+ const read=i=>new THREE.Vector3(pos.getX(i),pos.getY(i),pos.getZ(i));
+ const group=new THREE.Group();group.userData.se552Diagnostic=true;group.raycast=()=>{};
+ t.mesh.geometry.computeBoundingBox();const bounds=t.mesh.geometry.boundingBox;
+ const size=Math.max(.025,Math.min(.22,bounds.getSize(new THREE.Vector3()).length()*.031));
+ groups.forEach((g,i)=>{
+  const p=se556Representative(t,topo,g);if(!p)return;
+  const [a,b,c]=p.f.map(read);
+  const center=a.clone().add(b).add(c).multiplyScalar(1/3);
+  const normal=b.clone().sub(a).cross(c.clone().sub(a)).normalize();
+  center.addScaledVector(normal,size*.21);
+  const cv=document.createElement('canvas');cv.width=cv.height=128;
+  const ctx=cv.getContext('2d');ctx.fillStyle='#07101d';ctx.beginPath();ctx.arc(64,64,56,0,Math.PI*2);ctx.fill();
+  ctx.strokeStyle=se552Color(g,i,anatomical);ctx.lineWidth=10;ctx.stroke();
+  ctx.fillStyle='#fff';ctx.font='bold 64px system-ui';ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.fillText(String(anatomical?g.id+1:i+1),64,66);
+  const texture=new THREE.CanvasTexture(cv);if(THREE.SRGBColorSpace)texture.colorSpace=THREE.SRGBColorSpace;
+  const sprite=new THREE.Sprite(new THREE.SpriteMaterial({map:texture,depthTest:true,depthWrite:false,transparent:true}));
+  sprite.position.copy(center);sprite.scale.set(size,size,1);sprite.renderOrder=25;sprite.raycast=()=>{};sprite.userData.se552Diagnostic=true;
+  group.add(sprite);
+ });
+ t.mesh.add(group);se556Labels=group;se556LabelsSource=t.mesh.geometry;
+};
+const se556OpenBase=se552Open;
+se552Open=function(){
+ se556OpenBase();
+ const host=se552Portal?.host,controls=host?.children?.[1];
+ if(!controls||controls.querySelector('[data-se556-model]'))return;
+ const regions=controls.querySelector('[data-se552-regions]');
+ if(regions?.parentNode?.lastChild?.nodeType===3)regions.parentNode.lastChild.textContent=' UV colors + numbers';
+ const label=document.createElement('label');label.style.cssText='display:flex;align-items:center;gap:5px';
+ label.innerHTML='<input type="checkbox" data-se556-model> Show colors + numbers on 3D model';
+ controls.append(label);const check=label.firstChild;check.checked=se556ShowModel;
+ check.addEventListener('change',()=>{
+  se556ShowModel=check.checked;
+  if(check.checked&&regions&&!regions.checked){regions.checked=true;regions.dispatchEvent(new Event('change'));}
+  se552ModelRegions(se551Target());se356UVPreviewSchedule();
+ });
+ const view=document.createElement('button');view.type='button';view.dataset.se556View='1';view.textContent='View numbered model';
+ view.style.cssText='padding:8px;background:#254658;color:white;border:1px solid #537e91;border-radius:6px';
+ controls.append(view);
+ view.addEventListener('click',()=>{
+  se556ShowModel=true;check.checked=true;
+  if(regions){regions.checked=true;regions.dispatchEvent(new Event('change'));}
+  se552ModelRegions(se551Target());se552Portal?.close();
+  status('Numbered UV overlay active. Reopen expanded UV Editor to toggle it off.');
+ });
+};
+window.SWYRL_ENGINE_UV_NUMBERING=Object.freeze({
+ inspect:()=>({enabled:se552ShowRegions,model:se556ShowModel,labels:se556Labels?.children.length||0})
+});
+/* SE556_NUMBERED_MODEL_UV_END */
