@@ -154,6 +154,14 @@ def release(mode):
     if (AFTER_AGENT in current_agent or AFTER_RUNTIME in current_runtime):
         if (originals[AGENT]!=candidate[AGENT]
                 or originals[RUNTIME]!=candidate[RUNTIME]):
+            # Later normalization release owns its exact source pin and writes.
+            # The historical v8 check is read-only for that upgrade.
+            if (mode == "preflight" and originals[RUNTIME] == candidate[RUNTIME]
+                    and b"def _check_model_metadata(" in candidate[AGENT]
+                    and AFTER_AGENT in current_agent):
+                ast.parse(current_agent, filename=AGENT)
+                print("V8_NEWER_NORMALIZER_PREFLIGHT", rev, flush=True)
+                return
             raise RuntimeError("PARTIALLY_MODIFIED_LIVE_PROPOSAL_HELPERS")
     elif (BASE_AGENT not in current_agent or BASE_RUNTIME not in current_runtime):
         raise RuntimeError("LIVE_AGENT_PROPOSAL_ANCHOR_DRIFT")
