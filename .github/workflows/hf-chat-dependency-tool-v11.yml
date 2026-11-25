@@ -68,7 +68,7 @@ jobs:
           PY
       - name: Install credential-free Chromium harness
         run: |
-          python -m pip install --quiet 'playwright==1.51.1' 'fastapi>=0.115,<1'
+          python -m pip install --quiet 'playwright==1.51.0' 'fastapi>=0.115,<1'
           python -m playwright install --with-deps chromium
       - name: Render real existing viewer with production-equivalent sandbox
         run: python scripts/verify_html_project_browser_v1.py --project interactive-3d-model-viewer --root browser-candidate/interactive-3d-model-viewer --viewer-fixture
