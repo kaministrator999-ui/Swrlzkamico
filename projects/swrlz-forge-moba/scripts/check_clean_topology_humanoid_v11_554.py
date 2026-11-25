@@ -83,6 +83,27 @@ def run():
     central=[v[1] for v in pelvis if abs(v[0])<.08 and abs(v[2])<.10]
     lateral=[v[1] for v in pelvis if .28<abs(v[0])<.44 and abs(v[2])<.20]
     assert central and lateral and max(lateral)-min(central)>.10
+    # Independently measure both sides of the front silhouette from the final
+    # triangles. A watertight mesh alone does not prove anatomical continuity.
+    assert report['hipThighProfile']=='continuous-outer-contour-v6'
+    levels=[round(2.4-i*.05,3) for i in range(22)]
+    profile=[]
+    for y in levels:
+        crossings=[]
+        for k in range(0,len(ix),3):
+            tri=[xyz[ix[k+i]] for i in range(3)]
+            for a,b in zip(tri,tri[1:]+tri[:1]):
+                if min(a[1],b[1])<=y<max(a[1],b[1]):
+                    t=(y-a[1])/(b[1]-a[1])
+                    crossings.append(a[0]+t*(b[0]-a[0]))
+        assert crossings,('Missing silhouette section',y)
+        right,left=max(crossings),-min(crossings)
+        assert abs(right-left)<.018,('Asymmetric hip/thigh',y,left,right)
+        assert .400<=right<=.465 and .400<=left<=.465,('Pinched or bulging hip/thigh',y,left,right)
+        profile.append((y,left,right))
+    for a,b in zip(profile,profile[1:]):
+        assert max(abs(a[i]-b[i]) for i in (1,2))<.018,('Abrupt hip transition',a,b)
+    print('SE557_CONTINUOUS_HIP_THIGH_PASS',json.dumps(profile),flush=True)
     print('SE555_CONFORMAL_MESH_UV_AND_ANATOMY_PASS',json.dumps({
       'uvVertices':len(pos)//3,'triangles':len(ix)//3,
       'weldedVertices':len(unique),'charts':report['uvChartCount'],
