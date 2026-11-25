@@ -12,9 +12,6 @@ on:
   workflow_dispatch:
 permissions:
   contents: read
-concurrency:
-  group: swrlz-execution-deploy
-  cancel-in-progress: false
 jobs:
   validate:
     runs-on: ubuntu-latest
@@ -28,6 +25,9 @@ jobs:
       - run: python projects/swrlz-execution/release_diagnostics_v1.py
   publish:
     needs: validate
+    concurrency:
+      group: swrlz-execution-publish
+      cancel-in-progress: false
     if: github.event_name != 'pull_request' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/feat/swrlz-execution-v01')
     runs-on: ubuntu-latest
     timeout-minutes: 25
