@@ -1,12 +1,13 @@
 {
   "schema": "swrlz-clean-topology-author-v1",
-  "goal": "Smooth shared physical shoulder and pelvis junctions, retain the genuine conformal UV pipeline and preserve the original robot",
+  "goal": "Remove the narrow hip connectors and exaggerated upper thigh bulges by sculpting a continuous outer hip-to-knee profile in actual geometry; preserve other anatomy and numbered conformal UV workflow",
   "source": "authoring/build_clean_topology_humanoid_v11_554.py",
   "mode": "do-not-change-existing-robot",
   "verification": [
     "welded local smoothing and gradual limb socket transition",
     "real LSCM UV regeneration",
-    "watertight topology and matching diagnostic texture"
+    "watertight topology and matching diagnostic texture",
+    "independent final triangle cross-sections on both hips and thighs; bounded width and no abrupt transitions"
   ],
-  "request": "2026-11-25-smooth-welded-shoulder-hip-v5"
+  "request": "2026-11-25-continuous-hip-thigh-silhouette-v6"
 }
