@@ -3,6 +3,8 @@ import shutil
 import time
 from io import BytesIO
 
+import spaces
+import torch
 import gradio as gr
 from PIL import Image
 from playwright.sync_api import sync_playwright
@@ -59,12 +61,61 @@ def probe():
     result['elapsed_seconds'] = round(time.monotonic() - started, 2)
     return result, screenshot
 
+@spaces.GPU(duration=20)
+def compare_screenshots(reference, candidate):
+    """GPU-accelerated local structural similarity and pixel-change heatmap."""
+    if reference is None or candidate is None:
+        return {"status": "Supply both images"}, None
+    if reference.shape != candidate.shape:
+        return {"status": "Dimension mismatch", "reference": list(reference.shape), "candidate": list(candidate.shape)}, None
+    height, width = reference.shape[:2]
+    if min(height, width) < 8 or max(height, width) > 4096 or height * width > 16777216:
+        return {"status": "Use equal-sized RGB images between 8 and 4096 pixels per side"}, None
+    if not torch.cuda.is_available():
+        raise RuntimeError("CUDA unavailable for GPU visual regression")
+    with torch.inference_mode():
+        a = torch.from_numpy(reference.copy()).to(device="cuda", dtype=torch.float32).permute(2, 0, 1).unsqueeze(0) / 255.0
+        b = torch.from_numpy(candidate.copy()).to(device="cuda", dtype=torch.float32).permute(2, 0, 1).unsqueeze(0) / 255.0
+        diff = (a - b).abs().amax(dim=1)[0]
+        changed = diff > (2.0 / 255.0)
+        # Local windowed structural similarity (SSIM), calculated on CUDA.
+        # Downsample only the SSIM inputs to bound GPU working memory for 4K images.
+        scale = min(1.0, 1024.0 / max(height, width))
+        if scale < 1:
+            size = (max(8, round(height * scale)), max(8, round(width * scale)))
+            x = torch.nn.functional.interpolate(a, size=size, mode="area")
+            y = torch.nn.functional.interpolate(b, size=size, mode="area")
+        else:
+            x, y = a, b
+        pool = lambda t: torch.nn.functional.avg_pool2d(t, 7, stride=1, padding=0)
+        mx, my = pool(x), pool(y)
+        vx = (pool(x*x) - mx*mx).clamp_min(0)
+        vy = (pool(y*y) - my*my).clamp_min(0)
+        cov = pool(x*y) - mx*my
+        c1, c2 = 0.01**2, 0.03**2
+        score = ((2*mx*my+c1)*(2*cov+c2)/((mx.square()+my.square()+c1)*(vx+vy+c2))).mean().item()
+        heat = torch.stack((diff, diff*0.15, torch.zeros_like(diff)), dim=-1)
+        heat = (heat.clamp(0, 1)*255).to(torch.uint8).cpu().numpy()
+        return {"status": "PASS", "device": torch.cuda.get_device_name(0), "width": width, "height": height,
+                "ssim": round(score, 6), "changed_pixels_percent": round(changed.float().mean().item()*100, 4),
+                "mean_absolute_pixel_delta": round((a-b).abs().mean().item()*255, 4),
+                "note": "SSIM uses a 7x7 local window and is evaluated at up to 1024 pixels per side; pixel differences use original resolution."}, heat
+
+
 with gr.Blocks(title='§Execution — diagnostics', analytics_enabled=False) as demo:
     gr.Markdown('# §Execution — browser diagnostics\nFixed local test fixture only. No user-supplied code, URLs, credentials or network requests.')
     run = gr.Button('Run Chromium diagnostics', variant='primary')
     result = gr.JSON(label='Diagnostic results')
     screenshot = gr.Image(label='Browser screenshot', interactive=False)
     run.click(probe, outputs=[result, screenshot], concurrency_limit=1, api_name=False)
+    gr.Markdown("## GPU visual regression\nCompare two screenshots of the same dimensions. This optional CUDA diagnostic uses the caller's ZeroGPU quota. Do not upload private images to this public Space.")
+    with gr.Row():
+        reference = gr.Image(label="Reference screenshot", type="numpy", image_mode="RGB", sources=["upload"])
+        candidate = gr.Image(label="Candidate screenshot", type="numpy", image_mode="RGB", sources=["upload"])
+    compare = gr.Button("Compare screenshots on GPU")
+    metrics = gr.JSON(label="Visual comparison metrics")
+    heatmap = gr.Image(label="Pixel-change heatmap", interactive=False)
+    compare.click(compare_screenshots, inputs=[reference, candidate], outputs=[metrics, heatmap], concurrency_limit=1, api_name=False)
 
 if __name__ == '__main__':
     demo.queue(max_size=4).launch(server_name='0.0.0.0', server_port=int(os.getenv('PORT', '7860')))
