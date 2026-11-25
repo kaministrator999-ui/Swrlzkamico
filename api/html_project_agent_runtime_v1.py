@@ -84,7 +84,12 @@ def _model_patch(coder_generate, base_payload, messages):
     """Invoke the existing §C coding model; do not reimplement inference."""
     system = messages[0]["content"]
     task = messages[1]["content"]
-    model_payload = dict(base_payload)
+    # Isolate repair inference from the outer conversation's GitHub plan,
+    # evidence-report, artifact-generation, and approval contracts.
+    model_payload = {key: base_payload[key] for key in (
+        "modelId", "requestId", "threadId", "_cancelCheck"
+    ) if key in base_payload}
+    model_payload["repairPatchProtocol"] = "swrlz-exact-patches-v10"
     model_payload["prompt"] = (
         "SOURCE-PRESERVING EXISTING PROJECT REPAIR TASK\n"
         + system + "\nVERIFIED REPOSITORY SOURCE AND DIAGNOSTICS:\n" + task
@@ -94,7 +99,9 @@ def _model_patch(coder_generate, base_payload, messages):
     model_payload["programmingIntent"] = {
         "codingTask": False, "source": "verified-existing-project-patch"
     }
-    model_payload["githubSourceChangeTask"] = "plan"
+    model_payload["presentationIntent"] = "PROSE"
+    # githubSourceChangeTask selects a DIFFERENT constrained JSON grammar in
+    # qwen_coder_engine. Never send it for exact existing-project repairs.
     model_payload["responseDirective"] = (
         "Return a single JSON object containing patches [{path, op, anchor, code}]. "
         "Do not calculate source hashes or supply schema/project identity; the trusted "
@@ -128,7 +135,11 @@ def _model_patch(coder_generate, base_payload, messages):
             close()
     if not complete:
         raise ProposalError("MODEL_GENERATION_INCOMPLETE")
-    return _parse_json("".join(output))
+    parsed = _parse_json("".join(output))
+    if not isinstance(parsed, dict):
+        raise ProposalError("INVALID_MODEL_PATCH_PROPOSAL: expected JSON object, got " +
+                            type(parsed).__name__)
+    return parsed
 
 
 def run(payload, coder_generate):
@@ -188,6 +199,8 @@ def run(payload, coder_generate):
                 return
             except (ProposalError, ValueError, TypeError) as exc:
                 failures.append(str(exc)[:240])
+                if str(exc) == "CANCELLED":
+                    raise
                 yield {"type": "STATUS", "phase": "REPAIR_PATCH_REJECTED",
                        "reason": str(exc)[:240], "attempt": attempt + 1}
         raise ProposalError("MAX_REPAIR_ATTEMPTS_EXHAUSTED: " + ", ".join(failures[-3:]))
