@@ -40,11 +40,13 @@ def station_guard(source):
         'payload["activeHtmlProject"]=html_project_ref',
         'payload["projectFileEvidence"]=_swrlz_project_context.evidence(',
         "_swrlz_project_repair.should_route(payload)",
-        "_swrlz_model_repair.run(payload,_coder_generate)",
         'payload["htmlRepairOwner"]=google_owner',
         'payload["htmlRepairThreadId"]=tid',
     )
     missing = [item for item in required if item not in source]
+    if not any(route in source for route in ("_swrlz_model_repair.run(payload,_coder_generate)",
+            "_swrlz_execute_model_repair_v7(payload,_coder_generate)") ):
+        missing.append("verified model repair execution route")
     if missing:
         raise RuntimeError("LIVE_STATION_ROUTE_DRIFT: " + repr(missing))
     # The selected project must win over the old generic source-report route.
