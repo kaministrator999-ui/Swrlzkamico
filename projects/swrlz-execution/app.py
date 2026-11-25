@@ -125,7 +125,7 @@ def _wire(obj):
     return json.dumps(obj, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode()
 
 def _mac(key, kind, raw):
-    return hmac.new(key.encode(), kind.encode()+b"\\0"+raw, hashlib.sha256).hexdigest()
+    return hmac.new(key.encode(), kind.encode()+bytes([0])+raw, hashlib.sha256).hexdigest()
 
 def remote_probe(request_json, signature):
     key = os.environ.get("SWRLZ_X_DIAGNOSTIC_KEY", "")
