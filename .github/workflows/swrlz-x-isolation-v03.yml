@@ -28,7 +28,7 @@ jobs:
         run: |
           python -m py_compile projects/swrlz-execution/app.py
           python -u - <<'PY'
-          import os, json, time, re
+          import os, json, time, re, hashlib
           from pathlib import Path
           import requests
           from huggingface_hub import HfApi, CommitOperationAdd, hf_hub_download
@@ -60,6 +60,8 @@ jobs:
                           elif line.startswith(b"data:") and kind=="complete":
                               data=json.loads(line[5:].strip())[0]
                               assert data["schema"]=="swrlz-x-isolation-v03"
+                              assert data.get("probeSourceSha256")==hashlib.sha256(local.read_bytes()).hexdigest(), "STALE_RUNNING_SOURCE"
+                              assert "nonRootBrowserSandbox" in data and "independentNamespaceChecks" in data, "STALE_PROBE_FIELDS"
                               assert data["candidateExecutionEnabled"] is False and data["isolationVerified"] is False
                               if data["status"]=="BUSY":raise RuntimeError("BUSY")
                               print("X_ISOLATION_CAPABILITY_EVIDENCE",json.dumps(data,sort_keys=True),flush=True)
