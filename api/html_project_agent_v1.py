@@ -103,6 +103,21 @@ def prompt_messages(project, files, diagnostics, task, *, prior_failures=()):
 
 
 
+def _check_model_metadata(obj, canonical, location):
+    """Project only canonical edit fields; reject explicit authority requests.
+
+    Extra metadata is never forwarded to the patch engine or approval store.
+    """
+    for key in obj.keys() - canonical:
+        normalized = re.sub(r"[^a-z]", "", key.lower())
+        if any(word in normalized for word in (
+                "approv", "deploy", "publish", "commit", "merge", "command",
+                "shell", "execute", "authorization", "permission", "token",
+                "credential", "delete", "createfile", "writefile")):
+            raise ProposalError("UNSUPPORTED_MODEL_PROPOSAL_FIELD: " +
+                                location + "." + re.sub(r"[^A-Za-z0-9_.-]", "?", key)[:64])
+
+
 def bind_model_edits(project, original_files, model_proposal):
     """Attach source-pinned identity and *chained* hashes to untrusted model edits.
 
@@ -113,8 +128,7 @@ def bind_model_edits(project, original_files, model_proposal):
     verify_source(project, original_files)
     if not isinstance(model_proposal, dict):
         raise ProposalError("INVALID_MODEL_PATCH_PROPOSAL")
-    if set(model_proposal) - {"patches", "rationale", "schema", "project"}:
-        raise ProposalError("UNSUPPORTED_MODEL_PROPOSAL_FIELD")
+    _check_model_metadata(model_proposal, {"patches", "rationale", "schema", "project"}, "proposal")
     # Metadata is not needed in the model protocol. If it is present, it is
     # untrusted and ignored; only the source-verified owner context is bound.
     edits = model_proposal.get("patches")
@@ -126,10 +140,13 @@ def bind_model_edits(project, original_files, model_proposal):
     current = dict(original_files)
     bound = []
     for edit in edits:
-        if not isinstance(edit, dict) or set(edit) - {
-                "path", "op", "anchor", "code", "sourceSha256"} or not {
-                "path", "op", "anchor", "code"}.issubset(edit):
-            raise ProposalError("INVALID_MODEL_PATCH_FIELDS")
+        required = {"path", "op", "anchor", "code"}
+        if not isinstance(edit, dict):
+            raise ProposalError("INVALID_MODEL_PATCH_FIELDS: expected object")
+        _check_model_metadata(edit, required | {"sourceSha256"}, "patch")
+        if not required.issubset(edit):
+            raise ProposalError("INVALID_MODEL_PATCH_FIELDS: missing " +
+                                ", ".join(sorted(required - set(edit))))
         path = safe_path(edit["path"])
         if path not in current:
             raise ProposalError("EXISTING_FILES_ONLY")
