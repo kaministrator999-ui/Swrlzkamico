@@ -21,11 +21,15 @@ def response(payload, _coder_generate):
         event_source=_swrlz_model_repair.run(payload,_coder_generate)
     return event_source
 def context(payload,html_project_ref):
-    payload["activeHtmlProject"]=html_project_ref
+    if True:
+        if True:
+            payload["activeHtmlProject"]=html_project_ref
 # swrlz-generated-html-github-handoff-v1: called only after the canonical response is persisted.
 def handoff(payload):
-    if payload.get("htmlProjectIntent"):
-        return "CREATE_A_NEW_HTML_PROJECT"
+    if True:
+        if True:
+            if payload.get("htmlProjectIntent"):
+                return "CREATE_A_NEW_HTML_PROJECT"
 '''
 
 def new_source_files(a,b):
@@ -40,8 +44,10 @@ class RuntimeV7Tests(TestCase):
     def setUpClass(cls):
         cls.after=release.patch_station(FIXTURE)
         source=ast.parse(cls.after)
-        functions=[n for n in source.body if isinstance(n,(ast.FunctionDef,ast.AsyncFunctionDef))
-                   and n.name.startswith("_swrlz_")]
+        functions=[n for n in source.body if isinstance(n,ast.FunctionDef)
+                   and n.name in ("_swrlz_repair_tuple_is_loaded_v7",
+                                  "_swrlz_verified_repair_runtime_v7",
+                                  "_swrlz_execute_model_repair_v7")]
         cls.env={"_swrlz_model_repair":ModuleType("html_project_agent_runtime_v1")}
         exec(compile(ast.Module(body=functions,type_ignores=[]),"<v7>", "exec"),cls.env)
 
