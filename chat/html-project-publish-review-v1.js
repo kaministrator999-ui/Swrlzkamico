@@ -122,7 +122,9 @@
     decline.type=approve.type="button";
     decline.textContent=creating?"Cancel creation":repairing?"Cancel repair":"Cancel deployment";
     if(serverBrowser){
-      note.textContent=fullRepair?"§C server Chromium rendering and static validation passed before approval. Approval authorizes the exact GitHub commit, deployment and live verification.":"§C server Chromium rendering and static validation passed. Approval authorizes only the reviewed repair PR.";
+      const backend=data.repairValidation?.browserReceipt?.backend;
+      const label=backend==="github-actions"?"§C-controlled GitHub browser worker":"§C server Chromium";
+      note.textContent=label+(fullRepair?" passed rendering and static validation before approval. Approval authorizes the exact GitHub commit, deployment and live verification.":" passed rendering and static validation. Approval authorizes only the reviewed repair PR.");
     }
     approve.textContent=creating?"Approve GitHub commit":modelRepair?(fullRepair?"Approve repair and deploy":"Approve model repair PR"):repairing?"Approve repair PR build":"Approve publish";
     actions.append(decline,approve);surface.append(actions);

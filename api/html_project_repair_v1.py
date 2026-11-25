@@ -244,7 +244,9 @@ def _confirm_model(user_id, proposal):
         inputs={"source_sha":proposal["sha"],"project":proposal["project"],"proposal_json":proposal["plan"],
                 "publish_after_validation":"yes" if proposal.get("publishAfterValidation") is True else "no","approved":"yes"}
         if proposal.get("browserReceipt"):
-            inputs["browser_receipt_json"]=json.dumps(proposal["browserReceipt"],separators=(",",":"))
+            envelope=proposal["browserReceipt"]
+            name="github_browser_receipt_json" if envelope.get("backend")=="github-actions" else "browser_receipt_json"
+            inputs[name]=json.dumps(envelope,separators=(",",":"))
         publishing._github(auth,"POST","actions/workflows/"+MODEL_WORKFLOW+"/dispatches",
                            data={"ref":"main","inputs":inputs})
     except publishing.PublishActionError as exc:
