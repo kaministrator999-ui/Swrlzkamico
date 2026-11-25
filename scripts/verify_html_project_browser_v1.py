@@ -84,10 +84,10 @@ def smoke(root,url,viewer_fixture=False):
             if viewer_fixture:
                 page.locator("#loading").wait_for(state="hidden",timeout=12000)
                 canvas=page.locator("canvas").first
-                before=canvas.screenshot()
+                before=page.screenshot(clip={"x":200,"y":160,"width":560,"height":400})
                 page.locator("#light-toggle").uncheck()
                 page.wait_for_timeout(700)
-                after=canvas.screenshot()
+                after=page.screenshot(clip={"x":200,"y":160,"width":560,"height":400})
                 if before==after:raise RuntimeError("VIEWER_LIGHT_CONTROL_NO_RENDER_CHANGE")
                 page.locator("#wireframe-toggle").check()
                 page.locator("#reset-btn").click()
