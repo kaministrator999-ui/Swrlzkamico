@@ -45,6 +45,21 @@ const mime={'.html':'text/html; charset=utf-8','.js':'text/javascript','.mjs':'t
   await page.waitForFunction(()=>document.getElementById('se476StartupGate')?.hidden===true &&
     document.documentElement.classList.contains('se127-editor-ready'),null,{timeout:45000});
   assert.equal(errors.filter(x=>/se552Open|se555|ReferenceError|SyntaxError/.test(x)).length,0,errors.join('\n'));
+  const opened=await page.evaluate(()=>window.SWYRL_ENGINE_CLEAN_TOPOLOGY.open(true));
+  assert.equal(opened,true,'Clean humanoid starter must load');
+  await page.locator('#se355UVEditorOpen').click({timeout:20000});
+  await page.locator('[data-se551="expand"]').click({timeout:20000});
+  await page.locator('#se552UVHost [data-se552-regions]').check({timeout:20000});
+  await page.waitForFunction(()=>window.SWYRL_ENGINE_UV_NUMBERING.inspect().labels>=1,null,{timeout:20000});
+  const labels=await page.evaluate(()=>window.SWYRL_ENGINE_UV_NUMBERING.inspect());
+  assert(labels.enabled&&labels.model&&labels.labels>=1,JSON.stringify(labels));
+  await page.locator('[data-se556-model]').uncheck();
+  await page.waitForFunction(()=>window.SWYRL_ENGINE_UV_NUMBERING.inspect().labels===0);
+  await page.locator('[data-se556-model]').check();
+  await page.locator('[data-se556-view]').click();
+  await page.waitForFunction(()=>!document.getElementById('se552UVHost')&&window.SWYRL_ENGINE_UV_NUMBERING.inspect().labels>=1);
+  assert.equal(errors.filter(x=>/ReferenceError|TypeError|SyntaxError/.test(x)).length,0,errors.join('\n'));
+  console.log('SE556_NUMBERED_MODEL_UV_BROWSER_PASS',JSON.stringify({live,labels}));
   console.log('SE555_DELIVERED_BROWSER_BOOT_PASS',JSON.stringify({live,info,errors:errors.slice(0,5)}));
  }finally{await browser.close();}
 })().catch(e=>{console.error('SE555_DELIVERED_BROWSER_BOOT_FAIL',e.stack||e);process.exitCode=1;});
