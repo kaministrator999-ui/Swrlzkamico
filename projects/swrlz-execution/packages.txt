@@ -1,0 +1,4 @@
+chromium
+libgl1-mesa-dri
+libegl1
+libgl1
