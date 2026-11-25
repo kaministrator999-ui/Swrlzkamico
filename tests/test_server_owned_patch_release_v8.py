@@ -49,6 +49,9 @@ class LivePatchV8Contract(unittest.TestCase):
         self.assertEqual(runtime.bind_model_edits.__name__,bind_model_edits.__name__)
         self.assertTrue(callable(runtime.bind_model_edits))
         self.assertIn("bind_model_edits",runtime.run.__code__.co_names)
+        if hasattr(runtime,"repair_candidate"):
+            self.assertIn("binder",runtime.repair_candidate.__code__.co_varnames)
+            self.assertIs(runtime.repair_candidate.__kwdefaults__["binder"],runtime.bind_model_edits)
         self.assertNotIn("sourceSha256",runtime._model_patch.__code__.co_consts)
 
 

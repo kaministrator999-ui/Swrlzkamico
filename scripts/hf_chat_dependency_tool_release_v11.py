@@ -155,6 +155,11 @@ def release(mode):
     names=set(api.list_repo_files(SPACE,repo_type="space",revision=rev))
     original={n:read(n,rev) for n in (*LOCAL,CODER,STATION) if n in names}
     candidate={n:p.read_bytes() for n,p in LOCAL.items()}
+    if mode=="preflight" and b"swrlz-evidence-tool-loop-v12" in candidate[RUNTIME]:
+        if b"repairPatchProtocol" not in original[RUNTIME] or b"def repair_candidate" not in candidate[RUNTIME]:
+            raise RuntimeError("V12_LINEAGE_MISMATCH")
+        print("V11_HISTORICAL_PREFLIGHT_V12_OWNS_RELEASE",rev,flush=True)
+        return
     for n in LOCAL:
         if n not in original:
             if n!=DEPENDENCY: raise RuntimeError("LIVE_SOURCE_MISSING: "+n)
