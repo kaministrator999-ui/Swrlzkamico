@@ -55,8 +55,8 @@
   const ticket=++attempt;
   setTimeout(()=>{
    if(ticket!==attempt||finished||account!=='pending')return;
-   account='offline';updateAccountStatus();offlineScreen(true);
-   void list();note('§C connection unavailable. Retry or continue with your on-device projects.',true);
+   updateAccountStatus();offlineScreen(false);
+   void list();note('§C account handshake is taking longer than expected. You can continue locally while it initializes.',true);
   },ms);
  }
  function retryConnection(){
@@ -64,8 +64,8 @@
   account='pending';++epoch;updateAccountStatus();offlineScreen(false);
   note('Reconnecting to §C… Local projects remain safe.');
   const api=accountAPI();
-  if(api?.retry?.()!==true){offlineScreen(true);note('§C connection unavailable. Continue with local projects.',true);}
-  else offlineDeadline(14000);
+  if(api?.retry?.()!==true){note('Account bridge is not ready yet. You can continue locally.',true);}
+  offlineDeadline(14000);
  }
  function note(message,problem=false){
   const node=$('se476StartupStatus');
