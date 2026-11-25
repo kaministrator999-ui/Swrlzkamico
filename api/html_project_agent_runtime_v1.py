@@ -89,7 +89,8 @@ def _model_patch(coder_generate, base_payload, messages):
     model_payload = {key: base_payload[key] for key in (
         "modelId", "requestId", "threadId", "_cancelCheck"
     ) if key in base_payload}
-    model_payload["repairPatchProtocol"] = "swrlz-exact-patches-v10"
+    # swrlz-exact-patches-v10: legacy source pin lineage.
+    model_payload["repairPatchProtocol"] = "swrlz-exact-patches-v11"
     model_payload["prompt"] = (
         "SOURCE-PRESERVING EXISTING PROJECT REPAIR TASK\n"
         + system + "\nVERIFIED REPOSITORY SOURCE AND DIAGNOSTICS:\n" + task
@@ -104,6 +105,8 @@ def _model_patch(coder_generate, base_payload, messages):
     # qwen_coder_engine. Never send it for exact existing-project repairs.
     model_payload["responseDirective"] = (
         "Return a single JSON object containing patches [{path, op, anchor, code}]. "
+        "Use localize_imports for source-declared pinned npm importmap CSP violations. "
+        "Do not substitute another CDN. "
         "Do not calculate source hashes or supply schema/project identity; the trusted "
         "server binds those. Never return a replacement page, review instructions, "
         "prose, or approval claims."
@@ -175,6 +178,10 @@ def run(payload, coder_generate):
                 prior_failures=failures)
             try:
                 model_edits = _model_patch(coder_generate, payload, messages)
+                if any(isinstance(p,dict) and p.get("op")=="localize_imports"
+                       for p in (model_edits.get("patches") or []) if isinstance(model_edits.get("patches"),list)):
+                    yield {"type":"STATUS","phase":"REPAIR_DEPENDENCIES",
+                           "reason":"Model selected pinned npm dependency localization; fetching and verifying assets."}
                 proposal = bind_model_edits(project["project"], files, model_edits)
                 result = apply_proposal(
                     project["project"], files, proposal,
@@ -198,7 +205,7 @@ def run(payload, coder_generate):
                 yield {"type": "COMPLETED", "phase": "COMPLETE"}
                 return
             except (ProposalError, ValueError, TypeError) as exc:
-                failures.append(str(exc)[:240])
+                failures.append(str(exc)[:1800])
                 if str(exc) == "CANCELLED":
                     raise
                 yield {"type": "STATUS", "phase": "REPAIR_PATCH_REJECTED",

@@ -30,7 +30,7 @@ class RuntimeTests(unittest.TestCase):
     def coder(self, incoming):
         self.assertIn("SOURCE-PRESERVING",incoming["prompt"])
         self.assertEqual(incoming["history"],[])
-        self.assertEqual(incoming["repairPatchProtocol"], "swrlz-exact-patches-v10")
+        self.assertEqual(incoming["repairPatchProtocol"], "swrlz-exact-patches-v11")
         self.assertNotIn("githubSourceChangeTask", incoming)
         self.assertNotIn("githubAction", incoming)
         self.assertNotIn("htmlRepairOwner", incoming)

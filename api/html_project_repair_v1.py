@@ -181,7 +181,14 @@ def prepare_model(user_id, thread_id, slug, head, patch_plan, source_hashes, res
     files = result.get("changedFiles")
     if not isinstance(files, list) or not files:
         raise RepairError("EMPTY_REPAIR")
-    if any(path not in source_hashes for path in files):
+    assets = {}
+    for patch in patch_plan.get("patches",[]):
+        if patch.get("op")=="localize_imports":
+            assets.update(patch.get("assetHashes",{}))
+    after = result.get("afterHashes") or {}
+    if any(path not in source_hashes and
+           (not path.startswith("vendor/") or not assets.get(path) or assets[path]!=after.get(path))
+           for path in files):
         raise RepairError("REPAIR_PATH_NOT_VERIFIED")
     with _lock:
         _pending[(user_id, thread_id)] = {
@@ -199,6 +206,8 @@ def prepare_model(user_id, thread_id, slug, head, patch_plan, source_hashes, res
             **manifest, "mode": "repair", "sourceBlob": manifest["indexGitBlobSha"],
             "repairStrategy": "model-exact-patch",
             "repairDiffs": result.get("diffs") or {},
+            "repairValidation": result.get("validation") or {},
+            "dependencyAssets": assets,
             "changedFiles": files,
             "workflowUrl": MODEL_WORKFLOW_URL,
             "expiresInSeconds": TTL,

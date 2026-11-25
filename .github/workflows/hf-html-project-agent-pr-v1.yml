@@ -101,7 +101,11 @@ jobs:
           for rel in receipt["files"]:
               source=pathlib.Path("repair-output")/slug/rel
               target=pathlib.Path("reviewed-source/html-projects")/slug/rel
-              assert source.is_file() and target.is_file() and not target.is_symlink()
+              assert source.is_file() and not target.is_symlink()
+              if not target.is_file():
+                  assert rel.startswith("vendor/") and rel in receipt["resultHashes"] and rel not in receipt["sourceHashes"]
+                  assert not target.exists()
+                  target.parent.mkdir(parents=True,exist_ok=True)
               shutil.copyfile(source,target)
           PY
           cd reviewed-source
