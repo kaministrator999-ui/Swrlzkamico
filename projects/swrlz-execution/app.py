@@ -488,6 +488,28 @@ def browser_failure(exc):
         ("node:internal", "NODE_INTERNAL"),
         ("uv_get", "LIBUV_INIT"),
         ("crashpad", "CRASHPAD"),
+        ("fatal:", "CHROMIUM_FATAL"),
+        ("check failed", "CHROMIUM_CHECK_FAILED"),
+        ("readlink", "READLINK"),
+        ("readlinkat", "READLINK"),
+        ("/proc/self/fd", "PROC_SELF_FD"),
+        ("/proc/self/maps", "PROC_SELF_MAPS"),
+        ("/proc/self/status", "PROC_SELF_STATUS"),
+        ("/proc/self/auxv", "PROC_SELF_AUXV"),
+        ("/proc/self/exe", "PROC_SELF_EXE"),
+        ("/proc/thread-self", "PROC_THREAD_SELF"),
+        ("/proc/sys/", "PROC_SYS"),
+        ("trace/breakpoint trap", "SIGTRAP"),
+        ("segmentation fault", "SIGSEGV"),
+        ("remote-debugging-pipe", "DEBUG_PIPE"),
+        ("failed to read", "READ_FAILED"),
+        ("failed to open", "OPEN_FAILED"),
+        ("failed to create", "CREATE_FAILED"),
+        ("failed to parse", "PARSE_FAILED"),
+        ("shared memory", "SHARED_MEMORY"),
+        ("fontconfig", "FONTCONFIG"),
+        ("singleton", "PROFILE_SINGLETON"),
+        ("gpu process", "GPU_PROCESS"),
         ("--database is required", "CRASH_REPORTER_DATABASE"),
         ("permission denied", "PERMISSION_DENIED"),
         ("eacces", "PERMISSION_DENIED"),
@@ -510,6 +532,33 @@ def browser_failure(exc):
         ("closed", "BROWSER_CLOSED"),
     )
     return sorted({label for needle,label in patterns if needle in msg}) or [type(exc).__name__]
+
+def chromium_direct_checks(chromium,work,launch_args,label):
+    # Fixed local fixture only. No candidate code, URLs, or credentials.
+    # Native sandbox is unavailable; this is diagnostic compatibility only.
+    result={}
+    for name,args in (("version",["--version"]),
+        ("fixture",["--headless","--no-sandbox","--no-first-run","--no-default-browser-check",
+                    "--user-data-dir="+str(work/("direct-"+label)),*launch_args,
+                    "--dump-dom","data:text/html,<p>swrlz-fixed-direct-probe</p>"])):
+        try:
+            run=subprocess.run([chromium,*args],stdin=subprocess.DEVNULL,stdout=subprocess.PIPE,
+                               stderr=subprocess.PIPE,timeout=8,check=False)
+            msg=run.stderr.decode(errors="replace")
+            result[name]={"exitCode":run.returncode,
+                "pass":run.returncode==0 and (name=="version" or b"<p>swrlz-fixed-direct-probe</p>" in run.stdout),
+                "failureCategories":browser_failure(RuntimeError(msg)) if msg.strip() else [],
+                "signal":-run.returncode if run.returncode<0 else None}
+            # Only fixed known markers. No public raw diagnostic logs.
+            result[name]["markers"]=[key for key,needle in (
+                ("PROC_SELF","/proc/self/"),("PROC_NUMERIC","/proc/"),
+                ("CRASH_REPORTER","crashpad"),("XDG_RUNTIME","xdg_runtime_dir"),
+                ("DEV_SHM","/dev/shm"),("DEV_DRI","/dev/dri"),
+                ("TMP_PATH","/tmp/"),("SYSTEM_LIB","/usr/lib/"),
+                ("PERMISSION_ERRNO","(13)"),("OPERATION_ERRNO","(1)"),
+                ("PIPE_CLOSED","broken pipe")) if needle in msg.lower()]
+        except Exception as e:result[name]={"pass":False,"failureCategories":browser_failure(e)}
+    return result
 
 def runtime_paths():
     # Check only known public system resources. No file content is returned.
@@ -583,6 +632,7 @@ def main():
         return result
     out["baselineRuntimeAccess"]=runtime_paths()
     out["baselineNodeStartup"]=node_startup_checks()
+    out["baselineDirectChromium"]=chromium_direct_checks(chromium,work,launch_args,"baseline")
     out["baselineBrowserLaunch"]=False
     try:
         with sync_playwright() as baseline:
@@ -755,6 +805,8 @@ console.log(JSON.stringify(result));"""
                 out["driverVersionChecks"][label]={"pass":False,"failureCategories":browser_failure(e)}
     except Exception as e:
         out["driverVersionChecks"]={"status":"UNAVAILABLE","failureCategories":browser_failure(e)}
+    out["stage"]="restricted_direct_browser"
+    out["restrictedDirectChromium"]=chromium_direct_checks(chromium,work,launch_args,"restricted")
     out["stage"]="restricted_driver_start"
     # Fixed fixture only: no external assets, URLs, candidate bytes or credentials.
     # Native Chromium sandbox is still unavailable on this host.
@@ -809,7 +861,7 @@ def combined_probe():
             proc=subprocess.Popen([sys.executable,"-I","-c",_COMBINED_CHILD],
                 cwd=home,env=env,stdout=subprocess.PIPE,stderr=subprocess.DEVNULL,start_new_session=True,**kwargs)
             try:
-                raw,_=proc.communicate(timeout=110)
+                raw,_=proc.communicate(timeout=140)
                 if proc.returncode or len(raw)>16000:
                     result.update(status="CHILD_FAILED",exitCode=proc.returncode)
                 else:
