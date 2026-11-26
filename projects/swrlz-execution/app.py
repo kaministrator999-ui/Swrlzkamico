@@ -533,6 +533,37 @@ def browser_failure(exc):
     )
     return sorted({label for needle,label in patterns if needle in msg}) or [type(exc).__name__]
 
+def chromium_error_sites(raw):
+    import re
+    # Only Chromium source basenames and line numbers, plus fixed semantic
+    # markers. No raw messages, process IDs, absolute paths or environment.
+    sites={}
+    for line in raw.splitlines():
+        m=re.search(r'\b(FATAL|ERROR|WARNING|DFATAL):(?:[A-Za-z0-9_.-]+/)*([A-Za-z0-9_.-]+\.(?:cc|cpp|c|h)):(\d{1,6})\]',line)
+        if not m:
+            m=re.search(r'\b(FATAL|ERROR|WARNING|DFATAL):(?:[A-Za-z0-9_.-]+/)*([A-Za-z0-9_.-]+\.(?:cc|cpp|c|h))\((\d{1,6})\)',line)
+        if not m:continue
+        level,filename,number=m.groups()
+        if level=="WARNING":continue
+        key=(level,filename,int(number))
+        low=line.lower()
+        marks=[label for label,needle in (
+            ("CHECK_FAILED","check failed"),("PERMISSION_DENIED","permission denied"),
+            ("READ_FAILED","failed to read"),("OPEN_FAILED","failed to open"),
+            ("PROC_SELF_FD","/proc/self/fd"),("PROC_SELF_MAPS","/proc/self/maps"),
+            ("PROC_SELF_STATUS","/proc/self/status"),("PROC_SELF_AUXV","/proc/self/auxv"),
+            ("PROC_SYS","/proc/sys/"),("PROC","/proc/"),
+            ("GETDENTS","getdents"),("READLINK","readlink"),
+            ("CRASHPAD","crashpad"),("DBUS","dbus"),("SOCKET","socket"),
+            ("FORK","fork"),("ZYGOTE","zygote"),("RENDERER","renderer"),
+            ("FILE_DESCRIPTOR","file descriptor"),("FD_DIRECTORY","fd_dir"),
+            ("NO_SUCH_FILE","no such file"),("ERRNO_13","(13)"),
+            ("ERRNO_1","(1)")) if needle in low]
+        entry=sites.setdefault(key,{"level":level,"source":filename,"line":int(number),"count":0,"markers":[]})
+        entry["count"]+=1
+        entry["markers"]=sorted(set(entry["markers"]+marks))
+    return sorted(sites.values(),key=lambda x:(x["level"] not in ("FATAL","DFATAL"),-x["count"],x["source"]))[:12]
+
 def direct_browser_evidence(stdout,stderr,returncode,timed_out,name):
     msg=(stderr or b"").decode(errors="replace").lower()
     markers=[key for key,needle in (
@@ -556,6 +587,7 @@ def direct_browser_evidence(stdout,stderr,returncode,timed_out,name):
             "timedOut":timed_out,"fixtureOutputSeen":fixture_seen,
             "stderrBytes":len(stderr or b""),"stdoutBytes":len(stdout or b""),
             "failureCategories":categories,"markers":markers,
+            "errorSites":chromium_error_sites((stderr or b"").decode(errors="replace")),
             "signal":-returncode if returncode is not None and returncode<0 else None}
 
 def chromium_direct_checks(chromium,work,launch_args,label):
@@ -855,8 +887,12 @@ console.log(JSON.stringify(result));"""
             out["chromiumLaunch"]=True
             out["stage"]="browser_context"
             context=browser.new_context(viewport={"width":640,"height":480},service_workers="block")
+            out["contextCreated"]=True
+            out["stage"]="request_interception"
             context.route("**/*",lambda route:route.abort())
+            out["stage"]="renderer_page_creation"
             page=context.new_page();page.set_default_timeout(4000)
+            out["pageCreated"]=True
             errors=[];page.on("pageerror",lambda e:errors.append("PAGE_ERROR"))
             out["stage"]="fixture_execution"
             page.set_content("<button id='go' onclick=\"this.textContent='Clicked'\">Go</button><canvas id='c' width='64' height='64'></canvas>")
@@ -877,6 +913,9 @@ except Exception as e:
     out["status"]="BROWSER_OR_RUNTIME_FAILED"
     out["failureCategories"]=browser_failure(e)
     out["failureCategory"]=out["failureCategories"][0]
+    out["playwrightErrorSites"]=chromium_error_sites(str(e))
+    msg=str(e).lower()
+    out["playwrightErrorMarkers"]=[label for label,needle in (("NEW_CONTEXT","browser.new_context"),("NEW_PAGE","browsercontext.new_page"),("TARGET_CLOSED","target closed"),("BROWSER_DISCONNECTED","browser has been closed"),("PROTOCOL_ERROR","protocol error"),("TARGET_CREATE","target.createtarget"),("CONTEXT_CREATE","target.createbrowsercontext"),("PAGE_CRASH","page crashed"),("PERMISSION_DENIED","permission denied")) if needle in msg]
 print(json.dumps(out),flush=True)
 '''
 
@@ -900,7 +939,7 @@ def combined_probe():
                 cwd=home,env=env,stdout=subprocess.PIPE,stderr=subprocess.DEVNULL,start_new_session=True,**kwargs)
             try:
                 raw,_=proc.communicate(timeout=190)
-                if proc.returncode or len(raw)>16000:
+                if proc.returncode or len(raw)>32000:
                     result.update(status="CHILD_FAILED",exitCode=proc.returncode)
                 else:
                     data=json.loads(raw)
