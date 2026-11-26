@@ -1,0 +1,51 @@
+name: §X v0.9 Chromium inside disposable VM
+on:
+  push:
+    branches: [feat/swrlz-x-isolation-v03]
+    paths:
+      - 'projects/swrlz-execution/*v09*'
+      - '.github/workflows/swrlz-vm-browser-v09.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  guest-browser:
+    if: github.ref == 'refs/heads/feat/swrlz-x-isolation-v03'
+    concurrency:
+      group: swrlz-execution-publish
+      cancel-in-progress: false
+    runs-on: ubuntu-latest
+    timeout-minutes: 55
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - run: python -m pip install --quiet 'huggingface_hub>=0.34,<2' 'requests>=2.31,<3'
+      - name: Validate source
+        run: |
+          python -m py_compile projects/swrlz-execution/*v09.py
+          bash -n projects/swrlz-execution/build_guest_v09.sh
+          sh -n projects/swrlz-execution/guest_browser_init_v09.sh
+      - name: Build independent guest image from Debian packages
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq debootstrap qemu-system-x86 e2fsprogs
+          bash projects/swrlz-execution/build_guest_v09.sh "$RUNNER_TEMP/swrlz-guest"
+      - name: Test fixed browser guest locally before changing §X
+        run: |
+          set -o pipefail
+          python -u projects/swrlz-execution/vm_browser_v09.py "$RUNNER_TEMP/swrlz-guest" | tee swrlz-v09-local.json
+      - name: Deploy exact guest image and verify live signed result
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: python -u projects/swrlz-execution/release_vm_browser_v09.py publish "$RUNNER_TEMP/swrlz-guest"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: swrlz-v09-browser-receipts
+          path: |
+            swrlz-v09-local.json
+            swrlz-v09-live.json
+          if-no-files-found: warn
+          retention-days: 14

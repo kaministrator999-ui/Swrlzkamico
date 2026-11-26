@@ -1,0 +1,151 @@
+name: §X trusted development and isolation diagnostics
+on:
+  push:
+    branches: [feat/swrlz-x-isolation-v03]
+    paths:
+      - 'projects/swrlz-execution/app.py'
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'Trusted development roundtrip or experimental Landlock probe'
+        type: choice
+        options: [trusted, isolation]
+        default: trusted
+permissions:
+  contents: read
+jobs:
+  probe:
+    if: github.ref == 'refs/heads/feat/swrlz-x-isolation-v03'
+    concurrency:
+      group: swrlz-execution-publish
+      cancel-in-progress: false
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - run: python -m pip install --quiet 'huggingface_hub>=0.34,<2' 'requests>=2.31,<3'
+      - name: Deploy §X and collect selected runtime evidence
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          PROBE_MODE: ${{ inputs.mode || 'trusted' }}
+        run: |
+          python -m py_compile projects/swrlz-execution/app.py
+          python -u - <<'PY'
+          import os, json, time, re, hashlib, ast, sys, hmac
+          from pathlib import Path
+          import requests
+          from huggingface_hub import HfApi, CommitOperationAdd, hf_hub_download
+          target="kamiloki/swrlz-execution"
+          api=HfApi(token=os.environ["HF_TOKEN"])
+          old=api.repo_info(target,repo_type="space").sha
+          local=Path("projects/swrlz-execution/app.py")
+          tree=ast.parse(local.read_text())
+          for node in tree.body:
+              if isinstance(node,ast.Assign) and any(isinstance(t,ast.Name) and t.id in ("_COMBINED_CHILD","_LANDLOCK_CHILD") for t in node.targets):
+                  compile(ast.literal_eval(node.value),"<trusted diagnostic child>","exec")
+          current=Path(hf_hub_download(target,"app.py",repo_type="space",revision=old,token=os.environ["HF_TOKEN"])).read_bytes()
+          if b"def remote_probe(" not in current:
+              raise RuntimeError("X_SOURCE_DRIFT")
+          if current != local.read_bytes():
+              revision=api.create_commit(repo_id=target,repo_type="space",revision="main",parent_commit=old,operations=[CommitOperationAdd(path_in_repo="app.py",path_or_fileobj=local)],commit_message="§X v0.5 trusted development diagnostics").oid
+          else:
+              revision=old
+          assert Path(hf_hub_download(target,"app.py",repo_type="space",revision=revision,token=os.environ["HF_TOKEN"])).read_bytes()==local.read_bytes()
+          print("X_PROBE_SOURCE_READBACK_PASS",revision,flush=True)
+          if os.environ.get("PROBE_MODE","trusted")=="trusted":
+              sys.path.insert(0,str(local.parent))
+              from x_diagnostic_client import derive_key, request_data, call_gradio, verify, station_diagnose, mac, wire
+              key=derive_key(os.environ["HF_TOKEN"])
+              expected=hashlib.sha256(local.read_bytes()).hexdigest()
+              # Wait for the exact new running source. Signed failure evidence
+              # from the correct revision is retained and fails the suite gate.
+              for attempt in range(24):
+                  try:
+                      obj,raw,sig=request_data(key)
+                      env=call_gradio(raw,sig)
+                      rec=env["receipt"]
+                      assert hmac.compare_digest(mac(key,"receipt",wire(rec)),env["signature"])
+                      assert rec["nonce"]==obj["nonce"] and abs(time.time()-rec["timestamp"])<=180
+                      assert rec["schema"]==obj["schema"]
+                      assert rec["arbitrary_execution"] is False and rec["isolation_verified"] is False
+                      assert rec["diagnostics"]["source_sha256"]==expected
+                      break
+                  except Exception as exc:
+                      if attempt==23:raise RuntimeError("TRUSTED_RUNTIME_UNVERIFIED") from exc
+                      if attempt%4==0:print("TRUSTED_RUNTIME_PENDING",type(exc).__name__,flush=True)
+                      time.sleep(8)
+              Path("swrlz-trusted-receipt.json").write_text(json.dumps(rec,indent=2,sort_keys=True)+"\n")
+              def suite_verified(receipt):
+                  d=receipt["diagnostics"]
+                  s=d["trusted_development"]
+                  assert d["source_sha256"]==expected and s["schema"]=="swrlz-trusted-development-v1"
+                  assert s["arbitraryExecution"] is False and s["isolationVerified"] is False
+                  assert s["broken"]["detected"] is True and s["repaired"]["passed"] is True
+                  assert s["passed"] is True and s["broken"]["fixtureSha256"]!=s["repaired"]["fixtureSha256"]
+                  for case in ("broken","repaired"):
+                      assert re.fullmatch(r"[0-9a-f]{64}",s[case]["fixtureSha256"])
+                      assert re.fullmatch(r"[0-9a-f]{64}",s[case]["screenshotSha256"])
+                  assert receipt["passed"] is True
+              suite_verified(verify(key,env,obj["nonce"]))
+              result=station_diagnose(key)
+              suite_verified(result["receipt"])
+              Path("swrlz-station-receipt.json").write_text(json.dumps(result["receipt"],indent=2,sort_keys=True)+"\n")
+              with open(os.environ["GITHUB_STEP_SUMMARY"],"a") as summary:
+                  summary.write("## §C → §X trusted development roundtrip\n\n")
+                  summary.write("Broken fixture detection: **PASS**\n\nRepaired fixture validation: **PASS**\n\n")
+                  summary.write("Signed §C roundtrip: **PASS**\n\nCandidate execution: **DISABLED**\n\n")
+                  summary.write("This tests built-in fixtures only; no model-generated repair or production containment is verified.\n")
+              print("C_TO_X_TRUSTED_REGRESSION_PASS",flush=True)
+              raise SystemExit(0)
+          url="https://kamiloki-swrlz-execution.hf.space/gradio_api/call/swrlz_combined_v04"
+          for attempt in range(30):
+              try:
+                  r=requests.post(url,json={"data":[]},timeout=15,allow_redirects=False)
+                  if r.status_code!=200: raise RuntimeError("HTTP_"+str(r.status_code))
+                  event=r.json()["event_id"]
+                  assert re.fullmatch(r"[0-9a-f]{32}",event)
+                  with requests.get(url+"/"+event,timeout=(10,210),stream=True,allow_redirects=False) as stream:
+                      stream.raise_for_status()
+                      kind=""
+                      for line in stream.iter_lines():
+                          if line.startswith(b"event:"):kind=line[6:].strip().decode()
+                          elif line.startswith(b"data:") and kind=="complete":
+                              data=json.loads(line[5:].strip())[0]
+                              assert data["schema"]=="swrlz-x-combined-v04"
+                              assert data.get("probeSourceSha256")==hashlib.sha256(local.read_bytes()).hexdigest(), "STALE_RUNNING_SOURCE"
+                              assert data["candidateExecutionEnabled"] is False and data["isolationVerified"] is False
+                              if data["status"]=="BUSY":raise RuntimeError("BUSY")
+                              status=str(data.get("status","UNVERIFIED"))
+                              compatible=status=="FIXTURE_COMPATIBLE" and data.get("browserChecksPassed") is True
+                              receipt=Path("swrlz-combined-receipt.json")
+                              receipt.write_text(json.dumps(data,indent=2,sort_keys=True)+"\n")
+                              with open(os.environ["GITHUB_STEP_SUMMARY"],"a") as summary:
+                                  summary.write("## §X runtime capability receipt\n\n")
+                                  summary.write("Diagnostic collection: **PASS**\\n\\n".replace("\\n","\n"))
+                                  summary.write("Trusted fixture compatibility: **"+("PASS" if compatible else "BLOCKED")+"**\n\n")
+                                  summary.write("Candidate execution: **DISABLED**\n\n")
+                                  summary.write("Source SHA-256: `"+data["probeSourceSha256"]+"`\n\n")
+                                  summary.write("See attached JSON receipt for exact stage and failure details. A successful diagnostic run is not proof of isolation.\n")
+                              print("X_COMBINED_BROWSER_EVIDENCE",json.dumps(data,sort_keys=True),flush=True)
+                              print("CANDIDATE_EXECUTION_REMAINS_DISABLED",flush=True)
+                              raise SystemExit(0)
+                  raise RuntimeError("NO_RECEIPT")
+              except Exception as exc:
+                  if attempt==29:raise RuntimeError("X_COMBINED_PROBE_UNVERIFIED") from exc
+                  if attempt%4==0:print("X_PROBE_PENDING",type(exc).__name__,flush=True)
+                  time.sleep(8)
+          PY
+      - name: Upload runtime diagnostic receipt
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: swrlz-runtime-receipts
+          path: |
+            swrlz-combined-receipt.json
+            swrlz-trusted-receipt.json
+            swrlz-station-receipt.json
+          if-no-files-found: warn
+          retention-days: 14

@@ -1,0 +1,39 @@
+name: §X v0.8 disposable VM capability
+on:
+  push:
+    branches: [feat/swrlz-x-isolation-v03]
+    paths:
+      - 'projects/swrlz-execution/vm_capability_v08.py'
+      - 'projects/swrlz-execution/launch_v08.py'
+      - 'projects/swrlz-execution/release_vm_capability_v08.py'
+      - '.github/workflows/swrlz-vm-capability-v08.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  capability:
+    if: github.ref == 'refs/heads/feat/swrlz-x-isolation-v03'
+    concurrency:
+      group: swrlz-execution-publish
+      cancel-in-progress: false
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - run: python -m pip install --quiet 'huggingface_hub>=0.34,<2' 'requests>=2.31,<3'
+      - name: Validate fixed probe and launcher
+        run: python projects/swrlz-execution/release_vm_capability_v08.py
+      - name: Verify live diskless guest capability and existing §X regression
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: python -u projects/swrlz-execution/release_vm_capability_v08.py publish
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: swrlz-v08-capability-receipt
+          path: swrlz-v08-capability.json
+          if-no-files-found: warn
+          retention-days: 14
