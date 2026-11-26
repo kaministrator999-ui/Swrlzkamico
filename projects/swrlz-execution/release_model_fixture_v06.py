@@ -68,6 +68,7 @@ def _swrlz_v06_model_fixture(
                 raise RuntimeError("FIXTURE_RECEIPT_MISMATCH")
             return rec
         try:
+            if not callable(globals().get("_coder_generate")):raise RuntimeError("LIVE_CODER_NOT_CALLABLE")
             active=_swrlz_verified_repair_runtime_v7()
             baseline=signed_suite()
             result["beforeSha256"]=before
@@ -131,18 +132,46 @@ def patch_station(source):
     if MARK in source:
         if source.count(MARK)!=1 or block.strip() not in source:raise RuntimeError("EXISTING_MODEL_FIXTURE_DRIFT")
         return source
-    anchor="def _swrlz_execute_model_repair_v7("
-    if source.count(anchor)!=1 or "def _swrlz_verified_repair_runtime_v7(" not in source or "def _coder_generate(" not in source or "/api/swrlz-x/v1/diagnostics" not in source:
-        raise RuntimeError("LIVE_STATION_ANCHOR_DRIFT")
-    updated=source.replace(anchor,block+"\n"+anchor,1)
+    tree=ast.parse(source)
+    # The production coder can be imported under an alias, not defined in
+    # station.py. Verify the existing binding or the established v12 call site.
+    definitions={n.name:n for n in tree.body if isinstance(n,(ast.FunctionDef,ast.AsyncFunctionDef))}
+    bindings=set(definitions)
+    for n in ast.walk(tree):
+        if isinstance(n,(ast.Import,ast.ImportFrom)):
+            bindings.update(a.asname or a.name.split(".")[0] for a in n.names)
+        elif isinstance(n,(ast.Assign,ast.AnnAssign)):
+            targets=n.targets if isinstance(n,ast.Assign) else [n.target]
+            bindings.update(t.id for t in targets if isinstance(t,ast.Name))
+    calls=[n for n in ast.walk(tree) if isinstance(n,ast.Call) and isinstance(n.func,ast.Name) and n.func.id=="_coder_generate"]
+    route_literals=[n for n in ast.walk(tree) if isinstance(n,ast.Constant) and n.value=="/api/swrlz-x/v1/diagnostics"]
+    missing=[]
+    anchor=definitions.get("_swrlz_execute_model_repair_v7")
+    if anchor is None:missing.append("REPAIR_ENTRY")
+    if "_swrlz_verified_repair_runtime_v7" not in definitions:missing.append("RUNTIME_GUARD")
+    if "_coder_generate" not in bindings and not calls:missing.append("CODER_BINDING")
+    if not route_literals:missing.append("SIGNED_DIAGNOSTIC_ROUTE")
+    if missing:raise RuntimeError("LIVE_STATION_ANCHOR_DRIFT:"+",".join(missing))
+    # Insert before the actual AST node (including any decorators); preserve all
+    # other source bytes. No invented alternate inference function or route.
+    line=min([anchor.lineno]+[d.lineno for d in anchor.decorator_list])
+    lines=source.splitlines(keepends=True)
+    lines.insert(line-1,block+"\n")
+    updated="".join(lines)
     ast.parse(updated)
+    print("LIVE_STATION_ANCHORS_PASS",flush=True)
     return updated
 
 def selftest():
-    stub="def _swrlz_verified_repair_runtime_v7():pass\ndef _coder_generate(payload):pass\n# /api/swrlz-x/v1/diagnostics\ndef _swrlz_execute_model_repair_v7():pass\n"
-    patched=patch_station(stub)
-    assert patch_station(patched)==patched
-    compile(patched,"<station fixture>","exec")
+    for coder in ("def _coder_generate(payload):pass\n","from qwen_coder_engine import generate as _coder_generate\n","def existing_probe(payload):\n    yield from _coder_generate(payload)\n"):
+        stub="def _swrlz_verified_repair_runtime_v7():pass\n"+coder+'ROUTE_PATH="/api/swrlz-x/v1/diagnostics"\n'+"def _swrlz_execute_model_repair_v7():pass\n"
+        patched=patch_station(stub)
+        assert patch_station(patched)==patched
+        compile(patched,"<station fixture>","exec")
+    try:patch_station("def _swrlz_execute_model_repair_v7():pass\n")
+    except RuntimeError as exc:
+        assert "CODER_BINDING" in str(exc) and "SIGNED_DIAGNOSTIC_ROUTE" in str(exc)
+    else:raise AssertionError("missing production anchors accepted")
     print("MODEL_FIXTURE_SOURCE_SELFTEST_PASS",flush=True)
 
 def live(key):
@@ -171,6 +200,7 @@ def publish():
     if updated!=original:new=write(old,updated,"§C: signed trusted model fixture repair probe v0.6")
     try:
         assert read(new)==updated
+        if new!=old:api.restart_space(SPACE)
         for attempt in range(15):
             try:rec=live(key);break
             except Exception as exc:
@@ -186,6 +216,7 @@ def publish():
         if new!=old and rev()==new:
             restored=write(new,original,"Rollback unverified §C model fixture probe")
             print("STATION_ROLLBACK",restored,flush=True)
+            api.restart_space(SPACE)
         raise
 
 if __name__=="__main__":
