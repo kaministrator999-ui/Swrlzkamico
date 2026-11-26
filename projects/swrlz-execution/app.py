@@ -533,6 +533,31 @@ def browser_failure(exc):
     )
     return sorted({label for needle,label in patterns if needle in msg}) or [type(exc).__name__]
 
+def direct_browser_evidence(stdout,stderr,returncode,timed_out,name):
+    msg=(stderr or b"").decode(errors="replace").lower()
+    markers=[key for key,needle in (
+        ("PROC_SELF","/proc/self/"),("PROC_NUMERIC","/proc/"),
+        ("PROC_STATUS","/status"),("PROC_MAPS","/maps"),("PROC_AUXV","/auxv"),
+        ("CRASH_REPORTER","crashpad"),("XDG_RUNTIME","xdg_runtime_dir"),
+        ("DEV_SHM","/dev/shm"),("DEV_DRI","/dev/dri"),
+        ("TMP_PATH","/tmp/"),("SYSTEM_LIB","/usr/lib/"),
+        ("PERMISSION_ERRNO","(13)"),("OPERATION_ERRNO","(1)"),
+        ("PIPE_CLOSED","broken pipe"),("LAUNCHER_CONFIG","/etc/chromium.d"),
+        ("SHELL_CANNOT_OPEN","cannot open"),("SHELL_CANNOT_SOURCE","cannot source"),
+        ("SHELL_SYNTAX","syntax error"),("SHELL_REDIRECTION","redirection"),
+        ("CHROMIUM_WRAPPER","/usr/bin/chromium"),("GPU_PROCESS","gpu process"),
+        ("RENDERER","renderer"),("ZYGOTE","zygote"),("FATAL","fatal:"),
+        ("THREAD","pthread"),("SOCKET","socket"),("DENIED","permission denied"),
+        ("CRASH_LOOP","crashed"),("DBUS","dbus")) if needle in msg]
+    fixture_seen=b"<p>swrlz-fixed-direct-probe</p>" in (stdout or b"")
+    categories=browser_failure(RuntimeError(msg)) if msg.strip() else []
+    if timed_out:categories=sorted(set(categories+["TIMEOUT"]))
+    return {"exitCode":returncode,"pass":not timed_out and returncode==0 and (name=="version" or fixture_seen),
+            "timedOut":timed_out,"fixtureOutputSeen":fixture_seen,
+            "stderrBytes":len(stderr or b""),"stdoutBytes":len(stdout or b""),
+            "failureCategories":categories,"markers":markers,
+            "signal":-returncode if returncode is not None and returncode<0 else None}
+
 def chromium_direct_checks(chromium,work,launch_args,label):
     # Fixed local fixture only. No candidate code, URLs, or credentials.
     # Native sandbox is unavailable; this is diagnostic compatibility only.
@@ -543,23 +568,10 @@ def chromium_direct_checks(chromium,work,launch_args,label):
                     "--dump-dom","data:text/html,<p>swrlz-fixed-direct-probe</p>"])):
         try:
             run=subprocess.run([chromium,*args],stdin=subprocess.DEVNULL,stdout=subprocess.PIPE,
-                               stderr=subprocess.PIPE,timeout=8,check=False)
-            msg=run.stderr.decode(errors="replace")
-            result[name]={"exitCode":run.returncode,
-                "pass":run.returncode==0 and (name=="version" or b"<p>swrlz-fixed-direct-probe</p>" in run.stdout),
-                "failureCategories":browser_failure(RuntimeError(msg)) if msg.strip() else [],
-                "signal":-run.returncode if run.returncode<0 else None}
-            # Only fixed known markers. No public raw diagnostic logs.
-            result[name]["markers"]=[key for key,needle in (
-                ("PROC_SELF","/proc/self/"),("PROC_NUMERIC","/proc/"),
-                ("CRASH_REPORTER","crashpad"),("XDG_RUNTIME","xdg_runtime_dir"),
-                ("DEV_SHM","/dev/shm"),("DEV_DRI","/dev/dri"),
-                ("TMP_PATH","/tmp/"),("SYSTEM_LIB","/usr/lib/"),
-                ("PERMISSION_ERRNO","(13)"),("OPERATION_ERRNO","(1)"),
-                ("PIPE_CLOSED","broken pipe"),("LAUNCHER_CONFIG","/etc/chromium.d"),
-                ("SHELL_CANNOT_OPEN","cannot open"),("SHELL_CANNOT_SOURCE","cannot source"),
-                ("SHELL_SYNTAX","syntax error"),("SHELL_REDIRECTION","redirection"),
-                ("CHROMIUM_WRAPPER","/usr/bin/chromium")) if needle in msg.lower()]
+                               stderr=subprocess.PIPE,timeout=15 if name=="fixture" else 5,check=False)
+            result[name]=direct_browser_evidence(run.stdout,run.stderr,run.returncode,False,name)
+        except subprocess.TimeoutExpired as e:
+            result[name]=direct_browser_evidence(e.stdout,e.stderr,None,True,name)
         except Exception as e:result[name]={"pass":False,"failureCategories":browser_failure(e)}
     return result
 
@@ -824,12 +836,13 @@ console.log(JSON.stringify(result));"""
     out["stage"]="restricted_direct_browser"
     out["restrictedDirectChromium"]=chromium_direct_checks(chromium,work,launch_args,"restricted")
     if binary:out["restrictedPackagedChromium"]=chromium_direct_checks(binary,work,launch_args,"restricted-packaged")
-    # Use the packaged ELF for the fixed compatibility fixture only when both
-    # direct baseline and restricted fixture tests passed. Policy is unchanged.
+    # The wrapper failure is already established. Test the packaged ELF via
+    # Playwright even if dump-dom timed out; this is still only the fixed fixture.
+    # No candidate bytes or new filesystem permissions are involved.
     selected=chromium
     if (not out["restrictedDirectChromium"].get("fixture",{}).get("pass") and binary
         and out.get("baselinePackagedChromium",{}).get("fixture",{}).get("pass")
-        and out.get("restrictedPackagedChromium",{}).get("fixture",{}).get("pass")):
+        and out.get("restrictedPackagedChromium",{}).get("version",{}).get("pass")):
         selected=binary
     out["fixtureBrowserExecutable"]="PACKAGED_ELF" if selected==binary else "SYSTEM_LAUNCHER"
     out["stage"]="restricted_driver_start"
@@ -886,7 +899,7 @@ def combined_probe():
             proc=subprocess.Popen([sys.executable,"-I","-c",_COMBINED_CHILD],
                 cwd=home,env=env,stdout=subprocess.PIPE,stderr=subprocess.DEVNULL,start_new_session=True,**kwargs)
             try:
-                raw,_=proc.communicate(timeout=160)
+                raw,_=proc.communicate(timeout=190)
                 if proc.returncode or len(raw)>16000:
                     result.update(status="CHILD_FAILED",exitCode=proc.returncode)
                 else:
