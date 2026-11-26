@@ -1,0 +1,40 @@
+name: §C → §X model-driven trusted fixture v0.6
+on:
+  push:
+    branches: [feat/swrlz-x-isolation-v03]
+    paths:
+      - 'projects/swrlz-execution/release_model_fixture_v06.py'
+      - '.github/workflows/swrlz-model-fixture-v06.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  model-fixture:
+    if: github.ref == 'refs/heads/feat/swrlz-x-isolation-v03'
+    concurrency:
+      group: swrlz-execution-publish
+      cancel-in-progress: false
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m pip install --quiet 'huggingface_hub>=0.34,<2' 'requests>=2.31,<3'
+      - name: Validate exact fixture and station patch
+        run: python projects/swrlz-execution/release_model_fixture_v06.py
+      - name: Deploy authenticated probe and verify actual model-to-browser roundtrip
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: python -u projects/swrlz-execution/release_model_fixture_v06.py publish
+      - name: Retain signed-receipt evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: swrlz-model-fixture-receipt
+          path: swrlz-model-fixture-receipt.json
+          if-no-files-found: warn
+          retention-days: 14
