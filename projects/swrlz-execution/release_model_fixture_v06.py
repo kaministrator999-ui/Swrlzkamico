@@ -1,6 +1,6 @@
 """Deploy a signed, fixture-only model repair probe into §C.
 No candidate HTML crosses the network or executes unless it is byte-identical
-to the already reviewed built-in §X fixture. No project writes or publication.
+to an independently reviewed built-in §X fixture. No project writes or publication.
 """
 import ast, hashlib, hmac, io, json, os, re, secrets, sys, time
 from pathlib import Path
@@ -73,6 +73,8 @@ def _swrlz_v06_model_fixture(
         def sha(text):return hashlib.sha256(text.encode()).hexdigest()
         fixture=_swrlz_v06_fixture
         broken=fixture.replace("document.querySelector('#state').textContent","document.querySelector('#missing').textContent",1)
+        alternate=fixture.replace("document.querySelector('#state')","document.getElementById('state')",1)
+        reviewed={"repaired":fixture,"repairedById":alternate}
         before=sha(broken);expected=sha(fixture)
         project="trusted-browser-fixture"
         files={"index.html":broken}
@@ -82,9 +84,9 @@ def _swrlz_v06_model_fixture(
             if (d.get("source_sha256")!=_swrlz_v06_source_sha or s.get("schema")!="swrlz-trusted-development-v1"
                 or s.get("arbitraryExecution") is not False or s.get("isolationVerified") is not False
                 or s.get("passed") is not True or s["broken"].get("detected") is not True
-                or s["repaired"].get("passed") is not True
+                or any(s[case].get("passed") is not True or s[case].get("fixtureSha256")!=sha(html) for case,html in reviewed.items())
                 or s["broken"].get("fixtureSha256")!=before or s["repaired"].get("fixtureSha256")!=expected
-                or any(not re.fullmatch(r"[0-9a-f]{64}",s[c].get("screenshotSha256") or "") for c in ("broken","repaired"))):
+                or any(not re.fullmatch(r"[0-9a-f]{64}",s[c].get("screenshotSha256") or "") for c in ("broken","repaired","repairedById"))):
                 raise RuntimeError("FIXTURE_RECEIPT_MISMATCH")
             return rec
         try:
@@ -95,8 +97,8 @@ def _swrlz_v06_model_fixture(
             result["baselineNonce"]=baseline["nonce"]
             result["baselineFailure"]=baseline["diagnostics"]["trusted_development"]["broken"]
             evidence=[{"runtimeEvidence":result["baselineFailure"],"expectedBehavior":"Click the Test interaction button; state changes from Ready to Click passed without page errors."}]
-            evidence.append({"scope":"The reviewed fixture permits changing only the invalid CSS selector inside the existing onclick handler. The target is the existing status element containing Ready. All other characters, including quote style, whitespace and line endings, must remain identical. Browser behavior alone is insufficient for this trusted-only test."})
-            task="Identify the existing status element ID from the HTML source. Repair the click handler by replacing only its incorrect selector token with that existing ID. Return exactly ONE replace_once patch in index.html using the shortest unique literal anchor. Do not rewrite the handler, change quotes, add a null guard, rename IDs, alter markup or modify any other bytes. No full page or prose."
+            evidence.append({"scope":"The reviewed fixture permits a minimal correction to the existing DOM lookup inside the onclick handler. The target is the existing status element containing Ready. Preserve all other source bytes. Browser behavior alone is insufficient for this trusted-only test."})
+            task="Identify the existing status element ID from the HTML source. Repair its DOM lookup in the click handler with one minimal exact replace_once patch in index.html. Preserve the assignment, other markup, styles and all unrelated bytes. No full page or prose."
             # This deliberately invokes the same production coding model and
             # exact patch engine, with no executor fallback or model authority.
             failures=[]
@@ -115,7 +117,8 @@ def _swrlz_v06_model_fixture(
                     proposal=active.bind_model_edits(project,files,raw_proposal)
                     applied=active.apply_proposal(project,files,proposal,expected_hashes={"index.html":before})
                     candidate=applied["proposedFiles"].get("index.html")
-                    if not isinstance(candidate,str) or candidate!=fixture or applied["afterHashes"].get("index.html")!=expected:
+                    selected=next((case for case,html in reviewed.items() if candidate==html),None)
+                    if selected is None or applied["afterHashes"].get("index.html")!=sha(reviewed[selected]):
                         mismatch=_swrlz_v06_candidate_delta(broken,fixture,candidate)
                         raise ValueError("CANDIDATE_NOT_REVIEWED_FIXTURE")
                     result["attempts"].append({"attempt":attempt+1,"state":"reviewed_fixture_match","patchCount":len(edits)})
@@ -124,8 +127,8 @@ def _swrlz_v06_model_fixture(
                     # Execute the byte-identical reviewed fixture via existing §X.
                     fresh=signed_suite()
                     if fresh["nonce"]==baseline["nonce"]:raise RuntimeError("STALE_RETEST")
-                    result.update(state="passed",repairOrigin="model",afterSha256=expected,
-                                  retestNonce=fresh["nonce"],retest=fresh["diagnostics"]["trusted_development"]["repaired"],
+                    result.update(state="passed",repairOrigin="model",afterSha256=sha(reviewed[selected]),reviewedVariant=selected,
+                                  retestNonce=fresh["nonce"],retest=fresh["diagnostics"]["trusted_development"][selected],
                                   browserVerified=True,fixtureBytesMatched=True)
                     break
                 except Exception as exc:
@@ -135,9 +138,9 @@ def _swrlz_v06_model_fixture(
                     if mismatch is not None:
                         rejected["mismatch"]=mismatch
                         failures.append(label+": "+json.dumps(mismatch,sort_keys=True)+
-                            ". Re-read the original source; correct only the erroneous selector to the existing status element ID. Preserve all other characters. Submit a new single exact patch.")
+                            ". Re-read the original source; correct only the erroneous DOM lookup to the existing status element ID. Preserve all other characters. Submit a new single exact patch.")
                     else:
-                        failures.append(label+". Return one exact replace_once edit on the existing selector token, not an entire handler.")
+                        failures.append(label+". Return one exact replace_once edit on the existing DOM lookup, not an entire handler.")
                     result["attempts"].append(rejected)
             if result["state"]!="passed":result["blocker"]="MODEL_FIXTURE_REPAIR_UNVERIFIED"
         except Exception as exc:
@@ -223,6 +226,8 @@ def selftest():
     reviewed,_=source_fixture()
     broken=reviewed.replace("querySelector('#state')","querySelector('#missing')",1)
     assert broken!=reviewed
+    alternate=reviewed.replace("document.querySelector('#state')","document.getElementById('state')",1)
+    assert hashlib.sha256(alternate.encode()).hexdigest()=="fb2f0fa4211e2bb8a0cad5cc3d3ed80847f08c216b762b9f293c9c2f78483f67"
     assert delta(broken,reviewed,broken)["originalSelectorStillPresent"]
     changed=delta(broken,reviewed,reviewed+"\n")
     assert changed["expectedSelectorPresent"] and changed["changedOutsideAllowedSpan"]
@@ -291,6 +296,28 @@ def publish():
     token=os.environ["HF_TOKEN"];key=derive_key(token);api=HfApi(token=token)
     def rev():return str(api.repo_info(SPACE,repo_type="space").sha)
     def read(r):return Path(hf_hub_download(SPACE,STATION,repo_type="space",revision=r,token=token)).read_bytes()
+    # Ensure §X runs the matching trusted suite before changing shared §C/§E.
+    from x_diagnostic_client import diagnose
+    xspace="kamiloki/swrlz-execution"
+    xraw=(ROOT/"app.py").read_bytes()
+    xdigest=hashlib.sha256(xraw).hexdigest()
+    xr=str(api.repo_info(xspace,repo_type="space").sha)
+    current=Path(hf_hub_download(xspace,"app.py",repo_type="space",revision=xr,token=token)).read_bytes()
+    if b"def remote_probe(" not in current:raise RuntimeError("X_SOURCE_DRIFT")
+    if current!=xraw:
+        xr=api.create_commit(repo_id=xspace,repo_type="space",revision="main",parent_commit=xr,operations=[CommitOperationAdd(path_in_repo="app.py",path_or_fileobj=io.BytesIO(xraw))],commit_message="§X reviewed equivalent fixture v0.6").oid
+    assert Path(hf_hub_download(xspace,"app.py",repo_type="space",revision=xr,token=token)).read_bytes()==xraw
+    deadline=time.monotonic()+360
+    while time.monotonic()<deadline:
+        try:
+            d=diagnose(key)["diagnostics"]
+            assert d["source_sha256"]==xdigest and d["trusted_development"]["repairedById"]["passed"] is True
+            print("X_REVIEWED_VARIANTS_VERIFIED",xdigest,flush=True)
+            break
+        except Exception as exc:
+            print("X_VARIANT_PENDING",type(exc).__name__,flush=True)
+            time.sleep(8)
+    else:raise RuntimeError("X_REVIEWED_VARIANTS_UNVERIFIED")
     old=rev();original=read(old);updated=patch_station(original.decode()).encode()
     def write(parent,raw,msg):
         return api.create_commit(repo_id=SPACE,repo_type="space",revision="main",parent_commit=parent,operations=[CommitOperationAdd(path_in_repo=STATION,path_or_fileobj=io.BytesIO(raw))],commit_message=msg).oid
@@ -304,10 +331,13 @@ def publish():
         rec=live(key)
         Path("swrlz-model-fixture-receipt.json").write_text(json.dumps(rec,indent=2,sort_keys=True)+"\n")
         print("MODEL_FIXTURE_RECEIPT",json.dumps(rec,sort_keys=True),flush=True)
-        fixture,_=source_fixture();expected=hashlib.sha256(fixture.encode()).hexdigest()
+        fixture,_=source_fixture()
+        reviewed={"repaired":fixture,"repairedById":fixture.replace("document.querySelector('#state')","document.getElementById('state')",1)}
+        selected=rec.get("reviewedVariant")
+        expected=hashlib.sha256(reviewed[selected].encode()).hexdigest() if selected in reviewed else None
         if any(a.get("reason")=="CANDIDATE_NOT_REVIEWED_FIXTURE" and not isinstance(a.get("mismatch"),dict) for a in rec.get("attempts",[])):
             raise RuntimeError("MODEL_FIXTURE_MISMATCH_EVIDENCE_MISSING")
-        if not (rec.get("state")=="passed" and rec.get("realModelCalls",0)>=1 and rec.get("repairOrigin")=="model" and rec.get("fixtureBytesMatched") is True and rec.get("browserVerified") is True and rec.get("afterSha256")==expected and rec.get("candidateSha256")==expected and rec.get("baselineNonce")!=rec.get("retestNonce") and rec.get("arbitraryExecution") is False and rec.get("isolationVerified") is False and rec.get("projectCommitted") is False and rec.get("projectDeployed") is False):
+        if not (rec.get("state")=="passed" and rec.get("realModelCalls",0)>=1 and rec.get("repairOrigin")=="model" and rec.get("fixtureBytesMatched") is True and rec.get("browserVerified") is True and expected is not None and rec.get("afterSha256")==expected and rec.get("candidateSha256")==expected and rec.get("retest",{}).get("fixtureSha256")==expected and rec.get("retest",{}).get("passed") is True and rec.get("baselineNonce")!=rec.get("retestNonce") and rec.get("arbitraryExecution") is False and rec.get("isolationVerified") is False and rec.get("projectCommitted") is False and rec.get("projectDeployed") is False):
             raise RuntimeError("MODEL_REPAIR_NOT_VERIFIED")
         print("C_MODEL_TO_X_FIXTURE_REPAIR_PASS",flush=True)
     except Exception:
