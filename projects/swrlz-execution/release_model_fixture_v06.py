@@ -32,7 +32,7 @@ def _swrlz_v06_model_fixture(
     import x_diagnostic_client as x
     key=os.environ.get(x.KEY_NAME,"")
     if len(key)!=64 or len(raw)>512 or len(signature)!=64 or not hmac.compare_digest(x.mac(key,"model-fixture-request",raw.encode()),signature):
-        raise _swrlz_v06_http_error(403,"DIAGNOSTIC_DENIED")
+        raise _swrlz_v06_http_error(403,"MODEL_FIXTURE_V06_DENIED")
     try:
         obj=json.loads(raw);now=int(time.time())
         if set(obj)!={"schema","nonce","timestamp"} or obj["schema"]!="swrlz-trusted-model-fixture-v06" or not re.fullmatch(r"[0-9a-f]{32}",obj["nonce"]) or type(obj["timestamp"]) is not int or abs(now-obj["timestamp"])>120:
@@ -144,16 +144,23 @@ def patch_station(source):
             targets=n.targets if isinstance(n,ast.Assign) else [n.target]
             bindings.update(t.id for t in targets if isinstance(t,ast.Name))
     calls=[n for n in ast.walk(tree) if isinstance(n,ast.Call) and isinstance(n.func,ast.Name) and n.func.id=="_coder_generate"]
-    route_literals=[n for n in ast.walk(tree) if isinstance(n,ast.Constant) and n.value=="/api/swrlz-x/v1/diagnostics"]
+    # Register alongside the existing, verified live diagnostic route rather
+    # than assuming the repair helper is before every ASGI mount/startup.
+    diagnostic_routes=[n for n in definitions.values() if any(
+        isinstance(d,ast.Call) and isinstance(d.func,ast.Attribute)
+        and isinstance(d.func.value,ast.Name) and d.func.value.id=="app"
+        and d.func.attr=="post" and d.args and isinstance(d.args[0],ast.Constant)
+        and d.args[0].value=="/api/swrlz-x/v1/diagnostics" for d in n.decorator_list)]
     missing=[]
     anchor=definitions.get("_swrlz_execute_model_repair_v7")
     if anchor is None:missing.append("REPAIR_ENTRY")
     if "_swrlz_verified_repair_runtime_v7" not in definitions:missing.append("RUNTIME_GUARD")
     if "_coder_generate" not in bindings and not calls:missing.append("CODER_BINDING")
-    if not route_literals:missing.append("SIGNED_DIAGNOSTIC_ROUTE")
+    if len(diagnostic_routes)!=1:missing.append("SIGNED_DIAGNOSTIC_ROUTE")
     if missing:raise RuntimeError("LIVE_STATION_ANCHOR_DRIFT:"+",".join(missing))
     # Insert before the actual AST node (including any decorators); preserve all
     # other source bytes. No invented alternate inference function or route.
+    anchor=diagnostic_routes[0]
     line=min([anchor.lineno]+[d.lineno for d in anchor.decorator_list])
     lines=source.splitlines(keepends=True)
     lines.insert(line-1,block+"\n")
@@ -164,7 +171,7 @@ def patch_station(source):
 
 def selftest():
     for coder in ("def _coder_generate(payload):pass\n","from qwen_coder_engine import generate as _coder_generate\n","def existing_probe(payload):\n    yield from _coder_generate(payload)\n"):
-        stub="def _swrlz_verified_repair_runtime_v7():pass\n"+coder+'ROUTE_PATH="/api/swrlz-x/v1/diagnostics"\n'+"def _swrlz_execute_model_repair_v7():pass\n"
+        stub="def _swrlz_verified_repair_runtime_v7():pass\n"+coder+'@app.post("/api/swrlz-x/v1/diagnostics")\ndef existing_diagnostic():pass\n'+"def _swrlz_execute_model_repair_v7():pass\n"
         patched=patch_station(stub)
         assert patch_station(patched)==patched
         compile(patched,"<station fixture>","exec")
@@ -173,6 +180,43 @@ def selftest():
         assert "CODER_BINDING" in str(exc) and "SIGNED_DIAGNOSTIC_ROUTE" in str(exc)
     else:raise AssertionError("missing production anchors accepted")
     print("MODEL_FIXTURE_SOURCE_SELFTEST_PASS",flush=True)
+
+def wait_ready(api, revision):
+    """Only test route registration. Invalid signature must reject before inference."""
+    deadline=time.monotonic()+540
+    attempt=0
+    evidence={}
+    with requests.Session() as session:
+        session.trust_env=False
+        while time.monotonic()<deadline:
+            attempt+=1
+            if str(api.repo_info(SPACE,repo_type="space").sha)!=revision:
+                raise RuntimeError("STATION_CONCURRENT_CHANGE")
+            try:
+                stage=str(api.get_space_runtime(SPACE).stage)
+            except Exception as exc:
+                stage="UNKNOWN_"+type(exc).__name__
+            evidence={"stage":stage,"attempt":attempt}
+            try:
+                with session.post(BASE+CHECK,headers={"X-Swrlz-X-Request":"{}","X-Swrlz-X-Signature":"0"*64},timeout=(10,10),allow_redirects=False,stream=True) as response:
+                    evidence["httpStatus"]=response.status_code
+                    if response.status_code==403:
+                        body=response.raw.read(4097)
+                        if len(body)<=4096:
+                            try:detail=json.loads(body).get("detail")
+                            except (ValueError,AttributeError):detail=None
+                            if detail=="MODEL_FIXTURE_V06_DENIED":
+                                print("MODEL_FIXTURE_ROUTE_READY",json.dumps(evidence),flush=True)
+                                return
+                if evidence.get("httpStatus")==404 and attempt%5==1:
+                    with session.post(BASE+"/api/swrlz-x/v1/diagnostics",headers={"X-Swrlz-X-Request":"{}","X-Swrlz-X-Signature":"0"*64},timeout=(10,10),allow_redirects=False,stream=True) as previous:
+                        evidence["existingDiagnosticHttpStatus"]=previous.status_code
+            except requests.RequestException as exc:
+                evidence["transport"]=type(exc).__name__
+            print("MODEL_FIXTURE_STARTUP",json.dumps(evidence,sort_keys=True),flush=True)
+            Path("swrlz-model-fixture-startup.json").write_text(json.dumps(evidence,indent=2)+"\n")
+            time.sleep(10)
+    raise RuntimeError("MODEL_FIXTURE_ROUTE_UNVERIFIED:"+json.dumps(evidence,sort_keys=True))
 
 def live(key):
     obj={"schema":SCHEMA,"nonce":secrets.token_hex(16),"timestamp":int(time.time())}
@@ -201,11 +245,9 @@ def publish():
     try:
         assert read(new)==updated
         if new!=old:api.restart_space(SPACE)
-        for attempt in range(15):
-            try:rec=live(key);break
-            except Exception as exc:
-                if attempt==14:raise
-                print("MODEL_FIXTURE_PENDING",type(exc).__name__,flush=True);time.sleep(8)
+        wait_ready(api,new)
+        # Do not repeatedly trigger the real model if a long request loses its connection.
+        rec=live(key)
         Path("swrlz-model-fixture-receipt.json").write_text(json.dumps(rec,indent=2,sort_keys=True)+"\n")
         print("MODEL_FIXTURE_RECEIPT",json.dumps(rec,sort_keys=True),flush=True)
         fixture,_=source_fixture();expected=hashlib.sha256(fixture.encode()).hexdigest()
