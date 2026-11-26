@@ -556,7 +556,10 @@ def chromium_direct_checks(chromium,work,launch_args,label):
                 ("DEV_SHM","/dev/shm"),("DEV_DRI","/dev/dri"),
                 ("TMP_PATH","/tmp/"),("SYSTEM_LIB","/usr/lib/"),
                 ("PERMISSION_ERRNO","(13)"),("OPERATION_ERRNO","(1)"),
-                ("PIPE_CLOSED","broken pipe")) if needle in msg.lower()]
+                ("PIPE_CLOSED","broken pipe"),("LAUNCHER_CONFIG","/etc/chromium.d"),
+                ("SHELL_CANNOT_OPEN","cannot open"),("SHELL_CANNOT_SOURCE","cannot source"),
+                ("SHELL_SYNTAX","syntax error"),("SHELL_REDIRECTION","redirection"),
+                ("CHROMIUM_WRAPPER","/usr/bin/chromium")) if needle in msg.lower()]
         except Exception as e:result[name]={"pass":False,"failureCategories":browser_failure(e)}
     return result
 
@@ -593,6 +596,18 @@ def main():
     allowed=work/"canary.txt";allowed.write_text("inside")
     chromium=shutil.which("chromium") or shutil.which("chromium-browser")
     if not chromium:out["status"]="CHROMIUM_MISSING";return
+    # Inspect only the installed launcher magic and the known packaged executable.
+    # No user-supplied executable or path is accepted.
+    binary=None
+    try:
+        with open(chromium,"rb") as f:magic=f.read(4)
+        out["chromiumLauncherType"]="SHELL_SCRIPT" if magic.startswith(b"#!") else ("ELF" if magic==b"\x7fELF" else "OTHER")
+        packaged=Path("/usr/lib/chromium/chromium")
+        if packaged.is_file() and os.access(packaged,os.X_OK):
+            with packaged.open("rb") as f:
+                if f.read(4)==b"\x7fELF":binary=str(packaged)
+    except OSError as e:out["launcherInspectionErrno"]=e.errno
+    out["packagedChromiumPresent"]=binary is not None
     abi=syscall(444,C.c_void_p(),C.c_size_t(0),C.c_uint(1));out["abi"]=abi
     if abi<4:out["status"]="LANDLOCK_ABI_TOO_OLD";return
     # The original child cwd was the parent of the permitted workspace.
@@ -633,6 +648,7 @@ def main():
     out["baselineRuntimeAccess"]=runtime_paths()
     out["baselineNodeStartup"]=node_startup_checks()
     out["baselineDirectChromium"]=chromium_direct_checks(chromium,work,launch_args,"baseline")
+    if binary:out["baselinePackagedChromium"]=chromium_direct_checks(binary,work,launch_args,"baseline-packaged")
     out["baselineBrowserLaunch"]=False
     try:
         with sync_playwright() as baseline:
@@ -807,12 +823,21 @@ console.log(JSON.stringify(result));"""
         out["driverVersionChecks"]={"status":"UNAVAILABLE","failureCategories":browser_failure(e)}
     out["stage"]="restricted_direct_browser"
     out["restrictedDirectChromium"]=chromium_direct_checks(chromium,work,launch_args,"restricted")
+    if binary:out["restrictedPackagedChromium"]=chromium_direct_checks(binary,work,launch_args,"restricted-packaged")
+    # Use the packaged ELF for the fixed compatibility fixture only when both
+    # direct baseline and restricted fixture tests passed. Policy is unchanged.
+    selected=chromium
+    if (not out["restrictedDirectChromium"].get("fixture",{}).get("pass") and binary
+        and out.get("baselinePackagedChromium",{}).get("fixture",{}).get("pass")
+        and out.get("restrictedPackagedChromium",{}).get("fixture",{}).get("pass")):
+        selected=binary
+    out["fixtureBrowserExecutable"]="PACKAGED_ELF" if selected==binary else "SYSTEM_LAUNCHER"
     out["stage"]="restricted_driver_start"
     # Fixed fixture only: no external assets, URLs, candidate bytes or credentials.
     # Native Chromium sandbox is still unavailable on this host.
     with sync_playwright() as p:
         out["stage"]="restricted_browser_launch"
-        browser=p.chromium.launch(executable_path=chromium,headless=True,chromium_sandbox=False,timeout=12000,args=launch_args)
+        browser=p.chromium.launch(executable_path=selected,headless=True,chromium_sandbox=False,timeout=12000,args=launch_args)
         try:
             out["chromiumLaunch"]=True
             out["stage"]="browser_context"
@@ -861,7 +886,7 @@ def combined_probe():
             proc=subprocess.Popen([sys.executable,"-I","-c",_COMBINED_CHILD],
                 cwd=home,env=env,stdout=subprocess.PIPE,stderr=subprocess.DEVNULL,start_new_session=True,**kwargs)
             try:
-                raw,_=proc.communicate(timeout=140)
+                raw,_=proc.communicate(timeout=160)
                 if proc.returncode or len(raw)>16000:
                     result.update(status="CHILD_FAILED",exitCode=proc.returncode)
                 else:
