@@ -30,14 +30,17 @@ def probe():
         _probe_lock.release()
 
 def _trusted_development(browser):
-    """Run only two source-defined fixtures. Never accept project bytes or URLs."""
+    """Run only source-defined fixtures. Never accept project bytes or URLs."""
     broken=FIXTURE.replace("document.querySelector('#state').textContent",
                            "document.querySelector('#missing').textContent",1)
     if broken==FIXTURE:
         raise RuntimeError("TRUSTED_FIXTURE_DRIFT")
     suite={"schema":"swrlz-trusted-development-v1","arbitraryExecution":False,
            "isolationVerified":False,"passed":False}
-    for name,html in (("broken",broken),("repaired",FIXTURE)):
+    # Independently reviewed equivalent DOM lookup; no model bytes are evaluated.
+    alternate=FIXTURE.replace("document.querySelector('#state')","document.getElementById('state')",1)
+    if alternate==FIXTURE:raise RuntimeError("TRUSTED_ALTERNATE_DRIFT")
+    for name,html in (("broken",broken),("repaired",FIXTURE),("repairedById",alternate)):
         context=browser.new_context(viewport={"width":800,"height":560},device_scale_factor=1,
                                     service_workers="block")
         errors=[]
@@ -59,7 +62,7 @@ def _trusted_development(browser):
                 case["passed"]=before=="Ready" and after=="Click passed" and not errors
             suite[name]=case
         finally:context.close()
-    suite["passed"]=suite["broken"]["detected"] and suite["repaired"]["passed"]
+    suite["passed"]=suite["broken"]["detected"] and suite["repaired"]["passed"] and suite["repairedById"]["passed"]
     return suite
 
 
