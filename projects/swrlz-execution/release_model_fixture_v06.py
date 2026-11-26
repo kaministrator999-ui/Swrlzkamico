@@ -23,6 +23,7 @@ _swrlz_v06_lock=_swrlz_v06_threading.Lock()
 _swrlz_v06_seen={}
 _swrlz_v06_fixture=__TRUSTED_FIXTURE__
 _swrlz_v06_source_sha=__X_SOURCE_SHA__
+_swrlz_v06_release_id=__RELEASE_ID__
 
 def _swrlz_v06_candidate_delta(broken, reviewed, candidate):
     """Safe mismatch metadata only; do not return model-generated source."""
@@ -51,10 +52,10 @@ def _swrlz_v06_model_fixture(
     import x_diagnostic_client as x
     key=os.environ.get(x.KEY_NAME,"")
     if len(key)!=64 or len(raw)>512 or len(signature)!=64 or not hmac.compare_digest(x.mac(key,"model-fixture-request",raw.encode()),signature):
-        raise _swrlz_v06_http_error(403,"MODEL_FIXTURE_V06_DENIED")
+        raise _swrlz_v06_http_error(403,"MODEL_FIXTURE_V06_DENIED:"+_swrlz_v06_release_id)
     try:
         obj=json.loads(raw);now=int(time.time())
-        if set(obj)!={"schema","nonce","timestamp"} or obj["schema"]!="swrlz-trusted-model-fixture-v06" or not re.fullmatch(r"[0-9a-f]{32}",obj["nonce"]) or type(obj["timestamp"]) is not int or abs(now-obj["timestamp"])>120:
+        if set(obj)!={"schema","nonce","timestamp","releaseId"} or obj["releaseId"]!=_swrlz_v06_release_id or obj["schema"]!="swrlz-trusted-model-fixture-v06" or not re.fullmatch(r"[0-9a-f]{32}",obj["nonce"]) or type(obj["timestamp"]) is not int or abs(now-obj["timestamp"])>120:
             raise ValueError()
     except (ValueError,TypeError,KeyError):
         raise _swrlz_v06_http_error(400,"DIAGNOSTIC_INVALID")
@@ -66,7 +67,7 @@ def _swrlz_v06_model_fixture(
         if obj["nonce"] in _swrlz_v06_seen or len(_swrlz_v06_seen)>=256:
             raise _swrlz_v06_http_error(409,"DIAGNOSTIC_REPLAY")
         _swrlz_v06_seen[obj["nonce"]]=now
-        result={"schema":obj["schema"],"nonce":obj["nonce"],"state":"failed",
+        result={"schema":obj["schema"],"nonce":obj["nonce"],"releaseId":_swrlz_v06_release_id,"state":"failed",
                 "realModelCalls":0,"attempts":[],"arbitraryExecution":False,
                 "isolationVerified":False,"projectCommitted":False,"projectDeployed":False}
         def sha(text):return hashlib.sha256(text.encode()).hexdigest()
@@ -154,9 +155,14 @@ def source_fixture():
     if len(values)!=1 or not isinstance(values[0],str):raise RuntimeError("FIXTURE_SOURCE_DRIFT")
     return values[0],hashlib.sha256(raw).hexdigest()
 
+def release_id():
+    # Fingerprint the actual route implementation and pinned §X source.
+    _,digest=source_fixture()
+    return hashlib.sha256((ROUTE+"\n"+digest).encode()).hexdigest()
+
 def patch_station(source):
     fixture,digest=source_fixture()
-    block=ROUTE.replace("__TRUSTED_FIXTURE__",repr(fixture)).replace("__X_SOURCE_SHA__",repr(digest))
+    block=ROUTE.replace("__TRUSTED_FIXTURE__",repr(fixture)).replace("__X_SOURCE_SHA__",repr(digest)).replace("__RELEASE_ID__",repr(release_id()))
     if MARK in source:
         if source.count(MARK)!=1 or block.strip() not in source:raise RuntimeError("EXISTING_MODEL_FIXTURE_DRIFT")
         return source
@@ -202,6 +208,7 @@ def selftest():
         stub="def _swrlz_verified_repair_runtime_v7():pass\n"+coder+'@app.post("/api/swrlz-x/v1/diagnostics")\ndef existing_diagnostic():pass\n'+"def _swrlz_execute_model_repair_v7():pass\n"
         patched=patch_station(stub)
         assert patch_station(patched)==patched
+        assert repr(release_id()) in patched
         compile(patched,"<station fixture>","exec")
     try:patch_station("def _swrlz_execute_model_repair_v7():pass\n")
     except RuntimeError as exc:
@@ -224,7 +231,9 @@ def selftest():
 
 def wait_ready(api, revision):
     """Only test route registration. Invalid signature must reject before inference."""
-    deadline=time.monotonic()+540
+    deadline=time.monotonic()+720
+    expected=release_id()
+    print("MODEL_FIXTURE_EXPECTED_RELEASE",expected,flush=True)
     attempt=0
     evidence={}
     with requests.Session() as session:
@@ -246,8 +255,12 @@ def wait_ready(api, revision):
                         if len(body)<=4096:
                             try:detail=json.loads(body).get("detail")
                             except (ValueError,AttributeError):detail=None
-                            if detail=="MODEL_FIXTURE_V06_DENIED":
-                                print("MODEL_FIXTURE_ROUTE_READY",json.dumps(evidence),flush=True)
+                            evidence["releaseMatches"]=detail=="MODEL_FIXTURE_V06_DENIED:"+expected
+                            if evidence["releaseMatches"] and stage.split(".")[-1]=="RUNNING":
+                                # Recheck repo revision after the live response.
+                                if str(api.repo_info(SPACE,repo_type="space").sha)!=revision:
+                                    raise RuntimeError("STATION_CONCURRENT_CHANGE")
+                                print("MODEL_FIXTURE_ROUTE_READY",json.dumps(evidence),expected,flush=True)
                                 return
                 if evidence.get("httpStatus")==404 and attempt%5==1:
                     with session.post(BASE+"/api/swrlz-x/v1/diagnostics",headers={"X-Swrlz-X-Request":"{}","X-Swrlz-X-Signature":"0"*64},timeout=(10,10),allow_redirects=False,stream=True) as previous:
@@ -260,7 +273,7 @@ def wait_ready(api, revision):
     raise RuntimeError("MODEL_FIXTURE_ROUTE_UNVERIFIED:"+json.dumps(evidence,sort_keys=True))
 
 def live(key):
-    obj={"schema":SCHEMA,"nonce":secrets.token_hex(16),"timestamp":int(time.time())}
+    obj={"schema":SCHEMA,"nonce":secrets.token_hex(16),"timestamp":int(time.time()),"releaseId":release_id()}
     raw=wire(obj)
     with requests.Session() as s:
         s.trust_env=False
@@ -269,7 +282,7 @@ def live(key):
             body=r.raw.read(65537)
     if len(body)>65536:raise RuntimeError("RECEIPT_TOO_LARGE")
     env=json.loads(body);rec=env["receipt"]
-    if not hmac.compare_digest(mac(key,"model-fixture-receipt",wire(rec)),env["signature"]) or rec["nonce"]!=obj["nonce"] or rec["schema"]!=SCHEMA or abs(time.time()-rec["timestamp"])>180:
+    if not hmac.compare_digest(mac(key,"model-fixture-receipt",wire(rec)),env["signature"]) or rec["nonce"]!=obj["nonce"] or rec["schema"]!=SCHEMA or rec.get("releaseId")!=release_id() or abs(time.time()-rec["timestamp"])>180:
         raise RuntimeError("RECEIPT_IDENTITY")
     return rec
 
@@ -292,6 +305,8 @@ def publish():
         Path("swrlz-model-fixture-receipt.json").write_text(json.dumps(rec,indent=2,sort_keys=True)+"\n")
         print("MODEL_FIXTURE_RECEIPT",json.dumps(rec,sort_keys=True),flush=True)
         fixture,_=source_fixture();expected=hashlib.sha256(fixture.encode()).hexdigest()
+        if any(a.get("reason")=="CANDIDATE_NOT_REVIEWED_FIXTURE" and not isinstance(a.get("mismatch"),dict) for a in rec.get("attempts",[])):
+            raise RuntimeError("MODEL_FIXTURE_MISMATCH_EVIDENCE_MISSING")
         if not (rec.get("state")=="passed" and rec.get("realModelCalls",0)>=1 and rec.get("repairOrigin")=="model" and rec.get("fixtureBytesMatched") is True and rec.get("browserVerified") is True and rec.get("afterSha256")==expected and rec.get("candidateSha256")==expected and rec.get("baselineNonce")!=rec.get("retestNonce") and rec.get("arbitraryExecution") is False and rec.get("isolationVerified") is False and rec.get("projectCommitted") is False and rec.get("projectDeployed") is False):
             raise RuntimeError("MODEL_REPAIR_NOT_VERIFIED")
         print("C_MODEL_TO_X_FIXTURE_REPAIR_PASS",flush=True)
