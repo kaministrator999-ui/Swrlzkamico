@@ -28,7 +28,7 @@ jobs:
         run: |
           python -m py_compile projects/swrlz-execution/app.py
           python -u - <<'PY'
-          import os, json, time, re, hashlib
+          import os, json, time, re, hashlib, ast
           from pathlib import Path
           import requests
           from huggingface_hub import HfApi, CommitOperationAdd, hf_hub_download
@@ -36,6 +36,10 @@ jobs:
           api=HfApi(token=os.environ["HF_TOKEN"])
           old=api.repo_info(target,repo_type="space").sha
           local=Path("projects/swrlz-execution/app.py")
+          tree=ast.parse(local.read_text())
+          for node in tree.body:
+              if isinstance(node,ast.Assign) and any(isinstance(t,ast.Name) and t.id in ("_COMBINED_CHILD","_LANDLOCK_CHILD") for t in node.targets):
+                  compile(ast.literal_eval(node.value),"<trusted diagnostic child>","exec")
           current=Path(hf_hub_download(target,"app.py",repo_type="space",revision=old,token=os.environ["HF_TOKEN"])).read_bytes()
           if b"def remote_probe(" not in current:
               raise RuntimeError("X_SOURCE_DRIFT")
@@ -52,7 +56,7 @@ jobs:
                   if r.status_code!=200: raise RuntimeError("HTTP_"+str(r.status_code))
                   event=r.json()["event_id"]
                   assert re.fullmatch(r"[0-9a-f]{32}",event)
-                  with requests.get(url+"/"+event,timeout=(10,65),stream=True,allow_redirects=False) as stream:
+                  with requests.get(url+"/"+event,timeout=(10,210),stream=True,allow_redirects=False) as stream:
                       stream.raise_for_status()
                       kind=""
                       for line in stream.iter_lines():
