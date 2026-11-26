@@ -11,7 +11,7 @@ printf '#!/bin/sh\nexit 101\n' | sudo tee "$root/usr/sbin/policy-rc.d" >/dev/nul
 sudo chmod 755 "$root/usr/sbin/policy-rc.d"
 sudo chroot "$root" apt-get update
 sudo chroot "$root" env DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-  linux-image-amd64 initramfs-tools chromium chromium-sandbox libgl1-mesa-dri libegl1 fonts-liberation util-linux
+  linux-image-amd64 initramfs-tools chromium chromium-sandbox libgl1-mesa-dri libegl1 fonts-liberation util-linux busybox-static
 sudo chroot "$root" useradd -m -s /bin/sh renderer
 sudo install -m 0755 "$(dirname "$0")/guest_browser_init_v09.sh" "$root/usr/local/sbin/swrlz-probe"
 sudo install -m 0644 "$(dirname "$0")/guest_browser_fixture_v09.html" "$root/opt/swrlz-fixture.html"
