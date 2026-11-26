@@ -29,6 +29,40 @@ def probe():
     finally:
         _probe_lock.release()
 
+def _trusted_development(browser):
+    """Run only two source-defined fixtures. Never accept project bytes or URLs."""
+    broken=FIXTURE.replace("document.querySelector('#state').textContent",
+                           "document.querySelector('#missing').textContent",1)
+    if broken==FIXTURE:
+        raise RuntimeError("TRUSTED_FIXTURE_DRIFT")
+    suite={"schema":"swrlz-trusted-development-v1","arbitraryExecution":False,
+           "isolationVerified":False,"passed":False}
+    for name,html in (("broken",broken),("repaired",FIXTURE)):
+        context=browser.new_context(viewport={"width":800,"height":560},device_scale_factor=1,
+                                    service_workers="block")
+        errors=[]
+        try:
+            context.route("**/*",lambda route:route.abort())
+            page=context.new_page()
+            page.set_default_timeout(5000)
+            page.on("pageerror",lambda error:errors.append("TYPE_ERROR" if "null" in str(error).lower() else "PAGE_ERROR"))
+            page.set_content(html,wait_until="domcontentloaded",timeout=5000)
+            before=page.locator("#state").inner_text()
+            page.locator("#test").click()
+            after=page.locator("#state").inner_text()
+            case={"fixtureSha256":hashlib.sha256(html.encode()).hexdigest(),
+                  "screenshotSha256":hashlib.sha256(page.screenshot(timeout=5000)).hexdigest(),
+                  "before":before,"after":after,"pageErrors":errors}
+            if name=="broken":
+                case["detected"]=before=="Ready" and after=="Ready" and "TYPE_ERROR" in errors
+            else:
+                case["passed"]=before=="Ready" and after=="Click passed" and not errors
+            suite[name]=case
+        finally:context.close()
+    suite["passed"]=suite["broken"]["detected"] and suite["repaired"]["passed"]
+    return suite
+
+
 def _probe():
     started = time.monotonic()
     result = {'chromium': 'not tested', 'javascript': 'not tested', 'interaction': 'not tested', 'webgl': 'not tested', 'screenshot': 'not tested'}
@@ -66,6 +100,7 @@ def _probe():
                 }''')
                 screenshot = Image.open(BytesIO(page.screenshot(timeout=5000))).copy()
                 result['screenshot'] = 'PASS'
+                result['trusted_development'] = _trusted_development(browser)
             finally:
                 browser.close()
     except Exception as exc:
@@ -148,6 +183,8 @@ def remote_probe(request_json, signature):
             raise gr.Error("REMOTE_REPLAY_OR_LIMIT")
         _remote_seen[obj["nonce"]] = now
     result, screenshot = probe()
+    from pathlib import Path
+    result["source_sha256"] = hashlib.sha256(Path(__file__).read_bytes()).hexdigest()
     result["screenshot_sha256"] = None
     if screenshot is not None:
         buf = BytesIO()
@@ -155,7 +192,8 @@ def remote_probe(request_json, signature):
         result["screenshot_sha256"] = hashlib.sha256(buf.getvalue()).hexdigest()
     passed = (all(result.get(k) == "PASS" for k in ("chromium", "javascript", "interaction", "screenshot"))
               and isinstance(result.get("webgl"), dict) and result["webgl"].get("status") == "PASS"
-              and result.get("page_errors") == [] and bool(result["screenshot_sha256"]))
+              and result.get("page_errors") == [] and bool(result["screenshot_sha256"])
+              and result.get("trusted_development",{}).get("passed") is True)
     receipt = {"schema":obj["schema"], "nonce":obj["nonce"], "timestamp":int(time.time()), "passed":passed,
                "fixture_sha256":hashlib.sha256(FIXTURE.encode()).hexdigest(), "diagnostics":result,
                "arbitrary_execution":False, "isolation_verified":False}
@@ -960,8 +998,8 @@ def combined_probe():
 
 
 with gr.Blocks(title='§Execution — diagnostics', analytics_enabled=False) as demo:
-    gr.Markdown('# §Execution — browser diagnostics\nFixed local test fixture only. No user-supplied code, URLs, credentials or network requests.')
-    run = gr.Button('Run Chromium diagnostics', variant='primary')
+    gr.Markdown('# §Execution — browser diagnostics\nTrusted built-in broken/repaired fixtures only. No user-supplied code, URLs or network requests. Production isolation is not verified.')
+    run = gr.Button('Run trusted Chromium regression', variant='primary')
     result = gr.JSON(label='Diagnostic results')
     screenshot = gr.Image(label='Browser screenshot', interactive=False)
     run.click(probe, outputs=[result, screenshot], concurrency_limit=1, api_name=False)
