@@ -24,6 +24,25 @@ _swrlz_v06_seen={}
 _swrlz_v06_fixture=__TRUSTED_FIXTURE__
 _swrlz_v06_source_sha=__X_SOURCE_SHA__
 
+def _swrlz_v06_candidate_delta(broken, reviewed, candidate):
+    """Safe mismatch metadata only; do not return model-generated source."""
+    import hashlib
+    def span(a,b):
+        start=0
+        while start<min(len(a),len(b)) and a[start]==b[start]:start+=1
+        tail=0
+        while tail<min(len(a)-start,len(b)-start) and a[-1-tail]==b[-1-tail]:tail+=1
+        return {"start":start,"removedChars":len(a)-start-tail,"addedChars":len(b)-start-tail}
+    if not isinstance(candidate,str):return {"kind":"CANDIDATE_MISSING"}
+    allowed=span(broken,reviewed)
+    actual=span(broken,candidate)
+    mismatch=span(reviewed,candidate)
+    return {"kind":"EXACT_BYTES_MISMATCH","allowedChange":allowed,"actualChange":actual,
+            "remainingDifference":mismatch,"candidateSha256":hashlib.sha256(candidate.encode()).hexdigest(),
+            "originalSelectorStillPresent":"querySelector('#missing')" in candidate,
+            "expectedSelectorPresent":"querySelector('#state')" in candidate,
+            "changedOutsideAllowedSpan":actual["start"]<allowed["start"] or actual["start"]+actual["removedChars"]>allowed["start"]+allowed["removedChars"]}
+
 @app.post("/api/swrlz-x/v1/model-fixture",include_in_schema=False)
 def _swrlz_v06_model_fixture(
     raw:str=_swrlz_v06_header(default="",alias="X-Swrlz-X-Request"),
@@ -75,7 +94,8 @@ def _swrlz_v06_model_fixture(
             result["baselineNonce"]=baseline["nonce"]
             result["baselineFailure"]=baseline["diagnostics"]["trusted_development"]["broken"]
             evidence=[{"runtimeEvidence":result["baselineFailure"],"expectedBehavior":"Click the Test interaction button; state changes from Ready to Click passed without page errors."}]
-            task="Fix the existing trusted fixture's click interaction using the smallest exact source edit. Preserve layout, button and WebGL surface. Return an exact patch only."
+            evidence.append({"scope":"The reviewed fixture permits changing only the invalid CSS selector inside the existing onclick handler. The target is the existing status element containing Ready. All other characters, including quote style, whitespace and line endings, must remain identical. Browser behavior alone is insufficient for this trusted-only test."})
+            task="Identify the existing status element ID from the HTML source. Repair the click handler by replacing only its incorrect selector token with that existing ID. Return exactly ONE replace_once patch in index.html using the shortest unique literal anchor. Do not rewrite the handler, change quotes, add a null guard, rename IDs, alter markup or modify any other bytes. No full page or prose."
             # This deliberately invokes the same production coding model and
             # exact patch engine, with no executor fallback or model authority.
             failures=[]
@@ -85,15 +105,17 @@ def _swrlz_v06_model_fixture(
                     if payload.get("modelId")!="coder":raise RuntimeError("WRONG_MODEL_ROUTE")
                     result["realModelCalls"]+=1
                     yield from _coder_generate(payload)
+                mismatch=None
                 try:
                     raw_proposal=active._model_patch(coder,{},messages)
                     edits=raw_proposal.get("patches")
-                    if not isinstance(edits,list) or not 1<=len(edits)<=3 or any(not isinstance(p,dict) or p.get("path")!="index.html" or p.get("op")!="replace_once" for p in edits):
+                    if not isinstance(edits,list) or len(edits)!=1 or any(not isinstance(p,dict) or p.get("path")!="index.html" or p.get("op")!="replace_once" for p in edits):
                         raise ValueError("FIXTURE_PATCH_SCOPE")
                     proposal=active.bind_model_edits(project,files,raw_proposal)
                     applied=active.apply_proposal(project,files,proposal,expected_hashes={"index.html":before})
                     candidate=applied["proposedFiles"].get("index.html")
                     if not isinstance(candidate,str) or candidate!=fixture or applied["afterHashes"].get("index.html")!=expected:
+                        mismatch=_swrlz_v06_candidate_delta(broken,fixture,candidate)
                         raise ValueError("CANDIDATE_NOT_REVIEWED_FIXTURE")
                     result["attempts"].append({"attempt":attempt+1,"state":"reviewed_fixture_match","patchCount":len(edits)})
                     result["candidateSha256"]=sha(candidate)
@@ -108,8 +130,14 @@ def _swrlz_v06_model_fixture(
                 except Exception as exc:
                     # Fixed categories only, not model output or private traces.
                     label=str(exc) if str(exc) in ("FIXTURE_PATCH_SCOPE","CANDIDATE_NOT_REVIEWED_FIXTURE","STALE_RETEST","FIXTURE_RECEIPT_MISMATCH") else type(exc).__name__
-                    result["attempts"].append({"attempt":attempt+1,"state":"rejected","reason":label})
-                    failures.append(label)
+                    rejected={"attempt":attempt+1,"state":"rejected","reason":label}
+                    if mismatch is not None:
+                        rejected["mismatch"]=mismatch
+                        failures.append(label+": "+json.dumps(mismatch,sort_keys=True)+
+                            ". Re-read the original source; correct only the erroneous selector to the existing status element ID. Preserve all other characters. Submit a new single exact patch.")
+                    else:
+                        failures.append(label+". Return one exact replace_once edit on the existing selector token, not an entire handler.")
+                    result["attempts"].append(rejected)
             if result["state"]!="passed":result["blocker"]="MODEL_FIXTURE_REPAIR_UNVERIFIED"
         except Exception as exc:
             result["blocker"]="FIXTURE_INFRASTRUCTURE_"+type(exc).__name__
@@ -179,6 +207,19 @@ def selftest():
     except RuntimeError as exc:
         assert "CODER_BINDING" in str(exc) and "SIGNED_DIAGNOSTIC_ROUTE" in str(exc)
     else:raise AssertionError("missing production anchors accepted")
+    # Exercise mismatch classification without executing any proposed HTML.
+    route_tree=ast.parse(ROUTE.replace("__TRUSTED_FIXTURE__",repr("fixture")).replace("__X_SOURCE_SHA__",repr("digest")))
+    helper=next(n for n in route_tree.body if isinstance(n,ast.FunctionDef) and n.name=="_swrlz_v06_candidate_delta")
+    scope={}
+    exec(compile(ast.Module(body=[helper],type_ignores=[]),"<trusted delta helper>","exec"),scope)
+    delta=scope[helper.name]
+    reviewed,_=source_fixture()
+    broken=reviewed.replace("querySelector('#state')","querySelector('#missing')",1)
+    assert broken!=reviewed
+    assert delta(broken,reviewed,broken)["originalSelectorStillPresent"]
+    changed=delta(broken,reviewed,reviewed+"\n")
+    assert changed["expectedSelectorPresent"] and changed["changedOutsideAllowedSpan"]
+    assert delta(broken,reviewed,None)["kind"]=="CANDIDATE_MISSING"
     print("MODEL_FIXTURE_SOURCE_SELFTEST_PASS",flush=True)
 
 def wait_ready(api, revision):
