@@ -67,6 +67,17 @@ jobs:
                               assert data.get("probeSourceSha256")==hashlib.sha256(local.read_bytes()).hexdigest(), "STALE_RUNNING_SOURCE"
                               assert data["candidateExecutionEnabled"] is False and data["isolationVerified"] is False
                               if data["status"]=="BUSY":raise RuntimeError("BUSY")
+                              status=str(data.get("status","UNVERIFIED"))
+                              compatible=status=="FIXTURE_COMPATIBLE" and data.get("browserChecksPassed") is True
+                              receipt=Path("swrlz-combined-receipt.json")
+                              receipt.write_text(json.dumps(data,indent=2,sort_keys=True)+"\n")
+                              with open(os.environ["GITHUB_STEP_SUMMARY"],"a") as summary:
+                                  summary.write("## §X runtime capability receipt\n\n")
+                                  summary.write("Diagnostic collection: **PASS**\\n\\n".replace("\\n","\n"))
+                                  summary.write("Trusted fixture compatibility: **"+("PASS" if compatible else "BLOCKED")+"**\n\n")
+                                  summary.write("Candidate execution: **DISABLED**\n\n")
+                                  summary.write("Source SHA-256: `"+data["probeSourceSha256"]+"`\n\n")
+                                  summary.write("See attached JSON receipt for exact stage and failure details. A successful diagnostic run is not proof of isolation.\n")
                               print("X_COMBINED_BROWSER_EVIDENCE",json.dumps(data,sort_keys=True),flush=True)
                               print("CANDIDATE_EXECUTION_REMAINS_DISABLED",flush=True)
                               raise SystemExit(0)
@@ -76,3 +87,11 @@ jobs:
                   if attempt%4==0:print("X_PROBE_PENDING",type(exc).__name__,flush=True)
                   time.sleep(8)
           PY
+      - name: Upload runtime diagnostic receipt
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: swrlz-combined-receipt
+          path: swrlz-combined-receipt.json
+          if-no-files-found: error
+          retention-days: 14
