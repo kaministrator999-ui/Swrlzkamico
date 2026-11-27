@@ -22,46 +22,75 @@ def replace_once(s, old, new):
     return s.replace(old, new, 1)
 
 def patch(s):
-    if "OVH_ADAPTIVE_CONTEXT_V1" in s:
-        # The previously supplied terminal patch may already be installed.
-        if "if compact_math:" not in s or "CONTEXT_RECEIPT compact_math=" not in s:
-            raise RuntimeError("Incomplete previous context patch")
+    if "OVH_ADAPTIVE_CONTEXT_V1" not in s:
+        raise RuntimeError("Expected deployed V1 context patch")
+    if "OVH_ADAPTIVE_CONTEXT_V2" in s:
         return s
-    anchor = "    started=time.perf_counter()\n    yield"
-    addition = r'''
+    start=s.index("    # OVH_ADAPTIVE_CONTEXT_V1")
+    end=s.index("    started=time.perf_counter()",start)
+    s=s[:start]+r'''
     # OVH_ADAPTIVE_CONTEXT_V1
-    compact_math = (
-        not programming.get("codingTask")
-        and not programming.get("failureEvidence")
-        and not programming.get("canonicalCarry")
-        and not file_dialogue
-        and bool(re.fullmatch(
-            r"(?:(?:hey|hi)\s+§?wyrlz\s*[,!:]?\s*)?"
-            r"(?:(?:what is|what's|calculate|compute|solve)\s+)?"
-            r"[+-]?\d+(?:\.\d+)?"
-            r"(?:\s*[-+*/×÷]\s*[+-]?\d+(?:\.\d+)?)+"
-            r"\s*[?=.]?", prompt.strip(), re.I
-        ))
+    # OVH_ADAPTIVE_CONTEXT_V2: port guarded 9B social prefill policy.
+    compact_allowed = (
+        not file_dialogue and not concise_identity_turn and not identity_followup
+        and not reference_structure and not music_policy
+        and not any(programming.get(k) for k in (
+            "codingTask","failureEvidence","canonicalCarry","artifactMutationRequested",
+            "artifactContinuation","newProject","intentContract","needsFailureEvidence"))
+        and not any(payload.get(k) for k in (
+            "nativeEditorEvidence","onlineContext","githubSourceChangeTask",
+            "projectThreadEvidence","archiveEvidence","widgetPresentation",
+            "forgeContext","githubAction","githubStart","sourceChangeIdentity","pinnedContext"))
     )
-    if compact_math:
+    clean = " ".join(prompt.split())
+    compact_math = compact_allowed and not history and bool(re.fullmatch(
+        r"(?:(?:hey|hi)\s+§?wyrlz\s*[,!:]?\s*)?"
+        r"(?:(?:what is|what's|calculate|compute|solve)\s+)?"
+        r"[+-]?\d+(?:\.\d+)?"
+        r"(?:\s*[-+*/×÷]\s*[+-]?\d+(?:\.\d+)?)+\s*[?=.]?",
+        clean, re.I))
+    compact_social = compact_allowed and len(clean)<=170 and bool(re.fullmatch(
+        r"(?:"
+        r"(?:hi|hello|hey|yo|howdy)(?:[,! ]+§?wyrlz)?(?:[,! ]+(?:how (?:are|r) you|how'?s it going|what'?s up))?"
+        r"|how (?:are|r) you|how'?s it going|how have you been|what'?s up"
+        r"|(?:pretty|really) (?:good|great|fine|okay)(?: actually| thanks| today)?"
+        r"|(?:doing|i'?m doing) (?:good|great|fine|okay|alright)(?: thanks)?"
+        r"|that took (?:a while|forever|so long)(?: for you to respond)?(?: lol| lmao)?"
+        r"|(?:lol|lmao|lmfao|haha|hahaha|yep|yeah|exactly|nice|cool|awesome)"
+        r")[!?. ,]*",clean,re.I))
+    # Narrow standalone educational questions, no history or evidence discarded.
+    compact_explain = compact_allowed and not history and len(clean)<=160 and bool(re.fullmatch(
+        r"(?:what (?:is|are)|define|explain)\s+(?:the\s+)?(?:[A-Za-z][A-Za-z0-9 -]{0,65})"
+        r"(?: in (?:one|two|three) sentences)?[?.]?",clean,re.I
+    )) and not re.search(r"\b(?:today|current|latest|now|my|our|your|price|weather|news|version|time|date|code|function|script|file|project|repair|fix|write|generate|how|should|best)\b",clean,re.I)
+    compact_kind = ("math" if compact_math else "social" if compact_social
+                    else "explain" if compact_explain else "standard")
+    if compact_kind != "standard":
         system = (
-            "You are §wyrlz. Answer the self-contained arithmetic "
-            "question accurately and concisely."
+            "You are §wyrlz (Swurlz), an AI assistant distinct from the user. "
+            "Answer the actual message directly, naturally and accurately. "
+            "Use supplied history for continuity; never invent shared memories, "
+            "facts, tool results or actions. Match humor when appropriate. "
+            "Be concise for simple questions; honor explicit answer constraints. "
+            "Acknowledge uncertainty when necessary."
         )
-        model_history = []
+        if custom_assistant_profile:
+            system += "\nUSER ASSISTANT PREFERENCES:\n" + custom_assistant_profile
+        if user_profile:
+            system += "\nCURRENT USER PROFILE (not assistant identity):\n" + user_profile
+        if compact_social:
+            system += "\nRespond conversationally using actual supplied context."
+        elif compact_math:
+            system += "\nCalculate accurately."
+    yield {"type":"STATUS","phase":"OVH_PREFILL_PROFILE","reason":compact_kind}
 
-'''
-    s = replace_once(s, anchor, addition + anchor)
-    anchor = '        mode=_response_mode(prompt,programming,history)\n        if file_dialogue:'
-    s = replace_once(s, anchor,
-        '        mode=_response_mode(prompt,programming,history)\n'
-        '        if compact_math:\n'
-        '            response_tokens=min(128,available_output_tokens)\n'
-        '            temperature=0.2\n'
-        '        elif file_dialogue:')
-    anchor = "    history_tokens=max(0,input_tokens-system_tokens-prompt_tokens)"
-    s = replace_once(s, anchor, anchor + '\n'
-        '    print(f"CONTEXT_RECEIPT compact_math={compact_math} input_tokens={input_tokens}", flush=True)')
+''' + s[end:]
+    s=replace_once(s,'        if compact_math:\n            response_tokens=min(128,available_output_tokens)\n            temperature=0.2\n',
+        '        if compact_math or compact_social or compact_explain:\n'
+        '            response_tokens=min(128 if compact_math else 256,available_output_tokens)\n'
+        '            temperature=0.2 if compact_math else 0.4\n')
+    s=replace_once(s,'    print(f"CONTEXT_RECEIPT compact_math={compact_math} input_tokens={input_tokens}", flush=True)',
+        '    print(f"CONTEXT_RECEIPT profile={compact_kind} input_tokens={input_tokens}", flush=True)')
     return s
 
 def write_atomic(path, data):
@@ -93,6 +122,50 @@ def restart():
             time.sleep(1)
     raise RuntimeError("Preview health failed")
 
+
+def probe(label,prompt,expected):
+    import http.cookiejar
+    import urllib.parse
+    import uuid
+    base="http://127.0.0.1:8766"
+    opener=urllib.request.build_opener(urllib.request.HTTPCookieProcessor(http.cookiejar.CookieJar()))
+    rid=str(uuid.uuid4())
+    body={"modelId":"700m","prompt":prompt,"threadId":"ovh-perf-"+rid,
+          "requestId":rid,"profileId":"LALM","profile":"","userProfile":"","timeZone":"UTC"}
+    started=time.monotonic()
+    req=urllib.request.Request(base+"/api/lalm_station/send",data=json.dumps(body).encode(),
+                              headers={"Content-Type":"application/json"},method="POST")
+    with opener.open(req,timeout=15) as r:
+        if r.status!=202: raise RuntimeError("Probe not accepted")
+        r.read()
+    first=None; parts=[]; terminal=None; tokens=None; profile=None
+    with opener.open(base+"/api/lalm_station/stream?"+urllib.parse.urlencode({"requestId":rid}),timeout=90) as r:
+        for raw in r:
+            if time.monotonic()-started>100: raise RuntimeError("Probe deadline")
+            try: event=json.loads(raw)
+            except ValueError: continue
+            kind=event.get("type")
+            if kind=="STATUS" and event.get("phase")=="OVH_PREFILL_PROFILE":
+                profile=event.get("reason")
+            if kind=="CONTEXT": tokens=event.get("estimatedInputTokens")
+            if kind=="DELTA":
+                piece=str(event.get("text") or "")
+                if piece and first is None: first=round(time.monotonic()-started,2)
+                parts.append(piece)
+            if kind in ("COMPLETE","COMPLETED","FAILED","CANCELLED"):
+                terminal=kind;break
+    receipt={"case":label,"profile":profile,"inputTokens":tokens,"firstVisibleSec":first,
+             "totalSec":round(time.monotonic()-started,2),"terminal":terminal,"outputChars":len("".join(parts))}
+    print("SWRLZ_PERF_RECEIPT "+json.dumps(receipt,separators=(",",":")),flush=True)
+    if terminal not in ("COMPLETE","COMPLETED") or not parts or first is None:
+        raise RuntimeError("End-to-end generation failed: "+label)
+    if profile!=expected or not isinstance(tokens,int) or tokens>512:
+        raise RuntimeError("Compact profile budget not verified: "+label)
+    if label=="math" and not re.search(r"(?<!\d)4(?!\d)","".join(parts)):
+        raise RuntimeError("Arithmetic acceptance failed")
+    if first>45:
+        raise RuntimeError("First token latency exceeded 45 seconds: "+label)
+
 def main():
     if os.geteuid() == 0:
         raise RuntimeError("Run as deployment user, not root")
@@ -110,6 +183,9 @@ def main():
     try:
         subprocess.run([PYTHON, "-c", "from ovh_chat import app"], cwd=PREVIEW, check=True, timeout=45)
         restart()
+        probe('math','Hey §wyrlz, what is 2 + 2?','math')
+        probe('social','Hello §wyrlz!','social')
+        probe('explain','What is RAM?','explain')
     except Exception:
         if updated != s:
             write_atomic(TARGET, original)
