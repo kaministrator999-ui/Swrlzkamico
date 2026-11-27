@@ -1,0 +1,61 @@
+name: OVH chat preview deploy
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/ovh_chat_preview_deploy.py'
+      - '.github/workflows/ovh-chat-preview-deploy.yml'
+concurrency:
+  group: ovh-chat-preview-deploy
+  cancel-in-progress: false
+permissions: {}
+jobs:
+  deploy:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: Synchronize and deploy private chat preview
+        shell: bash
+        env:
+          HOST: ${{ secrets.SWRLZ_SERVER_HOST }}
+          LOGIN: ${{ secrets.SWRLZ_SERVER_USER }}
+          SSH_KEY: ${{ secrets.SWRLZ_SERVER_SSH_KEY }}
+          KNOWN_HOSTS: ${{ secrets.SWRLZ_SERVER_KNOWN_HOSTS }}
+        run: |
+          set -euo pipefail
+          test -n "$HOST" && test -n "$LOGIN" && test -n "$SSH_KEY" && test -n "$KNOWN_HOSTS"
+          test "$LOGIN" = swrlz-deploy
+          umask 077
+          d=$(mktemp -d)
+          trap 'rm -rf "$d"' EXIT
+          printf '%s\n' "$SSH_KEY" > "$d/key"
+          printf '%s\n' "$KNOWN_HOSTS" > "$d/known_hosts"
+          unset SSH_KEY KNOWN_HOSTS
+          ssh-keygen -y -f "$d/key" >/dev/null
+          if ! ssh -F /dev/null -T -i "$d/key" \
+            -o BatchMode=yes -o IdentitiesOnly=yes \
+            -o StrictHostKeyChecking=yes -o HostKeyAlgorithms=ssh-ed25519 \
+            -o UserKnownHostsFile="$d/known_hosts" -o GlobalKnownHostsFile=/dev/null \
+            -o ConnectTimeout=15 -o ClearAllForwardings=yes \
+            "$LOGIN@$HOST" swrlz-source-sync > "$d/result"; then
+            echo 'Restricted source synchronization failed.' >&2
+            exit 1
+          fi
+          grep -Fxq SWRLZ_SOURCE_SYNC_OK "$d/result"
+          grep -Fxq "$GITHUB_SHA" "$d/result"
+          printf 'SWRLZ_SOURCE_SYNC_OK %s\n' "$GITHUB_SHA"
+          if ! ssh -F /dev/null -T -i "$d/key" \
+            -o BatchMode=yes -o IdentitiesOnly=yes \
+            -o StrictHostKeyChecking=yes -o HostKeyAlgorithms=ssh-ed25519 \
+            -o UserKnownHostsFile="$d/known_hosts" -o GlobalKnownHostsFile=/dev/null \
+            -o ConnectTimeout=15 -o ClearAllForwardings=yes \
+            "$LOGIN@$HOST" swrlz-chat-deploy > "$d/build-result"; then
+            echo 'Chat preview deployment failed.' >&2
+            exit 1
+          fi
+          grep -Fxq "$GITHUB_SHA" "$d/build-result"
+          grep -Fxq SWRLZ_CHAT_PREVIEW_DEPLOY_OK "$d/build-result"
+          echo SWRLZ_CHAT_PREVIEW_DEPLOY_OK
+          printf 'Verified chat deployment revision: %s\n' "$GITHUB_SHA"
