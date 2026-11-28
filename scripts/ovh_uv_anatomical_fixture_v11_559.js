@@ -173,6 +173,7 @@ if(new URLSearchParams(location.search).get('serverqa')==='1'){
   const canvas=host.querySelector('#se356UVCanvas'),cv=canvas.getBoundingClientRect(),vp=canvas.parentElement.getBoundingClientRect();
   const centerError=Math.abs((cv.left+cv.right-vp.left-vp.right)/2);
   qaAssert(centerError<=3&&cv.width<=vp.width+1&&cv.bottom<=host.getBoundingClientRect().bottom+1,'atlas fit/centering failed');
+  if(innerWidth<=700&&innerHeight>=700)qaAssert(cv.width>=Math.min(340,innerWidth*.83),'Mobile atlas too small: '+cv.width);
   return {ok:true,cancel:true,apply:true,undo:true,redo:true,anatomicalLayout:true,visualReview:true,referenceClearancePx:se561FrameReceipt.clearancePx,visibleLabels:review.visibleLabels,visibleConfirmation:true,visibleProgress:true,visibleResult:true,geometryPreserved:true,paintSamples:samples,maxPaintChannelError:maxError,renderTexture:true,restoredOriginal:true,centerErrorPx:centerError,atlasSizePx:cv.width,exportReceipt,coverage:actualExpected.report.packing.candidateTriangleArea,legendCount:choices.length};
  }
  const open=se552Open;
