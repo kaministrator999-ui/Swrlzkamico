@@ -1,0 +1,66 @@
+name: §E isolated humanoid UV visual QA
+on:
+  push:
+    branches: [uv-visual-qa-20261127]
+    paths:
+      - 'projects/swrlz-forge-moba/scripts/repack_humanoid_uv_candidate.mjs'
+      - 'projects/swrlz-forge-moba/scripts/render_humanoid_uv_candidate.py'
+      - 'projects/swrlz-forge-moba/tests/uv_candidate_visual_qa.cjs'
+      - '.github/workflows/uv-humanoid-visual-qa.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: uv-humanoid-visual-qa
+  cancel-in-progress: false
+jobs:
+  preview:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Repack the exact native starter and generate matched visual evidence
+        run: |
+          set -euo pipefail
+          python -m pip install --quiet 'pillow>=10,<13'
+          mkdir -p uv-qa
+          P=projects/swrlz-forge-moba
+          SCENE="$P/scenes/model-atelier-clean-topology-humanoid-v11-554.swyrl.json"
+          node "$P/scripts/repack_humanoid_uv_candidate.mjs" "$SCENE" uv-qa
+          python "$P/scripts/render_humanoid_uv_candidate.py" "$SCENE" uv-qa
+          node --check "$P/tests/uv_candidate_visual_qa.cjs"
+      - name: Build the actual sealed engine preview, without any production deployment
+        run: |
+          set -euo pipefail
+          P=projects/swrlz-forge-moba
+          python "$P/scripts/verify_v11_552_release.py" --output dist/uv-qa
+          python "$P/scripts/package_static_delivery_v11_552.py" --output dist/uv-qa
+      - name: Install browser for native screenshot capture
+        run: |
+          npm install --prefix "$RUNNER_TEMP/uv-browser" --no-audit --no-fund playwright@1.51.1
+          "$RUNNER_TEMP/uv-browser/node_modules/.bin/playwright" install --with-deps chromium
+      - name: Capture original and candidate in the actual Model Studio and UV editor
+        run: |
+          set -euo pipefail
+          export NODE_PATH="$RUNNER_TEMP/uv-browser/node_modules"
+          TEST=projects/swrlz-forge-moba/tests/uv_candidate_visual_qa.cjs
+          SCENE=dist/uv-qa/scenes/model-atelier-clean-topology-humanoid-v11-554.swyrl.json
+          node "$TEST" dist/uv-qa uv-qa/original
+          cp uv-qa/candidate.swyrl.json "$SCENE"
+          cp uv-qa/candidate-checker.png dist/uv-qa/assets/models/clean-topology-humanoid-v11-554-uv-test.png
+          cp uv-qa/candidate-uv.png dist/uv-qa/assets/models/clean-topology-humanoid-v11-554-uv-guide-2048.png
+          node "$TEST" dist/uv-qa uv-qa/candidate
+      - name: Preserve candidate scene and visual receipts even on test failure
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: swrlz-humanoid-uv-preview-${{ github.sha }}
+          path: uv-qa/
+          retention-days: 30
+          if-no-files-found: error
