@@ -12,8 +12,8 @@
       "bytes": 687188
     },
     "swrlz-engine-v11.552.js": {
-      "sha256": "5d7900e5f372aea65d02629e6a2fffe74cf6f62f2418b816fccc3ff052a6d515",
-      "bytes": 10680864
+      "sha256": "7dca647a643fa438a20c33d7233827a6032e2cf5e6a82d88421f8d5025e05809",
+      "bytes": 10682190
     },
     "assets/uv-unwrapper/uv_atlas_core_v11_555.mjs": {
       "sha256": "158c6c1ce36bfe37840201136671625a1e1e5afea7cb34bb3352028ca886008e",
@@ -41,13 +41,13 @@
       "bytes": 317478
     }
   },
-  "sourceCommit": "54fd569751d47bf3c199ea03aadb7185f0e1f70a",
-  "browserRun": "46113621008",
+  "sourceCommit": "208a679b154249c36fc1e5bf47b6da60424bd441",
+  "browserRun": "46114660276",
   "rendererBundle": {
     "version": "0.169.0",
     "threeIntegrity": "sha512-Ed906MA3dR4TS5riErd4QBsRGPcx+HBDX2O5yYE5GqJeFQTPU+M56Va/f/Oph9X7uZo3W3o4l2ZhBZ6f6qUv0w==",
     "esbuildVersion": "0.25.12",
-    "previousModuleSha256": "372c7f3d9a23a90d4f306a0af120e65591a066cfeaf9824403c9f9141ecbc802",
+    "previousModuleSha256": "ea9bb65db0fc792b5041abaa00481d416164fa84371389e4744f1216c9eb05a1",
     "startupImportsBundled": [
       "https://cdn.jsdelivr.net/npm/three@0.169.0/+esm",
       "https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/controls/OrbitControls.js/+esm",
@@ -95,15 +95,15 @@
   "previousCandidateBrowserReceipt": {
     "realStarterCard": false,
     "errors": [
-      "Awaiting OVH browser verification"
+      "QA fixture must never be promoted"
     ]
   },
   "uvSourceCommit": "d49eec1d29fc2cc3202ce497111147fcaa05fb37",
+  "qaOnly": true,
   "browserReceipt": {
     "realStarterCard": false,
     "errors": [
       "QA fixture must never be promoted"
     ]
-  },
-  "qaOnly": true
+  }
 }
