@@ -154,9 +154,15 @@ def probe(label,prompt,expected):
                 parts.append(piece)
             if kind in ("COMPLETE","COMPLETED","FAILED","CANCELLED"):
                 terminal=kind;break
+    # Station stores CONTEXT in its session projection, not the NDJSON stream.
+    with opener.open(base+"/api/lalm_station/sync",timeout=10) as r:
+        active=json.load(r).get("activeGeneration") or {}
+    if active.get("requestId")!=rid:
+        raise RuntimeError("Probe session generation mismatch")
+    tokens=(active.get("contextBudget") or {}).get("estimatedInputTokens",tokens)
     receipt={"case":label,"profile":profile,"inputTokens":tokens,"firstVisibleSec":first,
              "totalSec":round(time.monotonic()-started,2),"terminal":terminal,"outputChars":len("".join(parts))}
-    print("SWRLZ_PERF_RECEIPT "+json.dumps(receipt,separators=(",",":")),flush=True)
+    print("SWRLZ_PERF_RECEIPT "+json.dumps(receipt,separators=(",",":")),file=__import__("sys").stderr,flush=True)
     if terminal not in ("COMPLETE","COMPLETED") or not parts or first is None:
         raise RuntimeError("End-to-end generation failed: "+label)
     if profile!=expected or not isinstance(tokens,int) or tokens>512:
