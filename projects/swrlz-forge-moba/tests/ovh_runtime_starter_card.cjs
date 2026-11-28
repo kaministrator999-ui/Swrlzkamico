@@ -5,7 +5,7 @@
 const assert=require('node:assert/strict');
 const fs=require('node:fs'),path=require('node:path');
 const {chromium}=require('playwright');
-const origin='https://40.160.61.231';
+const origin=process.env.SWRLZ_TEST_ORIGIN||'https://40.160.61.231';
 const crypto=require('node:crypto');
 const root=path.resolve(process.argv[2]||'dist/swrlz-forge-moba');
 const live=false;
@@ -15,16 +15,26 @@ const mime={'.html':'text/html; charset=utf-8','.js':'text/javascript','.mjs':'t
 (async()=>{
  const browser=await chromium.launch({headless:true,args:['--no-sandbox','--enable-unsafe-swiftshader']});
  try{
-  const page=await browser.newPage({viewport:{width:412,height:915},isMobile:true,hasTouch:true,deviceScaleFactor:2});
+  const context=await browser.newContext({viewport:{width:412,height:915},isMobile:true,hasTouch:true,deviceScaleFactor:2,serviceWorkers:'block'});
+  const page=await context.newPage();
+  try{
   const errors=[];
   page.on('pageerror',e=>{errors.push(String(e.stack||e));console.log('BROWSER_PAGEERROR',String(e.stack||e).slice(0,1200));});
-  if(!live)await page.route(origin+'/**',async route=>{
+  const served=[];
+  page.on('requestfailed',r=>console.log('SWRLZ_REQUEST_FAILED',r.url(),r.failure()?.errorText));
+  page.on('console',m=>{if(m.type()==='error'||m.type()==='warning')console.log('SWRLZ_BROWSER_CONSOLE',m.type(),m.text().slice(0,500));});
+  page.on('response',r=>{if(r.status()>=400)console.log('SWRLZ_HTTP_ERROR',r.status(),r.url());});
+  if(!live)await context.route(r=>r.origin===origin,async route=>{
    const name=decodeURIComponent(new URL(route.request().url()).pathname).replace(/^\/+/,'')||'index.html';
    const file=path.resolve(root,name);
    if(!file.startsWith(root+path.sep)||!fs.existsSync(file)||!fs.statSync(file).isFile())return route.fulfill({status:404,body:'Not found'});
+   served.push(name);
    return route.fulfill({status:200,body:fs.readFileSync(file),contentType:mime[path.extname(file)]||'application/octet-stream'});
   });
-  await page.goto(origin+'/modeler.html?bootcheck='+Date.now(),{waitUntil:'domcontentloaded',timeout:90000});
+  const nav=await page.goto(origin+'/modeler.html?bootcheck='+Date.now(),{waitUntil:'domcontentloaded',timeout:90000});
+  assert.equal(nav.status(),200,'Expected routed engine entry document');
+  assert.equal(crypto.createHash('sha256').update(await nav.body()).digest('hex'),crypto.createHash('sha256').update(fs.readFileSync(path.join(root,'modeler.html'))).digest('hex'),'Entry document differs from tested package');
+  console.log('SWRLZ_OVH_ROUTE_ENTRY_OK',origin,served);
   await page.waitForFunction(()=>!!window.SWRLZ_FORGE_BUILD?.version &&
     !!window.SWYRL_ENGINE_UV_UNWRAP && !!window.SWYRL_ENGINE_STARTUP_476?.inspect?.()?.ready &&
     !!document.getElementById('seChatFrame')?.getAttribute('src'),null,{timeout:90000});
@@ -93,5 +103,10 @@ const mime={'.html':'text/html; charset=utf-8','.js':'text/javascript','.mjs':'t
   fs.writeFileSync(path.join(output,'receipt.json'),JSON.stringify({origin,hash,info,labels,errors,realStarterCard:true},null,2));
   console.log('SE556_NUMBERED_MODEL_UV_BROWSER_PASS',JSON.stringify({live,labels}));
   console.log('SE555_DELIVERED_BROWSER_BOOT_PASS',JSON.stringify({live,info,errors:errors.slice(0,5)}));
+  }catch(e){
+   console.log('SWRLZ_STARTUP_DIAG',JSON.stringify(await page.evaluate(()=>({title:document.title,href:location.href,ready:document.readyState,build:!!window.SWRLZ_FORGE_BUILD,uv:!!window.SWYRL_ENGINE_UV_UNWRAP,startup:window.SWYRL_ENGINE_STARTUP_476?.inspect?.(),frame:document.getElementById('seChatFrame')?.getAttribute('src'),scripts:[...document.scripts].map(s=>s.src).filter(Boolean),body:document.body?.innerText?.slice(0,700)})).catch(()=>null)));
+   await page.screenshot({path:path.join(output,'failure.png'),timeout:5000}).catch(()=>{});
+   throw e;
+  }
  }finally{await browser.close();}
 })().catch(e=>{console.error('SE555_DELIVERED_BROWSER_BOOT_FAIL',e.stack||e);process.exitCode=1;});

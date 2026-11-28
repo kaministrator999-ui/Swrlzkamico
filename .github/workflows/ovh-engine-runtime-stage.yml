@@ -14,6 +14,8 @@ jobs:
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-24.04
     timeout-minutes: 18
+    outputs:
+      staged_sha: ${{ steps.stage.outputs.sha }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -47,7 +49,11 @@ jobs:
       - name: Test exact delivered runtime on OVH origin with real project library click
         run: |
           set -euo pipefail
-          NODE_PATH="$RUNNER_TEMP/engine-browser/node_modules" node projects/swrlz-forge-moba/tests/ovh_runtime_starter_card.cjs dist/engine-runtime engine-qa
+          export NODE_PATH="$RUNNER_TEMP/engine-browser/node_modules"
+          if ! node projects/swrlz-forge-moba/tests/ovh_runtime_starter_card.cjs dist/engine-runtime engine-qa; then
+            SWRLZ_TEST_ORIGIN=https://kamiloki-swrlz-forge-moba.static.hf.space node projects/swrlz-forge-moba/tests/ovh_runtime_starter_card.cjs dist/engine-runtime engine-qa/control || true
+            exit 1
+          fi
           python scripts/ovh_engine_stage_runtime.py dist/engine-runtime engine-qa "$GITHUB_SHA" "$GITHUB_RUN_ID"
       - name: Preserve browser evidence
         if: always()
@@ -58,11 +64,66 @@ jobs:
           if-no-files-found: warn
           retention-days: 30
       - name: Commit only verified runtime overlay for promotion
+        id: stage
         run: |
           set -euo pipefail
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add -f .deploy/engine-runtime/payload
-          git diff --cached --quiet && exit 0
-          git commit -m 'Stage browser-verified engine runtime overlay'
-          git push origin HEAD:main
+          if ! git diff --cached --quiet; then
+            git commit -m 'Stage browser-verified engine runtime overlay'
+            git push origin HEAD:main
+          fi
+          echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
+  promote:
+    needs: stage
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - name: Use the existing pinned SSH identity and fixed §E commands
+        env:
+          HOST: ${{ secrets.SWRLZ_SERVER_HOST }}
+          LOGIN: ${{ secrets.SWRLZ_SERVER_USER }}
+          SSH_KEY: ${{ secrets.SWRLZ_SERVER_SSH_KEY }}
+          KNOWN_HOSTS: ${{ secrets.SWRLZ_SERVER_KNOWN_HOSTS }}
+          OP: deploy
+          STAGED_SHA: ${{ needs.stage.outputs.staged_sha }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -n "$HOST" && test "$LOGIN" = swrlz-deploy && test -n "$SSH_KEY" && test -n "$KNOWN_HOSTS"
+          umask 077
+          d=$(mktemp -d)
+          trap 'rm -rf "$d"' EXIT
+          printf '%s\n' "$SSH_KEY" > "$d/key"
+          printf '%s\n' "$KNOWN_HOSTS" > "$d/known_hosts"
+          unset SSH_KEY KNOWN_HOSTS
+          remote() {
+            ssh -F /dev/null -T -i "$d/key" -o BatchMode=yes -o IdentitiesOnly=yes \
+              -o StrictHostKeyChecking=yes -o HostKeyAlgorithms=ssh-ed25519 \
+              -o UserKnownHostsFile="$d/known_hosts" -o GlobalKnownHostsFile=/dev/null \
+              -o ConnectTimeout=15 -o ClearAllForwardings=yes "$LOGIN@$HOST" "$1"
+          }
+          remote swrlz-engine-check | tee "$d/check"
+          grep -Fxq SWRLZ_ENGINE_GATE_OK "$d/check"
+          case "$OP" in
+            check) exit 0 ;;
+            deploy)
+              remote swrlz-source-sync > "$d/sync"
+              grep -Fxq SWRLZ_SOURCE_SYNC_OK "$d/sync"
+              grep -Fxq "$STAGED_SHA" "$d/sync"
+              remote swrlz-engine-runtime-deploy | tee "$d/result"
+              grep -q '^SWRLZ_ENGINE_RUNTIME_DEPLOY_OK ' "$d/result"
+              ;;
+            rollback)
+              remote swrlz-engine-rollback | tee "$d/result"
+              grep -Fxq SWRLZ_ENGINE_ROLLBACK_OK "$d/result"
+              ;;
+            *) exit 1 ;;
+          esac
+          status=$(curl --noproxy '*' -sS --connect-timeout 12 --max-time 20 -D "$d/headers" -o /dev/null -w '%{http_code}' "https://$HOST/")
+          test "$status" = 401
+          grep -qi '^www-authenticate: Basic' "$d/headers"
+          echo SWRLZ_ENGINE_HTTPS_AUTH_PRESERVED
