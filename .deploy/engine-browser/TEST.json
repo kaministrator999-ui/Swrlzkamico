@@ -1,0 +1,5 @@
+{
+  "mode": "live",
+  "reason": "Owner confirmed installed browser gate; verify actual OVH Chromium and return screenshot evidence",
+  "scope": "read-only QA of deployed filesystem"
+}
