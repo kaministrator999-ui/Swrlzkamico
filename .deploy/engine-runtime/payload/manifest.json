@@ -1,0 +1,84 @@
+{
+  "schema": "swrlz-ovh-runtime-overlay-v1",
+  "target": "/var/www/swrlz-engine",
+  "sealedSourceSha256": "3fe29516958ea5af2448352fa238eda121cc3031266c61c746380f092d22232e",
+  "assets": {
+    "index.html": {
+      "sha256": "c3e9d72a529dd5409d2b419f4485348a6858bdf6474a340e3bc02ba60e4c9cfc",
+      "bytes": 687188
+    },
+    "modeler.html": {
+      "sha256": "c3e9d72a529dd5409d2b419f4485348a6858bdf6474a340e3bc02ba60e4c9cfc",
+      "bytes": 687188
+    },
+    "swrlz-engine-v11.552.js": {
+      "sha256": "4c96e7310fadd703bdabf8af4f0bcc03d1f896853507dea777c39c1cb3a9fd6b",
+      "bytes": 9623134
+    },
+    "assets/uv-unwrapper/uv_atlas_core_v11_555.mjs": {
+      "sha256": "70547b1b8386be0e5452d71c7aee230a520c5ba3d41f51259d255b2c257ddc2a",
+      "bytes": 7710
+    },
+    "assets/uv-unwrapper/uv_lscm_core_v11_555.mjs": {
+      "sha256": "f8745cb5cf3f871a366821dc5dc393426c7541ab4f42a3950709e790102636e2",
+      "bytes": 10091
+    }
+  },
+  "requiredStarterAssets": {
+    "scenes/model-atelier-clean-topology-humanoid-v11-554.swyrl.json": {
+      "baselineGitBlobSha1": "6ef0e683f98c12323129d42cc282983d662939b2",
+      "sha256": "05b40cd4aa751760b371265cf73047485065175a9b6e742e33d47871ec1da2fb",
+      "bytes": 589219
+    },
+    "assets/models/clean-topology-humanoid-v11-554-uv-test.png": {
+      "baselineGitBlobSha1": "e25bf0858a7b9bba9c0fe3d736abe6b9183c7770",
+      "sha256": "d973fcd024ceaee5ab20b4ea676dc91afcedb53fafbd1a61aff89899b589fed0",
+      "bytes": 5900
+    },
+    "assets/models/clean-topology-humanoid-v11-554-uv-guide-2048.png": {
+      "baselineGitBlobSha1": "d5487d6b3175e3b208d9af6ac07105f74453841f",
+      "sha256": "5268bfabc00cdeb15f0b95fec97b1faf0e576f911a6358d703a70dbd073c1c78",
+      "bytes": 317478
+    }
+  },
+  "browserReceipt": {
+    "origin": "https://40.160.61.231",
+    "hash": "05b40cd4aa751760b371265cf73047485065175a9b6e742e33d47871ec1da2fb",
+    "info": {
+      "version": "v11.546",
+      "startup": {
+        "ready": true,
+        "finished": false,
+        "account": "pending",
+        "rows": 0,
+        "opening": false,
+        "selection": null,
+        "default": null
+      },
+      "bridge": true,
+      "frame": null,
+      "uv": {
+        "ready": false,
+        "busy": false,
+        "seamMode": "inspect",
+        "markedSeams": 0
+      },
+      "signalLost": false
+    },
+    "labels": {
+      "enabled": true,
+      "model": true,
+      "labels": 22,
+      "target": "clean-topology-humanoid-base",
+      "selected": "clean-topology-humanoid-base",
+      "meshCount": 2,
+      "attached": true
+    },
+    "errors": [],
+    "realStarterCard": true,
+    "accountMode": "explicit-local-workspace",
+    "accountIntegrationVerified": false
+  },
+  "sourceCommit": "ec1f9fc4fcefd9f97353d096fd6f36ce253af34a",
+  "browserRun": "46104831744"
+}
