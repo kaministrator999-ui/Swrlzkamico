@@ -12,16 +12,16 @@
       "bytes": 687188
     },
     "swrlz-engine-v11.552.js": {
-      "sha256": "eb42521eaa8db2b759ab94bfb144811a8a68afcdb729c9b9e02ba33ff63110e9",
-      "bytes": 10663969
+      "sha256": "6676d174bcfc660ddb367b681dfe6094be0e423121ae6b8ccddafde558260597",
+      "bytes": 10671670
     },
     "assets/uv-unwrapper/uv_atlas_core_v11_555.mjs": {
-      "sha256": "70547b1b8386be0e5452d71c7aee230a520c5ba3d41f51259d255b2c257ddc2a",
-      "bytes": 7710
+      "sha256": "158c6c1ce36bfe37840201136671625a1e1e5afea7cb34bb3352028ca886008e",
+      "bytes": 8142
     },
     "assets/uv-unwrapper/uv_lscm_core_v11_555.mjs": {
-      "sha256": "f8745cb5cf3f871a366821dc5dc393426c7541ab4f42a3950709e790102636e2",
-      "bytes": 10091
+      "sha256": "2e557cf9a60eb3cb5d33d0ec9d38dcefba5283140fccd4de097feb74d758f5a8",
+      "bytes": 21958
     }
   },
   "requiredStarterAssets": {
@@ -41,13 +41,13 @@
       "bytes": 317478
     }
   },
-  "sourceCommit": "09a3a0c3935aacdc49f28ea6a357b8e8cffc5aed",
-  "browserRun": "46112444977",
+  "sourceCommit": "e13b87aa9cfa5f3d327b9b9d4641637e65e80c46",
+  "browserRun": "46112633277",
   "rendererBundle": {
     "version": "0.169.0",
     "threeIntegrity": "sha512-Ed906MA3dR4TS5riErd4QBsRGPcx+HBDX2O5yYE5GqJeFQTPU+M56Va/f/Oph9X7uZo3W3o4l2ZhBZ6f6qUv0w==",
     "esbuildVersion": "0.25.12",
-    "previousModuleSha256": "4c96e7310fadd703bdabf8af4f0bcc03d1f896853507dea777c39c1cb3a9fd6b",
+    "previousModuleSha256": "a1fe0f3c6d1390bf8de3a021c09aea685bf25efccbc146956e36de777cdf4545",
     "startupImportsBundled": [
       "https://cdn.jsdelivr.net/npm/three@0.169.0/+esm",
       "https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/controls/OrbitControls.js/+esm",
@@ -92,6 +92,13 @@
     "accountMode": "explicit-local-workspace",
     "accountIntegrationVerified": false
   },
+  "previousCandidateBrowserReceipt": {
+    "realStarterCard": false,
+    "errors": [
+      "Awaiting OVH browser verification"
+    ]
+  },
+  "uvSourceCommit": "d49eec1d29fc2cc3202ce497111147fcaa05fb37",
   "browserReceipt": {
     "realStarterCard": false,
     "errors": [
