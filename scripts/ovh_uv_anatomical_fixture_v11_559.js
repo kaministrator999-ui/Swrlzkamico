@@ -152,12 +152,28 @@ if(new URLSearchParams(location.search).get('serverqa')==='1'){
   }finally{HTMLCanvasElement.prototype.toBlob=originalBlob;HTMLAnchorElement.prototype.click=originalClick;}
   // Leave only the disposable local starter with the new layout for the server screenshots.
   legend.open=false;se356UVPreviewSchedule();
+  // Exercise the clean preview and texture-only modes with the actual editor controls.
+  const geometryBeforePreview=JSON.stringify(model().parts);
+  host.querySelector('[data-se561-preview="guide"]').click();await pause(120);
+  qaAssert(window.SWYRL_ENGINE_UV_VISUAL_REVIEW.inspect().preview==='guide','Guide preview mode did not activate');
+  const guideCanvas=host.querySelector('#se356UVCanvas'),guidePixels=guideCanvas.getContext('2d').getImageData(0,0,guideCanvas.width,guideCanvas.height).data;
+  qaAssert(guidePixels[0]===248&&guidePixels[1]===250&&guidePixels[2]===252,'Guide preview background not clean');
+  host.querySelector('[data-se561-preview="texture"]').click();await pause(120);
+  qaAssert(window.SWYRL_ENGINE_UV_VISUAL_REVIEW.inspect().preview==='texture','Texture-only mode did not activate');
+  host.querySelector('[data-se561-preview="editor"]').click();await pause(120);
+  qaAssert(JSON.stringify(model().parts)===geometryBeforePreview,'Display mode mutated saved model');
+  qaAssert(se561FrameReference(),'Reference framing failed: '+JSON.stringify(se561FrameReceipt));
+  qaAssert(se561FrameReceipt.clearancePx>=-2,'Reference model still clipped by controls');
+  se561DeclutterLabels();
+  const review=window.SWYRL_ENGINE_UV_VISUAL_REVIEW.inspect();
+  qaAssert(review.visibleLabels>=1&&review.visibleLabels<=review.totalLabels&&review.totalLabels===22,'Label visibility mismatch');
+
   await pause(100);
   host.querySelector('[data-se551="fit"]').click();await pause(100);
   const canvas=host.querySelector('#se356UVCanvas'),cv=canvas.getBoundingClientRect(),vp=canvas.parentElement.getBoundingClientRect();
   const centerError=Math.abs((cv.left+cv.right-vp.left-vp.right)/2);
   qaAssert(centerError<=3&&cv.width<=vp.width+1&&cv.bottom<=host.getBoundingClientRect().bottom+1,'atlas fit/centering failed');
-  return {ok:true,cancel:true,apply:true,undo:true,redo:true,anatomicalLayout:true,visibleConfirmation:true,visibleProgress:true,visibleResult:true,geometryPreserved:true,paintSamples:samples,maxPaintChannelError:maxError,renderTexture:true,restoredOriginal:true,centerErrorPx:centerError,atlasSizePx:cv.width,exportReceipt,coverage:actualExpected.report.packing.candidateTriangleArea,legendCount:choices.length};
+  return {ok:true,cancel:true,apply:true,undo:true,redo:true,anatomicalLayout:true,visualReview:true,referenceClearancePx:se561FrameReceipt.clearancePx,visibleLabels:review.visibleLabels,visibleConfirmation:true,visibleProgress:true,visibleResult:true,geometryPreserved:true,paintSamples:samples,maxPaintChannelError:maxError,renderTexture:true,restoredOriginal:true,centerErrorPx:centerError,atlasSizePx:cv.width,exportReceipt,coverage:actualExpected.report.packing.candidateTriangleArea,legendCount:choices.length};
  }
  const open=se552Open;
  se552Open=function(){
