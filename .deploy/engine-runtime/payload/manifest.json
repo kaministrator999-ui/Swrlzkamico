@@ -12,8 +12,8 @@
       "bytes": 687188
     },
     "swrlz-engine-v11.552.js": {
-      "sha256": "4c96e7310fadd703bdabf8af4f0bcc03d1f896853507dea777c39c1cb3a9fd6b",
-      "bytes": 9623134
+      "sha256": "eb42521eaa8db2b759ab94bfb144811a8a68afcdb729c9b9e02ba33ff63110e9",
+      "bytes": 10663969
     },
     "assets/uv-unwrapper/uv_atlas_core_v11_555.mjs": {
       "sha256": "70547b1b8386be0e5452d71c7aee230a520c5ba3d41f51259d255b2c257ddc2a",
@@ -41,7 +41,20 @@
       "bytes": 317478
     }
   },
-  "browserReceipt": {
+  "sourceCommit": "09a3a0c3935aacdc49f28ea6a357b8e8cffc5aed",
+  "browserRun": "46112444977",
+  "rendererBundle": {
+    "version": "0.169.0",
+    "threeIntegrity": "sha512-Ed906MA3dR4TS5riErd4QBsRGPcx+HBDX2O5yYE5GqJeFQTPU+M56Va/f/Oph9X7uZo3W3o4l2ZhBZ6f6qUv0w==",
+    "esbuildVersion": "0.25.12",
+    "previousModuleSha256": "4c96e7310fadd703bdabf8af4f0bcc03d1f896853507dea777c39c1cb3a9fd6b",
+    "startupImportsBundled": [
+      "https://cdn.jsdelivr.net/npm/three@0.169.0/+esm",
+      "https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/controls/OrbitControls.js/+esm",
+      "https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/controls/TransformControls.js/+esm"
+    ]
+  },
+  "priorBrowserReceipt": {
     "origin": "https://40.160.61.231",
     "hash": "05b40cd4aa751760b371265cf73047485065175a9b6e742e33d47871ec1da2fb",
     "info": {
@@ -79,6 +92,10 @@
     "accountMode": "explicit-local-workspace",
     "accountIntegrationVerified": false
   },
-  "sourceCommit": "ec1f9fc4fcefd9f97353d096fd6f36ce253af34a",
-  "browserRun": "46104831744"
+  "browserReceipt": {
+    "realStarterCard": false,
+    "errors": [
+      "Awaiting OVH browser verification"
+    ]
+  }
 }
