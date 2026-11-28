@@ -12,8 +12,8 @@
       "bytes": 687188
     },
     "swrlz-engine-v11.552.js": {
-      "sha256": "7b0c009caea09762a3d7d9f668877048b176b9818b9702c41e0b70ab6c459228",
-      "bytes": 10709707
+      "sha256": "a091084041c8e38153028a126e8300d8c6d7f5449005bfcc23bc0d500b84fb10",
+      "bytes": 10694509
     },
     "assets/uv-unwrapper/uv_atlas_core_v11_555.mjs": {
       "sha256": "e5a05b74f9e324c18c67831f3d5f0e3705fb88e21917d2e0232147ad6698836d",
@@ -47,7 +47,7 @@
     "version": "0.169.0",
     "threeIntegrity": "sha512-Ed906MA3dR4TS5riErd4QBsRGPcx+HBDX2O5yYE5GqJeFQTPU+M56Va/f/Oph9X7uZo3W3o4l2ZhBZ6f6qUv0w==",
     "esbuildVersion": "0.25.12",
-    "previousModuleSha256": "692ea817519c3116f17f80194ced45afa2745341077d27146d6c5990708fff64",
+    "previousModuleSha256": "3007ebe51a41ec23aae453e3fbbb14188a42228bb4806d1a97174392f4975275",
     "startupImportsBundled": [
       "https://cdn.jsdelivr.net/npm/three@0.169.0/+esm",
       "https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/controls/OrbitControls.js/+esm",
@@ -99,7 +99,7 @@
     ]
   },
   "uvSourceCommit": "d49eec1d29fc2cc3202ce497111147fcaa05fb37",
-  "qaOnly": true,
+  "qaOnly": false,
   "functionalVerification": {
     "run": 46114660276,
     "job": 140886104995,
@@ -117,8 +117,8 @@
     "optimizeAllOnePart": true
   },
   "anatomicalVerification": {
-    "run": 46121073679,
-    "fixtureModuleSha256": "a498cabc44e766ed8b6d65592f690854f2bd147bb0b794ebc3c70d32dc06b758",
+    "run": 46123734099,
+    "fixtureModuleSha256": "7b0c009caea09762a3d7d9f668877048b176b9818b9702c41e0b70ab6c459228",
     "profiles": {
       "desktop": {
         "ok": true,
@@ -127,6 +127,14 @@
         "undo": true,
         "redo": true,
         "anatomicalLayout": true,
+        "visualReview": true,
+        "guideStableFrames": 3,
+        "guideDarkPixels": 3776,
+        "guideBlankSamples": 23,
+        "texturePreviewSamples": 218,
+        "texturePreviewMaxError": 0,
+        "referenceClearancePx": 41.430809220763365,
+        "visibleLabels": 10,
         "visibleConfirmation": true,
         "visibleProgress": true,
         "visibleResult": true,
@@ -136,7 +144,7 @@
         "renderTexture": true,
         "restoredOriginal": true,
         "centerErrorPx": 0,
-        "atlasSizePx": 1100.8125,
+        "atlasSizePx": 1027.8125,
         "exportReceipt": {
           "width": 4096,
           "height": 4096,
@@ -153,6 +161,14 @@
         "undo": true,
         "redo": true,
         "anatomicalLayout": true,
+        "visualReview": true,
+        "guideStableFrames": 3,
+        "guideDarkPixels": 3776,
+        "guideBlankSamples": 23,
+        "texturePreviewSamples": 218,
+        "texturePreviewMaxError": 0,
+        "referenceClearancePx": 12.820718132115275,
+        "visibleLabels": 9,
         "visibleConfirmation": true,
         "visibleProgress": true,
         "visibleResult": true,
@@ -162,7 +178,7 @@
         "renderTexture": true,
         "restoredOriginal": true,
         "centerErrorPx": 0,
-        "atlasSizePx": 136.5625,
+        "atlasSizePx": 390,
         "exportReceipt": {
           "width": 4096,
           "height": 4096,
@@ -177,7 +193,7 @@
   "browserReceipt": {
     "realStarterCard": false,
     "errors": [
-      "QA fixture must never be promoted"
+      "Awaiting clean candidate desktop and mobile verification"
     ]
   }
 }
