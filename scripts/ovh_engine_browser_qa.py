@@ -20,8 +20,12 @@ def load_file(root,rel):
     return path.read_bytes()
 def main():
     require(os.geteuid()!=0,'Never run browser as root')
-    require(len(sys.argv)==2 and sys.argv[1] in ('live','candidate'),'Invalid QA mode')
+    require(len(sys.argv) in (2,3) and sys.argv[1] in ('live','candidate'),'Invalid QA mode')
     mode=sys.argv[1]
+    profile=sys.argv[2] if len(sys.argv)==3 else 'mobile'
+    require(profile in ('mobile','desktop'),'Invalid browser profile')
+    mobile=profile=='mobile'
+    viewport={'width':412,'height':915} if mobile else {'width':2560,'height':1440}
     receipt_path=LIVE/'.swrlz-starter-receipt.json'
     if not receipt_path.exists():receipt_path=LIVE/'SOURCE.json'
     live_receipt=json.loads(receipt_path.read_text())
@@ -44,11 +48,12 @@ def main():
     def read(rel):
         return assets[rel] if rel in assets else load_file(LIVE,rel)
     errors=[]; missing=[]; shots={}; served={}; result={'mode':mode,'executionHost':socket.gethostname(),'browserExecutable':CHROMIUM,'origin':ORIGIN,'transport':'server filesystem through isolated browser routes; not authenticated HTTP','accountIntegrationVerified':False,'sandbox':True}
+    result.update(profile=profile,viewport=viewport,deviceScaleFactor=1,isMobile=mobile,hasTouch=mobile)
     start=time.monotonic()
     with sync_playwright() as pw:
         browser=pw.chromium.launch(executable_path=CHROMIUM,headless=True,chromium_sandbox=True,proxy={'server':'http://127.0.0.1:9','bypass':''},args=['--proxy-bypass-list=<-loopback>','--disable-dev-shm-usage','--use-angle=swiftshader','--enable-unsafe-swiftshader','--disable-background-networking'],timeout=20000)
         result['chromiumVersion']=browser.version
-        context=browser.new_context(viewport={'width':412,'height':915},is_mobile=True,has_touch=True,device_scale_factor=1,service_workers='block',accept_downloads=False)
+        context=browser.new_context(viewport=viewport,screen=viewport,is_mobile=mobile,has_touch=mobile,device_scale_factor=1,service_workers='block',accept_downloads=False)
         context.set_default_timeout(20000)
         def route(r):
             u=urlsplit(r.request.url)
@@ -71,10 +76,17 @@ def main():
         page.on('dialog',lambda d:d.dismiss())
         def shot(name):
             page.wait_for_timeout(250)
-            shots[name+'.png']=page.screenshot(timeout=15000)
+            data=page.screenshot(timeout=25000,scale='css')
+            require(data[:8]==b'\x89PNG\r\n\x1a\n','Expected PNG screenshot')
+            require(int.from_bytes(data[16:20],'big')==viewport['width'] and int.from_bytes(data[20:24],'big')==viewport['height'],'Screenshot resolution mismatch')
+            shots[name+'.png']=data
         try:
             nav=page.goto(ORIGIN+'/modeler.html?serverqa=1',wait_until='domcontentloaded',timeout=60000)
             require(nav.status==200 and sha(nav.body())==sha(read('modeler.html')),'Entry mismatch')
+            result['browserDisplay']=page.evaluate("()=>({width:innerWidth,height:innerHeight,dpr:devicePixelRatio,screenWidth:screen.width,screenHeight:screen.height,touch:navigator.maxTouchPoints,coarse:matchMedia('(pointer: coarse)').matches,userAgent:navigator.userAgent})")
+            if not mobile:
+                display=result['browserDisplay']
+                require(display['width']==2560 and display['height']==1440 and display['dpr']==1 and display['touch']==0 and not display['coarse'],'Desktop emulation mismatch')
             page.wait_for_function("!!window.SWRLZ_FORGE_BUILD?.version && !!window.SWYRL_ENGINE_UV_UNWRAP && !!window.SWYRL_ENGINE_STARTUP_476?.inspect?.()?.ready",timeout=60000)
             require(page.locator('#seChatFrame').count()==0,'Unexpected credentialed iframe on OVH')
             if page.locator('#se476StartupGate').is_visible():page.locator('#se476ContinueLocal').click()
