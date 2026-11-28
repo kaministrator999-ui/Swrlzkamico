@@ -1,0 +1,150 @@
+name: OVH §E anatomical texture layout and clean 4K guide QA
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/ovh-engine-uv-anatomical.yml']
+permissions: {}
+concurrency:
+  group: ovh-engine-browser
+  cancel-in-progress: false
+jobs:
+  stage:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 18
+    permissions:
+      contents: write
+    outputs:
+      sha: ${{ steps.stage.outputs.sha }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/checkout@v4
+        with:
+          ref: d49eec1d29fc2cc3202ce497111147fcaa05fb37
+          path: candidate-source
+          persist-credentials: false
+      - name: Verify anatomical packing and prepare isolated candidate
+        run: |
+          set -euo pipefail
+          node scripts/test_uv_anatomical_v11_559.mjs
+          python3 scripts/ovh_prepare_uv_anatomical_v11_559.py
+          cat scripts/ovh_uv_anatomical_fixture_v11_559.js >> candidate-source/projects/swrlz-forge-moba/runtime/uv_auto_unwrap_v11_555.js
+          node --check candidate-source/projects/swrlz-forge-moba/runtime/uv_auto_unwrap_v11_555.js
+      - name: Build and validate exact saved UV candidate
+        run: |
+          set -euo pipefail
+          cd candidate-source
+          P=projects/swrlz-forge-moba
+          node "$P/tests/universal_uv_v11_557.mjs"
+          python3 "$P/scripts/verify_v11_552_release.py" --output dist/universal-uv
+          python3 "$P/scripts/package_static_delivery_v11_552.py" --output dist/universal-uv
+          node --check dist/universal-uv/swrlz-engine-v11.552.js
+      - name: Bundle local renderer into UV candidate
+        run: python3 scripts/ovh_bundle_universal_uv.py "$GITHUB_SHA" "$GITHUB_RUN_ID" candidate-source/dist/universal-uv
+      - name: Mark fixture candidate as non-publishable
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path('.deploy/engine-runtime/payload/manifest.json')
+          m=json.loads(p.read_text());m['qaOnly']=True;m['browserReceipt']={'realStarterCard':False,'errors':['QA fixture must never be promoted']};p.write_text(json.dumps(m,indent=2)+'\n')
+          PY
+      - name: Stage isolated candidate without publishing
+        id: stage
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add .deploy/engine-runtime/payload
+          git commit -m 'Stage isolated anatomical UV layout and 4K guide QA fixture (NOT production)'
+          git push origin HEAD:main
+          echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+  browser:
+    needs: stage
+    if: github.ref == 'refs/heads/main'
+    permissions:
+      contents: read
+    runs-on: ubuntu-24.04
+    timeout-minutes: 7
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.stage.outputs.sha }}
+          sparse-checkout: .deploy/engine-runtime/payload/manifest.json
+          sparse-checkout-cone-mode: false
+      - name: Invoke existing OVH Chromium (no runner browser installation)
+        env:
+          HOST: ${{ secrets.SWRLZ_SERVER_HOST }}
+          LOGIN: ${{ secrets.SWRLZ_SERVER_USER }}
+          SSH_KEY: ${{ secrets.SWRLZ_SERVER_SSH_KEY }}
+          KNOWN_HOSTS: ${{ secrets.SWRLZ_SERVER_KNOWN_HOSTS }}
+          MODE: candidate
+          STAGED_SHA: ${{ needs.stage.outputs.sha }}
+        run: |
+          set -euo pipefail
+          test -n "$HOST" && test "$LOGIN" = swrlz-deploy
+          umask 077
+          d=$(mktemp -d)
+          trap 'rm -rf "$d"' EXIT
+          printf '%s\n' "$SSH_KEY" > "$d/key"
+          printf '%s\n' "$KNOWN_HOSTS" > "$d/known_hosts"
+          unset SSH_KEY KNOWN_HOSTS
+          remote() {
+            ssh -F /dev/null -T -i "$d/key" -o BatchMode=yes -o IdentitiesOnly=yes \
+              -o StrictHostKeyChecking=yes -o HostKeyAlgorithms=ssh-ed25519 \
+              -o UserKnownHostsFile="$d/known_hosts" -o GlobalKnownHostsFile=/dev/null \
+              -o ConnectTimeout=15 -o ClearAllForwardings=yes "$LOGIN@$HOST" "$1"
+          }
+          if test "$MODE" = candidate; then
+            remote swrlz-source-sync > "$d/sync"
+            grep -Fxq "$STAGED_SHA" "$d/sync"
+          fi
+          case "$MODE" in live|candidate) ;; *) exit 1 ;; esac
+          status=0
+          remote "swrlz-engine-browser-$MODE-desktop" > "$d/evidence" || status=$?
+          mkdir -p engine-server-qa
+          python3 - "$d/evidence" "$MODE" <<'PY'
+          import base64,hashlib,io,json,sys,zipfile
+          from pathlib import Path
+          lines=Path(sys.argv[1]).read_text().splitlines()
+          rows=[s.split(' ',1)[1] for s in lines if s.startswith('SWRLZ_ENGINE_QA_ZIP ')]
+          if len(rows)!=1:raise RuntimeError('Missing server browser receipt; verify bridge authorization')
+          raw=base64.b64decode(rows[0],validate=True)
+          assert len(raw)<=8*1024*1024
+          out=Path('engine-server-qa')
+          with zipfile.ZipFile(io.BytesIO(raw)) as z:
+              receipt=json.loads(z.read('receipt.json'))
+              assert receipt['mode']==sys.argv[2] and receipt['sandbox']
+              assert sum(i.file_size for i in z.infolist())<=16*1024*1024
+              for name,digest in receipt['screenshots'].items():
+                  assert name in {'starter-library.png','native-starter.png','expanded-uv-default.png','native-uv-numbered.png','native-numbered-model.png','failure.png'}
+                  data=z.read(name)
+                  assert hashlib.sha256(data).hexdigest()==digest and data.startswith(b'\x89PNG')
+                  (out/name).write_bytes(data)
+              (out/'receipt.json').write_text(json.dumps(receipt,indent=2))
+          print(json.dumps({k:v for k,v in receipt.items() if k!='served'},indent=2))
+          assert receipt['ok'] and receipt['realStarterCard']
+          manifest=json.loads(Path('.deploy/engine-runtime/payload/manifest.json').read_text())
+          assert receipt['served']['modeler.html']==manifest['assets']['modeler.html']['sha256']
+          assert receipt['served']['swrlz-engine-v11.552.js']==manifest['assets']['swrlz-engine-v11.552.js']['sha256']
+          assert receipt['sceneSha256']==manifest['requiredStarterAssets']['scenes/model-atelier-clean-topology-humanoid-v11-554.swyrl.json']['sha256']
+          assert receipt['profile']=='desktop' and receipt['viewport']=={'width':2560,'height':1440}
+          assert receipt['labels']['labels']==22
+          qa=receipt['labels']['functionalQA']
+          assert qa['ok'] and qa['cancel'] and qa['apply'] and qa['undo'] and qa['redo'] and qa['anatomicalLayout'] and qa['renderTexture'] and qa['restoredOriginal'] and qa['geometryPreserved']
+          assert qa['paintSamples']>=100 and qa['maxPaintChannelError']<=2 and qa['centerErrorPx']<=3
+          assert qa['legendCount']==22 and qa['exportReceipt']['width']==4096 and qa['exportReceipt']['height']==4096 and qa['exportReceipt']['transparentInterior']
+          print('SWRLZ_OVH_ANATOMICAL_UV_PASS',json.dumps(qa))
+          print('SWRLZ_OVH_BUNDLED_RENDERER_BROWSER_PASS')
+          PY
+          test "$status" = 0
+      - name: Return screenshots from OVH
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ovh-engine-anatomical-uv-evidence
+          path: engine-server-qa/
+          if-no-files-found: warn
+          retention-days: 30
