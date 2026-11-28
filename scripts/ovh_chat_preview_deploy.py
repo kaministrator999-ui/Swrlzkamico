@@ -190,6 +190,17 @@ def _ovh_small_code(prompt,programming,payload,history):
     s=replace_once(s,"        elif file_dialogue:\n            response_tokens=min(320,available_output_tokens);temperature=0.35",
         "        elif compact_kind=='code':\n            response_tokens=min(1024,available_output_tokens);temperature=0.30\n"
         "        elif file_dialogue:\n            response_tokens=min(320,available_output_tokens);temperature=0.35")
+    # Python 3.11 rejects global (?m) flags embedded in regex alternations.
+    rows=s.splitlines(keepends=True)
+    matches=[i for i,line in enumerate(rows) if "code_like=bool(re.search(" in line]
+    if len(matches)!=1: raise RuntimeError("Unexpected coding validator source shape")
+    i=matches[0]
+    line=rows[i]
+    if "(?m)" in line:
+        line=line.replace("(?m)","").replace(r"\\s",r"\s").replace(r"\\b",r"\b")
+        line=line.replace(",source,re.I))",",source,re.I|re.M))")
+        rows[i]=line
+    s="".join(rows)
     ast.parse(s)
     return s
 
@@ -240,7 +251,7 @@ def _ovh_score(docs,frequencies,query,postings=None):
 def verify_local():
     # No imported account history, credentials, or user prompt contents in receipts.
     program=r'''
-from lfm2_700m_engine import _OVHRequestTokenModel,_ovh_small_code
+from lfm2_700m_engine import _OVHRequestTokenModel,_ovh_small_code,_candidate_structure_check
 from brain_programming import programming_intent
 from chatgpt_account_memory import _ovh_postings,_ovh_score
 from collections import Counter
@@ -265,6 +276,9 @@ assert not _ovh_small_code(p,intent,{"archiveEvidence":"fixture"},[])
 assert not _ovh_small_code(p,intent,{},[{"role":"user","content":"previous"}])
 assert not _ovh_small_code("Fix the existing Python function",intent,{},[])
 assert not _ovh_small_code("Create a simple HTML application",intent,{},[])
+assert _candidate_structure_check("\x60\x60\x60python\ndef double(x):\n    return x*2\n\x60\x60\x60",intent,[])["status"]=="PASS"
+assert _candidate_structure_check("No candidate",intent,[])["status"]=="REJECT"
+
 docs=[{"id":i,"timestamp":i%31,"terms":{"common":2,"term"+str(i%401):1},
        "titleTokens":{"term"+str(i%401)}} for i in range(12000)]
 freq=Counter(w for d in docs for w in d["terms"])
