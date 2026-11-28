@@ -82,3 +82,40 @@ se552Open=function(){
  const t=se551Target();if(t)se559UpdateLegend(t,se559RegionInfo(t,se552Regions(t)));se356UVPreviewSchedule();
 };
 /* SE559_PAINT_GUIDE_END */
+
+/* SE560: persistent editor feedback and non-native confirmation. */
+function se560Feedback(message){
+ const box=se552Portal?.host?.querySelector('[data-se560-status]');
+ if(box)box.textContent=message;
+}
+function se560BusyControls(busy){
+ for(const b of se552Portal?.host?.querySelectorAll('[data-se559-layout],[data-se557-optimize],[data-se557-optimize-all],[data-se559-export]')||[])b.disabled=busy;
+}
+function se560Confirm(message){
+ const host=se552Portal?.host,box=host?.querySelector('[data-se560-confirm]');
+ if(!host||!box)return Promise.resolve(false);
+ return new Promise(resolve=>{
+  let done=false;
+  const observer=new MutationObserver(()=>{if(!host.isConnected)finish(false);});
+  const finish=value=>{
+   if(done)return;done=true;observer.disconnect();box.hidden=true;
+   box.querySelector('[data-se560-apply]').onclick=null;box.querySelector('[data-se560-cancel]').onclick=null;resolve(value);
+  };
+  box.querySelector('[data-se560-prompt]').textContent=message;
+  box.querySelector('[data-se560-apply]').onclick=()=>finish(true);
+  box.querySelector('[data-se560-cancel]').onclick=()=>finish(false);
+  box.hidden=false;se560Feedback('Preview ready — choose Apply or Cancel.');
+  observer.observe(document.body,{childList:true});
+ });
+}
+const se560PreviousOpen=se552Open;
+se552Open=function(){
+ se560PreviousOpen();
+ const host=se552Portal?.host;
+ if(!host||host.querySelector('[data-se560-status]'))return;
+ const panel=document.createElement('div');panel.style.cssText='flex:none;background:#172d3b;border:1px solid #4d788c;border-radius:6px;padding:6px 9px;margin-bottom:5px;font-size:12px;line-height:1.35';
+ panel.innerHTML='<div data-se560-status role="status" aria-live="polite">AI anatomical layout: tap to prepare upright face, chest and legs. Apply confirms; Undo reverses.</div><div data-se560-confirm hidden><div data-se560-prompt style="white-space:pre-line;padding:7px 0"></div><div style="display:flex;gap:8px;flex-wrap:wrap"><button type="button" data-se560-apply style="padding:9px 15px;background:#2c7961;color:white;border:1px solid #82c5a5;border-radius:6px">Apply layout</button><button type="button" data-se560-cancel style="padding:9px 15px;background:#293947;color:white;border:1px solid #8295a5;border-radius:6px">Cancel</button></div></div>';
+ host.insertBefore(panel,host.children[2]);
+ host.querySelector('[data-se551="fit"]')?.click();
+};
+/* SE560_FEEDBACK_END */

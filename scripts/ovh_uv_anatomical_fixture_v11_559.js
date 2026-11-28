@@ -38,15 +38,30 @@ if(new URLSearchParams(location.search).get('serverqa')==='1'){
   qaAssert(expected.changed,'fixture must have measurable optimization');
   await pause(150);
   let result=null,confirmations=0;
-  const originalOptimize=se557Optimize,originalConfirm=window.confirm;
+  const originalOptimize=se557Optimize;
   const invoke=async(all,accept)=>{
    const b=host.querySelector('[data-se559-layout]');
    qaAssert(b&&!b.disabled,'optimization button missing');
    result=null;
-   window.confirm=msg=>{qaAssert(String(msg).includes('Apply AI anatomical layout'),'unexpected confirmation');confirmations++;return accept;};
    se557Optimize=function(...args){result=originalOptimize(...args);return result;};
-   try{b.click();qaAssert(result,'button did not invoke optimizer');return await result;}
-   finally{se557Optimize=originalOptimize;window.confirm=originalConfirm;}
+   try{
+    b.click();qaAssert(result,'button did not invoke optimizer');
+    const status=host.querySelector('[data-se560-status]');
+    qaAssert(status?.textContent.includes('Preparing'),'Visible preparing status missing');
+    const prompt=host.querySelector('[data-se560-confirm]');
+    for(let n=0;n<200&&prompt.hidden;n++){
+     if(!b.disabled)throw Error('Optimizer exited without confirmation: '+status.textContent);
+     await pause(50);
+    }
+    qaAssert(!prompt.hidden&&prompt.querySelector('[data-se560-prompt]').textContent.includes('Apply AI anatomical layout'),'In-panel confirmation missing: '+status.textContent);
+    qaAssert(b.disabled,'Duplicate action not blocked');
+    confirmations++;
+    prompt.querySelector(accept?'[data-se560-apply]':'[data-se560-cancel]').click();
+    const ok=await result;
+    qaAssert(prompt.hidden&&!b.disabled,'Confirmation controls did not reset');
+    qaAssert(status.textContent.includes(accept?'Applied anatomical layout':'Cancelled'),'Visible result missing: '+status.textContent);
+    return ok;
+   }finally{se557Optimize=originalOptimize;}
   };
   const state=()=>find();
   const verifyGeometry=(p)=>{
@@ -142,7 +157,7 @@ if(new URLSearchParams(location.search).get('serverqa')==='1'){
   const canvas=host.querySelector('#se356UVCanvas'),cv=canvas.getBoundingClientRect(),vp=canvas.parentElement.getBoundingClientRect();
   const centerError=Math.abs((cv.left+cv.right-vp.left-vp.right)/2);
   qaAssert(centerError<=3&&cv.width<=vp.width+1&&cv.bottom<=host.getBoundingClientRect().bottom+1,'atlas fit/centering failed');
-  return {ok:true,cancel:true,apply:true,undo:true,redo:true,anatomicalLayout:true,geometryPreserved:true,paintSamples:samples,maxPaintChannelError:maxError,renderTexture:true,restoredOriginal:true,centerErrorPx:centerError,atlasSizePx:cv.width,exportReceipt,coverage:actualExpected.report.packing.candidateTriangleArea,legendCount:choices.length};
+  return {ok:true,cancel:true,apply:true,undo:true,redo:true,anatomicalLayout:true,visibleConfirmation:true,visibleProgress:true,visibleResult:true,geometryPreserved:true,paintSamples:samples,maxPaintChannelError:maxError,renderTexture:true,restoredOriginal:true,centerErrorPx:centerError,atlasSizePx:cv.width,exportReceipt,coverage:actualExpected.report.packing.candidateTriangleArea,legendCount:choices.length};
  }
  const open=se552Open;
  se552Open=function(){
