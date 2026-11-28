@@ -12,8 +12,8 @@
       "bytes": 687188
     },
     "swrlz-engine-v11.552.js": {
-      "sha256": "d0d4b120669c731d2b8fae49255b6422ace98eaa761eb4ae994e6912a483c184",
-      "bytes": 10708278
+      "sha256": "7b0c009caea09762a3d7d9f668877048b176b9818b9702c41e0b70ab6c459228",
+      "bytes": 10709707
     },
     "assets/uv-unwrapper/uv_atlas_core_v11_555.mjs": {
       "sha256": "e5a05b74f9e324c18c67831f3d5f0e3705fb88e21917d2e0232147ad6698836d",
@@ -41,13 +41,13 @@
       "bytes": 317478
     }
   },
-  "sourceCommit": "8296dc773f954058d3305859e448fbaea1987c87",
-  "browserRun": "46123473638",
+  "sourceCommit": "e69e896b4ee825a21d701a1b8229cd0eb8a6d40f",
+  "browserRun": "46123734099",
   "rendererBundle": {
     "version": "0.169.0",
     "threeIntegrity": "sha512-Ed906MA3dR4TS5riErd4QBsRGPcx+HBDX2O5yYE5GqJeFQTPU+M56Va/f/Oph9X7uZo3W3o4l2ZhBZ6f6qUv0w==",
     "esbuildVersion": "0.25.12",
-    "previousModuleSha256": "29617c381023335d859fe8e0ea9a4b1633d66cc603337dbf931fd8dcf8fcb149",
+    "previousModuleSha256": "692ea817519c3116f17f80194ced45afa2745341077d27146d6c5990708fff64",
     "startupImportsBundled": [
       "https://cdn.jsdelivr.net/npm/three@0.169.0/+esm",
       "https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/controls/OrbitControls.js/+esm",
