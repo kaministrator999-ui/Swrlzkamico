@@ -1,0 +1,148 @@
+{
+  "baseline": "65476cd927d504b8eac8b5cb6d426235a54907b9",
+  "sourceScene": "projects/swrlz-forge-moba/scenes/model-atelier-clean-topology-humanoid-v11-554.swyrl.json",
+  "sourceBlob": "6ef0e683f98c12323129d42cc282983d662939b2",
+  "charts": 22,
+  "triangles": 11492,
+  "vertices": 6418,
+  "baselineTriangleArea": 0.48763995114058134,
+  "candidateTriangleArea": 0.5300443295416873,
+  "relativeAreaGain": 0.08695837636338632,
+  "linearTexelGain": 0.04257295973153985,
+  "scale": 1.0425729597315399,
+  "flips": 0,
+  "degenerate": 0,
+  "maxAreaError": 2.6969529040576923e-18,
+  "paddingPixels": 8,
+  "atlasResolution": 2048,
+  "rotatedCharts": 0,
+  "attempts": [
+    {
+      "sort": 0,
+      "scoreMode": 0,
+      "rotate": false,
+      "scale": 1.037775374912921
+    },
+    {
+      "sort": 0,
+      "scoreMode": 0,
+      "rotate": true,
+      "scale": 1.010028487228237
+    },
+    {
+      "sort": 0,
+      "scoreMode": 1,
+      "rotate": false,
+      "scale": 1.0062412529198204
+    },
+    {
+      "sort": 0,
+      "scoreMode": 1,
+      "rotate": true,
+      "scale": 1.0062412529198204
+    },
+    {
+      "sort": 1,
+      "scoreMode": 0,
+      "rotate": false,
+      "scale": 1.0425729597315399
+    },
+    {
+      "sort": 1,
+      "scoreMode": 0,
+      "rotate": true,
+      "scale": 1.0062412529198204
+    },
+    {
+      "sort": 1,
+      "scoreMode": 1,
+      "rotate": false,
+      "scale": 1.0192683642636373
+    },
+    {
+      "sort": 1,
+      "scoreMode": 1,
+      "rotate": true,
+      "scale": 1.0096682104401253
+    },
+    {
+      "sort": 2,
+      "scoreMode": 0,
+      "rotate": false,
+      "scale": 1.037775374912921
+    },
+    {
+      "sort": 2,
+      "scoreMode": 0,
+      "rotate": true,
+      "scale": 1.010028487228237
+    },
+    {
+      "sort": 2,
+      "scoreMode": 1,
+      "rotate": false,
+      "scale": 1.0062412529198204
+    },
+    {
+      "sort": 2,
+      "scoreMode": 1,
+      "rotate": true,
+      "scale": 1.0062412529198204
+    },
+    {
+      "sort": 3,
+      "scoreMode": 0,
+      "rotate": false,
+      "scale": 1.0425729597315399
+    },
+    {
+      "sort": 3,
+      "scoreMode": 0,
+      "rotate": true,
+      "scale": 1.0062412529198204
+    },
+    {
+      "sort": 3,
+      "scoreMode": 1,
+      "rotate": false,
+      "scale": 1.0192683642636373
+    },
+    {
+      "sort": 3,
+      "scoreMode": 1,
+      "rotate": true,
+      "scale": 1.0096682104401253
+    },
+    {
+      "sort": 4,
+      "scoreMode": 0,
+      "rotate": false,
+      "scale": 1.037775374912921
+    },
+    {
+      "sort": 4,
+      "scoreMode": 0,
+      "rotate": true,
+      "scale": 1.010028487228237
+    },
+    {
+      "sort": 4,
+      "scoreMode": 1,
+      "rotate": false,
+      "scale": 0.9382963121214201
+    },
+    {
+      "sort": 4,
+      "scoreMode": 1,
+      "rotate": true,
+      "scale": 1.0350881236432734
+    }
+  ],
+  "selected": {
+    "sort": 1,
+    "scoreMode": 0,
+    "rotate": false
+  },
+  "geometryChanged": false,
+  "interChartBoundingBoxOverlap": false
+}
