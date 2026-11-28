@@ -1,0 +1,13 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import {anatomicalUV559} from './ovh_uv_anatomical_v11_559.mjs';
+const scene=JSON.parse(fs.readFileSync('.deploy/engine-uv/payload/overlay/scenes/model-atelier-clean-topology-humanoid-v11-554.swyrl.json','utf8'));
+const mesh=scene.project.modelAtelier.parts[0].topologyMesh;
+const r=anatomicalUV559(mesh),b=r.report.boxes;
+assert.equal(r.positions,mesh.positions);assert.equal(r.indices,mesh.indices);
+assert(r.report.packing.maxAreaError<1e-10);
+for(const i of [1,4])assert(Math.abs(b[i].x+b[i].w/2-.5)<1e-10);
+assert(Math.abs((b[21].x+b[22].x+b[22].w)/2-.5)<1e-10);
+assert(b[4].y>b[1].y&&b[1].y>b[21].y&&b[1].y>b[22].y);
+for(const a of Object.values(r.report.alignment))assert(a>.999999);
+console.log('SWRLZ_ANATOMICAL_ATLAS_PASS',JSON.stringify(r.report));
