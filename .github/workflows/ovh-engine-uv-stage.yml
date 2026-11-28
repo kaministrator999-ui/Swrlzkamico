@@ -1,0 +1,39 @@
+name: OVH §E stage verified UV assets
+on:
+  push:
+    branches: [main]
+    paths: ['.deploy/engine-uv/request.json']
+  workflow_dispatch:
+permissions:
+  contents: write
+  actions: read
+concurrency:
+  group: ovh-engine-uv-stage
+  cancel-in-progress: false
+jobs:
+  stage:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Retrieve exact successful browser evidence
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          test "$(gh run view 46098814920 --json conclusion --jq .conclusion)" = success
+          test "$(gh run view 46098814920 --json headSha --jq .headSha)" = 05b2f1197dd0728a3690b6e4ad9b7c98dc67c75e
+          gh run download 46098814920 --name swrlz-humanoid-uv-preview-05b2f1197dd0728a3690b6e4ad9b7c98dc67c75e --dir "$RUNNER_TEMP/uv"
+          python3 scripts/ovh_engine_stage_uv.py "$RUNNER_TEMP/uv/relaxed"
+          python3 -m py_compile scripts/ovh_engine_publish.py
+          bash -n scripts/ovh_engine_install_gate.sh
+      - name: Preserve verified deployment payload in main (no live publication)
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add .deploy/engine-uv/payload
+          if git diff --cached --quiet; then echo 'Payload already staged'; exit 0; fi
+          git commit -m 'Stage exact browser-verified OVH engine UV assets'
+          git push origin HEAD:main
