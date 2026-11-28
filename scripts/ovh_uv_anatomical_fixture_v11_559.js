@@ -154,10 +154,24 @@ if(new URLSearchParams(location.search).get('serverqa')==='1'){
   legend.open=false;se356UVPreviewSchedule();
   // Exercise the clean preview and texture-only modes with the actual editor controls.
   const geometryBeforePreview=JSON.stringify(model().parts);
-  host.querySelector('[data-se561-preview="guide"]').click();await pause(120);
+  host.querySelector('[data-se561-preview="guide"]').click();
   qaAssert(window.SWYRL_ENGINE_UV_VISUAL_REVIEW.inspect().preview==='guide','Guide preview mode did not activate');
-  const guideCanvas=host.querySelector('#se356UVCanvas'),guidePixels=guideCanvas.getContext('2d').getImageData(0,0,guideCanvas.width,guideCanvas.height).data;
-  qaAssert(guidePixels[0]===248&&guidePixels[1]===250&&guidePixels[2]===252,'Guide preview background not clean');
+  const guideCanvas=host.querySelector('#se356UVCanvas'),gc2=guideCanvas.getContext('2d');
+  // Sample unoccupied interior pixels, not the rounded canvas corner or
+  // anti-aliased boundary. Wait for a stable rendered frame, not fixed sleep.
+  const blankUV=[[.75,.62],[.75,.52],[.5,.97],[.87,.48]];
+  const readGuide=()=>blankUV.map(([u,v])=>Array.from(gc2.getImageData(Math.floor(u*guideCanvas.width),Math.floor((1-v)*guideCanvas.height),1,1).data));
+  const matches=ps=>ps.every(p=>Math.abs(p[0]-248)<=2&&Math.abs(p[1]-250)<=2&&Math.abs(p[2]-252)<=2&&p[3]===255);
+  let stable=0,pixelsRead=[];
+  for(let n=0;n<50&&stable<3;n++){
+   await new Promise(r=>requestAnimationFrame(r));
+   pixelsRead=readGuide();stable=matches(pixelsRead)?stable+1:0;
+  }
+  qaAssert(stable>=3,'Guide preview background not stable: '+JSON.stringify(pixelsRead));
+  const guidePixels=gc2.getImageData(0,0,guideCanvas.width,guideCanvas.height).data;
+  let dark=0,white=0;
+  for(let k=0;k<guidePixels.length;k+=4){if(guidePixels[k]<150&&guidePixels[k+1]<150&&guidePixels[k+2]<150)dark++;if(guidePixels[k]>=246&&guidePixels[k+1]>=248&&guidePixels[k+2]>=250)white++;}
+  qaAssert(dark>=100&&white>guideCanvas.width*guideCanvas.height*.85,'Guide outlines/background coverage invalid: '+JSON.stringify({dark,white}));
   host.querySelector('[data-se561-preview="texture"]').click();await pause(120);
   qaAssert(window.SWYRL_ENGINE_UV_VISUAL_REVIEW.inspect().preview==='texture','Texture-only mode did not activate');
   host.querySelector('[data-se561-preview="editor"]').click();await pause(120);
@@ -174,7 +188,8 @@ if(new URLSearchParams(location.search).get('serverqa')==='1'){
   const centerError=Math.abs((cv.left+cv.right-vp.left-vp.right)/2);
   qaAssert(centerError<=3&&cv.width<=vp.width+1&&cv.bottom<=host.getBoundingClientRect().bottom+1,'atlas fit/centering failed');
   if(innerWidth<=700&&innerHeight>=700)qaAssert(cv.width>=Math.min(340,innerWidth*.83),'Mobile atlas too small: '+cv.width);
-  return {ok:true,cancel:true,apply:true,undo:true,redo:true,anatomicalLayout:true,visualReview:true,referenceClearancePx:se561FrameReceipt.clearancePx,visibleLabels:review.visibleLabels,visibleConfirmation:true,visibleProgress:true,visibleResult:true,geometryPreserved:true,paintSamples:samples,maxPaintChannelError:maxError,renderTexture:true,restoredOriginal:true,centerErrorPx:centerError,atlasSizePx:cv.width,exportReceipt,coverage:actualExpected.report.packing.candidateTriangleArea,legendCount:choices.length};
+  se561SetPreview('guide');
+  return {ok:true,cancel:true,apply:true,undo:true,redo:true,anatomicalLayout:true,visualReview:true,guideStableFrames:stable,guideDarkPixels:dark,referenceClearancePx:se561FrameReceipt.clearancePx,visibleLabels:review.visibleLabels,visibleConfirmation:true,visibleProgress:true,visibleResult:true,geometryPreserved:true,paintSamples:samples,maxPaintChannelError:maxError,renderTexture:true,restoredOriginal:true,centerErrorPx:centerError,atlasSizePx:cv.width,exportReceipt,coverage:actualExpected.report.packing.candidateTriangleArea,legendCount:choices.length};
  }
  const open=se552Open;
  se552Open=function(){

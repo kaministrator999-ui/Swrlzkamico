@@ -127,7 +127,7 @@ function se561PreviewDraw(){
  const t=se551Target(),cv=se552Portal.host.querySelector('#se356UVCanvas');
  if(!t||!cv)return;
  const ctx=cv.getContext('2d'),n=cv.width;
- ctx.save();ctx.globalAlpha=1;ctx.clearRect(0,0,n,n);
+ ctx.save();ctx.resetTransform();ctx.globalCompositeOperation='source-over';ctx.globalAlpha=1;ctx.clearRect(0,0,n,n);
  if(se561Preview==='guide'){
   ctx.fillStyle='#f8fafc';ctx.fillRect(0,0,n,n);
   const r=se552Regions(t);
@@ -148,6 +148,9 @@ function se561SetPreview(mode){
  se561Preview=mode;
  const host=se552Portal?.host;
  for(const b of host?.querySelectorAll('[data-se561-preview]')||[])b.setAttribute('aria-pressed',String(b.dataset.se561Preview===mode));
+ // A click must update the actual preview immediately, not merely queue a
+ // render behind asynchronous image decoding and heavyweight geometry updates.
+ if(mode==='editor')se356UVRender();else se561PreviewDraw();
  se356UVPreviewSchedule();
 }
 function se561ProjectedBounds(){
@@ -263,7 +266,13 @@ se552Open=function(){
    '#se552UVHost [data-se562-more]:not([open]) [data-se562-extra]{display:none!important}'+
    '#se552UVHost [data-se562-more] summary{cursor:pointer;border:1px solid #658797;border-radius:6px;background:#243849}'+
    '}'+
-   '@media(min-width:701px){#se552UVHost [data-se562-more]{display:contents}#se552UVHost [data-se562-more]>summary{display:none}#se552UVHost [data-se562-extra]{display:contents!important}#se552UVHost [data-se562-proxy]{display:none!important}}';
+   '@media(min-width:701px){#se552UVHost [data-se562-more]{display:contents}#se552UVHost [data-se562-more]>summary{display:none}#se552UVHost [data-se562-extra]{display:contents!important}#se552UVHost [data-se562-proxy]{display:none!important}'+
+   '#se552UVHost [data-se562-extra]>label{display:flex!important;flex:0 0 auto!important;align-items:center!important;gap:5px;white-space:nowrap!important;width:auto!important;max-width:100%!important;overflow-wrap:normal!important}'+
+   '#se552UVHost [data-se562-extra]>label select{width:auto!important;min-width:0!important;max-width:210px!important;flex:none!important}'+
+   '#se552UVHost [data-se562-extra]>label input[type=checkbox]{width:auto!important;flex:none!important}'+
+   '#se552UVHost [data-se562-extra]>button{flex:0 0 auto!important;white-space:nowrap!important}'+
+   '#se552UVHost [data-se562-extra]>span{flex:0 1 auto!important;max-width:100%;overflow-wrap:normal!important}'+
+   '}';
   document.head.append(style);
  }
  bar.dataset.se562Bar='1';
@@ -300,7 +309,7 @@ se552Open=function(){
  const fit=()=>{
   if(pending)return;pending=true;
   requestAnimationFrame(()=>{pending=false;if(!host.isConnected)return;
-   if(matchMedia('(max-width:700px)').matches)bar.__se558Fit?.();
+   bar.__se558Fit?.();
    const r=details.getBoundingClientRect();extra.style.top=Math.min(innerHeight-80,Math.max(40,r.bottom+5))+'px';
   });
  };
