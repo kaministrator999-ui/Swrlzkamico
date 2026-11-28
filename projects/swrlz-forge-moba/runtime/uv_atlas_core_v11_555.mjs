@@ -1,4 +1,5 @@
-import {flattenSeamedMesh,packSeamedCharts} from './uv_lscm_core_v11_555.mjs';
+import {flattenSeamedMesh,packSeamedCharts,optimizeExistingUV} from './uv_lscm_core_v11_555.mjs';
+export {optimizeExistingUV};
 /* §E v11.555 — reusable geometry-derived UV atlas core.
    xatlas (MIT): real chart segmentation, conformal parameterization and packing.
    Usable from Node authoring and the browser's selected topology mesh.
@@ -85,6 +86,8 @@ export async function unwrapMesh(createXAtlas,source,options={}){
   const result=packSeamedCharts(input,{
     resolution:options.resolution||2048,padding:options.padding||8
   });
+  // Preserve the proven shelf output if the bounded optimizer cannot improve it.
+  try{const opt=optimizeExistingUV(result,{resolution:options.resolution||2048,padding:options.padding||8});if(opt.changed){result.uvs=opt.uvs;result.optimization=opt.report;result.packing='audited-relax-and-rotate';delete result.chartBoxes;}}catch(e){result.optimizationSkipped=String(e.message||e);}
   result.method='LSCM+verified-chart-packing';
   result.weldedInputVertices=0;
   validateMesh(result.positions,result.indices);

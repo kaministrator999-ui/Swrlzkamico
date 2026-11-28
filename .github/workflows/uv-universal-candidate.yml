@@ -1,0 +1,26 @@
+name: §E universal UV candidate QA
+on:
+  push:
+    branches: [uv-universal-v11-557]
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Test numerical optimization against synthetic and existing starter meshes
+        run: |
+          P=projects/swrlz-forge-moba
+          node --check "$P/runtime/uv_auto_unwrap_v11_555.js"
+          node "$P/tests/universal_uv_v11_557.mjs"
+      - name: Verify sealed build and delivery injection
+        run: |
+          P=projects/swrlz-forge-moba
+          python3 "$P/scripts/verify_v11_552_release.py" --output dist/universal-uv
+          python3 "$P/scripts/package_static_delivery_v11_552.py" --output dist/universal-uv
+          node --check dist/universal-uv/swrlz-engine-v11.552.js

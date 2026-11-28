@@ -377,3 +377,109 @@ atelierTopologyGeometry=function(part){
  n.needsUpdate=true;return geo;
 };
 /* SE556_NUMBERED_MODEL_UV_END */
+
+
+/* SE557 selected-mesh UV optimization and conservative painted PNG rebake.
+   Existing geometry, skinning, vertex order, materials and seam topology stay intact. */
+let se557Busy=false,se557ExpandedBefore=false;
+async function se557Rebake(part,mesh,next){
+ const source=part.uvPaintPNG;
+ if(!source)return null;
+ if(typeof source!=='string'||!source.startsWith('data:image/png;base64,'))throw Error('Only embedded painted PNG textures can be safely rebaked');
+ const img=new Image();img.src=source;await img.decode();
+ const w=img.naturalWidth,h=img.naturalHeight;
+ if(w!==h||w<256||w>2048)throw Error('Paint rebake currently supports square 256–2048 px PNG textures');
+ const cv=document.createElement('canvas');cv.width=w;cv.height=h;
+ const ctx=cv.getContext('2d',{willReadFrequently:true});ctx.drawImage(img,0,0);
+ const src=ctx.getImageData(0,0,w,h).data,dst=ctx.createImageData(w,h),out=dst.data,mask=new Uint8Array(w*h);
+ const old=mesh.uvs,ix=mesh.indices,off=part.uvPaintOffset||[0,0];
+ if(!Array.isArray(off)||off.length!==2||off.some(v=>!Number.isFinite(v)))throw Error('Unsupported paint offset');
+ const wrap=x=>((x%1)+1)%1;
+ for(let k=0;k<ix.length;k+=3){
+  const ids=ix.slice(k,k+3),a=ids.map(i=>[next[i*2]*w,(1-next[i*2+1])*h]);
+  const [A,B,C]=a,det=(B[0]-A[0])*(C[1]-A[1])-(B[1]-A[1])*(C[0]-A[0]);
+  if(Math.abs(det)<1e-12)throw Error('Collapsed rebake triangle');
+  const minX=Math.max(0,Math.floor(Math.min(...a.map(p=>p[0])))),maxX=Math.min(w-1,Math.ceil(Math.max(...a.map(p=>p[0]))));
+  const minY=Math.max(0,Math.floor(Math.min(...a.map(p=>p[1])))),maxY=Math.min(h-1,Math.ceil(Math.max(...a.map(p=>p[1]))));
+  for(let y=minY;y<=maxY;y++)for(let x=minX;x<=maxX;x++){
+   const X=x+.5-A[0],Y=y+.5-A[1],b=(X*(C[1]-A[1])-Y*(C[0]-A[0]))/det,c=((B[0]-A[0])*Y-(B[1]-A[1])*X)/det,d=1-b-c;
+   if(Math.min(b,c,d)<-1e-8)continue;
+   const u=old[ids[0]*2]*d+old[ids[1]*2]*b+old[ids[2]*2]*c;
+   const v=old[ids[0]*2+1]*d+old[ids[1]*2+1]*b+old[ids[2]*2+1]*c;
+   const sx=Math.min(w-1,Math.floor(wrap(u+off[0])*w)),sy=Math.min(h-1,Math.floor((1-wrap(v+off[1]))*h)),j=y*w+x,i=(sy*w+sx)*4;
+   out.set(src.subarray(i,i+4),j*4);mask[j]=1;
+  }
+ }
+ if(!mask.some(Boolean))throw Error('Texture rebake produced no pixels');
+ // Bounded gutter dilation, without overwriting any actual triangle pixels.
+ for(let pass=0;pass<4;pass++){
+  const prev=mask.slice();
+  for(let y=0;y<h;y++)for(let x=0;x<w;x++){
+   const i=y*w+x;if(prev[i])continue;
+   const j=[x?i-1:-1,x+1<w?i+1:-1,y?i-w:-1,y+1<h?i+w:-1].find(j=>j>=0&&prev[j]);
+   if(j===undefined)continue;out.set(out.subarray(j*4,j*4+4),i*4);mask[i]=1;
+  }
+ }
+ ctx.putImageData(dst,0,0);
+ return {canvas:cv,data:cv.toDataURL('image/png')};
+}
+async function se557Prepare(t,core){
+ const mesh=se555ModelData(t),uv=t.mesh.geometry.getAttribute('uv'),mat=t.mesh.material;
+ if(Array.isArray(mat)||!mat||!uv||uv.count*2!==mesh.uvs?.length||uv.isInterleavedBufferAttribute)throw Error('Requires one editable UV mesh and one material');
+ if(['normalMap','roughnessMap','metalnessMap','aoMap','emissiveMap','alphaMap','lightMap','bumpMap','displacementMap'].some(k=>mat[k]))throw Error('Additional texture channels require a multi-map rebake; model left untouched');
+ if(mat.map&&!t.part.uvPaintPNG)throw Error('External/material texture cannot be rebaked safely');
+ if(mat.map&&(mat.map.rotation!==0||mat.map.repeat.x!==1||mat.map.repeat.y!==1||mat.map.flipY!==true))throw Error('Unsupported texture transform; model left untouched');
+ const result=core.optimizeExistingUV(mesh,{resolution:2048,padding:8});
+ if(!result.changed)return {t,mesh,result};
+ const paint=await se557Rebake(t.part,mesh,result.uvs);
+ const map=paint?new THREE.CanvasTexture(paint.canvas):null;
+ if(map&&THREE.SRGBColorSpace)map.colorSpace=THREE.SRGBColorSpace;
+ if(map){map.wrapS=map.wrapT=THREE.RepeatWrapping;}
+ return {t,mesh,result,paint,map,originalUV:mesh.uvs.slice(),originalPNG:t.part.uvPaintPNG,originalOffset:JSON.stringify(t.part.uvPaintOffset||[0,0])};
+}
+async function se557Optimize(all=false){
+ if(se557Busy||se555Busy)return false;
+ const current=se551Target(),targets=all?(model()?.parts||[]).map(part=>({part,mesh:modelRoot?.children.find(x=>x.isMesh&&x.userData.atelierId===part.id)})).filter(t=>t.mesh&&t.part.topologyMesh):current?[current]:[];
+ if(!targets.length){status('Select an editable topology mesh first');return false;}
+ se557Busy=true;const prepared=[],skipped=[];
+ try{
+  const {core}=await se555Imports();
+  for(const t of targets){try{const p=await se557Prepare(t,core);if(p.result.changed)prepared.push(p);else skipped.push(t.part.name+': no measurable improvement');}catch(e){skipped.push(t.part.name+': '+String(e.message||e));}}
+  if(!prepared.length){status('No UV changes. '+skipped.join('; ').slice(0,200));return false;}
+  const summary=prepared.map(p=>{const r=p.result.report;return p.t.part.name+': '+(r.packing?'area '+(r.packing.baselineTriangleArea*100).toFixed(1)+'% → '+(r.packing.candidateTriangleArea*100).toFixed(1)+'%':'packing unchanged')+(r.relaxation?', worst stretch '+r.relaxation.before.max.toFixed(2)+' → '+r.relaxation.after.max.toFixed(2):'');}).join('\n');
+  if(!confirm('Apply verified UV improvement to '+prepared.length+' mesh(es)?\n'+summary+(skipped.length?'\nSkipped: '+skipped.join('; ').slice(0,350):'')+'\nEmbedded PNG paint is rebaked where supported. Undo restores original.'))return false;
+  // Reject stale targets if the user edited/switched the project during async rebake.
+  for(const p of prepared){if(!model()?.parts?.includes(p.t.part)||p.t.part.topologyMesh!==p.mesh||p.mesh.uvs.some((x,i)=>x!==p.originalUV[i])||p.t.part.uvPaintPNG!==p.originalPNG||JSON.stringify(p.t.part.uvPaintOffset||[0,0])!==p.originalOffset)throw Error('Mesh changed during preview; retry');}
+  checkpoint();se555HeatmapClear();se552ClearRegionMesh();se551Selection=null;
+  for(const p of prepared){
+   const {t,mesh,result,paint,map}=p;
+   mesh.uvs=result.uvs.slice();
+   const uv=t.mesh.geometry.getAttribute('uv');for(let i=0;i<uv.count;i++)uv.setXY(i,result.uvs[i*2],result.uvs[i*2+1]);uv.needsUpdate=true;
+   if(paint){t.part.uvPaintPNG=paint.data;t.part.uvPaintOffset=[0,0];t.mesh.material.map=map;t.mesh.material.needsUpdate=true;p.map=null;}
+  }
+  signalEdited();se356UVPreviewSchedule();
+  status('UV optimization applied to '+prepared.length+' mesh(es); '+skipped.length+' skipped. '+summary.replace(/\n/g,'; ').slice(0,200));
+  const label=se552Portal?.host?.querySelector('[data-se555-summary]');if(label)label.textContent=summary.replace(/\n/g,' · ').slice(0,300);
+  return true;
+ }catch(e){status('UV optimization stopped: '+String(e.message||e).slice(0,220));return false;}
+ finally{for(const p of prepared)p.map?.dispose();se557Busy=false;}
+}
+const se557OpenBase=se552Open;
+se552Open=function(){
+ // Original expanded portal forces paint mode; default to complete UV
+ // wireframe and numbered regions so an untextured mesh is never invisible.
+ if(!se557ExpandedBefore){se552ShowWires=true;se552ShowRegions=true;se557ExpandedBefore=true;}
+ se557OpenBase();
+ const host=se552Portal?.host,controls=host?.children?.[1];
+ if(!controls||controls.querySelector('[data-se557-optimize]'))return;
+ controls.style.cssText='display:flex;flex-wrap:wrap;align-items:center;gap:6px;padding:6px 0;max-height:38dvh;overflow:auto;flex:none';
+ for(const el of controls.querySelectorAll('label'))el.style.cssText+=';flex:0 1 auto;min-width:0;white-space:normal;overflow-wrap:anywhere;font-size:12px';
+ for(const el of controls.querySelectorAll('button'))el.style.cssText+=';max-width:100%;min-height:34px;white-space:normal;font-size:12px';
+ const wires=controls.querySelector('[data-se552-wires]');if(wires)wires.checked=se552ShowWires;
+ const regions=controls.querySelector('[data-se552-regions]');if(regions)regions.checked=se552ShowRegions;
+ const make=(label,key,all)=>{const b=document.createElement('button');b.type='button';b.dataset[key]='1';b.textContent=label;b.style.cssText='padding:8px;background:#254658;color:white;border:1px solid #537e91;border-radius:6px;min-height:34px';controls.append(b);b.onclick=()=>void se557Optimize(all);};
+ make('Optimize UV','se557Optimize',false);make('Optimize all editable meshes','se557OptimizeAll',true);
+ se356UVPreviewSchedule();
+};
+window.SWYRL_ENGINE_UV_OPTIMIZE=Object.freeze({optimize:se557Optimize,status:()=>({busy:se557Busy,scope:'editable indexed meshes, per-mesh atlas'})});
+/* SE557_UNIVERSAL_UV_END */

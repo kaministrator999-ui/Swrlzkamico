@@ -242,3 +242,142 @@ export function packSeamedCharts(flat,{resolution=2048,padding=8}={}){
   chartScale:lower,paddingPixels:padding
  };
 }
+
+
+/* SE557: geometry-independent, bounded optimization of existing seam-split UVs.
+   Derived from the validated humanoid experiments; no anatomical IDs. */
+function se557Repack(mesh, resolution=2048, padding=8){
+ const {positions,uvs,indices}=mesh, n=positions.length/3, parent=Array.from({length:n},(_,i)=>i);
+ const find=i=>{while(parent[i]!==i){parent[i]=parent[parent[i]];i=parent[i]}return i};
+ const join=(a,b)=>{a=find(a);b=find(b);if(a!==b)parent[b]=a};
+ for(let k=0;k<indices.length;k+=3){join(indices[k],indices[k+1]);join(indices[k],indices[k+2]);}
+ const g=new Map();for(const i of new Set(indices)){const id=find(i);if(!g.has(id))g.set(id,[]);g.get(id).push(i)}
+ const rects=[...g.values()].map((ids,id)=>{const u=ids.map(i=>uvs[2*i]),v=ids.map(i=>uvs[2*i+1]);const x=Math.min(...u),y=Math.min(...v);return {id,ids,x,y,w:Math.max(...u)-x,h:Math.max(...v)-y}});
+ if(rects.some(r=>r.w<=0||r.h<=0))throw Error("collapsed chart");
+ if(rects.length>96)throw Error('Too many UV islands for bounded interactive optimization');
+ const pad=padding/resolution, eps=1e-10;
+ const intersects=(a,b)=>a.x<b.x+b.w-eps&&b.x<a.x+a.w-eps&&a.y<b.y+b.h-eps&&b.y<a.y+a.h-eps;
+ const inside=(a,b)=>a.x>=b.x-eps&&a.y>=b.y-eps&&a.x+a.w<=b.x+b.w+eps&&a.y+a.h<=b.y+b.h+eps;
+ function pack(scale,sort,scoreMode,rotate){
+  let free=[{x:0,y:0,w:1,h:1}],out=[];
+  const order=rects.slice().sort((a,b)=>sort(b)-sort(a)||a.id-b.id);
+  for(const r of order){
+   let best=null;
+   for(const f of free)for(const turn of (rotate?[false,true]:[false])){
+    const w=(turn?r.h:r.w)*scale+2*pad,h=(turn?r.w:r.h)*scale+2*pad;
+    if(w>f.w+eps||h>f.h+eps)continue;
+    const dw=f.w-w,dh=f.h-h;
+    const score=scoreMode===0?[Math.min(dw,dh),Math.max(dw,dh),f.y,f.x]:[f.w*f.h-w*h,Math.min(dw,dh),f.y,f.x];
+    if(!best||score.some((v,i)=>v<best.score[i]-eps&&score.slice(0,i).every((x,j)=>Math.abs(x-best.score[j])<=eps)))best={id:r.id,x:f.x,y:f.y,w,h,turn,score};
+   }
+   if(!best)return null;
+   let next=[];
+   for(const f of free){
+    if(!intersects(f,best)){next.push(f);continue;}
+    const x2=f.x+f.w,y2=f.y+f.h,bx=best.x+best.w,by=best.y+best.h;
+    if(best.x>f.x+eps)next.push({x:f.x,y:f.y,w:best.x-f.x,h:f.h});
+    if(bx<x2-eps)next.push({x:bx,y:f.y,w:x2-bx,h:f.h});
+    if(best.y>f.y+eps)next.push({x:f.x,y:f.y,w:f.w,h:best.y-f.y});
+    if(by<y2-eps)next.push({x:f.x,y:by,w:f.w,h:y2-by});
+   }
+   free=next.filter((a,i)=>!next.some((b,j)=>i!==j&&inside(a,b)&&(!inside(b,a)||j<i)));
+   out.push(best);
+  }
+  return out;
+ }
+ const sorts=[r=>r.w*r.h,r=>Math.max(r.w,r.h),r=>r.h,r=>r.w,r=>r.w+r.h];
+ let best=null,attempts=[];
+ for(let si=0;si<sorts.length;si++)for(let mode=0;mode<2;mode++)for(const rotate of [false,true]){
+  let lo=0,hi=1/Math.max(...rects.map(r=>Math.max(r.w,r.h))),result=null;
+  for(let k=0;k<30;k++){const mid=(lo+hi)/2,p=pack(mid,sorts[si],mode,rotate);if(p){lo=mid;result=p}else hi=mid}
+  attempts.push({sort:si,scoreMode:mode,rotate,scale:lo});
+  if(result&&(!best||lo>best.scale))best={scale:lo,result,sort:si,scoreMode:mode,rotate};
+ }
+ if(!best||best.scale<=1.00001)return null;
+ const output=uvs.slice(), boxes=best.result;
+ for(const b of boxes){const r=rects[b.id];for(const i of r.ids){const u=uvs[2*i]-r.x,v=uvs[2*i+1]-r.y;output[2*i]=b.x+pad+(b.turn?v:u)*best.scale;output[2*i+1]=b.y+pad+(b.turn?r.w-u:v)*best.scale;}}
+ if(output.some(x=>!Number.isFinite(x)||x<0||x>1))throw Error("out of atlas");
+ for(let i=0;i<boxes.length;i++)for(let j=i+1;j<boxes.length;j++)if(intersects(boxes[i],boxes[j]))throw Error("chart overlap");
+ function area(arr,k){const [a,b,c]=indices.slice(k,k+3).map(i=>[arr[2*i],arr[2*i+1]]);return ((b[0]-a[0])*(c[1]-a[1])-(b[1]-a[1])*(c[0]-a[0]))/2}
+ let before=0,after=0,flips=0,degenerate=0,maxAreaError=0;
+ for(let k=0;k<indices.length;k+=3){const a=area(uvs,k),b=area(output,k);before+=Math.abs(a);after+=Math.abs(b);if(a*b<0)flips++;if(Math.abs(b)<1e-12)degenerate++;maxAreaError=Math.max(maxAreaError,Math.abs(b-a*best.scale**2));}
+ if(flips||maxAreaError>1e-10)throw Error("chart shape or winding changed");
+ return {uvs:output,report:{charts:rects.length,triangles:indices.length/3,vertices:n,baselineTriangleArea:before,candidateTriangleArea:after,relativeAreaGain:after/before-1,linearTexelGain:best.scale-1,scale:best.scale,flips,degenerate,maxAreaError,paddingPixels:padding,atlasResolution:resolution,rotatedCharts:boxes.filter(x=>x.turn).length,attempts,selected:{sort:best.sort,scoreMode:best.scoreMode,rotate:best.rotate},geometryChanged:false,interChartBoundingBoxOverlap:false}};
+}
+function se557Relax(mesh){
+ const {positions:p,uvs:u,indices:ix}=mesh, out=u.slice(), n=p.length/3,faces=[],vFaces=Array.from({length:n},()=>[]),edges=new Map(),neighbors=Array.from({length:n},()=>new Set());
+ for(let k=0;k<ix.length;k+=3){
+  const ids=ix.slice(k,k+3),[a,b,c]=ids.map(i=>p.slice(i*3,i*3+3)),A=b.map((x,i)=>x-a[i]),B=c.map((x,i)=>x-a[i]),l=Math.hypot(...A),x=A.reduce((s,v,i)=>s+v*B[i],0)/l,y=Math.sqrt(Math.max(0,Math.hypot(...B)**2-x*x));
+  if(!(l>1e-12&&y>1e-12))throw Error("Invalid triangle");
+  const f={ids,l,x,y};faces.push(f);
+  for(const i of ids)vFaces[i].push(faces.length-1);
+  for(let j=0;j<3;j++){const i=ids[j],a=ids[(j+1)%3],key=i<a?i+":"+a:a+":"+i;edges.set(key,(edges.get(key)||0)+1);neighbors[i].add(a);neighbors[a].add(i);}
+ }
+ const boundary=new Set();for(const [key,count] of edges)if(count===1)key.split(":").map(Number).forEach(i=>boundary.add(i));
+ function metrics(f,uv){
+  const [a,b,c]=f.ids.map(i=>[uv[i*2],uv[i*2+1]]),du=b[0]-a[0],dv=b[1]-a[1],eu=c[0]-a[0],ev=c[1]-a[1],j00=du/f.l,j10=dv/f.l,j01=(eu-f.x*j00)/f.y,j11=(ev-f.x*j10)/f.y;
+  const det=j00*j11-j01*j10,fro=j00*j00+j01*j01+j10*j10+j11*j11;
+  return {ratio:det>0?(fro+Math.sqrt(Math.max(0,fro*fro-4*det*det)))/(2*det):Infinity,det};
+ }
+ const original=faces.map(f=>metrics(f,u));
+ if(original.some(m=>!Number.isFinite(m.ratio)))throw Error("Baseline contains invalid UV triangles");
+ function stats(uv){const m=faces.map(f=>metrics(f,uv)),a=m.map(m=>m.ratio).sort((a,b)=>a-b),d=m.map(m=>Math.sqrt(m.det)).sort((a,b)=>a-b),q=(ar,f)=>ar[Math.floor((ar.length-1)*f)];return {median:q(a,.5),p95:q(a,.95),p99:q(a,.99),max:a.at(-1),over2:a.filter(x=>x>2).length,densityP95P05:q(d,.95)/q(d,.05),invalid:m.filter(x=>!Number.isFinite(x.ratio)).length};}
+ function local(i){let max=0,sum=0;for(const f of vFaces[i]){const m=metrics(faces[f],out),d=m.det/original[f].det;if(d<.35||d>2.85||!Number.isFinite(m.ratio))return [Infinity,Infinity];max=Math.max(max,m.ratio);sum+=Math.log(m.ratio)**2;}return [max,sum];}
+ const moved=new Set(),history=[];
+ for(let pass=0;pass<16;pass++){
+  const ordered=faces.map((f,i)=>({i,ratio:metrics(f,out).ratio})).filter(x=>x.ratio>1.9).sort((a,b)=>b.ratio-a.ratio||a.i-b.i);
+  const target=[...new Set(ordered.flatMap(x=>faces[x.i].ids).filter(i=>!boundary.has(i)))];let count=0;
+  for(const i of target){
+   const ox=out[i*2],oy=out[i*2+1],old=local(i);
+   if(!Number.isFinite(old[0]))throw Error("Invalid local baseline");
+   let best={x:ox,y:oy,score:old};
+   const mean=[...neighbors[i]].reduce((s,j)=>s+Math.hypot(ox-out[j*2],oy-out[j*2+1]),0)/neighbors[i].size;
+   for(const fraction of [.3,.15,.075,.0375,.01875,.009375]){
+    const step=mean*fraction;
+    for(let a=0;a<16;a++){const ang=a*Math.PI/8,x=ox+step*Math.cos(ang),y=oy+step*Math.sin(ang);if(x<0||x>1||y<0||y>1)continue;out[2*i]=x;out[2*i+1]=y;const s=local(i);
+     if(s[0]<best.score[0]-1e-7||(Math.abs(s[0]-best.score[0])<1e-7&&s[1]<best.score[1]-1e-8))best={x,y,score:s};}
+   }
+   out[2*i]=best.x;out[2*i+1]=best.y;if(best.x!==ox||best.y!==oy){moved.add(i);count++;}
+  }
+  history.push({pass:pass+1,moved:count,...stats(out)});if(!count)break;
+ }
+ const before=stats(u),after=stats(out);
+ if(after.invalid||after.max>=before.max||after.p95>before.p95*1.01||after.p99>before.p99*1.05||after.densityP95P05>before.densityP95P05*1.01)throw Error("Relaxation did not meet quality gate");
+ for(const i of boundary)if(out[i*2]!==u[i*2]||out[i*2+1]!==u[i*2+1])throw Error("Boundary moved");
+ return {uvs:out,report:{before,after,movedVertices:moved.size,fixedBoundaryVertices:boundary.size,history,geometryChanged:false,seamsChanged:false}};
+}
+function se557Audit(mesh){
+ const {uvs:u,indices:ix}=mesh,tris=[],bins=new Map(),N=64;
+ const cross=(a,b,c)=>(b[0]-a[0])*(c[1]-a[1])-(b[1]-a[1])*(c[0]-a[0]);
+ const polyArea=poly=>Math.abs(poly.reduce((v,a,i)=>{const b=poly[(i+1)%poly.length];return v+a[0]*b[1]-a[1]*b[0]},0))/2;
+ function intersect(a,b){let poly=a.slice(),sign=cross(...b)>0?1:-1;for(let k=0;k<3;k++){const c=b[k],d=b[(k+1)%3],next=[];for(let i=0;i<poly.length;i++){const x=poly[i],y=poly[(i+1)%poly.length],dx=sign*cross(c,d,x),dy=sign*cross(c,d,y);if(dx>=-1e-13)next.push(x);if((dx>0&&dy<0)||(dx<0&&dy>0)){const t=dx/(dx-dy);next.push([x[0]+(y[0]-x[0])*t,x[1]+(y[1]-x[1])*t]);}}poly=next;if(poly.length<3)return 0;}return polyArea(poly);}
+ let overlapCount=0,overlapArea=0,degenerate=0,neg=0,positive=0,checkedPairs=0;
+ for(let k=0;k<ix.length;k+=3){
+  const t=ix.slice(k,k+3).map(i=>u.slice(i*2,i*2+2)),area=cross(...t)/2;
+  if(area<0)neg++;if(area>0)positive++;if(Math.abs(area)<1e-12){degenerate++;continue;}
+  const box=[Math.min(...t.map(a=>a[0])),Math.min(...t.map(a=>a[1])),Math.max(...t.map(a=>a[0])),Math.max(...t.map(a=>a[1]))];
+  const cells=[],seen=new Set();
+  for(let a=Math.max(0,Math.floor(box[0]*N));a<=Math.min(N-1,Math.floor(box[2]*N));a++)for(let b=Math.max(0,Math.floor(box[1]*N));b<=Math.min(N-1,Math.floor(box[3]*N));b++){const key=b*N+a;cells.push(key);for(const i of bins.get(key)||[])seen.add(i);}
+  for(const i of seen){const o=tris[i];if(o.box[0]>=box[2]||o.box[1]>=box[3]||o.box[2]<=box[0]||o.box[3]<=box[1])continue;checkedPairs++;const a=intersect(t,o.t);if(a>1e-10){overlapCount++;overlapArea+=a;}}
+  const id=tris.length;tris.push({t,box});for(const c of cells){if(!bins.has(c))bins.set(c,[]);bins.get(c).push(id);}
+ }
+ return {triangles:ix.length/3,degenerate,positiveWinding:positive,negativeWinding:neg,checkedPairs,positiveAreaOverlapPairs:overlapCount,overlapAreaPairwise:overlapArea,overlapTolerance:1e-10};
+}
+export function optimizeExistingUV(source,{resolution=2048,padding=8}={}){
+ const {positions,indices,uvs}=source;
+ if(!Array.isArray(positions)||!Array.isArray(indices)||!Array.isArray(uvs)||positions.length%3||indices.length%3||uvs.length!==positions.length/3*2||!indices.length||positions.length>60000||indices.length>120000)throw Error('Expected a bounded indexed editable topology mesh');
+ if(positions.some(x=>!Number.isFinite(x))||uvs.some(x=>!Number.isFinite(x)||x<0||x>1)||indices.some(i=>!Number.isInteger(i)||i<0||i>=positions.length/3))throw Error('Unsupported UV coordinates or indices');
+ if(!Number.isInteger(resolution)||resolution<256||resolution>4096||!Number.isInteger(padding)||padding<2||padding>24)throw Error('Invalid atlas parameters');
+ const before=se557Audit(source);
+ if(before.degenerate||before.negativeWinding||before.positiveAreaOverlapPairs)throw Error('Existing UVs contain overlaps, reversed faces or collapsed triangles; use a separate unwrap preview');
+ let result=source,relaxation=null,packing=null;
+ try{
+  const r=se557Relax(source),a=se557Audit({...source,uvs:r.uvs});
+  if(!a.degenerate&&!a.negativeWinding&&!a.positiveAreaOverlapPairs){result={...source,uvs:r.uvs};relaxation=r.report;}
+ }catch(e){if(!/Relaxation did not meet quality gate/.test(String(e)))throw e;}
+ const packed=se557Repack(result,resolution,padding);
+ if(packed){result={...source,uvs:packed.uvs};packing=packed.report;}
+ const after=se557Audit(result);
+ if(after.degenerate||after.negativeWinding||after.positiveAreaOverlapPairs)throw Error('Optimized atlas failed exact triangle audit');
+ return {positions,indices,uvs:result.uvs.slice(),changed:!!(packing||relaxation),report:{before,after,packing,relaxation,geometryChanged:false,seamsChanged:false}};
+}
