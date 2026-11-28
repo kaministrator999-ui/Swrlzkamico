@@ -1,0 +1,26 @@
+{
+  "schema": "swrlz-engine-uv-overlay-v1",
+  "baselineCommit": "65476cd927d504b8eac8b5cb6d426235a54907b9",
+  "candidateCommit": "05b2f1197dd0728a3690b6e4ad9b7c98dc67c75e",
+  "browserRun": 46098814920,
+  "artifactId": 15244831500,
+  "target": "/var/www/swrlz-engine",
+  "candidate": "relaxation-plus-packing",
+  "assets": {
+    "scenes/model-atelier-clean-topology-humanoid-v11-554.swyrl.json": {
+      "baselineGitBlobSha1": "6ef0e683f98c12323129d42cc282983d662939b2",
+      "sha256": "05b40cd4aa751760b371265cf73047485065175a9b6e742e33d47871ec1da2fb",
+      "bytes": 589219
+    },
+    "assets/models/clean-topology-humanoid-v11-554-uv-test.png": {
+      "baselineGitBlobSha1": "e25bf0858a7b9bba9c0fe3d736abe6b9183c7770",
+      "sha256": "d973fcd024ceaee5ab20b4ea676dc91afcedb53fafbd1a61aff89899b589fed0",
+      "bytes": 5900
+    },
+    "assets/models/clean-topology-humanoid-v11-554-uv-guide-2048.png": {
+      "baselineGitBlobSha1": "d5487d6b3175e3b208d9af6ac07105f74453841f",
+      "sha256": "5268bfabc00cdeb15f0b95fec97b1faf0e576f911a6358d703a70dbd073c1c78",
+      "bytes": 317478
+    }
+  }
+}
