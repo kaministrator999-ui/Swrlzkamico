@@ -456,6 +456,7 @@ def main():
         if changed:
             restart()
         raise
+    subprocess.run(["/usr/bin/python3",str(SOURCE/"scripts/ovh_static_hosting.py")],check=True,timeout=180)
     print("SWRLZ_CHAT_PREVIEW_DEPLOY_OK")
     print(rev)
 
