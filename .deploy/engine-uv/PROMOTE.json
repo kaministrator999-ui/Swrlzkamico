@@ -1,0 +1,7 @@
+{
+  "operation": "deploy",
+  "candidateCommit": "05b2f1197dd0728a3690b6e4ad9b7c98dc67c75e",
+  "verifiedBrowserRun": 46098814920,
+  "stagingRun": 46100491564,
+  "authorization": "Owner installed restricted publisher and requested production deployment"
+}
