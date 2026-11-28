@@ -1,4 +1,4 @@
-name: OVH §E screenshot-driven UV review · stable guide and desktop controls
+name: OVH §E screenshot-driven UV review · audited blank and texture pixels
 on:
   push:
     branches: [main]
@@ -148,7 +148,7 @@ jobs:
           assert qa['paintSamples']>=100 and qa['maxPaintChannelError']<=2 and qa['centerErrorPx']<=3
           assert qa['legendCount']==22 and qa['exportReceipt']['width']==4096 and qa['exportReceipt']['height']==4096 and qa['exportReceipt']['transparentInterior']
           assert qa['visibleConfirmation'] and qa['visibleProgress'] and qa['visibleResult']
-          assert qa['visualReview'] and qa['guideStableFrames']>=3 and qa['guideDarkPixels']>=100 and qa['referenceClearancePx']>=-2 and 1<=qa['visibleLabels']<=22
+          assert qa['visualReview'] and qa['guideStableFrames']>=3 and qa['guideDarkPixels']>=100 and qa['guideBlankSamples']>=4 and qa['texturePreviewSamples']>=20 and qa['texturePreviewMaxError']<=2 and qa['referenceClearancePx']>=-2 and 1<=qa['visibleLabels']<=22
           if profile=='mobile': assert qa['atlasSizePx']>=340
           print('SWRLZ_OVH_ANATOMICAL_FEEDBACK_PASS',profile,json.dumps(qa))
           print('SWRLZ_OVH_BUNDLED_RENDERER_BROWSER_PASS')
@@ -240,7 +240,7 @@ jobs:
               assert all(qa[k] is True for k in ['ok','cancel','apply','undo','redo','anatomicalLayout','geometryPreserved','renderTexture','restoredOriginal','visibleConfirmation','visibleProgress','visibleResult'])
               assert qa['paintSamples']>=100 and qa['maxPaintChannelError']<=2 and qa['centerErrorPx']<=3 and qa['legendCount']==22
               assert qa['exportReceipt']['width']==4096 and qa['exportReceipt']['height']==4096 and qa['exportReceipt']['transparentInterior']
-              assert qa['visualReview'] and qa['guideStableFrames']>=3 and qa['guideDarkPixels']>=100 and qa['referenceClearancePx']>=-2 and 1<=qa['visibleLabels']<=22
+              assert qa['visualReview'] and qa['guideStableFrames']>=3 and qa['guideDarkPixels']>=100 and qa['guideBlankSamples']>=4 and qa['texturePreviewSamples']>=20 and qa['texturePreviewMaxError']<=2 and qa['referenceClearancePx']>=-2 and 1<=qa['visibleLabels']<=22
               if profile=='mobile': assert qa['atlasSizePx']>=340
               evidence[profile]=qa
           m['anatomicalVerification']={'run':int(os.environ['GITHUB_RUN_ID']),'fixtureModuleSha256':fixture['assets']['swrlz-engine-v11.552.js']['sha256'],'profiles':evidence}

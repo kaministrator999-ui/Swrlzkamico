@@ -159,7 +159,14 @@ if(new URLSearchParams(location.search).get('serverqa')==='1'){
   const guideCanvas=host.querySelector('#se356UVCanvas'),gc2=guideCanvas.getContext('2d');
   // Sample unoccupied interior pixels, not the rounded canvas corner or
   // anti-aliased boundary. Wait for a stable rendered frame, not fixed sleep.
-  const blankUV=[[.75,.62],[.75,.52],[.5,.97],[.87,.48]];
+  const blankUV=[],clearance=4/guideCanvas.width;
+  // Compute samples outside audited chart bounding boxes, including a four
+  // pixel safety margin. This remains valid for different packing scales.
+  for(let row=1;row<10;row++)for(let col=1;col<10;col++){
+   const u=col/10,v=row/10;
+   if(Object.values(boxes).every(b=>u<b.x-clearance||u>b.x+b.w+clearance||v<b.y-clearance||v>b.y+b.h+clearance))blankUV.push([u,v]);
+  }
+  qaAssert(blankUV.length>=4,'Insufficient known blank guide sample locations');
   const readGuide=()=>blankUV.map(([u,v])=>Array.from(gc2.getImageData(Math.floor(u*guideCanvas.width),Math.floor((1-v)*guideCanvas.height),1,1).data));
   const matches=ps=>ps.every(p=>Math.abs(p[0]-248)<=2&&Math.abs(p[1]-250)<=2&&Math.abs(p[2]-252)<=2&&p[3]===255);
   let stable=0,pixelsRead=[];
@@ -172,8 +179,27 @@ if(new URLSearchParams(location.search).get('serverqa')==='1'){
   let dark=0,white=0;
   for(let k=0;k<guidePixels.length;k+=4){if(guidePixels[k]<150&&guidePixels[k+1]<150&&guidePixels[k+2]<150)dark++;if(guidePixels[k]>=246&&guidePixels[k+1]>=248&&guidePixels[k+2]>=250)white++;}
   qaAssert(dark>=100&&white>guideCanvas.width*guideCanvas.height*.85,'Guide outlines/background coverage invalid: '+JSON.stringify({dark,white}));
-  host.querySelector('[data-se561-preview="texture"]').click();await pause(120);
+  host.querySelector('[data-se561-preview="texture"]').click();
   qaAssert(window.SWYRL_ENGINE_UV_VISUAL_REVIEW.inspect().preview==='texture','Texture-only mode did not activate');
+  // Verify actual displayed paint rather than just the selected preview flag.
+  const painted=state(),expectedImg=new Image();expectedImg.src=painted.uvPaintPNG;await expectedImg.decode();
+  const expectedCanvas=document.createElement('canvas');expectedCanvas.width=expectedCanvas.height=guideCanvas.width;
+  const exp=expectedCanvas.getContext('2d'),side=expectedCanvas.width;
+  exp.drawImage(expectedImg,0,0,side,side);
+  const ref=exp.getImageData(0,0,side,side).data,locations=[];
+  for(let y=12;y<side-12;y+=23)for(let x=12;x<side-12;x+=23){
+   const k=(y*side+x)*4;
+   if(ref[k+3]===255&&Math.abs(ref[k]-248)+Math.abs(ref[k+1]-250)+Math.abs(ref[k+2]-252)>20)locations.push(k);
+  }
+  qaAssert(locations.length>=20,'Insufficient opaque painted texture samples');
+  let textureError=Infinity;
+  for(let n=0;n<50;n++){
+   await new Promise(r=>requestAnimationFrame(r));
+   const shown=gc2.getImageData(0,0,side,side).data;
+   textureError=locations.reduce((max,k)=>Math.max(max,Math.abs(shown[k]-ref[k]),Math.abs(shown[k+1]-ref[k+1]),Math.abs(shown[k+2]-ref[k+2])),0);
+   if(textureError<=2)break;
+  }
+  qaAssert(textureError<=2,'Texture-only canvas differs from actual painted PNG: '+textureError);
   host.querySelector('[data-se561-preview="editor"]').click();await pause(120);
   qaAssert(JSON.stringify(model().parts)===geometryBeforePreview,'Display mode mutated saved model');
   qaAssert(se561FrameReference(),'Reference framing failed: '+JSON.stringify(se561FrameReceipt));
@@ -189,7 +215,7 @@ if(new URLSearchParams(location.search).get('serverqa')==='1'){
   qaAssert(centerError<=3&&cv.width<=vp.width+1&&cv.bottom<=host.getBoundingClientRect().bottom+1,'atlas fit/centering failed');
   if(innerWidth<=700&&innerHeight>=700)qaAssert(cv.width>=Math.min(340,innerWidth*.83),'Mobile atlas too small: '+cv.width);
   se561SetPreview('guide');
-  return {ok:true,cancel:true,apply:true,undo:true,redo:true,anatomicalLayout:true,visualReview:true,guideStableFrames:stable,guideDarkPixels:dark,referenceClearancePx:se561FrameReceipt.clearancePx,visibleLabels:review.visibleLabels,visibleConfirmation:true,visibleProgress:true,visibleResult:true,geometryPreserved:true,paintSamples:samples,maxPaintChannelError:maxError,renderTexture:true,restoredOriginal:true,centerErrorPx:centerError,atlasSizePx:cv.width,exportReceipt,coverage:actualExpected.report.packing.candidateTriangleArea,legendCount:choices.length};
+  return {ok:true,cancel:true,apply:true,undo:true,redo:true,anatomicalLayout:true,visualReview:true,guideStableFrames:stable,guideDarkPixels:dark,guideBlankSamples:blankUV.length,texturePreviewSamples:locations.length,texturePreviewMaxError:textureError,referenceClearancePx:se561FrameReceipt.clearancePx,visibleLabels:review.visibleLabels,visibleConfirmation:true,visibleProgress:true,visibleResult:true,geometryPreserved:true,paintSamples:samples,maxPaintChannelError:maxError,renderTexture:true,restoredOriginal:true,centerErrorPx:centerError,atlasSizePx:cv.width,exportReceipt,coverage:actualExpected.report.packing.candidateTriangleArea,legendCount:choices.length};
  }
  const open=se552Open;
  se552Open=function(){
