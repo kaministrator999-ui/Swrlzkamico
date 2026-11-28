@@ -12,8 +12,8 @@
       "bytes": 687188
     },
     "swrlz-engine-v11.552.js": {
-      "sha256": "7dca647a643fa438a20c33d7233827a6032e2cf5e6a82d88421f8d5025e05809",
-      "bytes": 10682190
+      "sha256": "8a74dea355d5ded73b6bfc60de1a7ef9dee4228fddb3d74e069fc85a6447bb87",
+      "bytes": 10673561
     },
     "assets/uv-unwrapper/uv_atlas_core_v11_555.mjs": {
       "sha256": "158c6c1ce36bfe37840201136671625a1e1e5afea7cb34bb3352028ca886008e",
@@ -41,13 +41,13 @@
       "bytes": 317478
     }
   },
-  "sourceCommit": "208a679b154249c36fc1e5bf47b6da60424bd441",
-  "browserRun": "46114660276",
+  "sourceCommit": "bdebefedbc79584ba8603a7331318f4606e30c48",
+  "browserRun": "46118301796",
   "rendererBundle": {
     "version": "0.169.0",
     "threeIntegrity": "sha512-Ed906MA3dR4TS5riErd4QBsRGPcx+HBDX2O5yYE5GqJeFQTPU+M56Va/f/Oph9X7uZo3W3o4l2ZhBZ6f6qUv0w==",
     "esbuildVersion": "0.25.12",
-    "previousModuleSha256": "ea9bb65db0fc792b5041abaa00481d416164fa84371389e4744f1216c9eb05a1",
+    "previousModuleSha256": "6f1b7be0c9d67adaca9daa557c5ad2b532b866bcfbc620f9f6ce5c91b0aeb95f",
     "startupImportsBundled": [
       "https://cdn.jsdelivr.net/npm/three@0.169.0/+esm",
       "https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/controls/OrbitControls.js/+esm",
@@ -99,11 +99,27 @@
     ]
   },
   "uvSourceCommit": "d49eec1d29fc2cc3202ce497111147fcaa05fb37",
-  "qaOnly": true,
+  "qaOnly": false,
   "browserReceipt": {
     "realStarterCard": false,
     "errors": [
-      "QA fixture must never be promoted"
+      "Awaiting clean candidate desktop and mobile verification"
     ]
+  },
+  "functionalVerification": {
+    "run": 46114660276,
+    "job": 140886104995,
+    "fixtureCommit": "840394b6c4a973c255833dfb75757ecd7621b32d",
+    "fixtureModuleSha256": "7dca647a643fa438a20c33d7233827a6032e2cf5e6a82d88421f8d5025e05809",
+    "paintSamples": 8499,
+    "maxPaintChannelError": 0,
+    "centerErrorPx": 0,
+    "cancel": true,
+    "apply": true,
+    "undo": true,
+    "redo": true,
+    "geometryPreserved": true,
+    "renderTexture": true,
+    "optimizeAllOnePart": true
   }
 }
