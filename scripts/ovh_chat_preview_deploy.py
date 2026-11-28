@@ -344,6 +344,22 @@ def patch_v5(s):
     return s
 
 
+
+def patch_v6(s):
+    s=patch_v5(s)
+    if "OVH_ADAPTIVE_CONTEXT_V6" in s:return s
+    anchor='    yield {"type":"STATUS","phase":"OVH_PREFILL_PROFILE","reason":compact_kind}'
+    s=replace_once(s,anchor,r'''
+    # OVH_ADAPTIVE_CONTEXT_V6: output fidelity and conversational economy.
+    if compact_kind in ("conversation","social"):
+        system+="\nDo not add generic follow-up questions, offers, or requests for elaboration simply to prolong the chat. Ask only when necessary or when the user clearly invites a question. Brief reactions and humor can stand alone."
+    if compact_kind=="conversation" and response_cognition.get("operation")=="translate":
+        system+="\nFor a translation-only request, output the translated text itself, without quotation marks added merely as an envelope, language labels, Markdown fences or commentary. Preserve meaningful quotation marks within the source."
+''' + anchor)
+    ast.parse(s)
+    return s
+
+
 def patch_memory(s):
     if "OVH_MEMORY_POSTINGS_V1" in s:
         return s
@@ -585,7 +601,7 @@ def main():
     memory=PREVIEW/"chatgpt_account_memory.py"
     ui=PREVIEW/"chat/§wyrlz/index.html"
     originals={p:p.read_bytes() for p in (TARGET,memory,ui)}
-    updates={TARGET:patch_v5(originals[TARGET].decode()).encode(),
+    updates={TARGET:patch_v6(originals[TARGET].decode()).encode(),
              memory:patch_memory(originals[memory].decode()).encode(),
              ui:patch_ui(originals[ui].decode()).encode()}
     for p,data in updates.items():
