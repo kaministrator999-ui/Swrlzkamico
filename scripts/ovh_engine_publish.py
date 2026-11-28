@@ -7,6 +7,8 @@ LIVE=Path('/var/www/swrlz-engine')
 HISTORY=Path('/var/www/.swrlz-engine-releases')
 PAYLOAD=Path('/srv/swrlz/source/.deploy/engine-uv/payload')
 LIMIT=16*1024*1024
+SCOPED='.swrlz-starter-receipt.json'
+BOOTSTRAP_BASELINE={"scenes/model-atelier-clean-topology-humanoid-v11-554.swyrl.json":"6ef0e683f98c12323129d42cc282983d662939b2","assets/models/clean-topology-humanoid-v11-554-uv-test.png":"e25bf0858a7b9bba9c0fe3d736abe6b9183c7770","assets/models/clean-topology-humanoid-v11-554-uv-guide-2048.png":"d5487d6b3175e3b208d9af6ac07105f74453841f"}
 HEX=re.compile(r'^[0-9a-f]{64}$')
 GITHEX=re.compile(r'^[0-9a-f]{40}$')
 ALLOWED=re.compile(r'^(?:scenes/model-atelier-[A-Za-z0-9_.-]+\.swyrl\.json|assets/models/[A-Za-z0-9_.-]+\.(?:png|jpg|jpeg|webp|json|glb|obj|mtl))$')
@@ -36,7 +38,6 @@ def check_root():
         s=p.lstat()
         require(stat.S_ISDIR(s.st_mode) and s.st_uid==0 and not s.st_mode&0o022,'Unsafe managed directory: '+str(p))
     require(LIVE.stat().st_dev==HISTORY.stat().st_dev,'Atomic exchange requires same filesystem')
-    require((LIVE/'SOURCE.json').is_file(),'Missing live SOURCE.json')
     for root,dirs,files in os.walk(LIVE,followlinks=False):
         for name in dirs+files:
             p=Path(root)/name; s=p.lstat()
@@ -56,8 +57,33 @@ def write_atomic(p,data,mode=0o644):
         os.chmod(name,mode);os.replace(name,p)
     finally:
         if os.path.exists(name):os.unlink(name)
+def receipt_path(root):
+    # Preserve a genuine packaged source receipt if present; otherwise use
+    # explicitly scoped local provenance. Never invent a sealed engine receipt.
+    return root/'SOURCE.json' if os.path.lexists(root/'SOURCE.json') else root/SCOPED
 def read_receipt(root):
-    return json.loads(safe_read(root/'SOURCE.json',4*1024*1024))
+    return json.loads(safe_read(receipt_path(root),4*1024*1024))
+def initialize():
+    # Administrator-only bootstrap. The SSH deployment account is NOT
+    # authorized to invoke this operation or to bless an unknown baseline.
+    if os.path.lexists(receipt_path(LIVE)):
+        r=read_receipt(LIVE)
+        for rel in BOOTSTRAP_BASELINE:
+            data=safe_read(LIVE/rel)
+            rec=r['assets'][rel]
+            require(rec['bytes']==len(data) and rec['sha256']==digest(data),'Existing receipt differs from live asset: '+rel)
+        print('SWRLZ_ENGINE_RECEIPT_PRESENT',flush=True)
+        return
+    records={}
+    for rel,expected in BOOTSTRAP_BASELINE.items():
+        data=safe_read(LIVE/rel)
+        actual=blob(data)
+        require(actual==expected,'Live asset baseline mismatch: '+rel+' expected='+expected+' actual='+actual)
+        records[rel]={'sha256':digest(data),'bytes':len(data)}
+        print('SWRLZ_ENGINE_BASELINE_OK '+rel,flush=True)
+    receipt={'schema':'swrlz-ovh-local-starter-baseline-v1','scope':'Only the three verified starter assets; not an engine build receipt','baselineCommit':'65476cd927d504b8eac8b5cb6d426235a54907b9','assets':records}
+    write_atomic(LIVE/SCOPED,(json.dumps(receipt,indent=2)+'\n').encode())
+    print('SWRLZ_ENGINE_LOCAL_RECEIPT_CREATED',flush=True)
 def verify(root,assets,receipt):
     for rel,meta in assets.items():
         data=safe_read(root/rel)
@@ -96,7 +122,7 @@ def deploy():
             write_atomic(p,data,stat.S_IMODE(p.stat().st_mode))
             receipt['assets'][rel].update(sha256=digest(data),bytes=len(data))
         receipt['ovhStarterOverlay']={'candidateCommit':m.get('candidateCommit'),'browserRun':m.get('browserRun'),'assets':list(staged),'publishedAt':int(time.time())}
-        write_atomic(stage/'SOURCE.json',(json.dumps(receipt,indent=2,ensure_ascii=False)+'\n').encode())
+        write_atomic(receipt_path(stage),(json.dumps(receipt,indent=2,ensure_ascii=False)+'\n').encode())
         verify(stage,assets,read_receipt(stage))
         exchange(LIVE,stage);swapped=True
         verify(LIVE,assets,read_receipt(LIVE))
@@ -119,11 +145,14 @@ def rollback():
     except BaseException:exchange(LIVE,old);raise
     print('SWRLZ_ENGINE_ROLLBACK_OK',flush=True)
 def main():
-    require(len(sys.argv)==2 and sys.argv[1] in ('check','deploy','rollback'),'Command not authorized')
+    require(len(sys.argv)==2 and sys.argv[1] in ('initialize','check','deploy','rollback'),'Command not authorized')
     check_root()
     with open(HISTORY/'lock','a') as f:
         fcntl.flock(f,fcntl.LOCK_EX)
-        if sys.argv[1]=='check':print('SWRLZ_ENGINE_GATE_OK')
+        if sys.argv[1]=='initialize':initialize()
+        elif sys.argv[1]=='check':
+            read_receipt(LIVE)
+            print('SWRLZ_ENGINE_GATE_OK')
         elif sys.argv[1]=='deploy':deploy()
         else:rollback()
 if __name__=='__main__':main()

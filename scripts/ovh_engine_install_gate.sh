@@ -1,6 +1,7 @@
 #!/bin/bash
 # Run once as the OVH administrator. The existing restricted SSH gate is retained.
-set -euo pipefail
+set -Eeuo pipefail
+trap 'echo "SWRLZ_ENGINE_INSTALL_FAILED line=$LINENO status=$?" >&2' ERR
 test "$(id -u)" = 0
 test $# = 1
 SOURCE=$1
@@ -16,11 +17,11 @@ grep -Fq 'command="/usr/local/bin/swrlz-deploy-gate"' "$HOME_DIR/.ssh/authorized
 test -f "$GATE" && test ! -L "$GATE"
 test "$(stat -c '%u' "$GATE")" = 0
 test -d /var/www/swrlz-engine && test ! -L /var/www/swrlz-engine
-test -f /var/www/swrlz-engine/SOURCE.json
 # Never chown the production document tree or alter nginx/authentication.
 install -d -m 0700 -o root -g root "$HISTORY"
 install -m 0755 -o root -g root "$SOURCE" "$PUBLISH.new"
 python3 -m py_compile "$PUBLISH.new"
+"$PUBLISH.new" initialize
 "$PUBLISH.new" check
 mv -f "$PUBLISH.new" "$PUBLISH"
 if ! grep -Fq '# SWRLZ_ENGINE_GATE_V1' "$GATE"; then
