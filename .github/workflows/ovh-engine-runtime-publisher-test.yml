@@ -1,0 +1,22 @@
+name: OVH engine runtime publisher transaction QA
+on:
+  push:
+    branches: [infra/ovh-runtime-publisher-20261127]
+  workflow_dispatch:
+permissions: {contents: read}
+jobs:
+  transaction:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            scripts/ovh_engine_publish.py
+            scripts/ovh_engine_install_gate.sh
+            scripts/test_ovh_engine_runtime_publisher.py
+          sparse-checkout-cone-mode: false
+      - run: |
+          python3 -m py_compile scripts/ovh_engine_publish.py scripts/test_ovh_engine_runtime_publisher.py
+          bash -n scripts/ovh_engine_install_gate.sh
+          sudo python3 scripts/test_ovh_engine_runtime_publisher.py

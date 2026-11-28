@@ -7,6 +7,8 @@ LIVE=Path('/var/www/swrlz-engine')
 HISTORY=Path('/var/www/.swrlz-engine-releases')
 PAYLOAD=Path('/srv/swrlz/source/.deploy/engine-uv/payload')
 LIMIT=16*1024*1024
+RUNTIME_PAYLOAD=Path('/srv/swrlz/source/.deploy/engine-runtime/payload')
+SEALED_SOURCE='3fe29516958ea5af2448352fa238eda121cc3031266c61c746380f092d22232e'
 SCOPED='.swrlz-starter-receipt.json'
 BOOTSTRAP_BASELINE={"scenes/model-atelier-clean-topology-humanoid-v11-554.swyrl.json":"6ef0e683f98c12323129d42cc282983d662939b2","assets/models/clean-topology-humanoid-v11-554-uv-test.png":"e25bf0858a7b9bba9c0fe3d736abe6b9183c7770","assets/models/clean-topology-humanoid-v11-554-uv-guide-2048.png":"d5487d6b3175e3b208d9af6ac07105f74453841f"}
 HEX=re.compile(r'^[0-9a-f]{64}$')
@@ -134,6 +136,67 @@ def deploy():
         if swapped:exchange(LIVE,stage)
         if stage.exists():shutil.rmtree(stage)
         raise
+def deploy_runtime():
+    m=json.loads(safe_read(RUNTIME_PAYLOAD/'manifest.json',256*1024))
+    require(m.get('schema')=='swrlz-ovh-runtime-overlay-v1' and m.get('target')==str(LIVE),'Invalid runtime manifest')
+    require(m.get('sealedSourceSha256')==SEALED_SOURCE,'Unexpected engine source seal')
+    evidence=m['browserReceipt']
+    require(evidence.get('realStarterCard') is True and evidence.get('errors')==[],'Missing real starter card evidence')
+    assets=m['assets']
+    fixed={'index.html','modeler.html','swrlz-engine-v11.552.js','assets/uv-unwrapper/uv_atlas_core_v11_555.mjs','assets/uv-unwrapper/uv_lscm_core_v11_555.mjs'}
+    require(set(assets)==fixed,'Runtime overlay must contain precisely the five authorized static files')
+    receipt=read_receipt(LIVE)
+    require(set(m['requiredStarterAssets'])==set(BOOTSTRAP_BASELINE),'Unexpected starter dependency set')
+    verify(LIVE,m['requiredStarterAssets'],receipt)
+    scene='scenes/model-atelier-clean-topology-humanoid-v11-554.swyrl.json'
+    require(evidence.get('hash')==m['requiredStarterAssets'][scene]['sha256'],'Browser-tested starter hash differs')
+    staged={};already=0
+    for rel,meta in assets.items():
+        require(type(meta['bytes']) is int and 0<meta['bytes']<=LIMIT and HEX.fullmatch(meta['sha256']),'Invalid runtime digest')
+        data=safe_read(RUNTIME_PAYLOAD/'overlay'/rel)
+        require(len(data)==meta['bytes'] and digest(data)==meta['sha256'],'Runtime payload mismatch: '+rel)
+        path=LIVE/rel
+        if os.path.lexists(path):
+            old=safe_read(path)
+            if digest(old)==meta['sha256']:already+=1
+            else:
+                prior=receipt['assets'].get(rel)
+                if prior:
+                    require(prior['sha256']==digest(old) and prior['bytes']==len(old),'Prior runtime receipt mismatch: '+rel)
+                else:
+                    require(rel in ('index.html','modeler.html') and digest(old)==SEALED_SOURCE,'Unknown runtime baseline: '+rel+' actual='+digest(old))
+        else:
+            require(rel not in ('index.html','modeler.html'),'Existing entry page absent: '+rel)
+        staged[rel]=data
+    require(sum(map(len,staged.values()))<=64*1024*1024,'Runtime overlay exceeds limit')
+    require(staged['index.html']==staged['modeler.html'],'Entry pages differ')
+    require(b'<script type="module" src="./swrlz-engine-v11.552.js"></script>' in staged['index.html'],'Runtime entry does not reference expected module')
+    if already==len(assets):
+        verify(LIVE,assets,receipt)
+        print('SWRLZ_ENGINE_RUNTIME_DEPLOY_OK already-current',flush=True);return
+    stage=Path(tempfile.mkdtemp(prefix='candidate-',dir=HISTORY));stage.rmdir()
+    swapped=False
+    try:
+        shutil.copytree(LIVE,stage,symlinks=True,copy_function=shutil.copy2)
+        for rel,data in staged.items():
+            path=stage/rel
+            path.parent.mkdir(parents=True,exist_ok=True)
+            write_atomic(path,data)
+            receipt['assets'][rel]={'sha256':digest(data),'bytes':len(data)}
+        receipt['ovhRuntimeOverlay']={'sealedSourceSha256':SEALED_SOURCE,'sourceCommit':m.get('sourceCommit'),'browserRun':m.get('browserRun'),'assets':list(staged),'publishedAt':int(time.time())}
+        write_atomic(receipt_path(stage),(json.dumps(receipt,indent=2,ensure_ascii=False)+'\n').encode())
+        verify(stage,assets,read_receipt(stage))
+        verify(stage,m['requiredStarterAssets'],read_receipt(stage))
+        exchange(LIVE,stage);swapped=True
+        verify(LIVE,assets,read_receipt(LIVE))
+        verify(LIVE,m['requiredStarterAssets'],read_receipt(LIVE))
+        write_atomic(HISTORY/'previous',(stage.name+'\n').encode(),0o600)
+        for rel,meta in assets.items():print('SWRLZ_ENGINE_RUNTIME_ASSET_OK '+meta['sha256']+' '+rel,flush=True)
+        print('SWRLZ_ENGINE_RUNTIME_DEPLOY_OK '+str(m.get('sourceCommit','')),flush=True)
+    except BaseException:
+        if swapped:exchange(LIVE,stage)
+        if stage.exists():shutil.rmtree(stage)
+        raise
 def rollback():
     name=safe_read(HISTORY/'previous',1024).decode().strip()
     require(re.fullmatch(r'candidate-[A-Za-z0-9_-]+',name) is not None,'Invalid rollback pointer')
@@ -145,7 +208,7 @@ def rollback():
     except BaseException:exchange(LIVE,old);raise
     print('SWRLZ_ENGINE_ROLLBACK_OK',flush=True)
 def main():
-    require(len(sys.argv)==2 and sys.argv[1] in ('initialize','check','deploy','rollback'),'Command not authorized')
+    require(len(sys.argv)==2 and sys.argv[1] in ('initialize','check','deploy','deploy-runtime','rollback'),'Command not authorized')
     check_root()
     with open(HISTORY/'lock','a') as f:
         fcntl.flock(f,fcntl.LOCK_EX)
@@ -154,5 +217,6 @@ def main():
             read_receipt(LIVE)
             print('SWRLZ_ENGINE_GATE_OK')
         elif sys.argv[1]=='deploy':deploy()
+        elif sys.argv[1]=='deploy-runtime':deploy_runtime()
         else:rollback()
 if __name__=='__main__':main()

@@ -1,0 +1,66 @@
+name: OVH §E restricted runtime promotion
+on:
+  workflow_dispatch:
+    inputs:
+      operation:
+        description: 'check, deploy or rollback'
+        required: true
+        type: choice
+        options: [check, deploy, rollback]
+  push:
+    branches: [main]
+    paths: ['.deploy/engine-runtime/PROMOTE.json']
+permissions: {}
+concurrency:
+  group: ovh-engine-production
+  cancel-in-progress: false
+jobs:
+  promote:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - name: Use the existing pinned SSH identity and fixed §E commands
+        env:
+          HOST: ${{ secrets.SWRLZ_SERVER_HOST }}
+          LOGIN: ${{ secrets.SWRLZ_SERVER_USER }}
+          SSH_KEY: ${{ secrets.SWRLZ_SERVER_SSH_KEY }}
+          KNOWN_HOSTS: ${{ secrets.SWRLZ_SERVER_KNOWN_HOSTS }}
+          OP: ${{ inputs.operation || 'deploy' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -n "$HOST" && test "$LOGIN" = swrlz-deploy && test -n "$SSH_KEY" && test -n "$KNOWN_HOSTS"
+          umask 077
+          d=$(mktemp -d)
+          trap 'rm -rf "$d"' EXIT
+          printf '%s\n' "$SSH_KEY" > "$d/key"
+          printf '%s\n' "$KNOWN_HOSTS" > "$d/known_hosts"
+          unset SSH_KEY KNOWN_HOSTS
+          remote() {
+            ssh -F /dev/null -T -i "$d/key" -o BatchMode=yes -o IdentitiesOnly=yes \
+              -o StrictHostKeyChecking=yes -o HostKeyAlgorithms=ssh-ed25519 \
+              -o UserKnownHostsFile="$d/known_hosts" -o GlobalKnownHostsFile=/dev/null \
+              -o ConnectTimeout=15 -o ClearAllForwardings=yes "$LOGIN@$HOST" "$1"
+          }
+          remote swrlz-engine-check | tee "$d/check"
+          grep -Fxq SWRLZ_ENGINE_GATE_OK "$d/check"
+          case "$OP" in
+            check) exit 0 ;;
+            deploy)
+              remote swrlz-source-sync > "$d/sync"
+              grep -Fxq SWRLZ_SOURCE_SYNC_OK "$d/sync"
+              grep -Fxq "$GITHUB_SHA" "$d/sync"
+              remote swrlz-engine-runtime-deploy | tee "$d/result"
+              grep -q '^SWRLZ_ENGINE_RUNTIME_DEPLOY_OK ' "$d/result"
+              ;;
+            rollback)
+              remote swrlz-engine-rollback | tee "$d/result"
+              grep -Fxq SWRLZ_ENGINE_ROLLBACK_OK "$d/result"
+              ;;
+            *) exit 1 ;;
+          esac
+          status=$(curl --noproxy '*' -sS --connect-timeout 12 --max-time 20 -D "$d/headers" -o /dev/null -w '%{http_code}' "https://$HOST/")
+          test "$status" = 401
+          grep -qi '^www-authenticate: Basic' "$d/headers"
+          echo SWRLZ_ENGINE_HTTPS_AUTH_PRESERVED

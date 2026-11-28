@@ -23,6 +23,9 @@ install -m 0755 -o root -g root "$SOURCE" "$PUBLISH.new"
 python3 -m py_compile "$PUBLISH.new"
 "$PUBLISH.new" initialize
 "$PUBLISH.new" check
+if test -f "$PUBLISH" && ! test -e "$PUBLISH.pre-runtime"; then
+  install -m 0755 -o root -g root "$PUBLISH" "$PUBLISH.pre-runtime"
+fi
 mv -f "$PUBLISH.new" "$PUBLISH"
 if ! grep -Fq '# SWRLZ_ENGINE_GATE_V1' "$GATE"; then
   test ! -e "$LEGACY"
@@ -32,7 +35,7 @@ test -x "$LEGACY"
 tmp=$(mktemp /etc/sudoers.d/.swrlz-engine.XXXXXX)
 trap 'rm -f "$tmp" "$GATE.new"' EXIT
 cat >"$tmp" <<'SUDOERS'
-swrlz-deploy ALL=(root) NOPASSWD: /usr/local/sbin/swrlz-engine-publish check, /usr/local/sbin/swrlz-engine-publish deploy, /usr/local/sbin/swrlz-engine-publish rollback
+swrlz-deploy ALL=(root) NOPASSWD: /usr/local/sbin/swrlz-engine-publish check, /usr/local/sbin/swrlz-engine-publish deploy, /usr/local/sbin/swrlz-engine-publish deploy-runtime, /usr/local/sbin/swrlz-engine-publish rollback
 SUDOERS
 chmod 0440 "$tmp"
 visudo -cf "$tmp"
@@ -44,6 +47,7 @@ set -eu
 case "${SSH_ORIGINAL_COMMAND:-}" in
   swrlz-engine-check) exec /usr/bin/sudo -n /usr/local/sbin/swrlz-engine-publish check ;;
   swrlz-engine-deploy) exec /usr/bin/sudo -n /usr/local/sbin/swrlz-engine-publish deploy ;;
+  swrlz-engine-runtime-deploy) exec /usr/bin/sudo -n /usr/local/sbin/swrlz-engine-publish deploy-runtime ;;
   swrlz-engine-rollback) exec /usr/bin/sudo -n /usr/local/sbin/swrlz-engine-publish rollback ;;
   *) exec /usr/local/bin/swrlz-deploy-gate.pre-engine "$@" ;;
 esac
@@ -52,4 +56,4 @@ chmod 0755 "$GATE.new"
 sh -n "$GATE.new"
 mv -f "$GATE.new" "$GATE"
 sudo -u swrlz-deploy env SSH_ORIGINAL_COMMAND=swrlz-engine-check "$GATE"
-echo SWRLZ_ENGINE_BRIDGE_INSTALLED
+echo SWRLZ_ENGINE_RUNTIME_BRIDGE_INSTALLED
