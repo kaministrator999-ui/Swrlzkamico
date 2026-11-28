@@ -12,8 +12,8 @@
       "bytes": 687188
     },
     "swrlz-engine-v11.552.js": {
-      "sha256": "cab20a91d1ec007168462024be2fb2892d7b302082a0a64195e4113968a17d0f",
-      "bytes": 10679758
+      "sha256": "a498cabc44e766ed8b6d65592f690854f2bd147bb0b794ebc3c70d32dc06b758",
+      "bytes": 10694176
     },
     "assets/uv-unwrapper/uv_atlas_core_v11_555.mjs": {
       "sha256": "e5a05b74f9e324c18c67831f3d5f0e3705fb88e21917d2e0232147ad6698836d",
@@ -41,13 +41,13 @@
       "bytes": 317478
     }
   },
-  "sourceCommit": "fcdcde4a58b2ff07cb63d821d2707d043e744111",
-  "browserRun": "46119338932",
+  "sourceCommit": "1ecb0a0d349603793dae8a9a74442e05c55f20aa",
+  "browserRun": "46121073679",
   "rendererBundle": {
     "version": "0.169.0",
     "threeIntegrity": "sha512-Ed906MA3dR4TS5riErd4QBsRGPcx+HBDX2O5yYE5GqJeFQTPU+M56Va/f/Oph9X7uZo3W3o4l2ZhBZ6f6qUv0w==",
     "esbuildVersion": "0.25.12",
-    "previousModuleSha256": "0f1de5d780fe9c9525d6edf99e527c508835f7fa4ba44724bc68451399f56d51",
+    "previousModuleSha256": "2af2e1723e67cc96b22a20b24d5595abcb5721b6c9ebd32daf96c0292230be32",
     "startupImportsBundled": [
       "https://cdn.jsdelivr.net/npm/three@0.169.0/+esm",
       "https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/controls/OrbitControls.js/+esm",
@@ -93,30 +93,6 @@
     "accountIntegrationVerified": false
   },
   "previousCandidateBrowserReceipt": {
-    "realStarterCard": false,
-    "errors": [
-      "QA fixture must never be promoted"
-    ]
-  },
-  "uvSourceCommit": "d49eec1d29fc2cc3202ce497111147fcaa05fb37",
-  "qaOnly": false,
-  "functionalVerification": {
-    "run": 46114660276,
-    "job": 140886104995,
-    "fixtureCommit": "840394b6c4a973c255833dfb75757ecd7621b32d",
-    "fixtureModuleSha256": "7dca647a643fa438a20c33d7233827a6032e2cf5e6a82d88421f8d5025e05809",
-    "paintSamples": 8499,
-    "maxPaintChannelError": 0,
-    "centerErrorPx": 0,
-    "cancel": true,
-    "apply": true,
-    "undo": true,
-    "redo": true,
-    "geometryPreserved": true,
-    "renderTexture": true,
-    "optimizeAllOnePart": true
-  },
-  "browserReceipt": {
     "realStarterCard": true,
     "errors": [],
     "hash": "05b40cd4aa751760b371265cf73047485065175a9b6e742e33d47871ec1da2fb",
@@ -235,6 +211,24 @@
       }
     }
   },
+  "uvSourceCommit": "d49eec1d29fc2cc3202ce497111147fcaa05fb37",
+  "qaOnly": true,
+  "functionalVerification": {
+    "run": 46114660276,
+    "job": 140886104995,
+    "fixtureCommit": "840394b6c4a973c255833dfb75757ecd7621b32d",
+    "fixtureModuleSha256": "7dca647a643fa438a20c33d7233827a6032e2cf5e6a82d88421f8d5025e05809",
+    "paintSamples": 8499,
+    "maxPaintChannelError": 0,
+    "centerErrorPx": 0,
+    "cancel": true,
+    "apply": true,
+    "undo": true,
+    "redo": true,
+    "geometryPreserved": true,
+    "renderTexture": true,
+    "optimizeAllOnePart": true
+  },
   "anatomicalVerification": {
     "run": 46119034301,
     "fixtureCommit": "005c6230d64a38675505be7bb12a2e0ab0f30149",
@@ -262,5 +256,11 @@
       "coverage": 0.4180033842933,
       "legendCount": 22
     }
+  },
+  "browserReceipt": {
+    "realStarterCard": false,
+    "errors": [
+      "QA fixture must never be promoted"
+    ]
   }
 }
