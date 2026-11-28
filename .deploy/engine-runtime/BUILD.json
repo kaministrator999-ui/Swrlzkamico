@@ -1,0 +1,6 @@
+{
+  "reason": "OVH bare sealed engine lacks delivery-only starter registration and UV controls",
+  "baseline": "897e3fd854f2c0ece60d02bd160b423c911787b5",
+  "uvCandidate": "05b2f1197dd0728a3690b6e4ad9b7c98dc67c75e",
+  "validation": "Click visible Starter Models card on actual OVH origin routed to exact built bytes; test scene SHA and UV numbering; no live publication"
+}

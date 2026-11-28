@@ -1,0 +1,68 @@
+name: OVH §E runtime delivery and real starter card QA
+on:
+  push:
+    branches: [main]
+    paths: ['.deploy/engine-runtime/BUILD.json']
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: ovh-engine-runtime-stage
+  cancel-in-progress: false
+jobs:
+  stage:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Rebuild exact sealed source and apply existing delivery transforms
+        run: |
+          set -euo pipefail
+          P=projects/swrlz-forge-moba
+          python "$P/scripts/verify_v11_552_release.py" --output dist/engine-runtime
+          python "$P/scripts/package_static_delivery_v11_552.py" --output dist/engine-runtime
+          python - <<'PY'
+          import hashlib,json,shutil
+          from pathlib import Path
+          dist=Path('dist/engine-runtime')
+          uv=Path('.deploy/engine-uv/payload')
+          m=json.loads((uv/'manifest.json').read_text())
+          for rel,rec in m['assets'].items():
+              p=uv/'overlay'/rel
+              assert hashlib.sha256(p.read_bytes()).hexdigest()==rec['sha256']
+              shutil.copyfile(p,dist/rel)
+          PY
+          node --check dist/engine-runtime/swrlz-engine-v11.552.js
+      - name: Install pinned browser
+        run: |
+          npm install --prefix "$RUNNER_TEMP/engine-browser" --no-audit --no-fund playwright@1.51.1
+          "$RUNNER_TEMP/engine-browser/node_modules/.bin/playwright" install --with-deps chromium
+      - name: Test exact delivered runtime on OVH origin with real project library click
+        run: |
+          set -euo pipefail
+          NODE_PATH="$RUNNER_TEMP/engine-browser/node_modules" node projects/swrlz-forge-moba/tests/ovh_runtime_starter_card.cjs dist/engine-runtime engine-qa
+          python scripts/ovh_engine_stage_runtime.py dist/engine-runtime engine-qa "$GITHUB_SHA" "$GITHUB_RUN_ID"
+      - name: Preserve browser evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ovh-engine-runtime-qa-${{ github.sha }}
+          path: engine-qa/
+          if-no-files-found: warn
+          retention-days: 30
+      - name: Commit only verified runtime overlay for promotion
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -f .deploy/engine-runtime/payload
+          git diff --cached --quiet && exit 0
+          git commit -m 'Stage browser-verified engine runtime overlay'
+          git push origin HEAD:main
