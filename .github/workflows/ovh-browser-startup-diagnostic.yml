@@ -1,0 +1,28 @@
+name: Inspect exact deployed engine boot dependencies
+on:
+  push:
+    branches: [qa/ovh-browser-startup-diagnostic]
+permissions:
+  contents: read
+jobs:
+  inspect:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: .deploy/engine-runtime/payload/overlay
+      - name: Inspect actual deployed JS imports, no browser or network dependency execution
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib,re,json
+          p=Path('.deploy/engine-runtime/payload/overlay/swrlz-engine-v11.552.js')
+          s=p.read_text()
+          print('MODULE_SHA256',hashlib.sha256(p.read_bytes()).hexdigest())
+          print('MODULE_START',s[:6000])
+          for m in list(re.finditer(r'\bimport\s*\(',s))[:50]:
+              print('DYNAMIC_IMPORT',s[max(0,m.start()-100):m.start()+260])
+          for u in sorted(set(re.findall(r'https://(?:cdn\.jsdelivr\.net|unpkg\.com|esm\.sh|cdnjs\.cloudflare\.com|cdn\.skypack\.dev)[^\s"\x27<>\\]+',s))):
+              print('EXTERNAL_DEPENDENCY',u[:350])
+          PY
