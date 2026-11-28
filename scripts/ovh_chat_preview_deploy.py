@@ -205,6 +205,110 @@ def _ovh_small_code(prompt,programming,payload,history):
     return s
 
 
+
+def patch_v4(s):
+    s=patch_v3(s)
+    if "OVH_ADAPTIVE_CONTEXT_V4" in s: return s
+    helper=r'''
+def _ovh_conversation_profile(prompt,cognition,programming,payload,history):
+    """Select ordinary conversation by existing turn semantics."""
+    if programming.get("codingTask") or cognition.get("programming"):
+        return False
+    if cognition.get("operation") not in ("respond","answer","explain","confirm","decline","correct"):
+        return False
+    if cognition.get("relation") in ("return-to-prior","expansion","selection","creative-delegation"):
+        return False
+    if cognition.get("detailMode")=="expanded" or cognition.get("requestedCount") or cognition.get("preserveConstraint"):
+        return False
+    if cognition.get("sourcePreference")!="unspecified" or cognition.get("deliverable")!="none":
+        return False
+    if any(payload.get(k) for k in ("privateHistoryIntent","projectVersionRecall","verifiedPrivateAnswer",
+        "nativeEditorEvidence","onlineContext","githubSourceChangeTask","projectThreadEvidence",
+        "archiveEvidence","widgetPresentation","forgeContext","githubAction","githubStart",
+        "sourceChangeIdentity","pinnedContext","uploadedFiles","attachments","visionReceipt")):
+        return False
+    clean=" ".join(prompt.split())
+    if not clean or len(clean)>600 or re.search(r"https?://|www\.|\x60{3}|[{}]",clean,re.I):
+        return False
+    if re.search(r"\b(?:remember|recall|previous conversations?|saved memory|what did i say|my name|your name|who am i|who are you|how do you work|your capabilities|your limitations|latest|current price|today's news|search|look up|calculate|diagnose|dosage|legal advice|investment advice|write|create|generate|build|deploy|repair|debug|execute|install)\b",clean,re.I):
+        return False
+    if history and cognition.get("relation") in ("confirmation","correction","decline"):
+        if any(re.search(r"\x60{3}|\b(?:deploy|commit|execute|repair|source code)\b",str(m.get("content") or m.get("text") or ""),re.I) for m in history[-2:]):
+            return False
+    return True
+
+def _ovh_compact_core():
+    wanted=("DYNAMIC MIRROR","SIMPLE-FIRST","CORRECTION ECONOMY","NO ECHO TAX",
+            "OWNERSHIP BEFORE INFERENCE","HUMOR CAUSALITY","EVIDENCE BEFORE AGREEMENT")
+    return "\n".join(line for line in BUILTIN_ASSISTANT_PROFILE.splitlines()
+                     if any(line.startswith(k+":") for k in wanted))
+
+'''
+    s=replace_once(s,"def generate_events(payload):",helper+"def generate_events(payload):")
+    anchor='    yield {"type":"STATUS","phase":"OVH_PREFILL_PROFILE","reason":compact_kind}'
+    s=replace_once(s,anchor,r'''
+    # OVH_ADAPTIVE_CONTEXT_V4: broad, guarded natural conversational turns.
+    if compact_kind=="standard" and compact_allowed and _ovh_conversation_profile(
+            prompt,response_cognition,programming,payload,history):
+        compact_kind="conversation"
+        system=("You are §wyrlz (Swurlz), an AI assistant distinct from the user. "
+                "Respond naturally and directly to the current turn. Maintain real conversation "
+                "continuity, preserve the user's preferences and correct attribution. "
+                "Do not fabricate memories, experiences, identity, tool results or actions. "
+                "Use concise answers when sufficient; expand when the question needs it. "
+                "Do not claim a persistent change or action without a verified receipt.\n"
+                +_ovh_compact_core()+"\n"+_role_frame(user_profile)
+                +"\n"+response_cognition_policy(response_cognition))
+        if custom_assistant_profile:
+            system+="\nUSER ASSISTANT PREFERENCES:\n"+custom_assistant_profile
+        if user_profile:
+            system+="\nCURRENT USER PROFILE:\n"+user_profile
+        if temporal and re.search(r"\b(?:earlier|today|yesterday|last night|tomorrow|ago|since|this morning)\b",prompt,re.I):
+            system+="\nServer-derived time context (not physical location): "+json.dumps(temporal,ensure_ascii=False,separators=(",",":"))
+        if social_style:
+            system+="\n"+social_style
+        if version_lesson:
+            system+="\n"+version_lesson
+        if lesson:
+            system+="\n"+lesson
+''' + anchor)
+    s=replace_once(s,'    yield {"type":"STATUS","phase":"LOADING"}',
+        '    yield {"type":"STATUS","phase":"OVH_CONTEXT_PREP","reason":"Preparing the relevant conversation context."}\n'
+        '    yield {"type":"STATUS","phase":"LOADING","reason":"Connecting to the resident model."}')
+    anchor='        yield {"type":"RESOURCE","cpuCapacity":_cpu_capacity(),"decodeThreads":_thread_plan()[0],"batchThreads":_thread_plan()[1],"maxResponseTokens":response_tokens}'
+    s=replace_once(s,anchor,anchor+'\n'
+        '        yield {"type":"STATUS","phase":"OVH_MODEL_PREFILL","reason":f"Processing {input_tokens} context tokens with the resident model."}\n'
+        '        if guarded_turn:\n'
+        '            yield {"type":"STATUS","phase":"OVH_GUARDED_GENERATION","reason":"Generating a candidate; validation runs before release."}')
+    s=replace_once(s,'    yield {"type":"DIAGNOSTIC","trace":_diagnostic_trace(history,user_profile,custom_assistant_profile)}',
+        '    yield {"type":"STATUS","phase":"OVH_INTENT_READY","reason":"Reading your request and conversation context."}\n'
+        '    yield {"type":"DIAGNOSTIC","trace":_diagnostic_trace(history,user_profile,custom_assistant_profile)}')
+    ast.parse(s)
+    return s
+
+def patch_ui(s):
+    if "OVH_PROGRESS_V4" in s:return s
+    anchor='      const activityLabelsV238={'
+    s=replace_once(s,anchor,anchor+r'''
+        // OVH_PROGRESS_V4: genuine transport/engine milestones, not answer tokens.
+        OVH_INTENT_READY:"Reading your request",OVH_CONTEXT_PREP:"Preparing relevant context",
+        OVH_PREFILL_PROFILE:"Selected response context",OVH_TOKENIZER_CACHE:"Context tokenized",
+        OVH_MODEL_PREFILL:"Processing context with the model",OVH_GUARDED_GENERATION:"Generating and checking code",
+        LOADING:"Connecting to resident model",
+''')
+    s=replace_once(s,'        const message=String(g.text||"").trim()?"Still responding":"Preparing response";',
+        r'''        const latestPhase=String((g.status||[]).at(-1)?.phase||g.phase||"CONNECTING").toUpperCase();
+        const message=String(g.text||"").trim()?"Writing the response":
+          ({CONNECTING:"Sending your message",QUEUED:"Message received; awaiting processing",
+            OVH_INTENT_READY:"Reading your request",OVH_CONTEXT_PREP:"Selecting relevant context",
+            OVH_MODEL_PREFILL:"Processing context before the first answer token",
+            OVH_GUARDED_GENERATION:"Generating and validating the candidate before release",
+            CANDIDATE_ATTEMPT:"Checking the generated candidate",
+            RESOURCE_ALLOCATED:"Inference resources ready"}[latestPhase]||activityNameV238(latestPhase));
+''')
+    return s
+
+
 def patch_memory(s):
     if "OVH_MEMORY_POSTINGS_V1" in s:
         return s
@@ -251,7 +355,8 @@ def _ovh_score(docs,frequencies,query,postings=None):
 def verify_local():
     # No imported account history, credentials, or user prompt contents in receipts.
     program=r'''
-from lfm2_700m_engine import _OVHRequestTokenModel,_ovh_small_code,_candidate_structure_check
+from lfm2_700m_engine import _OVHRequestTokenModel,_ovh_small_code,_candidate_structure_check,_ovh_conversation_profile
+from response_cognition import classify_response_cognition
 from brain_programming import programming_intent
 from chatgpt_account_memory import _ovh_postings,_ovh_score
 from collections import Counter
@@ -279,6 +384,14 @@ assert not _ovh_small_code("Create a simple HTML application",intent,{},[])
 assert _candidate_structure_check("\x60\x60\x60python\ndef double(x):\n    return x*2\n\x60\x60\x60",intent,[])["status"]=="PASS"
 assert _candidate_structure_check("No candidate",intent,[])["status"]=="REJECT"
 
+h=[{"role":"user","content":"Hey"},{"role":"assistant","content":"Hey, how are you doing?"}]
+for p2 in ("Doing fine I see your inference speed is pretty on point","I had a pretty good day at work","That was actually pretty funny","Can you explain why the sky is blue?"):
+    i2=programming_intent(p2,h,[],{})
+    assert _ovh_conversation_profile(p2,classify_response_cognition(p2,h,i2),i2,{},h), p2
+for p2 in ("Find the latest news","Write a Python function","Remember what we talked about yesterday","Explain more in depth"):
+    i2=programming_intent(p2,h,[],{})
+    assert not _ovh_conversation_profile(p2,classify_response_cognition(p2,h,i2),i2,{},h),p2
+assert not _ovh_conversation_profile("Hey",classify_response_cognition("Hey",h,{}),{},{"archiveEvidence":"fixture"},h)
 docs=[{"id":i,"timestamp":i%31,"terms":{"common":2,"term"+str(i%401):1},
        "titleTokens":{"term"+str(i%401)}} for i in range(12000)]
 freq=Counter(w for d in docs for w in d["terms"])
@@ -349,14 +462,14 @@ def restart():
     raise RuntimeError("Preview health failed")
 
 
-def probe(label,prompt,expected):
+def probe(label,prompt,expected,session=None):
     import http.cookiejar
     import urllib.parse
     import uuid
     base="http://127.0.0.1:8766"
-    opener=urllib.request.build_opener(urllib.request.HTTPCookieProcessor(http.cookiejar.CookieJar()))
+    opener,tid=session or (urllib.request.build_opener(urllib.request.HTTPCookieProcessor(http.cookiejar.CookieJar())),"ovh-perf-"+str(uuid.uuid4()))
     rid=str(uuid.uuid4())
-    body={"modelId":"700m","prompt":prompt,"threadId":"ovh-perf-"+rid,
+    body={"modelId":"700m","prompt":prompt,"threadId":tid,
           "requestId":rid,"profileId":"LALM","profile":"","userProfile":"","timeZone":"UTC"}
     started=time.monotonic()
     req=urllib.request.Request(base+"/api/lalm_station/send",data=json.dumps(body).encode(),
@@ -364,13 +477,16 @@ def probe(label,prompt,expected):
     with opener.open(req,timeout=15) as r:
         if r.status!=202: raise RuntimeError("Probe not accepted")
         r.read()
-    first=None; parts=[]; terminal=None; tokens=None; profile=None; cache=None
+    first=None; parts=[]; terminal=None; tokens=None; profile=None; cache=None; progress=None; phases=[]
     with opener.open(base+"/api/lalm_station/stream?"+urllib.parse.urlencode({"requestId":rid}),timeout=90) as r:
         for raw in r:
             if time.monotonic()-started>100: raise RuntimeError("Probe deadline")
             try: event=json.loads(raw)
             except ValueError: continue
             kind=event.get("type")
+            if kind=="STATUS":
+                phases.append(event.get("phase"))
+                if progress is None and event.get("phase")=="OVH_INTENT_READY": progress=round(time.monotonic()-started,3)
             if kind=="STATUS" and event.get("phase")=="OVH_PREFILL_PROFILE":
                 profile=event.get("reason")
             if kind=="STATUS" and event.get("phase")=="OVH_TOKENIZER_CACHE":
@@ -389,7 +505,7 @@ def probe(label,prompt,expected):
         raise RuntimeError("Probe session generation mismatch")
     tokens=(active.get("contextBudget") or {}).get("estimatedInputTokens",tokens)
     receipt={"case":label,"profile":profile,"inputTokens":tokens,"firstVisibleSec":first,
-             "totalSec":round(time.monotonic()-started,2),"terminal":terminal,"outputChars":len("".join(parts)),"tokenizerCache":cache}
+             "totalSec":round(time.monotonic()-started,2),"terminal":terminal,"outputChars":len("".join(parts)),"tokenizerCache":cache,"firstProgressSec":progress}
     print("SWRLZ_PERF_RECEIPT "+json.dumps(receipt,separators=(",",":")),file=__import__("sys").stderr,flush=True)
     if terminal not in ("COMPLETE","COMPLETED") or not parts or first is None:
         # These probes are isolated synthetic guest requests, never account history.
@@ -397,7 +513,7 @@ def probe(label,prompt,expected):
         attempts=[{"status":a.get("validationStatus"),"reasons":a.get("validationReasons"),"firstMs":a.get("firstTokenLatencyMs")} for a in active.get("candidateAttempts",[])]
         print("SWRLZ_PROBE_FAILURE "+json.dumps({"case":label,"failure":failed,"attempts":attempts}),file=__import__("sys").stderr,flush=True)
         raise RuntimeError("End-to-end generation failed: "+label)
-    if profile!=expected or not isinstance(tokens,int) or tokens>(1800 if label=="code" else 512):
+    if profile!=expected or not isinstance(tokens,int) or tokens>(2200 if expected=="conversation" else 1800 if label=="code" else 512):
         raise RuntimeError("Compact profile budget not verified: "+label)
     if label=="math" and not re.search(r"(?<!\d)4(?!\d)","".join(parts)):
         raise RuntimeError("Arithmetic acceptance failed")
@@ -420,6 +536,10 @@ def probe(label,prompt,expected):
         if ast.dump(value) not in accepted:
             raise RuntimeError("Generated code arithmetic failed")
         print("SWRLZ_CODE_STATIC_ACCEPTANCE_OK",file=__import__("sys").stderr,flush=True)
+    if progress is None or "OVH_MODEL_PREFILL" not in phases:
+        raise RuntimeError("Missing real progress events: "+label)
+    if label=="followup" and (active.get("contextBudget") or {}).get("historyMessagesKept",0)<2:
+        raise RuntimeError("Multi-turn history lost")
     if first>(85 if label=="code" else 45):
         raise RuntimeError("First token latency exceeded 45 seconds: "+label)
 
@@ -428,11 +548,13 @@ def main():
         raise RuntimeError("Run as deployment user, not root")
     rev = subprocess.check_output(["git", "-C", str(SOURCE), "rev-parse", "HEAD"], text=True).strip()
     memory=PREVIEW/"chatgpt_account_memory.py"
-    originals={p:p.read_bytes() for p in (TARGET,memory)}
-    updates={TARGET:patch_v3(originals[TARGET].decode()).encode(),
-             memory:patch_memory(originals[memory].decode()).encode()}
+    ui=PREVIEW/"chat/§wyrlz/index.html"
+    originals={p:p.read_bytes() for p in (TARGET,memory,ui)}
+    updates={TARGET:patch_v4(originals[TARGET].decode()).encode(),
+             memory:patch_memory(originals[memory].decode()).encode(),
+             ui:patch_ui(originals[ui].decode()).encode()}
     for p,data in updates.items():
-        ast.parse(data.decode())
+        if p.suffix==".py": ast.parse(data.decode())
     changed=[]
     try:
         for p,data in updates.items():
@@ -447,7 +569,10 @@ def main():
         restart()
         probe('code','Write a Python function double(x) that returns x multiplied by 2. Return only code.','code')
         probe('math','Hey §wyrlz, what is 2 + 2?','math')
-        probe('social','Hello §wyrlz!','social')
+        import http.cookiejar,uuid
+        session=(urllib.request.build_opener(urllib.request.HTTPCookieProcessor(http.cookiejar.CookieJar())), 'ovh-conversation-'+str(uuid.uuid4()))
+        probe('social','Hello §wyrlz!','social',session)
+        probe('followup','Doing fine I see your inference speed is pretty on point','conversation',session)
         probe('explain','What is RAM?','explain')
         cpu_receipt()
     except Exception:
