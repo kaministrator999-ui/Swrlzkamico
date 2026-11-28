@@ -14,7 +14,7 @@ grep -Fq 'swrlz-engine-runtime-deploy)' "$GATE"
 sudo -u swrlz-deploy "$PY" -I -c 'import playwright.sync_api'
 install -d -m 0755 -o root -g root /usr/local/libexec
 install -m 0644 -o root -g root "$1" "$QA.new"
-"$PY" -I -c 'import ast,sys;ast.parse(open(sys.argv[1]).read())' "$QA.new"
+/usr/bin/python3 -I -c 'import ast,sys;ast.parse(open(sys.argv[1]).read())' "$QA.new"
 mv "$QA.new" "$QA"
 if ! grep -Fq 'swrlz-engine-browser-live)' "$GATE"; then
   test ! -e "$GATE.pre-browser"
