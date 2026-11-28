@@ -93,6 +93,215 @@ def patch(s):
         '    print(f"CONTEXT_RECEIPT profile={compact_kind} input_tokens={input_tokens}", flush=True)')
     return s
 
+
+def patch_v3(s):
+    if "OVH_ADAPTIVE_CONTEXT_V3" in s:
+        return s
+    if "OVH_ADAPTIVE_CONTEXT_V2" not in s:
+        s=patch(s)
+    helper=r'''
+class _OVHRequestTokenModel:
+    """Exact token reuse for one generation only; no shared private text."""
+    def __init__(self,model):
+        self.model=model
+        self.cache={}
+        self.hits=0
+        self.misses=0
+    def tokenize(self,text,add_bos=False):
+        key=(bytes(text),bool(add_bos))
+        if key in self.cache:
+            self.hits+=1
+            return list(self.cache[key])
+        self.misses+=1
+        tokens=self.model.tokenize(text,add_bos=add_bos)
+        if len(self.cache)<64 and len(key[0])<=65536:
+            self.cache[key]=tuple(tokens)
+        return tokens
+    def create_chat_completion(self,**kwargs):
+        return self.model.create_chat_completion(**kwargs)
+
+
+def _ovh_small_code(prompt,programming,payload,history):
+    if not programming.get("codingTask") or history:
+        return False
+    if any(programming.get(k) for k in (
+        "failureEvidence","canonicalCarry","repairDirection","artifactContinuation",
+        "artifactMutationRequested","artifactTargetId","needsFailureEvidence",
+        "newProject","failureHistory","behaviorRepairBaseSource","pinnedCodeArtifactCount")):
+        return False
+    ledger=programming.get("behaviorLedger") or {}
+    constraints=programming.get("repairConstraints") or {}
+    if any(ledger.get(k) for k in ("suiteKey","currentFailingCases","knownPassingCases",
+        "preservePassingCases","regressedCases","resolvedCases","currentTestedArtifact",
+        "bestKnownArtifact","currentScore","bestKnownScore")):
+        return False
+    if any(constraints.get(k) for k in ("unavailableDependencies","forbiddenDependencies",
+        "currentReceiptDependencies","carriedUnavailableDependencies","addedDependencies")):
+        return False
+    if any(payload.get(k) for k in (
+        "nativeEditorEvidence","onlineContext","projectThreadEvidence","archiveEvidence",
+        "githubContext","githubAction","githubSourceChangeTask","forgeContext","forgeLeaseId",
+        "visionJobId","visionReceipt","fileDialogue","pinnedContext","uploadedFiles",
+        "attachments","sourceChangeIdentity","privateHistoryIntent","projectVersionRecall")):
+        return False
+    clean=" ".join(prompt.split())
+    if not clean or len(clean)>230 or re.search(r"https?://|www\.|§[eEcC]\b|[{}\x60]|/api/",clean,re.I):
+        return False
+    if not re.search(r"\b(?:write|create|implement|generate|show|make)\b",clean,re.I):
+        return False
+    if not re.search(r"\b(?:function|method|short|simple|small|snippet|hello world|example)\b",clean,re.I):
+        return False
+    if re.search(r"\b(?:fix|debug|repair|refactor|rewrite|edit|modify|update|change|extend|import|repository|repo|github|commit|deploy|existing|project|integration|integrate|engine|server|database|frontend|backend|file|directory|folder|component|error|stack trace|test failure|architecture|library|framework|endpoint)\b",clean,re.I):
+        return False
+    contract=programming.get("intentContract") or {}
+    if len(json.dumps(contract,ensure_ascii=False))>4500:
+        return False
+    if (contract.get("artifactType") in ("web-page","application","repository")
+        or (contract.get("languageContract") or {}).get("artifactType") in ("web-page","application","repository")):
+        return False
+    return True
+
+'''
+    s=replace_once(s,"def generate_events(payload):",helper+"def generate_events(payload):")
+    anchor='    yield {"type":"STATUS","phase":"OVH_PREFILL_PROFILE","reason":compact_kind}'
+    s=replace_once(s,anchor,r'''
+    # OVH_ADAPTIVE_CONTEXT_V3: guarded standalone code, preserve full repair contracts.
+    if _ovh_small_code(prompt,programming,payload,history):
+        compact_kind="code"
+        contract=dict(programming.get("intentContract") or {})
+        if contract.get("originalRequest")==prompt:
+            contract.pop("originalRequest")
+        system=("You are §wyrlz. Implement the exact requested language, signature, "
+                "behavior, examples and negative constraints. Return complete usable code. "
+                "Do not claim execution without a real execution receipt. Check the original "
+                "requirements against the returned code. Respect requested output format."
+                "\n"+CODE_TRUTH_POLICY+"\n"+_response_mode(prompt,programming,history))
+        if contract:
+            system+="\nSTRUCTURED ACCEPTANCE CONTRACT:\n"+json.dumps(contract,ensure_ascii=False,separators=(",",":"))
+        if custom_assistant_profile:
+            system+="\nASSISTANT PREFERENCES:\n"+custom_assistant_profile
+        if user_profile:
+            system+="\nUSER PROFILE (human only):\n"+user_profile
+''' + anchor)
+    s=replace_once(s,"    model=load()","    model=_OVHRequestTokenModel(load())")
+    s=replace_once(s,'    print(f"CONTEXT_RECEIPT profile={compact_kind} input_tokens={input_tokens}", flush=True)',
+        '    print(f"CONTEXT_RECEIPT profile={compact_kind} input_tokens={input_tokens}", flush=True)\n'
+        '    yield {"type":"STATUS","phase":"OVH_TOKENIZER_CACHE","reason":f"{model.hits}:{model.misses}"}')
+    s=replace_once(s,"        elif file_dialogue:\n            response_tokens=min(320,available_output_tokens);temperature=0.35",
+        "        elif compact_kind=='code':\n            response_tokens=min(1024,available_output_tokens);temperature=0.30\n"
+        "        elif file_dialogue:\n            response_tokens=min(320,available_output_tokens);temperature=0.35")
+    ast.parse(s)
+    return s
+
+
+def patch_memory(s):
+    if "OVH_MEMORY_POSTINGS_V1" in s:
+        return s
+    helper=r'''
+# OVH_MEMORY_POSTINGS_V1: exact candidate shortlist, not a new relevance policy.
+def _ovh_postings(docs):
+    postings={}
+    for i,doc in enumerate(docs):
+        for term in doc["terms"]:
+            postings.setdefault(term,[]).append(i)
+    return postings
+
+def _ovh_score(docs,frequencies,query,postings=None):
+    count=max(1,len(docs))
+    if postings is None:
+        candidates=range(len(docs))
+    else:
+        candidates=sorted({i for w in query for i in postings.get(w,())})
+    scored=[]
+    for i in candidates:
+        doc=docs[i]
+        score=sum(math.log1p((count+1)/(1+frequencies[w]))*
+                  (2.3 if w in doc["titleTokens"] else 1.0)*
+                  (1+min(2,doc["terms"].get(w,0))*.14)
+                  for w in query if doc["terms"].get(w))
+        if score>=1.3:scored.append((score,doc["timestamp"],doc))
+    scored.sort(key=lambda v:(v[0],v[1]),reverse=True)
+    return scored
+
+'''
+    s=replace_once(s,"def _build(owner,token):",helper+"def _build(owner,token):")
+    s=replace_once(s,'        for entry in docs: freq.update(entry["terms"].keys())',
+        '        for entry in docs: freq.update(entry["terms"].keys())\n        postings=_ovh_postings(docs)')
+    s=replace_once(s,'"docs":docs,"frequency":freq}', '"docs":docs,"frequency":freq,"postings":postings}')
+    s=replace_once(s,'        frequencies=state["frequency"]','        frequencies=state["frequency"]\n        postings=state.get("postings")')
+    start=s.index("    count=max(1,len(docs))",s.index("def retrieve("))
+    end=s.index("    if not scored:return",start)
+    s=s[:start]+"    scored=_ovh_score(docs,frequencies,query,postings)\n"+s[end:]
+    s=replace_once(s,"        hits=sum(min(2,_terms(text[:2000]).count(k)) for k in keywords)",
+        "        terms=Counter(_terms(text[:2000]))\n        hits=sum(min(2,terms[k]) for k in keywords)")
+    ast.parse(s)
+    return s
+
+def verify_local():
+    # No imported account history, credentials, or user prompt contents in receipts.
+    program=r'''
+from lfm2_700m_engine import _OVHRequestTokenModel,_ovh_small_code
+from brain_programming import programming_intent
+from chatgpt_account_memory import _ovh_postings,_ovh_score
+from collections import Counter
+import time,json
+class Fake:
+    def __init__(self): self.calls=0
+    def tokenize(self,t,add_bos=False):
+        self.calls+=1
+        return list(t)+([0] if add_bos else [])
+f=Fake(); m=_OVHRequestTokenModel(f)
+assert m.tokenize(b"abc")==[97,98,99]
+assert m.tokenize(b"abc")==[97,98,99]
+assert m.tokenize(b"abc",True)==[97,98,99,0]
+assert m.hits==1 and f.calls==2
+assert _OVHRequestTokenModel(f).tokenize(b"abc")==[97,98,99] and f.calls==3
+p="Write a Python function double(x) that returns x multiplied by 2. Return only code."
+intent=programming_intent(p,[],[],{})
+assert _ovh_small_code(p,intent,{},[]), "Standalone code profile not selected"
+for key in ("failureEvidence","canonicalCarry","artifactContinuation","artifactMutationRequested"):
+    assert not _ovh_small_code(p,dict(intent,**{key:True}),{},[])
+assert not _ovh_small_code(p,intent,{"archiveEvidence":"fixture"},[])
+assert not _ovh_small_code(p,intent,{},[{"role":"user","content":"previous"}])
+assert not _ovh_small_code("Fix the existing Python function",intent,{},[])
+assert not _ovh_small_code("Create a simple HTML application",intent,{},[])
+docs=[{"id":i,"timestamp":i%31,"terms":{"common":2,"term"+str(i%401):1},
+       "titleTokens":{"term"+str(i%401)}} for i in range(12000)]
+freq=Counter(w for d in docs for w in d["terms"])
+post=_ovh_postings(docs)
+for q in (["term31"],["term2","term3"],["common"],["absent"],["common","term19"]):
+    assert _ovh_score(docs,freq,q)==_ovh_score(docs,freq,q,post)
+q=["term31"]
+t=time.perf_counter()
+for _ in range(20): _ovh_score(docs,freq,q)
+old=time.perf_counter()-t
+t=time.perf_counter()
+for _ in range(20): _ovh_score(docs,freq,q,post)
+new=time.perf_counter()-t
+print("SWRLZ_LOCAL_REGRESSION_OK "+json.dumps({"tokenizerHits":m.hits,
+    "memoryFixtureDocs":len(docs),"matchingDocs":len(post[q[0]]),
+    "fullScanMs":round(old*50,3),"indexedMs":round(new*50,3)}))
+'''
+    p=subprocess.run([PYTHON,"-c",program],cwd=PREVIEW,check=True,timeout=60,capture_output=True,text=True)
+    print(p.stdout,file=__import__("sys").stderr,flush=True)
+
+def cpu_receipt():
+    # Observe only. Inference unit has separate administrative authority.
+    try:
+        with urllib.request.urlopen("http://127.0.0.1:16947/props",timeout=5) as r:
+            props=json.load(r)
+        settings=props.get("default_generation_settings") or {}
+        safe={k:settings[k] for k in ("n_ctx","n_batch","n_ubatch","n_threads","n_threads_batch") if k in settings}
+        help_text=subprocess.check_output(
+            ["/srv/swrlz/runtime/llama.cpp/build/bin/llama-server","--help"],
+            stderr=subprocess.STDOUT,text=True,timeout=15)
+        defaults=[line.strip() for line in help_text.splitlines() if re.match(r"\s*-b,|\s*-ub,",line)][:4]
+        print("SWRLZ_CPU_OBSERVATION "+json.dumps({"reportedSettings":safe,"binaryDefaults":defaults,
+            "changed":False,"reason":"inference restart outside preview gate"}),file=__import__("sys").stderr,flush=True)
+    except Exception as e:
+        print("SWRLZ_CPU_OBSERVATION unavailable "+type(e).__name__,file=__import__("sys").stderr,flush=True)
+
+
 def write_atomic(path, data):
     with tempfile.NamedTemporaryFile(dir=path.parent, delete=False) as f:
         temp = Path(f.name)
@@ -138,7 +347,7 @@ def probe(label,prompt,expected):
     with opener.open(req,timeout=15) as r:
         if r.status!=202: raise RuntimeError("Probe not accepted")
         r.read()
-    first=None; parts=[]; terminal=None; tokens=None; profile=None
+    first=None; parts=[]; terminal=None; tokens=None; profile=None; cache=None
     with opener.open(base+"/api/lalm_station/stream?"+urllib.parse.urlencode({"requestId":rid}),timeout=90) as r:
         for raw in r:
             if time.monotonic()-started>100: raise RuntimeError("Probe deadline")
@@ -147,6 +356,8 @@ def probe(label,prompt,expected):
             kind=event.get("type")
             if kind=="STATUS" and event.get("phase")=="OVH_PREFILL_PROFILE":
                 profile=event.get("reason")
+            if kind=="STATUS" and event.get("phase")=="OVH_TOKENIZER_CACHE":
+                cache=event.get("reason")
             if kind=="CONTEXT": tokens=event.get("estimatedInputTokens")
             if kind=="DELTA":
                 piece=str(event.get("text") or "")
@@ -161,40 +372,67 @@ def probe(label,prompt,expected):
         raise RuntimeError("Probe session generation mismatch")
     tokens=(active.get("contextBudget") or {}).get("estimatedInputTokens",tokens)
     receipt={"case":label,"profile":profile,"inputTokens":tokens,"firstVisibleSec":first,
-             "totalSec":round(time.monotonic()-started,2),"terminal":terminal,"outputChars":len("".join(parts))}
+             "totalSec":round(time.monotonic()-started,2),"terminal":terminal,"outputChars":len("".join(parts)),"tokenizerCache":cache}
     print("SWRLZ_PERF_RECEIPT "+json.dumps(receipt,separators=(",",":")),file=__import__("sys").stderr,flush=True)
     if terminal not in ("COMPLETE","COMPLETED") or not parts or first is None:
         raise RuntimeError("End-to-end generation failed: "+label)
-    if profile!=expected or not isinstance(tokens,int) or tokens>512:
+    if profile!=expected or not isinstance(tokens,int) or tokens>(1800 if label=="code" else 512):
         raise RuntimeError("Compact profile budget not verified: "+label)
     if label=="math" and not re.search(r"(?<!\d)4(?!\d)","".join(parts)):
         raise RuntimeError("Arithmetic acceptance failed")
-    if first>45:
+    if not cache or int(cache.split(":")[0])<1:
+        raise RuntimeError("Tokenizer cache not verified: "+label)
+    if label=="code":
+        answer="".join(parts).strip()
+        match=re.search(r"\x60{3}(?:python)?\s*\n([\s\S]*?)\x60{3}",answer,re.I)
+        code=match.group(1) if match else answer
+        tree=ast.parse(code)
+        funcs=[n for n in tree.body if isinstance(n,ast.FunctionDef) and n.name=="double"]
+        if len(funcs)!=1 or [a.arg for a in funcs[0].args.args]!=["x"]:
+            raise RuntimeError("Generated code signature failed")
+        # Check a tiny expression structurally; never execute model-generated code in deploy account.
+        statements=[n for n in funcs[0].body if not (isinstance(n,ast.Expr) and isinstance(n.value,ast.Constant) and isinstance(n.value.value,str))]
+        if len(statements)!=1 or not isinstance(statements[0],ast.Return):
+            raise RuntimeError("Generated code shape failed")
+        value=statements[0].value
+        accepted=[ast.dump(ast.parse(x,mode="eval").body) for x in ("x*2","2*x","x+x")]
+        if ast.dump(value) not in accepted:
+            raise RuntimeError("Generated code arithmetic failed")
+        print("SWRLZ_CODE_STATIC_ACCEPTANCE_OK",file=__import__("sys").stderr,flush=True)
+    if first>(85 if label=="code" else 45):
         raise RuntimeError("First token latency exceeded 45 seconds: "+label)
 
 def main():
     if os.geteuid() == 0:
         raise RuntimeError("Run as deployment user, not root")
     rev = subprocess.check_output(["git", "-C", str(SOURCE), "rev-parse", "HEAD"], text=True).strip()
-    original = TARGET.read_bytes()
-    s = original.decode("utf-8")
-    updated = patch(s)
-    ast.parse(updated)
-    if updated != s:
-        backup = TARGET.with_name(TARGET.name + ".ovh-" + rev[:12] + ".bak")
-        if not backup.exists():
-            with backup.open("xb") as f:
-                f.write(original)
-        write_atomic(TARGET, updated.encode("utf-8"))
+    memory=PREVIEW/"chatgpt_account_memory.py"
+    originals={p:p.read_bytes() for p in (TARGET,memory)}
+    updates={TARGET:patch_v3(originals[TARGET].decode()).encode(),
+             memory:patch_memory(originals[memory].decode()).encode()}
+    for p,data in updates.items():
+        ast.parse(data.decode())
+    changed=[]
     try:
+        for p,data in updates.items():
+            if data==originals[p]: continue
+            backup=p.with_name(p.name+".ovh-"+rev[:12]+".bak")
+            if not backup.exists():
+                with backup.open("xb") as f: f.write(originals[p])
+            write_atomic(p,data)
+            changed.append(p)
+        verify_local()
         subprocess.run([PYTHON, "-c", "from ovh_chat import app"], cwd=PREVIEW, check=True, timeout=45)
         restart()
         probe('math','Hey §wyrlz, what is 2 + 2?','math')
         probe('social','Hello §wyrlz!','social')
         probe('explain','What is RAM?','explain')
+        probe('code','Write a Python function double(x) that returns x multiplied by 2. Return only code.','code')
+        cpu_receipt()
     except Exception:
-        if updated != s:
-            write_atomic(TARGET, original)
+        for p in reversed(changed):
+            write_atomic(p,originals[p])
+        if changed:
             restart()
         raise
     print("SWRLZ_CHAT_PREVIEW_DEPLOY_OK")
