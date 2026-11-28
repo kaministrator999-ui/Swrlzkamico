@@ -378,6 +378,10 @@ def probe(label,prompt,expected):
              "totalSec":round(time.monotonic()-started,2),"terminal":terminal,"outputChars":len("".join(parts)),"tokenizerCache":cache}
     print("SWRLZ_PERF_RECEIPT "+json.dumps(receipt,separators=(",",":")),file=__import__("sys").stderr,flush=True)
     if terminal not in ("COMPLETE","COMPLETED") or not parts or first is None:
+        # These probes are isolated synthetic guest requests, never account history.
+        failed=[str(x.get("reason") or "")[:240] for x in active.get("status",[]) if x.get("phase")=="FAILED"]
+        attempts=[{"status":a.get("validationStatus"),"reasons":a.get("validationReasons"),"firstMs":a.get("firstTokenLatencyMs")} for a in active.get("candidateAttempts",[])]
+        print("SWRLZ_PROBE_FAILURE "+json.dumps({"case":label,"failure":failed,"attempts":attempts}),file=__import__("sys").stderr,flush=True)
         raise RuntimeError("End-to-end generation failed: "+label)
     if profile!=expected or not isinstance(tokens,int) or tokens>(1800 if label=="code" else 512):
         raise RuntimeError("Compact profile budget not verified: "+label)
@@ -427,10 +431,10 @@ def main():
         verify_local()
         subprocess.run([PYTHON, "-c", "from ovh_chat import app"], cwd=PREVIEW, check=True, timeout=45)
         restart()
+        probe('code','Write a Python function double(x) that returns x multiplied by 2. Return only code.','code')
         probe('math','Hey §wyrlz, what is 2 + 2?','math')
         probe('social','Hello §wyrlz!','social')
         probe('explain','What is RAM?','explain')
-        probe('code','Write a Python function double(x) that returns x multiplied by 2. Return only code.','code')
         cpu_receipt()
     except Exception:
         for p in reversed(changed):
