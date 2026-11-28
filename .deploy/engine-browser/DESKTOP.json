@@ -1,0 +1,9 @@
+{
+  "mode": "candidate",
+  "profile": "desktop",
+  "viewport": {
+    "width": 2560,
+    "height": 1440
+  },
+  "reason": "Owner completed desktop browser installation; verify universal UV candidate in high resolution on OVH"
+}
