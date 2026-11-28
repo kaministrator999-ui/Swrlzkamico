@@ -1,0 +1,82 @@
+name: OVH §E server Chromium QA
+on:
+  push:
+    branches: [main]
+    paths: ['.deploy/engine-browser/TEST.json']
+  workflow_dispatch:
+    inputs:
+      mode:
+        type: choice
+        options: [live, candidate]
+        default: live
+permissions: {}
+concurrency:
+  group: ovh-engine-browser
+  cancel-in-progress: false
+jobs:
+  browser:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 7
+    steps:
+      - name: Invoke existing OVH Chromium (no runner browser installation)
+        env:
+          HOST: ${{ secrets.SWRLZ_SERVER_HOST }}
+          LOGIN: ${{ secrets.SWRLZ_SERVER_USER }}
+          SSH_KEY: ${{ secrets.SWRLZ_SERVER_SSH_KEY }}
+          KNOWN_HOSTS: ${{ secrets.SWRLZ_SERVER_KNOWN_HOSTS }}
+          MODE: ${{ inputs.mode || 'live' }}
+        run: |
+          set -euo pipefail
+          test -n "$HOST" && test "$LOGIN" = swrlz-deploy
+          umask 077
+          d=$(mktemp -d)
+          trap 'rm -rf "$d"' EXIT
+          printf '%s\n' "$SSH_KEY" > "$d/key"
+          printf '%s\n' "$KNOWN_HOSTS" > "$d/known_hosts"
+          unset SSH_KEY KNOWN_HOSTS
+          remote() {
+            ssh -F /dev/null -T -i "$d/key" -o BatchMode=yes -o IdentitiesOnly=yes \
+              -o StrictHostKeyChecking=yes -o HostKeyAlgorithms=ssh-ed25519 \
+              -o UserKnownHostsFile="$d/known_hosts" -o GlobalKnownHostsFile=/dev/null \
+              -o ConnectTimeout=15 -o ClearAllForwardings=yes "$LOGIN@$HOST" "$1"
+          }
+          if test "$MODE" = candidate; then
+            remote swrlz-source-sync > "$d/sync"
+            grep -Fxq "$GITHUB_SHA" "$d/sync"
+          fi
+          case "$MODE" in live|candidate) ;; *) exit 1 ;; esac
+          status=0
+          remote "swrlz-engine-browser-$MODE" > "$d/evidence" || status=$?
+          mkdir -p engine-server-qa
+          python3 - "$d/evidence" "$MODE" <<'PY'
+          import base64,hashlib,io,json,sys,zipfile
+          from pathlib import Path
+          lines=Path(sys.argv[1]).read_text().splitlines()
+          rows=[s.split(' ',1)[1] for s in lines if s.startswith('SWRLZ_ENGINE_QA_ZIP ')]
+          if len(rows)!=1:raise RuntimeError('Missing server browser receipt; verify bridge authorization')
+          raw=base64.b64decode(rows[0],validate=True)
+          assert len(raw)<=8*1024*1024
+          out=Path('engine-server-qa')
+          with zipfile.ZipFile(io.BytesIO(raw)) as z:
+              receipt=json.loads(z.read('receipt.json'))
+              assert receipt['mode']==sys.argv[2] and receipt['sandbox']
+              assert sum(i.file_size for i in z.infolist())<=16*1024*1024
+              for name,digest in receipt['screenshots'].items():
+                  assert name in {'starter-library.png','native-starter.png','expanded-uv-default.png','native-uv-numbered.png','native-numbered-model.png','failure.png'}
+                  data=z.read(name)
+                  assert hashlib.sha256(data).hexdigest()==digest and data.startswith(b'\x89PNG')
+                  (out/name).write_bytes(data)
+              (out/'receipt.json').write_text(json.dumps(receipt,indent=2))
+          print(json.dumps({k:v for k,v in receipt.items() if k!='served'},indent=2))
+          assert receipt['ok'] and receipt['realStarterCard']
+          PY
+          test "$status" = 0
+      - name: Return screenshots from OVH
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ovh-engine-server-chromium-evidence
+          path: engine-server-qa/
+          if-no-files-found: warn
+          retention-days: 30
