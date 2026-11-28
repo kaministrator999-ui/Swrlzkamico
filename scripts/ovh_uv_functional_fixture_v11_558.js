@@ -26,6 +26,12 @@ if(new URLSearchParams(location.search).get('serverqa')==='1'){
   checkpoint();
   first.part.topologyMesh.uvs=original.topologyMesh.uvs.map(x=>.06+x*.75);
   first.part.uvPaintPNG=paint.toDataURL('image/png');first.part.uvPaintOffset=[.125,.0625];
+  // The fixture uses real native materials, not a Solid/diagnostic view clone.
+  first.part.uvPaintSourceW=512;first.part.uvPaintSourceH=512;
+  first.part.uvPaintSourceBytes=Math.floor(first.part.uvPaintPNG.split(',')[1].length*3/4)-(first.part.uvPaintPNG.endsWith('==')?2:first.part.uvPaintPNG.endsWith('=')?1:0);
+  first.part.uvPaintMaxSize=0;
+  atelierViewColors=true;atelierViewTextures=true;atelierViewMaterialOverrides.clear();
+  qaAssert(window.SWYRL_ENGINE_VIEW_READABILITY_455.choose('shaded'),'Cannot enter Material view');
   signalEdited();reselect();
   const before=JSON.parse(JSON.stringify(find())), beforeList=JSON.stringify(model().parts);
   const expected=core.optimizeExistingUV(before.topologyMesh);
@@ -85,7 +91,12 @@ if(new URLSearchParams(location.search).get('serverqa')==='1'){
   // Check the actual Three.js material after native model rebuild.
   let map;
   for(let n=0;n<30;n++){map=se551Target()?.mesh?.material?.map;if(map?.image?.width===512)break;await pause(100);}
-  qaAssert(map?.image?.width===512&&map.offset.x===0&&map.offset.y===0,'render texture not restored by native material path');
+  const actual=se551Target()?.mesh;
+  const describeMap=m=>({width:m?.image?.width||null,height:m?.image?.height||null,offset:m?.offset?.toArray?.()||null,source:m?.image?.src?.slice(0,30)||null});
+  qaAssert(map?.image?.width===512&&map.offset.x===0&&map.offset.y===0,'render texture not restored: '+JSON.stringify({view:atelierViewModeFor(state()),flags:atelierViewFlagsFor(state()),active:describeMap(map),original:describeMap(actual?.userData?.se455OriginalMaterial?.map),paintBytes:state().uvPaintPNG?.length,sourceWidth:state().uvPaintSourceW}));
+  const gpu=document.createElement('canvas');gpu.width=gpu.height=512;const gc=gpu.getContext('2d');gc.drawImage(map.image,0,0);
+  const actualPixels=gc.getImageData(0,0,512,512).data;
+  qaAssert(actualPixels.every((v,i)=>v===pixels[i]),'rebuilt Three.js texture pixels differ from saved rebake');
   host.querySelector('[data-se551="undo"]').click();reselect();
   qaAssert(JSON.stringify(model().parts)===beforeList,'Undo did not restore exact UV and painted PNG');
   verifyGeometry(state());
