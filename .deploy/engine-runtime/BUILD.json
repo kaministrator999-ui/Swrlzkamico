@@ -2,8 +2,8 @@
   "reason": "OVH bare sealed engine lacks delivery-only starter registration and UV controls",
   "baseline": "897e3fd854f2c0ece60d02bd160b423c911787b5",
   "uvCandidate": "05b2f1197dd0728a3690b6e4ad9b7c98dc67c75e",
-  "validation": "Click visible Starter Models card on actual OVH origin routed to exact built bytes; test scene SHA and UV numbering; no live publication",
-  "attempt": 2,
+  "validation": "OVH-origin startup via existing explicit local-workspace action, actual visible Starter Models card, scene hash, 22 UV labels. Preserve existing credentialed Chat origin allowlist; do not claim account integration.",
+  "attempt": 3,
   "authorization": "Owner installed runtime bridge; promote only if OVH-origin real card test passes",
-  "previousFailure": "Startup timeout; collect request and console diagnostics and verify routed document hash"
+  "previousFailure": "Native Chat iframe deliberately not mounted on OVH because original allowlist is HF-only. Old QA incorrectly required it."
 }

@@ -12,6 +12,9 @@ qa_receipt=json.loads((qa/'receipt.json').read_text())
 def sha(p):return hashlib.sha256(p.read_bytes()).hexdigest()
 assert qa_receipt['realStarterCard'] and not qa_receipt['errors']
 assert qa_receipt['origin']=='https://40.160.61.231'
+assert qa_receipt['accountMode']=='explicit-local-workspace' and qa_receipt['accountIntegrationVerified'] is False
+assert qa_receipt['info']['frame'] is None
+assert qa_receipt['labels']['labels']==22
 scene='scenes/model-atelier-clean-topology-humanoid-v11-554.swyrl.json'
 assert qa_receipt['hash']==m['assets'][scene]['sha256']
 for rel,rec in m['assets'].items():

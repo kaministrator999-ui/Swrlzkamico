@@ -9,6 +9,9 @@ const origin=process.env.SWRLZ_TEST_ORIGIN||'https://40.160.61.231';
 const crypto=require('node:crypto');
 const root=path.resolve(process.argv[2]||'dist/swrlz-forge-moba');
 const live=false;
+// The original credentialed Chat host deliberately mounts only on the two HF origins.
+// OVH currently supports the explicit native local workspace path, not HF account auth.
+const accountOrigin=new Set(['https://kamiloki-swrlz-forge-moba.static.hf.space','https://kamiloki-swrlz-forge-moba.hf.space']).has(origin);
 const output=path.resolve(process.argv[3]);
 fs.mkdirSync(output,{recursive:true});
 const mime={'.html':'text/html; charset=utf-8','.js':'text/javascript','.mjs':'text/javascript','.css':'text/css','.json':'application/json','.png':'image/png','.jpg':'image/jpeg','.webp':'image/webp','.svg':'image/svg+xml','.glb':'model/gltf-binary'};
@@ -37,13 +40,16 @@ const mime={'.html':'text/html; charset=utf-8','.js':'text/javascript','.mjs':'t
   console.log('SWRLZ_OVH_ROUTE_ENTRY_OK',origin,served);
   await page.waitForFunction(()=>!!window.SWRLZ_FORGE_BUILD?.version &&
     !!window.SWYRL_ENGINE_UV_UNWRAP && !!window.SWYRL_ENGINE_STARTUP_476?.inspect?.()?.ready &&
-    !!document.getElementById('seChatFrame')?.getAttribute('src'),null,{timeout:90000});
+    (document.getElementById('se476StartupGate')!==null),null,{timeout:90000});
+  if(accountOrigin)await page.waitForFunction(()=>!!document.getElementById('seChatFrame')?.getAttribute('src'),null,{timeout:15000});
   assert.equal(errors.filter(x=>/se552Open|se555|ReferenceError|SyntaxError/.test(x)).length,0,errors.join('\n'));
   const info=await page.evaluate(()=>({version:window.SWRLZ_FORGE_BUILD.version,
    startup:window.SWYRL_ENGINE_STARTUP_476.inspect(),bridge:!!window.SWYRL_ENGINE_STARTUP_ACCOUNT_476,
-   frame:document.getElementById('seChatFrame').src,uv:window.SWYRL_ENGINE_UV_UNWRAP.status(),
+   frame:document.getElementById('seChatFrame')?.src||null,uv:window.SWYRL_ENGINE_UV_UNWRAP.status(),
    signalLost:!document.getElementById('se476SignalLost').hidden}));
-  assert(info.bridge&&info.frame.startsWith('https://kamiloki-swyrlz.hf.space/'),JSON.stringify(info));
+  assert(info.bridge,JSON.stringify(info));
+  if(accountOrigin)assert(info.frame?.startsWith('https://kamiloki-swyrlz.hf.space/'),JSON.stringify(info));
+  else assert.equal(info.frame,null,'Credentialed HF panel must not mount on unapproved OVH origin');
   assert(!info.signalLost,'False outage while account is initializing');
   if(live){
    await page.waitForFunction(()=>window.SWYRL_ENGINE_STARTUP_ACCOUNT_476?.ready?.()===true,null,{timeout:90000});
@@ -54,6 +60,11 @@ const mime={'.html':'text/html; charset=utf-8','.js':'text/javascript','.mjs':'t
   // No account bypass: exercise the existing explicit local-workspace action.
   if(await page.locator('#se476StartupGate').isVisible()){
    await page.locator('#se476ContinueLocal').click({timeout:15000});
+  }
+  if(!accountOrigin){
+   await page.waitForFunction(()=>window.SWYRL_ENGINE_STARTUP_476.inspect().finished===true,null,{timeout:15000});
+   assert.notEqual(await page.evaluate(()=>window.SWYRL_ENGINE_STARTUP_476.inspect().account),'connected','No authenticated account expected on OVH local path');
+   console.log('SWRLZ_OVH_EXPLICIT_LOCAL_WORKSPACE_PASS');
   }
   await page.waitForFunction(()=>document.getElementById('se476StartupGate')?.hidden===true &&
     document.documentElement.classList.contains('se127-editor-ready'),null,{timeout:45000});
@@ -100,7 +111,7 @@ const mime={'.html':'text/html; charset=utf-8','.js':'text/javascript','.mjs':'t
   await page.waitForFunction(()=>!document.getElementById('se552UVHost')&&window.SWYRL_ENGINE_UV_NUMBERING.inspect().labels>=1);
   assert.equal(errors.filter(x=>/ReferenceError|TypeError|SyntaxError/.test(x)).length,0,errors.join('\n'));
   await page.screenshot({path:path.join(output,'native-numbered-model.png')});
-  fs.writeFileSync(path.join(output,'receipt.json'),JSON.stringify({origin,hash,info,labels,errors,realStarterCard:true},null,2));
+  fs.writeFileSync(path.join(output,'receipt.json'),JSON.stringify({origin,hash,info,labels,errors,realStarterCard:true,accountMode:accountOrigin?'legacy-account-origin':'explicit-local-workspace',accountIntegrationVerified:false},null,2));
   console.log('SE556_NUMBERED_MODEL_UV_BROWSER_PASS',JSON.stringify({live,labels}));
   console.log('SE555_DELIVERED_BROWSER_BOOT_PASS',JSON.stringify({live,info,errors:errors.slice(0,5)}));
   }catch(e){
