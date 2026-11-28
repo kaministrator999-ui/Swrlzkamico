@@ -5,6 +5,8 @@ on:
     branches: [main]
     paths:
       - 'scripts/ovh_chat_preview_deploy.py'
+      - 'scripts/ovh_static_hosting.py'
+      - 'hosting/**'
       - '.github/workflows/ovh-chat-preview-deploy.yml'
 concurrency:
   group: ovh-chat-preview-deploy
@@ -59,3 +61,10 @@ jobs:
           grep -Fxq SWRLZ_CHAT_PREVIEW_DEPLOY_OK "$d/build-result"
           echo SWRLZ_CHAT_PREVIEW_DEPLOY_OK
           printf 'Verified chat deployment revision: %s\n' "$GITHUB_SHA"
+          grep '^SWRLZ_HOSTING_SLOT_OK ' "$d/build-result"
+          for port in 443 8443 8444; do
+            status=$(curl --noproxy '*' -sS --connect-timeout 12 --max-time 20 -D "$d/headers" -o /dev/null -w '%{http_code}' "https://$HOST:$port/")
+            test "$status" = 401
+            grep -qi '^www-authenticate: Basic' "$d/headers"
+            printf 'SWRLZ_EXTERNAL_HTTPS_AUTH_OK port=%s status=%s\n' "$port" "$status"
+          done
