@@ -4,6 +4,7 @@ on:
     branches: [uv-visual-qa-20261127]
     paths:
       - 'projects/swrlz-forge-moba/scripts/repack_humanoid_uv_candidate.mjs'
+      - 'projects/swrlz-forge-moba/scripts/relax_humanoid_uv_candidate.mjs'
       - 'projects/swrlz-forge-moba/scripts/render_humanoid_uv_candidate.py'
       - 'projects/swrlz-forge-moba/tests/uv_candidate_visual_qa.cjs'
       - '.github/workflows/uv-humanoid-visual-qa.yml'
@@ -34,6 +35,8 @@ jobs:
           SCENE="$P/scenes/model-atelier-clean-topology-humanoid-v11-554.swyrl.json"
           node "$P/scripts/repack_humanoid_uv_candidate.mjs" "$SCENE" uv-qa
           python "$P/scripts/render_humanoid_uv_candidate.py" "$SCENE" uv-qa
+          node "$P/scripts/relax_humanoid_uv_candidate.mjs" "$SCENE" uv-qa/relaxed
+          python "$P/scripts/render_humanoid_uv_candidate.py" "$SCENE" uv-qa/relaxed
           node --check "$P/tests/uv_candidate_visual_qa.cjs"
       - name: Build the actual sealed engine preview, without any production deployment
         run: |
@@ -56,6 +59,10 @@ jobs:
           cp uv-qa/candidate-checker.png dist/uv-qa/assets/models/clean-topology-humanoid-v11-554-uv-test.png
           cp uv-qa/candidate-uv.png dist/uv-qa/assets/models/clean-topology-humanoid-v11-554-uv-guide-2048.png
           node "$TEST" dist/uv-qa uv-qa/candidate
+          cp uv-qa/relaxed/candidate.swyrl.json "$SCENE"
+          cp uv-qa/relaxed/candidate-checker.png dist/uv-qa/assets/models/clean-topology-humanoid-v11-554-uv-test.png
+          cp uv-qa/relaxed/candidate-uv.png dist/uv-qa/assets/models/clean-topology-humanoid-v11-554-uv-guide-2048.png
+          node "$TEST" dist/uv-qa uv-qa/relaxed/native
       - name: Preserve candidate scene and visual receipts even on test failure
         if: always()
         uses: actions/upload-artifact@v4
