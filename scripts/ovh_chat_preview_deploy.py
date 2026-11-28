@@ -151,7 +151,7 @@ def _ovh_small_code(prompt,programming,payload,history):
         return False
     if not re.search(r"\b(?:function|method|short|simple|small|snippet|hello world|example)\b",clean,re.I):
         return False
-    if re.search(r"\b(?:fix|debug|repair|refactor|rewrite|edit|modify|update|change|extend|import|repository|repo|github|commit|deploy|existing|project|integration|integrate|engine|server|database|frontend|backend|file|directory|folder|component|error|stack trace|test failure|architecture|library|framework|endpoint)\b",clean,re.I):
+    if re.search(r"\b(?:fix|debug|repair|refactor|rewrite|edit|modify|update|change|extend|import|repository|repo|github|commit|deploy|existing|project|integration|integrate|engine|server|database|frontend|backend|file|directory|folder|component|error|stack trace|test failure|architecture|library|framework|endpoint|application|webpage|website|web page)\b",clean,re.I):
         return False
     contract=programming.get("intentContract") or {}
     if len(json.dumps(contract,ensure_ascii=False))>4500:
@@ -258,7 +258,7 @@ assert m.hits==1 and f.calls==2
 assert _OVHRequestTokenModel(f).tokenize(b"abc")==[97,98,99] and f.calls==3
 p="Write a Python function double(x) that returns x multiplied by 2. Return only code."
 intent=programming_intent(p,[],[],{})
-assert _ovh_small_code(p,intent,{},[]), "Standalone code profile not selected"
+assert _ovh_small_code(p,intent,{},[]), ("Standalone code profile not selected", {k:bool(v) for k,v in intent.items()}, intent.get("behaviorLedger"), intent.get("repairConstraints"))
 for key in ("failureEvidence","canonicalCarry","artifactContinuation","artifactMutationRequested"):
     assert not _ovh_small_code(p,dict(intent,**{key:True}),{},[])
 assert not _ovh_small_code(p,intent,{"archiveEvidence":"fixture"},[])
@@ -282,8 +282,11 @@ print("SWRLZ_LOCAL_REGRESSION_OK "+json.dumps({"tokenizerHits":m.hits,
     "memoryFixtureDocs":len(docs),"matchingDocs":len(post[q[0]]),
     "fullScanMs":round(old*50,3),"indexedMs":round(new*50,3)}))
 '''
-    p=subprocess.run([PYTHON,"-c",program],cwd=PREVIEW,check=True,timeout=60,capture_output=True,text=True)
+    p=subprocess.run([PYTHON,"-c",program],cwd=PREVIEW,timeout=60,capture_output=True,text=True)
     print(p.stdout,file=__import__("sys").stderr,flush=True)
+    if p.returncode:
+        print(p.stderr[-3500:],file=__import__("sys").stderr,flush=True)
+        raise RuntimeError("Synthetic local regression failed")
 
 def cpu_receipt():
     # Observe only. Inference unit has separate administrative authority.
