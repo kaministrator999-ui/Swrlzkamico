@@ -12,8 +12,8 @@
       "bytes": 687188
     },
     "swrlz-engine-v11.552.js": {
-      "sha256": "1ab007f1887a4f94d3a240a07bb034f5279be0199fc7997164dfb658ea6a9ad1",
-      "bytes": 10690387
+      "sha256": "cab20a91d1ec007168462024be2fb2892d7b302082a0a64195e4113968a17d0f",
+      "bytes": 10679758
     },
     "assets/uv-unwrapper/uv_atlas_core_v11_555.mjs": {
       "sha256": "e5a05b74f9e324c18c67831f3d5f0e3705fb88e21917d2e0232147ad6698836d",
@@ -41,13 +41,13 @@
       "bytes": 317478
     }
   },
-  "sourceCommit": "c34a3d129a87d523056a559c878cb558576b31da",
-  "browserRun": "46119034301",
+  "sourceCommit": "fcdcde4a58b2ff07cb63d821d2707d043e744111",
+  "browserRun": "46119338932",
   "rendererBundle": {
     "version": "0.169.0",
     "threeIntegrity": "sha512-Ed906MA3dR4TS5riErd4QBsRGPcx+HBDX2O5yYE5GqJeFQTPU+M56Va/f/Oph9X7uZo3W3o4l2ZhBZ6f6qUv0w==",
     "esbuildVersion": "0.25.12",
-    "previousModuleSha256": "cc257ad6228d9a4a57a50c088398d67ec3ec10c971083c0243fd2cdf84cff1ba",
+    "previousModuleSha256": "0f1de5d780fe9c9525d6edf99e527c508835f7fa4ba44724bc68451399f56d51",
     "startupImportsBundled": [
       "https://cdn.jsdelivr.net/npm/three@0.169.0/+esm",
       "https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/controls/OrbitControls.js/+esm",
@@ -93,126 +93,13 @@
     "accountIntegrationVerified": false
   },
   "previousCandidateBrowserReceipt": {
-    "realStarterCard": true,
-    "errors": [],
-    "hash": "05b40cd4aa751760b371265cf73047485065175a9b6e742e33d47871ec1da2fb",
-    "profiles": {
-      "desktop": {
-        "mode": "candidate",
-        "executionHost": "swrlz-server",
-        "browserExecutable": "/usr/bin/chromium",
-        "origin": "https://40.160.61.231",
-        "transport": "server filesystem through isolated browser routes; not authenticated HTTP",
-        "accountIntegrationVerified": false,
-        "sandbox": true,
-        "profile": "desktop",
-        "viewport": {
-          "width": 2560,
-          "height": 1440
-        },
-        "deviceScaleFactor": 1,
-        "isMobile": false,
-        "hasTouch": false,
-        "chromiumVersion": "156.0.8078.108",
-        "browserDisplay": {
-          "width": 2560,
-          "height": 1440,
-          "dpr": 1,
-          "screenWidth": 2560,
-          "screenHeight": 1440,
-          "touch": 0,
-          "coarse": false,
-          "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36"
-        },
-        "ok": true,
-        "realStarterCard": true,
-        "sceneSha256": "05b40cd4aa751760b371265cf73047485065175a9b6e742e33d47871ec1da2fb",
-        "labels": {
-          "enabled": true,
-          "model": true,
-          "labels": 22,
-          "target": "clean-topology-humanoid-base",
-          "selected": "clean-topology-humanoid-base",
-          "meshCount": 2,
-          "attached": true
-        },
-        "errors": [],
-        "missing": [],
-        "served": {
-          "modeler.html": "c3e9d72a529dd5409d2b419f4485348a6858bdf6474a340e3bc02ba60e4c9cfc",
-          "swrlz-engine-v11.552.js": "8a74dea355d5ded73b6bfc60de1a7ef9dee4228fddb3d74e069fc85a6447bb87",
-          "assets/sheep-tag/grass-source-color-quest.webp": "6e3dd288200de2da62ba367056673b7e60bb2d68da66befb3725f702719afbda",
-          "scenes/model-atelier-clean-topology-humanoid-v11-554.swyrl.json": "05b40cd4aa751760b371265cf73047485065175a9b6e742e33d47871ec1da2fb"
-        },
-        "durationMs": 38218,
-        "screenshots": {
-          "starter-library.png": "e28ec6aa832aad59bdc69e02cdc0194eeb8155c692b7ef0649ef47f79a0f9645",
-          "native-starter.png": "3b87bd2474449f4025fcc88ae3fe89b9005a020ed18af12ac7a8994489b3dc9f",
-          "expanded-uv-default.png": "ea2e97d891090479729dbe3c525c246eefebe394cb59db02e523f54af13d5bee",
-          "native-uv-numbered.png": "ea2e97d891090479729dbe3c525c246eefebe394cb59db02e523f54af13d5bee",
-          "native-numbered-model.png": "9fd70205b2a8e980e20d6fbd6d76f52f049c6df151dedc449e6f18ab68afee8c"
-        }
-      },
-      "mobile": {
-        "mode": "candidate",
-        "executionHost": "swrlz-server",
-        "browserExecutable": "/usr/bin/chromium",
-        "origin": "https://40.160.61.231",
-        "transport": "server filesystem through isolated browser routes; not authenticated HTTP",
-        "accountIntegrationVerified": false,
-        "sandbox": true,
-        "profile": "mobile",
-        "viewport": {
-          "width": 412,
-          "height": 915
-        },
-        "deviceScaleFactor": 1,
-        "isMobile": true,
-        "hasTouch": true,
-        "chromiumVersion": "156.0.8078.108",
-        "browserDisplay": {
-          "width": 412,
-          "height": 915,
-          "dpr": 1,
-          "screenWidth": 412,
-          "screenHeight": 915,
-          "touch": 1,
-          "coarse": true,
-          "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36"
-        },
-        "ok": true,
-        "realStarterCard": true,
-        "sceneSha256": "05b40cd4aa751760b371265cf73047485065175a9b6e742e33d47871ec1da2fb",
-        "labels": {
-          "enabled": true,
-          "model": true,
-          "labels": 22,
-          "target": "clean-topology-humanoid-base",
-          "selected": "clean-topology-humanoid-base",
-          "meshCount": 2,
-          "attached": true
-        },
-        "errors": [],
-        "missing": [],
-        "served": {
-          "modeler.html": "c3e9d72a529dd5409d2b419f4485348a6858bdf6474a340e3bc02ba60e4c9cfc",
-          "swrlz-engine-v11.552.js": "8a74dea355d5ded73b6bfc60de1a7ef9dee4228fddb3d74e069fc85a6447bb87",
-          "assets/sheep-tag/grass-source-color-quest.webp": "6e3dd288200de2da62ba367056673b7e60bb2d68da66befb3725f702719afbda",
-          "scenes/model-atelier-clean-topology-humanoid-v11-554.swyrl.json": "05b40cd4aa751760b371265cf73047485065175a9b6e742e33d47871ec1da2fb"
-        },
-        "durationMs": 22890,
-        "screenshots": {
-          "starter-library.png": "d63546d0721730094d01e11ac4280ada59bbcfd0e0ab22a4f49de4495da14bf7",
-          "native-starter.png": "a952552970288de92f4f5d762d2dd431f5e8f3a5e57680c02493c5f3f406650d",
-          "expanded-uv-default.png": "f0ff1f62e6db90626f76f7ff153e9ce9b5530dce0ab27026c34e9a12e7a9cb21",
-          "native-uv-numbered.png": "f0ff1f62e6db90626f76f7ff153e9ce9b5530dce0ab27026c34e9a12e7a9cb21",
-          "native-numbered-model.png": "cce7335635af90b6507790d349e090e25591c996c2091342688e7ccba2f6aee8"
-        }
-      }
-    }
+    "realStarterCard": false,
+    "errors": [
+      "QA fixture must never be promoted"
+    ]
   },
   "uvSourceCommit": "d49eec1d29fc2cc3202ce497111147fcaa05fb37",
-  "qaOnly": true,
+  "qaOnly": false,
   "functionalVerification": {
     "run": 46114660276,
     "job": 140886104995,
@@ -232,7 +119,35 @@
   "browserReceipt": {
     "realStarterCard": false,
     "errors": [
-      "QA fixture must never be promoted"
+      "Awaiting clean candidate desktop and mobile verification"
     ]
+  },
+  "anatomicalVerification": {
+    "run": 46119034301,
+    "fixtureCommit": "005c6230d64a38675505be7bb12a2e0ab0f30149",
+    "fixtureModuleSha256": "1ab007f1887a4f94d3a240a07bb034f5279be0199fc7997164dfb658ea6a9ad1",
+    "receipt": {
+      "ok": true,
+      "cancel": true,
+      "apply": true,
+      "undo": true,
+      "redo": true,
+      "anatomicalLayout": true,
+      "geometryPreserved": true,
+      "paintSamples": 7951,
+      "maxPaintChannelError": 0,
+      "renderTexture": true,
+      "restoredOriginal": true,
+      "centerErrorPx": 0,
+      "atlasSizePx": 1136,
+      "exportReceipt": {
+        "width": 4096,
+        "height": 4096,
+        "bytes": 639719,
+        "transparentInterior": true
+      },
+      "coverage": 0.4180033842933,
+      "legendCount": 22
+    }
   }
 }
