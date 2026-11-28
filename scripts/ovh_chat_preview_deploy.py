@@ -316,6 +316,34 @@ def patch_ui(s):
     return s
 
 
+
+def patch_v5(s):
+    s=patch_v4(s)
+    if "OVH_ADAPTIVE_CONTEXT_V5" in s:return s
+    # Output constraints alone are not a reason for the full engineering profile.
+    s=replace_once(s,'("respond","answer","explain","confirm","decline","correct","continue")',
+        '("respond","answer","explain","confirm","decline","correct","continue","translate","compare","calculate")')
+    s=replace_once(s,'if cognition.get("detailMode")=="expanded" or cognition.get("requestedCount") or cognition.get("preserveConstraint"):',
+        'if cognition.get("detailMode")=="expanded" or cognition.get("preserveConstraint"):')
+    # Support bounded nontechnical numbered lists without authorizing deliverables.
+    s=replace_once(s,'if cognition.get("sourcePreference")!="unspecified" or cognition.get("deliverable")!="none":',
+        'if cognition.get("sourcePreference")!="unspecified" or cognition.get("deliverable") not in ("none","unspecified"):')
+    anchor='    yield {"type":"STATUS","phase":"OVH_PREFILL_PROFILE","reason":compact_kind}'
+    s=replace_once(s,anchor,r'''
+    # OVH_ADAPTIVE_CONTEXT_V5: retain explicit response shape on compact turns.
+    if compact_kind=="conversation":
+        if response_cognition.get("outputOnly"):
+            system+="\nReturn only the requested answer or artifact, with no introduction or follow-up."
+        if response_cognition.get("requestedCount"):
+            system+="\nReturn exactly "+str(response_cognition["requestedCount"])+" requested items."
+        if response_cognition.get("detailMode")=="compact":
+            system+="\nKeep the answer brief and complete."
+        system+="\nIf the user corrects an earlier fact, the latest explicit user statement overrides older ones. If the information is absent, say so without inventing it."
+''' + anchor)
+    ast.parse(s)
+    return s
+
+
 def patch_memory(s):
     if "OVH_MEMORY_POSTINGS_V1" in s:
         return s
@@ -557,7 +585,7 @@ def main():
     memory=PREVIEW/"chatgpt_account_memory.py"
     ui=PREVIEW/"chat/§wyrlz/index.html"
     originals={p:p.read_bytes() for p in (TARGET,memory,ui)}
-    updates={TARGET:patch_v4(originals[TARGET].decode()).encode(),
+    updates={TARGET:patch_v5(originals[TARGET].decode()).encode(),
              memory:patch_memory(originals[memory].decode()).encode(),
              ui:patch_ui(originals[ui].decode()).encode()}
     for p,data in updates.items():
@@ -582,6 +610,7 @@ def main():
         probe('followup','Doing fine I see your inference speed is pretty on point','conversation',session)
         probe('explain','What is RAM?','explain')
         cpu_receipt()
+        subprocess.run([PYTHON,str(SOURCE/"scripts/ovh_extended_response_qa.py")],check=True,timeout=360)
     except Exception:
         for p in reversed(changed):
             write_atomic(p,originals[p])
