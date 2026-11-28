@@ -12,16 +12,16 @@
       "bytes": 687188
     },
     "swrlz-engine-v11.552.js": {
-      "sha256": "8a74dea355d5ded73b6bfc60de1a7ef9dee4228fddb3d74e069fc85a6447bb87",
-      "bytes": 10673561
+      "sha256": "1ab007f1887a4f94d3a240a07bb034f5279be0199fc7997164dfb658ea6a9ad1",
+      "bytes": 10690387
     },
     "assets/uv-unwrapper/uv_atlas_core_v11_555.mjs": {
-      "sha256": "158c6c1ce36bfe37840201136671625a1e1e5afea7cb34bb3352028ca886008e",
-      "bytes": 8142
+      "sha256": "e5a05b74f9e324c18c67831f3d5f0e3705fb88e21917d2e0232147ad6698836d",
+      "bytes": 8211
     },
     "assets/uv-unwrapper/uv_lscm_core_v11_555.mjs": {
-      "sha256": "2e557cf9a60eb3cb5d33d0ec9d38dcefba5283140fccd4de097feb74d758f5a8",
-      "bytes": 21958
+      "sha256": "8c23c4adf81d7d6f5226e74e24844e9e697cef09ff837b8e1422ddc7cc6d52de",
+      "bytes": 28043
     }
   },
   "requiredStarterAssets": {
@@ -41,13 +41,13 @@
       "bytes": 317478
     }
   },
-  "sourceCommit": "bdebefedbc79584ba8603a7331318f4606e30c48",
-  "browserRun": "46118301796",
+  "sourceCommit": "c34a3d129a87d523056a559c878cb558576b31da",
+  "browserRun": "46119034301",
   "rendererBundle": {
     "version": "0.169.0",
     "threeIntegrity": "sha512-Ed906MA3dR4TS5riErd4QBsRGPcx+HBDX2O5yYE5GqJeFQTPU+M56Va/f/Oph9X7uZo3W3o4l2ZhBZ6f6qUv0w==",
     "esbuildVersion": "0.25.12",
-    "previousModuleSha256": "6f1b7be0c9d67adaca9daa557c5ad2b532b866bcfbc620f9f6ce5c91b0aeb95f",
+    "previousModuleSha256": "cc257ad6228d9a4a57a50c088398d67ec3ec10c971083c0243fd2cdf84cff1ba",
     "startupImportsBundled": [
       "https://cdn.jsdelivr.net/npm/three@0.169.0/+esm",
       "https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/controls/OrbitControls.js/+esm",
@@ -93,14 +93,6 @@
     "accountIntegrationVerified": false
   },
   "previousCandidateBrowserReceipt": {
-    "realStarterCard": false,
-    "errors": [
-      "QA fixture must never be promoted"
-    ]
-  },
-  "uvSourceCommit": "d49eec1d29fc2cc3202ce497111147fcaa05fb37",
-  "qaOnly": false,
-  "browserReceipt": {
     "realStarterCard": true,
     "errors": [],
     "hash": "05b40cd4aa751760b371265cf73047485065175a9b6e742e33d47871ec1da2fb",
@@ -219,6 +211,8 @@
       }
     }
   },
+  "uvSourceCommit": "d49eec1d29fc2cc3202ce497111147fcaa05fb37",
+  "qaOnly": true,
   "functionalVerification": {
     "run": 46114660276,
     "job": 140886104995,
@@ -234,5 +228,11 @@
     "geometryPreserved": true,
     "renderTexture": true,
     "optimizeAllOnePart": true
+  },
+  "browserReceipt": {
+    "realStarterCard": false,
+    "errors": [
+      "QA fixture must never be promoted"
+    ]
   }
 }

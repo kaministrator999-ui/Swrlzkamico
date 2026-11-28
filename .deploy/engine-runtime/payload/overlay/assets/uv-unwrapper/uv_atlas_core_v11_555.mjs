@@ -158,3 +158,5 @@ export async function unwrapMesh(createXAtlas,source,options={}){
   return result;
  }finally{atlas.destroy();}
 }
+
+export {optimizeAnatomicalUV559} from './uv_lscm_core_v11_555.mjs';
