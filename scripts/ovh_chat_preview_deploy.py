@@ -214,7 +214,7 @@ def _ovh_conversation_profile(prompt,cognition,programming,payload,history):
     """Select ordinary conversation by existing turn semantics."""
     if programming.get("codingTask") or cognition.get("programming"):
         return False
-    if cognition.get("operation") not in ("respond","answer","explain","confirm","decline","correct"):
+    if cognition.get("operation") not in ("respond","answer","explain","confirm","decline","correct","continue"):
         return False
     if cognition.get("relation") in ("return-to-prior","expansion","selection","creative-delegation"):
         return False
@@ -232,7 +232,9 @@ def _ovh_conversation_profile(prompt,cognition,programming,payload,history):
         return False
     if re.search(r"\b(?:remember|recall|previous conversations?|saved memory|what did i say|my name|your name|who am i|who are you|how do you work|your capabilities|your limitations|latest|current price|today's news|search|look up|calculate|diagnose|dosage|legal advice|investment advice|write|create|generate|build|deploy|repair|debug|execute|install)\b",clean,re.I):
         return False
-    if history and cognition.get("relation") in ("confirmation","correction","decline"):
+    if cognition.get("operation")=="continue" and re.search(r"^(?:continue|keep going|go on|more|again|next|another|do it|go ahead|carry on|finish it|run it|send it)\b",clean,re.I):
+        return False
+    if history and cognition.get("relation") in ("confirmation","correction","decline","continuation"):
         if any(re.search(r"\x60{3}|\b(?:deploy|commit|execute|repair|source code)\b",str(m.get("content") or m.get("text") or ""),re.I) for m in history[-2:]):
             return False
     return True
@@ -257,8 +259,13 @@ def _ovh_compact_core():
                 "Do not fabricate memories, experiences, identity, tool results or actions. "
                 "Use concise answers when sufficient; expand when the question needs it. "
                 "Do not claim a persistent change or action without a verified receipt.\n"
-                +_ovh_compact_core()+"\n"+_role_frame(user_profile)
-                +"\n"+response_cognition_policy(response_cognition))
+                +" Follow the active thread, interpret humor and metaphor literally only when intended, "
+                "prefer the smallest sufficient answer, apply corrections as deltas, avoid repetition, "
+                "preserve speaker ownership, and distinguish evidence from agreement. "
+                "In the user's messages I/me means the user and you means the assistant. "
+                "Respect explicit scope and output constraints. "
+                +"Current turn relation: "+str(response_cognition.get("relation"))+
+                "; operation: "+str(response_cognition.get("operation"))+".")
         if custom_assistant_profile:
             system+="\nUSER ASSISTANT PREFERENCES:\n"+custom_assistant_profile
         if user_profile:
@@ -540,7 +547,7 @@ def probe(label,prompt,expected,session=None):
         raise RuntimeError("Missing real progress events: "+label)
     if label=="followup" and (active.get("contextBudget") or {}).get("historyMessagesKept",0)<2:
         raise RuntimeError("Multi-turn history lost")
-    if first>(85 if label=="code" else 45):
+    if first>(85 if label=="code" else 30 if label=="followup" else 45):
         raise RuntimeError("First token latency exceeded 45 seconds: "+label)
 
 def main():
